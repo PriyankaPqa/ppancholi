@@ -46,12 +46,14 @@
         </div>
       </template>
       <template #[`item.actionText`]="{ item }">
-        <div class="no-word-break" :data-test="`action-item`">
-          {{ item.actionText }}
-        </div>
-        <div
-          v-if="displayUserSubmittedTo(item.approvalAction) && item.submittedTo && item.submittedTo.userName">
-          {{ `${item.submittedTo.userName} (${$m(item.submittedTo.roleName)})` }}
+        <div data-test="action-item">
+          <div class="no-word-break">
+            {{ item.actionText }}
+          </div>
+          <div
+            v-if="displayUserSubmittedTo(item.approvalAction) && item.submittedTo && item.submittedTo.userName">
+            {{ `${item.submittedTo.userName} (${$m(item.submittedTo.roleName)})` }}
+          </div>
         </div>
       </template>
     </v-data-table>

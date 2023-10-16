@@ -97,11 +97,13 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
           financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(0).should('eq', 'TestDev6(System Admin)');
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName('Level3')}`);
           financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(0).should('eq', getToday());
-          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('eq', 'Submitted');
+          // eslint-disable-next-line
+          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('string', 'Submitted to').and('string', `${getUserName('Level3')} (${getUserRoleDescription('Level3')})`);
           financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(1).should('eq', `${getUserName('Level3')}(${getUserRoleDescription('Level3')})`);
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'sending this for next level approval');
           financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(1).should('eq', getToday());
-          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('eq', 'Approved');
+          // eslint-disable-next-line
+          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('string', 'Approved and submitted to').and('string', `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`);
           financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(2).should('eq', `${getUserName(roleName)}(${getUserRoleDescription(roleName)})`);
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(2).should('eq', 'I am approving this amount');
           financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(2).should('eq', getToday());

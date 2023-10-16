@@ -88,7 +88,8 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
           financialAssistanceDetailsPage.getApprovalHistory();
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName(roleName)}`);
-          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('eq', 'Submitted');
+           // eslint-disable-next-line
+          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('string', 'Submitted to').and('string', `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`);
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'you did not provide the information that I previously needed in order to approve it');
           financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('eq', 'Declined');
           financialAssistanceDetailsPage.closeDialogApprovalStatusHistory();

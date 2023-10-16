@@ -90,7 +90,8 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
           financialAssistanceDetailsPage.getApprovalHistory();
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName(roleName)}`);
-          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('eq', 'Submitted');
+          // eslint-disable-next-line
+          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('string', 'Submitted to').and('string', `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`);
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'Please upload the results of the beneficiary assessment');
           financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('eq', 'Request additional information');
           financialAssistanceDetailsPage.closeDialogApprovalStatusHistory();
