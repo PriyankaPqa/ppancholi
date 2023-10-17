@@ -13,6 +13,9 @@ export enum DataTest {
   faHistory = 'history-link',
   addFaPayment = 'table__addButton',
   refreshButton = 'undefined_refresh_button',
+  dialogApprovalHistoryRationale = 'rationale-item',
+  dialogApprovalHistoryAction = 'action-item',
+  dialogCancel = 'dialog-cancel-action',
 }
 
 export class FinancialAssistanceHomePage {
@@ -37,6 +40,12 @@ export class FinancialAssistanceHomePage {
   private addFaPayment = { selector: DataTest.addFaPayment };
 
   private refreshButton = { selector: DataTest.refreshButton };
+
+  private dialogApprovalHistoryRationale = { selector: DataTest.dialogApprovalHistoryRationale };
+
+  private dialogApprovalHistoryAction = { selector: DataTest.dialogApprovalHistoryAction };
+
+  private dialogCancel = { selector: DataTest.dialogCancel };
 
   public getFAPaymentById(financialAssistancePaymentId: string) {
     cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).click();
@@ -93,6 +102,10 @@ export class FinancialAssistanceHomePage {
     return cy.getByDataTest(this.faHistory);
   }
 
+  public getApprovalStatusHistory() {
+    return cy.getByDataTest(this.faHistory).click();
+  }
+
   public getAddFaPaymentButton() {
     return cy.getByDataTest(this.addFaPayment);
   }
@@ -108,5 +121,17 @@ export class FinancialAssistanceHomePage {
         foundMsg: 'FA Payment updated',
       },
     );
+  }
+
+  public getApprovalHistoryRationaleByIndex(index: number) {
+    return cy.getByDataTest(this.dialogApprovalHistoryRationale).eq(index).getAndTrimText();
+  }
+
+  public getApprovalHistoryActionByIndex(index: number) {
+    return cy.getByDataTest(this.dialogApprovalHistoryAction).eq(index).getAndTrimText();
+  }
+
+  public getDialogCancelApprovalStatusHistoryButton() {
+    return cy.getByDataTest(this.dialogCancel);
   }
 }

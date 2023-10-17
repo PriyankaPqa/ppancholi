@@ -3,12 +3,11 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
-import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
-import { getToday } from '@libs/cypress-lib/helpers';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold, addFinancialAssistancePayment } from '../../helpers/prepareState';
+import { submitPaymentTypeCanSteps } from '../../steps/submitPaymentTypeCanSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -63,45 +62,18 @@ describe('#TC303# - Submit a Pre-paid Card Payment', { tags: ['@case-file', '@fi
             caseFile = resultPrepareStateHousehold.registrationResponse.caseFile;
             const provider = resultPrepareStateHousehold.provider;
             financialAssistancePayment = await addFinancialAssistancePayment(provider, EPaymentModalities.PrepaidCard, caseFile.id, table.id);
+            cy.wrap(financialAssistancePayment).as('financialAssistancePayment');
             cy.login(roleValue);
             cy.goTo(`casefile/${caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully create a Prepaid Card Payment Line', () => {
-          const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
-          financialAssistanceHomePage.getApprovalStatus().should('eq', 'New');
-
-          const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(financialAssistancePayment.id);
-          financialAssistanceDetailsPage.getAddPaymentLineButton().should('be.enabled');
-          financialAssistanceDetailsPage.getBackToFinancialAssistanceButton().should('be.enabled');
-          financialAssistanceDetailsPage.getSubmitAssistanceButton().should('be.enabled');
-          financialAssistanceDetailsPage.getSubmitAssistanceButton().click();
-          cy.contains('By clicking Submit your payment will be processed and the status of this financial assistance payment will be Approved.').should('be.visible');
-          financialAssistanceDetailsPage.getDialogSubmitFinancialAssistanceButton().should('be.enabled');
-          financialAssistanceDetailsPage.getDialogCancelFinancialAssistanceButton().should('be.enabled');
-          financialAssistanceDetailsPage.getDialogSubmitFinancialAssistanceButton().click();
-          cy.contains('The financial assistance has been successfully submitted').should('be.visible');
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
-          financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'Approved');
-          financialAssistanceDetailsPage.goToFinancialAssistanceHomePage();
-
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
-          financialAssistanceHomePage.getFAPaymentNameById(financialAssistancePayment.id).should('eq', financialAssistancePayment.name);
-          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
-          financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
-          financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
-          financialAssistanceHomePage.expandFAPayment();
-          financialAssistanceHomePage.getFAPaymentGroupTitle().should('eq', 'Prepaid card');
-          financialAssistanceHomePage.getFAPaymentGroupTotal().should('eq', '$80.00');
-          financialAssistanceHomePage.getFAPaymentPaymentStatus().should('eq', 'Status: New');
-
-          const caseFileDetailsPage = financialAssistanceHomePage.goToCaseFileDetailsPage();
-          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${financialAssistancePayment.name}`);
-          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Financial assistance payment - Approved - Final');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${financialAssistancePayment.name}`).and('string', 'Amount: $80.00');
+        it('should successfully create a Prepaid Card Payment Line', function () {
+          submitPaymentTypeCanSteps({
+            financialAssistancePayment: this.financialAssistancePayment,
+            paymentType: 'Prepaid card',
+            roleName,
+            paymentGroupStatus: 'New',
+          });
         });
       });
     }

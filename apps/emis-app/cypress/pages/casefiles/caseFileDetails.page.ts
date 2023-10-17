@@ -11,6 +11,7 @@ export enum DataTest {
   caseFileNumber = 'caseFileDetails-caseFileNumber',
   eventName = 'caseFileDetails-event',
   financialAssistance = 'case-financial-assistance',
+  pageTitle = 'page-title',
 }
 
 export class CaseFileDetailsPage {
@@ -35,6 +36,8 @@ export class CaseFileDetailsPage {
   private eventName = { selector: DataTest.eventName };
 
   private financialAssistance = { selector: DataTest.financialAssistance };
+
+  private pageTitle = { selector: DataTest.pageTitle };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -92,7 +95,7 @@ export class CaseFileDetailsPage {
     cy.waitAndRefreshUntilConditions(
       {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        visibilityCondition: () => cy.contains('Case file activity').should('be.visible').wait(2000),
+        visibilityCondition: () => cy.getByDataTest(this.pageTitle).contains('Case file activity').should('be.visible').wait(2000),
         checkCondition: () => Cypress.$("[data-test='caseFileActivity-listItem-content-body']").text().includes(expectedCaseFileActivityBody),
       },
       {

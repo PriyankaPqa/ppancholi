@@ -4,7 +4,7 @@ import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold, addFinancialAssistancePayment } from '../../helpers/prepareState';
-import { submitPaymentTypeCanSteps } from './canSteps';
+import { submitPaymentTypeCanSteps } from '../../steps/submitPaymentTypeCanSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,

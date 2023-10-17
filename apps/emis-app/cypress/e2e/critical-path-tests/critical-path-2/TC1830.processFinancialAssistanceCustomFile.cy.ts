@@ -85,6 +85,7 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // avoiding dependency cycle error
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getFAPaymentName().should('string', `${this.programName} - Clothing`);
           financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
