@@ -69,6 +69,7 @@ import { RcPageLoading, RcTab, RcTabs } from '@libs/component-lib/components';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useNotificationStore } from '@/pinia/notification/notification';
 import { useUserStore } from '@/pinia/user/user';
+import { useTaskStore } from '@/pinia/task/task';
 import { INotificationEntity, NotificationCategoryType } from '@libs/entities-lib/notification';
 import NotificationCard from '@/ui/shared-components/NotificationCard.vue';
 import { IFetchParams } from '@libs/services-lib/notifications/entity';
@@ -167,10 +168,20 @@ export default Vue.extend({
       try {
         this.initLoading = true;
         const res = await useNotificationStore().fetchCurrentUserNotifications(params);
+        await this.fetchTargetEntities(res);
         return res;
       } finally {
         this.initLoading = false;
       }
+    },
+
+    async fetchTargetEntities(fetchedNotifications: INotificationEntity[]) {
+      const tasks = fetchedNotifications?.filter((n) => n.categoryType === NotificationCategoryType.Tasks && n.targetEntityId);
+      if (!tasks || tasks.length === 0) {
+return;
+}
+
+      await useTaskStore().fetchByIds(tasks.map((t) => t.targetEntityId), true);
     },
   },
 });

@@ -5,6 +5,7 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '@/ui/shared-components/NotificationCenter.vue';
 import { NotificationCategoryType, mockNotificationEntity } from '@libs/entities-lib/notification';
 import { useNotificationStore } from '@/pinia/notification/notification';
+import { useMockTaskStore } from '@/pinia/task/task.mock';
 
 const localVue = createLocalVue();
 
@@ -17,6 +18,7 @@ const mockNotifications = [mockUnreadGeneral, mockReadGeneral, mockUnreadTasks, 
 const { pinia, notificationStore } = useMockNotificationStore();
 const { dashboardStore } = useMockDashboardStore(pinia);
 const { userStore } = useMockUserStore(pinia);
+const { taskStore } = useMockTaskStore(pinia);
 
 describe('NotificationCenter.vue', () => {
   let wrapper;
@@ -34,6 +36,7 @@ describe('NotificationCenter.vue', () => {
     });
 
     wrapper.vm.show = true;
+    await wrapper.vm.$nextTick();
   };
 
   describe('Template', () => {
@@ -216,6 +219,30 @@ describe('NotificationCenter.vue', () => {
           beforeDateTimeUtc: '2023-09-12',
           numberOfDays: 15,
         });
+      });
+      it('should call fetchTargetEntities', async () => {
+        wrapper.vm.fetchTargetEntities = jest.fn();
+        await wrapper.vm.fetchNotifications({
+          limit: 2,
+          beforeDateTimeUtc: '2023-09-12',
+          numberOfDays: 15,
+        });
+        expect(wrapper.vm.fetchTargetEntities).toHaveBeenCalled();
+      });
+    });
+
+    describe('fetchTargetEntities', () => {
+      it('should do nothing if empty notification array passed in', async () => {
+        await wrapper.vm.fetchTargetEntities([]);
+        expect(taskStore.fetchByIds).toHaveBeenCalledTimes(0);
+      });
+      it('should do nothing when no task notification passed in', async () => {
+        await wrapper.vm.fetchTargetEntities([mockReadGeneral]);
+        expect(taskStore.fetchByIds).toHaveBeenCalledTimes(0);
+      });
+      it('should call task store when task notifications passed in', async () => {
+        await wrapper.vm.fetchTargetEntities(mockNotifications);
+        expect(taskStore.fetchByIds).toHaveBeenCalledWith([mockUnreadTasks.targetEntityId, mockReadTasks.targetEntityId], true);
       });
     });
 
