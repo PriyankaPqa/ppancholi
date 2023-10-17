@@ -112,6 +112,28 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     }
   }
 
+  async function fetchByIds(ids: uuid[], fetchMissingOnly: boolean = false): Promise<T[]> {
+    let idsToGet = ids;
+    try {
+      if (fetchMissingOnly) {
+        const stored = getByIds(ids) as IEntity[];
+        idsToGet = ids.filter((id) => !stored.find((s) => s.id === id));
+      }
+
+      // only fetched values are returned
+      if (idsToGet.length === 0) {
+return <T[]>[];
+}
+
+      const res = await service.getByIds(idsToGet);
+      setAll(res);
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, { }, 'module.base', 'fetchByIds');
+      return null;
+    }
+  }
+
   function addNewlyCreatedId(item: T) {
     if (!newlyCreatedIds.value.find((n) => n.id === item.id)) {
       newlyCreatedIds.value.unshift({ id: item.id, createdOn: (new Date()).getTime() });
@@ -145,6 +167,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     fetch,
     fetchAll,
     fetchAllIncludingInactive,
+    fetchByIds,
     addNewlyCreatedId,
     setItemFromOutsideNotification,
   } as BaseStoreComponents<T, IdParams>;
