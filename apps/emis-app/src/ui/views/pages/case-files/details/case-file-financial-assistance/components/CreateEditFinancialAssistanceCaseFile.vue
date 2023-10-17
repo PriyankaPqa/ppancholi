@@ -394,14 +394,14 @@ export default mixins(caseFileDetail).extend({
         // so we can leave without warning
         (this.$refs.form as VForm).reset();
         // reset actually takes a few ms but isnt awaitable...
-        setTimeout(() => {
-          this.$router.replace({
-            name: routes.caseFile.financialAssistance.details.name,
-            params: {
-              financialAssistancePaymentId: result.id,
-            },
-          });
-        }, 150);
+        await helpers.timeout(500);
+
+        await this.$router.replace({
+          name: routes.caseFile.financialAssistance.details.name,
+          params: {
+            financialAssistancePaymentId: result.id,
+          },
+        });
       }
       this.savingFinancialAssistance = false;
     },
