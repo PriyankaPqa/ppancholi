@@ -168,7 +168,7 @@ describe('>>> Household Service', () => {
       },
     });
     await service.updateHomeAddress('123', true, address);
-    expect(http.patch).toHaveBeenCalledWith('www.test.com/household/public/123/address', {
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/123/address`, {
       address: {
         address: service.parseAddress(address),
         from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),

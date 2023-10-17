@@ -50,7 +50,7 @@
           </div>
         </template>
         <template #item.emailAddress="{ item: household }">
-          <div class="no-wrap ">
+          <div class="">
             <span data-test="emailAddress">
               {{ household.primaryBeneficiary.email || '-' }}
             </span>

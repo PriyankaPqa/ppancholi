@@ -97,7 +97,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async updateHomeAddress(id: string, publicMode: boolean, payload: IAddress): Promise<IHouseholdEntity> {
-    const url = publicMode ? `${this.baseApi}/public/${id}/address`
+    const url = publicMode ? `${this.baseUrl}/public/${id}/address`
       : `${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${id}/address`;
     return this.http.patch(url, {
       address: {

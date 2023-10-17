@@ -694,7 +694,7 @@
     "registration.tier2.Waiting": "Veuillez patienter pendant que nous traitons l'information",
     "registration.tier2.help1": "Utilisez une pièce d'identité avec photo provenant du gouvernement. Un permis de conduire est aussi une pièce d'identité valide.",
     "registration.tier2.help2": "Une image claire incluant votre nom, date de naissance, photo et signature.",
-    "registration.tier2.help3": "Fichiers acceptés: .jpeg et .png d'une taille maximale de 5Mb.",
+    "registration.tier2.help3": "Fichiers acceptés: .jpeg et .png d'une taille maximale de 10Mb.",
     "registration.tier2.introduction": "Pour la prochaine étape du processus d’inscription, veuillez fournir une pièce d’identité pour valider vos informations.",
     "registration.tier2.selectIdHeader": "Choisir une pièce d'identité",
     "registration.tier2.selectOtherId": "Choisir un autre type d'identification",

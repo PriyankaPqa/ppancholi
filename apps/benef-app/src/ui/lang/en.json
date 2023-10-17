@@ -694,7 +694,7 @@
     "registration.tier2.Waiting": "Please wait while we process the information",
     "registration.tier2.help1": "Use a valid government-issued photo ID. A driver's license is also a valid identity card",
     "registration.tier2.help2": "A clear image that includes your name, date of birth, photo and signature.",
-    "registration.tier2.help3": "Accepted files: .jpeg and .png with a max size of 5Mb.",
+    "registration.tier2.help3": "Accepted files: .jpeg and .png with a max size of 10Mb.",
     "registration.tier2.introduction": "For the next step in the registration process, please provide identification to validate your information.",
     "registration.tier2.selectIdHeader": "Select ID type",
     "registration.tier2.selectOtherId": "Select another type of ID",
