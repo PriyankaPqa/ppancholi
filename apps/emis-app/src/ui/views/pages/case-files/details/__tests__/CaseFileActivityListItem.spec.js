@@ -443,6 +443,13 @@ describe('CaseFileActivityListItem.vue', () => {
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
+
+      it('returns the correct icon when activity type is TaskManagementTaskCreated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.TaskManagementTaskCreated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
     });
 
     describe('Methods', () => {
@@ -1371,6 +1378,20 @@ describe('CaseFileActivityListItem.vue', () => {
         body += `${wrapper.vm.$t('caseFileActivity.activityList.body.noLongerReceivingAssistance')} \n${wrapper.vm.item.details.rationale}`;
 
         expect(wrapper.vm.makeContentForImpactedIndividualsEdited()).toEqual({
+          title,
+          body,
+        });
+      });
+    });
+
+    describe('makeContentForTaskManagementAction', () => {
+      it('should return proper data when action type is TaskManagementTaskCreated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.TaskManagementTaskCreated)[0],
+        });
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.TaskManagement.Created');
+        const body = wrapper.vm.$t('caseFileActivity.activityList.body.TaskManagement.Created', { x: wrapper.vm.$m(wrapper.vm.item.details.name.name) });
+        expect(wrapper.vm.makeContentForTaskManagementAction()).toEqual({
           title,
           body,
         });
