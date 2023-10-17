@@ -25,10 +25,6 @@ stages:
 
   # Run E2E Tests
   - ${{ if or(eq(variables['build.reason'], 'PullRequest'), eq(variables['build.reason'], 'Manual')) }}:
-    - template: './stages/find-cypress-affected-stage.yml'
-      parameters:
-        workingDir: ${{ parameters.workingDir }}
-        
     - stage: 'E2E_Test_Stage'
       condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
       displayName: 'E2E Tests'
