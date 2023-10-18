@@ -122,8 +122,8 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
 
       // only fetched values are returned
       if (idsToGet.length === 0) {
-return <T[]>[];
-}
+        return <T[]>[];
+      }
 
       const res = await service.getByIds(idsToGet);
       setAll(res);

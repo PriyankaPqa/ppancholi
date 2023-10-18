@@ -57,8 +57,8 @@ export default Vue.extend({
     },
     targetEntity(): IEntity {
       if (this.notification.categoryType !== NotificationCategoryType.Tasks) {
-return null;
-}
+        return null;
+      }
 
       return useTaskStore().getById(this.notification.targetEntityId);
     },

@@ -178,8 +178,8 @@ export default Vue.extend({
     async fetchTargetEntities(fetchedNotifications: INotificationEntity[]) {
       const tasks = fetchedNotifications?.filter((n) => n.categoryType === NotificationCategoryType.Tasks && n.targetEntityId);
       if (!tasks || tasks.length === 0) {
-return;
-}
+        return;
+      }
 
       await useTaskStore().fetchByIds(tasks.map((t) => t.targetEntityId), true);
     },
