@@ -27,7 +27,7 @@
             <v-btn
               data-test="share-button"
               color="primary"
-              @click="saveQuery()">
+              @click="saveQuery(false, true)">
               <v-icon>
                 mdi-share-variant
               </v-icon>
@@ -124,6 +124,19 @@
         </div>
       </template>
     </rc-confirmation-dialog>
+
+    <select-users-popup
+      v-if="showSelectUserDialog"
+      data-test="add-team-members"
+      :levels="[UserRolesNames.level4, UserRolesNames.level5, UserRolesNames.level6]"
+      :title="$t('reporting.query.share.title') + query.name"
+      :submit-action-label="$t('common.buttons.share')"
+      :show.sync="showSelectUserDialog"
+      :top-search-title="$t('reporting.query.share.search_member')"
+      :top-selected-title="$t('reporting.query.share.selected_members')"
+      :excluded-ids="[currentUserId]"
+      :loading="loading"
+      @submit="shareToUsers" />
   </div>
 </template>
 <script lang="ts">
@@ -144,6 +157,7 @@ import enMessages from 'devextreme/localization/messages/en.json';
 import { locale, loadMessages } from 'devextreme/localization';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { localStorageKeys } from '@/constants/localStorage';
+import SelectUsersPopup from '@/ui/shared-components/SelectUsersPopup.vue';
 import { Workbook } from 'exceljs';
 import saveAs from 'file-saver';
 import { Column } from 'devextreme/ui/data_grid';
@@ -151,6 +165,8 @@ import { RcDataTableHeader, RcConfirmationDialog, VTextFieldWithValidation } fro
 import { IQuery, QueryType, ReportingTopic } from '@libs/entities-lib/reporting';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
+import { UserTeamMember } from '@libs/entities-lib/user-account';
+import { UserRolesNames } from '@libs/entities-lib/user';
 
 import { IDatasourceSettings, datasources } from './datasources';
 
@@ -173,6 +189,7 @@ export default Vue.extend({
     RcConfirmationDialog,
     RcDataTableHeader,
     VTextFieldWithValidation,
+    SelectUsersPopup,
   },
   props: {
     queryId: {
@@ -190,6 +207,10 @@ export default Vue.extend({
     if (!odata) console.log('odata loaded: ', odata !== null);
 
     return {
+      currentUserId: useUserStore().getUserId(),
+      UserRolesNames,
+      loading: false,
+      showSelectUserDialog: false,
       showGrid: false,
       headerOptions: {
         color: 'primary darken-1',
@@ -218,6 +239,7 @@ export default Vue.extend({
       } as IQuery,
       showSaveDialog: false,
       queryName: null as string,
+      shareAfterSave: false,
     };
   },
   computed: {
@@ -300,7 +322,8 @@ export default Vue.extend({
     },
 
     /// shows the dialog if we need a name, else saves
-    async saveQuery(doSaveAs = false) {
+    async saveQuery(doSaveAs = false, thenShare = false) {
+      this.shareAfterSave = thenShare;
       if (doSaveAs || !this.query.id) {
         this.queryName = null;
         this.showSaveDialog = true;
@@ -317,7 +340,7 @@ export default Vue.extend({
         query.name = this.queryName;
       }
       if (query.owner == null) {
-        query.owner = useUserStore().getUserId();
+        query.owner = this.currentUserId;
       }
       query.state = window.btoa(JSON.stringify(this.grid?.instance?.state()));
       query = saveAs ? await this.$services.queries.create(query) : await this.$services.queries.edit(query);
@@ -326,6 +349,33 @@ export default Vue.extend({
         this.query = query;
       }
       this.showSaveDialog = false;
+
+      if (this.shareAfterSave) {
+        this.grid?.instance?.hideColumnChooser();
+        this.showSelectUserDialog = true;
+        this.shareAfterSave = false;
+      }
+    },
+
+    async shareToUsers(selectedUsers: UserTeamMember[]) {
+      if (!selectedUsers?.length) {
+        return;
+      }
+
+      try {
+        this.loading = true;
+        const query = _cloneDeep(this.query);
+        query.id = null;
+
+        const promises = selectedUsers.map((u) => this.$services.queries.create({ ...query, owner: u.id }));
+
+        await Promise.all(promises);
+
+        this.$toasted.global.success(this.$t('reporting.query.share.share_confirmation', { x: selectedUsers.length }));
+        this.showSelectUserDialog = false;
+      } finally {
+        this.loading = false;
+      }
     },
 
     /// every time a new column is added or removed we get the new data since we have a different "select"
@@ -337,7 +387,7 @@ export default Vue.extend({
 
     /// loads the data for the grid.  This checks for all visible columns to limit the number of columns requested (select)
     refreshData() {
-      if (!this.grid?.instance || !this.grid.instance.getDataSource()) {
+      if (!this.grid?.instance?.getDataSource || !this.grid.instance.getDataSource()) {
         return;
       }
 

@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockTeamEntity, mockTeamMembersData,
 } from '@libs/entities-lib/team';
-import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
+import SelectUsersPopup from '@/ui/shared-components/SelectUsersPopup.vue';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
@@ -146,18 +146,17 @@ describe('TeamMembersTable.vue', () => {
 
       describe('Add Team Members', () => {
         it('is shown only if showAddTeamMemberDialog is true', async () => {
-          expect(wrapper.findComponent(AddTeamMembers).exists()).toBeFalsy();
+          expect(wrapper.findComponent(SelectUsersPopup).exists()).toBeFalsy();
 
           await wrapper.setData({ showAddTeamMemberDialog: true });
 
-          expect(wrapper.findComponent(AddTeamMembers).exists()).toBeTruthy();
+          expect(wrapper.findComponent(SelectUsersPopup).exists()).toBeTruthy();
         });
 
-        test('props teamMembers is correctly linked', async () => {
+        test('props preselected-ids is correctly linked to teamMembers', async () => {
           await wrapper.setData({ showAddTeamMemberDialog: true });
           const element = wrapper.findDataTest('add-team-members');
-          expect(element.props().teamMembers).toEqual(wrapper.vm.team.teamMembers);
-          expect(element.props().teamId).toEqual(wrapper.vm.team.id);
+          expect(element.props().preselectedIds).toEqual(wrapper.vm.team.teamMembers.map((i) => i.id));
         });
       });
 
@@ -449,12 +448,22 @@ describe('TeamMembersTable.vue', () => {
 
     describe('addMembers', () => {
       it('adds the new mapped member to the list of teamMembers', async () => {
-        const newMembers = [mockCombinedUserAccount()];
+        const newMembers = [mockCombinedUserAccount().entity];
         wrapper.vm.makeMappedMembers = jest.fn(() => [mockTeamMembers[1]]);
         wrapper.setData({ teamMembers: [mockTeamMembers[0]] });
+
+        const userFromStore = mockCombinedUserAccount({ id: 'mynewguy' });
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [userFromStore]);
         await wrapper.vm.addMembers(newMembers);
-        expect(wrapper.vm.makeMappedMembers).toHaveBeenCalledWith(newMembers);
+        expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith([newMembers[0].id]);
+        expect(wrapper.vm.makeMappedMembers).toHaveBeenCalledWith([userFromStore]);
         expect(wrapper.vm.teamMembers).toEqual([mockTeamMembers[0], mockTeamMembers[1]]);
+      });
+
+      it('calls addTeamMembers actions with correct parameters (selectedUsers)', async () => {
+        const newMembers = [mockCombinedUserAccount().entity];
+        await wrapper.vm.addMembers(newMembers);
+        expect(teamStore.addTeamMembers).toHaveBeenCalledWith({ teamId: 'abc', teamMembers: [{ ...newMembers[0], isPrimaryContact: false }] });
       });
     });
 

@@ -154,23 +154,31 @@ describe('QueryView.vue', () => {
         expect(wrapper.vm.doSave).not.toHaveBeenCalled();
         expect(wrapper.vm.showSaveDialog).toBeTruthy();
         expect(wrapper.vm.queryName).toBeNull();
+        expect(wrapper.vm.shareAfterSave).toBeFalsy();
 
         await wrapper.setData({ showSaveDialog: false, queryName: 'some name' });
         wrapper.vm.saveQuery();
         expect(wrapper.vm.doSave).not.toHaveBeenCalled();
         expect(wrapper.vm.showSaveDialog).toBeTruthy();
         expect(wrapper.vm.queryName).toBeNull();
+        expect(wrapper.vm.shareAfterSave).toBeFalsy();
 
         await wrapper.setData({ showSaveDialog: false, queryName: 'some name', query: { id: 'some id' } });
         wrapper.vm.saveQuery();
         expect(wrapper.vm.doSave).toHaveBeenCalled();
         expect(wrapper.vm.showSaveDialog).toBeFalsy();
+        expect(wrapper.vm.shareAfterSave).toBeFalsy();
+
+        wrapper.vm.saveQuery(false, true);
+        expect(wrapper.vm.doSave).toHaveBeenCalled();
+        expect(wrapper.vm.showSaveDialog).toBeFalsy();
+        expect(wrapper.vm.shareAfterSave).toBeTruthy();
       });
     });
 
     describe('doSave', () => {
       it('sets the query to be saved and calls service', async () => {
-        await wrapper.setData({ showSaveDialog: true, queryName: 'new name', grid: { instance: { state: jest.fn(() => 'my new state') } } });
+        await wrapper.setData({ showSaveDialog: true, queryName: 'new name', grid: { instance: { state: jest.fn(() => 'my new state'), hideColumnChooser: jest.fn() } } });
         await wrapper.vm.doSave(true);
         expect(services.queries.create).toHaveBeenCalledWith(
           {
@@ -185,7 +193,7 @@ describe('QueryView.vue', () => {
         expect(wrapper.vm.showSaveDialog).toBeFalsy();
         jest.clearAllMocks();
 
-        await wrapper.setData({ grid: { instance: { state: jest.fn(() => 'my other state') } } });
+        await wrapper.setData({ grid: { instance: { state: jest.fn(() => 'my other state'), hideColumnChooser: jest.fn() } } });
         await wrapper.vm.doSave();
         expect(services.queries.edit).toHaveBeenCalledWith(
           {
@@ -203,6 +211,40 @@ describe('QueryView.vue', () => {
             tenantId: 'b70bbe71-0683-4a18-bc3e-c9747aafcea3',
             timestamp: '2021-04-06 06:39:04',
             topic: 1,
+          },
+        );
+      });
+
+      it('opens dialog if we want to share', async () => {
+        await wrapper.setData({ shareAfterSave: false, showSelectUserDialog: false });
+        await wrapper.setData({ grid: { instance: { state: jest.fn(() => 'my other state'), hideColumnChooser: jest.fn() } } });
+        await wrapper.vm.doSave();
+        expect(wrapper.vm.shareAfterSave).toBeFalsy();
+        expect(wrapper.vm.showSelectUserDialog).toBeFalsy();
+
+        await wrapper.setData({ shareAfterSave: true });
+        await wrapper.vm.doSave();
+        expect(wrapper.vm.shareAfterSave).toBeFalsy();
+        expect(wrapper.vm.showSelectUserDialog).toBeTruthy();
+      });
+    });
+
+    describe('shareToUsers', () => {
+      it('calls the service with the query owners', async () => {
+        await wrapper.setData({ showSelectUserDialog: true });
+        await wrapper.vm.shareToUsers([{ id: 'abc' }, { id: 'def' }]);
+        expect(services.queries.create).toHaveBeenCalledWith(
+          {
+            ...wrapper.vm.query,
+            id: null,
+            owner: 'abc',
+          },
+        );
+        expect(services.queries.create).toHaveBeenCalledWith(
+          {
+            ...wrapper.vm.query,
+            id: null,
+            owner: 'def',
           },
         );
       });

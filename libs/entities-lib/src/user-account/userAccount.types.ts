@@ -82,6 +82,13 @@ export interface IUserAccountMetadata extends IEntity {
   assignedCaseFileCountByTeam: IAssignedCaseFileCountByTeam[]
 }
 
+export interface UserTeamMember {
+  roleName: IMultilingual,
+  displayName: string,
+  id: string,
+  emailAddress: string,
+}
+
 export type IUserAccountCombined = IEntityCombined<IUserAccountEntity, IUserAccountMetadata>;
 
 export type IdParams = uuid;

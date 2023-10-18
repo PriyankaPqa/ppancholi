@@ -4,16 +4,15 @@ import { mockTeamMembersData } from '@libs/entities-lib/team';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import helpers from '@/ui/helpers/helpers';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
-import { useMockTeamStore } from '@/pinia/team/team.mock';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
-import Component from './AddTeamMembers.vue';
+import Component from './SelectUsersPopup.vue';
 
 const localVue = createLocalVue();
 
-const { pinia } = useMockUserAccountStore();
-const { teamStore } = useMockTeamStore(pinia);
+const { pinia, userAccountStore } = useMockUserAccountStore();
 
-describe('AddTeamMembers.vue', () => {
+describe('SelectUsersPopup.vue', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -22,8 +21,10 @@ describe('AddTeamMembers.vue', () => {
       pinia,
       propsData: {
         show: true,
-        teamMembers: mockTeamMembersData(),
-        teamId: 'abc',
+        preselectedIds: mockTeamMembersData().map((u) => u.id),
+        title: 'title',
+        topSearchTitle: 'topSearchTitle',
+        topSelectedTitle: 'topSelectedTitle',
       },
     });
   });
@@ -72,13 +73,6 @@ describe('AddTeamMembers.vue', () => {
             sortable: false,
             value: 'role',
           },
-          {
-            text: 'teams.member_status',
-            class: 'team_member_header',
-            filterable: false,
-            sortable: false,
-            value: 'status',
-          },
         ]);
       });
     });
@@ -90,7 +84,6 @@ describe('AddTeamMembers.vue', () => {
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.filteredUsers).toEqual([
           {
-            isPrimaryContact: false,
             roleName: tm.metadata.roleName,
             displayName: tm.metadata.displayName,
             id: tm.entity.id,
@@ -123,30 +116,30 @@ describe('AddTeamMembers.vue', () => {
 
     describe('getClassRow', () => {
       it('returns row_disabled if the user is already in the team', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInTeam').mockImplementation(() => true);
+        jest.spyOn(wrapper.vm, 'isAlreadySelected').mockImplementation(() => true);
         const user = mockTeamMembersData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('row_disabled');
       });
 
       it('returns row_active if the user is currently selected', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInTeam').mockImplementation(() => false);
+        jest.spyOn(wrapper.vm, 'isAlreadySelected').mockImplementation(() => false);
         jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => true);
         const user = mockTeamMembersData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('row_active');
       });
 
       it('returns "" otherwise', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInTeam').mockImplementation(() => false);
+        jest.spyOn(wrapper.vm, 'isAlreadySelected').mockImplementation(() => false);
         jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => false);
         const user = mockTeamMembersData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('');
       });
     });
 
-    describe('isAlreadyInTeam', () => {
+    describe('isAlreadySelected', () => {
       it('returns true if the user is already in the team', () => {
         const user = mockTeamMembersData()[0];
-        expect(wrapper.vm.isAlreadyInTeam(user)).toBeTruthy();
+        expect(wrapper.vm.isAlreadySelected(user)).toBeTruthy();
       });
 
       it('returns false if the user does not belong to the team', () => {
@@ -159,7 +152,7 @@ describe('AddTeamMembers.vue', () => {
           userPrincipalName: 'test@test.com',
           roles: [],
         };
-        expect(wrapper.vm.isAlreadyInTeam(user)).toBeFalsy();
+        expect(wrapper.vm.isAlreadySelected(user)).toBeFalsy();
       });
     });
 
@@ -214,14 +207,56 @@ describe('AddTeamMembers.vue', () => {
     });
 
     describe('fetchFilteredUsers', () => {
-      it('calls the search endpoint with the right data', async () => {
+      it('calls the search endpoint with the right data when no role and default props', async () => {
         wrapper.vm.combinedUserAccountStore.search = jest.fn();
         helpers.toQuickSearch = jest.fn(() => 'query from helper');
         await wrapper.vm.fetchFilteredUsers();
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
-          search: 'query from helper',
+          orderBy: 'Metadata/DisplayName',
           queryType: 'full',
+          search: 'query from helper',
+          searchFields: null,
           searchMode: 'all',
+          top: null,
+        });
+      });
+
+      it('calls the search endpoint with the right data when no role but props', async () => {
+        wrapper.vm.combinedUserAccountStore.search = jest.fn();
+        helpers.toQuickSearch = jest.fn(() => 'query from helper');
+        await wrapper.setProps({ searchFields: 'some field', maxNbResults: 3 });
+
+        await wrapper.vm.fetchFilteredUsers();
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
+          orderBy: 'Metadata/DisplayName',
+          queryType: 'full',
+          search: 'query from helper',
+          searchFields: 'some field',
+          searchMode: 'all',
+          top: 3,
+        });
+      });
+
+      it('calls the search endpoint with the right data when role', async () => {
+        sharedHelpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
+        wrapper.vm.combinedUserAccountStore.search = jest.fn();
+        helpers.toQuickSearch = jest.fn(() => 'query from helper');
+        await wrapper.setProps({ levels: ['l3', 'l4'], searchFields: 'some field', maxNbResults: 3 });
+
+        userAccountStore.rolesByLevels = jest.fn(() => [{ name: 'role1', id: 'id-1' }]);
+
+        await wrapper.vm.fetchFilteredUsers();
+        expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
+          ids: ['id-1'],
+          searchInFilter: 'Entity/Roles/any(r: search.in(r/OptionItemId, \'{ids}\'))',
+          otherOptions: {
+            search: 'query from helper',
+            searchFields: 'some field',
+            top: 3,
+            orderBy: 'Metadata/DisplayName',
+            queryType: 'full',
+            searchMode: 'all' },
+          service: wrapper.vm.combinedUserAccountStore,
         });
       });
 
@@ -234,23 +269,10 @@ describe('AddTeamMembers.vue', () => {
     });
 
     describe('submit', () => {
-      it('calls addTeamMembers actions with correct parameters (selectedUsers)', async () => {
-        await wrapper.vm.submit();
-        expect(teamStore.addTeamMembers).toHaveBeenCalledWith({ teamId: 'abc', teamMembers: [] });
-      });
-
-      it('calls close method', async () => {
-        jest.spyOn(wrapper.vm, 'close').mockImplementation(() => true);
-        await wrapper.vm.submit();
-        expect(wrapper.vm.close).toHaveBeenCalledTimes(1);
-      });
-
-      it('emits addMembers with the right value', async () => {
+      it('emits submit with the right value', async () => {
         wrapper.setData({ selectedUsers: [{ id: 'id-1' }, { id: 'id-2' }] });
-        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [{ id: 'm-1' }, { id: 'm-2' }]);
         await wrapper.vm.submit();
-        expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['id-1', 'id-2']);
-        expect(wrapper.emitted('addMembers')[0][0]).toEqual([{ id: 'm-1' }, { id: 'm-2' }]);
+        expect(wrapper.emitted('submit')[0][0]).toEqual([{ id: 'id-1' }, { id: 'id-2' }]);
       });
     });
 

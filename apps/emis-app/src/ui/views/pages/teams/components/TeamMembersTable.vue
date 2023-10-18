@@ -99,13 +99,17 @@
       </template>
     </v-data-table>
 
-    <add-team-members
+    <select-users-popup
       v-if="showAddTeamMemberDialog"
       data-test="add-team-members"
-      :team-members="team.teamMembers"
-      :team-id="team.id"
+      :title="$t('teams.add_new_members')"
+      :submit-action-label="$t('common.buttons.add')"
+      :preselected-ids="team.teamMembers.map((t) => t.id)"
       :show.sync="showAddTeamMemberDialog"
-      @addMembers="addMembers" />
+      :top-search-title="$t('teams.search_member')"
+      :top-selected-title="$t('teams.selected_members')"
+      :loading="loading"
+      @submit="addMembers" />
 
     <team-member-teams v-if="showMemberTeamsDialog" :show.sync="showMemberTeamsDialog" :member="clickedMember" />
     <team-member-case-files
@@ -126,12 +130,12 @@ import {
   ITeamEntity, ITeamMember, ITeamMemberAsUser,
 } from '@libs/entities-lib/team';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
-import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
+import SelectUsersPopup from '@/ui/shared-components/SelectUsersPopup.vue';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
-  IAssignedCaseFileCountByTeam, IUserAccountEntity, IUserAccountMetadata,
+  IAssignedCaseFileCountByTeam, IUserAccountEntity, IUserAccountMetadata, UserTeamMember,
 } from '@libs/entities-lib/user-account';
 import { IUserAccountCombined, IdParams as IdParamsUserAccount } from '@libs/entities-lib/src/user-account/userAccount.types';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -148,7 +152,7 @@ export default Vue.extend({
   name: 'TeamMembersTable',
 
   components: {
-    AddTeamMembers,
+    SelectUsersPopup,
     RcPhoneDisplay,
     TeamMemberTeams,
     TeamMemberCaseFiles,
@@ -447,10 +451,21 @@ export default Vue.extend({
       });
     },
 
-    addMembers(members: IUserAccountCombined[]) {
-      const mappedNewMembers = this.makeMappedMembers(members);
-      const newMembersList = [...this.teamMembers, ...mappedNewMembers];
-      this.teamMembers = _orderBy(newMembersList, this.sortBy, this.sortDesc ? 'desc' : 'asc');
+    async addMembers(selectedUsers: UserTeamMember[]) {
+      try {
+        this.loading = true;
+        await useTeamStore().addTeamMembers({
+          teamId: this.teamId, teamMembers: selectedUsers.map((u) => ({ ...u, isPrimaryContact: false })),
+        });
+        this.$toasted.global.success(this.$t('team.add_members.success'));
+        const members = this.combinedUserAccountStore.getByIds(selectedUsers.map((u) => u.id)) as IUserAccountCombined[];
+        const mappedNewMembers = this.makeMappedMembers(members);
+        const newMembersList = [...this.teamMembers, ...mappedNewMembers];
+        this.teamMembers = _orderBy(newMembersList, this.sortBy, this.sortDesc ? 'desc' : 'asc');
+        this.showAddTeamMemberDialog = false;
+      } finally {
+        this.loading = false;
+      }
     },
 
     async onCloseCaseFileDialog() {

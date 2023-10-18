@@ -166,7 +166,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         this.items,
         this.params?.search,
       );
-      return _orderBy(items, ['pinned', this.options.sortBy[0]], ['desc', this.options.sortDesc[0] ? 'desc' : 'asc']);
+      return _orderBy(items, ['pinned', ((item) => item[this.options.sortBy[0]]?.toLowerCase())], ['desc', this.options.sortDesc[0] ? 'desc' : 'asc']);
     },
 
     customColumns(): Record<string, string> {

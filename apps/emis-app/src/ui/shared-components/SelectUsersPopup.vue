@@ -1,7 +1,7 @@
 <template>
   <rc-dialog
-    :title="$t('teams.add_new_members')"
-    :submit-action-label="$t('common.buttons.add')"
+    :title="title"
+    :submit-action-label="$t(submitActionLabel)"
     :cancel-action-label="$t('common.buttons.cancel')"
     :submit-button-disabled="selectedUsers.length === 0"
     :show.sync="show"
@@ -10,7 +10,7 @@
     fullscreen
     persistent
     show-close
-    :loading="loading"
+    :loading="loading || internalLoading"
     @close="close"
     @cancel="close"
     @submit="submit">
@@ -19,7 +19,7 @@
         <div class="left-container">
           <div>
             <p class="rc-body16 fw-bold">
-              {{ $t('teams.search_member') }}
+              {{ topSearchTitle }}
             </p>
             <v-text-field
               v-model="search"
@@ -47,9 +47,9 @@
                   <v-simple-checkbox
                     :data-test="`select_${item.id}`"
                     :ripple="false"
-                    :value="isSelected(item) || isAlreadyInTeam(item)"
-                    :readonly="isAlreadyInTeam(item)"
-                    :disabled="isAlreadyInTeam(item)"
+                    :value="isSelected(item) || isAlreadySelected(item)"
+                    :readonly="isAlreadySelected(item)"
+                    :disabled="isAlreadySelected(item)"
                     @input="updateSelection(item)" />
                 </div>
               </template>
@@ -76,7 +76,7 @@
       <v-col cols="4" class="px-6">
         <div class="right-container">
           <div class="rc-body16 fw-bold pb-4">
-            {{ $t('teams.selected_members') }}
+            {{ topSelectedTitle }}
           </div>
           <ul class="selected__members_container">
             <li v-for="user in selectedUsers" :key="user.id">
@@ -114,23 +114,14 @@ import _difference from 'lodash/difference';
 import helpers from '@/ui/helpers/helpers';
 import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { ITeamMember } from '@libs/entities-lib/team';
-import { IMultilingual } from '@libs/shared-lib/types';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { IdParams, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { IdParams, IUserAccountEntity, IUserAccountMetadata, UserTeamMember } from '@libs/entities-lib/user-account';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { useTeamStore } from '@/pinia/team/team';
-
-interface UserTeamMember {
-  roleName: IMultilingual,
-  displayName: string,
-  id: string,
-  emailAddress: string,
-  isPrimaryContact: boolean,
-}
+import { IAzureSearchParams } from '@libs/shared-lib/src/types';
 
 export default Vue.extend({
-  name: 'AddTeamMembers',
+  name: 'SelectUsersPopup',
 
   components: {
     RcDialog,
@@ -141,13 +132,45 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
-    teamMembers: {
-      type: Array as () => ITeamMember[],
-      required: true,
+    preselectedIds: {
+      type: Array as () => string[],
+      default: () => [] as string[],
     },
-    teamId: {
+    excludedIds: {
+      type: Array as () => string[],
+      default: () => [] as string[],
+    },
+    title: {
       type: String,
       required: true,
+    },
+    topSearchTitle: {
+      type: String,
+      required: true,
+    },
+    topSelectedTitle: {
+      type: String,
+      required: true,
+    },
+    submitActionLabel: {
+      type: String,
+      default: () => 'common.buttons.add',
+    },
+    maxNbResults: {
+      type: Number,
+      default: () => null as Number,
+    },
+    searchFields: {
+      type: String,
+      default: () => null as string,
+    },
+    levels: {
+      type: Array as () => string[],
+      default: () => null as string[],
+    },
+    loading: {
+      type: Boolean,
+      default: () => false,
     },
   },
 
@@ -155,7 +178,7 @@ export default Vue.extend({
     return {
       search: '',
       selectedUsers: [] as UserTeamMember[],
-      loading: false,
+      internalLoading: false,
       filteredUsersIds: [] as string[],
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
@@ -185,20 +208,12 @@ export default Vue.extend({
           sortable: false,
           value: 'role',
         },
-        {
-          text: this.$t('teams.member_status') as string,
-          class: 'team_member_header',
-          filterable: false,
-          sortable: false,
-          value: 'status',
-        },
       ];
     },
 
     filteredUsers(): UserTeamMember[] {
-      return this.combinedUserAccountStore.getByIds(this.filteredUsersIds).map(
+      return this.combinedUserAccountStore.getByIds(_difference(this.filteredUsersIds, this.excludedIds || [])).map(
         (tm) => ({
-          isPrimaryContact: false,
           roleName: tm.metadata.roleName,
           displayName: tm.metadata.displayName,
           id: tm.entity.id,
@@ -222,7 +237,7 @@ export default Vue.extend({
     },
 
     getClassRow(user: UserTeamMember): string {
-      if (this.isAlreadyInTeam(user)) {
+      if (this.isAlreadySelected(user)) {
         return 'row_disabled';
       }
       if (this.isSelected(user)) {
@@ -231,8 +246,8 @@ export default Vue.extend({
       return '';
     },
 
-    isAlreadyInTeam(user: UserTeamMember): boolean {
-      return this.teamMembers.findIndex((u) => user.id === u.id) !== -1;
+    isAlreadySelected(user: UserTeamMember): boolean {
+      return this.preselectedIds.findIndex((u) => user.id === u) !== -1;
     },
 
     isSelected(user: UserTeamMember): boolean {
@@ -241,35 +256,47 @@ export default Vue.extend({
 
     onSelectAll({ items, value }: { items: Array<UserTeamMember>; value: boolean }) {
       if (value) { // select all, get the new ones + old ones
-        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInTeam(i))];
+        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadySelected(i))];
       } else { // deselect, only remove what is currently removed
         this.selectedUsers = _difference(this.selectedUsers, items);
       }
     },
 
     async fetchFilteredUsers() {
-      this.loading = true;
-      const res = await this.combinedUserAccountStore.search({
-        search: helpers.toQuickSearch(this.search),
+      this.internalLoading = true;
+      await useUserAccountStore().fetchRoles();
+      const rolesId = this.levels?.length ? useUserAccountStore().rolesByLevels(this.levels)?.map((r) => r.id) : null;
+
+      const searchParam = helpers.toQuickSearch(this.search);
+      const params = {
+        search: searchParam,
+        searchFields: this.searchFields,
+        top: this.maxNbResults,
+        orderBy: 'Metadata/DisplayName',
         queryType: 'full',
         searchMode: 'all',
-      });
-      if (res) {
-        this.filteredUsersIds = res.ids;
+      } as IAzureSearchParams;
+
+      let searchResults;
+      if (rolesId?.length) {
+        searchResults = await sharedHelpers.callSearchInInBatches({
+          ids: rolesId,
+          searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
+          otherOptions: { ...params },
+          service: this.combinedUserAccountStore,
+        });
+      } else {
+        searchResults = await this.combinedUserAccountStore.search(params);
       }
-      this.loading = false;
+
+      if (searchResults) {
+        this.filteredUsersIds = searchResults.ids;
+      }
+      this.internalLoading = false;
     },
 
     async submit() {
-      try {
-        this.loading = true;
-        await useTeamStore().addTeamMembers({ teamId: this.teamId, teamMembers: this.selectedUsers });
-        this.$toasted.global.success(this.$t('team.add_members.success'));
-        this.$emit('addMembers', this.combinedUserAccountStore.getByIds(this.selectedUsers.map((u) => u.id)));
-        this.close();
-      } finally {
-        this.loading = false;
-      }
+      this.$emit('submit', this.selectedUsers);
     },
 
     updateSelection(user: UserTeamMember) {
