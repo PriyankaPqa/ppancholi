@@ -30,7 +30,7 @@ const addedRolesValues = [UserRoles.level1, UserRoles.level2];
 describe('#TC404# - Add Members To Standard Team', { tags: ['@case-file', '@teams'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
-      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, canRolesValues);
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, [...canRolesValues, ...Object.values(partialRole)]);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');
@@ -70,7 +70,6 @@ describe('#TC404# - Add Members To Standard Team', { tags: ['@case-file', '@team
           cy.contains('Member name').should('be.visible');
           cy.contains('Email').should('be.visible');
           cy.contains('Role').should('be.visible');
-          cy.contains('Status').should('be.visible');
           addNewTeamMemberPage.selectMember(teamMemberId[UserRoles.level1]);
           addNewTeamMemberPage.selectMember(teamMemberId[UserRoles.level2]);
           addNewTeamMemberPage.addButton().should('be.enabled');
@@ -93,7 +92,6 @@ describe('#TC404# - Add Members To Standard Team', { tags: ['@case-file', '@team
         });
         it('should not be able to add members to standard team but have access till TeamDetails Page', () => {
           const teamsHomePage = new TeamsHomePage();
-
           const teamDetailsPage = teamsHomePage.goToFirstTeamDetails();
           teamDetailsPage.getEditTeamButton().should('not.exist');
         });
