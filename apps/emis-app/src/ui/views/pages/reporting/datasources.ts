@@ -147,7 +147,22 @@ export const personViewDs : IDatasourceSettings = {
     { dataField: 'alternatePhoneNumber', dataType: 'string', visible: false },
     { dataField: 'alternatePhoneNumberExtension', dataType: 'string', visible: false },
     { dataField: 'email', dataType: 'string', visible: false },
-    { dataField: 'address_Observation', dataType: 'string', visible: false },
+    { dataField: 'preferredLanguageNameEn', dataType: 'string', visible: false },
+    { dataField: 'preferredLanguageNameFr', dataType: 'string', visible: false },
+    { dataField: 'preferredLanguageNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'primarySpokenLanguageNameEn', dataType: 'string', visible: false },
+    { dataField: 'primarySpokenLanguageNameFr', dataType: 'string', visible: false },
+    { dataField: 'primarySpokenLanguageEnFr', dataType: 'string', visible: false },
+    { dataField: 'primarySpokenLanguageOther', dataType: 'string', visible: false },
+    { dataField: 'address_AddressTypeNameEn', dataType: 'string', visible: false },
+    { dataField: 'address_AddressTypeNameFr', dataType: 'string', visible: false },
+    { dataField: 'address_AddressTypeNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'address_PlaceName', dataType: 'string', visible: false },
+    { dataField: 'address_PlaceNumber', dataType: 'string', visible: false },
+    { dataField: 'shelterLocationsNameEn', dataType: 'string', visible: false },
+    { dataField: 'shelterLocationsNameFr', dataType: 'string', visible: false },
+    { dataField: 'shelterLocationsNameEnFr', dataType: 'string', visible: false },
+
     { dataField: 'address_From', dataType: 'datetime', visible: false },
     { dataField: 'address_To', dataType: 'datetime', visible: false },
     { dataField: 'address_Country', dataType: 'string', visible: false },
@@ -161,12 +176,34 @@ export const personViewDs : IDatasourceSettings = {
     { dataField: 'address_PostalCode', dataType: 'string', visible: false },
     { dataField: 'address_Latitude', dataType: 'number', visible: false },
     { dataField: 'address_Longitude', dataType: 'number', visible: false },
+    { dataField: 'address_CheckIn', dataType: 'datetime', visible: false },
+    { dataField: 'address_CheckOut', dataType: 'datetime', visible: false },
+    { dataField: 'address_CrcProvided', dataType: 'boolean', visible: false },
+    { dataField: 'address_EventId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
     { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
+};
+
+export const caseFileAuthenticationIdsCsvViewDS : IDatasourceSettings = {
+  columns: ([
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'csvAuthenticationIdNameEn', dataType: 'string', visible: false },
+    { dataField: 'csvAuthenticationIdNameFr', dataType: 'string', visible: false },
+    // { dataField: 'csvAuthenticationIdNameEnFr', dataType: 'string', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileAuthenticationIdsCsv.${x.dataField}` })),
+};
+
+export const caseFileTagsCsvViewDS : IDatasourceSettings = {
+  columns: ([
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'csvTagNameEn', dataType: 'string', visible: false },
+    { dataField: 'csvTagNameFr', dataType: 'string', visible: false },
+    // { dataField: 'csvTagNameEnFr', dataType: 'string', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileTagsCsv.${x.dataField}` })),
 };
 
 export const caseFileToHouseholdDs : IDatasourceSettings = {
@@ -202,6 +239,8 @@ export const householdMembersDs : IDatasourceSettings = {
     ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
     ...(householdViewDs.columns.filter((c) => c.dataField !== 'id').map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
     ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
+    ...(caseFileTagsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileTagsCsv.${x.dataField}` }))),
   ],
 };
 
