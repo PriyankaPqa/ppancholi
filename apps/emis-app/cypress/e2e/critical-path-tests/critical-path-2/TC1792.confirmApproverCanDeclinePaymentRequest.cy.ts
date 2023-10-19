@@ -71,8 +71,8 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
         it('should successfully decline a payment request by approver', function () {
           const approvalsPage = new ApprovalsPage();
 
-          approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
           approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
+          approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
           approvalsPage.clickActionsButtonByPaymentId(this.FAPaymentId);
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
           approvalsPage.checkApprovalActionDecline();

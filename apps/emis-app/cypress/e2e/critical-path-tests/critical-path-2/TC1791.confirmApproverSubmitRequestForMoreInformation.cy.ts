@@ -71,8 +71,8 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
         it('should successfully submit a request for more information', function () {
           const approvalsPage = new ApprovalsPage();
 
-          approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
           approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
+          approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
           approvalsPage.clickActionsButtonByPaymentId(this.FAPaymentId);
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
           approvalsPage.checkApprovalActionRequestInfo();
