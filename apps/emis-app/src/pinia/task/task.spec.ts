@@ -1,6 +1,6 @@
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { Entity } from '@/pinia/task/task';
-import { IdParams, mockTaskEntities, mockTeamTaskEntity } from '@libs/entities-lib/task';
+import { IdParams, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken } from '@libs/entities-lib/task';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 
@@ -110,6 +110,15 @@ describe('Task Store', () => {
             'orderRank',
           ),
         );
+      });
+    });
+
+    describe('taskAction', () => {
+      it('should call service completeTask when actionType is TaskCompleted', () => {
+        const store = createTestStore();
+        entityService.completeTask = jest.fn();
+        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.TaskCompleted, rationale: 'mock-rationale' });
+        expect(entityService.completeTask).toHaveBeenCalledWith('mock-task-id-1', 'mock-case-file-id-1', 'mock-rationale');
       });
     });
 });

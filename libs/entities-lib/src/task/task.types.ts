@@ -12,10 +12,10 @@ export enum TaskStatus {
 }
 
 export enum TaskActionTaken {
-  Assign = 1,
-  ActionCompleted = 2,
-  TaskCompleted = 3,
-  Reopen = 4,
+  Assign = 0,
+  ActionCompleted = 1,
+  TaskCompleted = 2,
+  Reopen = 3,
 }
 
 export interface ITaskEntityData extends IEntity {
@@ -42,6 +42,7 @@ export interface ITaskMetadata extends IEntity {
   taskCategoryName: IMultilingual;
   nameId: uuid;
   taskStatusName: IMultilingual;
+  eventId: uuid;
 }
 
 export type ITaskCombined = IEntityCombined<ITaskEntity, ITaskMetadata>;

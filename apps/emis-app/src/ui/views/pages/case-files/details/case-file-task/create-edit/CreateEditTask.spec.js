@@ -655,5 +655,35 @@ describe('CreateEditTask.vue', () => {
         expect(wrapper.vm.localTask.userWorkingOn).toEqual('user-1');
       });
     });
+
+    describe('task.taskStatus', () => {
+      it('should update localTask taskStatus when changed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+          },
+          data() {
+            return {
+              mockTask: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+            };
+          },
+          computed: {
+            task: {
+              get() {
+                return this.mockTask;
+              },
+              set(value) {
+                this.mockTask = value;
+              },
+            },
+          },
+        });
+        wrapper.vm.task = mockTeamTaskEntity({ taskStatus: TaskStatus.Completed });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.localTask.taskStatus).toEqual(TaskStatus.Completed);
+      });
+    });
   });
 });

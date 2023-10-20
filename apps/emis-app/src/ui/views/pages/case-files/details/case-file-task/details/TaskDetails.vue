@@ -23,7 +23,7 @@
                 </v-icon>
               </v-btn>
 
-              <status-chip v-if="isTeamTask" status-name="TaskStatus" :status="task.taskStatus" class="mr-4" />
+              <status-chip v-if="isTeamTask || task.taskStatus === TaskStatus.Completed" status-name="TaskStatus" :status="task.taskStatus" class="mr-4" />
               <template v-if="canEdit">
                 <v-divider vertical class="mr-2" />
                 <v-btn icon data-test="task-details-edit-button" @click="getEditTaskRoute()">
@@ -157,6 +157,7 @@
         {{ $t('task.task_details.back_to_tasks') }}
       </v-btn>
     </template>
+    <task-action-dialog v-if="showTaskActionDialog" :task="task" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
   </rc-page-content>
 </template>
 
@@ -175,6 +176,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileTask, caseFileDetail).extend({
@@ -184,6 +186,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     RcPageContent,
     StatusChip,
     RcPageLoading,
+    TaskActionDialog,
   },
 
   props: {
@@ -197,6 +200,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     return {
       TaskType,
       UserRoles,
+      TaskStatus,
       helpers,
       showTaskActionDialog: false,
       showTaskHistoryDialog: false,
@@ -256,8 +260,9 @@ export default mixins(caseFileTask, caseFileDetail).extend({
         if (this.task.taskStatus === TaskStatus.InProgress) {
           return this.$hasLevel(UserRoles.level1) || this.task.createdBy === userId;
         }
+          return false;
       }
-      return this.task.createdBy === userId;
+        return this.task.createdBy === userId;
     },
 
     displayWorkingOnIt(): boolean {

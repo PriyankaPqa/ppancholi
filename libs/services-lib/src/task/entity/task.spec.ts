@@ -25,6 +25,11 @@ describe('>>> Tasks Service', () => {
     expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/set-working-on', { userWorkingOn: 'mock-user-id-1' });
   });
 
+  test('completeTask is linked to the correct URL', async () => {
+    await service.completeTask('mock-task-id-123', 'mock-case-file-id-1', 'mock-rationale-123');
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/complete', { rationale: 'mock-rationale-123' });
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };

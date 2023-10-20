@@ -12,6 +12,7 @@ import { mockProvider } from '@/services/provider';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockTeamEntities, mockTeamEntity } from '@libs/entities-lib/team';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import Component from './TaskDetails.vue';
 
 const localVue = createLocalVue();
@@ -459,6 +460,48 @@ describe('TaskDetails.vue', () => {
         });
       });
     });
+
+    describe('status-chip', () => {
+      it('should be rendered for team task', async () => {
+        await doMount(false, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+            isTeamTask: () => true,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findComponent(StatusChip);
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should be rendered for completed personal task', async () => {
+        await doMount(false, {
+          computed: {
+            task: () => mockPersonalTaskEntity({
+              taskStatus: TaskStatus.Completed,
+            }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findComponent(StatusChip);
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered for in progress personal task', async () => {
+        await doMount(false, {
+          computed: {
+            task: () => mockPersonalTaskEntity({
+              taskStatus: TaskStatus.InProgress,
+            }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findComponent(StatusChip);
+        expect(element.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -611,6 +654,18 @@ describe('TaskDetails.vue', () => {
           pinia: getPiniaForUser(UserRoles.level1),
           computed: {
             task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
+            isTeamTask: () => true,
+          },
+        });
+        expect(wrapper.vm.canEdit).toEqual(false);
+      });
+
+      it('should be false if task is Completed and user has no L6 and user is the creator', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount(true, {
+          pinia: getPiniaForUser(UserRoles.level1),
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'user-1' }),
             isTeamTask: () => true,
           },
         });

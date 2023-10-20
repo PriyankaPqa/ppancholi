@@ -1,5 +1,5 @@
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
-import { IdParams, ITaskEntity, ITaskEntityData } from '@libs/entities-lib/task';
+import { IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken } from '@libs/entities-lib/task';
 import { TaskService } from '@libs/services-lib/task/entity/task';
 import { ITaskServiceMock } from '@libs/services-lib/task/entity';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
@@ -70,6 +70,26 @@ export function getExtensionComponents(
     }
   }
 
+  async function taskAction(id: uuid, caseFileId: uuid, params: { actionType: TaskActionTaken, rationale: string }) {
+    // TODO the params and actionServices will be updated in the following tasks
+
+    const { actionType, rationale } = params;
+    const actionServices : { [index: number ]: ITaskEntityData | Promise<ITaskEntityData> } = {
+      [TaskActionTaken.TaskCompleted]: entityService.completeTask(id, caseFileId, rationale),
+    };
+
+    try {
+      const res = await actionServices[actionType];
+      if (res) {
+        baseComponents.set(res);
+      }
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, {}, 'module.taskEntity', 'taskAction');
+      return null;
+    }
+  }
+
   return {
     taskCategoriesFetched,
     taskCategories,
@@ -78,5 +98,6 @@ export function getExtensionComponents(
     fetchTaskCategories,
     getTaskCategories,
     setWorkingOn,
+    taskAction,
   };
 }

@@ -63,6 +63,7 @@ export const mockTaskEntities = (): ITaskEntity[] => [
 export const mockTaskMetadata = (force? : Partial<IEntity>): ITaskMetadata => ({
   ...mockBaseMetadata(),
   caseFileNumber: 'mock-case-file-number-1',
+  eventId: 'mock-event-id-1',
   ...force,
 });
 

@@ -107,7 +107,7 @@
       </template>
       <template #[`item.${customColumns.taskStatus}`]="{ item }">
         <status-chip
-          v-if="item.entity.taskType === TaskType.Team"
+          v-if="item.entity.taskType === TaskType.Team || item.entity.taskStatus === TaskStatus.Completed"
           data-test="task-table-task-status"
           x-small
           :status="item.entity.taskStatus"
@@ -117,7 +117,8 @@
         <v-btn
           color="primary"
           small
-          :data-test="`task-table-action-btn-${item.entity.id}`">
+          :data-test="`task-table-action-btn-${item.entity.id}`"
+          @click="setActioningTask(item)">
           {{ $t('task.action') }}
         </v-btn>
       </template>
@@ -133,6 +134,7 @@
         </v-btn>
       </template>
     </rc-data-table>
+    <task-action-dialog v-if="showTaskActionDialog" :task="actioningTask" :event-id="actioningEventId" :show.sync="showTaskActionDialog" />
   </div>
 </template>
 
@@ -162,6 +164,7 @@ import { ITeamEntity } from '@libs/entities-lib/team';
 import { IEntityCombined } from '@libs/entities-lib/base';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
+import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 
 interface IParsedTaskEntity extends ITaskEntityData {
   assignedTeamName: string;
@@ -177,6 +180,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     FilterToolbar,
     RcAddButtonWithMenu,
     StatusChip,
+    TaskActionDialog,
   },
 
   props: {
@@ -215,7 +219,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       TaskType,
       UserRoles,
       FilterKey,
+      TaskStatus,
       teamsByEvent: [] as ITeamEntity[],
+      showTaskActionDialog: false,
+      actioningTask: null as ITaskEntity,
+      actioningEventId: '',
       combinedTaskStore: new CombinedStoreFactory<ITaskEntity, ITaskMetadata, IdParams>(useTaskStore(), useTaskMetadataStore()),
     };
   },
@@ -510,8 +518,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         if (taskEntity.taskStatus === TaskStatus.InProgress) {
           return this.$hasLevel(UserRoles.level1) || taskEntity.createdBy === userId;
         }
+          return false;
       }
-      return taskEntity.createdBy === userId;
+        return taskEntity.createdBy === userId;
       },
 
     async getTeamsByEvent() {
@@ -519,6 +528,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       if (teams) {
         this.teamsByEvent = teams;
       }
+    },
+
+    setActioningTask(item: ITaskCombined) {
+      this.actioningTask = item.entity;
+      this.actioningEventId = item.metadata.eventId;
+      this.showTaskActionDialog = true;
     },
 
     additionalFilters() {

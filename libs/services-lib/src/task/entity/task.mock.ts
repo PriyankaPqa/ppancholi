@@ -7,4 +7,5 @@ export const mockTaskService = (): ITaskServiceMock => ({
   createTask: jest.fn(() => mockTeamTaskEntity()),
   editTask: jest.fn(() => mockTeamTaskEntity()),
   setWorkingOn: jest.fn(() => mockTeamTaskEntity()),
+  completeTask: jest.fn(() => mockTeamTaskEntity()),
 });

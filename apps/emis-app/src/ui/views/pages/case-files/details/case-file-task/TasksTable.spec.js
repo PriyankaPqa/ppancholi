@@ -156,12 +156,12 @@ describe('TasksTable.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('should not be rendered for personal task', async () => {
+      it('should not be rendered for in progress personal task', async () => {
         await doMount({
           computed: {
             parsedTableData: () => [
               {
-                entity: mockPersonalTaskEntity(),
+                entity: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
                 metadata: mockTaskMetadata(),
               },
             ],
@@ -169,6 +169,21 @@ describe('TasksTable.vue', () => {
         }, false);
         const element = wrapper.findDataTest('task-table-task-status');
         expect(element.exists()).toBeFalsy();
+      });
+
+      it('should not be rendered for completed personal task', async () => {
+        await doMount({
+          computed: {
+            parsedTableData: () => [
+              {
+                entity: mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
+                metadata: mockTaskMetadata(),
+              },
+            ],
+          },
+        }, false);
+        const element = wrapper.findDataTest('task-table-task-status');
+        expect(element.exists()).toBeTruthy();
       });
     });
 
@@ -643,6 +658,15 @@ describe('TasksTable.vue', () => {
         const taskEntity = mockTeamTaskEntity({ createdBy: 'user-2' });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
+
+      it('should be false if task is Completed and user has no L6 and user is the creator', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount({
+          pinia: getPiniaForUser(UserRoles.level1),
+        });
+        const taskEntity = mockTeamTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'user-1' });
+        expect(wrapper.vm.canEdit(taskEntity)).toEqual(false);
+      });
     });
 
     describe('getTeamsByEvent', () => {
@@ -770,6 +794,22 @@ describe('TasksTable.vue', () => {
             taskType: 'team',
           },
         });
+      });
+    });
+
+    describe('setActioningTask', () => {
+      it('should set actioning task and event id properly', async () => {
+        await wrapper.setData({
+          actioningTask: null,
+          actioningEventId: '',
+        });
+        const item = {
+          entity: mockTeamTaskEntity(),
+          metadata: mockTaskMetadata(),
+        };
+        wrapper.vm.setActioningTask(item);
+        expect(wrapper.vm.actioningTask).toEqual(mockTeamTaskEntity());
+        expect(wrapper.vm.actioningEventId).toEqual('mock-event-id-1');
       });
     });
   });

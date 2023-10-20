@@ -24,7 +24,8 @@
                     <div v-if="isEditMode" class="pl-0 py-2">
                       <v-btn
                         color="primary"
-                        small>
+                        small
+                        @click="showTaskActionDialog = true">
                         {{ $t('task.action') }}
                       </v-btn>
                     </div>
@@ -73,7 +74,8 @@
                     <div v-if="isEditMode" class="pl-0 py-2">
                       <v-btn
                         color="primary"
-                        small>
+                        small
+                        @click="showTaskActionDialog = true">
                         {{ $t('task.action') }}
                       </v-btn>
                     </div>
@@ -94,6 +96,7 @@
           </v-btn>
         </template>
       </rc-page-content>
+      <task-action-dialog v-if="showTaskActionDialog" :task="task" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
     </page-template>
   </validation-observer>
 </template>
@@ -123,6 +126,7 @@ import helpers from '@/ui/helpers/helpers';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useUserStore } from '@/pinia/user/user';
 import { UserRoles } from '@libs/entities-lib/user';
+import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 
 export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask).extend({
   name: 'CreateEditTask',
@@ -137,6 +141,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     StatusChip,
     TeamTaskForm,
     PersonalTaskForm,
+    TaskActionDialog,
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
@@ -182,6 +187,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     return {
       loading: false,
       isSubmitting: false,
+      showTaskActionDialog: false,
       assignedTeamName: '',
       TaskType,
       localTask: new TaskEntity(),
@@ -235,6 +241,12 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     'task.userWorkingOn': {
       handler(newValue: string) {
         this.localTask.userWorkingOn = newValue;
+      },
+    },
+
+    'task.taskStatus': {
+      handler(newValue: TaskStatus) {
+        this.localTask.taskStatus = newValue;
       },
     },
   },

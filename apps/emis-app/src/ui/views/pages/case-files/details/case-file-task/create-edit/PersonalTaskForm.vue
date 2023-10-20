@@ -1,6 +1,14 @@
 <template>
   <v-row justify="center" class="my-8 rc-body14">
     <v-col>
+      <v-row v-if="isEditMode" class="mb-6 ml-0 align-center">
+        <status-chip
+          x-small
+          :status="taskData.taskStatus"
+          status-name="TaskStatus"
+          data-test="task-status-chip" />
+      </v-row>
+
       <slot name="actionSection" />
 
       <v-row>
@@ -50,6 +58,7 @@ import VDateFieldWithValidation from '@libs/component-lib/components/atoms/VDate
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
 import helpers from '@/ui/helpers/helpers';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 interface ILocalPersonalTaskForm {
   name: IListOption;
@@ -65,6 +74,7 @@ export default mixins(caseFileTask).extend({
     VTextFieldWithValidation,
     VTextAreaWithValidation,
     VDateFieldWithValidation,
+    StatusChip,
   },
 
   props: {

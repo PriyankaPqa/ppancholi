@@ -26,6 +26,10 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/set-working-on`, { id, caseFileId }), { userWorkingOn: userId });
   }
 
+  async completeTask(id: uuid, caseFileId: uuid, rationale: string): Promise<ITaskEntityData> {
+    return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/complete`, { id, caseFileId }), { rationale });
+  }
+
   async search(params: IAzureSearchParams, searchEndpoint: string = null):
     Promise<IAzureCombinedSearchResult<ITaskEntityData, ITaskMetadata>> {
     return this.http.get(`case-file/search/${searchEndpoint ?? 'tasks'}`, { params, isOData: true });
