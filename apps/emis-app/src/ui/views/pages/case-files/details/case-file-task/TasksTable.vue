@@ -518,10 +518,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         if (taskEntity.taskStatus === TaskStatus.InProgress) {
           return this.$hasLevel(UserRoles.level1) || taskEntity.createdBy === userId;
         }
-          return false;
-      }
+      } else {
         return taskEntity.createdBy === userId;
-      },
+      }
+      return false;
+    },
 
     async getTeamsByEvent() {
       const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);

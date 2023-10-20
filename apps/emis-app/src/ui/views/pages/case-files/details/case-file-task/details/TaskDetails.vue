@@ -260,9 +260,10 @@ export default mixins(caseFileTask, caseFileDetail).extend({
         if (this.task.taskStatus === TaskStatus.InProgress) {
           return this.$hasLevel(UserRoles.level1) || this.task.createdBy === userId;
         }
-          return false;
-      }
+      } else {
         return this.task.createdBy === userId;
+      }
+      return false;
     },
 
     displayWorkingOnIt(): boolean {

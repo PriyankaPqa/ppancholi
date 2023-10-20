@@ -171,6 +171,7 @@ export default Vue.extend({
           return this.makeContentForImpactedIndividualsEdited();
 
         case CaseFileActivityType.TaskManagementTaskCreated:
+        case CaseFileActivityType.TaskManagementTaskCompleted:
           return this.makeContentForTaskManagementAction();
 
         default:
@@ -197,6 +198,7 @@ export default Vue.extend({
         case CaseFileActivityType.ImpactedIndividualReceivingAssistance:
         case CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance:
         case CaseFileActivityType.TaskManagementTaskCreated:
+        case CaseFileActivityType.TaskManagementTaskCompleted:
           return '$rctech-actions';
 
         case CaseFileActivityType.AddedDuplicateFlag:
@@ -687,10 +689,13 @@ export default Vue.extend({
       // TODO titleObject and contentObject will be updated in the following task
       const titleObject: { [index: number ]: TranslateResult | string } = {
         [CaseFileActivityType.TaskManagementTaskCreated]: this.$t('caseFileActivity.activityList.title.TaskManagement.Created'),
+        [CaseFileActivityType.TaskManagementTaskCompleted]: this.$t('caseFileActivity.activityList.title.TaskManagement.Completed'),
       };
       const contentObject: { [index: number ]: TranslateResult | string } = {
         [CaseFileActivityType.TaskManagementTaskCreated]:
           this.$t('caseFileActivity.activityList.body.TaskManagement.Created', { x: this.$m((this.item.details.name as any).name as IMultilingual) }),
+        [CaseFileActivityType.TaskManagementTaskCompleted]:
+          this.$t('caseFileActivity.activityList.body.TaskManagement.Completed', { x: this.$m((this.item.details.name as any).name as IMultilingual) }),
       };
       const title = titleObject[this.item.activityType as CaseFileActivityType];
       const body = contentObject[this.item.activityType as CaseFileActivityType];

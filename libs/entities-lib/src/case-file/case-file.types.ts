@@ -67,6 +67,7 @@ export enum CaseFileActivityType {
   ImpactedIndividualNoLongerReceivingAssistance = 39,
   HouseholdPotentialDuplicateUpdated = 40,
   TaskManagementTaskCreated = 41,
+  TaskManagementTaskCompleted = 42,
 }
 
 export enum HouseholdCaseFileActivityType {
