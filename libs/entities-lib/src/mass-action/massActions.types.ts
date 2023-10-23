@@ -1,4 +1,5 @@
-import { IMultilingual } from '@libs/shared-lib/src/types';
+import { IListOption, IMultilingual } from '@libs/shared-lib/src/types';
+import { CaseFileStatus } from '../case-file';
 import { EPaymentModalities } from '../program';
 import { IEntity, IEntityCombined } from '../base';
 
@@ -69,6 +70,12 @@ export interface IMassActionAssessmentDetails {
   eventId: uuid;
   emailSubject: IMultilingual;
   emailAdditionalDescription: IMultilingual;
+}
+
+export interface IMassActionCaseFileStatusDetails {
+  status: CaseFileStatus;
+  reason: IListOption;
+  rationale: string ;
 }
 
 export interface IMassActionRun extends IEntity {

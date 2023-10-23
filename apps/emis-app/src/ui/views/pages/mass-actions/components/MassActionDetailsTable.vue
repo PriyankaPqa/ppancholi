@@ -63,6 +63,7 @@ export default Vue.extend({
         [MassActionType.GenerateFundingRequest]: 'massActions.type.fundingRequest',
         [MassActionType.Assessments]: 'massActions.type.assessment',
         [MassActionType.FinancialAssistanceCustomOptions]: 'massAction.financialAssistanceCustomTable.title',
+        [MassActionType.CaseFileStatus]: 'massActions.type.caseFileStatus',
       } as Record<MassActionType, string>,
     };
   },
