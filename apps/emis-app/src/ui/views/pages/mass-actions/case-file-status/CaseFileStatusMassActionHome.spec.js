@@ -22,17 +22,17 @@ describe('CaseFileStatusMassActionHome.vue', () => {
       expect(wrapper.vm.massActionTypeData).toEqual(MassActionType.CaseFileStatus);
     });
 
-    // it('should have proper detailsRouteName', () => {
-    //   expect(wrapper.vm.detailsRouteNameData).toEqual(routes.massActions.caseFileStatus.details.name);
-    // });
+    it('should have proper detailsRouteName', () => {
+      expect(wrapper.vm.detailsRouteNameData).toEqual(routes.massActions.caseFileStatus.details.name);
+    });
 
     it('should have proper table title', () => {
       expect(wrapper.vm.tableTitleData).toEqual('massAction.caseFileStatus.title');
     });
 
-    // it('should have proper search end point', () => {
-    //   expect(wrapper.vm.searchEndpointData).toEqual('');
-    // });
+    it('should have proper search end point', () => {
+      expect(wrapper.vm.searchEndpointData).toEqual('case-file-status-mass-actions');
+    });
   });
 
   describe('Methods', () => {

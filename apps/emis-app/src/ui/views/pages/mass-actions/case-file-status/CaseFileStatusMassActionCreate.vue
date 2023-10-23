@@ -102,10 +102,10 @@ export default Vue.extend({
     async onUploadStart() {
       const { reason, rationale, status } = this.form;
 
-      this.formData.set('eventId', this.form.event?.id);
-      this.formData.set('reason', reason && reason.optionItemId ? JSON.stringify(reason) : null);
-      this.formData.set('rationale', rationale);
-      this.formData.set('status', status?.toString());
+      this.formData.set('eventId', this.form.event?.id || '');
+      this.formData.set('reason', reason && reason.optionItemId ? JSON.stringify(reason) : '');
+      this.formData.set('rationale', rationale || '');
+      this.formData.set('status', status?.toString() || '');
 
       this.loading = true;
       await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();

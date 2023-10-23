@@ -139,4 +139,21 @@ describe('FinancialAssistanceHomeMassAction.vue', () => {
       });
     });
   });
+
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('calls loadState and saves the State', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+        });
+        jest.spyOn(wrapper.vm, 'loadState').mockImplementation(() => {});
+
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+
+        expect(wrapper.vm.loadState).toHaveBeenCalled();
+        expect(wrapper.vm.saveState).toBeTruthy();
+      });
+    });
+  });
 });

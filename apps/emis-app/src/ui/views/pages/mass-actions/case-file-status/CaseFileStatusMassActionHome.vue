@@ -19,6 +19,36 @@
           data-test="create-case-file-status-mass-action"
           @click-item="goToAdd($event)" />
       </template>
+
+      <template #[`item.${customColumns.name}`]="{ item }">
+        <router-link class="rc-link14 font-weight-bold" data-test="massAction-name" :to="goToDetails(item.entity.id)">
+          {{ item.entity.name }}
+        </router-link>
+      </template>
+
+      <template #[`item.${customColumns.dateCreated}`]="{ item }">
+        {{ getLocalStringDate(item.entity.created, 'Entity.created', 'PP') }}
+      </template>
+
+      <template #[`item.${customColumns.projected}`]="{ item }">
+        {{ getLastRunMetadata(item) && getLastRunMetadata(item).results ? getLastRunMetadata(item).results.total : $t('common.toBeDetermined') }}
+      </template>
+
+      <template #[`item.${customColumns.successful}`]="{ item }">
+        {{ getLastRunMetadata(item) && getLastRunMetadata(item).results ? getLastRunMetadata(item).results.successes : $t('common.toBeDetermined') }}
+      </template>
+
+      <template #[`item.${customColumns.status}`]="{ item }">
+        <status-chip status-name="MassActionRunStatus" :status="getLastRunEntity(item).runStatus" />
+      </template>
+
+      <template #[`item.deleteButton`]="{ item }">
+        <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" data-test="delete" @click="onDelete(item)">
+          <v-icon size="24" color="grey darken-2">
+            mdi-delete
+          </v-icon>
+        </v-btn>
+      </template>
     </rc-data-table>
     <case-file-status-mass-action-filtering v-if="showProcessByList" :show.sync="showProcessByList" />
   </div>
@@ -32,6 +62,7 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
+import helpers from '@/ui/helpers/helpers';
 import CaseFileStatusMassActionFiltering from './CaseFileStatusMassActionFiltering.vue';
 
 export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
@@ -46,9 +77,11 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   data() {
     return {
       massActionTypeData: MassActionType.CaseFileStatus,
+      detailsRouteNameData: routes.massActions.caseFileStatus.details.name,
       tableTitleData: 'massAction.caseFileStatus.title',
       showProcessByList: false,
-      searchEndpointData: '',
+      searchEndpointData: 'case-file-status-mass-actions',
+      getLocalStringDate: helpers.getLocalStringDate,
     };
   },
 
@@ -114,6 +147,11 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
         dataTest: 'mass-action-case-file-status-add-file',
       }];
     },
+  },
+
+  created() {
+    this.saveState = true;
+    this.loadState();
   },
 
   methods: {
