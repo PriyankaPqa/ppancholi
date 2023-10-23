@@ -1,7 +1,9 @@
 <template>
   <div class="pageLoading">
-    <div v-if="text" class="mb-4">
-      {{ text }}
+    <div v-if="text" class="mb-16 text-center">
+      <div class="pre-formatted">
+        {{ text }}
+      </div>
     </div>
     <v-progress-circular
       data-test="progress-circular"

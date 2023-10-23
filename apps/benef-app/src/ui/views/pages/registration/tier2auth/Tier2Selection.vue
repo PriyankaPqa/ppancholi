@@ -1,75 +1,79 @@
 <template>
   <div>
     <rc-page-loading v-if="interval" :text="$t('registration.tier2.Waiting')" />
-    <div v-else>
-      <div v-if="!iframeUrl">
-        <p>{{ $t('registration.tier2.introduction') }}</p>
-        <h2 class="mt-8">
-          {{ $t('registration.tier2.selectIdHeader') }}
-        </h2>
-        <div class="font-italic">
-          <div>
-            <v-icon size="20">
-              mdi-information
-            </v-icon>
-            {{ $t('registration.tier2.help1') }}
-          </div>
-          <div>
-            <v-icon size="20">
-              mdi-information
-            </v-icon>
-            {{ $t('registration.tier2.help2') }}
-          </div>
-          <div>
-            <v-icon size="20">
-              mdi-information
-            </v-icon>
-            {{ $t('registration.tier2.help3') }}
-          </div>
-        </div>
+    <template v-else>
+      <template v-if="!iframeUrl">
+        <v-row justify="center" class="mt-12 full-height pa-4" no-gutters>
+          <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
+            <p>{{ $t('registration.tier2.introduction') }}</p>
+            <h2 class="mt-8">
+              {{ $t('registration.tier2.selectIdHeader') }}
+            </h2>
+            <div class="font-italic">
+              <div>
+                <v-icon size="20">
+                  mdi-information
+                </v-icon>
+                {{ $t('registration.tier2.help1') }}
+              </div>
+              <div>
+                <v-icon size="20">
+                  mdi-information
+                </v-icon>
+                {{ $t('registration.tier2.help2') }}
+              </div>
+              <div>
+                <v-icon size="20">
+                  mdi-information
+                </v-icon>
+                {{ $t('registration.tier2.help3') }}
+              </div>
+            </div>
 
-        <div class="grey-container pa-4 mt-4 rc-body14">
-          <v-row>
-            <v-col>
-              <v-select-with-validation
-                v-model="selectedId"
-                outlined
-                background-color="white"
-                rules="required"
-                :items="validIdOptions"
-                :label="$t('registration.tier2.selectValidId')" />
-            </v-col>
-          </v-row>
-          <div v-if="selectedId == 0">
-            <v-row>
-              <v-col>
-                <v-select-with-validation
-                  v-model="otherIdType"
-                  outlined
-                  background-color="white"
-                  rules="required"
-                  :items="otherIdTypeList"
-                  :label="$t('registration.tier2.selectOtherId')" />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-select-with-validation
-                  v-model="proofAddress"
-                  outlined
-                  background-color="white"
-                  rules="required"
-                  :items="proofAddressList"
-                  :label="$t('registration.tier2.selectProofAddress')" />
-              </v-col>
-            </v-row>
-          </div>
-        </div>
-      </div>
-      <div v-else>
-        <iframe ref="iframeObj" :src="iframeUrl" title="auth" allow="camera;microphone" class="iframe-full" @load="attachListener" />
-      </div>
-    </div>
+            <div class="grey-container pa-4 mt-4 rc-body14">
+              <v-row>
+                <v-col>
+                  <v-select-with-validation
+                    v-model="selectedId"
+                    outlined
+                    background-color="white"
+                    rules="required"
+                    :items="validIdOptions"
+                    :label="$t('registration.tier2.selectValidId')" />
+                </v-col>
+              </v-row>
+              <div v-if="selectedId == 0">
+                <v-row>
+                  <v-col>
+                    <v-select-with-validation
+                      v-model="otherIdType"
+                      outlined
+                      background-color="white"
+                      rules="required"
+                      :items="otherIdTypeList"
+                      :label="$t('registration.tier2.selectOtherId')" />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-select-with-validation
+                      v-model="proofAddress"
+                      outlined
+                      background-color="white"
+                      rules="required"
+                      :items="proofAddressList"
+                      :label="$t('registration.tier2.selectProofAddress')" />
+                  </v-col>
+                </v-row>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </template>
+      <template v-else>
+        <iframe ref="iframeObj" :src="iframeUrl" title="auth" allow="camera;microphone" class="full-height full-width" @load="attachListener" />
+      </template>
+    </template>
   </div>
 </template>
 
@@ -174,8 +178,8 @@ export default Vue.extend({
       this.interval = setInterval(async () => {
           try {
             const result = await this.$services.caseFiles.getTier2Result(this.requiredInformation.caseFileId);
-            // if 15 seconds elapsed since we started too bad - gambit didnt tell us the final status we move with unverified on confirmation
-            if (new Date().getTime() - startTime > 15000 || result.processCompleted) {
+            // if 1 minute elapsed since we started too bad - gambit didnt tell us the final status we move with unverified on confirmation
+            if (new Date().getTime() - startTime > 60000 || result.processCompleted) {
               useRegistrationStore().tier2State.completed = true;
               if (result.processCompleted) {
                 useRegistrationStore().tier2State.status = result.identityAuthenticationStatus;
@@ -217,30 +221,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped lang="scss">
-
-.iframe-full {
-    height: calc(100vh - 245px);
-    position: absolute;
-    top: 64px;
-    width: calc(100vw - 335px);
-    left: 0px;
-  }
-
-  @media only screen and (max-width: $breakpoint-sm-max) {
-    .iframe-full {
-      height: calc(100vh - 210px);
-      top: 56px;
-      width: calc(100vw - 49px);
-    }
-  }
-
-  @media only screen and (max-width: $breakpoint-xs-max) {
-    .iframe-full {
-      height: calc(100vh - 192px);
-      top: 56px;
-      width: calc(100vw - 17px);
-    }
-  }
-</style>

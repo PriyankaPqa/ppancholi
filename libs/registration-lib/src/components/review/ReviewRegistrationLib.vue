@@ -83,7 +83,7 @@
         color: 'var(--v-grey-darken4)',
       }"
       :message="$t('registration.review.members')" />
-    <div data-test="title" class="rc-heading-5 mb-2 fw-bold d-flex justify-space-between align-center">
+    <div data-test="title" class="rc-heading-5 mb-2 fw-bold d-flex justify-space-between align-center flex-wrap">
       <div>
         {{ `${$t('registration.household_members.title')} (${householdCreate.additionalMembers.length})` }}
       </div>

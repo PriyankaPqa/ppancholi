@@ -1,5 +1,5 @@
 <template>
-  <div class="full-height grey lighten-4">
+  <div class="full-height grey lighten-4" :class="[currentTab.id, { tier2ProcessStarted: tier2ProcessStarted }]">
     <left-menu @jump="jump" />
 
     <!-- eslint-disable-next-line vue/no-unused-vars  (validation observer reacts differently without failed in tests somehow...) -->
@@ -10,13 +10,17 @@
         :title="$t(currentTab.titleKey)"
         :subtitle="$t('registration.type.individual')"
         :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"
+        :content-padding="currentTab.id === TabId.Tier2auth ? '0' : '4'"
         outer-scroll>
         <template slot="default">
-          <v-row justify="center" class="mt-12 full-height" no-gutters>
+          <v-row v-if="currentTab.id !== TabId.Tier2auth" justify="center" class="mt-12 full-height" no-gutters>
             <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
               <component :is="currentTab.componentName" :disable-autocomplete="!$hasFeature(FeatureKeys.AddressAutoFill)" />
             </v-col>
           </v-row>
+          <template v-else>
+            <component :is="currentTab.componentName" :disable-autocomplete="!$hasFeature(FeatureKeys.AddressAutoFill)" class="full-height" />
+          </template>
         </template>
 
         <template slot="actions">
@@ -53,11 +57,11 @@
                 {{ $t(currentTab.backButtonTextKey) }}
               </v-btn>
 
-              <span class="ml-2 d-sm-inline d-md-none">{{ previousTabName }}</span>
+              <span class="ml-2 d-sm-inline d-md-none tabtext">{{ previousTabName }}</span>
             </div>
 
             <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
-              <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
+              <span class="fw-bold d-sm-inline d-md-none tabtext">{{ nextTabName }}</span>
               <vue-programmatic-invisible-google-recaptcha
                 v-if="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress"
                 ref="recaptchaSubmit"
@@ -340,6 +344,10 @@ export default mixins(individual).extend({
   }
 }
 
+.tier2auth ::v-deep .pageContentCard__container {
+  width: 100% !important;
+}
+
 .actions {
   display: flex;
   align-items: center;
@@ -371,6 +379,48 @@ export default mixins(individual).extend({
       height: 100%;
       flex-direction: column-reverse;
       align-items: flex-end;
+    }
+  }
+}
+
+@media only screen and (max-width: $breakpoint-sm-max) {
+  .tier2auth.tier2ProcessStarted, .assessment {
+    & .actions {
+      justify-content: space-between;
+    }
+  }
+  .tier2auth, .assessment {
+    & .actions {
+      height: initial;
+    }
+
+    & .tabtext {
+      display: none;
+    }
+  }
+}
+
+.tier2auth, .assessment {
+  & .actions {
+    flex-wrap: wrap;
+    gap: 6px;
+    & > div:nth-child(1) {
+      flex-wrap: wrap;
+      &.half {
+        width: initial;
+        height: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+    }
+    & > div:nth-child(2) {
+      &.half {
+        width: initial;
+        height: 100%;
+        flex-direction: column-reverse;
+        align-items: flex-end;
+      }
     }
   }
 }
