@@ -51,6 +51,9 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     if (massActionType === MassActionType.ExportValidationOfImpactStatus) {
       urlSuffix = 'export-validation-of-impact-records';
     }
+    if (massActionType === MassActionType.CaseFileStatus) {
+      urlSuffix = 'export-case-file-status-update-records';
+    }
     // Remove when EMISV2-3799 is done - Temporary timeout to 10 minutes
     return this.http.postFullResponse(`${this.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
   }

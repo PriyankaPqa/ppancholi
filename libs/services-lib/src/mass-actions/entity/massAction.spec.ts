@@ -71,6 +71,15 @@ describe('>>> Mass Action Service', () => {
 
       expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
     });
+
+    it('should be linked to correct URL for export case file status mass action', async () => {
+      const urlSuffix = 'export-case-file-status-update-records';
+      const payload = { filter: 'filter', search: 'search', language: 'en' };
+
+      await service.exportList(MassActionType.CaseFileStatus, payload);
+
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
+    });
   });
 
   test('getValidFile is linked to the correct URL', async () => {
