@@ -63,6 +63,26 @@ export const generateRandomFaCustomFileUserData = (caseFile:ICaseFileEntity, Fin
   PostalCode: faker.helpers.replaceSymbols('?#?#?#'),
 });
 
+export interface IContactInformationDataCorrectionTemplate {
+  PersonId: string,
+  PrimarySpokenLanguageSpecifiedOther: string,
+  HomePhoneNumber: string,
+  MobilePhoneNumber: string,
+  AlternatePhoneNumber: string,
+  AlternatePhoneNumberExtension: string,
+  ETag: string
+}
+
+export const generateRandomContactInformationData = (personId:string, eTag: string): IContactInformationDataCorrectionTemplate => ({
+  PersonId: personId,
+  PrimarySpokenLanguageSpecifiedOther: faker.helpers.arrayElement(['English', 'French', 'Arabic', 'German', 'Punjabi']),
+  HomePhoneNumber: faker.helpers.replaceSymbols('(514) 2##-####'),
+  MobilePhoneNumber: null,
+  AlternatePhoneNumber: null,
+  AlternatePhoneNumberExtension: null,
+  ETag: eTag,
+});
+
 export const writeCSVContentToFile = <T>(filePath: string, data: T[]): string => {
   cy.writeFile(filePath, generateCSVContent(data));
   return generateCSVContent(data);
@@ -74,6 +94,15 @@ export const fixtureGenerateFaCsvFile = (caseFiles: ICaseFileEntity[], Financial
     faData.push(generateRandomFaCustomFileUserData(caseFile, FinancialAssistanceTableId));
   }
   return writeCSVContentToFile(filePath, faData);
+};
+
+export const fixtureGenerateContactInformationDataCorrectionCsvFile = (primaryMemberHouseholds: Record<string, string>, filePath: string) => {
+  const correctionData: IContactInformationDataCorrectionTemplate[] = [];
+
+  for (const [id, eTag] of Object.entries(primaryMemberHouseholds)) {
+    correctionData.push(generateRandomContactInformationData(id, eTag.replace(/"/g, '')));
+  }
+  return writeCSVContentToFile(filePath, correctionData);
 };
 
 function extractXlsxRowFromUserData(caseFile: ICaseFileEntity, FinancialAssistanceTableId: string): string[] {

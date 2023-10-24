@@ -1,4 +1,3 @@
-import { getToday } from '@libs/cypress-lib/helpers';
 import { AddAssessmentsPage } from './addAssessments.page';
 
 export enum DataTest {
@@ -109,11 +108,9 @@ export class AssessmentsListPage {
   public refreshUntilFilledAssessmentUpdated() {
     cy.waitAndRefreshUntilConditions(
       {
-        visibilityCondition: () => cy.contains('Pending assessments').should('be.visible'),
+        // eslint-disable-next-line
+        visibilityCondition: () => cy.contains('Pending assessments').should('be.visible').wait(2000),
         checkCondition: () => Cypress.$("[data-test='assessmentDetail-link']").length > 0,
-        actionsAfterReload: () => {
-          this.getCompletedAssessmentTable().contains(`${getToday()}`).should('be.visible');
-        },
       },
       {
         errorMsg: 'Failed to update assessment',

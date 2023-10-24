@@ -487,3 +487,14 @@ export const prepareStateMassActionFinancialAssistanceUploadFile = async (access
   const responseMassFinancialAssistance = await responseCreateHouseholds.provider.massActions.create('financial-assistance', mockCreateMassFinancialAssistanceUploadCsvFile);
   return { responseMassFinancialAssistance, responseCreateHouseholds };
 };
+
+/**
+ * Fetch household members persons info
+ * @param provider
+ * @param personIds
+ */
+export const getPersonsInfo = async (provider: IProvider, personIds: string[]) => {
+  const getPersonPromises = personIds.map((personId) => provider.households.getPerson(personId));
+  const personsInfo = await Promise.all(getPersonPromises);
+  return personsInfo;
+};

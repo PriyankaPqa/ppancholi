@@ -9,7 +9,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import { faker } from '@faker-js/faker';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
-import { Genders, generateDateOfBirth, getCurrentDateString, getRandomNumber, PreferredLanguages, PrimarySpokenLanguages, today } from '../../helpers';
+import { Genders, generateDateOfBirth, getCurrentDateString, getRandomNumber, PreferredLanguages, today } from '../../helpers';
 
 const mockCurrentAddressCreateRequest = (force?: Partial<ICurrentAddressCreateRequest>): ICurrentAddressCreateRequest => ({
   addressType: ECurrentAddressTypes.RemainingInHome,
@@ -55,10 +55,7 @@ export const mockContactInformationCreateRequest = (force?: Partial<IContactInfo
     optionItemId: PreferredLanguages.French,
     specifiedOther: null,
   },
-  primarySpokenLanguage: {
-    optionItemId: PrimarySpokenLanguages.English,
-    specifiedOther: null,
-  },
+  primarySpokenLanguage: null,
   ...force,
 });
 
