@@ -398,8 +398,6 @@
     "caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated": "Pièce(s) d’identité fournie(s) mise(s) à jour",
     "caseFileActivity.activityList.title.ImpactStatusValidationUpdated": "Changement du statut de vérification de l'impact",
     "caseFileActivity.activityList.title.ImpactedIndividualsEdited": "Modification des personnes touchées",
-    "caseFileActivity.activityList.title.TaskManagement.Created": "Tâche créée",
-    "caseFileActivity.activityList.title.TaskManagement.Completed": "Tâche accomplie",
     "caseFileActivity.activityList.title.PaymentApproved": "Approuvé",
     "caseFileActivity.activityList.title.PaymentApprovedFinal": "Approuvé - Final",
     "caseFileActivity.activityList.title.PaymentCompleted": "Statut du paiement : Terminé",
