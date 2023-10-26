@@ -69,7 +69,7 @@
           :columns="columns"
           height="calc(100vh - 185px)"
           width="100%"
-          key-expr="ID"
+          :key-expr="dsType.key"
           @option-changed="handlePropertyChange"
           @exporting="onExporting">
           <DxExport
@@ -99,6 +99,7 @@
             <DxColumnChooserSearch
               :enabled="true" />
           </DxColumnChooser>
+          <DxSorting mode="multiple" />
         </DxDataGrid>
       </div>
     </v-card>
@@ -143,7 +144,7 @@
 import Vue from 'vue';
 import {
   DxDataGrid, DxColumnChooser, DxColumnChooserSearch, DxPosition, DxHeaderFilter, DxFilterRow,
-  DxFilterBuilderPopup, DxFilterPanel, DxSelection, DxGroupPanel, DxScrolling, DxExport,
+  DxFilterBuilderPopup, DxFilterPanel, DxSelection, DxGroupPanel, DxScrolling, DxExport, DxSorting,
 } from 'devextreme-vue/data-grid';
 import _cloneDeep from 'lodash/cloneDeep';
 
@@ -151,6 +152,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { odata } from 'devextreme/data/odata/query_adapter';
 
 import ODataStore from 'devextreme/data/odata/store';
+import { sortBy } from 'lodash';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import frMessages from 'devextreme/localization/messages/fr.json';
 import enMessages from 'devextreme/localization/messages/en.json';
@@ -169,12 +171,14 @@ import { UserTeamMember } from '@libs/entities-lib/user-account';
 import { UserRolesNames } from '@libs/entities-lib/user';
 
 import { IDatasourceSettings, datasources } from './datasources';
+import { AllReports } from './standard_queries';
 
 export default Vue.extend({
   name: 'QueryView',
 
   components: {
     DxDataGrid,
+    DxSorting,
     DxColumnChooser,
     DxColumnChooserSearch,
     DxPosition,
@@ -199,6 +203,10 @@ export default Vue.extend({
     theme: {
       type: Number,
       default: null,
+    },
+    queryTypeName: {
+      type: String,
+      default: 'Custom',
     },
   },
   data() {
@@ -243,6 +251,13 @@ export default Vue.extend({
     };
   },
   computed: {
+    queryType(): QueryType {
+      if (this.queryTypeName === 'Custom') {
+        return QueryType.Custom;
+      }
+      return QueryType[this.queryTypeName + this.$i18n.locale as any] as any;
+    },
+
     title(): string {
       return `${this.$t(`reporting.query.title.${QueryType[this.query.queryType]}`)}: ${this.query.name || this.$t(`reporting.query.theme.${ReportingTopic[this.query.topic]}`)}`;
     },
@@ -253,26 +268,41 @@ export default Vue.extend({
   watch: {
     $route() {
       // to rebind language
-      this.initializeGrid();
+      this.bindQuery();
     },
   },
-  async mounted() {
-      if (this.queryId) {
-        this.query = await this.$services.queries.get(this.queryId);
-      }
-      this.initializeGrid(true);
+  mounted() {
+      this.bindQuery(true);
   },
 
   methods: {
+    async bindQuery(initialLoad = false) {
+      if (this.queryType === QueryType.Custom) {
+        if (initialLoad) {
+          if (this.queryId) {
+            this.query = await this.$services.queries.get(this.queryId);
+          }
+        } else {
+          // custom queries we can keep the current state
+            this.query.state = window.btoa(JSON.stringify(this.grid?.instance?.state()));
+          }
+      } else {
+        // standard queries are simply different between french and english - the user will start fresh all the time
+        this.query = AllReports.find((r) => r.id === this.queryId && r.queryType === this.queryType);
+      }
+
+      this.initializeGrid();
+    },
+
     /// this sets the datasource for the grid and loads its state
     /// timeouts are required to make sure the grid is ready to receive the information
     /// also this sets all the locale for the grid
-    async initializeGrid(bindState = false) {
+    async initializeGrid() {
+      this.showGrid = false;
+      this.grid = null;
       this.initializeDatasource();
       loadMessages(this.$i18n.locale === 'fr' ? frMessages : enMessages);
       locale(this.$i18n.locale);
-      this.showGrid = false;
-      this.grid = null;
       await helpers.timeout(50);
       this.showGrid = true;
       while (!this.grid) {
@@ -280,8 +310,8 @@ export default Vue.extend({
         await helpers.timeout(50);
         this.grid = (this.$refs.gridDx as DxDataGrid);
       }
-      if (bindState && this.query.state) {
-        this.grid.instance?.state(JSON.parse(window.atob(this.query.state)));
+      if (this.query.state) {
+        this.grid.instance?.state(JSON.parse(this.queryType === QueryType.Custom ? window.atob(this.query.state) : this.query.state));
       }
       this.refreshData();
     },
@@ -289,12 +319,12 @@ export default Vue.extend({
     /// this picks the right datasource for this query.  Also it sets the initial "select" list to the list of columns that are visible by default
     initializeDatasource() {
       const ds = datasources.find((d) => d.reportingTopic === this.query.topic) || datasources[0];
-      const columns = ds.columns.map((c) => ({
+      const columns = sortBy(ds.columns.map((c) => ({
         ...c,
         caption: this.$t(c.caption),
         cssClass: 'grid-column',
         allowSearch: c.allowSearch !== false && c.visible !== false,
-      }));
+      })), 'caption');
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
       if (select.indexOf('id') === -1) {
         select.push('id');
@@ -305,7 +335,7 @@ export default Vue.extend({
       this.dataSource = {
         store: new ODataStore({
           url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`,
-          key: 'id',
+          key: ds.key,
           keyType: 'Guid',
           version: 4,
           filterToLower: false,
@@ -338,6 +368,7 @@ export default Vue.extend({
       if (saveAs) {
         query.id = null;
         query.name = this.queryName;
+        query.queryType = QueryType.Custom;
       }
       if (query.owner == null) {
         query.owner = this.currentUserId;
@@ -349,6 +380,10 @@ export default Vue.extend({
         this.query = query;
       }
       this.showSaveDialog = false;
+
+      // used when creating standard queries - just uncomment this, make your standard query and hit save.
+      // then put the state from the console in standard_queries.ts.   ta-dah!
+      // console.log('state: ' + JSON.stringify(JSON.stringify(this.grid?.instance?.state())));
 
       if (this.shareAfterSave) {
         this.grid?.instance?.hideColumnChooser();
@@ -402,9 +437,10 @@ export default Vue.extend({
 
       const cols = grid.getVisibleColumns().map((x) => x.dataField);
 
-      if (cols.indexOf('id') === -1) {
-        cols.push('id');
-      }
+      const keys = this.dsType.key || ['id'];
+      keys.filter((k) => cols.indexOf(k) === -1).forEach((k) => {
+        cols.push(k);
+      });
 
       // sets the "select" to the list of correct columns
       grid.getDataSource().select(cols.filter((c) => c != null));

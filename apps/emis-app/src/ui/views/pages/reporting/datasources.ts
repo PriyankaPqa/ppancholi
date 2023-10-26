@@ -9,6 +9,7 @@ export interface IDatasourceSettings {
   url?: string,
   reportingTopic?: ReportingTopic;
   columns: Column<any, any>[]
+  key?: string[];
 }
 
 export const caseNoteViewDs : IDatasourceSettings = {
@@ -251,10 +252,11 @@ export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
 export const householdMembersDs : IDatasourceSettings = {
   url: 'common/data-providers/household-members',
   reportingTopic: ReportingTopic.HouseholdMembers,
+  key: ['casefile.id', 'person.id'],
   columns: [
-    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
-    ...(householdViewDs.columns.filter((c) => c.dataField !== 'id').map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
-    ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(caseFileViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(householdViewDs.columns.map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
     ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
     ...(caseFileTagsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileTagsCsv.${x.dataField}` }))),
   ],

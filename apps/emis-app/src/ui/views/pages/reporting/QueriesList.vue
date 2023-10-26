@@ -105,6 +105,8 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 
 import routes from '@/constants/routes';
 
+import { AllReports } from './standard_queries';
+
 interface IQueryMapped {
   name: string;
   id: string;
@@ -161,9 +163,22 @@ export default mixins(TablePaginationSearchMixin).extend({
       return this.queryType === QueryType.Custom;
     },
 
+    standardReports(): IQueryMapped[] {
+      if (this.queryType === QueryType.Custom) {
+        return null;
+      }
+      const reports = AllReports.filter((r) => r.queryType === this.queryType);
+      return reports.map((q) => ({
+        id: q.id,
+        theme: this.$t(`reporting.query.theme.${ReportingTopic[q.topic]}`) as string,
+        name: q.name,
+        sharedBy: '',
+      }));
+    },
+
     queryItems(): IQueryMapped[] {
       const items = sharedHelpers.filterCollectionByValue(
-        this.items,
+        this.standardReports || this.items,
         this.params?.search,
       );
       return _orderBy(items, ['pinned', ((item) => item[this.options.sortBy[0]]?.toLowerCase())], ['desc', this.options.sortDesc[0] ? 'desc' : 'asc']);
@@ -244,7 +259,9 @@ export default mixins(TablePaginationSearchMixin).extend({
   async created() {
     this.saveState = true;
     this.loadState();
-    await this.loadData();
+    if (this.queryType === QueryType.Custom) {
+      await this.loadData();
+    }
   },
 
   methods: {

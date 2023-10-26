@@ -18,6 +18,28 @@ const pinia = createTestingPinia({ stubActions: false });
 const userAccountMetadataStore = useMockUserAccountStore(pinia).userAccountMetadataStore;
 let services = mockProvider();
 
+jest.mock('./standard_queries', () => ({ AllReports: [{
+  id: 'someReporten',
+  name: 'some report',
+  queryType: 2,
+  topic: 1,
+  state: 'state',
+},
+{
+  id: 'someReportfr',
+  name: 'some report fr',
+  queryType: 3,
+  topic: 1,
+  state: 'state',
+},
+{
+  id: 'second en',
+  name: 'some report en 2',
+  queryType: 2,
+  topic: 1,
+  state: 'state',
+}] }));
+
 describe('QueriesList.vue', () => {
   let wrapper;
 
@@ -72,6 +94,27 @@ describe('QueriesList.vue', () => {
         expect(wrapper.vm.queryType).toEqual(QueryType.Custom);
         await wrapper.setProps({ queryTypeName: 'StandardL6' });
         expect(wrapper.vm.queryType).toEqual(QueryType.StandardL6en);
+      });
+    });
+
+    describe('standardReports', () => {
+      it('returns the list of reports by query type', async () => {
+        expect(wrapper.vm.standardReports).toEqual(null);
+        await wrapper.setProps({ queryTypeName: 'StandardL6' });
+        expect(wrapper.vm.standardReports).toEqual([
+          {
+            id: 'someReporten',
+            name: 'some report',
+            sharedBy: '',
+            theme: 'reporting.query.theme.HouseholdMembers',
+          },
+          {
+            id: 'second en',
+            name: 'some report en 2',
+            sharedBy: '',
+            theme: 'reporting.query.theme.HouseholdMembers',
+          },
+        ]);
       });
     });
 
