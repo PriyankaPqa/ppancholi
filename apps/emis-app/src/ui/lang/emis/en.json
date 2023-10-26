@@ -246,7 +246,7 @@
     "caseFile.financialAssistance.deleteTooltip": "If a financial assistance has only one payment line, it cannot be deleted.",
     "caseFile.financialAssistance.details.title": "Financial assistance details",
     "caseFile.financialAssistance.editPaymentLine": "Edit payment line",
-    "caseFile.financialAssistance.error.potentialDuplicate": "Financial assistance cannot be created. Case file is flagged as a potential duplicate.",
+    "caseFile.financialAssistance.error.potentialDuplicate": "Financial assistance cannot be created. Household is flagged as a potential duplicate.",
     "caseFile.financialAssistance.groupTotal": "Total {modality}: {total}",
     "caseFile.financialAssistance.inactiveDetails.message": "The items listed in red are inactive in the current financial payment table and must be corrected.",
     "caseFile.financialAssistance.inactiveDetails.title": "Payment cannot proceed",

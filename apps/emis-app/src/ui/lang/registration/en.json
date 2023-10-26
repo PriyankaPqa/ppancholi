@@ -691,7 +691,7 @@
     "registration.start_assessment.label": "Begin Questionnaire",
     "registration.submit_registration.label": "Submit registration",
     "registration.tier2.NoBasicId": "I don't have any of these",
-    "registration.tier2.Waiting": "Please wait while we process the information",
+    "registration.tier2.Waiting": "Please wait while we process your information. This could take up to 1 minute.\n\n\nPlease do not navigate away from this page.",
     "registration.tier2.help1": "Use a valid government-issued photo ID. A driver's license is also a valid identity card",
     "registration.tier2.help2": "A clear image that includes your name, date of birth, photo and signature.",
     "registration.tier2.help3": "Accepted files: .jpeg and .png with a max size of 10Mb.",
