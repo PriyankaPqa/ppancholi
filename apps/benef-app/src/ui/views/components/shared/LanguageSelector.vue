@@ -27,6 +27,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Trans } from '@/ui/plugins/translation';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 
 export default Vue.extend({
   name: 'LanguageSelector',
@@ -97,6 +98,8 @@ export default Vue.extend({
           },
         });
       });
+
+      EventHub.$emit('setLanguage', lang); // Remove this comment and add a test for that
     },
   },
 });

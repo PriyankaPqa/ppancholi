@@ -28,7 +28,7 @@ describe('Individual.vue', () => {
       mocks: {
         $services: services,
       },
-      stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
+      stubs: ['i18n', 'google-recaptcha', 'privacy-statement',
         'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
       computed: {
         ...otherComputed,
@@ -58,6 +58,24 @@ describe('Individual.vue', () => {
         wrapper.vm.$options.destroyed[1].call(wrapper.vm);
         expect(EventHub.$off).toHaveBeenCalledWith('fetchPublicToken', wrapper.vm.fetchPublicToken);
         expect(EventHub.$off).toHaveBeenCalledWith('next', wrapper.vm.goNext);
+      });
+
+      it('connects and disconnects to event hub on created/destroyed for recaptchaSubmit render on setLanguage', async () => {
+        EventHub.$on = jest.fn();
+        EventHub.$off = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.BotProtection);
+        tenantSettingsStore.recaptcha = {
+          ipAddressIsAllowed: false,
+          clientIpAddress: '',
+        };
+
+        jest.clearAllMocks();
+        wrapper.vm.$options.created[0].call(wrapper.vm);
+        expect(EventHub.$on).toHaveBeenCalledWith('setLanguage', wrapper.vm.renderRecaptcha);
+
+        jest.clearAllMocks();
+        wrapper.vm.$options.destroyed[1].call(wrapper.vm);
+        expect(EventHub.$off).toHaveBeenCalledWith('setLanguage', wrapper.vm.renderRecaptcha);
       });
     });
   });

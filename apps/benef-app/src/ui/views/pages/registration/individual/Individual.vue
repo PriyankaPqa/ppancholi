@@ -62,13 +62,14 @@
 
             <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
               <span class="fw-bold d-sm-inline d-md-none tabtext">{{ nextTabName }}</span>
-              <vue-programmatic-invisible-google-recaptcha
+              <google-recaptcha
                 v-if="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress"
                 ref="recaptchaSubmit"
                 data-test="google-recaptcha"
                 :sitekey="recaptchaKey"
                 element-id="recaptchaSubmit"
                 badge-position="left"
+                :lang="$i18n.locale"
                 :show-badge-mobile="false"
                 :show-badge-desktop="false"
                 @recaptcha-callback="recaptchaCallBack" />
@@ -118,6 +119,7 @@ import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings'
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
+import GoogleRecaptcha from '@/ui/views/components/shared/GoogleRecaptcha.vue';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -145,6 +147,7 @@ export default mixins(individual).extend({
     SystemErrorDialog,
     DuplicateDialog,
     Tier2Selection,
+    GoogleRecaptcha,
   },
 
   data: () => ({
@@ -174,16 +177,28 @@ export default mixins(individual).extend({
 
     // for when a component wants to trigger moving to the next step without a button pressed
     EventHub.$on('next', this.goNext);
+
+    if (this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
+      EventHub.$on('setLanguage', this.renderRecaptcha);
+    }
   },
 
   destroyed() {
     if (EventHub) {
       EventHub.$off('fetchPublicToken', this.fetchPublicToken);
       EventHub.$off('next', this.goNext);
+
+      if (this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
+        EventHub.$off('setLanguage', this.renderRecaptcha);
+      }
     }
   },
 
   methods: {
+    renderRecaptcha(lang: string) {
+      (this.$refs.recaptchaSubmit as any).render(lang);
+    },
+
     async fetchPublicToken(continueFnct: () => void, onlyIfNotFetchedRecently: boolean = true) {
       // unless we specifically ask to renew the token, if one was fetched less then 30 minutes ago we continue
       if (onlyIfNotFetchedRecently && this.tokenFetchedLast > new Date(new Date().getTime() - (30 * 60 * 1000))) {
