@@ -19,6 +19,11 @@ const mockTaskNotification = mockNotificationEntity({
 
 describe('NotificationCard.vue', () => {
   let wrapper;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   const mountWithNotification = (notification) => {
     wrapper = mount(Component, {
       localVue,
@@ -43,13 +48,11 @@ describe('NotificationCard.vue', () => {
       });
       it('should render expected link when displayLink is set', async () => {
         mountWithNotification(mockTaskNotification);
-        await wrapper.setData({ targetEntityLoaded: true });
         const linkDiv = wrapper.findDataTest('notification-subject-link');
         expect(linkDiv.text()).toEqual(mockTaskNotification.subject.translation.en);
       });
       it('should hide subject text when displayLink is set', async () => {
         mountWithNotification(mockTaskNotification);
-        await wrapper.setData({ targetEntityLoaded: true });
         const textDiv = wrapper.findDataTest('notification-subject-text');
         expect(textDiv.exists()).toBeFalsy();
       });
@@ -87,18 +90,44 @@ describe('NotificationCard.vue', () => {
     describe('displayLink', () => {
       it('should display a link for Task notifications when entity is loaded', async () => {
         mountWithNotification(mockTaskNotification);
-        await wrapper.setData({ targetEntityLoaded: true });
         expect(wrapper.vm.displayLink).toBeTruthy();
       });
       it('should not display a link for Task notifications when entity is not loaded', async () => {
+        taskStore.getById = jest.fn();
         mountWithNotification(mockTaskNotification);
-        await wrapper.setData({ targetEntityLoaded: false, targetEntity: null });
         expect(wrapper.vm.displayLink).toBeFalsy();
       });
       it('should not display a link for General notifications', async () => {
         mountWithNotification(mockNotification);
-        await wrapper.setData({ targetEntity: mockTeamTaskEntity });
         expect(wrapper.vm.displayLink).toBeFalsy();
+      });
+    });
+    describe('targetEntity', () => {
+      it('is not set for General notifications', async () => {
+        mountWithNotification(mockNotification);
+        expect(wrapper.vm.targetEntity).toBeFalsy();
+      });
+      it('is set for Task notifications when returned by the store', async () => {
+        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
+        mountWithNotification(mockTaskNotification);
+        expect(wrapper.vm.targetEntity).toBeTruthy();
+      });
+      it('is not set for Task notifications when not returned by the store', async () => {
+        taskStore.getById = jest.fn();
+        mountWithNotification(mockTaskNotification);
+        expect(wrapper.vm.targetEntity).toBeFalsy();
+      });
+    });
+    describe('targetEntityLoaded', () => {
+      it('is true when targetEntity is set', async () => {
+        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
+        mountWithNotification(mockTaskNotification);
+        expect(wrapper.vm.targetEntityLoaded).toBeTruthy();
+      });
+      it('is false when targetEntity is not set', async () => {
+        taskStore.getById = jest.fn();
+        mountWithNotification(mockTaskNotification);
+        expect(wrapper.vm.targetEntityLoaded).toBeFalsy();
       });
     });
   });
@@ -111,19 +140,6 @@ describe('NotificationCard.vue', () => {
         expect(wrapper.emitted('toggleIsRead')).toBeTruthy();
       });
     });
-    describe('fetchLinkedEntity', () => {
-      it('should fetch Task entities from the store for Task notifications', async () => {
-        mountWithNotification(mockTaskNotification);
-        taskStore.getById = jest.fn(() => {});
-        taskStore.fetch = jest.fn(() => {});
-        await wrapper.vm.fetchLinkedEntity();
-        expect(taskStore.getById).toHaveBeenCalledWith(mockTaskNotification.targetEntityId);
-        expect(taskStore.fetch).toHaveBeenCalledWith({
-          caseFileId: mockTaskNotification.targetEntityParentId,
-          id: mockTaskNotification.targetEntityId,
-        }, false);
-      });
-    });
     describe('subjectClick', () => {
       it('marks the notificaiton as read', async () => {
         expect(mockNotification.isRead).toBeFalsy();
@@ -134,8 +150,8 @@ describe('NotificationCard.vue', () => {
         expect(wrapper.vm.toggleIsRead).toBeCalled();
       });
       it('navigates to the target link', async () => {
+        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
         mountWithNotification(mockTaskNotification);
-        await wrapper.setData({ targetEntityLoaded: true, targetEntity: mockTeamTaskEntity });
         await wrapper.vm.subjectClick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.caseFile.task.details.name,
@@ -153,30 +169,17 @@ describe('NotificationCard.vue', () => {
         expect(link).toBeFalsy();
       });
       it('returns a link for Task notifications when the target entity is loaded', async () => {
+        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
         mountWithNotification(mockTaskNotification);
-        await wrapper.setData({ targetEntityLoaded: true, targetEntity: mockTeamTaskEntity });
         const link = wrapper.vm.targetEntityLink();
         expect(link.name).toBeTruthy();
         expect(link.params.id).toEqual(mockTaskNotification.targetEntityParentId);
       });
       it('does not return a link for Task notifications when the target entity is not loaded', async () => {
+        taskStore.getById = jest.fn();
         mountWithNotification(mockTaskNotification);
-        await wrapper.setData({ targetEntityLoaded: false, targetEntity: null });
         const link = wrapper.vm.targetEntityLink();
         expect(link).toBeFalsy();
-      });
-    });
-  });
-
-  describe('Lifecycle', () => {
-    describe('Created', () => {
-      it('should call fetchLinkedEntity', async () => {
-        mountWithNotification(mockNotification);
-        wrapper.vm.fetchLinkedEntity = jest.fn();
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.fetchLinkedEntity).toHaveBeenCalled();
       });
     });
   });

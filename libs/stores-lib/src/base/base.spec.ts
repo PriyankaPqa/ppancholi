@@ -115,6 +115,39 @@ describe('Base Store', () => {
     });
   });
 
+  describe('fetchByIds', () => {
+    it('should call getByIds method from the service', async () => {
+      service.getByIds = jest.fn();
+      await baseStore.fetchByIds(['1'], false);
+      expect(service.getByIds).toHaveBeenCalledWith(['1']);
+    });
+    it('should not call the service when the store already contains all requested items and missing only requested', async () => {
+      service.getByIds = jest.fn();
+      baseStore.setAll(mockUserAccountEntities());
+      await baseStore.fetchByIds(mockUserAccountEntities().map((e) => e.id), true);
+      expect(service.getByIds).toHaveBeenCalledTimes(0);
+    });
+    it('should call the service when the store already contains all requested items and missing only not requested', async () => {
+      service.getByIds = jest.fn();
+      baseStore.setAll(mockUserAccountEntities());
+      await baseStore.fetchByIds(mockUserAccountEntities().map((e) => e.id), false);
+      expect(service.getByIds).toHaveBeenCalledTimes(1);
+    });
+    it('should call only for missing ids when requested', async () => {
+      service.getByIds = jest.fn();
+      const mockEntity = mockUserAccountEntity();
+      baseStore.set(mockEntity);
+      await baseStore.fetchByIds([mockEntity.id, '101'], true);
+      expect(service.getByIds).toHaveBeenCalledWith(['101']);
+    });
+    it('should save result', async () => {
+      const res = mockUserAccountEntities();
+      service.getByIds = jest.fn(() => res);
+      await baseStore.fetchByIds(mockUserAccountEntities().map((e) => e.id), true);
+      expect(baseStore.items).toEqual(res);
+    });
+  });
+
   describe('deactivate', () => {
     it('should call deactivate method from the service', async () => {
       service.deactivate = jest.fn();
