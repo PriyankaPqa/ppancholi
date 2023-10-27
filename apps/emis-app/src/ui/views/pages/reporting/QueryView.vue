@@ -27,7 +27,7 @@
             <v-btn
               data-test="share-button"
               color="primary"
-              @click="saveQuery(false, true)">
+              @click="saveQuery(!canSave, true)">
               <v-icon>
                 mdi-share-variant
               </v-icon>
@@ -122,6 +122,26 @@
             data-test="query_name"
             rules="required"
             :label="`${$t('reporting.query.queryName')} *`" />
+        </div>
+      </template>
+    </rc-confirmation-dialog>
+
+    <rc-confirmation-dialog
+      ref="exportDialog"
+      data-test="export-dialog"
+      :show.sync="showExportDialog"
+      :title="$t('common.buttons.export')"
+      cancel-button-key="common.buttons.cancel"
+      submit-button-key="common.buttons.export">
+      <template #default>
+        <div>
+          <div class="rc-body16 fw-bold mb-4">
+            {{ $t('reporting.query.selectExportMode') }}
+          </div>
+          <v-radio-group v-model="exportMode" mandatory>
+            <v-radio :label="$t('reporting.format.excel')" value="excel" />
+            <v-radio :label="$t('reporting.format.csv')" value="csv" />
+          </v-radio-group>
         </div>
       </template>
     </rc-confirmation-dialog>
@@ -246,6 +266,7 @@ export default Vue.extend({
         topic: this.theme ? Number(this.theme) : datasources[0].reportingTopic,
       } as IQuery,
       showSaveDialog: false,
+      showExportDialog: false,
       queryName: null as string,
       shareAfterSave: false,
     };
@@ -447,8 +468,14 @@ export default Vue.extend({
       grid.refresh();
     },
 
-    /// when exporting to excel or csv, called after all the data has been downloaded by the grid
-    onExporting(e: { component: any }) {
+    /// when exporting to excel or csv
+    async onExporting(e: { component: any }) {
+      this.showExportDialog = true;
+      const userChoice = await (this.$refs.exportDialog as any).open() as boolean;
+      this.showExportDialog = false;
+      if (!userChoice) {
+        return;
+      }
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet('Main sheet');
       exportDataGrid({
@@ -459,6 +486,7 @@ export default Vue.extend({
           options.excelCell.alignment = { horizontal: 'left' };
         },
       }).then(() => {
+        // called after all the data has been downloaded by the grid
         if (this.exportMode !== 'csv') {
           workbook.xlsx.writeBuffer()
             .then((buffer) => {

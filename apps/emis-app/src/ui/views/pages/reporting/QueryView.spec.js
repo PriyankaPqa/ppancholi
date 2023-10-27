@@ -7,6 +7,7 @@ import {
   QueryType,
 } from '@libs/entities-lib/reporting';
 import { locale, loadMessages } from 'devextreme/localization';
+import { exportDataGrid } from 'devextreme/excel_exporter';
 import frMessages from 'devextreme/localization/messages/fr.json';
 import enMessages from 'devextreme/localization/messages/en.json';
 import Component from './QueryView.vue';
@@ -17,6 +18,9 @@ const pinia = createTestingPinia({ stubActions: false });
 const userStore = useMockUserStore(pinia).userStore;
 let services = mockProvider();
 jest.mock('devextreme/localization', () => ({ locale: jest.fn(), loadMessages: jest.fn() }));
+jest.mock('devextreme/excel_exporter', () => ({ exportDataGrid: jest.fn(() => Promise.resolve()) }));
+jest.mock('file-saver');
+
 userStore.getUserId = jest.fn(() => 'user-1');
 window.atob = jest.fn(() => null);
 window.btoa = jest.fn(() => 'encrypted');
@@ -312,6 +316,18 @@ describe('QueryView.vue', () => {
         await wrapper.vm.doSave();
         expect(wrapper.vm.shareAfterSave).toBeFalsy();
         expect(wrapper.vm.showSelectUserDialog).toBeTruthy();
+      });
+    });
+
+    describe('onExporting', () => {
+      it('calls the export depending on confirmation', async () => {
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => false) };
+        await wrapper.vm.onExporting({ });
+        expect(exportDataGrid).not.toHaveBeenCalled();
+
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => true) };
+        await wrapper.vm.onExporting({ });
+        expect(exportDataGrid).toHaveBeenCalled();
       });
     });
 
