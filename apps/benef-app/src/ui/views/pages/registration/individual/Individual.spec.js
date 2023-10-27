@@ -286,7 +286,7 @@ describe('Individual.vue', () => {
     });
 
     describe('renderRecaptcha', () => {
-      it('should call render on recaptcha', async () => {
+      it('should call render method from recaptcha with proper language parameter', async () => {
         wrapper.vm.$refs.recaptchaSubmit = {};
         wrapper.vm.$refs.recaptchaSubmit.render = jest.fn();
 
