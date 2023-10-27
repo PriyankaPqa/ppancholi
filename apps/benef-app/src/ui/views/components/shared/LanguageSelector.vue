@@ -99,7 +99,7 @@ export default Vue.extend({
         });
       });
 
-      EventHub.$emit('setLanguage', lang); // Remove this comment and add a test for that
+      EventHub.$emit('setLanguage', lang);
     },
   },
 });

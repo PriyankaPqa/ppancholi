@@ -285,6 +285,16 @@ describe('Individual.vue', () => {
       });
     });
 
+    describe('renderRecaptcha', () => {
+      it('should call render on recaptcha', async () => {
+        wrapper.vm.$refs.recaptchaSubmit = {};
+        wrapper.vm.$refs.recaptchaSubmit.render = jest.fn();
+
+        await wrapper.vm.renderRecaptcha('en');
+        expect(wrapper.vm.$refs.recaptchaSubmit.render).toHaveBeenCalledWith('en');
+      });
+    });
+
     describe('fetchPublicToken', () => {
       it('should call recaptcha if BotProtection is enabled and if ip address is not in allowed list', async () => {
         wrapper.vm.$refs.recaptchaSubmit = {};
