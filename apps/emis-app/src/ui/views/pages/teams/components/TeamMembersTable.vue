@@ -328,11 +328,11 @@ export default Vue.extend({
   },
 
   watch: {
-    async primaryContact(newValue) {
+    async primaryContact(newValue: IUserAccountCombined) {
       if (newValue?.entity?.id) {
         const teamMemberIds = this.team?.teamMembers?.map((m) => m.id) || [];
         if (!teamMemberIds.includes(newValue.entity.id)) {
-          this.addMembers([newValue]);
+          this.addMembers([{ id: newValue.entity.id } as UserTeamMember], false);
         }
         this.teamMembers = this.makeMappedMembers(this.teamMembers);
       }
@@ -451,13 +451,15 @@ export default Vue.extend({
       });
     },
 
-    async addMembers(selectedUsers: UserTeamMember[]) {
+    async addMembers(selectedUsers: UserTeamMember[], saveToStore = true) {
       try {
-        this.loading = true;
-        await useTeamStore().addTeamMembers({
-          teamId: this.teamId, teamMembers: selectedUsers.map((u) => ({ ...u, isPrimaryContact: false })),
-        });
-        this.$toasted.global.success(this.$t('team.add_members.success'));
+        if (saveToStore) {
+          this.loading = true;
+          await useTeamStore().addTeamMembers({
+            teamId: this.teamId, teamMembers: selectedUsers.map((u) => ({ ...u, isPrimaryContact: false })),
+          });
+          this.$toasted.global.success(this.$t('team.add_members.success'));
+        }
         const members = this.combinedUserAccountStore.getByIds(selectedUsers.map((u) => u.id)) as IUserAccountCombined[];
         const mappedNewMembers = this.makeMappedMembers(members);
         const newMembersList = [...this.teamMembers, ...mappedNewMembers];
