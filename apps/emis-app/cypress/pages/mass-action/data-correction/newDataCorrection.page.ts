@@ -29,7 +29,7 @@ export enum DataTest {
     private dialogCancel = { selector: DataTest.dialogCancel };
 
     public selectMassActionCorrectionType(correctionType: string) {
-      cy.searchAndSelect(DataTest.massActionCorrectionType, correctionType);
+      cy.selectListElementByValue(DataTest.massActionCorrectionType, correctionType);
     }
 
     public fillMassActionDescription(description: string) {

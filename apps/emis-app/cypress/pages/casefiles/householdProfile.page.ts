@@ -192,7 +192,7 @@ export class HouseholdProfilePage {
 
   public editAddress() {
     // timeout added to allow page to load properly
-    cy.getByDataTest(this.memberEditAddress, { timeout: 15000 }).should('be.visible').click();
+    cy.getByDataTest(this.memberEditAddress, { timeout: 30000 }).should('be.visible').click();
     return new EditHouseholdAddressPage();
   }
 

@@ -25,7 +25,7 @@ import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import { fixtureGenerateFaCsvFile, fixtureGenerateFaCustomOptionsXlsxFile } from 'cypress/fixtures/mass-actions';
-import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { linkEventToTeamForManyRoles } from './teams';
@@ -497,4 +497,27 @@ export const getPersonsInfo = async (provider: IProvider, personIds: string[]) =
   const getPersonPromises = personIds.map((personId) => provider.households.getPerson(personId));
   const personsInfo = await Promise.all(getPersonPromises);
   return personsInfo;
+};
+
+/**
+ * Set Casefile Identity Authentication status
+ * @param provider
+ * @param casefileIds
+ * @param identityAuthenticationStatus
+ */
+export const setCaseFileIdentityAuthentication = async (provider: IProvider, caseFileIds: string[], identityAuthenticationStatus: IIdentityAuthentication) => {
+  const setCaseFileIdentityAuthenticationPromises = caseFileIds.map((caseFileId) => provider.caseFiles.setCaseFileIdentityAuthentication(caseFileId, identityAuthenticationStatus));
+  const caseFileIdentityAuthentication = await Promise.all(setCaseFileIdentityAuthenticationPromises);
+  return caseFileIdentityAuthentication;
+};
+
+/**
+ * Fetch casefile summary
+ * @param provider
+ * @param caseFileIds
+ */
+export const getCaseFilesSummary = async (provider: IProvider, caseFileIds: string[]) => {
+  const getCaseFilesSummaryPromises = caseFileIds.map((caseFileId) => provider.caseFiles.getSummary(caseFileId));
+  const caseFilesSummary = await Promise.all(getCaseFilesSummaryPromises);
+  return caseFilesSummary;
 };

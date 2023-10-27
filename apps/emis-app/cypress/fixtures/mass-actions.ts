@@ -83,6 +83,18 @@ export const generateRandomContactInformationData = (personId:string, eTag: stri
   ETag: eTag,
 });
 
+export interface IAuthenticationOtherDataCorrectionTemplate {
+  CaseFileId: string,
+  AuthenticationSpecifiedOther: string,
+  ETag: string
+}
+
+export const generateRandomAuthenticationOtherData = (caseFileId:string, eTag: string): IAuthenticationOtherDataCorrectionTemplate => ({
+  CaseFileId: caseFileId,
+  AuthenticationSpecifiedOther: 'Test Automation',
+  ETag: eTag,
+});
+
 export const writeCSVContentToFile = <T>(filePath: string, data: T[]): string => {
   cy.writeFile(filePath, generateCSVContent(data));
   return generateCSVContent(data);
@@ -101,6 +113,15 @@ export const fixtureGenerateContactInformationDataCorrectionCsvFile = (primaryMe
 
   for (const [id, eTag] of Object.entries(primaryMemberHouseholds)) {
     correctionData.push(generateRandomContactInformationData(id, eTag.replace(/"/g, '')));
+  }
+  return writeCSVContentToFile(filePath, correctionData);
+};
+
+export const fixtureGenerateAuthenticationOtherDataCorrectionCsvFile = (primaryMemberHouseholds: Record<string, string>, filePath: string) => {
+  const correctionData: IAuthenticationOtherDataCorrectionTemplate[] = [];
+
+  for (const [casefileId, eTag] of Object.entries(primaryMemberHouseholds)) {
+    correctionData.push(generateRandomAuthenticationOtherData(casefileId, eTag.replace(/"/g, '')));
   }
   return writeCSVContentToFile(filePath, correctionData);
 };

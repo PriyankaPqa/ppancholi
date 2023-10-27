@@ -1,9 +1,18 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { fixtureGenerateContactInformationDataCorrectionCsvFile } from '../../../fixtures/mass-actions';
-import { createEventAndTeam, getPersonsInfo, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
+import { IIdentityAuthentication, IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@libs/entities-lib/case-file';
+import { fixtureGenerateAuthenticationOtherDataCorrectionCsvFile } from '../../../fixtures/mass-actions';
+import { createEventAndTeam, getCaseFilesSummary, prepareStateMultipleHouseholds, setCaseFileIdentityAuthentication } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
+const updatedIdentityAuthenticationStatus: IIdentityAuthentication = {
+  status: IdentityAuthenticationStatus.Passed,
+  method: IdentityAuthenticationMethod.Exceptional,
+  identificationIds: [{
+    optionItemId: 'd9c5618e-40df-446c-86d4-19d5d6b37a04',
+    specifiedOther: 'Update Identity Authentication using Mass Action',
+  }],
+};
 const canRoles = {
   Level6: UserRoles.level6,
 };
@@ -25,11 +34,11 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/contactInfoDataCorrectionMassAction.csv';
-const dataCorrectionTypeDataTest = 'Contact Information';
-const dataCorrectionTypeDropDown = 'Contact Information';
+const filePath = 'cypress/downloads/authenticationOtherDataCorrectionMassAction.csv';
+const dataCorrectionTypeDataTest = 'Authentication Specified Other';
+const dataCorrectionTypeDropDown = 'Authentication Other';
 
-describe('#TC1709# - Pre-process a Contact Information data correction file', { tags: ['@household', '@mass-actions'] }, () => {
+describe('#TC1708# - Pre-process a Authentication Other data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
@@ -39,16 +48,17 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
             // eslint-disable-next-line
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const personIds: string[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
+            const casefileIds: string[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.id,
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
             ];
-            const resultPersonsInfo = await getPersonsInfo(resultMultipleHousehold.provider, personIds);
+            await setCaseFileIdentityAuthentication(resultMultipleHousehold.provider, casefileIds, updatedIdentityAuthenticationStatus);
+            const resultCaseFilesSummary = await getCaseFilesSummary(resultMultipleHousehold.provider, casefileIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultPersonsInfo).as('primaryMemberHouseholds');
+            cy.wrap(resultCaseFilesSummary).as('caseFilesSummary');
             cy.login(roleValue);
             cy.goTo('mass-actions/data-correction/create');
           });
@@ -58,20 +68,20 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully pre-process a Contact Information data correction file', function () {
-          const primaryMemberHouseholds: Record<string, string> = {
-            [this.primaryMemberHouseholds[0].id]: this.primaryMemberHouseholds[0].etag,
-            [this.primaryMemberHouseholds[1].id]: this.primaryMemberHouseholds[1].etag,
-            [this.primaryMemberHouseholds[2].id]: this.primaryMemberHouseholds[2].etag,
+        it('should successfully pre-process an Authentication Other data correction file', function () {
+          const casefiles: Record<string, string> = {
+            [this.caseFilesSummary[0].id]: this.caseFilesSummary[0].etag,
+            [this.caseFilesSummary[1].id]: this.caseFilesSummary[1].etag,
+            [this.caseFilesSummary[2].id]: this.caseFilesSummary[2].etag,
           };
-          fixtureGenerateContactInformationDataCorrectionCsvFile(primaryMemberHouseholds, filePath);
+          fixtureGenerateAuthenticationOtherDataCorrectionCsvFile(casefiles, filePath);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,
             dataCorrectionTypeDataTest,
             dataCorrectionTypeDropDown,
             filePath,
-            preprocessedItems: 'household records',
+            preprocessedItems: 'case files',
             roleName,
             householdQuantity,
           });
@@ -86,7 +96,7 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
           cy.login(roleValue);
           cy.goTo('mass-actions/data-correction/create');
         });
-        it('should not be able to pre-process a Contact Information data correction file', () => {
+        it('should not be able to pre-process an Authentication Other data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });
