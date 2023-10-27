@@ -7,6 +7,7 @@ import {
   QueryType,
 } from '@libs/entities-lib/reporting';
 import { locale, loadMessages } from 'devextreme/localization';
+import { exportDataGrid } from 'devextreme/excel_exporter';
 import frMessages from 'devextreme/localization/messages/fr.json';
 import enMessages from 'devextreme/localization/messages/en.json';
 import Component from './QueryView.vue';
@@ -17,9 +18,35 @@ const pinia = createTestingPinia({ stubActions: false });
 const userStore = useMockUserStore(pinia).userStore;
 let services = mockProvider();
 jest.mock('devextreme/localization', () => ({ locale: jest.fn(), loadMessages: jest.fn() }));
+jest.mock('devextreme/excel_exporter', () => ({ exportDataGrid: jest.fn(() => Promise.resolve()) }));
+jest.mock('file-saver');
+
 userStore.getUserId = jest.fn(() => 'user-1');
 window.atob = jest.fn(() => null);
 window.btoa = jest.fn(() => 'encrypted');
+const AllReports = [{
+  id: 'someReporten',
+  name: 'some report',
+  queryType: 2,
+  topic: 1,
+  state: 'state',
+},
+{
+  id: 'someReportfr',
+  name: 'some report fr',
+  queryType: 3,
+  topic: 1,
+  state: 'state',
+},
+{
+  id: 'second en',
+  name: 'some report en 2',
+  queryType: 2,
+  topic: 1,
+  state: 'state',
+}];
+
+jest.mock('./standard_queries', () => ({ AllReports }));
 
 describe('QueryView.vue', () => {
   let wrapper;
@@ -48,6 +75,14 @@ describe('QueryView.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('queryType', () => {
+      it('returns the correct QueryType', async () => {
+        expect(wrapper.vm.queryType).toEqual(QueryType.Custom);
+        await wrapper.setProps({ queryTypeName: 'StandardL6' });
+        expect(wrapper.vm.queryType).toEqual(QueryType.StandardL6en);
+      });
+    });
+
     describe('title', () => {
       it('returns the title according to the query', async () => {
         expect(wrapper.vm.title).toBe('reporting.query.title.Custom: reporting.query.theme.HouseholdMembers');
@@ -67,23 +102,81 @@ describe('QueryView.vue', () => {
 
   describe('Lifecycle', () => {
     describe('mounted', () => {
-      it('initializes the grid and downloads the query if id was passed', async () => {
-        wrapper.vm.initializeGrid = jest.fn();
-
-        expect(services.queries.get).not.toHaveBeenCalled();
+      it('calls bindquery', async () => {
+        wrapper.vm.bindQuery = jest.fn();
         jest.clearAllMocks();
-        await wrapper.setProps({ queryId: 'some id' });
 
         const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
         await hook.call(wrapper.vm);
 
-        expect(wrapper.vm.initializeGrid).toHaveBeenCalledWith(true);
-        expect(services.queries.get).toHaveBeenCalledWith(wrapper.vm.queryId);
+        expect(wrapper.vm.bindQuery).toHaveBeenCalledWith(true);
       });
     });
   });
 
   describe('methods', () => {
+    describe('bindQuery', () => {
+      it('if initial load it initializes the grid and downloads the query if id was passed', async () => {
+        wrapper.vm.initializeGrid = jest.fn();
+
+        await wrapper.vm.bindQuery(true);
+
+        expect(services.queries.get).not.toHaveBeenCalled();
+        expect(wrapper.vm.initializeGrid).toHaveBeenCalled();
+        jest.clearAllMocks();
+        await wrapper.setProps({ queryId: 'some id' });
+
+        await wrapper.vm.bindQuery(true);
+
+        expect(wrapper.vm.initializeGrid).toHaveBeenCalled();
+        expect(services.queries.get).toHaveBeenCalledWith(wrapper.vm.queryId);
+      });
+
+      it('if initial load it initializes the grid and downloads the query if id was passed', async () => {
+        wrapper.vm.initializeGrid = jest.fn();
+
+        await wrapper.vm.bindQuery(true);
+
+        expect(services.queries.get).not.toHaveBeenCalled();
+        expect(wrapper.vm.initializeGrid).toHaveBeenCalled();
+        jest.clearAllMocks();
+        await wrapper.setProps({ queryId: 'some id' });
+
+        await wrapper.vm.bindQuery(true);
+
+        expect(wrapper.vm.initializeGrid).toHaveBeenCalled();
+        expect(services.queries.get).toHaveBeenCalledWith(wrapper.vm.queryId);
+      });
+
+      it('if not initial load then doesnt go to service', async () => {
+        wrapper.vm.initializeGrid = jest.fn();
+
+        await wrapper.vm.bindQuery(false);
+
+        expect(services.queries.get).not.toHaveBeenCalled();
+        expect(wrapper.vm.initializeGrid).toHaveBeenCalled();
+        jest.clearAllMocks();
+        await wrapper.setProps({ queryId: 'some id' });
+
+        await wrapper.vm.bindQuery(false);
+
+        expect(services.queries.get).not.toHaveBeenCalled();
+        expect(wrapper.vm.initializeGrid).toHaveBeenCalled();
+      });
+
+      it('loads from AllReports if not custom query', async () => {
+        wrapper.vm.initializeGrid = jest.fn();
+        jest.clearAllMocks();
+        await wrapper.setProps({ queryTypeName: 'StandardL6', queryId: 'second en' });
+
+        await wrapper.vm.bindQuery(true);
+
+        expect(wrapper.vm.initializeGrid).toHaveBeenCalled();
+        expect(services.queries.get).not.toHaveBeenCalled();
+        expect(wrapper.vm.query).toEqual(AllReports[2]);
+      });
+    });
+
     describe('initializeGrid', () => {
       it('initializes the grid and sets language', async () => {
         wrapper.vm.initializeDatasource = jest.fn();
@@ -115,29 +208,26 @@ describe('QueryView.vue', () => {
         ]);
         expect(wrapper.vm.columns.slice(0, 3)).toEqual([
           {
-            allowFiltering: false,
-            allowHeaderFiltering: false,
             allowSearch: false,
-            caption: 'ds.casefile.id',
+            caption: 'ds.caseFileAuthenticationIdsCsv.csvAuthenticationIdNameEn',
             cssClass: 'grid-column',
-            dataField: 'casefile.id',
+            dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameEn',
             dataType: 'string',
             visible: false,
           },
           {
-            allowSearch: true,
-            caption: 'ds.casefile.caseFileNumber',
+            allowSearch: false,
+            caption: 'ds.caseFileAuthenticationIdsCsv.csvAuthenticationIdNameFr',
             cssClass: 'grid-column',
-            dataField: 'casefile.caseFileNumber',
+            dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameFr',
             dataType: 'string',
+            visible: false,
           },
           {
-            allowFiltering: false,
-            allowHeaderFiltering: false,
             allowSearch: false,
-            caption: 'ds.casefile.householdId',
+            caption: 'ds.caseFileTagsCsv.csvTagNameEn',
             cssClass: 'grid-column',
-            dataField: 'casefile.householdId',
+            dataField: 'caseFileTagsCsv.csvTagNameEn',
             dataType: 'string',
             visible: false,
           },
@@ -226,6 +316,18 @@ describe('QueryView.vue', () => {
         await wrapper.vm.doSave();
         expect(wrapper.vm.shareAfterSave).toBeFalsy();
         expect(wrapper.vm.showSelectUserDialog).toBeTruthy();
+      });
+    });
+
+    describe('onExporting', () => {
+      it('calls the export depending on confirmation', async () => {
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => false) };
+        await wrapper.vm.onExporting({ });
+        expect(exportDataGrid).not.toHaveBeenCalled();
+
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => true) };
+        await wrapper.vm.onExporting({ });
+        expect(exportDataGrid).toHaveBeenCalled();
       });
     });
 

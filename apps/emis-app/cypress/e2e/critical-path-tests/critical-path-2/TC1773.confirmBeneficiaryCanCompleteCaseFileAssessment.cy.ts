@@ -7,6 +7,7 @@ import {
   completeAndSubmitCasefileAssessment } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { verifyFullyCompletedCaseFileAssessment } from './canSteps';
+import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -59,9 +60,10 @@ describe('#TC1773# - Confirm that Beneficiary can complete a Case File Assessmen
           });
         });
         it('should successfully complete a Case File Assessment', function () {
+          const assessmentsListPage = new AssessmentsListPage();
           // eslint-disable-next-line
           completeAndSubmitCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //completely respond to assessment as a beneficiary and click on submit
-
+          assessmentsListPage.refreshUntilFilledAssessmentUpdated();
           verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
         });
       });

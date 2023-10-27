@@ -9,8 +9,6 @@ export enum FeatureKeys {
   ManageDuplicates = 'manageDuplicates',
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
-  MassActionAutoGenerateName = 'MassActionAutoGenerateName',
-  ClearSpecialCharactersFromFundingRequest = 'ClearSpecialCharactersFromFundingRequest',
   TaskManagement = 'TaskManagement',
   MassActionCaseFileStatus = 'MassActionCaseFileStatus',
   DisplayNotificationCenter = 'DisplayNotificationCenter',

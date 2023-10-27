@@ -9,6 +9,7 @@ export interface IDatasourceSettings {
   url?: string,
   reportingTopic?: ReportingTopic;
   columns: Column<any, any>[]
+  key?: string[];
 }
 
 export const caseNoteViewDs : IDatasourceSettings = {
@@ -206,6 +207,16 @@ export const caseFileTagsCsvViewDS : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileTagsCsv.${x.dataField}` })),
 };
 
+export const financialAssistancePaymentSummaryViewDS : IDatasourceSettings = {
+  columns: ([
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'totalAmountUnapproved', dataType: 'number', visible: false },
+    { dataField: 'totalAmountCommitted', dataType: 'number', visible: false },
+    { dataField: 'totalAmountCompleted', dataType: 'number', visible: false },
+    { dataField: 'grandTotal', dataType: 'number', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialAssistancePaymentSummary.${x.dataField}` })),
+};
+
 export const caseFileToHouseholdDs : IDatasourceSettings = {
   url: caseFileViewDs.url,
   columns: [
@@ -223,22 +234,29 @@ export const householdWithPrimaryDs : IDatasourceSettings = {
 };
 
 export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
-  url: 'common/data-providers/household-members',
+  url: 'common/data-providers/household-primary',
   reportingTopic: ReportingTopic.HouseholdPrimary,
   columns: [
     ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
-    ...(householdViewDs.columns.filter((c) => c.dataField !== 'id').map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
-    // ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `household.primaryMember.${x.dataField}` }))),
+    ...(householdViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'primaryBeneficiaryFirstName' && c.dataField !== 'primaryBeneficiaryLastName')
+    .map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+    ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
+    ...(caseFileTagsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileTagsCsv.${x.dataField}` }))),
+    ...(financialAssistancePaymentSummaryViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({
+      ...x, dataField: `financialAssistancePaymentSummary.${x.dataField}`,
+    }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `primaryMember.${x.dataField}` }))),
   ],
 };
 
 export const householdMembersDs : IDatasourceSettings = {
   url: 'common/data-providers/household-members',
   reportingTopic: ReportingTopic.HouseholdMembers,
+  key: ['casefile.id', 'person.id'],
   columns: [
-    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
-    ...(householdViewDs.columns.filter((c) => c.dataField !== 'id').map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
-    ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(caseFileViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(householdViewDs.columns.map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
     ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
     ...(caseFileTagsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileTagsCsv.${x.dataField}` }))),
   ],

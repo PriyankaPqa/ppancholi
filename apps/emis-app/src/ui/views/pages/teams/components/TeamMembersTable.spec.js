@@ -54,6 +54,10 @@ describe('TeamMembersTable.vue', () => {
     await wrapper.vm.$nextTick();
   };
 
+  beforeEach(async () => {
+    jest.clearAllMocks();
+  });
+
   describe('Template', () => {
     beforeEach(async () => {
       await mountWrapper(true, 5, {
@@ -239,7 +243,7 @@ describe('TeamMembersTable.vue', () => {
         await wrapper.setData({ team: { teamMembers: [{ id: '1', isPrimaryContact: true }] } });
         wrapper.vm.addMembers = jest.fn();
         await wrapper.setProps({ primaryContact: mockCombinedUserAccount({ id: 'new-id' }) });
-        expect(wrapper.vm.addMembers).toHaveBeenCalledWith([mockCombinedUserAccount({ id: 'new-id' })]);
+        expect(wrapper.vm.addMembers).toHaveBeenCalledWith([{ id: 'new-id' }], false);
       });
     });
 
@@ -460,10 +464,16 @@ describe('TeamMembersTable.vue', () => {
         expect(wrapper.vm.teamMembers).toEqual([mockTeamMembers[0], mockTeamMembers[1]]);
       });
 
-      it('calls addTeamMembers actions with correct parameters (selectedUsers)', async () => {
+      it('calls addTeamMembers actions with correct parameters (selectedUsers) if no parameter passed (save by default)', async () => {
         const newMembers = [mockCombinedUserAccount().entity];
         await wrapper.vm.addMembers(newMembers);
         expect(teamStore.addTeamMembers).toHaveBeenCalledWith({ teamId: 'abc', teamMembers: [{ ...newMembers[0], isPrimaryContact: false }] });
+      });
+
+      it('doesnt call addTeamMembers actions if not saving', async () => {
+        const newMembers = [mockCombinedUserAccount().entity];
+        await wrapper.vm.addMembers(newMembers, false);
+        expect(teamStore.addTeamMembers).not.toHaveBeenCalled();
       });
     });
 

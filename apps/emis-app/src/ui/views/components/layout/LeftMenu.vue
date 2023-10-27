@@ -173,7 +173,6 @@ export default Vue.extend({
           test: 'reporting',
           exact: false,
           level: UserRoles.level6,
-          feature: FeatureKeys.InSystemQuerying,
         },
         {
           to: routes.systemManagement.home.name,
