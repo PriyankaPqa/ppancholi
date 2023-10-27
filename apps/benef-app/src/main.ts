@@ -11,7 +11,6 @@ import '@libs/shared-lib/plugins/vue-toasted';
 import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import VueProgrammaticInvisibleGoogleRecaptcha from 'vue-programmatic-invisible-google-recaptcha';
 import { Survey } from 'survey-vue';
 import { createPinia, PiniaVuePlugin } from 'pinia';
 import resetStore from '@libs/stores-lib/store-reset';
@@ -25,7 +24,6 @@ const pinia = createPinia();
 pinia.use(resetStore);
 
 Vue.component('Survey', Survey);
-Vue.component('VueProgrammaticInvisibleGoogleRecaptcha', VueProgrammaticInvisibleGoogleRecaptcha);
 
 prepareServices();
 
