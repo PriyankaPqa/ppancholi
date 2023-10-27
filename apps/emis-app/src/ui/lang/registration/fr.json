@@ -691,7 +691,7 @@
     "registration.start_assessment.label": "Commencer le questionnaire",
     "registration.submit_registration.label": "Soumettre l'inscription",
     "registration.tier2.NoBasicId": "Je n'ai aucun de ces documents",
-    "registration.tier2.Waiting": "Veuillez patienter pendant que nous traitons l'information",
+    "registration.tier2.Waiting": "Merci de patienter pendant que nous traitons les renseignements. Ce processus pourrait durer une minute.\n\n\nPrière de ne pas quitter cette page.",
     "registration.tier2.help1": "Utilisez une pièce d'identité avec photo provenant du gouvernement. Un permis de conduire est aussi une pièce d'identité valide.",
     "registration.tier2.help2": "Une image claire incluant votre nom, date de naissance, photo et signature.",
     "registration.tier2.help3": "Fichiers acceptés: .jpeg et .png d'une taille maximale de 10Mb.",
