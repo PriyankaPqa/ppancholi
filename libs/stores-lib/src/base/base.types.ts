@@ -22,6 +22,7 @@ export interface BaseActions <T extends IEntity, IdParams> {
   fetch: (idParams: IdParams, useGlobalHandler?: boolean) => Promise<T>
   fetchAll: (parentId?: Omit<IdParams, 'id'>) => Promise<T[]>
   fetchAllIncludingInactive: (parentId?: Omit<IdParams, 'id'>) => Promise<T[]>
+  fetchByIds: (ids: uuid[], fetchMissingOnly: boolean, batchSize?: number) => Promise<T[]>,
   addNewlyCreatedId: (item: T) => void,
   setItemFromOutsideNotification: () => void,
 

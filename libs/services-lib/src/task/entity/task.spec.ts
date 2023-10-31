@@ -53,6 +53,13 @@ describe('>>> Tasks Service', () => {
     });
   });
 
+  describe('getByIds', () => {
+    it('should call the proper endpoint', async () => {
+      await service.getByIds(['1', '2', '3']);
+      expect(http.get).toHaveBeenCalledWith('case-file/tasks?ids=1&ids=2&ids=3');
+    });
+  });
+
   describe('parseTaskPayload', () => {
     it('should parse data properly', () => {
       const task = mockTeamTaskEntity();

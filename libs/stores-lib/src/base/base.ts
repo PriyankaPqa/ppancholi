@@ -1,4 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import _chunk from 'lodash/chunk';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { IEntity, Status } from '@libs/entities-lib/base';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
@@ -112,6 +113,36 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     }
   }
 
+  async function fetchByIds(ids: uuid[], fetchMissingOnly: boolean = false, batchSize = 40): Promise<T[]> {
+    // default batch size should keep the query string under 2,083 characters (max length for Edge)
+
+    let idsToGet = ids;
+    try {
+      if (fetchMissingOnly) {
+        const stored = getByIds(ids) as IEntity[];
+        idsToGet = ids.filter((id) => !stored.find((s) => s.id === id));
+      }
+
+      // only fetched values are returned
+      if (idsToGet.length === 0) {
+        return <T[]>[];
+      }
+
+      const idBatches = _chunk(idsToGet, batchSize);
+      let res = [] as T[];
+      await Promise.all(idBatches.map(async (batch) => {
+        const batchRes = await service.getByIds(batch);
+        res = [...res, ...batchRes];
+      }));
+
+      setAll(res);
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, { }, 'module.base', 'fetchByIds');
+      return null;
+    }
+  }
+
   function addNewlyCreatedId(item: T) {
     if (!newlyCreatedIds.value.find((n) => n.id === item.id)) {
       newlyCreatedIds.value.unshift({ id: item.id, createdOn: (new Date()).getTime() });
@@ -145,6 +176,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     fetch,
     fetchAll,
     fetchAllIncludingInactive,
+    fetchByIds,
     addNewlyCreatedId,
     setItemFromOutsideNotification,
   } as BaseStoreComponents<T, IdParams>;

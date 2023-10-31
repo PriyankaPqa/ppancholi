@@ -15,6 +15,7 @@ export function getMockBaseStoreComponents(items: Array<unknown>) {
     fetch: jest.fn(() => items[0]),
     fetchAll: jest.fn(() => items),
     fetchAllIncludingInactive: jest.fn(() => items),
+    fetchByIds: jest.fn(() => items),
     addNewlyCreatedId: jest.fn(),
     setItemFromOutsideNotification: jest.fn(),
   };

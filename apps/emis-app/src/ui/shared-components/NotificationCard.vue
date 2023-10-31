@@ -43,8 +43,6 @@ export default Vue.extend({
   data() {
     return {
       helpers,
-      targetEntity: null as IEntity,
-      targetEntityLoaded: false,
     };
   },
   computed: {
@@ -57,33 +55,20 @@ export default Vue.extend({
     displayLink(): boolean {
       return this.notification.categoryType === NotificationCategoryType.Tasks && this.targetEntityLoaded;
     },
-  },
-  async created() {
-    try {
-      await this.fetchLinkedEntity();
-    } catch {
-      // intentionally not handled
-      // -> in case of authorization violation or other error, this will result
-      //    in no link or extended information being displayed
-    }
+    targetEntity(): IEntity {
+      if (this.notification.categoryType !== NotificationCategoryType.Tasks) {
+        return null;
+      }
+
+      return useTaskStore().getById(this.notification.targetEntityId);
+    },
+    targetEntityLoaded(): boolean {
+      return this.targetEntity && JSON.stringify(this.targetEntity) !== '{}';
+    },
   },
   methods: {
     toggleIsRead() {
       this.$emit('toggleIsRead', this.notification);
-    },
-    async fetchLinkedEntity() {
-      // only to be done for Tasks for now
-      if (this.notification.categoryType !== NotificationCategoryType.Tasks || !this.notification.targetEntityId || !this.notification.targetEntityParentId) {
-        return;
-      }
-
-      this.targetEntity = useTaskStore().getById(this.notification.targetEntityId);
-      if (!this.targetEntity || JSON.stringify(this.targetEntity) === '{}') {
-        this.targetEntity = await useTaskStore().fetch({ caseFileId: this.notification.targetEntityParentId, id: this.notification.targetEntityId }, false);
-      }
-      if (this.targetEntity) {
-        this.targetEntityLoaded = true;
-      }
     },
     async subjectClick() {
       this.notification.isRead = true;
