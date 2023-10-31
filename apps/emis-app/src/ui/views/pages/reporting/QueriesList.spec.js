@@ -343,7 +343,7 @@ describe('QueriesList.vue', () => {
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.reporting.newQuery.name,
           params: {
-            theme: 1,
+            theme: '1',
           },
         });
       });

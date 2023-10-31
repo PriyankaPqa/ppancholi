@@ -63,7 +63,6 @@
           :show-row-lines="true"
           :show-borders="true"
           :filter-builder="filterBuilder"
-          :filter-value="filterValue"
           :allow-column-reordering="true"
           :allow-column-resizing="true"
           :columns="columns"
@@ -221,7 +220,7 @@ export default Vue.extend({
       default: null,
     },
     theme: {
-      type: Number,
+      type: String,
       default: null,
     },
     queryTypeName: {
@@ -256,7 +255,6 @@ export default Vue.extend({
       filterBuilder: {
         allowHierarchicalFields: false,
       },
-      filterValue: [],
       columns: [] as Column<any, any>[],
       grid: null as DxDataGrid,
       exportMode: 'excel',
@@ -404,7 +402,11 @@ export default Vue.extend({
 
       // used when creating standard queries - just uncomment this, make your standard query and hit save.
       // then put the state from the console in standard_queries.ts.   ta-dah!
-      // console.log('state: ' + JSON.stringify(JSON.stringify(this.grid?.instance?.state())));
+      // const state = this.grid?.instance?.state();
+      // if (Array.isArray(state?.columns)) {
+      //   state.columns = sortBy(state.columns, 'dataField');
+      // }
+      // console.log('state: ' + JSON.stringify(JSON.stringify(state)));
 
       if (this.shareAfterSave) {
         this.grid?.instance?.hideColumnChooser();

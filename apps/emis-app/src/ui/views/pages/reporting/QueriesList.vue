@@ -308,7 +308,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       this.$router.push({
         name: routes.reporting.newQuery.name,
         params: {
-          theme: this.selectedTheme,
+          theme: this.selectedTheme.toString(),
         },
       });
     },

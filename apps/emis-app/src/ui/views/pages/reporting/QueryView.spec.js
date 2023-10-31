@@ -51,7 +51,7 @@ jest.mock('./standard_queries', () => ({ AllReports }));
 describe('QueryView.vue', () => {
   let wrapper;
 
-  const doMount = async (queryId = null, theme = 1, level = 5, otherComputed = {}) => {
+  const doMount = async (queryId = null, theme = '1', level = 5, otherComputed = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
