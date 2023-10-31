@@ -580,4 +580,18 @@ describe('CaseFileDetails.vue', () => {
       });
     });
   });
+
+  describe('watcher', () => {
+    describe('id', () => {
+      it('should call fetchData when changed', async () => {
+        await doMount();
+        wrapper.vm.fetchData = jest.fn();
+        expect(wrapper.vm.fetchData).not.toHaveBeenCalled();
+        await wrapper.setProps({
+          id: 'new-id-1',
+        });
+        expect(wrapper.vm.fetchData).toHaveBeenCalled();
+      });
+    });
+  });
 });

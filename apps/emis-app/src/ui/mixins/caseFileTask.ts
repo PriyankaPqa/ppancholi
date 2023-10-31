@@ -58,6 +58,16 @@ export default Vue.extend({
     },
   },
 
+  watch: {
+    'task.userWorkingOn': {
+      handler(newValue) {
+        if (!newValue) {
+          this.isWorkingOn = false;
+        }
+      },
+    },
+  },
+
   methods: {
     async setWorkingOn(isWorkingOn = true) {
       const userId = useUserStore().getUserId();

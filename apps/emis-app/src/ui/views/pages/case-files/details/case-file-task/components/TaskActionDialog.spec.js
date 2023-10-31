@@ -131,7 +131,7 @@ describe('TaskActionDialog.vue', () => {
         expect(wrapper.vm.showAssignTeamSelect).toEqual(false);
       });
 
-      it('should return false taskStatus is Completed', async () => {
+      it('should return true taskStatus is Completed', async () => {
         await doMount();
         await wrapper.setProps({
           taskType: 'team',
@@ -140,7 +140,7 @@ describe('TaskActionDialog.vue', () => {
         await wrapper.setData({
           actionTaken: TaskActionTaken.Reopen,
         });
-        expect(wrapper.vm.showAssignTeamSelect).toEqual(false);
+        expect(wrapper.vm.showAssignTeamSelect).toEqual(true);
       });
 
       it('should return false actionTaken is not actions assign to a new team', async () => {
@@ -178,7 +178,11 @@ describe('TaskActionDialog.vue', () => {
           rationale: 'test-string',
         });
         await wrapper.vm.onSubmit();
-        expect(taskStore.taskAction).toHaveBeenCalledWith('mock-team-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Assign, rationale: 'test-string' });
+        expect(taskStore.taskAction).toHaveBeenCalledWith(
+          'mock-team-task-id-1',
+          'mock-case-file-id-1',
+          { actionType: TaskActionTaken.Assign, rationale: 'test-string', teamId: '' },
+        );
       });
 
       it('should emit update:show event when received response from server', async () => {
@@ -213,21 +217,21 @@ describe('TaskActionDialog.vue', () => {
             return {
               actionTaken: TaskActionTaken.Assign,
               rationale: 'mock-string',
-              selectedTeam: mockTeamEntity(),
+              assignedTeamId: mockTeamEntity(),
             };
           },
         });
         wrapper.vm.$refs.form.reset = jest.fn();
         wrapper.vm.resetForm();
         expect(wrapper.vm.rationale).toEqual('');
-        expect(wrapper.vm.selectedTeam).toEqual(null);
+        expect(wrapper.vm.assignedTeamId).toEqual('');
       });
     });
   });
 
   describe('lifecycle', () => {
     describe('created', () => {
-      it('should call fetchTeamsOfEvent if taskType is team, taskStatus is InProgress and has props eventId', async () => {
+      it('should call fetchTeamsOfEvent if taskType is team', async () => {
         await wrapper.setProps({
           task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
           eventId: 'mock-id-123',
@@ -240,36 +244,10 @@ describe('TaskActionDialog.vue', () => {
         expect(wrapper.vm.fetchTeamsOfEvent).toHaveBeenCalled();
       });
 
-      it('should not call fetchTeamsOfEvent if taskType is personal, taskStatus is InProgress and has props eventId', async () => {
+      it('should not call fetchTeamsOfEvent if taskType is personal', async () => {
         await wrapper.setProps({
           task: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
           eventId: 'mock-id-123',
-        });
-        wrapper.vm.fetchTeamsOfEvent = jest.fn();
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-        expect(wrapper.vm.fetchTeamsOfEvent).not.toHaveBeenCalled();
-      });
-
-      it('should not call fetchTeamsOfEvent if taskType is team, taskStatus is Completed and has props eventId', async () => {
-        await wrapper.setProps({
-          task: mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
-          eventId: 'mock-id-123',
-        });
-        wrapper.vm.fetchTeamsOfEvent = jest.fn();
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-        expect(wrapper.vm.fetchTeamsOfEvent).not.toHaveBeenCalled();
-      });
-
-      it('should not call fetchTeamsOfEvent if taskType is team, taskStatus is InProgress and has no props eventId', async () => {
-        await wrapper.setProps({
-          task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
-          eventId: '',
         });
         wrapper.vm.fetchTeamsOfEvent = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {

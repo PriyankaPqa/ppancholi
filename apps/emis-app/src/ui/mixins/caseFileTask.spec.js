@@ -183,4 +183,38 @@ describe('caseFileTask', () => {
       });
     });
   });
+
+  describe('watch', () => {
+    describe('task.userWorkingOn', () => {
+      it('should set isWorkingOn to false when task is assigned to the same team and userWorkingOn is falsy', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-id-1',
+            taskId: 'mock-case-file-id-1',
+          },
+          data() {
+            return {
+              mockTask: mockTeamTaskEntity({ assignedTeamId: 'mock-team-1', userWorkingOn: 'mock-user-id-1' }),
+              isWorkingOn: true,
+            };
+          },
+          computed: {
+            task: {
+              get() {
+                return this.mockTask;
+              },
+              set(value) {
+                this.mockTask = value;
+              },
+            },
+          },
+        });
+        wrapper.vm.task = mockTeamTaskEntity({ assignedTeamId: 'mock-team-1', userWorkingOn: '' });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.isWorkingOn).toEqual(false);
+      });
+    });
+  });
 });

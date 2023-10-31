@@ -1,5 +1,5 @@
 import { TaskService } from '@/task/entity/task';
-import { mockTeamTaskEntity } from '@libs/entities-lib/task';
+import { ActionStatus, mockTeamTaskEntity } from '@libs/entities-lib/task';
 import { mockHttp } from '../../http-client';
 
 const http = mockHttp();
@@ -28,6 +28,14 @@ describe('>>> Tasks Service', () => {
   test('completeTask is linked to the correct URL', async () => {
     await service.completeTask('mock-task-id-123', 'mock-case-file-id-1', 'mock-rationale-123');
     expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/complete', { rationale: 'mock-rationale-123' });
+  });
+
+  test('setTaskActionStatus is linked to the correct URL', async () => {
+    await service.setTaskActionStatus('mock-task-id-123', 'mock-case-file-id-1', { actionStatus: ActionStatus.Assign, rationale: 'mock-rationale-123', teamId: 'mock-team-id-1' });
+    expect(http.patch).toHaveBeenCalledWith(
+      'www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/set-action-status',
+      { actionStatus: ActionStatus.Assign, rationale: 'mock-rationale-123', teamId: 'mock-team-id-1' },
+    );
   });
 
   describe('search', () => {

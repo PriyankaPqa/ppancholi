@@ -18,6 +18,12 @@ export enum TaskActionTaken {
   Reopen = 3,
 }
 
+export enum ActionStatus {
+  Assign = 1,
+  Completed = 2,
+  Reopen = 3,
+}
+
 export interface ITaskEntityData extends IEntity {
   name: IListOption;
   caseFileId: string;

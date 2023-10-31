@@ -288,16 +288,17 @@ export default mixins(caseFileDetail).extend({
     },
   },
 
+  watch: {
+    async id(newValue, oldValue) {
+      if (oldValue === '' || newValue === oldValue) {
+        return;
+      }
+      await this.fetchData();
+    },
+  },
+
   async created() {
-    this.loading = true;
-    try {
-      await useCaseFileStore().fetch(this.caseFileId);
-      await useCaseFileMetadataStore().fetch(this.caseFileId, false);
-      await useEventStore().fetch(this.caseFile.eventId);
-      await this.getHouseholdInfo();
-    } finally {
-      this.loading = false;
-    }
+    await this.fetchData();
   },
 
   methods: {
@@ -322,6 +323,18 @@ export default mixins(caseFileDetail).extend({
 
     openVerifyIdentity() {
       this.showVerifyIdentityDialog = true;
+    },
+
+    async fetchData() {
+      this.loading = true;
+      try {
+        await useCaseFileStore().fetch(this.caseFileId);
+        await useCaseFileMetadataStore().fetch(this.caseFileId, false);
+        await useEventStore().fetch(this.caseFile.eventId);
+        await this.getHouseholdInfo();
+      } finally {
+        this.loading = false;
+      }
     },
   },
 });

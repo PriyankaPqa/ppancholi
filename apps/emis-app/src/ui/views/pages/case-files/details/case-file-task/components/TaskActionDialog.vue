@@ -11,6 +11,7 @@
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"
       :min-height="showAssignTeamSelect ? 500 : 360"
+      :loading="loading"
       data-test="task-action-dialog"
       @cancel="$emit('update:show', false);"
       @close="$emit('update:show', false);"
@@ -43,20 +44,14 @@
         </div>
 
         <div v-if="showAssignTeamSelect" class=" py-0">
-          <v-autocomplete-with-validation
-            v-model="selectedTeam"
-            :search-input.sync="search"
+          <v-select-with-validation
+            v-model="assignedTeamId"
             :items="teamsOfEvent"
             :item-text="(item) => item.name"
+            :item-value="(item) => item.id"
             :label="`${$t('task.action.select_team_to_assign')} *`"
             :rules="rules.teamAssignTo"
-            :placeholder="$t('common.inputs.start_typing_to_search')"
-            return-object
-            async-mode
-            clearable
-            :loading="loading"
-            data-test="task-action-dialog-team-assign-to"
-            @update:search-input="debounceSearch($event)" />
+            data-test="task-action-dialog-team-assign-to" />
         </div>
 
         <div class="pa-0">
@@ -71,13 +66,13 @@
   </validation-observer>
 </template>
 <script lang="ts">
+
 import Vue from 'vue';
-import { RcDialog, VAutocompleteWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
+import { RcDialog, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { ITaskEntity, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ValidationProvider } from 'vee-validate';
 import { VForm } from '@libs/shared-lib/types';
-import _debounce from 'lodash/debounce';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { IdParams, ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
@@ -97,7 +92,7 @@ export default Vue.extend({
     RcDialog,
     VTextAreaWithValidation,
     ValidationProvider,
-    VAutocompleteWithValidation,
+    VSelectWithValidation,
   },
 
   props: {
@@ -121,13 +116,11 @@ export default Vue.extend({
     return {
       rationale: '',
       actionTaken: null as TaskActionTaken,
-      assignTo: '',
       combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
       teamsOfEvent: [] as ITeamEntity[],
-      search: '',
-      selectedTeam: null as ITeamEntity,
-      loading: false,
+      assignedTeamId: '',
       submitLoading: false,
+      loading: false,
       TaskType,
     };
   },
@@ -188,14 +181,19 @@ export default Vue.extend({
     },
 
     showAssignTeamSelect(): boolean {
-      const actionAssignTeam = [TaskActionTaken.Assign, TaskActionTaken.ActionCompleted];
-      return this.task.taskType === TaskType.Team && this.task.taskStatus === TaskStatus.InProgress && actionAssignTeam.indexOf(this.actionTaken) >= 0;
+      const actionAssignTeam = [TaskActionTaken.Assign, TaskActionTaken.ActionCompleted, TaskActionTaken.Reopen];
+      return this.task.taskType === TaskType.Team && actionAssignTeam.indexOf(this.actionTaken) >= 0;
     },
   },
 
   async created() {
-    if (this.task.taskType === TaskType.Team && this.task.taskStatus === TaskStatus.InProgress && this.eventId) {
-      await this.fetchTeamsOfEvent();
+    if (this.task.taskType === TaskType.Team) {
+      try {
+        this.loading = true;
+        await this.fetchTeamsOfEvent();
+      } finally {
+        this.loading = false;
+      }
     }
   },
 
@@ -208,7 +206,7 @@ export default Vue.extend({
       }
       this.submitLoading = true;
       try {
-        await useTaskStore().taskAction(this.task.id, this.task.caseFileId, { actionType: this.actionTaken, rationale: this.rationale });
+        await useTaskStore().taskAction(this.task.id, this.task.caseFileId, { actionType: this.actionTaken, rationale: this.rationale, teamId: this.assignedTeamId });
       } finally {
         this.$emit('update:show', false);
       }
@@ -216,21 +214,15 @@ export default Vue.extend({
     },
 
     async fetchTeamsOfEvent() {
-      this.loading = true;
       const res = await this.$services.teams.getTeamsByEvent(this.eventId);
       if (res) {
         this.teamsOfEvent = res;
       }
-      this.loading = false;
     },
-
-    debounceSearch: _debounce(function func(this: any) {
-      this.fetchTeamsOfEvent();
-    }, 500),
 
     resetForm() {
       this.rationale = '';
-      this.selectedTeam = null;
+      this.assignedTeamId = '';
       (this.$refs.form as VForm).reset();
     },
   },

@@ -295,14 +295,15 @@ describe('CreateEditTask.vue', () => {
       });
     });
 
-    describe('fetchEscalationTeamAndSetTeamId', () => {
-      it('should call teams service getTeamsByEvent and assign team id and name properly', async () => {
+    describe('fetchAssignedTeamAndSetTeamId', () => {
+      it('should call teams service getTeamsByEvent and assign team id and name properly when it is not edit mode', async () => {
         await doMount(false, {
           propsData: {
             id: 'mock-case-file-id-1',
             taskType: 'team',
           },
           computed: {
+            isEditMode: () => false,
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
             taskNames: () => mockOptionItems(),
@@ -312,10 +313,33 @@ describe('CreateEditTask.vue', () => {
           mockTeamEntity({ id: 'mock-id-1', name: 'mock-team-name-1', isEscalation: true }),
           mockTeamEntity({ id: 'mock-id-2', name: 'mock-team-name-2', isEscalation: false }),
         ]);
-        await wrapper.vm.fetchEscalationTeamAndSetTeamId();
+        await wrapper.vm.fetchAssignedTeamAndSetTeamId();
         expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id');
         expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-id-1');
         expect(wrapper.vm.assignedTeamName).toEqual('mock-team-name-1');
+      });
+
+      it('should call teams service getTeamsByEvent and assign team id and name properly when it is edit mode', async () => {
+        await doMount(false, {
+          propsData: {
+            id: 'mock-case-file-id-1',
+            taskType: 'team',
+          },
+          computed: {
+            isEditMode: () => true,
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-id-2' }),
+            caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
+            event: () => mockEventEntity({ id: 'mock-event-id' }),
+            taskNames: () => mockOptionItems(),
+          },
+        });
+        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [
+          mockTeamEntity({ id: 'mock-team-id-2', name: 'mock-team-name-2', isEscalation: false }),
+        ]);
+        await wrapper.vm.fetchAssignedTeamAndSetTeamId();
+        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id', 'mock-team-id-2');
+        expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-team-id-2');
+        expect(wrapper.vm.assignedTeamName).toEqual('mock-team-name-2');
       });
     });
 
@@ -586,12 +610,12 @@ describe('CreateEditTask.vue', () => {
             taskNames: () => mockOptionItems(),
           },
         });
-        wrapper.vm.fetchEscalationTeamAndSetTeamId = jest.fn();
+        wrapper.vm.fetchAssignedTeamAndSetTeamId = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.fetchEscalationTeamAndSetTeamId).toHaveBeenCalled();
+        expect(wrapper.vm.fetchAssignedTeamAndSetTeamId).toHaveBeenCalled();
       });
 
       it('should call loadTask and setOriginalData when is edit mode', async () => {
@@ -683,6 +707,39 @@ describe('CreateEditTask.vue', () => {
         wrapper.vm.task = mockTeamTaskEntity({ taskStatus: TaskStatus.Completed });
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.localTask.taskStatus).toEqual(TaskStatus.Completed);
+      });
+    });
+
+    describe('task.assignedTeamId', () => {
+      it('should call fetchAssignedTeamAndSetTeamId and set isWorkingOn to false when changed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+          },
+          data() {
+            return {
+              mockTask: mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+              isWorkingOn: true,
+            };
+          },
+          computed: {
+            task: {
+              get() {
+                return this.mockTask;
+              },
+              set(value) {
+                this.mockTask = value;
+              },
+            },
+          },
+        });
+        wrapper.vm.task = mockTeamTaskEntity({ assignedTeamId: 'mock-team-2' });
+        wrapper.vm.fetchAssignedTeamAndSetTeamId = jest.fn();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.fetchAssignedTeamAndSetTeamId).toHaveBeenCalled();
+        expect(wrapper.vm.isWorkingOn).toEqual(false);
       });
     });
   });

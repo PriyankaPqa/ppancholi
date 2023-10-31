@@ -6,6 +6,7 @@
           v-model="localTeamTaskForm.isUrgent"
           :label="$t('task.create_edit.urgent')"
           class="ma-0 mt-1"
+          :disabled="formDisabled"
           data-test="is-urgent-check-box" />
 
         <template v-if="isEditMode">
@@ -29,6 +30,7 @@
             :item-value="(item) => item ? item.id : null"
             :rules="rules.teamTaskName"
             :label="$t('task.create_edit.task_name') + ' *'"
+            :disabled="formDisabled"
             data-test="task-name-team-task"
             @change="setTaskNameIdAndResetForm($event)" />
           <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="ml-1 mb-4 option-list-description" data-test="task-name-description">
@@ -50,7 +52,7 @@
             :item-text="(item) => item ? $m(item.name) : ''"
             :item-value="(item) => item ? item.id : ''"
             :rules="rules.teamTaskCategory"
-            :disabled="shouldDisableCategorySelect"
+            :disabled="shouldDisableCategorySelect || formDisabled"
             :label="$t('task.create_edit.task_category') + ' *'"
             data-test="task-category"
             @change="setCategoryIdAndResetSpecifiedOther($event)" />
@@ -72,6 +74,7 @@
             :label="`${$t('common.pleaseSpecify')} *`"
             rows="1"
             :rules="rules.specifyOtherCategory"
+            :disabled="formDisabled"
             data-test="task-specified-other" />
         </v-col>
       </v-row>
@@ -83,6 +86,7 @@
             :rules="rules.description"
             :label="$t('task.create_edit.task_description') + ' *'"
             rows="4"
+            :disabled="formDisabled"
             data-test="task-description" />
         </v-col>
       </v-row>
@@ -93,7 +97,7 @@
 <script lang="ts">
 import caseFileTask from '@/ui/mixins/caseFileTask';
 import mixins from 'vue-typed-mixins';
-import { ITaskEntityData } from '@libs/entities-lib/task';
+import { ITaskEntityData, TaskStatus } from '@libs/entities-lib/task';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
@@ -163,6 +167,10 @@ export default mixins(caseFileTask).extend({
           required: true,
         },
       };
+    },
+
+    formDisabled(): boolean {
+      return this.taskData.taskStatus === TaskStatus.Completed;
     },
   },
 

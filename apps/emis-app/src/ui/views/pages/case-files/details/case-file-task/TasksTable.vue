@@ -115,6 +115,7 @@
       </template>
       <template #[`item.${customColumns.action}`]="{ item }">
         <v-btn
+          v-if="item.entity.taskType === TaskType.Team || item.entity.taskStatus === TaskStatus.InProgress"
           color="primary"
           small
           :data-test="`task-table-action-btn-${item.entity.id}`"
@@ -522,7 +523,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         return taskEntity.createdBy === userId;
       }
       return false;
-    },
+      },
 
     async getTeamsByEvent() {
       const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);

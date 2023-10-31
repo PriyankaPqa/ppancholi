@@ -55,6 +55,7 @@
             </v-col>
             <div>
               <v-btn
+                v-if="task.taskType === TaskType.Team || task.taskStatus === TaskStatus.InProgress"
                 color="primary"
                 small
                 data-test="task-details-action-button"
@@ -268,6 +269,15 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 
     displayWorkingOnIt(): boolean {
       return this.isTeamTask && this.task.taskStatus === TaskStatus.InProgress;
+    },
+  },
+
+  watch: {
+    'task.assignedTeamId': {
+      async handler() {
+        await this.getAssignedTeam();
+        this.isWorkingOn = false;
+      },
     },
   },
 

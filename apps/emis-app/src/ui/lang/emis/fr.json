@@ -2700,7 +2700,7 @@
     "task.task_action_dialog.ActionCompleted.description": "Mon action terminée, confier la tâche à une autre équipe",
     "task.task_action_dialog.Assign": "Assigner",
     "task.task_action_dialog.Assign.description": "Assigner une tâche à une autre équipe",
-    "task.task_action_dialog.Reopen": "Réouvrir",
+    "task.task_action_dialog.Reopen": "Rouvrir la tâche",
     "task.task_action_dialog.TaskCompleted": "Tâche terminée",
     "task.task_action_dialog.TaskCompleted.description": "Marquer comme terminé, aucune autre action n'est requise",
     "task.task_action_dialog.personal_task.TaskCompleted": "Terminé",

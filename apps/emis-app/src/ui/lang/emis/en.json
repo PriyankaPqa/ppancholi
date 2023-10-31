@@ -2700,7 +2700,7 @@
     "task.task_action_dialog.ActionCompleted.description": "My action completed, assign task to a different team",
     "task.task_action_dialog.Assign": "Assign",
     "task.task_action_dialog.Assign.description": "Assign task to a different team",
-    "task.task_action_dialog.Reopen": "Re-open",
+    "task.task_action_dialog.Reopen": "Re-open task",
     "task.task_action_dialog.TaskCompleted": "Task completed",
     "task.task_action_dialog.TaskCompleted.description": "Mark as completed, no further action required",
     "task.task_action_dialog.personal_task.TaskCompleted": "Completed",

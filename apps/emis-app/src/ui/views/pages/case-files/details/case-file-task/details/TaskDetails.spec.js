@@ -879,4 +879,40 @@ describe('TaskDetails.vue', () => {
       });
     });
   });
+
+  describe('watcher', () => {
+    describe('task.assignedTeamId', () => {
+      it('should call getAssignedTeam and set isWorkingOn to false when changed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-id-1',
+            taskId: 'mock-case-file-id-1',
+          },
+          data() {
+            return {
+              mockTask: mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+              isWorkingOn: true,
+            };
+          },
+          computed: {
+            task: {
+              get() {
+                return this.mockTask;
+              },
+              set(value) {
+                this.mockTask = value;
+              },
+            },
+          },
+        });
+        wrapper.vm.task = mockTeamTaskEntity({ assignedTeamId: 'mock-team-2' });
+        wrapper.vm.getAssignedTeam = jest.fn();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.getAssignedTeam).toHaveBeenCalled();
+        expect(wrapper.vm.isWorkingOn).toEqual(false);
+      });
+    });
+  });
 });

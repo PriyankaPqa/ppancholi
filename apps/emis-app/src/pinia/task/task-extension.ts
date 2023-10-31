@@ -1,5 +1,5 @@
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
-import { IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken } from '@libs/entities-lib/task';
+import { ActionStatus, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken } from '@libs/entities-lib/task';
 import { TaskService } from '@libs/services-lib/task/entity/task';
 import { ITaskServiceMock } from '@libs/services-lib/task/entity';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
@@ -70,16 +70,17 @@ export function getExtensionComponents(
     }
   }
 
-  async function taskAction(id: uuid, caseFileId: uuid, params: { actionType: TaskActionTaken, rationale: string }) {
-    // TODO the params and actionServices will be updated in the following tasks
-
-    const { actionType, rationale } = params;
-    const actionServices : { [index: number ]: ITaskEntityData | Promise<ITaskEntityData> } = {
-      [TaskActionTaken.TaskCompleted]: entityService.completeTask(id, caseFileId, rationale),
+  async function taskAction(id: uuid, caseFileId: uuid, params: { actionType: TaskActionTaken, rationale: string, teamId?: uuid }) {
+    const { actionType, rationale, teamId } = params;
+    const actionServices : { [index: number ]: () => ITaskEntityData | Promise<ITaskEntityData> } = {
+      [TaskActionTaken.Assign]: () => entityService.setTaskActionStatus(id, caseFileId, { rationale, actionStatus: ActionStatus.Assign, teamId }),
+      [TaskActionTaken.ActionCompleted]: () => entityService.setTaskActionStatus(id, caseFileId, { rationale, actionStatus: ActionStatus.Completed, teamId }),
+      [TaskActionTaken.TaskCompleted]: () => entityService.completeTask(id, caseFileId, rationale),
+      [TaskActionTaken.Reopen]: () => entityService.setTaskActionStatus(id, caseFileId, { rationale, actionStatus: ActionStatus.Reopen, teamId }),
     };
 
     try {
-      const res = await actionServices[actionType];
+      const res = await actionServices[actionType]();
       if (res) {
         baseComponents.set(res);
       }

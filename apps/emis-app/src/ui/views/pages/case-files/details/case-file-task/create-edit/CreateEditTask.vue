@@ -73,6 +73,7 @@
                     </div>
                     <div v-if="isEditMode" class="pl-0 py-2">
                       <v-btn
+                        v-if="task.taskStatus === TaskStatus.InProgress"
                         color="primary"
                         small
                         @click="showTaskActionDialog = true">
@@ -190,6 +191,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       showTaskActionDialog: false,
       assignedTeamName: '',
       TaskType,
+      TaskStatus,
       localTask: new TaskEntity(),
       originalForm: {
         name: null as IListOption,
@@ -249,6 +251,13 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         this.localTask.taskStatus = newValue;
       },
     },
+
+    'task.assignedTeamId': {
+      async handler() {
+        await this.fetchAssignedTeamAndSetTeamId();
+        this.isWorkingOn = false;
+      },
+    },
   },
 
   async created() {
@@ -260,7 +269,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       this.prepareCreateTask();
     }
     if (this.taskType === 'team') {
-      await this.fetchEscalationTeamAndSetTeamId();
+      await this.fetchAssignedTeamAndSetTeamId();
     }
     this.loading = false;
   },
@@ -349,12 +358,21 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       this.localTask = task;
     },
 
-    async fetchEscalationTeamAndSetTeamId() {
-      const teamsOfEvent = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
-      if (teamsOfEvent) {
-        const escalationTeam = teamsOfEvent.filter((t) => t.isEscalation)[0];
-        this.assignedTeamName = escalationTeam?.name;
-        this.localTask.assignedTeamId = escalationTeam?.id;
+    async fetchAssignedTeamAndSetTeamId() {
+      if (!this.isEditMode) {
+        const teamsOfEvent = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
+        if (teamsOfEvent) {
+          const escalationTeam = teamsOfEvent.filter((t) => t.isEscalation)[0];
+          this.assignedTeamName = escalationTeam?.name;
+          this.localTask.assignedTeamId = escalationTeam?.id;
+        }
+      } else {
+        const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, this.task.assignedTeamId);
+        if (res.length > 0) {
+          const assignedTeam = res[0];
+          this.assignedTeamName = assignedTeam.name;
+          this.localTask.assignedTeamId = this.task.assignedTeamId;
+        }
       }
     },
 
