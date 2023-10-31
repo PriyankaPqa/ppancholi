@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { CaseFileActivityType, ICaseFileActivity } from '@libs/entities-lib/case-file';
+import { ICaseFileActivity } from '@libs/entities-lib/case-file';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
 import { system } from '@/constants/system';
 import { format } from 'date-fns';
@@ -140,11 +140,7 @@ export default Vue.extend({
     },
 
     displaySystemAdminOnly() : boolean {
-      if (!this.isCaseNote) {
-        const cfActivity = this.item as ICaseFileActivity;
-        return cfActivity.activityType === CaseFileActivityType.FinancialAssistancePayment && cfActivity.triggeredByMassAction;
-      }
-      return false;
+        return (this.item as ICaseFileActivity).triggeredByMassAction;
     },
   },
 });

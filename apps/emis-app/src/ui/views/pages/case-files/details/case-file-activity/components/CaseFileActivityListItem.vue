@@ -295,9 +295,10 @@ export default Vue.extend({
     },
 
     makeContentForCaseFileStatusArchived(): { title: TranslateResult, body: TranslateResult } {
+      const rationaleString = this.item.details?.rationale as string;
       return {
         title: this.$t('caseFileActivity.activityList.title.CaseFileStatusArchived'),
-        body: null,
+        body: rationaleString ? `${this.$t('caseFileActivity.activityList.status.rationale')}: ${rationaleString}` : '',
       };
     },
 

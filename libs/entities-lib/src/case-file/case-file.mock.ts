@@ -285,7 +285,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
       activityType: CaseFileActivityType.CaseFileStatusArchived,
-      details: null,
+      details: { rationale: 'test' },
     },
     {
       id: 'mock-activity-id-8',

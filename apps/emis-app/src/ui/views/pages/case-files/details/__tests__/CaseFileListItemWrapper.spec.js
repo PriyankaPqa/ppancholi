@@ -166,7 +166,7 @@ describe('CaseFileListItemWrapper.vue', () => {
     });
 
     describe('displaySystemAdminOnly', () => {
-      it('should be true when isCaseNote false, activity type is FinancialAssistancePayment and activity is triggered by mass action', () => {
+      it('should be true when activity is triggered by mass action', () => {
         wrapper = mount(Component, {
           localVue,
           propsData: {
@@ -174,26 +174,12 @@ describe('CaseFileListItemWrapper.vue', () => {
               ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
               triggeredByMassAction: true,
             },
-            isCaseNote: false,
           },
         });
         expect(wrapper.vm.displaySystemAdminOnly).toEqual(true);
       });
 
-      it('should be false when isCaseNote false, activity type is not FinancialAssistancePayment', () => {
-        wrapper = mount(Component, {
-          localVue,
-          propsData: {
-            item: {
-              ...mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
-            },
-            isCaseNote: false,
-          },
-        });
-        expect(wrapper.vm.displaySystemAdminOnly).toEqual(false);
-      });
-
-      it('should be false when isCaseNote false, activity type is FinancialAssistancePayment and activity is not triggered by mass action', () => {
+      it('should be false when activity is not triggered by mass action', () => {
         wrapper = mount(Component, {
           localVue,
           propsData: {
@@ -201,7 +187,6 @@ describe('CaseFileListItemWrapper.vue', () => {
               ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
               triggeredByMassAction: false,
             },
-            isCaseNote: false,
           },
         });
         expect(wrapper.vm.displaySystemAdminOnly).toEqual(false);

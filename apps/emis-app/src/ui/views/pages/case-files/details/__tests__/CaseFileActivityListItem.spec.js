@@ -551,14 +551,25 @@ describe('CaseFileActivityListItem.vue', () => {
       });
 
       describe('makeContentForCaseFileStatusArchived', () => {
-        it('returns the correct data when action type is CaseFileStatusArchived', async () => {
+        it('returns the correct data when action type is CaseFileStatusArchived and there is no rationale', async () => {
+          await wrapper.setProps({
+            item: { ...mockCaseFileActivities(CaseFileActivityType.CaseFileStatusArchived)[0], details: { rationale: null } },
+          });
+
+          expect(wrapper.vm.makeContentForCaseFileStatusArchived()).toEqual({
+            title: 'caseFileActivity.activityList.title.CaseFileStatusArchived',
+            body: '',
+          });
+        });
+
+        it('returns the correct data when action type is CaseFileStatusArchived and there is a rationale', async () => {
           await wrapper.setProps({
             item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusArchived)[0],
           });
 
           expect(wrapper.vm.makeContentForCaseFileStatusArchived()).toEqual({
             title: 'caseFileActivity.activityList.title.CaseFileStatusArchived',
-            body: null,
+            body: `caseFileActivity.activityList.status.rationale: ${wrapper.vm.item.details.rationale}`,
           });
         });
       });
