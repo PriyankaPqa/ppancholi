@@ -206,6 +206,11 @@ describe('QueriesList.vue', () => {
             name: 'reporting.query.theme.HouseholdPrimary',
             description: 'reporting.query.theme.HouseholdPrimary.description',
           },
+          {
+            id: ReportingTopic.PaymentLine,
+            name: 'reporting.query.theme.PaymentLine',
+            description: 'reporting.query.theme.PaymentLine.description',
+          },
         ]);
         await wrapper.setData({ searchTheme: 'HouseholdPrimary' });
         expect(wrapper.vm.availableThemes).toEqual([

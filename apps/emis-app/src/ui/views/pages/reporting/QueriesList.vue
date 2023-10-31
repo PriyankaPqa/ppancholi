@@ -250,6 +250,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           name: this.$t('reporting.query.theme.HouseholdPrimary'),
           description: this.$t('reporting.query.theme.HouseholdPrimary.description'),
         },
+        {
+          id: ReportingTopic.PaymentLine,
+          name: this.$t('reporting.query.theme.PaymentLine'),
+          description: this.$t('reporting.query.theme.PaymentLine.description'),
+        },
       ], this.searchTheme);
 
       return _orderBy(themes, ['name'], ['asc']);

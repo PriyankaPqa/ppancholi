@@ -9,6 +9,7 @@ export enum QueryType {
 export enum ReportingTopic {
   HouseholdMembers = 1,
   HouseholdPrimary = 2,
+  PaymentLine = 3,
 }
 
 export interface IQuery extends IEntity {
