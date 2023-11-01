@@ -16,31 +16,39 @@ export const fixtureNewMassFinancialAssistance = () : INewMassFinancialAssistanc
   paymentAmount: '80.00',
 });
 
-export interface IFinancialAssistanceCustomOptionsTemplate {
-  CaseFileNumber: string;
-  CaseFileId: string;
-  Description: string;
-  RevisedCreateDate: string;
-  FinancialAssistanceTableId: string;
-  PaymentModality: string;
-  Item: string;
-  SubItem: string;
-  Amount: number;
-  RelatedNumber: number;
-  PayeeType:string,
-  PayeeName: string;
-  CareOf: string;
-  Country: string;
-  StreetAddress: string;
-  UnitSuite: number;
-  City: string;
-  Province: string;
-  SpecifiedOtherProvince: string;
-  PostalCode: string
+export interface IFinancialAssistanceMassActionTemplate {
+  CaseFileNumber?: string;
+  CaseFileId?: string;
+  Description?: string;
+  RevisedCreateDate?: string;
+  FinancialAssistanceTableId?: string;
+  PaymentModality?: string;
+  Item?: string;
+  SubItem?: string;
+  Amount?: number;
+  RelatedNumber?: number;
+  PayeeType?:string,
+  PayeeName?: string;
+  CareOf?: string;
+  Country?: string;
+  StreetAddress?: string;
+  UnitSuite?: number;
+  City?: string;
+  Province?: string;
+  SpecifiedOtherProvince?: string;
+  PostalCode?: string
+  FinancialAssistancePaymentId?: string;
+  Name?: string;
+  FinancialAssistancePaymentGroupId?: string;
+  PaymentStatus?: string;
+  CancellationReason?: string;
+  FinancialAssistancePaymentLinesId?: string;
+  ActualAmount?: number;
+  ETag?: string;
 }
 
 // properties also act as first row of financial assistance custom file
-export const generateRandomFaCustomFileUserData = (caseFile:ICaseFileEntity, FinancialAssistanceTableId: string): IFinancialAssistanceCustomOptionsTemplate => ({
+export const generateRandomFaCustomFileUserData = (caseFile:ICaseFileEntity, FinancialAssistanceTableId: string): IFinancialAssistanceMassActionTemplate => ({
   CaseFileNumber: caseFile.caseFileNumber,
   CaseFileId: caseFile.id,
   Description: 'Description Payment',
@@ -61,6 +69,45 @@ export const generateRandomFaCustomFileUserData = (caseFile:ICaseFileEntity, Fin
   Province: 'Ontario',
   SpecifiedOtherProvince: null,
   PostalCode: faker.helpers.replaceSymbols('?#?#?#'),
+});
+
+export interface GenerateRandomFaDataCorrectionParams {
+  caseFile: ICaseFileEntity;
+  FinancialAssistancePaymentId: string;
+  FinancialAssistanceTableId: string;
+  FinancialAssistancePaymentGroupId: string;
+  FinancialAssistancePaymentLinesId: string;
+  ETag: string;
+}
+
+export const generateRandomFaDataCorrectionData = (faCorrectionData: GenerateRandomFaDataCorrectionParams): IFinancialAssistanceMassActionTemplate => ({
+  CaseFileNumber: faCorrectionData.caseFile.caseFileNumber,
+  FinancialAssistancePaymentId: faCorrectionData.FinancialAssistancePaymentId,
+  Name: 'Test Mass Action',
+  Description: 'Description Payment',
+  FinancialAssistanceTableId: faCorrectionData.FinancialAssistanceTableId,
+  RevisedCreateDate: null,
+  FinancialAssistancePaymentGroupId: faCorrectionData.FinancialAssistancePaymentGroupId,
+  PaymentModality: 'Cheque',
+  PayeeType: 'Beneficiary',
+  PayeeName: faker.name.fullName(),
+  PaymentStatus: 'InProgress',
+  CancellationReason: null,
+  FinancialAssistancePaymentLinesId: faCorrectionData.FinancialAssistancePaymentLinesId,
+  Item: 'Clothing',
+  SubItem: 'Winter Clothing',
+  Amount: 100,
+  ActualAmount: null,
+  RelatedNumber: null,
+  CareOf: faker.name.fullName(),
+  Country: 'CA',
+  StreetAddress: faker.address.streetAddress(),
+  UnitSuite: faker.datatype.number(1000),
+  City: faker.address.cityName(),
+  Province: 'Ontario',
+  SpecifiedOtherProvince: null,
+  PostalCode: faker.helpers.replaceSymbols('?#?#?#'),
+  ETag: faCorrectionData.ETag,
 });
 
 export interface IContactInformationDataCorrectionTemplate {
@@ -101,7 +148,7 @@ export const writeCSVContentToFile = <T>(filePath: string, data: T[]): string =>
 };
 
 export const fixtureGenerateFaCsvFile = (caseFiles: ICaseFileEntity[], FinancialAssistanceTableId:string, filePath: string) => {
-  const faData: IFinancialAssistanceCustomOptionsTemplate[] = [];
+  const faData: IFinancialAssistanceMassActionTemplate[] = [];
   for (const caseFile of caseFiles) {
     faData.push(generateRandomFaCustomFileUserData(caseFile, FinancialAssistanceTableId));
   }
@@ -151,5 +198,34 @@ function extractXlsxColumnNamesFromUserData(caseFile: ICaseFileEntity, Financial
 export const fixtureGenerateFaCustomOptionsXlsxFile = (caseFiles: ICaseFileEntity[], FinancialAssistanceTableId:string, tableName: string, fileName: string) => {
   const columns = extractXlsxColumnNamesFromUserData(caseFiles[0], FinancialAssistanceTableId);
   const rows = generateXlsxRowsData(caseFiles, FinancialAssistanceTableId);
+  return generateXlsxFile(columns, rows, tableName, fileName);
+};
+
+function extractXlsxRowFromFaDataCorrectionData(faCorrectionData: GenerateRandomFaDataCorrectionParams): string[] {
+  return Object.values(generateRandomFaDataCorrectionData(faCorrectionData));
+}
+
+function generateXlsxFaDataCorrectionRowsData(faCorrectionData: GenerateRandomFaDataCorrectionParams, caseFiles: ICaseFileEntity[]): string[][] {
+  const allRowsData: string[][] = [];
+  caseFiles.forEach((caseFile) => {
+    const individualRowData = extractXlsxRowFromFaDataCorrectionData({ ...faCorrectionData, caseFile });
+    allRowsData.push(individualRowData);
+  });
+  return allRowsData;
+}
+
+function extractXlsxColumnNamesFromFaDataCorrection(faCorrectionData: GenerateRandomFaDataCorrectionParams): IXlsxTableColumnProperties[] {
+  const userData = generateRandomFaDataCorrectionData(faCorrectionData);
+  const columnNames = Object.keys(userData).map((columnName) => ({
+    name: columnName,
+    filterButton: true,
+  }));
+  return columnNames;
+}
+
+// eslint-disable-next-line
+export const fixtureGenerateFaDataCorrectionXlsxFile = (faCorrectionData: GenerateRandomFaDataCorrectionParams, caseFiles: ICaseFileEntity[], tableName: string, fileName: string) => {
+  const columns = extractXlsxColumnNamesFromFaDataCorrection(faCorrectionData);
+  const rows = generateXlsxFaDataCorrectionRowsData(faCorrectionData, caseFiles);
   return generateXlsxFile(columns, rows, tableName, fileName);
 };

@@ -2,6 +2,7 @@ import { BaseDetailsMassAction } from '../base/baseDetailsMassAction';
 
 export enum DataTest {
   massActionCorrectionType = 'massActionType',
+  eventName = 'data-correction-events',
   description = 'description',
   fileUpload = 'upload-file',
   next = 'next',
@@ -30,6 +31,10 @@ export enum DataTest {
 
     public selectMassActionCorrectionType(correctionType: string) {
       cy.selectListElementByValue(DataTest.massActionCorrectionType, correctionType);
+    }
+
+    public fillEvent(eventName: string) {
+      cy.searchAndSelect(DataTest.eventName, eventName);
     }
 
     public fillMassActionDescription(description: string) {

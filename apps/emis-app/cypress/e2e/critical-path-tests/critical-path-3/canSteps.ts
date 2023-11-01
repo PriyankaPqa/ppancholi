@@ -12,14 +12,18 @@ export interface PreProcessDataCorrectionFileCanStepsParams {
   preprocessedItems: string,
   roleName: string,
   householdQuantity: number,
+  eventName?: string,
 }
 
 // eslint-disable-next-line
-export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTypeDataTest, dataCorrectionTypeDropDown, filePath, preprocessedItems, householdQuantity, roleName}: Partial<PreProcessDataCorrectionFileCanStepsParams>) => {
+export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTypeDataTest, dataCorrectionTypeDropDown, filePath, preprocessedItems, householdQuantity, roleName, eventName}: Partial<PreProcessDataCorrectionFileCanStepsParams>) => {
   const baseMassActionData = fixtureBaseMassAction(retries);
 
   const newDataCorrectionPage = new NewDataCorrectionPage();
   newDataCorrectionPage.selectMassActionCorrectionType(dataCorrectionTypeDataTest);
+  if (dataCorrectionTypeDropDown === 'Financial Assistance') {
+    newDataCorrectionPage.fillEvent(eventName);
+  }
   newDataCorrectionPage.fillMassActionDescription(baseMassActionData.description);
   newDataCorrectionPage.uploadFile().selectFile(filePath, { force: true });
   newDataCorrectionPage.clickNext();
