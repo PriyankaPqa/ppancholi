@@ -33,7 +33,6 @@ describe('ContactInformationForm.vue', () => {
         personId: 'personId',
       },
       stubs: {
-        'vue-programmatic-invisible-google-recaptcha': { template: '<div></div>' },
         ValidationObserver: false,
       },
       mocks: {
