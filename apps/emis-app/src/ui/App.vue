@@ -120,7 +120,7 @@ export default {
   },
 
   async created() {
-    // The values of environment variables are currently not loaded in components in production TODO: investigate why and find a fix!!...
+    // The values of environment variables are currently not loaded in components in production TODO: investigate why and find a fix!!
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VITE_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VITE_API_BASE_URL);
     sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VITE_VERSION);
