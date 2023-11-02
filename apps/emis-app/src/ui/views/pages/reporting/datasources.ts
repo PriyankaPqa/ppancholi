@@ -1,19 +1,18 @@
 import { ReportingTopic } from '@libs/entities-lib/reporting';
 import { Column } from 'devextreme/ui/data_grid_types';
 
-/**
- * For any reviewer: skip reviewing details here.  just the idea and the way the file is built.  the datasources here are not finalized yet
- * * */
-
-export interface IDatasourceSettings {
-  url?: string,
-  reportingTopic?: ReportingTopic;
-  columns: Column<any, any>[]
-  key?: string[];
+export interface IDatasourceBase {
+  columns: Column<any, any>[];
 }
 
-export const caseNoteViewDs : IDatasourceSettings = {
-  url: 'common/data-providers/case-notes',
+export interface IDatasourceSettings extends IDatasourceBase {
+  url: string,
+  reportingTopic: ReportingTopic;
+  columns: Column<any, any>[]
+  key: string[];
+}
+
+export const caseNoteViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: true },
@@ -34,8 +33,7 @@ export const caseNoteViewDs : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.casenote.${x.dataField}` })),
 };
 
-export const caseFileViewDs : IDatasourceSettings = {
-  // url: 'https://localhost:44352/data-providers/case-file-view',
+export const caseFileViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'caseFileNumber', dataType: 'string' },
@@ -90,8 +88,7 @@ export const caseFileViewDs : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.casefile.${x.dataField}` })),
 };
 
-export const householdViewDs : IDatasourceSettings = {
-  // url: 'https://localhost:44352/data-providers/household-view',
+export const householdViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'primaryBeneficiary', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -123,8 +120,7 @@ export const householdViewDs : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.household.${x.dataField}` })),
 };
 
-export const personViewDs : IDatasourceSettings = {
-  // url: 'https://localhost:44352/data-providers/person-view',
+export const personViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'householdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -190,7 +186,16 @@ export const personViewDs : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
 };
 
-export const caseFileAuthenticationIdsCsvViewDS : IDatasourceSettings = {
+export const programsPerCaseFileCsvViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'programNameEn', dataType: 'string', visible: false },
+    { dataField: 'programNameFr', dataType: 'string', visible: false },
+    // { dataField: 'programNameEnFr', dataType: 'string', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.programsPerCaseFileCsv.${x.dataField}` })),
+};
+
+export const caseFileAuthenticationIdsCsvViewDS : IDatasourceBase = {
   columns: ([
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
     { dataField: 'csvAuthenticationIdNameEn', dataType: 'string', visible: false },
@@ -199,7 +204,7 @@ export const caseFileAuthenticationIdsCsvViewDS : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileAuthenticationIdsCsv.${x.dataField}` })),
 };
 
-export const caseFileTagsCsvViewDS : IDatasourceSettings = {
+export const caseFileTagsCsvViewDS : IDatasourceBase = {
   columns: ([
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
     { dataField: 'csvTagNameEn', dataType: 'string', visible: false },
@@ -208,7 +213,7 @@ export const caseFileTagsCsvViewDS : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileTagsCsv.${x.dataField}` })),
 };
 
-export const financialAssistancePaymentViewDs : IDatasourceSettings = {
+export const financialAssistancePaymentViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -247,7 +252,7 @@ export const financialAssistancePaymentViewDs : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialassistancepayment.${x.dataField}` })),
 };
 
-export const financialAssistancePaymentGroupViewDs : IDatasourceSettings = {
+export const financialAssistancePaymentGroupViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'financialAssistancePaymentId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -274,7 +279,7 @@ export const financialAssistancePaymentGroupViewDs : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentgroup.${x.dataField}` })),
 };
 
-export const financialAssistancePaymentLineViewDs : IDatasourceSettings = {
+export const financialAssistancePaymentLineViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'financialAssistancePaymentId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -309,7 +314,7 @@ export const financialAssistancePaymentLineViewDs : IDatasourceSettings = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentline.${x.dataField}` })),
 };
 
-export const financialAssistancePaymentSummaryViewDS : IDatasourceSettings = {
+export const financialAssistancePaymentSummaryViewDS : IDatasourceBase = {
   columns: ([
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
     { dataField: 'totalAmountUnapproved', dataType: 'number', visible: false },
@@ -317,22 +322,6 @@ export const financialAssistancePaymentSummaryViewDS : IDatasourceSettings = {
     { dataField: 'totalAmountCompleted', dataType: 'number', visible: false },
     { dataField: 'grandTotal', dataType: 'number', visible: false },
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialAssistancePaymentSummary.${x.dataField}` })),
-};
-
-export const caseFileToHouseholdDs : IDatasourceSettings = {
-  url: caseFileViewDs.url,
-  columns: [
-    ...caseFileViewDs.columns,
-    ...(householdViewDs.columns.filter((c) => c.dataField !== 'id').map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
-  ],
-};
-
-export const householdWithPrimaryDs : IDatasourceSettings = {
-  url: householdViewDs.url,
-  columns: [
-    ...householdViewDs.columns,
-    ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `primaryMember.${x.dataField}` }))),
-  ],
 };
 
 export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
@@ -348,6 +337,7 @@ export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
     ...(financialAssistancePaymentSummaryViewDS.columns.filter((c) => c.dataField !== 'caseFileId')
               .map((x) => ({ ...x, dataField: `financialAssistancePaymentSummary.${x.dataField}` }))),
     ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `primaryMember.${x.dataField}` }))),
+    ...(programsPerCaseFileCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `programsPerCaseFileCsv.${x.dataField}` }))),
   ],
 };
 
