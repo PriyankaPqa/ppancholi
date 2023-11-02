@@ -261,6 +261,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           description: this.$t('reporting.query.theme.PaymentLine.description'),
         },
         {
+          id: ReportingTopic.PaymentGroup,
+          name: this.$t('reporting.query.theme.PaymentGroup'),
+          description: this.$t('reporting.query.theme.PaymentGroup.description'),
+        },
+        {
           id: ReportingTopic.Referrals,
           name: this.$t('reporting.query.theme.Referrals'),
           description: this.$t('reporting.query.theme.Referrals.description'),

@@ -292,12 +292,13 @@ export const financialAssistancePaymentGroupViewDs : IDatasourceBase = {
     { dataField: 'cancellationReasonNameFr', dataType: 'string', visible: false },
     // { dataField: 'cancellationReasonEnFr', dataType: 'string', visible: false },
     { dataField: 'cancellationDate', dataType: 'datetime', visible: false },
-    { dataField: 'cancellationBy', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    // { dataField: 'cancellationBy', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'cancelledBy', dataType: 'string', visible: false },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
-    { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    // { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentgroup.${x.dataField}` })),
 };
 
@@ -332,8 +333,28 @@ export const financialAssistancePaymentLineViewDs : IDatasourceBase = {
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
-    { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    // { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentline.${x.dataField}` })),
+};
+
+export const caseFileLifetimeActivitiesViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'registrationDate', dataType: 'datetime', visible: false },
+    { dataField: 'inactiveDate', dataType: 'datetime', visible: false },
+    { dataField: 'closedDate', dataType: 'datetime', visible: false },
+    { dataField: 'archivedDate', dataType: 'datetime', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileLifetimeActivitiesViewDS.${x.dataField}` })),
+};
+
+export const financialAssistanceSummaryByPaymentGroupViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'financialAssistancePaymentGroupId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'totalAmountUnapproved', dataType: 'number', visible: false },
+    { dataField: 'totalAmountCommitted', dataType: 'number', visible: false },
+    { dataField: 'totalAmountCompleted', dataType: 'number', visible: false },
+    { dataField: 'grandTotal', dataType: 'number', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialAssistanceSummaryByPaymentGroupViewDS.${x.dataField}` })),
 };
 
 export const financialAssistancePaymentSummaryViewDS : IDatasourceBase = {
@@ -437,9 +458,27 @@ export const financialAssistancePaymentLineDs : IDatasourceSettings = {
       .map((x) => ({ ...x, dataField: `paymentLine.${x.dataField}` }))),
     ...(financialAssistancePaymentViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `payment.${x.dataField}` }))),
     ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
-    ...(financialAssistancePaymentGroupViewDs.columns.filter((c) => c.dataField !== 'caseFileId' && c.dataField !== 'financialAssistancePaymentId')
+    ...(financialAssistancePaymentGroupViewDs.columns.filter((c) => c.dataField !== 'financialAssistancePaymentId')
       .map((x) => ({ ...x, dataField: `paymentGroup.${x.dataField}` }))),
   ],
 };
 
-export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, caseFileActivitiesDs, financialAssistancePaymentLineDs, referralsDs];
+export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
+  url: 'common/data-providers/financial-assistance-payment-group',
+  reportingTopic: ReportingTopic.PaymentGroup,
+  key: ['paymentGroup.id'],
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(financialAssistancePaymentViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `payment.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(financialAssistancePaymentGroupViewDs.columns.filter((c) => c.dataField !== 'financialAssistancePaymentId')
+      .map((x) => ({ ...x, dataField: `paymentGroup.${x.dataField}` }))),
+    ...(financialAssistanceSummaryByPaymentGroupViewDS.columns.filter((c) => c.dataField !== 'financialAssistancePaymentGroupId').map((x) => ({
+        ...x, dataField: `groupSummary.${x.dataField}`,
+      }))),
+    ...(caseFileLifetimeActivitiesViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileLifetimeActivities.${x.dataField}` }))),
+  ],
+};
+
+export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, caseFileActivitiesDs, financialAssistancePaymentLineDs, referralsDs,
+  financialAssistancePaymentGroupDs];
