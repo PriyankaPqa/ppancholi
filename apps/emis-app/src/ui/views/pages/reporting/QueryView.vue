@@ -337,7 +337,7 @@ export default Vue.extend({
 
     /// this picks the right datasource for this query.  Also it sets the initial "select" list to the list of columns that are visible by default
     initializeDatasource() {
-      const ds = datasources.find((d) => d.reportingTopic === this.query.topic) || datasources[0];
+      const ds = datasources.find((d) => d.reportingTopic === this.query.topic);
       const columns = sortBy(ds.columns.map((c) => ({
         ...c,
         caption: this.$t(c.caption),
@@ -345,9 +345,12 @@ export default Vue.extend({
         allowSearch: c.allowSearch !== false && c.visible !== false,
       })), 'caption');
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
-      if (select.indexOf('id') === -1) {
-        select.push('id');
-      }
+      ds.key.forEach((k) => {
+          if (select.indexOf(k) === -1) {
+          select.push(k);
+        }
+      });
+
       this.dsType = ds;
       this.columns = columns as Column<any, any>[];
 

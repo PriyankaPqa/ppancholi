@@ -197,6 +197,11 @@ describe('QueriesList.vue', () => {
       it('returns data filtered by searchTheme', async () => {
         expect(wrapper.vm.availableThemes).toEqual([
           {
+            id: ReportingTopic.CaseFileActivities,
+            name: 'reporting.query.theme.CaseFileActivities',
+            description: 'reporting.query.theme.CaseFileActivities.description',
+          },
+          {
             id: ReportingTopic.HouseholdMembers,
             name: 'reporting.query.theme.HouseholdMembers',
             description: 'reporting.query.theme.HouseholdMembers.description',

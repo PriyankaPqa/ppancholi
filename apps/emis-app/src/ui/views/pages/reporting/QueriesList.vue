@@ -251,6 +251,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           description: this.$t('reporting.query.theme.HouseholdPrimary.description'),
         },
         {
+          id: ReportingTopic.CaseFileActivities,
+          name: this.$t('reporting.query.theme.CaseFileActivities'),
+          description: this.$t('reporting.query.theme.CaseFileActivities.description'),
+        },
+        {
           id: ReportingTopic.PaymentLine,
           name: this.$t('reporting.query.theme.PaymentLine'),
           description: this.$t('reporting.query.theme.PaymentLine.description'),

@@ -33,6 +33,21 @@ export const caseNoteViewDs : IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.casenote.${x.dataField}` })),
 };
 
+export const caseFileActivitiesViewDs : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'activityTypeNameEn', dataType: 'string', visible: false },
+    { dataField: 'activityTypeNameFr', dataType: 'string', visible: false },
+    // { dataField: 'activityTypeNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'activityDate', dataType: 'datetime', visible: false },
+    { dataField: 'userName', dataType: 'string', visible: false },
+    { dataField: 'userRoleNameEn', dataType: 'string', visible: false },
+    { dataField: 'userRoleNameFr', dataType: 'string', visible: false },
+    // { dataField: 'userRoleNameEnFr', dataType: 'string', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.casefileactivities.${x.dataField}` })),
+};
+
 export const caseFileViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -354,6 +369,19 @@ export const householdMembersDs : IDatasourceSettings = {
   ],
 };
 
+export const caseFileActivitiesDs : IDatasourceSettings = {
+  url: 'common/data-providers/case-file-activities',
+  reportingTopic: ReportingTopic.CaseFileActivities,
+  key: ['activity.id'],
+  columns: [
+    ...(caseFileActivitiesViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `activity.${x.dataField}` }))),
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `primaryMember.${x.dataField}` }))),
+    ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
+    ...(caseFileTagsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileTagsCsv.${x.dataField}` }))),
+  ],
+};
+
 export const financialAssistancePaymentLineDs : IDatasourceSettings = {
   url: 'common/data-providers/financial-assistance-payment-line',
   reportingTopic: ReportingTopic.PaymentLine,
@@ -369,4 +397,4 @@ export const financialAssistancePaymentLineDs : IDatasourceSettings = {
   ],
 };
 
-export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, financialAssistancePaymentLineDs];
+export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, caseFileActivitiesDs, financialAssistancePaymentLineDs];
