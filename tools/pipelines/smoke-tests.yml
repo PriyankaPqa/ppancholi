@@ -48,5 +48,5 @@ stages:
             distDir: ${{ parameters.distDir }}
             workingDir: ${{ parameters.workingDir }}
 
-    - ${{ else }}:
-      - template: './stages/dummy-stage.yml'
+  - ${{ else }}:
+    - template: './stages/dummy-stage.yml'
