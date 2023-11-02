@@ -48,21 +48,10 @@ stages:
       condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
       displayName: 'E2E Tests'
       jobs:
-        - job: SetCypressMode
-          displayName: 'Set Cypress roles selection mode'
-          steps:
-            - powershell: |
-                $canMode = "boundary"
-                $cannotMode = "none"
-
-                Write-Host "Setting Cypress mode..."
-                Write-Host "Value of CYPRESS_CAN_MODE: $canMode"
-                Write-Host "Value of CYPRESS_CANNOT_MODE: $cannotMode"
-
-                Write-Host "##vso[task.setvariable variable=CYPRESS_CAN_MODE;isOutput=true]$canMode"
-                Write-Host "##vso[task.setvariable variable=CYPRESS_CANNOT_MODE;isOutput=true]$cannotMode"
-              name: cypressRoleMode
-              displayName: 'Set Environment Variable'
+        - template: './jobs/cypress-role-mode.yml'
+          parameters:
+            canMode: 'boundary'
+            cannotMode: 'none'
 
         - template: './jobs/cypress-job.yml'
           parameters:

@@ -1,0 +1,22 @@
+parameters:
+  - name: canMode
+    type: string
+  - name: cannotMode
+    type: string
+
+jobs:
+  - job: SetCypressRoleMode
+    displayName: 'Set Cypress roles selection mode'
+    steps:
+      - powershell: |
+          $canMode = "${{ parameters.canMode }}"
+          $cannotMode = "${{ parameters.cannotMode }}"
+          
+          Write-Host "Setting Cypress mode..."
+          Write-Host "Value of CYPRESS_CAN_MODE: $canMode"
+          Write-Host "Value of CYPRESS_CANNOT_MODE: $cannotMode"
+          
+          Write-Host "##vso[task.setvariable variable=CYPRESS_CAN_MODE;isOutput=true]$canMode"
+          Write-Host "##vso[task.setvariable variable=CYPRESS_CANNOT_MODE;isOutput=true]$cannotMode"
+        name: cypressRoleMode
+        displayName: 'Set Environment Variable'

@@ -9,7 +9,7 @@ parameters:
 
 jobs:
   - job: Cypress
-    dependsOn: SetCypressMode
+    dependsOn: SetCypressRoleMode
     pool:
       name: 'self-hosted-ubuntu-latest-fe' ## Need self-hosted to have static IP for security restrictions
     displayName: ${{ parameters.displayName }}
@@ -20,9 +20,9 @@ jobs:
       - name: cypressAffectedTests
         value: $[ stageDependencies.FindCypressAffectedTestsStage.FindCypressAffectedTestsJob.outputs['getAffectedTests.affectedTests'] ]
       - name: cypressCanRoleMode
-        value: $[ dependencies.SetCypressMode.outputs['cypressRoleMode.CYPRESS_CAN_MODE'] ]
+        value: $[ dependencies.SetCypressRoleMode.outputs['cypressRoleMode.CYPRESS_CAN_MODE'] ]
       - name: cypressCannotRoleMode
-        value: $[ dependencies.SetCypressMode.outputs['cypressRoleMode.CYPRESS_CANNOT_MODE'] ]
+        value: $[ dependencies.SetCypressRoleMode.outputs['cypressRoleMode.CYPRESS_CANNOT_MODE'] ]
     strategy:
       parallel: ${{ parameters.parallelJobs }}
     steps:

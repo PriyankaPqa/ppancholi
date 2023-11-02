@@ -30,7 +30,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 
-describe('#TC206# - Create Direct Deposit Payment Line', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

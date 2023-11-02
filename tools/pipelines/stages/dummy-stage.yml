@@ -1,0 +1,8 @@
+stages:
+- stage: DummyStage
+  jobs:
+    - job: DummyJob
+      displayName: 'Dummy Job'
+      steps:
+        - script: echo "This is a dummy stage"
+          displayName: 'Dummy Step'

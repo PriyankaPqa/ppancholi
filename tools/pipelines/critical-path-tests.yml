@@ -11,49 +11,41 @@ parameters:
   parallelJobs: 1
 
 stages:
-  # Build the application and publish the artifact
-  - template: './stages/build-stage.yml'
-    parameters:
-      packageFeed: ${{ parameters.packageFeed }}
-      lokalise: ${{ parameters.lokalise }}
-      lokaliseCommand: ${{ parameters.lokaliseCommand }}
-      buildCommand: ${{ parameters.buildCommand }}
-      workingDir: ${{ parameters.workingDir }}
-      distDir: ${{ parameters.distDir }}
-      nodeJsVersion: ${{ parameters.nodeJsVersion }}
-      appVersion: ${{ parameters.appVersion }}
+  - ${{ if or(eq(variables['build.reason'], 'PullRequest'), eq(variables['build.reason'], 'Manual'), eq(variables['build.reason'], 'Schedule')) }}:
+    # Build the application and publish the artifact
+    - template: './stages/build-stage.yml'
+      parameters:
+        packageFeed: ${{ parameters.packageFeed }}
+        lokalise: ${{ parameters.lokalise }}
+        lokaliseCommand: ${{ parameters.lokaliseCommand }}
+        buildCommand: ${{ parameters.buildCommand }}
+        workingDir: ${{ parameters.workingDir }}
+        distDir: ${{ parameters.distDir }}
+        nodeJsVersion: ${{ parameters.nodeJsVersion }}
+        appVersion: ${{ parameters.appVersion }}
 
-  - template: './stages/find-cypress-affected-stage.yml'
-    parameters:
-      workingDir: ${{ parameters.workingDir }}
+    - template: './stages/find-cypress-affected-stage.yml'
+      parameters:
+        workingDir: ${{ parameters.workingDir }}
 
-  # Run E2E Tests
-  - stage: 'E2E_Test_Stage'
-    condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
-    displayName: 'E2E Tests'
-    jobs:
-      - job: SetCypressMode
-        displayName: 'Set Cypress roles selection mode'
-        steps:
-          - powershell: |
-              $canMode = "all"
-              $cannotMode = "all"
+    # Run E2E Tests
+    - stage: 'E2E_Test_Stage'
+      condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
+      displayName: 'E2E Tests'
+      jobs:
+        - template: './jobs/cypress-role-mode.yml'
+          parameters:
+            canMode: 'all'
+            cannotMode: 'all'
 
-              Write-Host "Setting Cypress mode..."
-              Write-Host "Value of CYPRESS_CAN_MODE: $canMode"
-              Write-Host "Value of CYPRESS_CANNOT_MODE: $cannotMode"
+        - template: './jobs/cypress-job.yml'
+          parameters:
+            displayName: 'Critical Path Tests'
+            parallelJobs: ${{ parameters.parallelJobs }}
+            packageFeed: ${{ parameters.packageFeed }}
+            nodeJsVersion: ${{ parameters.nodeJsVersion }}
+            distDir: ${{ parameters.distDir }}
+            workingDir: ${{ parameters.workingDir }}
 
-              Write-Host "##vso[task.setvariable variable=CYPRESS_CAN_MODE;isOutput=true]$canMode"
-              Write-Host "##vso[task.setvariable variable=CYPRESS_CANNOT_MODE;isOutput=true]$cannotMode"
-            name: cypressRoleMode
-            displayName: 'Set Environment Variable'
-
-      - template: './jobs/cypress-job.yml'
-        parameters:
-          displayName: 'Critical Path Tests'
-          parallelJobs: ${{ parameters.parallelJobs }}
-          packageFeed: ${{ parameters.packageFeed }}
-          nodeJsVersion: ${{ parameters.nodeJsVersion }}
-          distDir: ${{ parameters.distDir }}
-          workingDir: ${{ parameters.workingDir }}
-
+  - ${{ else }}:
+    - template: './stages/dummy-stage.yml'
