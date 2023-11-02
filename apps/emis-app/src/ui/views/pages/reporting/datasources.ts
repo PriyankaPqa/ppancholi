@@ -339,6 +339,31 @@ export const financialAssistancePaymentSummaryViewDS : IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.financialAssistancePaymentSummary.${x.dataField}` })),
 };
 
+export const referralViewDs : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'name', dataType: 'string' },
+    { dataField: 'referralTypeNameEn', dataType: 'string', visible: false },
+    { dataField: 'referralTypeNameFr', dataType: 'string', visible: false },
+    // { dataField: 'referralTypeNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'referralOutcomeStatusNameEn', dataType: 'string', visible: false },
+    { dataField: 'referralOutcomeStatusNameFr', dataType: 'string', visible: false },
+    // { dataField: 'referralOutcomeStatusNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'note', dataType: 'string', visible: false },
+    { dataField: 'referralMethodNameEn', dataType: 'string', visible: false },
+    { dataField: 'referralMethodNameFr', dataType: 'string', visible: false },
+    // { dataField: 'referralMethodNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'createDate', dataType: 'datetime', visible: false },
+    { dataField: 'updateDate', dataType: 'datetime', visible: false },
+    { dataField: 'createdBy', dataType: 'string', visible: false },
+    { dataField: 'createdByRoleNameEn', dataType: 'string', visible: false },
+    { dataField: 'createdByRoleNameFr', dataType: 'string', visible: false },
+    // { dataField: 'createdByRoleNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.referral.${x.dataField}` })),
+};
+
 export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
   url: 'common/data-providers/household-primary',
   reportingTopic: ReportingTopic.HouseholdPrimary,
@@ -366,6 +391,19 @@ export const householdMembersDs : IDatasourceSettings = {
     ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
     ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
     ...(caseFileTagsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileTagsCsv.${x.dataField}` }))),
+  ],
+};
+
+export const referralsDs : IDatasourceSettings = {
+  url: 'common/data-providers/referrals',
+  reportingTopic: ReportingTopic.Referrals,
+  key: ['referral.id'],
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(householdViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'primaryBeneficiaryFirstName' && c.dataField !== 'primaryBeneficiaryLastName')
+    .map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(referralViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `referral.${x.dataField}` }))),
   ],
 };
 
@@ -397,4 +435,4 @@ export const financialAssistancePaymentLineDs : IDatasourceSettings = {
   ],
 };
 
-export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, caseFileActivitiesDs, financialAssistancePaymentLineDs];
+export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, caseFileActivitiesDs, financialAssistancePaymentLineDs, referralsDs];
