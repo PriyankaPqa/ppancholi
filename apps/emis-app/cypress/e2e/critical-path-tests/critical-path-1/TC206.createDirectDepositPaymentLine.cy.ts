@@ -1,30 +1,31 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureDirectDepositPaymentLine } from '../../../fixtures/financial-assistance';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 import { paymentLineGeneralCanSteps } from './canSteps';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+];
 
-const cannotRoles = {
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
@@ -33,7 +34,7 @@ describe('#TC206# - Create Direct Deposit Payment Line', { tags: ['@financial-as
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRolesValues, EFinancialAmountModes.Fixed);
+      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRoles, EFinancialAmountModes.Fixed);
       cy.wrap(resultPrepareStateEventTeamProgramTable.event).as('event');
       cy.wrap(resultPrepareStateEventTeamProgramTable.table).as('table');
       cy.wrap(resultPrepareStateEventTeamProgramTable.provider).as('provider');
@@ -47,8 +48,8 @@ describe('#TC206# - Create Direct Deposit Payment Line', { tags: ['@financial-as
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
-      describe(`${roleName}`, () => {
+    for (const roleValue of filteredCanRoles) {
+      describe(`${roleValue}`, () => {
         beforeEach(() => {
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.event);
@@ -69,8 +70,8 @@ describe('#TC206# - Create Direct Deposit Payment Line', { tags: ['@financial-as
     }
   });
   describe('Cannot Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
-      describe(`${roleName}`, () => {
+    for (const roleValue of filteredCannotRoles) {
+      describe(`${roleValue}`, () => {
         beforeEach(() => {
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.event);

@@ -1,36 +1,37 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { getUserNameBis, getUserRoleDescriptionBis } from '@libs/cypress-lib/helpers/users';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { getToday } from '@libs/cypress-lib/helpers';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { fixtureCaseNotes } from '../../../fixtures/case-management';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseNotesPage } from '../../../pages/casefiles/caseNotes.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+];
 
-const cannotRoles = {
-  Contributor1: UserRoles.contributor1,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.contributor1,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let event = null as IEventEntity;
 let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 
-describe('#TC202# -Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
+describe('#TC202# - Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const result = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const result = await createEventAndTeam(accessTokenL6, allRoles);
       const { provider, team } = result;
       event = result.event;
       cy.wrap(provider).as('provider');
@@ -45,8 +46,8 @@ describe('#TC202# -Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
     }
   });
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
-      describe(`${roleName}`, () => {
+    for (const roleValue of filteredCanRoles) {
+      describe(`${roleValue}`, () => {
         beforeEach(() => {
           cy.then(async () => {
             const result = await prepareStateHousehold(accessTokenL6, event);
@@ -60,14 +61,14 @@ describe('#TC202# -Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
 
           const caseNotesPage = new CaseNotesPage();
           caseNotesPage.getCreateCaseNoteButton().click();
-          caseNotesPage.fill(caseNotesData, roleName);
+          caseNotesPage.fill(caseNotesData, roleValue);
           caseNotesPage.getCaseNoteButton().click();
-          caseNotesPage.getCaseFileUserName().should('eq', getUserName(roleName));
-          caseNotesPage.getCaseFileRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseNotesPage.getCaseNoteSubject().should('eq', `${caseNotesData.subject} ${roleName}`);
+          caseNotesPage.getCaseFileUserName().should('eq', getUserNameBis(roleValue));
+          caseNotesPage.getCaseFileRoleName().should('eq', `(${getUserRoleDescriptionBis(roleValue)})`);
+          caseNotesPage.getCaseNoteSubject().should('eq', `${caseNotesData.subject} ${roleValue}`);
           caseNotesPage.getCaseNoteCategory().should('eq', caseNotesData.category.trim());
-          caseNotesPage.getCaseNoteDescription().should('eq', `${caseNotesData.description} ${roleName}`);
-          caseNotesPage.getCaseFileLastEditBy().should('eq', getUserName(roleName));
+          caseNotesPage.getCaseNoteDescription().should('eq', `${caseNotesData.description} ${roleValue}`);
+          caseNotesPage.getCaseFileLastEditBy().should('eq', getUserNameBis(roleValue));
           caseNotesPage.getCaseFileLastModifiedDate().should('eq', getToday());
           caseNotesPage.getCaseFileEditButton().should('exist');
 
@@ -75,17 +76,17 @@ describe('#TC202# -Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
           caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Category:');
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Case note added');
           caseFileDetailsPage.getCaseFileActivityBodies()
-            .should('string', `Subject: ${caseNotesData.subject} ${roleName}`)
+            .should('string', `Subject: ${caseNotesData.subject} ${roleValue}`)
             .and('string', `Category: ${caseNotesData.category.trim()}`);
-          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+          caseFileDetailsPage.getUserName().should('eq', getUserNameBis(roleValue));
+          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescriptionBis(roleValue)})`);
         });
       });
     }
   });
   describe('Cannot roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
-      describe(`${roleName}`, () => {
+    for (const roleValue of filteredCannotRoles) {
+      describe(`${roleValue}`, () => {
         beforeEach(() => {
           cy.login(roleValue);
           cy.goTo('casefile');

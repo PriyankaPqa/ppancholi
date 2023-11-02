@@ -24,18 +24,34 @@ stages:
       appVersion: ${{ parameters.appVersion }}
 
   # Run E2E Tests
-  - ${{ if or(eq(variables['build.reason'], 'PullRequest'), eq(variables['build.reason'], 'Manual')) }}:
+  - ${{ if or(eq(variables['build.reason'], 'PullRequest'), eq(variables['build.reason'], 'Manual'), eq(variables['build.reason'], 'Schedule')) }}:
     - template: './stages/find-cypress-affected-stage.yml'
       parameters:
         workingDir: ${{ parameters.workingDir }}
-        
+
     - stage: 'E2E_Test_Stage'
       condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
       displayName: 'E2E Tests'
       jobs:
+        - job: SetCypressMode
+          displayName: 'Set Cypress roles selection mode'
+          steps:
+            - powershell: |
+                $canMode = "all"
+                $cannotMode = "all"
+                
+                Write-Host "Setting Cypress mode..."
+                Write-Host "Value of CYPRESS_CAN_MODE: $canMode"
+                Write-Host "Value of CYPRESS_CANNOT_MODE: $cannotMode"
+              
+                Write-Host "##vso[task.setvariable variable=CYPRESS_CAN_MODE;isOutput=true]$canMode"
+                Write-Host "##vso[task.setvariable variable=CYPRESS_CANNOT_MODE;isOutput=true]$cannotMode"
+              name: cypressRoleMode
+              displayName: 'Set Environment Variable'
+
         - template: './jobs/cypress-job.yml'
           parameters:
-            displayName: 'Smoke Tests'
+            displayName: 'Run smoke tests'
             cypressSpec: 'cypress/e2e/smoke-tests/**/*.ts'
             parallelJobs: ${{ parameters.parallelJobs }}
             packageFeed: ${{ parameters.packageFeed }}
