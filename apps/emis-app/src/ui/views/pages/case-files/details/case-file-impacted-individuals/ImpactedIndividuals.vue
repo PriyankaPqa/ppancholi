@@ -8,6 +8,7 @@
     <rc-page-loading v-if="loading" />
     <template v-else>
       <impacted-individual-card
+        v-if="household.primaryBeneficiary"
         :member="household.primaryBeneficiary"
         is-primary-member
         :shelter-locations-list="shelterLocations"
