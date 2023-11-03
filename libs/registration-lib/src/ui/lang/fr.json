@@ -101,7 +101,7 @@
     "registration.confirmation.registration_id": "Votre numéro d'inscription",
     "registration.confirmation.thank_you": "Merci  {x} de votre inscription!",
     "registration.contactInformation.updated": "Les coordonnées ont été mises à jour",
-    "registration.crc_confirmation.additional_assistance": "Les détails de l'inscription peuvent être consultés et mis à jour si nécessaire via le profil du foyer de {x}",
+    "registration.crc_confirmation.additional_assistance": "Les détails de l'inscription peuvent être consultés et mis à jour si nécessaire via le profil du ménage de {x}",
     "registration.crc_confirmation.email_sent": "Une copie de cette page a été envoyée au bénéficiaire principal par courriel.",
     "registration.crc_confirmation.thank_you": "{x} est maintenant enregistré!",
     "registration.currentAddress.updated": "L'adresse actuelle a été mise à jour",
