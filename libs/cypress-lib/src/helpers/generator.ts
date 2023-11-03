@@ -4,13 +4,6 @@ import { saveAs } from 'file-saver';
 
 const ExcelJS = require('exceljs');
 
-export interface IXlsxTableColumnProperties {
-  name: string;
-  totalsRowLabel?: string;
-  totalsRowFunction?: string;
-  filterButton?: boolean;
-  style?: object;
-}
 export const today = `${new Date().toISOString().split('T')[0]}T00:00:00.000Z`;
 
 export function getRandomNumber() {
@@ -56,6 +49,14 @@ export function generateCSVContent<T>(data: T[]): string {
   const header = `${Object.keys(data[0]).join(',')}\n`;
   const rows = data.map((entry) => Object.values(entry).join(',')).join('\n');
   return header + rows;
+}
+
+export interface IXlsxTableColumnProperties {
+  name: string;
+  totalsRowLabel?: string;
+  totalsRowFunction?: string;
+  filterButton?: boolean;
+  style?: object;
 }
 
 export async function generateXlsxFile(columns: IXlsxTableColumnProperties[], rows: string[][], tableName: string, fileName: string) {

@@ -8,7 +8,7 @@ import {
   createProgramWithTableWithItemAndSubItem,
   prepareStateHousehold,
   submitFinancialAssistancePayment } from '../../helpers/prepareState';
-import { GenerateRandomFaDataCorrectionParams, fixtureGenerateFaDataCorrectionXlsxFile } from '../../../fixtures/mass-actions';
+import { GenerateRandomFaDataCorrectionParams, fixtureGenerateFaDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
 const canRoles = {

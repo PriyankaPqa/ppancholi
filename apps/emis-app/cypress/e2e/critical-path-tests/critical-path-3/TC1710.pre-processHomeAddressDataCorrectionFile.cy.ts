@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { fixtureGenerateContactInformationDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
-import { createEventAndTeam, getPersonsInfo, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
+import { fixtureGenerateHomeAddressDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { createEventAndTeam, getHouseholdsSummary, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
@@ -25,11 +25,11 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/contactInfoDataCorrectionMassAction.csv';
-const dataCorrectionTypeDataTest = 'Contact Information';
-const dataCorrectionTypeDropDown = 'Contact Information';
+const filePath = 'cypress/downloads/homeAddressDataCorrectionMassAction.csv';
+const dataCorrectionTypeDataTest = 'Home Address';
+const dataCorrectionTypeDropDown = 'Home Address';
 
-describe('#TC1709# - Pre-process a Contact Information data correction file', { tags: ['@household', '@mass-actions'] }, () => {
+describe('#TC1710# - Pre-process a Home Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
@@ -39,16 +39,16 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
             // eslint-disable-next-line
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const personIds: string[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
+            const householdIds: string[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.id,
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.id,
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.id,
             ];
-            const resultPersonsInfo = await getPersonsInfo(resultMultipleHousehold.provider, personIds);
+            const resultHouseholdSummary = await getHouseholdsSummary(resultMultipleHousehold.provider, householdIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultPersonsInfo).as('primaryMemberHouseholds');
+            cy.wrap(resultHouseholdSummary).as('householdsSummary');
             cy.login(roleValue);
             cy.goTo('mass-actions/data-correction/create');
           });
@@ -58,13 +58,13 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully pre-process a Contact Information data correction file', function () {
-          const primaryMemberHouseholds: Record<string, string> = {
-            [this.primaryMemberHouseholds[0].id]: this.primaryMemberHouseholds[0].etag,
-            [this.primaryMemberHouseholds[1].id]: this.primaryMemberHouseholds[1].etag,
-            [this.primaryMemberHouseholds[2].id]: this.primaryMemberHouseholds[2].etag,
+        it('should successfully pre-process a Home Address data correction file', function () {
+          const householdIds: Record<string, string> = {
+            [this.householdsSummary[0].id]: this.householdsSummary[0].etag,
+            [this.householdsSummary[1].id]: this.householdsSummary[1].etag,
+            [this.householdsSummary[2].id]: this.householdsSummary[2].etag,
           };
-          fixtureGenerateContactInformationDataCorrectionCsvFile(primaryMemberHouseholds, filePath);
+          fixtureGenerateHomeAddressDataCorrectionCsvFile(householdIds, filePath);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,
@@ -86,7 +86,7 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
           cy.login(roleValue);
           cy.goTo('mass-actions/data-correction/create');
         });
-        it('should not be able to pre-process a Contact Information data correction file', () => {
+        it('should not be able to pre-process a Home Address data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

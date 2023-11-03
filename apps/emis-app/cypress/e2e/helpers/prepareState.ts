@@ -521,3 +521,14 @@ export const getCaseFilesSummary = async (provider: IProvider, caseFileIds: stri
   const caseFilesSummary = await Promise.all(getCaseFilesSummaryPromises);
   return caseFilesSummary;
 };
+
+/**
+ * Get Households summary
+ * @param provider
+ * @param caseFileIds
+ */
+export const getHouseholdsSummary = async (provider: IProvider, HouseholdIds: string[]) => {
+  const getHouseholdsPromises = HouseholdIds.map((HouseholdId) => provider.households.get(HouseholdId));
+  const householdsSummary = await Promise.all(getHouseholdsPromises);
+  return householdsSummary;
+};
