@@ -1,11 +1,13 @@
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
-import { ActionStatus, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken } from '@libs/entities-lib/task';
+import { ActionStatus, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken, TaskType } from '@libs/entities-lib/task';
 import { TaskService } from '@libs/services-lib/task/entity/task';
 import { ITaskServiceMock } from '@libs/services-lib/task/entity';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { Ref, ref } from 'vue';
+import routes from '@/constants/routes';
+import { INotificationHelperView } from '@libs/entities-lib/notification';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<ITaskEntity, IdParams>,
@@ -91,6 +93,31 @@ export function getExtensionComponents(
     }
   }
 
+  function getNotificationHelperView(id: uuid) : INotificationHelperView {
+    const task = baseComponents.getById(id);
+    if (JSON.stringify(task) === '{}') {
+      return null;
+    }
+
+    const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    return {
+      isUrgent: task.isUrgent,
+      isDueToday: dueDate && dueDate.toDateString() === today.toDateString(),
+      isOverdue: dueDate && dueDate < startOfDay,
+      icon: task.taskType === TaskType.Personal ? 'mdi-account-check' : '',
+      targetLink: {
+        name: routes.caseFile.task.details.name,
+        params: {
+          id: task.caseFileId,
+          taskId: task.id,
+        },
+      },
+    };
+  }
+
   return {
     taskCategoriesFetched,
     taskCategories,
@@ -100,5 +127,6 @@ export function getExtensionComponents(
     getTaskCategories,
     setWorkingOn,
     taskAction,
+    getNotificationHelperView,
   };
 }

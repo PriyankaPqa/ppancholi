@@ -1,6 +1,6 @@
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { Entity } from '@/pinia/task/task';
-import { ActionStatus, IdParams, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken } from '@libs/entities-lib/task';
+import { ActionStatus, IdParams, ITaskEntityData, mockPersonalTaskEntity, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken } from '@libs/entities-lib/task';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 
@@ -152,6 +152,68 @@ describe('Task Store', () => {
           'mock-case-file-id-1',
           { actionStatus: ActionStatus.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
         );
+      });
+    });
+
+    describe('getNotificationHelperView', () => {
+      const today = new Date();
+      const yesterday = new Date(new Date().setDate(today.getDate() - 1));
+      const tomorrow = new Date(new Date().setDate(today.getDate() + 1));
+      const taskMap = new Map<string, ITaskEntityData>();
+      taskMap.set('yesterday', mockPersonalTaskEntity({ id: 'yesterday', dueDate: yesterday, isUrgent: true }));
+      taskMap.set('today', mockPersonalTaskEntity({ id: 'today', dueDate: today, isUrgent: false }));
+      taskMap.set('tomorrow', mockPersonalTaskEntity({ id: 'tomorrow', dueDate: tomorrow }));
+      taskMap.set('team', mockTeamTaskEntity());
+      const bComponents = {
+        ...baseComponents,
+        getById: jest.fn((id) => taskMap.get(id)),
+      };
+      const store = createTestStore(bComponents);
+      describe('isUrgent', () => {
+        it('is true when task is urgent', () => {
+          expect(store.getNotificationHelperView('yesterday').isUrgent).toBeTruthy();
+        });
+        it('is false when task is not urgent', () => {
+          expect(store.getNotificationHelperView('today').isUrgent).toBeFalsy();
+        });
+      });
+      describe('isDueToday', () => {
+        it('is true when task due date is today', () => {
+          expect(store.getNotificationHelperView('today').isDueToday).toBeTruthy();
+        });
+        it('is false when task due date is yesterday', () => {
+          expect(store.getNotificationHelperView('yesterday').isDueToday).toBeFalsy();
+        });
+        it('is false when task due date is tomorrow', () => {
+          expect(store.getNotificationHelperView('tomorrow').isDueToday).toBeFalsy();
+        });
+      });
+      describe('isOverdue', () => {
+        it('is true when task due date is yesterday', () => {
+          expect(store.getNotificationHelperView('yesterday').isOverdue).toBeTruthy();
+        });
+        it('is false when task due date is today', () => {
+          expect(store.getNotificationHelperView('today').isOverdue).toBeFalsy();
+        });
+        it('is false when task due date is tomorrow', () => {
+          expect(store.getNotificationHelperView('tomorrow').isOverdue).toBeFalsy();
+        });
+      });
+      describe('icon', () => {
+        it('is set for personal tasks', () => {
+          expect(store.getNotificationHelperView('today').icon).toBeTruthy();
+        });
+        it('is not set for team tasks', () => {
+          expect(store.getNotificationHelperView('team').icon).toBeFalsy();
+        });
+      });
+      describe('targetLink', () => {
+        it('has parameters set correctly', () => {
+          const link = store.getNotificationHelperView('today').targetLink as any;
+          expect(link.name).toBeTruthy();
+          expect(link.params.id).toEqual(taskMap.get('today').caseFileId);
+          expect(link.params.taskId).toEqual(taskMap.get('today').id);
+        });
       });
     });
 });

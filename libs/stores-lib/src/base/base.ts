@@ -132,7 +132,9 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
       let res = [] as T[];
       await Promise.all(idBatches.map(async (batch) => {
         const batchRes = await service.getByIds(batch);
-        res = [...res, ...batchRes];
+        if (batchRes) {
+          res = [...res, ...batchRes];
+        }
       }));
 
       setAll(res);

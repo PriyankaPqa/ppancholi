@@ -1,7 +1,8 @@
+import { INotificationHelperView } from '../notification';
 import { IEntity, mockBaseData, mockBaseMetadata } from '../base';
 import { ITaskEntity, ITaskEntityData, ITaskMetadata, TaskStatus, TaskType, ITaskCombined } from './task.types';
 
-const mockBaseTaskEntityData = (force? : Partial<IEntity>): ITaskEntityData => ({
+const mockBaseTaskEntityData = (force? : Partial<ITaskEntityData>): ITaskEntityData => ({
   ...mockBaseData(),
   id: '',
   name: {
@@ -24,7 +25,7 @@ const mockBaseTaskEntityData = (force? : Partial<IEntity>): ITaskEntityData => (
   ...force,
 });
 
-export const mockTeamTaskEntity = (force? : Partial<IEntity>): ITaskEntityData => ({
+export const mockTeamTaskEntity = (force? : Partial<ITaskEntityData>): ITaskEntityData => ({
   ...mockBaseTaskEntityData(),
   id: 'mock-team-task-id-1',
   taskType: TaskType.Team,
@@ -39,7 +40,7 @@ export const mockTeamTaskEntity = (force? : Partial<IEntity>): ITaskEntityData =
   ...force,
 });
 
-export const mockPersonalTaskEntity = (force? : Partial<IEntity>): ITaskEntityData => ({
+export const mockPersonalTaskEntity = (force? : Partial<ITaskEntityData>): ITaskEntityData => ({
   ...mockBaseTaskEntityData(),
   id: 'mock-personal-task-id-1',
   name: {
@@ -83,3 +84,18 @@ export const mockCombinedTaskData = (): ITaskCombined[] => ([
     pinned: false,
   },
 ]);
+
+export const mockNotificationHelperView = (force? : Partial<INotificationHelperView>): INotificationHelperView => ({
+  isDueToday: false,
+  isOverdue: false,
+  isUrgent: false,
+  icon: '',
+  targetLink: {
+    name: 'taskRoute',
+    params: {
+      id: '1',
+      taskId: '2',
+    },
+  },
+  ...force,
+});

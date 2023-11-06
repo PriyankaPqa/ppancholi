@@ -3,17 +3,32 @@
     rounded
     class="d-flex justify-space-between pa-3"
     :color="backgroundColor">
-    <div class="rc-body14">
-      <div v-if="displayLink" class="fw-bold" data-test="notification-subject-link">
+    <div class="rc-body14 no-overflow">
+      <div v-if="helperView && helperView.targetLink" class="fw-bold overflow-ellipsis" data-test="notification-subject-link">
         <button type="button" class="rc-link14" data-test="notification-subject-btn" @click="subjectClick">
+          <v-icon v-if="helperView && helperView.icon" data-test="notification-link-icon" :color="'grey'" small>
+            {{ helperView.icon }}
+          </v-icon>
           {{ $m(notification.subject) }}
         </button>
       </div>
-      <div v-else class="fw-bold" data-test="notification-subject-text">
+      <div v-else class="fw-bold overflow-ellipsis" data-test="notification-subject-text">
+        <v-icon v-if="helperView && helperView.icon" data-test="notification-text-icon" :color="'grey'" small>
+          {{ helperView.icon }}
+        </v-icon>
         {{ $m(notification.subject) }}
       </div>
       <div data-test="notification-created-date">
         {{ $t('eventDetail.created') }} {{ helpers.getLocalStringDate((notification.created), 'local', 'PP') }}
+        <span v-if="helperView && helperView.isUrgent" data-test="notification-urgent" class="red--text">
+          {{ $t('task.create_edit.urgent') }}
+        </span>
+        <span v-if="helperView && helperView.isDueToday" data-test="notification-due-today" class="red--text">
+          {{ $t('task.due_today') }}
+        </span>
+        <span v-if="helperView && helperView.isOverdue" data-test="notification-overdue" class="red--text">
+          {{ $t('task.overdue') }}
+        </span>
       </div>
     </div>
     <div class="d-flex align-center">
@@ -24,15 +39,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { INotificationEntity, NotificationCategoryType } from '@libs/entities-lib/notification';
+import { INotificationEntity, INotificationHelperView, NotificationCategoryType } from '@libs/entities-lib/notification';
 import helpers from '@/ui/helpers/helpers';
 import { useTaskStore } from '@/pinia/task/task';
-import { IEntity } from '@libs/entities-lib/base';
-import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'NotificationCard',
-
   props: {
     notification: {
       type: Object as () => INotificationEntity,
@@ -52,18 +64,12 @@ export default Vue.extend({
     checkboxLabel(): string {
       return this.notification?.isRead ? 'notifications.mark_unread' : 'notifications.mark_read';
     },
-    displayLink(): boolean {
-      return this.notification.categoryType === NotificationCategoryType.Tasks && this.targetEntityLoaded;
-    },
-    targetEntity(): IEntity {
+    helperView(): INotificationHelperView {
       if (this.notification.categoryType !== NotificationCategoryType.Tasks) {
         return null;
       }
 
-      return useTaskStore().getById(this.notification.targetEntityId);
-    },
-    targetEntityLoaded(): boolean {
-      return this.targetEntity && JSON.stringify(this.targetEntity) !== '{}';
+      return useTaskStore().getNotificationHelperView(this.notification.targetEntityId);
     },
   },
   methods: {
@@ -74,22 +80,10 @@ export default Vue.extend({
       this.notification.isRead = true;
       this.toggleIsRead();
 
-      const linkObject = this.targetEntityLink();
+      const linkObject = this.helperView?.targetLink;
       if (linkObject) {
         await this.$router.push(linkObject);
       }
-    },
-    targetEntityLink(): any {
-      // note: displayLink only for Tasks currently
-      return this.displayLink
-      ? {
-          name: routes.caseFile.task.details.name,
-          params: {
-            id: this.notification.targetEntityParentId,
-            taskId: this.notification.targetEntityId,
-          },
-        }
-      : null;
     },
   },
 });
@@ -98,6 +92,20 @@ export default Vue.extend({
 <style scoped lang="scss">
   .v-input--checkbox::v-deep .v-label {
     font-size: 12px !important;
+  }
+
+  .red-text {
+    color:  var(--v-status_error-base);
+  }
+
+  .no-overflow {
+    overflow: hidden;
+  }
+
+  .overflow-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
 </style>

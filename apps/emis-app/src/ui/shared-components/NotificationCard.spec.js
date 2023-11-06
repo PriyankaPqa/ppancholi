@@ -1,7 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '@/ui/shared-components/NotificationCard.vue';
 import { NotificationCategoryType, mockNotificationEntity } from '@libs/entities-lib/notification';
-import { mockTeamTaskEntity } from '@libs/entities-lib/task';
+import { mockNotificationHelperView } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
@@ -35,7 +35,7 @@ describe('NotificationCard.vue', () => {
   };
 
   describe('Template', () => {
-    describe('text and link', () => {
+    describe('subject text and links', () => {
       it('should render subject text when not linked', () => {
         mountWithNotification(mockNotification);
         const text = wrapper.findDataTest('notification-subject-text');
@@ -46,31 +46,73 @@ describe('NotificationCard.vue', () => {
         const linkDiv = wrapper.findDataTest('notification-subject-link');
         expect(linkDiv.exists()).toBeFalsy();
       });
-      it('should render expected link when displayLink is set', async () => {
+      it('should render expected link for task notification', async () => {
         mountWithNotification(mockTaskNotification);
         const linkDiv = wrapper.findDataTest('notification-subject-link');
         expect(linkDiv.text()).toEqual(mockTaskNotification.subject.translation.en);
       });
-      it('should hide subject text when displayLink is set', async () => {
+      it('should hide subject text for task notification', async () => {
         mountWithNotification(mockTaskNotification);
         const textDiv = wrapper.findDataTest('notification-subject-text');
         expect(textDiv.exists()).toBeFalsy();
       });
+    });
+
+    describe('checkboxes', () => {
+      it('should render checkbox with expected label when unread', () => {
+        mountWithNotification(mockNotification);
+        const checkbox = wrapper.findDataTest('notification-chk-read');
+        expect(checkbox.element.labels[0].innerHTML).toEqual('notifications.mark_read');
+      });
+      it('should render checkbox with expected label when read', () => {
+        mountWithNotification(mockReadNotification);
+        const checkbox = wrapper.findDataTest('notification-chk-read');
+        expect(checkbox.element.labels[0].innerHTML).toEqual('notifications.mark_unread');
+      });
+    });
+
+    describe('other text', () => {
       it('should render expected date', () => {
         mountWithNotification(mockNotification);
         const text = wrapper.findDataTest('notification-created-date');
         const dateText = helpers.getLocalStringDate((mockNotification.created), 'local', 'PP');
         expect(text.text()).toEqual(`eventDetail.created ${dateText}`);
       });
-      it('should checkbox with expected label when unread', () => {
-        mountWithNotification(mockNotification);
-        const checkbox = wrapper.findDataTest('notification-chk-read');
-        expect(checkbox.element.labels[0].innerHTML).toEqual('notifications.mark_read');
+      it('should render Urgent when view marked as urgent', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ isUrgent: true }));
+        mountWithNotification(mockTaskNotification);
+        const urgentLabel = wrapper.findDataTest('notification-urgent');
+        expect(urgentLabel.exists()).toBeTruthy();
       });
-      it('should checkbox with expected label when read', () => {
-        mountWithNotification(mockReadNotification);
-        const checkbox = wrapper.findDataTest('notification-chk-read');
-        expect(checkbox.element.labels[0].innerHTML).toEqual('notifications.mark_unread');
+      it('should not render Urgent when view not marked as urgent', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ isUrgent: false }));
+        mountWithNotification(mockTaskNotification);
+        const urgentLabel = wrapper.findDataTest('notification-urgent');
+        expect(urgentLabel.exists()).toBeFalsy();
+      });
+      it('should render Due Today when view marked as due today', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ isDueToday: true }));
+        mountWithNotification(mockTaskNotification);
+        const urgentLabel = wrapper.findDataTest('notification-due-today');
+        expect(urgentLabel.exists()).toBeTruthy();
+      });
+      it('should not render Due Today when view not marked as due today', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ isDueToday: false }));
+        mountWithNotification(mockTaskNotification);
+        const urgentLabel = wrapper.findDataTest('notification-due-today');
+        expect(urgentLabel.exists()).toBeFalsy();
+      });
+      it('should render Overdue when view marked as overdue', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ isOverdue: true }));
+        mountWithNotification(mockTaskNotification);
+        const urgentLabel = wrapper.findDataTest('notification-overdue');
+        expect(urgentLabel.exists()).toBeTruthy();
+      });
+      it('should not render Overdue when view not marked as overdue', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ isOverdue: false }));
+        mountWithNotification(mockTaskNotification);
+        const urgentLabel = wrapper.findDataTest('notification-overdue');
+        expect(urgentLabel.exists()).toBeFalsy();
       });
     });
 
@@ -84,50 +126,38 @@ describe('NotificationCard.vue', () => {
         expect(wrapper.vm.backgroundColor).toEqual('grey lighten-5');
       });
     });
+
+    describe('icons', () => {
+      it('should render icon when part of view', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ icon: 'mdi-info' }));
+        mountWithNotification(mockTaskNotification);
+        const icon = wrapper.findDataTest('notification-link-icon');
+        expect(icon.exists()).toBeTruthy();
+      });
+      it('should not render icon when not part of view', () => {
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ icon: null }));
+        mountWithNotification(mockTaskNotification);
+        const icon = wrapper.findDataTest('notification-link-icon');
+        expect(icon.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('computed', () => {
-    describe('displayLink', () => {
-      it('should display a link for Task notifications when entity is loaded', async () => {
-        mountWithNotification(mockTaskNotification);
-        expect(wrapper.vm.displayLink).toBeTruthy();
-      });
-      it('should not display a link for Task notifications when entity is not loaded', async () => {
-        taskStore.getById = jest.fn();
-        mountWithNotification(mockTaskNotification);
-        expect(wrapper.vm.displayLink).toBeFalsy();
-      });
-      it('should not display a link for General notifications', async () => {
-        mountWithNotification(mockNotification);
-        expect(wrapper.vm.displayLink).toBeFalsy();
-      });
-    });
-    describe('targetEntity', () => {
+    describe('helperView', () => {
       it('is not set for General notifications', async () => {
         mountWithNotification(mockNotification);
-        expect(wrapper.vm.targetEntity).toBeFalsy();
+        expect(wrapper.vm.helperView).toBeFalsy();
       });
       it('is set for Task notifications when returned by the store', async () => {
-        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView());
         mountWithNotification(mockTaskNotification);
-        expect(wrapper.vm.targetEntity).toBeTruthy();
+        expect(wrapper.vm.helperView).toBeTruthy();
       });
       it('is not set for Task notifications when not returned by the store', async () => {
-        taskStore.getById = jest.fn();
+        taskStore.getNotificationHelperView = jest.fn();
         mountWithNotification(mockTaskNotification);
-        expect(wrapper.vm.targetEntity).toBeFalsy();
-      });
-    });
-    describe('targetEntityLoaded', () => {
-      it('is true when targetEntity is set', async () => {
-        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
-        mountWithNotification(mockTaskNotification);
-        expect(wrapper.vm.targetEntityLoaded).toBeTruthy();
-      });
-      it('is false when targetEntity is not set', async () => {
-        taskStore.getById = jest.fn();
-        mountWithNotification(mockTaskNotification);
-        expect(wrapper.vm.targetEntityLoaded).toBeFalsy();
+        expect(wrapper.vm.helperView).toBeFalsy();
       });
     });
   });
@@ -150,36 +180,17 @@ describe('NotificationCard.vue', () => {
         expect(wrapper.vm.toggleIsRead).toBeCalled();
       });
       it('navigates to the target link', async () => {
-        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
-        mountWithNotification(mockTaskNotification);
-        await wrapper.vm.subjectClick();
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+        const location = {
           name: routes.caseFile.task.details.name,
           params: {
             id: mockTaskNotification.targetEntityParentId,
             taskId: mockTaskNotification.targetEntityId,
           },
-        });
-      });
-    });
-    describe('targetEntityLink', () => {
-      it('does not return a link for General notifications', () => {
-        mountWithNotification(mockNotification);
-        const link = wrapper.vm.targetEntityLink();
-        expect(link).toBeFalsy();
-      });
-      it('returns a link for Task notifications when the target entity is loaded', async () => {
-        taskStore.getById = jest.fn(() => mockTeamTaskEntity());
+        };
+        taskStore.getNotificationHelperView = jest.fn(() => mockNotificationHelperView({ targetLink: location }));
         mountWithNotification(mockTaskNotification);
-        const link = wrapper.vm.targetEntityLink();
-        expect(link.name).toBeTruthy();
-        expect(link.params.id).toEqual(mockTaskNotification.targetEntityParentId);
-      });
-      it('does not return a link for Task notifications when the target entity is not loaded', async () => {
-        taskStore.getById = jest.fn();
-        mountWithNotification(mockTaskNotification);
-        const link = wrapper.vm.targetEntityLink();
-        expect(link).toBeFalsy();
+        await wrapper.vm.subjectClick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith(location);
       });
     });
   });
