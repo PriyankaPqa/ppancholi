@@ -49,7 +49,7 @@ describe('MassActionsHome.vue', () => {
             button: 'mass_action.card.action.view',
             route: routes.massActions.caseFileStatus.home.name,
             dataTest: 'massAction_case_file_status',
-            level: UserRoles.level6,
+            level: UserRoles.level5,
             roles: null,
             group: 1,
             feature: FeatureKeys.MassActionCaseFileStatus,

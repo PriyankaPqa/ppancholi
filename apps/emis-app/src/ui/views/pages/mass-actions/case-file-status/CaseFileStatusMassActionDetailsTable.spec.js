@@ -1,17 +1,17 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedMassAction, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { mockEventEntity } from '@libs/entities-lib/event';
-import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { mockListOption } from '@libs/entities-lib/user-account';
 import { mockOptionItem } from '@libs/entities-lib/optionItem';
+import { mockProvider } from '@/services/provider';
 import Component from './CaseFileStatusMassActionDetailsTable.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
-const { pinia, eventStore } = useMockEventStore();
-const { caseFileStore } = useMockCaseFileStore(pinia);
+const { caseFileStore, pinia } = useMockCaseFileStore();
 
 describe('CaseFileStatusMassActionDetailsTable.vue', () => {
   let wrapper;
@@ -32,6 +32,9 @@ describe('CaseFileStatusMassActionDetailsTable.vue', () => {
         return {
           ...otherData,
         };
+      },
+      mocks: {
+        $services: services,
       },
     };
 
@@ -130,7 +133,7 @@ describe('CaseFileStatusMassActionDetailsTable.vue', () => {
       it('should fetch the event', async () => {
         const id = mockCombinedMassAction().entity.details.eventId;
         await wrapper.vm.fetchEvent();
-        expect(eventStore.fetch).toHaveBeenCalledWith(id);
+        expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith([id]);
       });
     });
 

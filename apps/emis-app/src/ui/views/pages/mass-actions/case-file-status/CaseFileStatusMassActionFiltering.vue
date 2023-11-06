@@ -109,6 +109,7 @@ import { FilterKey } from '@libs/entities-lib/user-account';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 
 import { DataTableHeader } from 'vuetify';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(massActionCaseFileFiltering).extend({
 
@@ -125,6 +126,7 @@ export default mixins(massActionCaseFileFiltering).extend({
       FilterKey,
       MassActionType,
       getLocalStringDate: helpers.getLocalStringDate,
+      openEventsOnly: !this.$hasLevel(UserRoles.level6), // used in the eventFilter mixin
     };
   },
 

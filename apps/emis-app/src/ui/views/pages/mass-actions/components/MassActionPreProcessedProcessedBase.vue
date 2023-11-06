@@ -8,7 +8,7 @@
         :loading-chip="false"
         :mass-action="massAction"
         :mass-action-status="massActionStatus"
-        @edit="editMode = true"
+        @edit="goToEditMode"
         @delete="onDelete()" />
 
       <mass-action-edit-title-description
@@ -233,6 +233,11 @@ export default Vue.extend({
       type: Object as () =>IMassActionMetadata,
       required: true,
     },
+
+    canAccessEvent: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -270,6 +275,14 @@ export default Vue.extend({
   },
 
    methods: {
+    goToEditMode() {
+      if (!this.canAccessEvent) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.noAccessToEvent') });
+        return;
+      }
+      this.editMode = true;
+    },
+
     async update(payload: { name: string; description: string }) {
       this.editMode = false;
 
@@ -281,6 +294,14 @@ export default Vue.extend({
     },
 
     async onProcess() {
+    // The prop canAccessEvent wont be needed when the httpClient will allow custom catching of 403 errors from the back-end.
+    // We wont need to do the check in the front end before trying to process a mass action. The back-end will return 403 if the user has no access to the event,
+    // which can be caught in this method and displayed as an error toast notification.
+      if (!this.canAccessEvent) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.noAccessToEvent') });
+        return;
+      }
+
       const userChoice = await this.$confirm({
         title: this.$t('massAction.confirm.processing.title'),
         messages: this.$t('massAction.confirm.processing.message'),
@@ -291,6 +312,14 @@ export default Vue.extend({
     },
 
     async onDelete() {
+          // The prop canAccessEvent wont be needed when the httpClient will allow custom catching of 403 errors from the back-end.
+    // We wont need to do the check in the front end before trying to process a mass action. The back-end will return 403 if the user has no access to the event,
+    // which can be caught in this method and displayed as an error toast notification.
+      if (!this.canAccessEvent) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.noAccessToEvent') });
+        return;
+      }
+
       const userChoice = await this.$confirm({
         title: this.$t('massAction.confirm.delete.title'),
         messages: this.$t('massAction.confirm.delete.message'),
@@ -305,6 +334,10 @@ export default Vue.extend({
     },
 
     async downloadInvalid() {
+      if (!this.canAccessEvent) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.download.noAccessToEvent') });
+        return;
+      }
       const res = await this.$services.massActions.getInvalidFile({
         massActionId: this.massAction.id,
         runId: this.massActionMetadata.lastRun.runId,

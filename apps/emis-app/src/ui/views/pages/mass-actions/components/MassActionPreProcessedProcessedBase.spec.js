@@ -114,6 +114,22 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       doMount({ otherProps: null, otherData: null }, false);
     });
 
+    describe('goToEditMode', () => {
+      it('should display error message if the user has no access to the event', async () => {
+        await wrapper.setProps({ canAccessEvent: false });
+        await wrapper.vm.goToEditMode();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith(
+          { title: 'common.error', message: 'massAction.processing.error.noAccessToEvent' },
+        );
+      });
+
+      it('sets editMode to true', async () => {
+        await wrapper.setData({ editMode: false });
+        await wrapper.vm.goToEditMode();
+        expect(wrapper.vm.editMode).toBeTruthy();
+      });
+    });
+
     describe('update', () => {
       it('should set editMode to false', async () => {
         await wrapper.setData({
@@ -138,6 +154,14 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
             title: 'massAction.confirm.processing.title',
             messages: 'massAction.confirm.processing.message',
           },
+        );
+      });
+
+      it('should display error message if the user has no access to the event', async () => {
+        await wrapper.setProps({ canAccessEvent: false });
+        await wrapper.vm.onProcess();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith(
+          { title: 'common.error', message: 'massAction.processing.error.noAccessToEvent' },
         );
       });
 
@@ -192,6 +216,14 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         await wrapper.vm.downloadInvalid();
 
         expect(helpers.downloadFile).toBeCalled();
+      });
+
+      it('should display error message if the user has no access to the event', async () => {
+        await wrapper.setProps({ canAccessEvent: false });
+        await wrapper.vm.downloadInvalid();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith(
+          { title: 'common.error', message: 'massAction.processing.error.download.noAccessToEvent' },
+        );
       });
     });
 

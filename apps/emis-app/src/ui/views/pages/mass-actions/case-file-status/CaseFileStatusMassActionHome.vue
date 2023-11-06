@@ -43,7 +43,7 @@
       </template>
 
       <template #[`item.deleteButton`]="{ item }">
-        <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" data-test="delete" @click="onDelete(item)">
+        <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" data-test="delete" @click="onDeleteMassAction(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -60,9 +60,11 @@ import { DataTableHeader } from 'vuetify';
 import { RcDataTable, RcAddButtonWithMenu } from '@libs/component-lib/components';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
-import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
+import { IMassActionCombined, MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
+import { EEventStatus } from '@libs/entities-lib/event';
+import { UserRoles } from '@libs/entities-lib/user';
 import CaseFileStatusMassActionFiltering from './CaseFileStatusMassActionFiltering.vue';
 
 export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
@@ -161,6 +163,16 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       } else if (item.value === MassActionMode.List) {
         this.showProcessByList = true;
       }
+    },
+
+    async onDeleteMassAction(item: IMassActionCombined) {
+        const eventData = await this.$services.events.searchMyEventsById([item.entity?.details?.eventId]);
+        const canAccessEvent = !!eventData?.value?.[0] && (eventData?.value?.[0].entity?.schedule?.status === EEventStatus.Open || this.$hasLevel(UserRoles.level6));
+        if (!canAccessEvent) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.noAccessToEvent') });
+          return;
+        }
+        this.onDelete(item);
     },
   },
 

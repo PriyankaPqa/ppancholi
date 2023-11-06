@@ -68,7 +68,7 @@ export default mixins(massActions).extend({
               test: 'mass_action.card.case_file_status',
               to: routes.massActions.caseFileStatus.home.name,
               exact: false,
-              level: UserRoles.level6,
+              level: UserRoles.level5,
               feature: FeatureKeys.MassActionCaseFileStatus,
             },
           ],

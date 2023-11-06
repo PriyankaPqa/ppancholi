@@ -156,7 +156,7 @@ export default Vue.extend({
           text: 'leftMenu.mass_actions_title',
           test: 'mass_actions',
           exact: false,
-          level: UserRoles.level6,
+          level: this.$hasFeature(FeatureKeys.MassActionCaseFileStatus) ? UserRoles.level5 : UserRoles.level6,
           roles: [UserRoles.contributorIM, UserRoles.contributorFinance],
         },
         {
@@ -187,6 +187,7 @@ export default Vue.extend({
       if (this.$hasFeature(FeatureKeys.TaskManagement)) {
         tabs.splice(7, 0, tasksTab);
       }
+
       return tabs;
     },
 

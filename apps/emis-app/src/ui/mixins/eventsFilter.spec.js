@@ -59,6 +59,29 @@ describe('eventsFilter', () => {
         await wrapper.vm.fetchEventsFilter();
         expect(wrapper.vm.isInitialLoad).toEqual(false);
       });
+      it('should only filter on open events if openEventsOnly is true', async () => {
+        await wrapper.setData({ openEventsOnly: true });
+        await wrapper.vm.fetchEventsFilter('test', 10);
+        expect(wrapper.vm.$services.events.search).toHaveBeenCalledWith({
+          search: '((/.*test.*/ OR "\\"test\\""))',
+          searchFields: 'Entity/Name/Translation/en',
+          filter: {
+            or: [
+              {
+                Entity: {
+                  Schedule: {
+                    Status: EEventStatus.Open,
+                  },
+                },
+              }, null,
+            ],
+          },
+          top: 10,
+          orderBy: 'Entity/Schedule/OpenDate desc',
+          queryType: 'full',
+          searchMode: 'all',
+        });
+      });
     });
 
     describe('fetchEventsByIds', () => {

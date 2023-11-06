@@ -11,7 +11,7 @@
             async-mode
             return-object
             data-test="case_file_status_details_event_name"
-            fetch-all-events
+            :fetch-all-events="$hasLevel(UserRoles.level6)"
             :label="`${$t('massAction.caseFileStatus.create.event.label')} *`"
             :rules="rules.event" />
         </v-col>
@@ -101,6 +101,7 @@ import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { VTextFieldWithValidation, VTextAreaWithValidation, VSelectWithValidation,
 } from '@libs/component-lib/components';
+import { UserRoles } from '@libs/entities-lib/user';
 import { MassActionCaseFileStatusForm } from './CaseFileStatusMassActionCreate.vue';
 
 export default Vue.extend({
@@ -126,6 +127,7 @@ export default Vue.extend({
     return {
       isEmpty,
       CaseFileStatus,
+      UserRoles,
       formCopy: {} as MassActionCaseFileStatusForm,
       statuses: [CaseFileStatus.Open, CaseFileStatus.Archived, CaseFileStatus.Inactive, CaseFileStatus.Closed],
       selectedReason: null as IOptionItem,

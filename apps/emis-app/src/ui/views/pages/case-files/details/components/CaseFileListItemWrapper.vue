@@ -66,8 +66,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { ICaseFileActivity } from '@libs/entities-lib/case-file';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
+import { UserRolesNames } from '@libs/entities-lib/user';
 import { system } from '@/constants/system';
 import { format } from 'date-fns';
 
@@ -140,8 +142,14 @@ export default Vue.extend({
     },
 
     displaySystemAdminOnly() : boolean {
-        return (this.item as ICaseFileActivity).triggeredByMassAction;
+      const L6RoleIds = useUserAccountStore().rolesByLevels([UserRolesNames.level6])?.map((r) => r.id);
+      const userIsL6 = L6RoleIds && L6RoleIds.includes((this.item as ICaseFileActivity).role?.id);
+      return userIsL6 && (this.item as ICaseFileActivity).triggeredByMassAction;
     },
+  },
+
+  async created() {
+    await useUserAccountStore().fetchRoles();
   },
 });
 </script>

@@ -1,11 +1,13 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
+import { MassActionMode, MassActionType, mockCombinedMassAction } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
-
+import { mockProvider } from '@/services/provider';
+import { mockEventMainInfo } from '@libs/entities-lib/event';
 import Component from './CaseFileStatusMassActionHome.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 describe('CaseFileStatusMassActionHome.vue', () => {
   let wrapper;
@@ -14,7 +16,9 @@ describe('CaseFileStatusMassActionHome.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -39,7 +43,83 @@ describe('CaseFileStatusMassActionHome.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        mocks: {
+          $services: services,
+        },
+      });
+    });
 
+    describe('onDeleteMassAction', () => {
+      it('calls event search with the event id of the mass action', async () => {
+        const massAction = mockCombinedMassAction();
+        await wrapper.vm.onDeleteMassAction(massAction);
+        expect(wrapper.vm.$services.events.searchMyEventsById).toBeCalledWith([massAction.entity.details.eventId]);
+      });
+
+      it('calls onDelete if the service call returns an open event', async () => {
+        wrapper.vm.$services.events.searchMyEventsById = jest.fn(() => ({ value: [mockEventMainInfo()] }));
+        wrapper.vm.onDelete = jest.fn();
+        const massAction = mockCombinedMassAction();
+        await wrapper.vm.onDeleteMassAction(massAction);
+        expect(wrapper.vm.onDelete).toBeCalledWith(massAction);
+      });
+
+      it('calls onDelete if the service call returns a closed event and user is level6', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $services: services,
+            $hasLevel: () => true,
+          },
+        });
+        wrapper.vm.$services.events.searchMyEventsById = jest.fn(() => ({ value: [mockEventMainInfo({ schedule: { ...mockEventMainInfo().schedule, status: 1 } })] }));
+        wrapper.vm.onDelete = jest.fn();
+        const massAction = mockCombinedMassAction();
+        await wrapper.vm.onDeleteMassAction(massAction);
+        expect(wrapper.vm.onDelete).toBeCalledWith(massAction);
+      });
+
+      it('shows error message if the service call returns a closed event and user is not level6', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $services: services,
+            $hasLevel: () => false,
+          },
+        });
+
+        wrapper.vm.$services.events.searchMyEventsById = jest.fn(() => ({ value: [mockEventMainInfo({ schedule: { ...mockEventMainInfo().schedule, status: 1 } })] }));
+        wrapper.vm.onDelete = jest.fn();
+        const massAction = mockCombinedMassAction();
+        await wrapper.vm.onDeleteMassAction(massAction);
+        expect(wrapper.vm.onDelete).not.toBeCalled();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'massAction.processing.error.noAccessToEvent' });
+      });
+
+      it('shows error message if the service call returns a closed event and user is not level6', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $services: services,
+            $hasLevel: () => false,
+          },
+        });
+
+        wrapper.vm.$services.events.searchMyEventsById = jest.fn(() => ({ value: [mockEventMainInfo({ schedule: { ...mockEventMainInfo().schedule, status: 1 } })] }));
+        wrapper.vm.onDelete = jest.fn();
+        const massAction = mockCombinedMassAction();
+        await wrapper.vm.onDeleteMassAction(massAction);
+        expect(wrapper.vm.onDelete).not.toBeCalled();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'massAction.processing.error.noAccessToEvent' });
+      });
+
+      it('shows error message if the service call returns no event', async () => {
+        wrapper.vm.$services.events.searchMyEventsById = jest.fn(() => ({ value: [] }));
+        wrapper.vm.onDelete = jest.fn();
+        const massAction = mockCombinedMassAction();
+        await wrapper.vm.onDeleteMassAction(massAction);
+        expect(wrapper.vm.onDelete).not.toBeCalled();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'massAction.processing.error.noAccessToEvent' });
       });
     });
 

@@ -22,6 +22,7 @@ export default Vue.extend({
       isInitialLoad: true,
       searchEventMethod: '', // Defined in component using the mixin
       selectedEvent: [],
+      openEventsOnly: false,
     };
   },
   computed: {
@@ -56,8 +57,8 @@ export default Vue.extend({
                   Status: EEventStatus.Open,
                 },
               },
-            },
-            {
+            }, this.openEventsOnly ? null
+             : {
               Entity: {
                 Schedule: {
                   Status: EEventStatus.OnHold,

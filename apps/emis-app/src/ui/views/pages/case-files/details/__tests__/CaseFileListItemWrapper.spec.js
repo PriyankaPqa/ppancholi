@@ -2,11 +2,13 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import { CaseFileActivityType, mockCaseFileActivities } from '@libs/entities-lib/case-file';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
 import { system } from '@/constants/system';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 
 import Component from '../components/CaseFileListItemWrapper.vue';
 
 const localVue = createLocalVue();
 const item = mockCombinedCaseNote();
+const { pinia, userAccountStore } = useMockUserAccountStore();
 
 describe('CaseFileListItemWrapper.vue', () => {
   let wrapper;
@@ -17,6 +19,7 @@ describe('CaseFileListItemWrapper.vue', () => {
 
       wrapper = mount(Component, {
         localVue,
+        pinia,
         propsData: {
           item,
           sidebarIcon: 'mock-icon',
@@ -98,6 +101,7 @@ describe('CaseFileListItemWrapper.vue', () => {
       it('sets the right  data if item is case note', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             item,
             sidebarIcon: 'mock-icon',
@@ -143,6 +147,7 @@ describe('CaseFileListItemWrapper.vue', () => {
         item.user.id = system.public_user_id;
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             item,
             sidebarIcon: 'mock-icon',
@@ -166,22 +171,26 @@ describe('CaseFileListItemWrapper.vue', () => {
     });
 
     describe('displaySystemAdminOnly', () => {
-      it('should be true when activity is triggered by mass action', () => {
+      it('should be true when activity is triggered by mass action and activity user role is L6', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             item: {
               ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
               triggeredByMassAction: true,
+              role: { id: 'level-6-role-id' },
             },
           },
         });
+        userAccountStore.rolesByLevels = jest.fn(() => [{ id: 'level-6-role-id' }]);
         expect(wrapper.vm.displaySystemAdminOnly).toEqual(true);
       });
 
       it('should be false when activity is not triggered by mass action', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             item: {
               ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
@@ -189,6 +198,22 @@ describe('CaseFileListItemWrapper.vue', () => {
             },
           },
         });
+        expect(wrapper.vm.displaySystemAdminOnly).toEqual(false);
+      });
+
+      it('should return false if the activity user is not level 6', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            item: {
+              ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
+              triggeredByMassAction: true,
+              role: { id: 'level-5-role-id' },
+            },
+          },
+        });
+        userAccountStore.rolesByLevels = jest.fn(() => [{ id: 'level-6-role-id' }]);
         expect(wrapper.vm.displaySystemAdminOnly).toEqual(false);
       });
     });
