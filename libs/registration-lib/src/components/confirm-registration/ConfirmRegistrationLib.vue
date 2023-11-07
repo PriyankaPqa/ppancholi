@@ -222,14 +222,15 @@ export default Vue.extend({
         };
       }
 
-      if (state.basicDocumentsOnly) {
-        return {
-          header: this.$t('registration.confirmation.identityAuthentication.pending1Document'),
-          details: 'registration.confirmation.identityAuthentication.pending1Document.details',
-          color: 'red',
-          icon: 'mdi-alert',
-        };
-      }
+      /// temporarily commented out.  until they are sure of gambit's 1 document results
+      // if (state.basicDocumentsOnly) {
+      //   return {
+      //     header: this.$t('registration.confirmation.identityAuthentication.pending1Document'),
+      //     details: 'registration.confirmation.identityAuthentication.pending1Document.details',
+      //     color: 'red',
+      //     icon: 'mdi-alert',
+      //   };
+      // }
 
       return {
         header: this.$t('registration.confirmation.identityAuthentication.pending2Document'),

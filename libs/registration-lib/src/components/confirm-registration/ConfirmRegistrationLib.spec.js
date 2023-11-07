@@ -213,13 +213,14 @@ describe('ConfirmRegistrationLib.vue', () => {
           icon: 'mdi-check',
         });
 
-        wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: true, status: 0, basicDocumentsOnly: true };
-        expect(wrapper.vm.identityAuthenticationMessage).toEqual({
-          header: 'registration.confirmation.identityAuthentication.pending1Document',
-          details: 'registration.confirmation.identityAuthentication.pending1Document.details',
-          color: 'red',
-          icon: 'mdi-alert',
-        });
+        /// temporarily commented out.  until they are sure of gambit's 1 document results
+        // wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: true, status: 0, basicDocumentsOnly: true };
+        // expect(wrapper.vm.identityAuthenticationMessage).toEqual({
+        //   header: 'registration.confirmation.identityAuthentication.pending1Document',
+        //   details: 'registration.confirmation.identityAuthentication.pending1Document.details',
+        //   color: 'red',
+        //   icon: 'mdi-alert',
+        // });
 
         wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: true, status: 0, basicDocumentsOnly: false };
         expect(wrapper.vm.identityAuthenticationMessage).toEqual({
