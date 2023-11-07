@@ -3,7 +3,7 @@ import {
 } from '@libs/entities-lib/mass-action/massActions.types';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { IMassActionExportListPayload, IMassActionService } from './massAction.types';
-import { IHttpClient, IRestResponse } from '../../http-client';
+import { GlobalHandler, IHttpClient, IRestResponse } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
 const API_URL_SUFFIX = 'case-file';
@@ -19,11 +19,15 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
   }
 
   async process(id: uuid, runType: MassActionRunType): Promise<IMassActionEntity> {
-    return this.http.post(`${this.baseUrl}/${id}/run`, { runType });
+    return this.http.post(`${this.baseUrl}/${id}/run`, { runType }, { globalHandler: GlobalHandler.Disabled });
   }
 
   async update(id: uuid, payload: { name: string; description: string }): Promise<IMassActionEntity> {
-    return this.http.patch(`${this.baseUrl}/${id}`, payload);
+    return this.http.patch(`${this.baseUrl}/${id}`, payload, { globalHandler: GlobalHandler.Disabled });
+  }
+
+  async deactivate(id: uuid): Promise<IMassActionEntity> {
+    return this.http.delete(`${this.baseUrl}/${id}`, { globalHandler: GlobalHandler.Disabled });
   }
 
   async getInvalidFile({ massActionId, runId, language }: { massActionId: uuid; runId: uuid; language: string }): Promise<IRestResponse<string>> {
@@ -32,6 +36,7 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
         runId,
         language,
       },
+      globalHandler: GlobalHandler.Disabled,
     });
   }
 

@@ -1,5 +1,5 @@
 import { mockCaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
-import { IHttpMock, mockHttp } from '../../http-client';
+import { GlobalHandler, IHttpMock, mockHttp } from '../../http-client';
 import { CaseFileReferralsService } from './case-file-referrals';
 
 describe('>>> Case File Referral Service', () => {
@@ -16,7 +16,7 @@ describe('>>> Case File Referral Service', () => {
     it('is linked to the correct URL and params', async () => {
       const id = { id: 'myId', caseFileId: 'myParent' };
       await service.get(id);
-      expect(http.get).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/referrals/myId', { globalHandler: true });
+      expect(http.get).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/referrals/myId', { globalHandler: GlobalHandler.Enabled });
     });
   });
 

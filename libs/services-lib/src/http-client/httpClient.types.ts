@@ -3,6 +3,15 @@ import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/base';
 /* eslint-disable */
 
+// Disabled = reject and return immediately
+// Enabled = display generic error toasters for 401/403 errors or errors with no data, use error403Handler or errorGlobalHandler
+// Partial = same behavior for 401/403 or no data errors, reject and return instead of using the -Handler methods
+export enum GlobalHandler {
+  Enabled = "Enabled",
+  Partial = "Partial",
+  Disabled = "Disabled",
+}
+
 export interface IFullResponseCombined <TEntity extends IEntity, TMetadata extends IEntity> {
   entity: IRestResponse<TEntity>,
   metadata: IRestResponse<TMetadata>,
@@ -18,7 +27,7 @@ export interface IRestResponse<T> {
 }
 
 export interface RequestConfig extends AxiosRequestConfig {
-  globalHandler?: boolean;
+  globalHandler?: GlobalHandler;
   noErrorLogging?: boolean;
   isOData?: boolean;
   containsEncodedURL?: boolean;

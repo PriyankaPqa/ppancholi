@@ -5,7 +5,7 @@ import { IEventData } from '@libs/entities-lib/registration-event';
 import { IEventMetadata } from '@libs/entities-lib/event';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { IFeatureEntity } from '@libs/entities-lib/src/tenantSettings';
-import { IHttpClient } from '../http-client';
+import { GlobalHandler, IHttpClient } from '../http-client';
 import { IPublicService } from './public.types';
 
 export class PublicService implements IPublicService {
@@ -43,7 +43,7 @@ export class PublicService implements IPublicService {
     try {
       tenantId = await this.http.get<string>(
         `/system-management/tenants/id-from-domain?domain=${domain}`,
-        { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
+        { globalHandler: GlobalHandler.Partial, noErrorLogging: true, ignoreJwt: true },
       );
     } catch (e) {
       // allow to fail silently - probably dev...
@@ -58,7 +58,7 @@ export class PublicService implements IPublicService {
     try {
       features = await this.http.get<IFeatureEntity[]>(
         '/system-management/tenant-settings/public-features',
-        { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
+        { globalHandler: GlobalHandler.Partial, noErrorLogging: true, ignoreJwt: true },
       );
     } catch (e) {
       applicationInsights.trackTrace('PublicService.getPublicFeatures', { error: e }, 'public', 'getPublicFeatures');
@@ -71,7 +71,7 @@ export class PublicService implements IPublicService {
     try {
       tenantId = await this.http.get<string>(
         `/system-management/tenants/id-from-registration-domain?registrationDomain=${domain}`,
-        { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
+        { globalHandler: GlobalHandler.Partial, noErrorLogging: true, ignoreJwt: true },
       );
     } catch (e) {
       // allow to fail silently - probably dev...

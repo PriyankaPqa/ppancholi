@@ -10,6 +10,7 @@ import Vue, {
   ref, Ref,
 } from 'vue';
 
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import { BaseEntityStoreComponents, BaseStoreComponents } from './base.types';
 
 export function getBaseStoreComponents<T extends IEntity, IdParams>(
@@ -69,7 +70,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     payload.forEach((item) => upsert(item));
   }
 
-  async function fetch(idParams: IdParams, useGlobalHandler = true): Promise<T> {
+  async function fetch(idParams: IdParams, useGlobalHandler = GlobalHandler.Enabled): Promise<T> {
     try {
       const res = await service.get(idParams, useGlobalHandler);
       if (res) {

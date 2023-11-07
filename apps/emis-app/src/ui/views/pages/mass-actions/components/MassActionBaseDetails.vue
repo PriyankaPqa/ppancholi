@@ -39,7 +39,6 @@
       show-process-button
       show-delete-icon
       show-edit-icon
-      :can-access-event="canAccessEvent"
       @delete:success="back()">
       <template #payment-details>
         <slot name="pre-processed" />
@@ -60,8 +59,7 @@
       :successes-label="massActionBaseDetailsLabels.processedSuccessesLabel"
       :failures-label="massActionBaseDetailsLabels.processedFailuresLabel"
       :show-valid-download-button="showValidDownload"
-      show-invalid-download-button
-      :can-access-event="canAccessEvent">
+      show-invalid-download-button>
       <template #payment-details>
         <slot name="processed" />
       </template>
@@ -157,11 +155,6 @@ export default mixins(massActionDetails).extend({
     disableName: {
       type: Boolean,
       default: false,
-    },
-
-    canAccessEvent: {
-      type: Boolean,
-      default: true,
     },
   },
 

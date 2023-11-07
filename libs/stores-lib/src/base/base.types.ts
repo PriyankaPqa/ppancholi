@@ -1,6 +1,7 @@
 import { Ref } from 'vue';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/base';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 
 export interface BaseState<T extends IEntity> {
   items: Ref<Array<T>>
@@ -19,7 +20,7 @@ export interface BaseGetters <T extends IEntity> {
 export interface BaseActions <T extends IEntity, IdParams> {
   set: (item: T) => void
   setAll: (payload: Array<T>) => void
-  fetch: (idParams: IdParams, useGlobalHandler?: boolean) => Promise<T>
+  fetch: (idParams: IdParams, useGlobalHandler?: GlobalHandler) => Promise<T>
   fetchAll: (parentId?: Omit<IdParams, 'id'>) => Promise<T[]>
   fetchAllIncludingInactive: (parentId?: Omit<IdParams, 'id'>) => Promise<T[]>
   fetchByIds: (ids: uuid[], fetchMissingOnly: boolean, batchSize?: number) => Promise<T[]>,

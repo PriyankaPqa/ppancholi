@@ -1,5 +1,5 @@
 import { mockAssessmentFormEntity } from '@libs/entities-lib/src/assessment-template';
-import { IHttpMock, mockHttp } from '../../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { AssessmentFormsService } from './assessment-forms';
 
 describe('>>> AssessmentForms Service', () => {
@@ -16,7 +16,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.getForBeneficiary(entity.id);
-      expect(http.get).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/public`, { globalHandler: false });
+      expect(http.get).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/public`, { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -46,7 +46,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.create(entity);
-      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-forms', http.getPayloadAsFile(entity), { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-forms', http.getPayloadAsFile(entity), { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -54,7 +54,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.update(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}`, http.getPayloadAsFile(entity), { globalHandler: false });
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}`, http.getPayloadAsFile(entity), { globalHandler: GlobalHandler.Partial });
     });
   });
 

@@ -4,7 +4,7 @@ import {
 } from '@libs/entities-lib/mass-action';
 import { Status } from '@libs/entities-lib/base';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
-
+import { mockServerError } from '@libs/services-lib/http-client';
 import massActionsTable from './massActionsTable';
 
 const Component = {
@@ -130,6 +130,19 @@ describe('massActionsTable', () => {
         });
         await wrapper.vm.onDelete(mockCombinedMassAction());
         expect(wrapper.vm.itemsCount).toEqual(0);
+      });
+
+      it('should display an error toast when the call returns status 403', async () => {
+        massActionStore.deactivate = jest.fn(() => Promise.reject(mockServerError([], 403)));
+        await wrapper.vm.onDelete(mockCombinedMassAction());
+        expect(wrapper.vm.$toasted.global.error).toBeCalledWith('massAction.processing.error.noPermission');
+      });
+
+      it('should display a report error toast when the call returns another error', async () => {
+        wrapper.vm.$reportToasted = jest.fn();
+        massActionStore.deactivate = jest.fn(() => Promise.reject(mockServerError([])));
+        await wrapper.vm.onDelete(mockCombinedMassAction());
+        expect(wrapper.vm.$reportToasted).toBeCalled();
       });
     });
   });

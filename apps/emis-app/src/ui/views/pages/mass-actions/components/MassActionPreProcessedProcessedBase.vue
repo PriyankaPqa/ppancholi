@@ -8,7 +8,7 @@
         :loading-chip="false"
         :mass-action="massAction"
         :mass-action-status="massActionStatus"
-        @edit="goToEditMode"
+        @edit="editMode = true"
         @delete="onDelete()" />
 
       <mass-action-edit-title-description
@@ -139,6 +139,7 @@ import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import helpers from '@/ui/helpers/helpers';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
+import { IServerError } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'MassActionPreProcessedProcessedBase',
@@ -233,11 +234,6 @@ export default Vue.extend({
       type: Object as () =>IMassActionMetadata,
       required: true,
     },
-
-    canAccessEvent: {
-      type: Boolean,
-      default: true,
-    },
   },
 
   data() {
@@ -275,77 +271,63 @@ export default Vue.extend({
   },
 
    methods: {
-    goToEditMode() {
-      if (!this.canAccessEvent) {
-        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.noAccessToEvent') });
-        return;
-      }
-      this.editMode = true;
-    },
-
     async update(payload: { name: string; description: string }) {
       this.editMode = false;
 
-      const res = await useMassActionStore().update(this.massAction.id, payload);
-
-      if (res) {
-        this.$toasted.global.success(this.$t('massAction.update.success'));
+      try {
+        const res = await useMassActionStore().update(this.massAction.id, payload);
+        if (res) {
+          this.$toasted.global.success(this.$t('massAction.update.success'));
+        }
+      } catch (error) {
+        this.handleResponseError(error as IServerError);
       }
     },
 
     async onProcess() {
-    // The prop canAccessEvent wont be needed when the httpClient will allow custom catching of 403 errors from the back-end.
-    // We wont need to do the check in the front end before trying to process a mass action. The back-end will return 403 if the user has no access to the event,
-    // which can be caught in this method and displayed as an error toast notification.
-      if (!this.canAccessEvent) {
-        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.noAccessToEvent') });
-        return;
-      }
-
       const userChoice = await this.$confirm({
         title: this.$t('massAction.confirm.processing.title'),
         messages: this.$t('massAction.confirm.processing.message'),
       });
       if (userChoice) {
-        await useMassActionStore().process(this.massAction.id, MassActionRunType.Process);
+        try {
+          await useMassActionStore().process(this.massAction.id, MassActionRunType.Process);
+        } catch (error) {
+          this.handleResponseError(error as IServerError);
+        }
       }
     },
 
     async onDelete() {
-          // The prop canAccessEvent wont be needed when the httpClient will allow custom catching of 403 errors from the back-end.
-    // We wont need to do the check in the front end before trying to process a mass action. The back-end will return 403 if the user has no access to the event,
-    // which can be caught in this method and displayed as an error toast notification.
-      if (!this.canAccessEvent) {
-        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.noAccessToEvent') });
-        return;
-      }
-
       const userChoice = await this.$confirm({
         title: this.$t('massAction.confirm.delete.title'),
         messages: this.$t('massAction.confirm.delete.message'),
       });
       if (userChoice) {
-        const res = await useMassActionStore().deactivate(this.massAction.id);
-        if (res) {
-          this.$emit('delete:success');
-          this.$toasted.global.success(this.$t('massAction.delete.success'));
+        try {
+          const res = await useMassActionStore().deactivate(this.massAction.id);
+          if (res) {
+            this.$emit('delete:success');
+            this.$toasted.global.success(this.$t('massAction.delete.success'));
+          }
+        } catch (error) {
+          this.handleResponseError(error as IServerError);
         }
       }
     },
 
     async downloadInvalid() {
-      if (!this.canAccessEvent) {
-        this.$message({ title: this.$t('common.error'), message: this.$t('massAction.processing.error.download.noAccessToEvent') });
-        return;
-      }
+      try {
       const res = await this.$services.massActions.getInvalidFile({
         massActionId: this.massAction.id,
         runId: this.massActionMetadata.lastRun.runId,
         language: this.$i18n.locale,
       });
-
-      if (res) {
+        if (res) {
         helpers.downloadFile(res, `${this.massAction.name}.invalid.csv`);
+        }
+      } catch (error) {
+        this.handleResponseError(error as IServerError);
       }
     },
 
@@ -358,6 +340,25 @@ export default Vue.extend({
       });
       if (res) {
         helpers.downloadFile(res, `${this.massAction.name}.valid.csv`);
+      }
+    },
+
+    handleResponseError(error: IServerError) {
+      if (error.response?.status === 403) {
+        this.$toasted.global.error(this.$t('massAction.processing.error.noPermission'));
+      } else {
+        const errorData = error.response?.data?.errors;
+         if (!errorData || !Array.isArray(errorData)) {
+          this.$reportToasted(this.$t('error.submit_error'), error);
+        } else {
+          errorData.forEach((error) => {
+            if (this.$te(error.code)) {
+              this.$toasted.global.error(this.$t(error.code));
+            } else {
+              this.$reportToasted(this.$t('error.submit_error'), error);
+            }
+          });
+        }
       }
     },
   },

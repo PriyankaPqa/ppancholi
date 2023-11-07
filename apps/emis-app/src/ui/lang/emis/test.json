@@ -2383,6 +2383,7 @@
     "massAction.processed.title.3": "massAction.processed.title.3",
     "massAction.processing.error.download.noAccessToEvent": "",
     "massAction.processing.error.noAccessToEvent": "",
+    "massAction.processing.error.noPermission": "",
     "massAction.update.success": "massAction.update.success",
     "massAction.use.filter": "massAction.use.filter",
     "massActions.assessment.create.assessment.label": "massActions.assessment.create.assessment.label",

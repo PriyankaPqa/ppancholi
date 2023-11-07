@@ -6,6 +6,7 @@ import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 
 import { setActivePinia, createPinia, defineStore } from 'pinia';
 import { mockSignalR } from '@libs/shared-lib/signal-r';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import { getEntityStoreComponents } from './base';
 
 const service = mockUserAccountsService();
@@ -73,14 +74,14 @@ describe('Base Store', () => {
   describe('fetch', () => {
     it('should call get method from the service', () => {
       service.get = jest.fn();
-      baseStore.fetch(id, true);
-      expect(service.get).toBeCalledWith(id, true);
+      baseStore.fetch(id, GlobalHandler.Enabled);
+      expect(service.get).toBeCalledWith(id, GlobalHandler.Enabled);
     });
 
     it('should save result', async () => {
       const res = mockUserAccountEntity();
       service.get = jest.fn(() => res);
-      await baseStore.fetch(id, true);
+      await baseStore.fetch(id, GlobalHandler.Enabled);
       expect(baseStore.items).toContain(res);
     });
   });

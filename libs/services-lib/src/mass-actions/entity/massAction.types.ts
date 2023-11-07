@@ -56,6 +56,7 @@ export interface IMassActionCaseFileStatusCreatePayload {
 
 export interface IMassActionService extends IDomainBaseService<IMassActionEntity, uuid> {
   process(id: uuid, runType: MassActionRunType): Promise<IMassActionEntity>
+  deactivate(id: uuid): Promise<IMassActionEntity>
   update(id: uuid, payload: { name: string; description: string }): Promise<IMassActionEntity>
   getInvalidFile({ massActionId, runId, language }: { massActionId: uuid; runId: uuid; language: string }): Promise<IRestResponse<string>>
   create(urlSuffix: string, payload: unknown): Promise<IMassActionEntity>
@@ -71,6 +72,7 @@ export interface IMassActionService extends IDomainBaseService<IMassActionEntity
 
 export interface IMassActionServiceMock extends IDomainBaseServiceMock<IMassActionEntity> {
   process: jest.Mock<IMassActionEntity>;
+  deactivate: jest.Mock<IMassActionEntity>;
   update: jest.Mock<IMassActionEntity>;
   getInvalidFile: jest.Mock<IRestResponse<string>>;
   create: jest.Mock<IMassActionEntity>;

@@ -4,6 +4,7 @@ import _isEmpty from 'lodash/isEmpty';
 import {
  IAzureSearchParams, IAzureTableSearchResults, ICombinedIndex,
 } from '@libs/shared-lib/types';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import { BaseEntityStoreComponents, BaseStoreComponents } from './base.types';
 
 export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
@@ -168,8 +169,8 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     useEntityGlobalHandler,
     useMetadataGlobalHandler,
   } = {
-    useEntityGlobalHandler: true,
-    useMetadataGlobalHandler: true,
+    useEntityGlobalHandler: GlobalHandler.Enabled,
+    useMetadataGlobalHandler: GlobalHandler.Enabled,
   }): Promise<IEntityCombined<TEntity, TMetadata>> {
     const requests = [
       this.storeEntity.fetch(idParams, useEntityGlobalHandler),

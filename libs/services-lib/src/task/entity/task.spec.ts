@@ -1,6 +1,6 @@
 import { TaskService } from '@/task/entity/task';
 import { ActionStatus, mockTeamTaskEntity } from '@libs/entities-lib/task';
-import { mockHttp } from '../../http-client';
+import { mockHttp, GlobalHandler } from '../../http-client';
 
 const http = mockHttp();
 
@@ -11,13 +11,13 @@ describe('>>> Tasks Service', () => {
     const entity = mockTeamTaskEntity();
     entity.caseFileId = 'mock-case-file-id-1';
     await service.createTask(entity);
-    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', entity, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', entity, { globalHandler: GlobalHandler.Partial });
   });
 
   test('editTask is linked to the correct URL', async () => {
     const payload = mockTeamTaskEntity();
     await service.editTask('mock-task-id-123', payload);
-    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', payload, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', payload, { globalHandler: GlobalHandler.Partial });
   });
 
   test('setWorkingOn is linked to the correct URL', async () => {

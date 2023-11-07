@@ -1,7 +1,7 @@
 import {
   TeamEntity, mockTeamMembersData, mockTeamEntity,
 } from '@libs/entities-lib/team';
-import { mockHttp } from '../../http-client';
+import { mockHttp, GlobalHandler } from '../../http-client';
 import { TeamsService } from './teams';
 
 const http = mockHttp();
@@ -22,7 +22,7 @@ describe('>>> Teams Service', () => {
   test('createTeam is linked to the correct URL and params', async () => {
     const payload = new TeamEntity(mockTeamEntity());
     await service.createTeam(payload);
-    expect(http.post).toHaveBeenCalledWith('/team/teams', payload, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith('/team/teams', payload, { globalHandler: GlobalHandler.Partial });
   });
 
   test('editTeam calls the correct URL and payload', async () => {
@@ -43,7 +43,7 @@ describe('>>> Teams Service', () => {
       isEscalation: payload.isEscalation,
     };
 
-    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${payload.id}`, expectedPayload, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${payload.id}`, expectedPayload, { globalHandler: GlobalHandler.Partial });
   });
 
   test('addTeamMembers is linked to the correct URL and params', async () => {

@@ -12,6 +12,7 @@ import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import helpers from '@/ui/helpers/helpers';
+import { mockServerError } from '@libs/services-lib/http-client';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 
 import { mockProvider } from '@/services/provider';
@@ -114,22 +115,6 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       doMount({ otherProps: null, otherData: null }, false);
     });
 
-    describe('goToEditMode', () => {
-      it('should display error message if the user has no access to the event', async () => {
-        await wrapper.setProps({ canAccessEvent: false });
-        await wrapper.vm.goToEditMode();
-        expect(wrapper.vm.$message).toHaveBeenCalledWith(
-          { title: 'common.error', message: 'massAction.processing.error.noAccessToEvent' },
-        );
-      });
-
-      it('sets editMode to true', async () => {
-        await wrapper.setData({ editMode: false });
-        await wrapper.vm.goToEditMode();
-        expect(wrapper.vm.editMode).toBeTruthy();
-      });
-    });
-
     describe('update', () => {
       it('should set editMode to false', async () => {
         await wrapper.setData({
@@ -144,6 +129,14 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         await wrapper.vm.update(payload);
         expect(massActionStore.update).toHaveBeenLastCalledWith(wrapper.vm.massAction.id, payload);
       });
+
+      it('should call handleResponseError when the call returns an error', async () => {
+        massActionStore.update = jest.fn(() => Promise.reject(mockServerError([], 403)));
+        const payload = { name: 'test', description: 'test' };
+        wrapper.vm.handleResponseError = jest.fn();
+        await wrapper.vm.update(payload);
+        expect(wrapper.vm.handleResponseError).toBeCalledWith(mockServerError([], 403));
+      });
     });
 
     describe('onProcess', () => {
@@ -157,17 +150,16 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         );
       });
 
-      it('should display error message if the user has no access to the event', async () => {
-        await wrapper.setProps({ canAccessEvent: false });
-        await wrapper.vm.onProcess();
-        expect(wrapper.vm.$message).toHaveBeenCalledWith(
-          { title: 'common.error', message: 'massAction.processing.error.noAccessToEvent' },
-        );
-      });
-
       it('should call process actions with proper params', async () => {
         await wrapper.vm.onProcess();
         expect(massActionStore.process).toHaveBeenCalledWith(wrapper.vm.massAction.id, MassActionRunType.Process);
+      });
+
+      it('should call handleResponseError when the call returns an error', async () => {
+        massActionStore.process = jest.fn(() => Promise.reject(mockServerError([], 403)));
+        wrapper.vm.handleResponseError = jest.fn();
+        await wrapper.vm.onProcess();
+        expect(wrapper.vm.handleResponseError).toBeCalledWith(mockServerError([], 403));
       });
     });
 
@@ -187,6 +179,13 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         massActionStore.deactivate = jest.fn(() => mockMassActionEntity());
         await wrapper.vm.onDelete();
         expect(wrapper.emitted('delete:success')).toBeTruthy();
+      });
+
+      it('should call handleResponseError when the call returns an error', async () => {
+        massActionStore.deactivate = jest.fn(() => Promise.reject(mockServerError([], 403)));
+        wrapper.vm.handleResponseError = jest.fn();
+        await wrapper.vm.onDelete();
+        expect(wrapper.vm.handleResponseError).toBeCalledWith(mockServerError([], 403));
       });
     });
 
@@ -218,12 +217,11 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         expect(helpers.downloadFile).toBeCalled();
       });
 
-      it('should display error message if the user has no access to the event', async () => {
-        await wrapper.setProps({ canAccessEvent: false });
+      it('should call handleResponseError when the call returns an error', async () => {
+        wrapper.vm.$services.massActions.getInvalidFile = jest.fn(() => Promise.reject(mockServerError([], 403)));
+        wrapper.vm.handleResponseError = jest.fn();
         await wrapper.vm.downloadInvalid();
-        expect(wrapper.vm.$message).toHaveBeenCalledWith(
-          { title: 'common.error', message: 'massAction.processing.error.download.noAccessToEvent' },
-        );
+        expect(wrapper.vm.handleResponseError).toBeCalledWith(mockServerError([], 403));
       });
     });
 
@@ -246,6 +244,25 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         await wrapper.vm.downloadValid();
 
         expect(helpers.downloadFile).toBeCalled();
+      });
+    });
+
+    describe('handleResponseError', () => {
+      it('should display an error toast when the call returns status 403', async () => {
+        await wrapper.vm.handleResponseError(mockServerError([], 403));
+        expect(wrapper.vm.$toasted.global.error).toBeCalledWith('massAction.processing.error.noPermission');
+      });
+
+      it('should display a report error toast when the call returns another error', async () => {
+        await wrapper.vm.handleResponseError(mockServerError([]));
+        expect(wrapper.vm.$reportToasted).toBeCalled();
+      });
+
+      it('should display an error toast with the right message when the call returns a specific error', async () => {
+        const error = mockServerError([{ code: 'error-message' }]);
+        wrapper.vm.$te = jest.fn(() => true);
+        await wrapper.vm.handleResponseError(error);
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('error-message');
       });
     });
   });

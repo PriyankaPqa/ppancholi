@@ -2383,6 +2383,7 @@
     "massAction.processed.title.3": "Cannot be processed",
     "massAction.processing.error.download.noAccessToEvent": "You do not have permission to access this data. You do not have access to this event.",
     "massAction.processing.error.noAccessToEvent": "You do not have permission to modify or process this mass action. You do not have access to this event.",
+    "massAction.processing.error.noPermission": "You do not have permission to perform this action.",
     "massAction.update.success": "The mass action was successfully updated",
     "massAction.use.filter": "Please use the {0} filter to select case files for processing",
     "massActions.assessment.create.assessment.label": "Assessment",

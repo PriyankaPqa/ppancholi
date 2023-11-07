@@ -2,7 +2,7 @@ import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-l
 import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import { IApprovalTablesService, ICreateApprovalTableRequest, IEditApprovalTableRequest } from './approvalTables.types';
 import { DomainBaseService } from '../../base';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 
 const API_URL_SUFFIX = 'finance'; // Located in finance domain in the BE
 const CONTROLLER = 'approval-tables';
@@ -21,7 +21,7 @@ export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntit
       groups: payload.groups.map((g) => g.toDto()),
       approvalBaseStatus: payload.approvalBaseStatus,
     } as ICreateApprovalTableRequest;
-    return this.http.post<IApprovalTableEntityData>(`${this.baseUrl}`, formattedPayload, { globalHandler: false });
+    return this.http.post<IApprovalTableEntityData>(`${this.baseUrl}`, formattedPayload, { globalHandler: GlobalHandler.Partial });
   }
 
   getApprovalsTableByEventId(eventId: uuid): Promise<IApprovalTableEntityData[]> {
@@ -29,7 +29,7 @@ export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntit
   }
 
   getApprovalTableByProgramId(programId: uuid): Promise<IApprovalTableEntityData> {
-    return this.http.get<IApprovalTableEntityData>(`${this.baseApi}/programs/${programId}/approval-table`, { globalHandler: false });
+    return this.http.get<IApprovalTableEntityData>(`${this.baseApi}/programs/${programId}/approval-table`, { globalHandler: GlobalHandler.Partial });
   }
 
   edit(approvalId: uuid, payload: IApprovalTableEntity): Promise<IApprovalTableEntityData> {
@@ -41,7 +41,7 @@ export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntit
       approvalBaseStatus: payload.approvalBaseStatus,
     } as IEditApprovalTableRequest;
 
-    return this.http.patch(`${this.baseUrl}/${approvalId}`, formattedPayload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${approvalId}`, formattedPayload, { globalHandler: GlobalHandler.Partial });
   }
 
   addGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData> {

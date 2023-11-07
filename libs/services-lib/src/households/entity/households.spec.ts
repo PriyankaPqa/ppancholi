@@ -20,7 +20,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import { mockHttp } from '../../http-client';
+import { mockHttp, GlobalHandler } from '../../http-client';
 import { HouseholdsService } from './households';
 
 const API_URL_SUFFIX = 'household';
@@ -67,7 +67,7 @@ describe('>>> Household Service', () => {
     expect(http.post).toHaveBeenCalledWith(
       `${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
       { ...createBeneficiaryRequest },
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
   });
 
@@ -79,7 +79,7 @@ describe('>>> Household Service', () => {
     expect(http.post).toHaveBeenCalledWith(
       `${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
       { ...createBeneficiaryRequest },
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
   });
 
@@ -88,7 +88,7 @@ describe('>>> Household Service', () => {
 
     await service.postCrcRegistration(createBeneficiaryRequest);
 
-    expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, createBeneficiaryRequest, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, createBeneficiaryRequest, { globalHandler: GlobalHandler.Partial });
   });
 
   test('submitCRCRegistration is linked to the correct URL', async () => {
@@ -96,7 +96,7 @@ describe('>>> Household Service', () => {
 
     await service.submitCRCRegistration(mockHouseholdCreate(), 'event id');
 
-    expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, createBeneficiaryRequest, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, createBeneficiaryRequest, { globalHandler: GlobalHandler.Partial });
   });
 
   test('getPerson is linked to the correct URL', async () => {
@@ -199,7 +199,7 @@ describe('>>> Household Service', () => {
   test('splitHousehold is linked to the correct URL', async () => {
     service.parseSplitHouseholdPayload = jest.fn(() => splitBeneficiaryRequest);
     await service.splitHousehold(mockHouseholdCreate(), '1234', 'event-id');
-    expect(http.patch).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${'1234'}/split`, splitBeneficiaryRequest, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${'1234'}/split`, splitBeneficiaryRequest, { globalHandler: GlobalHandler.Partial });
   });
 
   test('moveMembers is linked to the correct URL', async () => {
@@ -228,7 +228,7 @@ describe('>>> Household Service', () => {
     await service.validateEmail({ emailAddress: email });
     expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/validate-email-address`, {
       emailAddress: email,
-    }, { globalHandler: false });
+    }, { globalHandler: GlobalHandler.Partial });
   });
 
   test('validatePublicEmail is linked to the correct URL', async () => {
@@ -237,7 +237,7 @@ describe('>>> Household Service', () => {
     await service.validatePublicEmail({ emailAddress: email });
     expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-email-address`, {
       emailAddress: email,
-    }, { globalHandler: false });
+    }, { globalHandler: GlobalHandler.Partial });
   });
 
   test('makePrimary is linked to the correct URL', async () => {
@@ -303,7 +303,7 @@ describe('>>> Household Service', () => {
       expect(http.post).toHaveBeenCalledWith(
         `${service.baseApi}/persons/public/check-possible-duplicate`,
         { eventId: 'eventId', contactInformation: member.contactInformation, identitySet: member.identitySet, householdId: hhId },
-        { globalHandler: false },
+        { globalHandler: GlobalHandler.Partial },
       );
     });
   });
@@ -311,7 +311,7 @@ describe('>>> Household Service', () => {
   describe('getPublicToken', () => {
     it('should call the proper endpoint and set header', async () => {
       await service.getPublicToken('token');
-      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-recaptcha?recaptchaToken=token`, null, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-recaptcha?recaptchaToken=token`, null, { globalHandler: GlobalHandler.Partial });
       expect(http.setPublicToken).toHaveBeenCalledWith(await http.post());
     });
   });
@@ -320,7 +320,7 @@ describe('>>> Household Service', () => {
     it('should call the proper endpoint', async () => {
       const params = {} as ISendOneTimeCodeRegistrationPublicPayload;
       await service.sendOneTimeCodeRegistrationPublic(params);
-      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/send-code-registration`, params, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/send-code-registration`, params, { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -328,7 +328,7 @@ describe('>>> Household Service', () => {
     it('should call the proper endpoint', async () => {
       const params = {} as IVerifyOneTimeCodeRegistrationPublicPayload;
       await service.verifyOneTimeCodeRegistrationPublic(params);
-      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/verify-code-registration`, params, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/verify-code-registration`, params, { globalHandler: GlobalHandler.Partial });
       expect(http.setPublicToken).toHaveBeenCalledWith(await http.post());
     });
   });

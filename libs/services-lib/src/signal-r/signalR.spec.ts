@@ -1,4 +1,4 @@
-import { IHttpMock, mockHttp } from '../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../http-client';
 import { SignalRService } from './signalR';
 
 describe('>>> SignalR service', () => {
@@ -17,7 +17,7 @@ describe('>>> SignalR service', () => {
       const connectionId = 'connection_id';
 
       await service.subscribe(connectionId, entityIds);
-      expect(http.post).toHaveBeenCalledWith('/hub/subscribe', { entityIds, connectionId }, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith('/hub/subscribe', { entityIds, connectionId }, { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -26,7 +26,7 @@ describe('>>> SignalR service', () => {
       const entityIds = ['1', '2'];
       const connectionId = 'connection_id';
       await service.unsubscribe(connectionId, entityIds);
-      expect(http.post).toHaveBeenCalledWith('/hub/unsubscribe', { entityIds, connectionId }, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith('/hub/unsubscribe', { entityIds, connectionId }, { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -34,7 +34,7 @@ describe('>>> SignalR service', () => {
     it('is linked to the correct url', async () => {
       const connectionId = 'connection_id';
       await service.unsubscribeAll(connectionId);
-      expect(http.post).toHaveBeenCalledWith('/hub/unsubscribe-all', { connectionId }, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith('/hub/unsubscribe-all', { connectionId }, { globalHandler: GlobalHandler.Partial });
     });
   });
 });

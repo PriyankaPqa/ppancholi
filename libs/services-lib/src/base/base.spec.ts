@@ -1,4 +1,4 @@
-import { mockHttp } from '../http-client';
+import { mockHttp, GlobalHandler } from '../http-client';
 import { DomainBaseService } from './base';
 
 const http = mockHttp();
@@ -22,26 +22,26 @@ describe('>>> Domain Base Service', () => {
   describe('get', () => {
     it('should call the proper endpoint and use global handler ', async () => {
       const id = '123';
-      await service.get(id, true);
-      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: true });
+      await service.get(id, GlobalHandler.Enabled);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: GlobalHandler.Enabled });
     });
     it('should call the proper endpoint and not use global handler ', async () => {
       const id = '123';
-      await service.get(id, false);
-      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: false });
+      await service.get(id, GlobalHandler.Partial);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: GlobalHandler.Partial });
     });
   });
 
   describe('getFullResponse', () => {
     it('should call the proper endpoint and use global handler ', async () => {
       const id = '123';
-      await service.getFullResponse(id, true);
-      expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: true });
+      await service.getFullResponse(id, GlobalHandler.Enabled);
+      expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: GlobalHandler.Enabled });
     });
     it('should call the proper endpoint and not use global handler ', async () => {
       const id = '123';
-      await service.getFullResponse(id, false);
-      expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: false });
+      await service.getFullResponse(id, GlobalHandler.Partial);
+      expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -52,15 +52,15 @@ describe('>>> Domain Base Service', () => {
       const service = new DomainBaseService<any, {parentId: string, id: string}>(http as never, API_URL_SUFFIX, CONTROLLER);
       service.baseUrl = 'http://MyAPI/parent/{parentId}/child';
       await service.get(id);
-      expect(http.get).toHaveBeenCalledWith('http://MyAPI/parent/123/child/abc', { globalHandler: true });
+      expect(http.get).toHaveBeenCalledWith('http://MyAPI/parent/123/child/abc', { globalHandler: GlobalHandler.Enabled });
     });
     it('will replace parameters in endpoint according to idParam when simple string', async () => {
       const id = 'abc';
       // eslint-disable-next-line
-      const service = new DomainBaseService<any, uuid>(http as never, API_URL_SUFFIX, CONTROLLER);
+      const service = new DomainBaseService<any, string>(http as never, API_URL_SUFFIX, CONTROLLER);
       service.baseUrl = 'http://MyAPI/entity';
       await service.get(id);
-      expect(http.get).toHaveBeenCalledWith('http://MyAPI/entity/abc', { globalHandler: true });
+      expect(http.get).toHaveBeenCalledWith('http://MyAPI/entity/abc', { globalHandler: GlobalHandler.Enabled });
     });
   });
 

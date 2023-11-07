@@ -5,6 +5,7 @@ import {
   IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, IMassActionRunResultMetadataModel, MassActionRunStatus,
 } from '@libs/entities-lib/mass-action';
 import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 
 export default Vue.extend({
   computed: {
@@ -55,7 +56,7 @@ export default Vue.extend({
   async created() {
     if (_isEmpty(this.massAction)) {
       await useMassActionStore().fetch(this.massActionId);
-      await useMassActionMetadataStore().fetch(this.massActionId, false);
+      await useMassActionMetadataStore().fetch(this.massActionId, GlobalHandler.Partial);
     }
   },
 });

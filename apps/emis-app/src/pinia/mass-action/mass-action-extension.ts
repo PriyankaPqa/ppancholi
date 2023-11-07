@@ -25,6 +25,15 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function deactivate(id: string): Promise<IMassActionEntity> {
+    const data = await entityService.deactivate(id);
+    if (data) {
+      baseComponents.set(data);
+      return data;
+    }
+    return null;
+  }
+
   async function update(id: string, payload: { name: string, description: string }): Promise<IMassActionEntity> {
     const data = await entityService.update(id, payload);
 
@@ -71,5 +80,6 @@ export function getExtensionComponents(
     process,
     update,
     create,
+    deactivate,
   };
 }

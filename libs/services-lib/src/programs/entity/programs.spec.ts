@@ -1,5 +1,5 @@
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { IHttpMock, mockHttp } from '../../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { ProgramsService } from './programs';
 
 describe('>>> Programs service', () => {
@@ -16,7 +16,7 @@ describe('>>> Programs service', () => {
     it('is linked to the correct url', async () => {
       const entity = mockProgramEntity();
       await service.createProgram(entity);
-      expect(http.post).toHaveBeenCalledWith(`www.test.com/event/events/${entity.eventId}/programs`, expect.anything(), { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith(`www.test.com/event/events/${entity.eventId}/programs`, expect.anything(), { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -25,7 +25,7 @@ describe('>>> Programs service', () => {
       const entity = mockProgramEntity();
       await service.updateProgram(entity);
       expect(http.patch)
-        .toHaveBeenCalledWith(`www.test.com/event/events/${entity.eventId}/programs/${entity.id}`, expect.anything(), { globalHandler: false });
+        .toHaveBeenCalledWith(`www.test.com/event/events/${entity.eventId}/programs/${entity.id}`, expect.anything(), { globalHandler: GlobalHandler.Partial });
     });
   });
 

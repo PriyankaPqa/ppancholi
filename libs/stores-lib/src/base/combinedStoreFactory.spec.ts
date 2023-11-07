@@ -4,6 +4,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { IUserAccountMetadata, mockUserAccountEntities, mockUserAccountMetadatum } from '@libs/entities-lib/user-account';
 
 import { IEntity } from '@libs/entities-lib/base';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import { CombinedStoreFactory } from './combinedStoreFactory';
 import { BaseEntityStoreComponents, BaseStoreComponents } from './base.types';
 import { getBaseStoreComponents, getEntityStoreComponents } from './base';
@@ -235,12 +236,12 @@ describe('Base Combined Store', () => {
       useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
 
       await useBaseCombinedStore.fetch(id, {
-        useEntityGlobalHandler: true,
-        useMetadataGlobalHandler: false,
+        useEntityGlobalHandler: GlobalHandler.Enabled,
+        useMetadataGlobalHandler: GlobalHandler.Partial,
       });
 
-      expect(entityStoreComponents.fetch).toBeCalledWith(id, true);
-      expect(baseMetadataStoreComponents.fetch).toBeCalledWith(id, false);
+      expect(entityStoreComponents.fetch).toBeCalledWith(id, GlobalHandler.Enabled);
+      expect(baseMetadataStoreComponents.fetch).toBeCalledWith(id, GlobalHandler.Partial);
     });
 
     it('should return one entity combined with its metadata', async () => {

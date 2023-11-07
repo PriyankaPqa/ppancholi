@@ -1,5 +1,5 @@
 import helpers from '@libs/shared-lib/helpers/helpers';
-import { mockHttp } from '../http-client';
+import { mockHttp, GlobalHandler } from '../http-client';
 import { PublicService } from './public';
 
 const http = mockHttp();
@@ -47,21 +47,21 @@ describe('>>> Public Service', () => {
   test('getTenantByEmisDomain is linked to the correct URL', async () => {
     await service.getTenantByEmisDomain('myDomain');
     expect(http.get)
-      .toHaveBeenCalledWith('/system-management/tenants/id-from-domain?domain=myDomain', { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+      .toHaveBeenCalledWith('/system-management/tenants/id-from-domain?domain=myDomain', { globalHandler: GlobalHandler.Partial, noErrorLogging: true, ignoreJwt: true });
   });
 
   // FeatureKeys.UseIdentityServer
   test('getPublicFeatures is linked to the correct URL', async () => {
     await service.getPublicFeatures();
     expect(http.get)
-      .toHaveBeenCalledWith('/system-management/tenant-settings/public-features', { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+      .toHaveBeenCalledWith('/system-management/tenant-settings/public-features', { globalHandler: GlobalHandler.Partial, noErrorLogging: true, ignoreJwt: true });
   });
 
   test('getTenantByRegistrationDomain is linked to the correct URL', async () => {
     await service.getTenantByRegistrationDomain('myDomain');
     expect(http.get).toHaveBeenCalledWith(
       '/system-management/tenants/id-from-registration-domain?registrationDomain=myDomain',
-      { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
+      { globalHandler: GlobalHandler.Partial, noErrorLogging: true, ignoreJwt: true },
     );
   });
 

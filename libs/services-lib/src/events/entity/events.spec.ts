@@ -5,7 +5,7 @@ import {
 } from '@libs/entities-lib/event';
 import { ISearchData } from '@libs/shared-lib/types';
 import helpers from '@libs/shared-lib/helpers/helpers';
-import { IHttpMock, mockHttp } from '../../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { EventsService } from './events';
 
 export const mockSearchParams: ISearchData = {
@@ -24,7 +24,7 @@ describe('>>> Events Service', () => {
 
   test('createEvent is linked to the correct URL', async () => {
     await service.createEvent(new EventEntity(mockEventEntities()[0]));
-    expect(http.post).toHaveBeenCalledWith(service.baseUrl, expect.anything(), { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(service.baseUrl, expect.anything(), { globalHandler: GlobalHandler.Partial });
   });
 
   test('createEvent converts the event entity to the correct payload', async () => {
@@ -73,13 +73,13 @@ describe('>>> Events Service', () => {
       status: EEventStatus.OnHold,
       authenticationTier1disabled: false,
       authenticationTier2disabled: true,
-    }, { globalHandler: false });
+    }, { globalHandler: GlobalHandler.Partial });
   });
 
   test('updateEvent is linked to the correct URL', async () => {
     const event = new EventEntity(mockEventEntities()[0]);
     await service.updateEvent(event);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${event.id}`, expect.anything(), { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${event.id}`, expect.anything(), { globalHandler: GlobalHandler.Partial });
   });
 
   test('updateEvent converts the event entity to the correct payload', async () => {
@@ -133,7 +133,7 @@ describe('>>> Events Service', () => {
       registrationsForL0usersEnabled: false,
       authenticationTier1disabled: false,
       authenticationTier2disabled: true,
-    }, { globalHandler: false });
+    }, { globalHandler: GlobalHandler.Partial });
   });
 
   test('toggleSelfRegistration is linked to the correct url', async () => {
@@ -200,7 +200,7 @@ describe('>>> Events Service', () => {
     const callCentre = event.callCentres[0];
     const { id } = event;
     await service.addCallCentre(id, callCentre);
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/call-centres`, callCentre, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/call-centres`, callCentre, { globalHandler: GlobalHandler.Partial });
   });
 
   test('editCallCentre is linked to the correct URL', async () => {
@@ -208,7 +208,7 @@ describe('>>> Events Service', () => {
     const callCentre = event.callCentres[0];
     const { id } = event;
     await service.editCallCentre(id, callCentre);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/call-centres/${callCentre.id}`, callCentre, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/call-centres/${callCentre.id}`, callCentre, { globalHandler: GlobalHandler.Partial });
   });
 
   test('addAgreement calls the correct URL with the right payload ', async () => {
@@ -225,7 +225,7 @@ describe('>>> Events Service', () => {
         optionItemId: agreement.agreementType.optionItemId,
         specifiedOther: agreement.agreementType.specifiedOther,
       },
-    }, { globalHandler: false });
+    }, { globalHandler: GlobalHandler.Partial });
   });
 
   test('editAgreement calls the correct URL with the right payload ', async () => {
@@ -245,7 +245,7 @@ describe('>>> Events Service', () => {
           specifiedOther: agreement.agreementType.specifiedOther,
         },
       },
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
   });
 
@@ -272,7 +272,7 @@ describe('>>> Events Service', () => {
       {
         consentStatementId: 'consentid',
       },
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
   });
 
@@ -281,7 +281,7 @@ describe('>>> Events Service', () => {
     const location = event.registrationLocations[0];
     const { id } = event;
     await service.addRegistrationLocation(id, location);
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-location`, location, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-location`, location, { globalHandler: GlobalHandler.Partial });
   });
 
   test('editRegistrationLocation is linked to the correct URL', async () => {
@@ -289,7 +289,7 @@ describe('>>> Events Service', () => {
     const location = event.registrationLocations[0];
     const { id } = event;
     await service.editRegistrationLocation(id, location);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-location/${location.id}`, location, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-location/${location.id}`, location, { globalHandler: GlobalHandler.Partial });
   });
 
   test('addRegistrationAssessment is linked to the correct URL', async () => {
@@ -321,7 +321,7 @@ describe('>>> Events Service', () => {
     const location = event.shelterLocations[0];
     const { id } = event;
     await service.addShelterLocation(id, location);
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/shelter-location`, location, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/shelter-location`, location, { globalHandler: GlobalHandler.Partial });
   });
 
   test('editShelterLocation is linked to the correct URL', async () => {
@@ -329,7 +329,7 @@ describe('>>> Events Service', () => {
     const location = event.shelterLocations[0];
     const { id } = event;
     await service.editShelterLocation(id, location);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/shelter-location/${location.id}`, location, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/shelter-location/${location.id}`, location, { globalHandler: GlobalHandler.Partial });
   });
 
   describe('search', () => {

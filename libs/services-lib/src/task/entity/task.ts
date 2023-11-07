@@ -1,7 +1,7 @@
 import { ITaskEntity, ITaskEntityData, IdParams, ITaskMetadata, ActionStatus } from '@libs/entities-lib/task';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { ITaskService } from './task.types';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
 const API_URL_SUFFIX = 'case-file/case-files/{caseFileId}';
@@ -14,12 +14,12 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
 
   async createTask(task: ITaskEntityData): Promise<ITaskEntityData> {
     const parseTask = this.parseTaskPayload(task);
-    return this.http.post(this.getItemUrl(`${this.baseUrl}`, task), parseTask, { globalHandler: false });
+    return this.http.post(this.getItemUrl(`${this.baseUrl}`, task), parseTask, { globalHandler: GlobalHandler.Partial });
   }
 
   async editTask(taskId: uuid, task: ITaskEntityData): Promise<ITaskEntityData> {
     const parseTask = this.parseTaskPayload(task);
-    return this.http.patch(this.getItemUrl(`${this.baseUrl}/${taskId}`, task), parseTask, { globalHandler: false });
+    return this.http.patch(this.getItemUrl(`${this.baseUrl}/${taskId}`, task), parseTask, { globalHandler: GlobalHandler.Partial });
   }
 
   async setWorkingOn(id: uuid, caseFileId: uuid, userId: string): Promise<ITaskEntityData> {

@@ -12,7 +12,7 @@ export interface IServerError extends Error {
   request?: { responseURL: string },
   response?: {
     data?: { errors: IError[] },
-    status?: string,
+    status?: number,
     config?: { data: string }
   }
 }

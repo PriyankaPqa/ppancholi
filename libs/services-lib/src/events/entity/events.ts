@@ -14,7 +14,7 @@ import {
 } from '@libs/entities-lib/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
 import helpers from '@libs/shared-lib/helpers/helpers';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { IEventsService } from './events.types';
 
@@ -29,13 +29,13 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   async createEvent(event: IEventEntity): Promise<IEventEntity> {
     event.fillEmptyMultilingualAttributes();
     const payload = this.eventToCreateEventRequestPayload(event);
-    return this.http.post(this.baseUrl, payload, { globalHandler: false });
+    return this.http.post(this.baseUrl, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async updateEvent(event: IEventEntity): Promise<IEventEntity> {
     event.fillEmptyMultilingualAttributes();
     const payload = this.eventToEditEventRequestPayload(event);
-    return this.http.patch(`${this.baseUrl}/${event.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${event.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async toggleSelfRegistration(id: uuid, selfRegistrationEnabled: boolean): Promise<IEventEntity> {
@@ -79,22 +79,22 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   }
 
   async addCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventEntity> {
-    return this.http.post(`${this.baseUrl}/${eventId}/call-centres`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/call-centres`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async editCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventEntity> {
-    return this.http.patch(`${this.baseUrl}/${eventId}/call-centres/${payload.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${eventId}/call-centres/${payload.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async addAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventEntity> {
-    return this.http.post(`${this.baseUrl}/${eventId}/agreement`, this.makeAgreementPayload(payload), { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/agreement`, this.makeAgreementPayload(payload), { globalHandler: GlobalHandler.Partial });
   }
 
   async editAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventEntity> {
     return this.http.patch(
       `${this.baseUrl}/${eventId}/agreement/${payload.id}`,
       this.makeAgreementPayload(payload),
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
   }
 
@@ -102,7 +102,7 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     return this.http.patch(
       `${this.baseUrl}/${eventId}/consent-statement`,
       { consentStatementId },
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
   }
 
@@ -118,19 +118,19 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   }
 
   async addRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.post(`${this.baseUrl}/${eventId}/registration-location`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/registration-location`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async editRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.patch(`${this.baseUrl}/${eventId}/registration-location/${payload.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${eventId}/registration-location/${payload.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async addShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.post(`${this.baseUrl}/${eventId}/shelter-location`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/shelter-location`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.patch(`${this.baseUrl}/${eventId}/shelter-location/${payload.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${eventId}/shelter-location/${payload.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async addRegistrationAssessment(eventId:uuid, payload: IRegistrationAssessment): Promise<IEventEntity> {

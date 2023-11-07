@@ -1,7 +1,7 @@
 import {
   ITeamEntity, ITeamMember,
 } from '@libs/entities-lib/team';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
 import { ITeamsService } from './teams.types';
@@ -23,12 +23,12 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
   }
 
   async createTeam(team: ITeamEntity): Promise<ITeamEntity> {
-    return this.http.post('/team/teams', team, { globalHandler: false });
+    return this.http.post('/team/teams', team, { globalHandler: GlobalHandler.Partial });
   }
 
   async editTeam(team: ITeamEntity): Promise<ITeamEntity> {
     const payload = this.teamToEditTeamRequestPayload(team);
-    return this.http.patch(`/team/teams/${team.id}`, payload, { globalHandler: false });
+    return this.http.patch(`/team/teams/${team.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async addTeamMembers(teamId: uuid, teamMembers: ITeamMember[]): Promise<ITeamEntity> {

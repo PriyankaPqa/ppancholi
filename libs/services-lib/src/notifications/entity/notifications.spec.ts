@@ -1,4 +1,4 @@
-import { IHttpMock, mockHttp } from '../../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { NotificationsService } from './notifications';
 
 describe('>>> Notifications Service', () => {
@@ -17,7 +17,7 @@ describe('>>> Notifications Service', () => {
       beforeDateTimeUtc: '2023-09-05',
     };
     await service.fetchCurrentUserNotifications(params);
-    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/user`, { params, globalHandler: false });
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/user`, { params, globalHandler: GlobalHandler.Partial });
   });
 
   test('updateIsRead is linked to the correct URL', async () => {

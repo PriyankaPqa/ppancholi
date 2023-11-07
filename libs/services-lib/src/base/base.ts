@@ -1,6 +1,6 @@
 import { IEntity } from '@libs/entities-lib/base';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
-import { IHttpClient, IRestResponse } from '../http-client';
+import { GlobalHandler, IHttpClient, IRestResponse } from '../http-client';
 import { IDomainBaseService } from './base.types';
 
 export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBaseService<T, IdParams> {
@@ -22,11 +22,11 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
   /**
    *
    * @param idParams can be a string (the id) or an object (ex: {caseFileId: string, id: string}; used for sub-entities such as case notes or case filer referrals)
-   * @param useGlobalHandler parameter for using the global handler. Can be false for cases where no notification should be displayed even if
+   * @param useGlobalHandler parameter for using the global handler. Can be Disabled or Partial for cases where no notification should be displayed even if
    * no entity is returned, such as case file metadata for a newly created case file
    * @returns call response
    */
-  async get(idParams: IdParams, useGlobalHandler = true): Promise<T> {
+  async get(idParams: IdParams, useGlobalHandler = GlobalHandler.Enabled): Promise<T> {
     return this.http.get<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams), { globalHandler: useGlobalHandler });
   }
 
@@ -35,7 +35,7 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
    * @param idParams
    * @param useGlobalHandler
    */
-  async getFullResponse(idParams: IdParams, useGlobalHandler = true): Promise<IRestResponse<T>> {
+  async getFullResponse(idParams: IdParams, useGlobalHandler = GlobalHandler.Enabled): Promise<IRestResponse<T>> {
     return this.http.getFullResponse<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams), { globalHandler: useGlobalHandler });
   }
 

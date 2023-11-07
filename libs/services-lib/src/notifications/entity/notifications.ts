@@ -2,7 +2,7 @@
 import {
   INotificationEntity,
 } from '@libs/entities-lib/notification';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
 import {
@@ -19,7 +19,7 @@ export class NotificationsService extends DomainBaseService<INotificationEntity,
   }
 
   async fetchCurrentUserNotifications(params?: IFetchParams): Promise<INotificationEntity[]> {
-    return this.http.get(`${this.baseUrl}/user`, { params, globalHandler: false });
+    return this.http.get(`${this.baseUrl}/user`, { params, globalHandler: GlobalHandler.Partial });
   }
 
   async updateIsRead(idList: uuid[], isRead: boolean): Promise<INotificationEntity[]> {

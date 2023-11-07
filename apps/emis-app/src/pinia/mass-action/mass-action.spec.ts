@@ -61,6 +61,29 @@ describe('>>> Mass Action Store', () => {
     });
   });
 
+  describe('deactivate', () => {
+    it('should call the process service with proper parameters and sets the res', async () => {
+      const store = createTestStore();
+      const id = '1';
+
+      await store.deactivate(id);
+
+      expect(entityService.deactivate).toHaveBeenCalledWith(id);
+    });
+
+    it('should set the res', async () => {
+      const massAction = mockMassActionEntity();
+      const bComponents = { ...baseComponents, set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const id = '1';
+
+      entityService.deactivate = jest.fn(() => massAction);
+      await store.deactivate(id);
+
+      expect(bComponents.set).toBeCalledWith(massAction);
+    });
+  });
+
   describe('update', () => {
     it('should call the update service with proper parameters and commit the res', async () => {
       const store = createTestStore();

@@ -3,7 +3,7 @@ import {
   IFilter, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
 import {
@@ -19,7 +19,7 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
   }
 
   async fetchCurrentUserAccount(): Promise<IUserAccountEntity> {
-    return this.http.get(`${this.baseUrl}/current-user`, { globalHandler: false });
+    return this.http.get(`${this.baseUrl}/current-user`, { globalHandler: GlobalHandler.Partial });
   }
 
   async addFilter(filter: IFilter): Promise<IUserAccountEntity> {
@@ -54,7 +54,7 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
   }
 
   async createUserAccount(payload: ICreateUserRequest): Promise<IUserAccountEntity> {
-    return this.http.post<IUserAccountEntity>(`${this.baseUrl}/user`, payload, { globalHandler: false });
+    return this.http.post<IUserAccountEntity>(`${this.baseUrl}/user`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> {

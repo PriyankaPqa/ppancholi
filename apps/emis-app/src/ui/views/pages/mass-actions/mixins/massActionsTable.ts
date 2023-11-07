@@ -5,7 +5,7 @@ import {
   IdParams,
   IMassActionCombined, IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
 } from '@libs/entities-lib/mass-action';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -77,11 +77,20 @@ export default Vue.extend({
         title: this.$t('massAction.confirm.delete.title'),
         messages: this.$t('massAction.confirm.delete.message'),
       });
+
       if (userChoice) {
-        const res = await useMassActionStore().deactivate(massAction.entity.id);
-        if (res) {
-          this.$toasted.global.success(this.$t('massAction.delete.success'));
-          this.itemsCount -= 1;
+        try {
+          const res = await useMassActionStore().deactivate(massAction.entity.id);
+          if (res) {
+            this.$toasted.global.success(this.$t('massAction.delete.success'));
+            this.itemsCount -= 1;
+        }
+        } catch (error) {
+          if ((error as IServerError).response?.status === 403) {
+            this.$toasted.global.error(this.$t('massAction.processing.error.noPermission'));
+          } else {
+            this.$reportToasted(this.$t('error.unexpected_error'), error);
+          }
         }
       }
     },

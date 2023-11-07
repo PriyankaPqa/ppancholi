@@ -3,7 +3,7 @@ import {
   ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData, IValidateCaptchaAllowedIpAddressResponse,
 } from '@libs/entities-lib/tenantSettings';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { ITenantSettingsService } from './tenantSettings.types';
 
@@ -17,11 +17,11 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
   }
 
   async getAll(): Promise<ITenantSettingsEntityData[]> {
-    return this.http.get(`${this.baseApi}/tenants/settings`, { globalHandler: false });
+    return this.http.get(`${this.baseApi}/tenants/settings`, { globalHandler: GlobalHandler.Partial });
   }
 
   async getCurrentTenantSettings(): Promise<ITenantSettingsEntityData> {
-    return this.http.get<ITenantSettingsEntityData>(`${this.baseUrl}/current-tenant-settings`, { globalHandler: false })
+    return this.http.get<ITenantSettingsEntityData>(`${this.baseUrl}/current-tenant-settings`, { globalHandler: GlobalHandler.Partial })
       .then((t) => {
         if (t?.tenantId) {
           this.http.setHeadersTenant(t.tenantId);
@@ -47,7 +47,7 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
   }
 
   async getUserTenants(): Promise<IBrandingEntityData[]> {
-    return this.http.get(`${this.baseApi}/${USER_TENANT_CONTROLLER}/brandings`, { globalHandler: false });
+    return this.http.get(`${this.baseApi}/${USER_TENANT_CONTROLLER}/brandings`, { globalHandler: GlobalHandler.Partial });
   }
 
   async updateColours(payload: IEditColoursRequest): Promise<ITenantSettingsEntityData> {

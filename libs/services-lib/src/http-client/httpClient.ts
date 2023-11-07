@@ -9,12 +9,11 @@ import { camelKeys } from 'js-convert-case';
 import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { localStorageKeys } from '@libs/shared-lib/constants/localStorage';
-import { sanitize932115 } from '../utils/owasp';
-import { buildQuery } from '../odata-query';
-
-import {
+import { GlobalHandler,
   IHttpClient, IError, IRestResponse, RequestConfig, IHttpClientOptions,
 } from './httpClient.types';
+import { sanitize932115 } from '../utils/owasp';
+import { buildQuery } from '../odata-query';
 
 export class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
@@ -78,17 +77,17 @@ export class HttpClient implements IHttpClient {
     }
   }
 
-  // By default, the global handler is ON. Need to pass { globalHandler: false } to turn in off
-  private isGlobalHandlerEnabled(config = { globalHandler: true }) {
+  // By default, the global handler is Enabled. Need to pass { globalHandler: GlobalHandler.Partial or Disabled } to turn in off
+  private getGlobalHandler(config = { globalHandler: GlobalHandler.Enabled }) {
     if (config.globalHandler === undefined) {
-      return true;
+      return GlobalHandler.Enabled;
     }
     return config.globalHandler;
   }
 
   private responseSuccessHandler(response: any) {
-    if (this.isGlobalHandlerEnabled(response.config)) {
-      // Add what you want when request is successful. It is applied globally except when { globalHandler: false }
+    if (this.getGlobalHandler(response.config) === GlobalHandler.Enabled) {
+      // Add what you want when request is successful. It is applied globally except when { globalHandler: GlobalHandler.Partial or Disabled }
     }
     if (response?.headers && response.headers['content-disposition']
       && response.headers['content-disposition'].toLowerCase().indexOf('attachment') > -1) {
@@ -100,6 +99,10 @@ export class HttpClient implements IHttpClient {
   private async responseErrorHandler(error: any) {
     if (!error) {
       return false;
+    }
+
+    if (this.getGlobalHandler(error.config) === GlobalHandler.Disabled) {
+      return Promise.reject(error);
     }
 
     if (!error.response?.data) {
@@ -115,7 +118,7 @@ export class HttpClient implements IHttpClient {
       return false;
     }
 
-    if (error.response?.status === 403 && this.isGlobalHandlerEnabled(error.config)) {
+    if (error.response?.status === 403 && this.getGlobalHandler(error.config) === GlobalHandler.Enabled) {
       this.error403Handler();
       return false;
     }
@@ -125,7 +128,7 @@ export class HttpClient implements IHttpClient {
       this.logToAppInsights(errors, error);
     }
 
-    if (this.isGlobalHandlerEnabled(error.config)) {
+    if (this.getGlobalHandler(error.config) === GlobalHandler.Enabled) {
       this.errorGlobalHandler(error);
     } else {
       return Promise.reject(error);
@@ -185,9 +188,9 @@ export class HttpClient implements IHttpClient {
     request.headers.common['X-Request-ID'] = uuidv4();
     request.headers.common['X-Correlation-ID'] = uuidv4();
 
-    if (this.isGlobalHandlerEnabled(request)) {
+    if (this.getGlobalHandler(request) === GlobalHandler.Enabled) {
       // Add what you want when request is sent
-      // It is applied globally except when { globalHandler: false }
+      // It is applied globally except when { globalHandler: GlobalHandler.Partial or Disabled}
     }
 
     sanitize932115(request.data);

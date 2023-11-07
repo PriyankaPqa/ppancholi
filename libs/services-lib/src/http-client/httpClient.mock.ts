@@ -42,7 +42,7 @@ export const mockHttpError = (force?: Partial<IError>): IError => ({
   ...force,
 });
 
-export const mockServerError = (errors?: Array<IError>): IServerError => ({
+export const mockServerError = (errors?: Array<IError>, status?: number): IServerError => ({
   name: '',
   message: '',
   request: { responseURL: '' },
@@ -50,7 +50,7 @@ export const mockServerError = (errors?: Array<IError>): IServerError => ({
     data: {
       errors: errors || [mockHttpError()],
     },
-    status: '',
+    status: status || 200,
     config: { data: '' },
   },
 });

@@ -1,7 +1,7 @@
 import { MassActionService } from '@/mass-actions/entity/massAction';
 import { MassActionDataCorrectionType, MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action';
 import { mockMassActionCreatePayload } from '@/mass-actions/entity/massAction.mock';
-import { mockHttp } from '../../http-client';
+import { GlobalHandler, mockHttp } from '../../http-client';
 
 const http = mockHttp();
 const service = new MassActionService(http as never);
@@ -16,7 +16,14 @@ describe('>>> Mass Action Service', () => {
     const runType = MassActionRunType.Process;
 
     await service.process(id, runType);
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/run`, { runType });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/run`, { runType }, { globalHandler: GlobalHandler.Disabled });
+  });
+
+  test('deactivate is linked to the correct URL', async () => {
+    const id = '1';
+
+    await service.deactivate(id);
+    expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: GlobalHandler.Disabled });
   });
 
   test('update is linked to the correct URL', async () => {
@@ -27,7 +34,7 @@ describe('>>> Mass Action Service', () => {
     };
 
     await service.update(id, payload);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, payload);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, payload, { globalHandler: GlobalHandler.Disabled });
   });
 
   test('getInvalidFile is linked to the correct URL', async () => {
@@ -41,6 +48,7 @@ describe('>>> Mass Action Service', () => {
         runId,
         language,
       },
+       globalHandler: GlobalHandler.Disabled,
     });
   });
 

@@ -3,6 +3,7 @@ import {
   MassActionRunStatus, mockMassActionEntity, mockMassActionMetadata, mockMassActionRun, mockMassActionRunMetadata,
 } from '@libs/entities-lib/mass-action';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import massActionDetails from './massActionDetails';
 
 const Component = {
@@ -180,7 +181,7 @@ describe('massActions', () => {
           hook.call(wrapper.vm);
         });
         expect(massActionStore.fetch).toHaveBeenCalledWith(wrapper.vm.massActionId);
-        expect(massActionMetadataStore.fetch).toHaveBeenCalledWith(wrapper.vm.massActionId, false);
+        expect(massActionMetadataStore.fetch).toHaveBeenCalledWith(wrapper.vm.massActionId, GlobalHandler.Partial);
       });
 
       it('should not fetch the mass action if already in the store', async () => {

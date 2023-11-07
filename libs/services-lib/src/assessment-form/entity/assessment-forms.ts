@@ -2,7 +2,7 @@ import {
  IAssessmentFormEntity, IAssessmentFormMetadata, IAssessmentTotalSubmissions, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { IAssessmentFormsService } from './assessment-forms.types';
 
@@ -16,15 +16,15 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
   }
 
   async getForBeneficiary(id: string): Promise<IAssessmentFormEntity> {
-    return this.http.get<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/public`, { id }), { globalHandler: false });
+    return this.http.get<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/public`, { id }), { globalHandler: GlobalHandler.Partial });
   }
 
   async create(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {
-    return this.http.post<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}`, item), this.http.getPayloadAsFile(item), { globalHandler: false });
+    return this.http.post<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}`, item), this.http.getPayloadAsFile(item), { globalHandler: GlobalHandler.Partial });
   }
 
   async update(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {
-    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), this.http.getPayloadAsFile(item), { globalHandler: false });
+    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), this.http.getPayloadAsFile(item), { globalHandler: GlobalHandler.Partial });
   }
 
   async updateAssessmentStructure(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {

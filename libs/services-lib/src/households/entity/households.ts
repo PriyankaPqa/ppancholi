@@ -14,7 +14,7 @@ import {
   ECanadaProvinces, ERegistrationMode, IOptionItemData,
 } from '@libs/shared-lib/types';
 import { DomainBaseService } from '../../base';
-import { IHttpClient, IHttpMock } from '../../http-client';
+import { GlobalHandler, IHttpClient, IHttpMock } from '../../http-client';
 import { IHouseholdsService } from './households.types';
 
 const API_URL_SUFFIX = 'household';
@@ -49,7 +49,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async postPublicRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse> {
-    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`, { ...payload }, { globalHandler: false });
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`, { ...payload }, { globalHandler: GlobalHandler.Partial });
   }
 
   async submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse> {
@@ -58,7 +58,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async postCrcRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse> {
-    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, payload, { globalHandler: false });
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async getPerson(id: uuid): Promise<IMemberEntity> {
@@ -129,7 +129,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IDetailedRegistrationResponse> {
     const payload = this.parseSplitHouseholdPayload(household, eventId);
-    return this.http.patch(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${originHouseholdId}/split`, payload, { globalHandler: false });
+    return this.http.patch(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${originHouseholdId}/split`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]> {
@@ -139,11 +139,11 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
-    return this.http.post(`${this.baseApi}/persons/validate-email-address`, request, { globalHandler: false });
+    return this.http.post(`${this.baseApi}/persons/validate-email-address`, request, { globalHandler: GlobalHandler.Partial });
   }
 
   async validatePublicEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
-    return this.http.post(`${this.baseApi}/persons/public/validate-email-address`, request, { globalHandler: false });
+    return this.http.post(`${this.baseApi}/persons/public/validate-email-address`, request, { globalHandler: GlobalHandler.Partial });
   }
 
   async makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity> {
@@ -178,7 +178,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.post(
       `${this.baseApi}/persons/public/check-possible-duplicate`,
       { eventId, contactInformation: member.contactInformation, identitySet: member.identitySet, householdId },
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
   }
 
@@ -186,7 +186,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     const publicToken = await this.http.post<string>(
       `${this.baseApi}/persons/public/validate-recaptcha?recaptchaToken=${encodeURIComponent(recaptchaToken)}`,
       null,
-      { globalHandler: false },
+      { globalHandler: GlobalHandler.Partial },
     );
 
     this.http.setPublicToken(publicToken);
@@ -195,11 +195,11 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void> {
-    return this.http.post(`${this.baseApi}/persons/public/send-code-registration`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseApi}/persons/public/send-code-registration`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async verifyOneTimeCodeRegistrationPublic(payload: IVerifyOneTimeCodeRegistrationPublicPayload): Promise<boolean> {
-    const publicToken = await this.http.post<string>(`${this.baseApi}/persons/public/verify-code-registration`, payload, { globalHandler: false });
+    const publicToken = await this.http.post<string>(`${this.baseApi}/persons/public/verify-code-registration`, payload, { globalHandler: GlobalHandler.Partial });
     const success = publicToken !== null && publicToken !== '';
     if (success) {
       this.http.setPublicToken(publicToken);

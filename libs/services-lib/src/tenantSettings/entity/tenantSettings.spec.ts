@@ -4,7 +4,7 @@ import {
   mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
 } from '@libs/entities-lib/tenantSettings';
-import { IHttpMock, mockHttp } from '../../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { TenantSettingsService } from './tenantSettings';
 
 describe('>>> TenantSettings service', () => {
@@ -22,7 +22,7 @@ describe('>>> TenantSettings service', () => {
   describe('getCurrentTenantSettings', () => {
     it('is linked to the correct url', async () => {
       await service.getCurrentTenantSettings();
-      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/current-tenant-settings', { globalHandler: false });
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/current-tenant-settings', { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -65,7 +65,7 @@ describe('>>> TenantSettings service', () => {
   describe('getUserTenants', () => {
     it('is linked to the correct url', async () => {
       await service.getUserTenants();
-      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenants/brandings', { globalHandler: false });
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenants/brandings', { globalHandler: GlobalHandler.Partial });
     });
   });
 

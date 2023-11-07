@@ -7,7 +7,7 @@ import { Toasted } from 'vue-toasted';
 import { buildQuery } from '@/odata-query';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import {
-  HttpClient, IRestResponse, mockHttp, mockHttpErrorResponse,
+  HttpClient, IRestResponse, mockHttp, mockHttpErrorResponse, GlobalHandler,
 } from './index';
 
 import * as owasp from '../utils/owasp';
@@ -122,19 +122,19 @@ describe('httpClient', () => {
       });
     });
 
-    describe('isGlobalHandlerEnabled', () => {
+    describe('getGlobalHandler', () => {
       it('returns default value if not defined', () => {
-        const result = mockHttpClient.isGlobalHandlerEnabled({});
+        const result = mockHttpClient.getGlobalHandler({});
 
-        expect(result).toBeTruthy();
+        expect(result).toEqual(GlobalHandler.Enabled);
       });
 
       it('returns defined value', () => {
-        const result = mockHttpClient.isGlobalHandlerEnabled({
-          globalHandler: false,
+        const result = mockHttpClient.getGlobalHandler({
+          globalHandler: GlobalHandler.Partial,
         });
 
-        expect(result).toBeFalsy();
+        expect(result).toEqual(GlobalHandler.Partial);
       });
     });
 
@@ -201,8 +201,8 @@ describe('httpClient', () => {
           expect(mockHttpClient.error403Handler).toBeCalled();
         });
 
-        it('should not call error403Handler if no global handler', async () => {
-          mockHttpClient.isGlobalHandlerEnabled = jest.fn(() => false);
+        it('should not call error403Handler if global handler is not enabled', async () => {
+          mockHttpClient.getGlobalHandler = jest.fn(() => GlobalHandler.Partial);
           mockHttpClient.error403Handler = jest.fn();
           await mockHttpClient.responseErrorHandler(mockHttpErrorResponse({}, 403))
             .catch(() => ({}));
@@ -280,8 +280,8 @@ describe('httpClient', () => {
         }]]);
       });
 
-      it('rejects if global handler deactivated', async () => {
-        mockHttpClient.isGlobalHandlerEnabled = jest.fn(() => false);
+      it('rejects if global handler not enabled', async () => {
+        mockHttpClient.getGlobalHandler = jest.fn(() => GlobalHandler.Partial);
 
         const errors = [{ code: '1' }, { code: '2' }];
 

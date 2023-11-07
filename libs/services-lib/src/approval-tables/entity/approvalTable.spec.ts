@@ -2,7 +2,7 @@ import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-
 import { mockApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import { IEditApprovalTableRequest } from '@/approval-tables/entity/approvalTables.types';
 import { ApprovalTablesService } from './approvalTables';
-import { IHttpMock, mockHttp } from '../../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 
 describe('>>> Approval Tables Service', () => {
   let http: IHttpMock;
@@ -25,7 +25,7 @@ describe('>>> Approval Tables Service', () => {
         aggregatedByType: approvalTable.aggregatedByType,
         groups: approvalTable.groups.map((g) => g.toDto()),
         approvalBaseStatus: approvalTable.approvalBaseStatus,
-      }, { globalHandler: false });
+      }, { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -41,7 +41,7 @@ describe('>>> Approval Tables Service', () => {
     it('is linked to the correct URL and params', async () => {
       const programId = '1';
       await service.getApprovalTableByProgramId('1');
-      expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/programs/${programId}/approval-table`, { globalHandler: false });
+      expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/programs/${programId}/approval-table`, { globalHandler: GlobalHandler.Partial });
     });
   });
 
@@ -57,7 +57,7 @@ describe('>>> Approval Tables Service', () => {
       } as IEditApprovalTableRequest;
       const approvalId = '1';
       await service.edit(approvalId, payload);
-      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${approvalId}`, formattedPayload, { globalHandler: false });
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${approvalId}`, formattedPayload, { globalHandler: GlobalHandler.Partial });
     });
   });
 

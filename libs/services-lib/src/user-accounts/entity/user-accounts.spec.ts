@@ -1,6 +1,6 @@
 import { IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { FilterKey, mockUserFilters } from '@libs/entities-lib/user-account';
-import { IHttpMock, mockHttp } from '../../http-client';
+import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { UserAccountsService } from './user-accounts';
 
 describe('>>> UserAccounts Service', () => {
@@ -14,7 +14,7 @@ describe('>>> UserAccounts Service', () => {
 
   test('fetchCurrentUserAccount is linked to the correct URL', async () => {
     await service.fetchCurrentUserAccount();
-    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/current-user`, { globalHandler: false });
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/current-user`, { globalHandler: GlobalHandler.Partial });
   });
 
   test('addFilter is linked to the correct URL and payload', async () => {
@@ -86,7 +86,7 @@ describe('>>> UserAccounts Service', () => {
       roleId: 'id',
     };
     await service.createUserAccount(request);
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/user`, request, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/user`, request, { globalHandler: GlobalHandler.Partial });
   });
 
   test('assignRole is linked to the correct URL and payload', async () => {
