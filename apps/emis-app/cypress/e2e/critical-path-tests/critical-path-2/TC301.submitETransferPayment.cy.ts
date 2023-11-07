@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
@@ -6,24 +7,24 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold, addFinancialAssistancePayment } from '../../helpers/prepareState';
 import { submitPaymentTypeCanSteps } from '../../steps/submitPaymentTypeCanSteps';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+];
 
-const cannotRoles = {
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -31,7 +32,7 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
       cy.wrap(resultPrepareStateEvent.provider).as('provider');
       cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -46,7 +47,7 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -54,7 +55,7 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
             // eslint-disable-next-line
             const financialAssistancePayment = await addFinancialAssistancePayment(resultPrepareStateHousehold.provider, EPaymentModalities.ETransfer, resultPrepareStateHousehold.registrationResponse.caseFile.id, this.table.id);
             cy.wrap(financialAssistancePayment).as('financialAssistancePayment');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${resultPrepareStateHousehold.registrationResponse.caseFile.id}/financialAssistance`);
           });
         });
@@ -80,10 +81,10 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
         cy.wrap(financialAssistancePayment.id).as('financialAssistancePaymentId');
       });
     });
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
         it('should not be able to submit a E-Transfer Payment', function () {

@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserId, getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -11,27 +12,28 @@ import {
   createFATable,
   escalateFinancialAssistancePaymentToNextLevelApprover,
   prepareStateHousehold,
-  submitFinancialAssistancePaymentToApprover } from '../../helpers/prepareState';
+  submitFinancialAssistancePaymentToApprover,
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { ApprovalsPage } from '../../../pages/approvals/approvals.cy';
 
-const canRoles = {
-  Level4: UserRoles.level4,
-};
+const canRoles = [
+ UserRoles.level4,
+];
 
-const cannotRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -40,7 +42,7 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
       const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
       await createApprovalTableWithMultipleApprovalGroup(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
@@ -56,19 +58,19 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
     }
   });
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
             const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
             // eslint-disable-next-line
             const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.faTableId);
-            await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('Level3'));
+            await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId(UserRoles.level3));
             await escalateFinancialAssistancePaymentToNextLevelApprover(resultFAPayment.id, getUserId(roleName), UserRoles.level3);
             cy.wrap(resultFAPayment.id).as('FAPaymentId');
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('CaseFileNumber');
             cy.wrap(resultFAPayment.name).as('FAPaymentName');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo('approvals/request');
           });
         });
@@ -78,7 +80,7 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
 
           approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
           approvalsPage.getPendingRequestsTable().contains(this.event.name.translation.en).should('be.visible');
-          approvalsPage.getSubmittedByUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName('Level3')); // initially Level6 user submits fa payment request to Level3 user
+          approvalsPage.getSubmittedByUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName('level3')); // initially Level6 user submits fa payment request to Level3 user
           approvalsPage.getSubmittedToUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName(roleName));
           approvalsPage.getDateSubmittedUsingPaymentId(this.FAPaymentId).should('eq', getToday());
           approvalsPage.getActionsButtonByPaymentId(this.FAPaymentId).should('be.visible').click();
@@ -95,11 +97,11 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
           financialAssistanceDetailsPage.getApprovalHistory();
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(0).should('eq', 'TestDev6(System Admin)');
-          financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName('Level3')}`);
+          financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName('level3')}`);
           financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(0).should('eq', getToday());
           // eslint-disable-next-line
-          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('string', 'Submitted to').and('string', `${getUserName('Level3')} (${getUserRoleDescription('Level3')})`);
-          financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(1).should('eq', `${getUserName('Level3')}(${getUserRoleDescription('Level3')})`);
+          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('string', 'Submitted to').and('string', `${getUserName('level3')} (${getUserRoleDescription('level3')})`);
+          financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(1).should('eq', `${getUserName('level3')}(${getUserRoleDescription('level3')})`);
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'sending this for next level approval');
           financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(1).should('eq', getToday());
           // eslint-disable-next-line
@@ -126,23 +128,23 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
         const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
         // eslint-disable-next-line
         const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.faTableId);
-        await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('Level3'));
-        await escalateFinancialAssistancePaymentToNextLevelApprover(resultFAPayment.id, getUserId('Level4'), UserRoles.level3);
+        await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('level3'));
+        await escalateFinancialAssistancePaymentToNextLevelApprover(resultFAPayment.id, getUserId('level4'), UserRoles.level3);
         cy.wrap(resultFAPayment.id).as('FAPaymentId');
       });
     });
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(() => {
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo('approvals/request');
           });
         });
         it('should not be able to give final approval', function () {
           const approvalsPage = new ApprovalsPage();
 
-          if (roleName === 'Level3') {
+          if (roleName === UserRoles.level3) {
             cy.waitUntilTableFullyLoaded('approval-requests-pending');
             approvalsPage.getFAPaymentElementById(this.FAPaymentId).should('not.exist'); // verify that submitted payment is not present for approver group 1 (Level 3)
           } else {

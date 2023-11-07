@@ -1,33 +1,34 @@
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureLocation } from '../../../fixtures/events';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+];
 
-const cannotRoles = {
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)] as UserRoles[];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 describe('#TC165# - Add Event Shelter Location', { tags: ['@event'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
-      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesValues);
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRoles);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');
@@ -41,10 +42,10 @@ describe('#TC165# - Add Event Shelter Location', { tags: ['@event'] }, () => {
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
         it('should successfully add event shelter location', function () {
@@ -70,10 +71,10 @@ describe('#TC165# - Add Event Shelter Location', { tags: ['@event'] }, () => {
   });
 
   describe('Cannot Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
         it('should not be able to add event shelter location', () => {

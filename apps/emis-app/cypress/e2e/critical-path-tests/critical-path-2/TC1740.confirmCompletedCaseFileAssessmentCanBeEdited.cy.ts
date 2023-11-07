@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import {
@@ -12,24 +13,24 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileAssessmentDetailsPage } from '../../../pages/assessments/caseFileAssessmentDetails.page';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+];
 
-const cannotRoles = {
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -37,7 +38,7 @@ describe('#TC1740# - Confirm that a Completed Case File Assessment can be edited
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, allRolesValues);
+      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, allRoles);
       const resultAssessment = await createAndUpdateAssessment(provider, event.id, program.id);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
@@ -53,17 +54,17 @@ describe('#TC1740# - Confirm that a Completed Case File Assessment can be edited
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.getToken(roleValue).then(async function (tokenResponse) {
+          cy.getToken(roleName).then(async function (tokenResponse) {
             const resultHousehold = await prepareStateHousehold(tokenResponse.access_token, this.eventCreated);
             const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, this.assessmentFormId);
             // eslint-disable-next-line
             const resultSubmittedAssessmentResponse = await completeAndSubmitCasefileAssessmentByCrcUser(resultHousehold.provider, resultCreateAssessmentResponse.id, resultHousehold.registrationResponse.caseFile.id, this.assessmentFormId); //complete and submit assessment
             cy.wrap(resultHousehold).as('householdCreated');
             cy.wrap(resultCreateAssessmentResponse).as('casefileAssessment');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/assessments/${resultSubmittedAssessmentResponse.id}`);
           });
         });
@@ -94,10 +95,10 @@ describe('#TC1740# - Confirm that a Completed Case File Assessment can be edited
         cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('casefileId');
       });
     });
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo(`casefile/${this.casefileId}/assessments`);
         });
         it('should not be able to edit a completed Case File Assessment', function () {

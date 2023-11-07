@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserId, getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -10,27 +11,28 @@ import {
   createEventAndTeam,
   createFATable,
   prepareStateHousehold,
-  submitFinancialAssistancePaymentToApprover } from '../../helpers/prepareState';
+  submitFinancialAssistancePaymentToApprover,
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { ApprovalsPage } from '../../../pages/approvals/approvals.cy';
 
-const canRoles = {
-  Level3: UserRoles.level3,
-};
+const canRoles = [
+  UserRoles.level3,
+];
 
-const cannotRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -39,7 +41,7 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
       const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
       await createApprovalTableWithMultipleApprovalGroup(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
@@ -55,7 +57,7 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
     }
   });
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -66,7 +68,7 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
             cy.wrap(resultFAPayment.id).as('FAPaymentId');
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('CaseFileNumber');
             cy.wrap(resultFAPayment.name).as('FAPaymentName');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo('approvals/request');
           });
         });
@@ -76,19 +78,19 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
 
           approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
           approvalsPage.getPendingRequestsTable().contains(this.event.name.translation.en).should('be.visible');
-          approvalsPage.getSubmittedByUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName('Level6')); // initially Level6 user submits fa payment request to Level3 user
+          approvalsPage.getSubmittedByUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName('level6')); // initially Level6 user submits fa payment request to Level3 user
           approvalsPage.getSubmittedToUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName(roleName));
           approvalsPage.getDateSubmittedUsingPaymentId(this.FAPaymentId).should('eq', getToday());
           approvalsPage.getActionsButtonByPaymentId(this.FAPaymentId).should('be.visible').click();
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
           approvalsPage.checkApprovalActionRequestApproved();
           approvalsPage.refreshUntilApproverSupervisorVisible(this.FAPaymentId);
-          approvalsPage.selectSupervisorForApproval(getUserName('Level4')); // Level3 user belonging to Approver Group 1 submits approval request to Level4 of Approver Group 2
+          approvalsPage.selectSupervisorForApproval(getUserName('level4')); // Level3 user belonging to Approver Group 1 submits approval request to Level4 of Approver Group 2
           approvalsPage.enterApprovalActionRationale().type('sending this for next level approval');
           approvalsPage.submitActionApproval();
           cy.contains('Approval status has been updated').should('be.visible');
           approvalsPage.getSubmittedByUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName(roleName));
-          approvalsPage.getSubmittedToUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName('Level4'));
+          approvalsPage.getSubmittedToUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName('level4'));
           approvalsPage.getActionIconElementUsingPaymentId(this.FAPaymentId).should('have.attr', 'class').and('contains', 'check theme'); // verify if checkmark icon is visible instead of Actions button
 
           const financialAssistanceDetailsPage = approvalsPage.getFAPaymentById(this.FAPaymentId);
@@ -105,7 +107,7 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'sending this for next level approval');
           financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(1).should('eq', getToday());
           // eslint-disable-next-line
-          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('string', 'Approved and submitted to').and('string', `${getUserName('Level4')} (${getUserRoleDescription('Level4')})`);
+          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('string', 'Approved and submitted to').and('string', `${getUserName('level4')} (${getUserRoleDescription('level4')})`);
           financialAssistanceDetailsPage.closeDialogApprovalStatusHistory();
 
           const caseFileDetailsPage = financialAssistanceDetailsPage.goToCaseFileDetailsPage();
@@ -124,22 +126,22 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
         const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
         // eslint-disable-next-line
         const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.faTableId);
-        await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('Level3'));
+        await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('level3'));
         cy.wrap(resultFAPayment.id).as('FAPaymentId');
       });
     });
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(() => {
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo('approvals/request');
           });
         });
         it('should not be able to escalate payment to next level approver', function () {
           const approvalsPage = new ApprovalsPage();
 
-          if (roleName === 'Level4') {
+          if (roleName === UserRoles.level4) {
             cy.waitUntilTableFullyLoaded('approval-requests-pending');
             approvalsPage.getFAPaymentElementById(this.FAPaymentId).should('not.exist'); // verify that submitted payment is not present for approver group 2 (Level 4)
           } else {

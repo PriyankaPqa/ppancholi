@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserId, getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -13,23 +14,23 @@ import {
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { ApprovalsPage } from '../../../pages/approvals/approvals.cy';
 
-const canRoles = {
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-};
+const canRoles = [
+  UserRoles.level4,
+  UserRoles.level3,
+];
 
-const cannotRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -37,7 +38,7 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
       const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
       await createApprovalTable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
@@ -53,7 +54,7 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
     }
   });
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -64,7 +65,7 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
             cy.wrap(resultFAPayment.id).as('FAPaymentId');
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('CaseFileNumber');
             cy.wrap(resultFAPayment.name).as('FAPaymentName');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo('approvals/request');
           });
         });
@@ -112,14 +113,14 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
         const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
         // eslint-disable-next-line
         const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.tableId);
-        await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('Level4'));
+        await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('level4'));
       });
     });
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(() => {
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo('approvals/request');
           });
         });

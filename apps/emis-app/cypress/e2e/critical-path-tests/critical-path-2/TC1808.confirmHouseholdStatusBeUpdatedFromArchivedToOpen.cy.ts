@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, prepareStateHousehold, setCasefileStatus, setHouseholdStatus } from '../../helpers/prepareState';
@@ -6,24 +7,24 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { updateHouseholdStatusCanSteps } from './canSteps';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+];
 
-const cannotRoles = {
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 const rationale = 'This is my reasoning for updating the status to Open';
@@ -32,7 +33,7 @@ describe('#TC1808# - Confirm that Household Status can be updated from Archived 
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const result = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const result = await createEventAndTeam(accessTokenL6, allRoles);
       cy.wrap(result.provider).as('provider');
       cy.wrap(result.event).as('eventCreated');
       cy.wrap(result.team).as('teamCreated');
@@ -45,7 +46,7 @@ describe('#TC1808# - Confirm that Household Status can be updated from Archived 
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -54,7 +55,7 @@ describe('#TC1808# - Confirm that Household Status can be updated from Archived 
             await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Archived);
             cy.wrap(result.registrationResponse.caseFile.id).as('casefileId');
             cy.wrap(result.registrationResponse.household.id).as('householdId');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/household/${result.registrationResponse.household.id}`);
           });
         });
@@ -86,11 +87,11 @@ describe('#TC1808# - Confirm that Household Status can be updated from Archived 
         cy.wrap(result.registrationResponse.household.id).as('householdId');
       });
     });
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(function () {
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/household/${this.householdId}`);
           });
         });

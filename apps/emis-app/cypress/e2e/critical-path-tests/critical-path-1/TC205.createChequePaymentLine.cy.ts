@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
@@ -12,32 +13,30 @@ let caseFileCreated = null as ICaseFileEntity;
 let accessTokenL6 = '';
 let householdCreated = null as ICreateHouseholdRequest;
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+];
 
-// dummy
+const cannotRoles = [
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const cannotRoles = {
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
-
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 describe('#TC205# - Create Cheque Payment Line', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRolesValues, EFinancialAmountModes.Fixed);
+      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRoles, EFinancialAmountModes.Fixed);
       cy.wrap(resultPrepareStateEventTeamProgramTable.event).as('event');
       cy.wrap(resultPrepareStateEventTeamProgramTable.table).as('table');
       cy.wrap(resultPrepareStateEventTeamProgramTable.provider).as('provider');
@@ -50,14 +49,14 @@ describe('#TC205# - Create Cheque Payment Line', { tags: ['@financial-assistance
     }
   });
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.event);
             caseFileCreated = result.registrationResponse.caseFile;
             householdCreated = result.mockCreateHousehold;
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
@@ -74,13 +73,13 @@ describe('#TC205# - Create Cheque Payment Line', { tags: ['@financial-assistance
     }
   });
   describe('Cannot Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.event);
             caseFileCreated = result.registrationResponse.caseFile;
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });

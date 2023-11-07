@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { getToday } from '@libs/cypress-lib/helpers';
 import {
   prepareStateEventAndProgram,
@@ -9,21 +10,21 @@ import {
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileAssessmentDetailsPage } from '../../../pages/assessments/caseFileAssessmentDetails.page';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles)];
+const { filteredCanRoles, allRoles } = getRoles(canRoles, []);
 
 let accessTokenL6 = '';
 
@@ -31,7 +32,7 @@ describe('#TC1738# - Confirm that responses to a completed Case File Assessment 
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, allRolesValues);
+      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, allRoles);
       const resultAssessment = await createAndUpdateAssessment(provider, event.id, program.id);
       const resultHousehold = await prepareStateHousehold(accessTokenL6, event);
       const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, resultAssessment.id);
@@ -52,10 +53,10 @@ describe('#TC1738# - Confirm that responses to a completed Case File Assessment 
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo(`casefile/${this.casefileId}/assessments/${this.casefileAssessmentResponseId}`);
         });
         it('should successfully view responses to a completed Case File Assessment', function () {

@@ -244,11 +244,11 @@ export const prepareStateMultipleHouseholds = async (accessToken: string, event:
 /**
  * Creates a event, add a team to it, assign roles to this team and creates a program for that event
  * @param accessToken
- * @param allRolesValues
+ * @param allRoles
  */
-export const prepareStateEventAndProgram = async (accessToken: string, allRolesValues: UserRoles[]) => {
+export const prepareStateEventAndProgram = async (accessToken: string, allRoles: UserRoles[]) => {
   const provider = useProvider(accessToken);
-  const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
+  const { event, team } = await createEventWithTeamWithUsers(provider, allRoles);
   const { program, mockCreateProgram } = await createProgram(provider, event.id);
   return { provider, event, team, mockCreateProgram, program };
 };
@@ -256,11 +256,11 @@ export const prepareStateEventAndProgram = async (accessToken: string, allRolesV
 /**
  * Creates a event, add a team to it, and assign roles to this team using inbuilt provider
  * @param accessToken
- * @param allRolesValues
+ * @param allRoles
  */
-export const createEventAndTeam = async (accessToken: string, allRolesValues: UserRoles[]) => {
+export const createEventAndTeam = async (accessToken: string, allRoles: UserRoles[]) => {
   const provider = useProvider(accessToken);
-  const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
+  const { event, team } = await createEventWithTeamWithUsers(provider, allRoles);
   return { provider, event, team };
 };
 
@@ -411,11 +411,11 @@ export const updateFinancialAssistancePayment = async (provider: IProvider, enti
  * Creates a event, add a team to it, assign roles to this team, creates a program for that event
  * and adds financial assistance table to it with an Item and Sub-item
  * @param accessTokenL6
- * @param allRolesValues
+ * @param allRoles
  * @param amountMode
  */
-export const prepareStateEventTeamProgramTableWithItemSubItem = async (accessTokenL6: string, allRolesValues: UserRoles[], amountMode:EFinancialAmountModes) => {
-  const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+export const prepareStateEventTeamProgramTableWithItemSubItem = async (accessTokenL6: string, allRoles: UserRoles[], amountMode:EFinancialAmountModes) => {
+  const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
   const event = resultPrepareStateEvent.event;
   const { provider, team } = resultPrepareStateEvent;
   const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, amountMode);

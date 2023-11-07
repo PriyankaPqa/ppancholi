@@ -4,28 +4,29 @@
   import { IProgramEntity } from '@libs/entities-lib/program';
   import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
   import { getToday } from '@libs/cypress-lib/helpers';
+  import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
   import { prepareStateHousehold, createAssessment, prepareStateEventAndProgram } from '../../helpers/prepareState';
   import { removeTeamMembersFromTeam } from '../../helpers/teams';
   import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 
-  const canRoles = {
-    Level6: UserRoles.level6,
-    Level5: UserRoles.level5,
-    Level4: UserRoles.level4,
-    Level3: UserRoles.level3,
-    Level2: UserRoles.level2,
-    Level1: UserRoles.level1,
-    Level0: UserRoles.level0,
-  };
+  const canRoles = [
+    UserRoles.level6,
+    UserRoles.level5,
+    UserRoles.level4,
+    UserRoles.level3,
+    UserRoles.level2,
+    UserRoles.level1,
+    UserRoles.level0,
+  ];
 
-  const cannotRoles = {
-    Contributor1: UserRoles.contributor1,
-    Contributor2: UserRoles.contributor2,
-    Contributor3: UserRoles.contributor3,
-    ReadOnly: UserRoles.readonly,
-  };
+  const cannotRoles = [
+    UserRoles.contributor1,
+    UserRoles.contributor2,
+    UserRoles.contributor3,
+    UserRoles.readonly,
+  ];
 
-  const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+  const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
   let event = null as IEventEntity;
   let accessTokenL6 = '';
@@ -37,7 +38,7 @@
     before(() => {
       cy.getToken().then(async (accessToken) => {
         accessTokenL6 = accessToken.access_token;
-        const resultEventProgram = await prepareStateEventAndProgram(accessTokenL6, allRolesValues);
+        const resultEventProgram = await prepareStateEventAndProgram(accessTokenL6, allRoles);
         const { provider, team } = resultEventProgram;
         event = resultEventProgram.event;
         program = resultEventProgram.program;
@@ -53,13 +54,13 @@
       }
     });
     describe('Can Roles', () => {
-      for (const [roleName, roleValue] of Object.entries(canRoles)) {
+      for (const roleName of filteredCanRoles) {
         describe(`${roleName}`, () => {
           beforeEach(() => {
             cy.then(async () => {
               const result = await prepareStateHousehold(accessTokenL6, event);
               caseFileCreated = result.registrationResponse.caseFile;
-              cy.login(roleValue);
+              cy.login(roleName);
               cy.goTo(`casefile/${caseFileCreated.id}/assessments`);
             });
           });
@@ -82,7 +83,7 @@
             assessmentsListPage.getAssessmentStatusTag().should('eq', 'Pending');
             assessmentsListPage.getAssessmentStartButton().should('be.visible');
 
-            if (roleValue === canRoles.Level0) {
+            if (roleName === UserRoles.level0) {
               assessmentsListPage.getCopyLinkButton().should('not.exist');
               assessmentsListPage.getDeleteAssessmentButton().should('not.exist');
             } else {
@@ -94,13 +95,13 @@
       }
     });
     describe('Cannot Roles', () => {
-      for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+       for (const roleName of filteredCannotRoles) {
         describe(`${roleName}`, () => {
           beforeEach(() => {
             cy.then(async () => {
               const result = await prepareStateHousehold(accessTokenL6, event);
               caseFileCreated = result.registrationResponse.caseFile;
-              cy.login(roleValue);
+              cy.login(roleName);
               cy.goTo(`casefile/${caseFileCreated.id}/assessments`);
             });
           });

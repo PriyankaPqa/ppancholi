@@ -1,3 +1,4 @@
+import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { AddCallCentrePage } from './addCallCentre.page';
 import { AddShelterLocationPage } from './addShelterLocation.page';
 import { AddRegistrationLocationPage } from './addRegistrationLocation.page';
@@ -159,7 +160,7 @@ export class EventDetailsPage {
   }
 
   public getCallCentreNameByRole(roleName: string, index = 0) {
-    if (roleName === 'Level5') {
+    if (roleName === UserRoles.level5) {
       cy.getByDataTestLike(this.callCentreName).eq(1).should('exist');
     }
     return cy.getByDataTestLike(this.callCentreName).eq(index).getAndTrimText();
@@ -179,7 +180,7 @@ export class EventDetailsPage {
   }
 
   public getRegistrationLocationNameByRole(roleName: string, index = 0) {
-    if (roleName === 'Level5') {
+    if (roleName === UserRoles.level5) {
       cy.getByDataTestLike(this.registrationLocationName).eq(1).should('exist');
     }
     return cy.getByDataTestLike(this.registrationLocationName).eq(index).getAndTrimText();
@@ -203,7 +204,7 @@ export class EventDetailsPage {
   }
 
   public getShelterLocationNameByRole(roleName: string, index = 0) {
-    if (roleName === 'Level5') {
+    if (roleName === UserRoles.level5) {
       cy.getByDataTestLike(this.shelterLocationName).eq(1).should('exist');
     }
     return cy.getByDataTestLike(this.shelterLocationName).eq(index).getAndTrimText();

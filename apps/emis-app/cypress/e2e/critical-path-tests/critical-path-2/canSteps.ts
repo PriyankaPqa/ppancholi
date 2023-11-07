@@ -1,5 +1,6 @@
 import { getToday } from '@libs/cypress-lib/helpers';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
@@ -22,7 +23,7 @@ export const verifyPartiallyCompletedCaseFileAssessment = (roleName:string) => {
   assessmentsListPage.getAssessmentDateAssigned().should('eq', getToday());
   assessmentsListPage.getAssessmentDateModified().should('eq', getToday());
   assessmentsListPage.getAssessmentDateCompletedElement().should('not.be.visible');
-  if (roleName === 'Contributor3' || roleName === 'Contributor2' || roleName === 'Contributor1' || roleName === 'ReadOnly') {
+  if (roleName === UserRoles.contributor3 || roleName === UserRoles.contributor2 || roleName === UserRoles.contributor1 || roleName === UserRoles.readonly) {
     assessmentsListPage.getResumePartialAssessmentButton().should('not.exist');
   } else {
     assessmentsListPage.getResumePartialAssessmentButton().should('be.visible');
@@ -34,12 +35,13 @@ export const verifyPendingCaseFileAssessment = (roleName:string, assessmentName:
   assessmentsListPage.getPendingAssessmentTable().contains(`${assessmentName}`).should('be.visible');
   assessmentsListPage.getPendingAssessmentTable().contains(`${getToday()}`).should('be.visible');
   assessmentsListPage.getPendingAssessmentTable().contains('Pending').should('be.visible');
-  if (roleName === 'Contributor3' || roleName === 'Contributor2' || roleName === 'Contributor1' || roleName === 'ReadOnly') {
+  if (roleName === UserRoles.contributor3 || roleName === UserRoles.contributor2 || roleName === UserRoles.contributor1 || roleName === UserRoles.readonly) {
     assessmentsListPage.getAssessmentStartButton().should('not.exist');
   } else {
     assessmentsListPage.getAssessmentStartButton().should('be.visible');
   }
-  if (roleName === 'Level0' || roleName === 'Contributor3' || roleName === 'Contributor2' || roleName === 'Contributor1' || roleName === 'ReadOnly') {
+  // eslint-disable-next-line vue/max-len
+  if (roleName === UserRoles.level0 || roleName === UserRoles.contributor3 || roleName === UserRoles.contributor2 || roleName === UserRoles.contributor1 || roleName === UserRoles.readonly) {
     assessmentsListPage.getDeleteAssessmentButton().should('not.exist');
   } else {
     assessmentsListPage.getDeleteAssessmentButton().should('be.visible');
@@ -53,7 +55,7 @@ export const verifyFullyCompletedCaseFileAssessment = (roleName:string, assessme
   assessmentsListPage.getAssessmentDateModified().should('eq', getToday());
   assessmentsListPage.getAssessmentDateCompletedElement().contains(`${getToday()}`).should('be.visible');
   assessmentsListPage.getAssessmentStatusTag().should('eq', 'Completed');
-  if (roleName === 'Level6' || roleName === 'Level5' || roleName === 'Level4' || roleName === 'Level3') {
+  if (roleName === UserRoles.level6 || roleName === UserRoles.level5 || roleName === UserRoles.level4 || roleName === UserRoles.level3) {
     assessmentsListPage.getEditCompletedAssessmentButton().should('be.visible');
   } else {
     assessmentsListPage.getEditCompletedAssessmentButton().should('not.exist');

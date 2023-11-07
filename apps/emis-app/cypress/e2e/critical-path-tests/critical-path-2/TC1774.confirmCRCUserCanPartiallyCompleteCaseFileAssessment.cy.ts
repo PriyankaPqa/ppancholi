@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import {
   prepareStateEventAndProgram,
   prepareStateHousehold,
@@ -9,24 +10,24 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 import { verifyPartiallyCompletedCaseFileAssessment, verifyPendingCaseFileAssessment } from './canSteps';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+];
 
-const cannotRoles = {
-  Contributor3: UserRoles.contributor3,
-  Contributor2: UserRoles.contributor2,
-  Contributor1: UserRoles.contributor1,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.contributor3,
+  UserRoles.contributor2,
+  UserRoles.contributor1,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -34,7 +35,7 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, allRolesValues);
+      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, allRoles);
       const resultAssessment = await createAndUpdateAssessment(provider, event.id, program.id);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
@@ -50,7 +51,7 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -58,7 +59,7 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
             const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, this.assessmentFormId);
             cy.wrap(resultHousehold).as('householdCreated');
             cy.wrap(resultCreateAssessmentResponse).as('casefileAssessment');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/assessments`);
           });
         });
@@ -83,11 +84,11 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
         cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('casefileId');
       });
     });
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${this.casefileId}/assessments`);
           });
         });

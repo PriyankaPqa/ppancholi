@@ -41,7 +41,7 @@ export const linkEventToTeamForManyRoles = async (event: IEventEntity, provider:
   const teamMembers = [] as ITeamMember[];
 
   roles.filter((r) => teamMemberId[r]).forEach((r, i) => {
-    teamMembers.push({ id: teamMemberId[r], isPrimaryContact: i === roles.length - 1 });
+    teamMembers.push({ id: teamMemberId[r], isPrimaryContact: i === 0 });
   });
 
   const team = await provider.teams.createTeam(mockTeams({

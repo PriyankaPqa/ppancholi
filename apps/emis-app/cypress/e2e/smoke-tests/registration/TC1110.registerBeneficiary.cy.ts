@@ -1,33 +1,35 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { capitalize } from '@libs/cypress-lib/helpers';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
 import { fixturePrimaryMember, fixtureAddressData, fixtureAdditionalMemberPersonalData } from '../../../fixtures/registration';
 import { ConfirmBeneficiaryRegistrationPage } from '../../../pages/registration/confirmBeneficiaryRegistration.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createEventAndTeam } from '../../helpers/prepareState';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+];
 
-const cannotRoles = {
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
-      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesValues);
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRoles);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('event');
       cy.wrap(team).as('teamCreated');
@@ -41,10 +43,10 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo('registration');
         });
         // eslint-disable-next-line
@@ -53,6 +55,7 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
           const primaryMemberData = fixturePrimaryMember(this.test.retries.length);
           const addressData = fixtureAddressData();
           const additionalMemberPersonalData = fixtureAdditionalMemberPersonalData(this.test.retries.length);
+          const roleNameCap = capitalize(roleName);
 
           crcRegistrationPage.getPageTitle().should('eq', 'Welcome, let\'s get started. Please select an event:');
           crcRegistrationPage.getBeginRegistrationButton().should('be.disabled');
@@ -80,7 +83,7 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
           householdMembersPage.getAdditionalMemberDetails(0).should('eq', `${additionalMemberPersonalData.firstName} ${additionalMemberPersonalData.lastName}`);
 
           const reviewRegistrationPage = householdMembersPage.goToReviewPage();
-          reviewRegistrationPage.getFirstName().should('string', `${roleName}${primaryMemberData.firstName}`);
+          reviewRegistrationPage.getFirstName().should('string', `${roleNameCap}${primaryMemberData.firstName}`);
           reviewRegistrationPage.getLastName().should('string', primaryMemberData.lastName);
           reviewRegistrationPage.getBirthDate().should('string', reviewRegistrationPage.getDateOfBirthString(primaryMemberData.dateOfBirth));
           reviewRegistrationPage.getPreferredLanguage().should('string', primaryMemberData.preferredLanguage);
@@ -100,7 +103,7 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
           reviewRegistrationPage.goToConfirmationPage();
 
           const confirmBeneficiaryRegistrationPage = new ConfirmBeneficiaryRegistrationPage();
-          confirmBeneficiaryRegistrationPage.getFullName().should('string', `${roleName}${primaryMemberData.firstName}`).and('string', `${primaryMemberData.lastName}`);
+          confirmBeneficiaryRegistrationPage.getFullName().should('string', `${roleNameCap}${primaryMemberData.firstName}`).and('string', `${primaryMemberData.lastName}`);
           confirmBeneficiaryRegistrationPage.getMessage().should('string', ' is now registered!');
           confirmBeneficiaryRegistrationPage.getRegistrationNumber().should('exist');
           confirmBeneficiaryRegistrationPage.getEventName().should('string', this.event.name.translation.en);
@@ -108,17 +111,17 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
           confirmBeneficiaryRegistrationPage.getNewRegistrationButton().should('be.visible');
 
           const caseFilesHomePage = confirmBeneficiaryRegistrationPage.goToCaseFiles();
-          caseFilesHomePage.refreshUntilCaseFilesUpdated(`${roleName}${primaryMemberData.firstName} ${primaryMemberData.lastName}`);
-          cy.contains(`${roleName}${primaryMemberData.firstName} ${primaryMemberData.lastName}`).should('be.visible');
+          caseFilesHomePage.refreshUntilCaseFilesUpdated(`${roleNameCap}${primaryMemberData.firstName} ${primaryMemberData.lastName}`);
+          cy.contains(`${roleNameCap}${primaryMemberData.firstName} ${primaryMemberData.lastName}`).should('be.visible');
         });
       });
     }
   });
   describe('Cannot Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo('registration');
         });
         it('should not be able to register beneficiary for event', () => {

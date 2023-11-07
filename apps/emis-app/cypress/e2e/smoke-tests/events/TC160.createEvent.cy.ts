@@ -1,25 +1,27 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { fixtureEvent } from '../../../fixtures/events';
 import { HomePage } from '../../../pages/home/home.page';
 import { CreateEventPage } from '../../../pages/events/createEvent.page';
 
-const cannotRoles = {
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
+
+const { filteredCannotRoles } = getRoles([], cannotRoles);
 
 describe('#TC160# - Create an Event', { tags: ['@event'] }, () => {
   describe('level6', () => {
     beforeEach(() => {
-      cy.log(Cypress.env('USER_0_MAIL'));
       cy.login();
       cy.goTo('events/create');
     });
@@ -49,10 +51,9 @@ describe('#TC160# - Create an Event', { tags: ['@event'] }, () => {
     });
   });
 
-  for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+   for (const roleName of filteredCannotRoles) {
     describe(`${roleName}`, () => {
       beforeEach(() => {
-        cy.login(roleValue);
         cy.goTo('home');
       });
       it('should not be able to create an event', () => {

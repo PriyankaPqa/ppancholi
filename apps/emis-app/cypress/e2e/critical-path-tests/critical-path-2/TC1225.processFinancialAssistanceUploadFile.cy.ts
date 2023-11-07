@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { getToday } from '@libs/cypress-lib/helpers';
@@ -8,24 +9,24 @@ import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/m
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-};
+const canRoles = [
+  UserRoles.level6,
+];
 
-const cannotRoles = {
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 const filePath = 'cypress/downloads/faCustomFile.csv';
@@ -33,12 +34,12 @@ const householdQuantity = 3;
 
 describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
-            const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+            const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             // eslint-disable-next-line
             const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
             // eslint-disable-next-line
@@ -47,7 +48,7 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.wrap(resultMassFinancialAssistance.responseMassFinancialAssistance.name).as('massFinancialAssistanceName');
             cy.wrap(resultMassFinancialAssistance.responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile.id).as('caseFileId');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`mass-actions/financial-assistance/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
           });
         });
@@ -104,10 +105,10 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
     }
   });
   describe('Cannot Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo('mass-actions/financial-assistance');
         });
         it('should not be able to process a financial assistance upload file', () => {

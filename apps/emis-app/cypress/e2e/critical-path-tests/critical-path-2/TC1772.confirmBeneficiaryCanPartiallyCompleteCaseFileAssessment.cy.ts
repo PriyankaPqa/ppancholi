@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import {
   prepareStateEventAndProgram,
   prepareStateHousehold,
@@ -9,21 +10,21 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { verifyPartiallyCompletedCaseFileAssessment } from './canSteps';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor3: UserRoles.contributor3,
-  Contributor2: UserRoles.contributor2,
-  Contributor1: UserRoles.contributor1,
-  ReadOnly: UserRoles.readonly,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor3,
+  UserRoles.contributor2,
+  UserRoles.contributor1,
+  UserRoles.readonly,
+];
 
-const canRolesValues = [...Object.values(canRoles)];
+const { filteredCanRoles } = getRoles(canRoles, []);
 
 let accessTokenL6 = '';
 
@@ -31,7 +32,7 @@ describe('#TC1772# - Confirm that the Beneficiary can partially complete a Case 
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, canRolesValues);
+      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, filteredCanRoles);
       const resultAssessment = await createAndUpdateAssessment(provider, event.id, program.id);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
@@ -46,7 +47,7 @@ describe('#TC1772# - Confirm that the Beneficiary can partially complete a Case 
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -54,7 +55,7 @@ describe('#TC1772# - Confirm that the Beneficiary can partially complete a Case 
             const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, this.assessmentFormId);
             cy.wrap(resultHousehold).as('householdCreated');
             cy.wrap(resultCreateAssessmentResponse).as('casefileAssessment');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/assessments`);
           });
         });

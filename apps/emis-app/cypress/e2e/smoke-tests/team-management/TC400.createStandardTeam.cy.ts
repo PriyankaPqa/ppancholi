@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { generateRandomTeamName } from '@libs/cypress-lib/helpers';
 import { CreateNewTeamPage } from '../../../pages/teams/createNewTeam.page';
@@ -6,32 +7,34 @@ import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { TeamsHomePage } from '../../../pages/teams/teamsHome.page';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+];
 
-const partialRoles = {
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-};
+const partialRoles = [
+  UserRoles.level4,
+  UserRoles.level3,
+];
 
-const cannotRoles = {
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(partialRoles), ...Object.values(cannotRoles)] as UserRoles[];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
+
+const allRolesWithPartial = [...Object.values(allRoles), ...Object.values(partialRoles)] as UserRoles[];
 
 describe('#TC400# - Create Standard Team', { tags: ['@case-file', '@teams'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
-      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesValues);
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesWithPartial);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');
@@ -45,10 +48,10 @@ describe('#TC400# - Create Standard Team', { tags: ['@case-file', '@teams'] }, (
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo('teams/create/standard');
         });
         it('should successfully create standard team', function () {
@@ -71,10 +74,10 @@ describe('#TC400# - Create Standard Team', { tags: ['@case-file', '@teams'] }, (
   });
 
   describe('Partial Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(partialRoles)) {
+    for (const roleName of partialRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo('teams');
         });
         it('should not be able to create team but have access till team page only', () => {
@@ -88,10 +91,10 @@ describe('#TC400# - Create Standard Team', { tags: ['@case-file', '@teams'] }, (
   });
 
   describe('Cannot Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo('teams');
         });
         it('should not be able to create team and have no access to team page', () => {

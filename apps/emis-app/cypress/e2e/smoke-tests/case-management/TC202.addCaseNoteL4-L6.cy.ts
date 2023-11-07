@@ -1,9 +1,9 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { getUserNameBis, getUserRoleDescriptionBis } from '@libs/cypress-lib/helpers/users';
+import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { getToday } from '@libs/cypress-lib/helpers';
-import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { fixtureCaseNotes } from '../../../fixtures/case-management';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -46,13 +46,13 @@ describe('#TC202# - Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
     }
   });
   describe('Can Roles', () => {
-    for (const roleValue of filteredCanRoles) {
-      describe(`${roleValue}`, () => {
+    for (const roleName of filteredCanRoles) {
+      describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async () => {
             const result = await prepareStateHousehold(accessTokenL6, event);
             caseFileCreated = result.registrationResponse.caseFile;
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${caseFileCreated.id}/note`);
           });
         });
@@ -60,15 +60,15 @@ describe('#TC202# - Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
           const caseNotesData = fixtureCaseNotes(this.test.retries.length);
 
           const caseNotesPage = new CaseNotesPage();
-          caseNotesPage.getCreateCaseNoteButton().click();
-          caseNotesPage.fill(caseNotesData, roleValue);
+          caseNotesPage.getCreateCaseNoteButton().click().wait(500);
+          caseNotesPage.fill(caseNotesData, roleName);
           caseNotesPage.getCaseNoteButton().click();
-          caseNotesPage.getCaseFileUserName().should('eq', getUserNameBis(roleValue));
-          caseNotesPage.getCaseFileRoleName().should('eq', `(${getUserRoleDescriptionBis(roleValue)})`);
-          caseNotesPage.getCaseNoteSubject().should('eq', `${caseNotesData.subject} ${roleValue}`);
+          caseNotesPage.getCaseFileUserName().should('eq', getUserName(roleName));
+          caseNotesPage.getCaseFileRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+          caseNotesPage.getCaseNoteSubject().should('eq', `${caseNotesData.subject} ${roleName}`);
           caseNotesPage.getCaseNoteCategory().should('eq', caseNotesData.category.trim());
-          caseNotesPage.getCaseNoteDescription().should('eq', `${caseNotesData.description} ${roleValue}`);
-          caseNotesPage.getCaseFileLastEditBy().should('eq', getUserNameBis(roleValue));
+          caseNotesPage.getCaseNoteDescription().should('eq', `${caseNotesData.description} ${roleName}`);
+          caseNotesPage.getCaseFileLastEditBy().should('eq', getUserName(roleName));
           caseNotesPage.getCaseFileLastModifiedDate().should('eq', getToday());
           caseNotesPage.getCaseFileEditButton().should('exist');
 
@@ -76,19 +76,19 @@ describe('#TC202# - Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
           caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Category:');
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Case note added');
           caseFileDetailsPage.getCaseFileActivityBodies()
-            .should('string', `Subject: ${caseNotesData.subject} ${roleValue}`)
+            .should('string', `Subject: ${caseNotesData.subject} ${roleName}`)
             .and('string', `Category: ${caseNotesData.category.trim()}`);
-          caseFileDetailsPage.getUserName().should('eq', getUserNameBis(roleValue));
-          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescriptionBis(roleValue)})`);
+          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
         });
       });
     }
   });
   describe('Cannot roles', () => {
-    for (const roleValue of filteredCannotRoles) {
-      describe(`${roleValue}`, () => {
+    for (const roleName of filteredCannotRoles) {
+      describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo('casefile');
         });
         it('should not be able to add a case note for L4-L6', () => {

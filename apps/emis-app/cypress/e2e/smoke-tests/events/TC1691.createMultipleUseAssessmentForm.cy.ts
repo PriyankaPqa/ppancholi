@@ -1,32 +1,33 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { fixtureAssessment } from '../../../fixtures/events';
 import { CreateNewAssessmentPage } from '../../../pages/assessments/createNewAssessment.page';
 import { prepareStateEventAndProgram } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-};
+const canRoles = [
+  UserRoles.level6,
+];
 
-const cannotRoles = {
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-  Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
-  Contributor2: UserRoles.contributor2,
-  Contributor3: UserRoles.contributor3,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)] as UserRoles[];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 describe('#TC1691# - Create a multiple use Assessment form', { tags: ['@event', '@assessments'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
-      const { provider, event, team, mockCreateProgram } = await prepareStateEventAndProgram(accessToken.access_token, allRolesValues);
+      const { provider, event, team, mockCreateProgram } = await prepareStateEventAndProgram(accessToken.access_token, allRoles);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');
@@ -41,10 +42,10 @@ describe('#TC1691# - Create a multiple use Assessment form', { tags: ['@event', 
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}/assessments/create`);
         });
         it('should successfully create a multiple use assessment form', function () {
@@ -68,10 +69,10 @@ describe('#TC1691# - Create a multiple use Assessment form', { tags: ['@event', 
   });
 
   describe('Cannot Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
-          cy.login(roleValue);
+          cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}/assessments/create`);
         });
         it('should not be able to create multiple use assessment form', () => {

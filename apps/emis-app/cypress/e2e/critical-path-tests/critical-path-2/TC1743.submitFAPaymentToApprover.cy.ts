@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -9,28 +10,29 @@ import {
   createCustomProgram,
   createEventAndTeam,
   createFATable,
-  prepareStateHousehold } from '../../helpers/prepareState';
+  prepareStateHousehold,
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 
-const canRoles = {
-  Level6: UserRoles.level6,
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
-  Level2: UserRoles.level2,
-  Level1: UserRoles.level1,
-};
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+];
 
-const cannotRoles = {
-  Level0: UserRoles.level0,
-  Contributor3: UserRoles.contributor3,
-  Contributor2: UserRoles.contributor2,
-  Contributor1: UserRoles.contributor1,
-  ReadOnly: UserRoles.readonly,
-};
+const cannotRoles = [
+  UserRoles.level0,
+  UserRoles.contributor3,
+  UserRoles.contributor2,
+  UserRoles.contributor1,
+  UserRoles.readonly,
+];
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -38,7 +40,7 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, [...allRoles, UserRoles.level3, UserRoles.level4]);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
       const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
       await createApprovalTable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
@@ -55,7 +57,7 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
   });
 
   describe('Can Roles', () => {
-    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+    for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -64,7 +66,7 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
             const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.tableId);
             cy.wrap(resultFAPayment.id).as('FAPaymentId');
             cy.wrap(resultFAPayment.name).as('FAPaymentName');
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/financialAssistance`);
           });
         });
@@ -119,10 +121,10 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
           cy.wrap(resultFAPayment.id).as('FAPaymentId');
         });
       });
-      for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+       for (const roleName of filteredCannotRoles) {
         describe(`${roleName}`, () => {
           beforeEach(function () {
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${this.casefileId}/financialAssistance`);
           });
           it('should not be able to submit FA payment to an Approver', function () {

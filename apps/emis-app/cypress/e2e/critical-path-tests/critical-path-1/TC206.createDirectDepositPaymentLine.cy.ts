@@ -1,7 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureDirectDepositPaymentLine } from '../../../fixtures/financial-assistance';
@@ -48,13 +48,13 @@ describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-a
   });
 
   describe('Can Roles', () => {
-    for (const roleValue of filteredCanRoles) {
-      describe(`${roleValue}`, () => {
+    for (const roleName of filteredCanRoles) {
+      describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.event);
             caseFileCreated = result.registrationResponse.caseFile;
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
@@ -70,13 +70,13 @@ describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-a
     }
   });
   describe('Cannot Roles', () => {
-    for (const roleValue of filteredCannotRoles) {
-      describe(`${roleValue}`, () => {
+    for (const roleName of filteredCannotRoles) {
+      describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.event);
             caseFileCreated = result.registrationResponse.caseFile;
-            cy.login(roleValue);
+            cy.login(roleName);
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
