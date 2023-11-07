@@ -341,7 +341,7 @@ export default Vue.extend({
       const columns = sortBy(ds.columns.map((c) => ({
         ...c,
         caption: this.$t(c.caption),
-        cssClass: 'grid-column',
+        cssClass: `grid-column ${c.cssClass || ''}`,
         allowSearch: c.allowSearch !== false && c.visible !== false,
       })), 'caption');
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
@@ -357,6 +357,7 @@ export default Vue.extend({
       this.dataSource = {
         store: new ODataStore({
           url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`,
+          // url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`.replace('api-dev.crc-tech.ca/common', 'localhost:44352'),
           key: ds.key,
           keyType: 'Guid',
           version: 4,
@@ -521,5 +522,9 @@ export default Vue.extend({
 .btn-header {
   background-color: var(--v-primary-lighten2) !important;
   color: var(--v-primary) !important;
+}
+
+::v-deep .wrapped-column {
+  white-space: pre-line;
 }
 </style>

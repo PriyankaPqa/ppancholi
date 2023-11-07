@@ -211,7 +211,7 @@ describe('QueryView.vue', () => {
           {
             allowSearch: false,
             caption: 'ds.caseFileAuthenticationIdsCsv.csvAuthenticationIdNameEn',
-            cssClass: 'grid-column',
+            cssClass: 'grid-column ',
             dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameEn',
             dataType: 'string',
             visible: false,
@@ -219,7 +219,7 @@ describe('QueryView.vue', () => {
           {
             allowSearch: false,
             caption: 'ds.caseFileAuthenticationIdsCsv.csvAuthenticationIdNameFr',
-            cssClass: 'grid-column',
+            cssClass: 'grid-column ',
             dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameFr',
             dataType: 'string',
             visible: false,
@@ -227,7 +227,7 @@ describe('QueryView.vue', () => {
           {
             allowSearch: false,
             caption: 'ds.caseFileTagsCsv.csvTagNameEn',
-            cssClass: 'grid-column',
+            cssClass: 'grid-column ',
             dataField: 'caseFileTagsCsv.csvTagNameEn',
             dataType: 'string',
             visible: false,

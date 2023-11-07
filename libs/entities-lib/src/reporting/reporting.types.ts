@@ -10,6 +10,7 @@ export enum ReportingTopic {
   HouseholdMembers = 1,
   HouseholdPrimary = 2,
   PaymentLine = 3,
+  HouseholdActivities = 4,
   CaseFileActivities = 5,
   Referrals = 6,
   PaymentGroup = 7,

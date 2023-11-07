@@ -347,6 +347,30 @@ export const caseFileLifetimeActivitiesViewDS : IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileLifetimeActivitiesViewDS.${x.dataField}` })),
 };
 
+export const householdActivitiesViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'householdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileNumber', dataType: 'string', visible: true },
+    // { dataField: 'eventId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'eventNameEn', dataType: 'string', visible: false },
+    { dataField: 'eventNameFr', dataType: 'string', visible: false },
+    // { dataField: 'eventNameEnFR', dataType: 'string', visible: false },
+    { dataField: 'activityTypeEn', dataType: 'string', visible: false },
+    { dataField: 'activityTypeFr', dataType: 'string', visible: false },
+    // { dataField: 'activityTypeEnFR', dataType: 'string', visible: false },
+    { dataField: 'dateOfChange', dataType: 'datetime', visible: true },
+    { dataField: 'editedBy', dataType: 'string', visible: true },
+    { dataField: 'previousDetailsEn', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
+    { dataField: 'newDetailsEn', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
+    { dataField: 'previousDetailsFr', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
+    { dataField: 'newDetailsFr', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
+    { dataField: 'previousDetailsJson', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
+    { dataField: 'newDetailsJson', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.householdActivitiesViewDS.${x.dataField}` })),
+};
+
 export const financialAssistanceSummaryByPaymentGroupViewDS : IDatasourceBase = {
   columns: ([
     { dataField: 'financialAssistancePaymentGroupId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
@@ -461,9 +485,20 @@ export const referralsDs : IDatasourceSettings = {
   columns: [
     ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
     ...(householdViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'primaryBeneficiaryFirstName' && c.dataField !== 'primaryBeneficiaryLastName')
-    .map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+            .map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
     ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
     ...(referralViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `referral.${x.dataField}` }))),
+  ],
+};
+
+export const householdActivitiesDs : IDatasourceSettings = {
+  url: 'common/data-providers/household-activities',
+  reportingTopic: ReportingTopic.HouseholdActivities,
+  key: ['activity.id', 'activity.caseFileId'],
+  columns: [
+    ...(householdActivitiesViewDS.columns.map((x) => ({ ...x, dataField: `activity.${x.dataField}` }))),
+    ...(caseFileViewDs.columns.filter((c) => ['id', 'caseFileNumber', 'eventId', 'householdId', 'eventNameEn', 'eventNameFr'].indexOf(c.dataField) === -1)
+            .map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
   ],
 };
 
@@ -487,11 +522,11 @@ export const financialAssistancePaymentLineDs : IDatasourceSettings = {
   columns: [
     ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
     ...(financialAssistancePaymentLineViewDs.columns.filter((c) => c.dataField !== 'financialAssistancePaymentId' && c.dataField !== 'financialAssistancePaymentGroupId')
-      .map((x) => ({ ...x, dataField: `paymentLine.${x.dataField}` }))),
+          .map((x) => ({ ...x, dataField: `paymentLine.${x.dataField}` }))),
     ...(financialAssistancePaymentViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `payment.${x.dataField}` }))),
     ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
     ...(financialAssistancePaymentGroupViewDs.columns.filter((c) => c.dataField !== 'financialAssistancePaymentId')
-      .map((x) => ({ ...x, dataField: `paymentGroup.${x.dataField}` }))),
+          .map((x) => ({ ...x, dataField: `paymentGroup.${x.dataField}` }))),
   ],
 };
 
@@ -514,13 +549,20 @@ export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
     ...(financialAssistancePaymentViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `payment.${x.dataField}` }))),
     ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
     ...(financialAssistancePaymentGroupViewDs.columns.filter((c) => c.dataField !== 'financialAssistancePaymentId')
-      .map((x) => ({ ...x, dataField: `paymentGroup.${x.dataField}` }))),
-    ...(financialAssistanceSummaryByPaymentGroupViewDS.columns.filter((c) => c.dataField !== 'financialAssistancePaymentGroupId').map((x) => ({
-        ...x, dataField: `groupSummary.${x.dataField}`,
-      }))),
+          .map((x) => ({ ...x, dataField: `paymentGroup.${x.dataField}` }))),
+    ...(financialAssistanceSummaryByPaymentGroupViewDS.columns.filter((c) => c.dataField !== 'financialAssistancePaymentGroupId')
+          .map((x) => ({ ...x, dataField: `groupSummary.${x.dataField}` }))),
     ...(caseFileLifetimeActivitiesViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileLifetimeActivities.${x.dataField}` }))),
   ],
 };
 
-export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, caseFileActivitiesDs, financialAssistancePaymentLineDs, referralsDs,
-  financialAssistancePaymentGroupDs, usersInTeamsDs];
+export const datasources = [
+  householdMembersDs,
+  caseFileHouseholdPrimaryDs,
+  caseFileActivitiesDs,
+  financialAssistancePaymentLineDs,
+  referralsDs,
+  financialAssistancePaymentGroupDs,
+  usersInTeamsDs,
+  householdActivitiesDs,
+];
