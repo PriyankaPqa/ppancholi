@@ -392,6 +392,38 @@ export const referralViewDs : IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.referral.${x.dataField}` })),
 };
 
+export const userAccountViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'roleNameEn', dataType: 'string', visible: false },
+    { dataField: 'roleNameFr', dataType: 'string', visible: false },
+    // { dataField: 'roleNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'accessLevelNameEn', dataType: 'string', visible: false },
+    { dataField: 'accessLevelNameFr', dataType: 'string', visible: false },
+    // { dataField: 'accessLevelNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'isInactive', dataType: 'boolean', visible: false },
+    { dataField: 'displayName', dataType: 'string' },
+    { dataField: 'emailAddress', dataType: 'string', visible: false },
+    { dataField: 'phoneNumber', dataType: 'string', visible: false },
+    { dataField: 'preferredLanguage', dataType: 'string', visible: false },
+    { dataField: 'givenName', dataType: 'string', visible: false },
+    { dataField: 'surname', dataType: 'string', visible: false },
+    { dataField: 'userPrincipalName', dataType: 'string', visible: false },
+    { dataField: 'createDate', dataType: 'datetime', visible: false },
+    { dataField: 'updateDate', dataType: 'datetime', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.userAccount.${x.dataField}` })),
+};
+
+export const teamDetailViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'name', dataType: 'string' },
+    { dataField: 'primaryContactId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'primaryContact', dataType: 'string', visible: false },
+    { dataField: 'isActive', dataType: 'boolean', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.teamDetail.${x.dataField}` })),
+};
+
 export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
   url: 'common/data-providers/household-primary',
   reportingTopic: ReportingTopic.HouseholdPrimary,
@@ -463,6 +495,16 @@ export const financialAssistancePaymentLineDs : IDatasourceSettings = {
   ],
 };
 
+export const usersInTeamsDs : IDatasourceSettings = {
+  url: 'common/data-providers/users-in-teams',
+  reportingTopic: ReportingTopic.UsersInTeams,
+  key: ['userAccount.id', 'teamDetail.id'],
+  columns: [
+    ...(userAccountViewDS.columns.map((x) => ({ ...x, dataField: `userAccount.${x.dataField}` }))),
+    ...(teamDetailViewDS.columns.filter((c) => c.dataField !== 'primaryContactId').map((x) => ({ ...x, dataField: `teamDetail.${x.dataField}` }))),
+  ],
+};
+
 export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
   url: 'common/data-providers/financial-assistance-payment-group',
   reportingTopic: ReportingTopic.PaymentGroup,
@@ -481,4 +523,4 @@ export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
 };
 
 export const datasources = [householdMembersDs, caseFileHouseholdPrimaryDs, caseFileActivitiesDs, financialAssistancePaymentLineDs, referralsDs,
-  financialAssistancePaymentGroupDs];
+  financialAssistancePaymentGroupDs, usersInTeamsDs];

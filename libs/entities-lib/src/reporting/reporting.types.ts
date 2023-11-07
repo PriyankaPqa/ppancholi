@@ -13,6 +13,7 @@ export enum ReportingTopic {
   CaseFileActivities = 5,
   Referrals = 6,
   PaymentGroup = 7,
+  UsersInTeams = 8,
 }
 
 export interface IQuery extends IEntity {

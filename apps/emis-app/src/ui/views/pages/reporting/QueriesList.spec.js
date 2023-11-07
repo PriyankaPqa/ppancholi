@@ -226,6 +226,11 @@ describe('QueriesList.vue', () => {
             name: 'reporting.query.theme.Referrals',
             description: 'reporting.query.theme.Referrals.description',
           },
+          {
+            id: ReportingTopic.UsersInTeams,
+            name: 'reporting.query.theme.UsersInTeams',
+            description: 'reporting.query.theme.UsersInTeams.description',
+          },
         ]);
         await wrapper.setData({ searchTheme: 'HouseholdPrimary' });
         expect(wrapper.vm.availableThemes).toEqual([

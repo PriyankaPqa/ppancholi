@@ -2706,7 +2706,7 @@
     "reporting.query.theme.PaymentLine": "Ligne de paiement",
     "reporting.query.theme.PaymentLine.description": "Affiche les détails des lignes de paiement d'un dossier pour un paiement donné pour un événement donné.",
     "reporting.query.theme.Referrals": "Référence",
-    "reporting.query.theme.Referrals.description": "Affiche les détails des références, le dossier associé, le ménage et le membre principal. Une ligne par référence.",
+    "reporting.query.theme.Referrals.description": "Affiche les détails des références, le dossier associé, le foyer et le membre principal. Une ligne par référence.",
     "reporting.query.theme.UsersInTeams": "Utilisateurs et équipes",
     "reporting.query.theme.UsersInTeams.description": "Affiche les détails des utilisateurs EMIS qui sont membres d’équipes. Plusieurs lignes contenant des informations sur l'utilisateur ou une ligne par utilisateur seront affichées.",
     "reporting.query.themeTitle": "Choisissez le thème qui sera la base de votre requête",
