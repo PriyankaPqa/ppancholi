@@ -241,7 +241,7 @@ describe('Tier2Selection.vue', () => {
         expect(setInterval).toHaveBeenCalled();
         expect(EventHub.$emit).toHaveBeenCalledWith('next');
         expect(registrationStore.tier2State.completed).toBeTruthy();
-        expect(services.caseFiles.getTier2Result).toHaveBeenCalledWith(wrapper.vm.requiredInformation.caseFileId);
+        expect(services.caseFiles.getTier2Result).toHaveBeenCalledWith(wrapper.vm.requiredInformation.caseFileId, true);
 
         window.setInterval = bck;
       });

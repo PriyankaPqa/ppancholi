@@ -175,9 +175,12 @@ export default Vue.extend({
       useRegistrationStore().submitLoading = true;
       const startTime = new Date().getTime();
       await helpers.timeout(2000);
+      let firstTime = true;
       this.interval = setInterval(async () => {
           try {
-            const result = await this.$services.caseFiles.getTier2Result(this.requiredInformation.caseFileId);
+            const addCaseFileActivity = firstTime;
+            firstTime = false;
+            const result = await this.$services.caseFiles.getTier2Result(this.requiredInformation.caseFileId, addCaseFileActivity);
             // if 1 minute elapsed since we started too bad - gambit didnt tell us the final status we move with unverified on confirmation
             if (new Date().getTime() - startTime > 60000 || result.processCompleted) {
               useRegistrationStore().tier2State.completed = true;

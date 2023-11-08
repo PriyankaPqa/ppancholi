@@ -819,6 +819,21 @@ describe('CaseFileActivityListItem.vue', () => {
           });
         });
 
+        it('returns the correct data when this is a tier 2', async () => {
+          const activity = mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0];
+          activity.details.isTier2 = true;
+          activity.details.manualVerification = true;
+          await wrapper.setProps({
+            item: activity,
+          });
+
+          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedId()).toEqual({
+            title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId',
+            // eslint-disable-next-line vue/max-len
+            body: 'caseFileActivity.authentication.tier2\ncaseFileActivity.authentication.manualVerification\ncaseFileActivity.activityList.identity_authentication_updated: caseFile.beneficiaryIdentityVerificationStatus.NotVerified',
+          });
+        });
+
         it('returns the correct data when action type is IdentityAuthenticationUpdatedId and status same', async () => {
           const activity = {
             ...mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0],

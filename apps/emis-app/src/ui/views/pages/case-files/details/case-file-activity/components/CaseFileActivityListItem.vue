@@ -391,12 +391,19 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId');
       let body = this.$hasFeature(FeatureKeys.AuthenticationPhaseII) ? '' : this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated');
       if (this.$hasFeature(FeatureKeys.AuthenticationPhaseII)) {
+        if (this.item.details.isTier2) {
+          body += `${this.$t('caseFileActivity.authentication.tier2')}\n`;
+        }
+        if (this.item.details.manualVerification) {
+          body += `${this.$t('caseFileActivity.authentication.manualVerification')}\n`;
+        }
         // this too lengthy for tenary
         if (this.item.details.status === this.item.details.previousStatus) {
           body += `${this.$t('caseFileActivity.activityList.identity_authentication_status')}: `;
         } else {
           body += `${this.$t('caseFileActivity.activityList.identity_authentication_updated')}: `;
         }
+
         switch (this.item.details.status) {
           case IdentityAuthenticationStatus.Passed:
             body += `${this.$t('caseFile.beneficiaryIdentityVerificationStatus.Passed')}`;

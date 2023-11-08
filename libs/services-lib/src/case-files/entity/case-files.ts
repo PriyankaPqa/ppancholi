@@ -113,8 +113,8 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.post(`${this.baseUrl}/public/${payload.id}/start-customer-identity-verification-tier-2`, payload);
   }
 
-  async getTier2Result(id: string): Promise<ITier2Response> {
-    return this.http.get(`${this.baseUrl}/public/customer-identity-verification-tier-2-result/${id}`);
+  async getTier2Result(id: string, addCaseFileActivity: boolean): Promise<ITier2Response> {
+    return this.http.get(`${this.baseUrl}/public/customer-identity-verification-tier-2-result/${id}?addCaseFileActivity=${addCaseFileActivity}`);
   }
 
   async getTier2Details(id: string): Promise<ITier2Details> {

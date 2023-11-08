@@ -27,8 +27,8 @@ describe('>>> Case File Service', () => {
 
   describe('tier2ProcessStart', () => {
     it('getTier2Result is linked to the correct URL', async () => {
-      await service.getTier2Result('someid');
-      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/public/customer-identity-verification-tier-2-result/someid`);
+      await service.getTier2Result('someid', true);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/public/customer-identity-verification-tier-2-result/someid?addCaseFileActivity=true`);
     });
   });
 

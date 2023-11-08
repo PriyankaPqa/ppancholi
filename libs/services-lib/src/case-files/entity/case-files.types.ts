@@ -43,7 +43,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   getAllCaseFilesRelatedToHouseholdId(householdId: uuid): Promise<ICaseFileEntity[]>;
   setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity>;
   tier2ProcessStart(payload: ITier2Request): Promise<ITier2Response>;
-  getTier2Result(id: string): Promise<ITier2Response>;
+  getTier2Result(id: string, addCaseFileActivity: boolean): Promise<ITier2Response>;
   getTier2Details(id: string): Promise<ITier2Details>;
   getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]>;
 }
