@@ -17,19 +17,14 @@ export const caseNoteViewDs : IDatasourceBase = {
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: true },
     { dataField: 'subject', dataType: 'string' },
-    { dataField: 'description', dataType: 'string' },
+    { dataField: 'description', dataType: 'string', visible: false },
     { dataField: 'caseNoteCategoryNameEn', dataType: 'string', visible: false },
     { dataField: 'caseNoteCategoryNameFr', dataType: 'string', visible: false },
     // { dataField: 'caseNoteCategoryNameEnFr', dataType: 'string', visible: false },
-    { dataField: 'userCreatedByName', dataType: 'string' },
+    { dataField: 'userCreatedByName', dataType: 'string', visible: false },
     { dataField: 'userUpdatedByName', dataType: 'string', visible: false },
-    { dataField: 'createDate', dataType: 'datetime' },
+    { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
-    /* case file view */
-    { dataField: 'caseFile.caseFileNumber', dataType: 'string' },
-    { dataField: 'caseFile.eventNameEn', dataType: 'string' },
-    { dataField: 'caseFile.triageEn', dataType: 'string', visible: false },
-    { dataField: 'caseFile.householdCount', dataType: 'number' },
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.casenote.${x.dataField}` })),
 };
 
@@ -556,6 +551,20 @@ export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
   ],
 };
 
+export const caseNotesDs : IDatasourceSettings = {
+  url: 'common/data-providers/case-notes',
+  reportingTopic: ReportingTopic.CaseNotes,
+  key: ['casenoteId'],
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(householdViewDs.columns
+      .filter((c) => c.dataField !== 'id' && c.dataField !== 'primaryBeneficiary' && c.dataField !== 'primaryBeneficiaryFirstName' && c.dataField !== 'primaryBeneficiaryLastName')
+      .map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(caseNoteViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `casenote.${x.dataField}` }))),
+  ],
+};
+
 export const datasources = [
   householdMembersDs,
   caseFileHouseholdPrimaryDs,
@@ -565,4 +574,5 @@ export const datasources = [
   financialAssistancePaymentGroupDs,
   usersInTeamsDs,
   householdActivitiesDs,
+  caseNotesDs,
 ];

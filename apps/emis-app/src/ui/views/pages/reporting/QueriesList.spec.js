@@ -202,6 +202,11 @@ describe('QueriesList.vue', () => {
             description: 'reporting.query.theme.CaseFileActivities.description',
           },
           {
+            id: ReportingTopic.CaseNotes,
+            name: 'reporting.query.theme.CaseNotes',
+            description: 'reporting.query.theme.CaseNotes.description',
+          },
+          {
             id: ReportingTopic.HouseholdActivities,
             name: 'reporting.query.theme.HouseholdActivities',
             description: 'reporting.query.theme.HouseholdActivities.description',

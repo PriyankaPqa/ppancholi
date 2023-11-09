@@ -14,6 +14,7 @@ export enum ReportingTopic {
   CaseFileActivities = 5,
   Referrals = 6,
   PaymentGroup = 7,
+  CaseNotes = 9,
   UsersInTeams = 8,
 }
 
