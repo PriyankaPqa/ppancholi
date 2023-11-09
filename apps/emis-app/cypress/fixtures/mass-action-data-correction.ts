@@ -98,6 +98,24 @@ export const generateRandomHomeAddressData = (householdId:string, eTag: string):
   ETag: eTag,
 });
 
+export interface IIdentitySetDataCorrectionTemplate {
+  PersonId: string,
+  FirstName: string,
+  LastName: string,
+  MiddleName: number,
+  GenderSpecifiedOther: string,
+  ETag: string
+}
+
+export const generateRandomIdentitySetData = (personId:string, eTag: string): IIdentitySetDataCorrectionTemplate => ({
+  PersonId: personId,
+  FirstName: faker.name.firstName(),
+  LastName: faker.name.lastName(),
+  MiddleName: null,
+  GenderSpecifiedOther: null,
+  ETag: eTag,
+});
+
 export const fixtureGenerateContactInformationDataCorrectionCsvFile = (primaryMemberHouseholds: Record<string, string>, filePath: string) => {
   const correctionData: IContactInformationDataCorrectionTemplate[] = [];
 
@@ -121,6 +139,15 @@ export const fixtureGenerateHomeAddressDataCorrectionCsvFile = (households: Reco
 
   for (const [householdId, eTag] of Object.entries(households)) {
     correctionData.push(generateRandomHomeAddressData(householdId, eTag.replace(/"/g, '')));
+  }
+  return writeCSVContentToFile(filePath, correctionData);
+};
+
+export const fixtureGenerateIdentitySetDataCorrectionCsvFile = (primaryMemberHouseholds: Record<string, string>, filePath: string) => {
+  const correctionData: IIdentitySetDataCorrectionTemplate[] = [];
+
+  for (const [id, eTag] of Object.entries(primaryMemberHouseholds)) {
+    correctionData.push(generateRandomIdentitySetData(id, eTag.replace(/"/g, '')));
   }
   return writeCSVContentToFile(filePath, correctionData);
 };
