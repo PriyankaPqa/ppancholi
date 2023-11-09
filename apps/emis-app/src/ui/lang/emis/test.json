@@ -2248,6 +2248,7 @@
     "householdDetails.manageDuplicates.flagNew.registrationNumber": "householdDetails.manageDuplicates.flagNew.registrationNumber",
     "householdDetails.manageDuplicates.flagNew.subtitle": "householdDetails.manageDuplicates.flagNew.subtitle",
     "householdDetails.manageDuplicates.flaggedAs": "householdDetails.manageDuplicates.flaggedAs",
+    "householdDetails.manageDuplicates.flaggedByTheSystem": "",
     "householdDetails.manageDuplicates.householdMembers": "householdDetails.manageDuplicates.householdMembers",
     "householdDetails.manageDuplicates.message.success": "householdDetails.manageDuplicates.message.success",
     "householdDetails.manageDuplicates.potentialDuplicate": "householdDetails.manageDuplicates.potentialDuplicate",

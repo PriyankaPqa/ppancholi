@@ -2248,6 +2248,7 @@
     "householdDetails.manageDuplicates.flagNew.registrationNumber": "Registration number",
     "householdDetails.manageDuplicates.flagNew.subtitle": "Flag a new household as a potential duplicate with {name}",
     "householdDetails.manageDuplicates.flaggedAs": "Flagged as",
+    "householdDetails.manageDuplicates.flaggedByTheSystem": "Flagged by the system",
     "householdDetails.manageDuplicates.householdMembers": "Household members",
     "householdDetails.manageDuplicates.message.success": "Household was successfully flagged as potential duplicate",
     "householdDetails.manageDuplicates.potentialDuplicate": "Potential duplicate",

@@ -21,7 +21,7 @@
           {{ itemData.duplicateStatus === DuplicateStatus.Potential
             ? $t('householdDetails.manageDuplicates.rationale')
             : $t('householdDetails.manageDuplicates.actionTakenToResolve') }}:
-          {{ itemData.rationale }}
+          {{ isFlaggedByTheSystem ? $t('householdDetails.manageDuplicates.flaggedByTheSystem') : itemData.rationale }}
         </div>
       </div>
     </div>
@@ -33,6 +33,8 @@ import Vue from 'vue';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import { DuplicateStatus } from '@libs/entities-lib/potential-duplicate';
 import routes from '@/constants/routes';
+import { system } from '@/constants/system';
+import { ICaseFileActivityUser } from '@libs/entities-lib/case-file';
 
 interface PotentialDuplicateDetails {
   duplicateStatus: DuplicateStatus,
@@ -49,7 +51,7 @@ export default Vue.extend({
 
   props: {
     item: {
-      type: Object as () => { details: PotentialDuplicateDetails },
+      type: Object as () => { details: PotentialDuplicateDetails, user: ICaseFileActivityUser },
       required: true,
     },
   },
@@ -63,6 +65,10 @@ export default Vue.extend({
   computed: {
     itemData(): PotentialDuplicateDetails {
       return this.item?.details;
+    },
+
+    isFlaggedByTheSystem(): boolean {
+      return this.item?.user?.id === system.system_user_id;
     },
   },
 

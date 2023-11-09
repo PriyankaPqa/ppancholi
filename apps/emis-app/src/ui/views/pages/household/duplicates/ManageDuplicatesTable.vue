@@ -92,16 +92,18 @@
             <span class="fw-bold flagged-as-label px-1" data-test="householdDetails-duplicate-history-status">
               {{ $t('householdDetails.manageDuplicates.flaggedAs') }} {{ $t(`householdDetails.manageDuplicates.enum.duplicateStatus.${historyItem.duplicateStatus}`) }}
             </span>
-            <div class="px-1" data-test="householdDetails-duplicate-history-user">
-              {{ $t('common.by') }}: {{ historyItem.userInformation.userName }}
-              <span v-if="historyItem.userInformation.roleName">({{ $m(historyItem.userInformation.roleName) }})</span>
-              - {{ format(parseISO(historyItem.dateOfAction), 'PP') }}
-            </div>
+            <template v-if="historyItem.userInformation">
+              <div class="px-1" data-test="householdDetails-duplicate-history-user">
+                {{ $t('common.by') }}: {{ isFlaggedByTheSystem(historyItem) ? $t('system.system_user_id') : historyItem.userInformation.userName }}
+                <span v-if="historyItem.userInformation.roleName">({{ $m(historyItem.userInformation.roleName) }})</span>
+                - {{ format(parseISO(historyItem.dateOfAction), 'PP') }}
+              </div>
+            </template>
             <div v-if="historyItem.rationale" class="px-1 pre-line" data-test="householdDetails-duplicate-history-rationale">
               {{ historyItem.duplicateStatus === DuplicateStatus.Potential
                 ? $t('householdDetails.manageDuplicates.rationale')
                 : $t('householdDetails.manageDuplicates.actionTaken') }}:
-              {{ historyItem.rationale }}
+              {{ isFlaggedByTheSystem(historyItem) ? $t('householdDetails.manageDuplicates.flaggedByTheSystem') : historyItem.rationale }}
             </div>
           </div>
         </div>
@@ -161,9 +163,10 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import routes from '@/constants/routes';
+import { system } from '@/constants/system';
 import householdHelpers from '@/ui/helpers/household';
 import { IHouseholdAddress } from '@libs/entities-lib/household';
-import { IPotentialDuplicateExtended, DuplicateStatus, DuplicateReason, IPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
+import { IPotentialDuplicateExtended, DuplicateStatus, DuplicateReason, IPotentialDuplicateEntity, IHouseholdDuplicateStatusHistory } from '@libs/entities-lib/potential-duplicate';
 import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import helpers from '@/ui/helpers/helpers';
 import CaseFileDetailsBeneficiaryPhoneNumber from '@/ui/views/pages/case-files/details/components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
@@ -306,6 +309,10 @@ export default Vue.extend({
       this.initialSelect = this.isPotentialTable ? DuplicateStatus.Potential : DuplicateStatus.Resolved;
       this.showActionDialog = false;
       this.actionedDuplicate = null;
+    },
+
+    isFlaggedByTheSystem(historyItem: IHouseholdDuplicateStatusHistory): boolean {
+      return historyItem?.userInformation?.userId === system.system_user_id;
     },
   },
 

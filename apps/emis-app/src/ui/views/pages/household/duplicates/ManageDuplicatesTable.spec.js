@@ -1,17 +1,18 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { DuplicateStatus, mockHouseholdDuplicateFullData, DuplicateReason } from '@libs/entities-lib/potential-duplicate';
+import { DuplicateStatus, mockHouseholdDuplicateFullData, DuplicateReason, mockPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import { mockProvider } from '@/services/provider';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
+import { system } from '@/constants/system';
 import helpers from '@/ui/helpers/helpers';
-
 import { UserRoles } from '@libs/entities-lib/user';
 import Component from './ManageDuplicatesTable.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
+
 const { pinia, potentialDuplicateStore } = useMockPotentialDuplicateStore();
 const duplicates = [
   mockHouseholdDuplicateFullData({
@@ -193,6 +194,24 @@ describe('ManageDuplicatesTable.vue', () => {
         expect(wrapper.vm.actionedDuplicate).toEqual(null);
       });
     });
+
+    describe('isFlaggedByTheSystem', () => {
+      it('returns true if the user has the system user id', () => {
+        doMount();
+        const result = wrapper.vm.isFlaggedByTheSystem({ ...mockPotentialDuplicateEntity().duplicateStatusHistory, userInformation: { userId: system.system_user_id } });
+        expect(result).toBeTruthy();
+      });
+      it('returns false if the user does not have the system user id', () => {
+        doMount();
+        const result = wrapper.vm.isFlaggedByTheSystem({ ...mockPotentialDuplicateEntity().duplicateStatusHistory, userInformation: { userId: '1' } });
+        expect(result).toBeFalsy();
+      });
+      it('returns false if there is no user information', () => {
+        doMount();
+        const result = wrapper.vm.isFlaggedByTheSystem({ ...mockPotentialDuplicateEntity().duplicateStatusHistory, userInformation: null });
+        expect(result).toBeFalsy();
+      });
+    });
   });
 
   describe('Template', () => {
@@ -340,6 +359,16 @@ describe('ManageDuplicatesTable.vue', () => {
         expect(element.text()).toContain(mockHouseholdDuplicateFullData().duplicateStatusHistory[0].userInformation.roleName.translation.en);
         expect(element.text()).toContain('Jan 18, 2023');
       });
+
+      it('contains the right data if the user is system', async () => {
+        const duplicateFlaggedByTheSystem = mockHouseholdDuplicateFullData({
+          duplicateStatusHistory: [{ ...mockPotentialDuplicateEntity().duplicateStatusHistory[0], userInformation: { userId: system.system_user_id } }],
+        });
+        doMount(false, { propsData: { ...propsData, duplicates: [duplicateFlaggedByTheSystem] } });
+        const element = wrapper.findDataTest('householdDetails-duplicate-history-user');
+        expect(element.text()).toContain('system.system_user_id');
+        expect(element.text()).not.toContain(mockHouseholdDuplicateFullData().duplicateStatusHistory[0].userInformation.roleName.translation.en);
+      });
     });
 
     describe('history rationale', () => {
@@ -353,6 +382,15 @@ describe('ManageDuplicatesTable.vue', () => {
         doMount(false);
         const element = wrapper.findDataTest('householdDetails-duplicate-history-rationale');
         expect(element.text()).toContain(mockHouseholdDuplicateFullData().duplicateStatusHistory[0].rationale);
+      });
+
+      it('contains the right data if the user is system', async () => {
+        const duplicateFlaggedByTheSystem = mockHouseholdDuplicateFullData({
+          duplicateStatusHistory: [{ ...mockPotentialDuplicateEntity().duplicateStatusHistory[0], userInformation: { userId: system.system_user_id } }],
+        });
+        doMount(false, { propsData: { ...propsData, duplicates: [duplicateFlaggedByTheSystem] } });
+        const element = wrapper.findDataTest('householdDetails-duplicate-history-rationale');
+        expect(element.text()).toContain('householdDetails.manageDuplicates.flaggedByTheSystem');
       });
     });
   });

@@ -2248,6 +2248,7 @@
     "householdDetails.manageDuplicates.flagNew.registrationNumber": "Numéro de dossier",
     "householdDetails.manageDuplicates.flagNew.subtitle": "Signaler un nouveau ménage comme étant un doublon potentiel avec {name}",
     "householdDetails.manageDuplicates.flaggedAs": "Signalé comme",
+    "householdDetails.manageDuplicates.flaggedByTheSystem": "Signalé par le système",
     "householdDetails.manageDuplicates.householdMembers": "Membres du ménage",
     "householdDetails.manageDuplicates.message.success": "Le ménage a bien été signalé comme étant un doublon potentiel",
     "householdDetails.manageDuplicates.potentialDuplicate": "Doublon potentiel",

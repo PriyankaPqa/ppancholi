@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileActivityType } from '@libs/entities-lib/case-file';
 import { DuplicateStatus } from '@libs/entities-lib/potential-duplicate';
 import routes from '@/constants/routes';
+import { system } from '@/constants/system';
 import Component from '../case-file-activity/components/CaseFileActivityDuplicateUpdated.vue';
 
 const localVue = createLocalVue();
@@ -161,6 +162,14 @@ describe('CaseFileActivityDuplicateUpdated.vue', () => {
         const element = wrapper.findDataTest('caseFileActivity-listItem-content-body-rationale');
         expect(element.text()).toContain(itemData().rationale);
       });
+
+      it('contains the right rationale if user is system user', async () => {
+        await doMount();
+        const item = { ...mockCaseFileActivities(CaseFileActivityType.HouseholdPotentialDuplicateUpdated)[0], user: { id: system.system_user_id } };
+        await wrapper.setProps({ item });
+        const element = wrapper.findDataTest('caseFileActivity-listItem-content-body-rationale');
+        expect(element.text()).toContain('householdDetails.manageDuplicates.flaggedByTheSystem');
+      });
     });
   });
 
@@ -169,6 +178,20 @@ describe('CaseFileActivityDuplicateUpdated.vue', () => {
       it('returns the item details', async () => {
         await doMount();
         expect(wrapper.vm.itemData).toEqual(wrapper.vm.item.details);
+      });
+    });
+
+    describe('isFlaggedByTheSystem', () => {
+      it('returns true if user is system user', async () => {
+        await doMount();
+        const item = { ...mockCaseFileActivities(CaseFileActivityType.HouseholdPotentialDuplicateUpdated)[0], user: { id: system.system_user_id } };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.isFlaggedByTheSystem).toBeTruthy();
+      });
+
+      it('returns false if user is not user', async () => {
+        await doMount();
+        expect(wrapper.vm.isFlaggedByTheSystem).toBeFalsy();
       });
     });
   });
