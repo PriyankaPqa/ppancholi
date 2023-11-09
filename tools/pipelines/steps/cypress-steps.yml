@@ -10,23 +10,24 @@ steps:
       packageFeed: ${{ parameters.packageFeed }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
 
-  # Caching the binary takes roughly same amount of time as always downloading it
-  - script: yarn cypress install
+  - script: npx cypress install --force
     displayName: 'Install cypress binary'
     workingDirectory: ${{ parameters.workingDir }}
+    env:
+      CYPRESS_DOWNLOAD_MIRROR: https://cy-cdn.currents.dev
 
   # Optional
-  - script: yarn cy:verify
+  - script: npx cypress verify
     displayName: 'Cypress verify'
     workingDirectory: ${{ parameters.workingDir }}
 
   # Optional
-  - script: yarn cy:cache:list
+  - script: npx cypress cache list
     displayName: 'Cypress cache List'
     workingDirectory: ${{ parameters.workingDir }}
 
   # Optional
-  - script: yarn cy:info
+  - script: npx cypress info
     displayName: 'Cypress info'
     workingDirectory: ${{ parameters.workingDir }}
     env:
