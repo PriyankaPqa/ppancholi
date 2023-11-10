@@ -98,6 +98,24 @@ export const generateRandomHomeAddressData = (householdId:string, eTag: string):
   ETag: eTag,
 });
 
+export interface ILabelDataCorrectionTemplate {
+  CaseFileId:string,
+  LabelName1: string,
+  LabelName2: string,
+  LabelName3: string,
+  LabelName4: string,
+  ETag: string
+}
+
+export const generateLabelData = (casefileId:string, eTag: string): ILabelDataCorrectionTemplate => ({
+  CaseFileId: casefileId,
+  LabelName1: 'Test Label 1',
+  LabelName2: 'Test Label 2',
+  LabelName3: 'Test Label 3',
+  LabelName4: 'Test Label 4',
+  ETag: eTag,
+});
+
 export interface IIdentitySetDataCorrectionTemplate {
   PersonId: string,
   FirstName: string,
@@ -139,6 +157,15 @@ export const fixtureGenerateHomeAddressDataCorrectionCsvFile = (households: Reco
 
   for (const [householdId, eTag] of Object.entries(households)) {
     correctionData.push(generateRandomHomeAddressData(householdId, eTag.replace(/"/g, '')));
+  }
+  return writeCSVContentToFile(filePath, correctionData);
+};
+
+export const fixtureGenerateLabelDataCorrectionCsvFile = (memberHouseholds: Record<string, string>, filePath: string) => {
+  const correctionData: ILabelDataCorrectionTemplate[] = [];
+
+  for (const [casefileId, eTag] of Object.entries(memberHouseholds)) {
+    correctionData.push(generateLabelData(casefileId, eTag.replace(/"/g, '')));
   }
   return writeCSVContentToFile(filePath, correctionData);
 };

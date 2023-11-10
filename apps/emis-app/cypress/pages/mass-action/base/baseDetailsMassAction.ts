@@ -75,21 +75,18 @@ export enum DataTest {
       return cy.getByDataTest(this.dateCreated).getAndTrimText();
     }
 
-    public verifyAndGetMassActionCreatedBy() {
-      return cy.getByDataTest(this.createdBy)
-        .invoke('text')
-        .then((text) => {
-          if (text) {
-            return text.trim();
-          }
-
-          // If text is not found, wait for a network request to complete and retry
-          cy.reload();
-          return cy.interceptAndRetryUntilNoMoreStatus('**/user-account/user-accounts/metadata/*', 404)
-            .then(() => cy.getByDataTest(this.createdBy)
-                .invoke('text')
-                .then((retryText) => retryText.trim()));
-        });
+    public verifyAndGetMassActionCreatedBy(roleName: string) {
+      cy.waitAndRefreshUntilConditions(
+        {
+          // eslint-disable-next-line
+          visibilityCondition: () => cy.contains('Created by').should('be.visible').wait(2000),
+          checkCondition: () => Cypress.$("[data-test='createdBy']").text().includes(roleName),
+        },
+        {
+          errorMsg: 'Unable to get mass action created by',
+        },
+      );
+      return cy.getByDataTest(this.createdBy).getAndTrimText();
     }
 
     public getDialogSubmitButton() {

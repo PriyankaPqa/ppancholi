@@ -50,5 +50,5 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   baseDetailsMassActionPage.getMassActionDescription().should('eq', baseMassActionData.description);
   baseDetailsMassActionPage.getMassActionType().should('eq', dataCorrectionTypeDropDown);
   baseDetailsMassActionPage.getMassActionDateCreated().should('eq', getToday());
-  baseDetailsMassActionPage.verifyAndGetMassActionCreatedBy().should('eq', getUserName(roleName));
+  baseDetailsMassActionPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
 };
