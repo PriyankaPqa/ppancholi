@@ -222,6 +222,11 @@ describe('QueriesList.vue', () => {
             description: 'reporting.query.theme.HouseholdPrimary.description',
           },
           {
+            id: ReportingTopic.LatestCaseFileActivities,
+            name: 'reporting.query.theme.LatestCaseFileActivities',
+            description: 'reporting.query.theme.LatestCaseFileActivities.description',
+          },
+          {
             id: ReportingTopic.PaymentGroup,
             name: 'reporting.query.theme.PaymentGroup',
             description: 'reporting.query.theme.PaymentGroup.description',

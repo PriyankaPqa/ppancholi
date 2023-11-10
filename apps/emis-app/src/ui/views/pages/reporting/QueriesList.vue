@@ -181,7 +181,11 @@ export default mixins(TablePaginationSearchMixin).extend({
         this.standardReports || this.items,
         this.params?.search,
       );
-      return _orderBy(items, ['pinned', ((item) => item[this.options.sortBy[0]]?.toLowerCase())], ['desc', this.options.sortDesc[0] ? 'desc' : 'asc']);
+      return _orderBy(
+          items,
+          ['pinned', ((item) => sharedHelpers.getNormalizedString(item[this.options.sortBy[0]]?.toLowerCase() || ''))],
+          ['desc', this.options.sortDesc[0] ? 'desc' : 'asc'],
+        );
     },
 
     customColumns(): Record<string, string> {
@@ -264,6 +268,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           id: ReportingTopic.PaymentGroup,
           name: this.$t('reporting.query.theme.PaymentGroup'),
           description: this.$t('reporting.query.theme.PaymentGroup.description'),
+        },
+        {
+          id: ReportingTopic.LatestCaseFileActivities,
+          name: this.$t('reporting.query.theme.LatestCaseFileActivities'),
+          description: this.$t('reporting.query.theme.LatestCaseFileActivities.description'),
         },
         {
           id: ReportingTopic.HouseholdActivities,

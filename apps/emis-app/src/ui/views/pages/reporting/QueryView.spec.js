@@ -204,8 +204,8 @@ describe('QueryView.vue', () => {
           'household.primaryBeneficiaryLastName',
           'person.firstName',
           'person.lastName',
-          'casefile.id',
-          'person.id',
+          'caseFileId',
+          'memberId',
         ]);
         expect(wrapper.vm.columns.slice(0, 3)).toEqual([
           {
