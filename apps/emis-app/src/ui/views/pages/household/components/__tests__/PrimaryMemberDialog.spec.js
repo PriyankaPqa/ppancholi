@@ -175,6 +175,11 @@ describe('PrimaryMemberDialog', () => {
         expect(wrapper.vm.changedIdentitySet).toBeFalsy();
       });
 
+      it('returns false if the personal info and the backup info are the same, even if duplicateStatusInCurrentHousehold and duplicateStatusInDb are different', async () => {
+        await wrapper.setData({ backupIdentitySet: { ...householdCreate.primaryBeneficiary.identitySet, duplicateStatusInCurrentHousehold: 10, duplicateStatusInDb: 11 } });
+        expect(wrapper.vm.changedIdentitySet).toBeFalsy();
+      });
+
       it('returns true if the personal info and the backup info are not the same', async () => {
         await wrapper.setData({
           backupIdentitySet: {

@@ -68,7 +68,7 @@
                 <div class="fw-bold">
                   {{ $t('task.create_edit.due_date') }}
                 </div>
-                <div>{{ helpers.getLocalStringDate(item.entity.dueDate, '', 'MMM d, yyyy') }}</div>
+                <div>{{ helpers.getLocalStringDate(item.entity.dueDate, '', 'PP') }}</div>
               </v-col>
             </template>
           </v-row>
@@ -103,7 +103,7 @@
         <span class="red--text font-weight-bold"> {{ item.entity.isUrgent ? $t('task.create_edit.urgent') : '' }}</span>
       </template>
       <template #[`item.${customColumns.dateAdded}`]="{ item }">
-        <span data-test="task-table-date-added"> {{ helpers.getLocalStringDate(item.entity.dateAdded, '', 'MMM d, yyyy') }}</span>
+        <span data-test="task-table-date-added"> {{ helpers.getLocalStringDate(item.entity.dateAdded, '', 'PP') }}</span>
       </template>
       <template #[`item.${customColumns.taskStatus}`]="{ item }">
         <status-chip

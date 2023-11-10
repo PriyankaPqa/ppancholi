@@ -17,7 +17,7 @@
                 <v-divider vertical class="ml-4" />
               </template>
 
-              <v-btn icon color="primary" class="mx-2">
+              <v-btn icon color="primary" class="mx-2" @click="showTaskHistoryDialog = true">
                 <v-icon>
                   mdi-history
                 </v-icon>
@@ -120,7 +120,7 @@
               </v-col>
               <v-col>
                 <div data-test="task-details-due-date">
-                  {{ helpers.getLocalStringDate(task.dueDate, '', 'MMM d, yyyy') }}
+                  {{ helpers.getLocalStringDate(task.dueDate, '', 'PP') }}
                 </div>
               </v-col>
             </v-row>
@@ -131,7 +131,7 @@
               </v-col>
               <v-col>
                 <div data-test="task-details-date-added">
-                  {{ helpers.getLocalStringDate(task.dateAdded, '', 'MMM d, yyyy') }}
+                  {{ helpers.getLocalStringDate(task.dateAdded, '', 'PP') }}
                 </div>
               </v-col>
             </v-row>
@@ -159,6 +159,7 @@
       </v-btn>
     </template>
     <task-action-dialog v-if="showTaskActionDialog" :task="task" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
+    <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" :teams-by-event="teamsByEvent" />
   </rc-page-content>
 </template>
 
@@ -178,6 +179,7 @@ import { useUserStore } from '@/pinia/user/user';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
+import TaskHistoryDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskHistoryDialog.vue';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileTask, caseFileDetail).extend({
@@ -188,6 +190,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     StatusChip,
     RcPageLoading,
     TaskActionDialog,
+    TaskHistoryDialog,
   },
 
   props: {
@@ -207,6 +210,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       showTaskHistoryDialog: false,
       loading: false,
       assignedTeam: null as ITeamEntity,
+      teamsByEvent: [] as ITeamEntity[],
     };
   },
 
@@ -274,8 +278,8 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 
   watch: {
     'task.assignedTeamId': {
-      async handler() {
-        await this.getAssignedTeam();
+       handler() {
+        this.assignedTeam = this.teamsByEvent.filter((t) => t.id === this.task.assignedTeamId)[0];
         this.isWorkingOn = false;
       },
     },
@@ -288,7 +292,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     if (this.isTeamTask) {
       await Promise.all([
         useUserAccountMetadataStore().fetch(this.task.createdBy, false),
-        this.getAssignedTeam(),
+        this.getTeamsByEventAndStoreAssignedTeam(),
       ]);
       this.selectedTaskNameId = this.task.name?.optionItemId;
       this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
@@ -318,10 +322,11 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       });
     },
 
-    async getAssignedTeam() {
-      const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, this.task.assignedTeamId);
+    async getTeamsByEventAndStoreAssignedTeam() {
+      const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
       if (res) {
-        this.assignedTeam = res[0];
+        this.teamsByEvent = res;
+        this.assignedTeam = res.filter((t) => t.id === this.task.assignedTeamId)[0];
       }
     },
   },

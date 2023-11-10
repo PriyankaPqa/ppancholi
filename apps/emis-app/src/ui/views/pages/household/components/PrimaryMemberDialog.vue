@@ -64,7 +64,7 @@ import { RcDialog } from '@libs/component-lib/components';
 import {
   ContactInformation,
   CurrentAddress,
-  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember,
+  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IIdentitySet, IMember,
 } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
 import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
@@ -144,7 +144,10 @@ export default Vue.extend({
     },
 
     changedIdentitySet():boolean {
-      return !_isEqual(this.member.identitySet, new IdentitySet(this.backupIdentitySet));
+      // remove duplicateStatusInCurrentHousehold and duplicateStatusInDb values from the equality check
+      const { duplicateStatusInCurrentHousehold, duplicateStatusInDb, ...newIdentity } = this.member.identitySet;
+      const { duplicateStatusInCurrentHousehold: x, duplicateStatusInDb: y, ...backupIdentity } = this.backupIdentitySet;
+      return !_isEqual(newIdentity, backupIdentity);
     },
 
     changedContactInfo():boolean {

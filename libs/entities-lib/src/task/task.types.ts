@@ -1,4 +1,4 @@
-import { IListOption, IMultilingual } from '@libs/shared-lib/types';
+import { IListOption, IMultilingual, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export enum TaskType {
@@ -22,6 +22,7 @@ export enum ActionStatus {
   Assign = 1,
   Completed = 2,
   Reopen = 3,
+  Create = 4,
 }
 
 export interface ITaskEntityData extends IEntity {
@@ -36,9 +37,21 @@ export interface ITaskEntityData extends IEntity {
   dateAdded: Date | string;
   dueDate: Date | string;
   userWorkingOn: string;
+  actionTaken: ActionStatus;
+  taskActionHistories: ITaskActionHistory[];
 }
 
 export interface ITaskEntity extends ITaskEntityData {
+}
+
+export interface ITaskActionHistory {
+  actionStatus: ActionStatus,
+  taskStatus: TaskStatus,
+  currentTeamId: uuid,
+  previousTeamId: uuid,
+  rationale: string,
+  timestamp: string,
+  userInformation: IUserInformation,
 }
 
 export interface ITaskMetadata extends IEntity {

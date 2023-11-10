@@ -1,5 +1,5 @@
 import { TaskEntity } from '@/task/task';
-import { mockTeamTaskEntity } from '@/task/task.mock';
+import { mockTaskActionHistories, mockTeamTaskEntity } from '@/task/task.mock';
 import { TaskStatus, TaskType } from '@/task/task.types';
 
 const mockTaskData = mockTeamTaskEntity();
@@ -85,6 +85,11 @@ describe('>>> Task', () => {
       expect(task.userWorkingOn).toBe('user-id-1');
     });
 
+    it('should instantiate taskActionHistories', () => {
+      const task = new TaskEntity({ ...mockTaskData, taskActionHistories: mockTaskActionHistories() });
+      expect(task.taskActionHistories).toEqual(mockTaskActionHistories());
+    });
+
     it('should instantiate properties with proper data when no params', () => {
       const task = new TaskEntity();
       expect(task.id).toBe('');
@@ -99,6 +104,7 @@ describe('>>> Task', () => {
       expect(task.taskStatus).toBe(null);
       expect(task.assignedTeamId).toBe('');
       expect(task.userWorkingOn).toBe(null);
+      expect(task.taskActionHistories).toEqual([]);
     });
   });
 });

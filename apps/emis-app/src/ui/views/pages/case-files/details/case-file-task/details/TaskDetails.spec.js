@@ -11,7 +11,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { mockProvider } from '@/services/provider';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-import { mockTeamEntities, mockTeamEntity } from '@libs/entities-lib/team';
+import { mockTeamEntity } from '@libs/entities-lib/team';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import Component from './TaskDetails.vue';
 
@@ -238,6 +238,7 @@ describe('TaskDetails.vue', () => {
 
     describe('task-details-assigned-to', () => {
       it('should render assigned to me when personal task and user is creator', async () => {
+        jest.clearAllMocks();
         userStore.getUserId = jest.fn(() => 'mock-user-1');
         await doMount(true, {
           computed: {
@@ -251,6 +252,7 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should render the name of creator when personal task but user not creator', async () => {
+        jest.clearAllMocks();
         userStore.getUserId = jest.fn(() => 'mock-user-2');
         await doMount(true, {
           computed: {
@@ -265,17 +267,16 @@ describe('TaskDetails.vue', () => {
 
       it('should render assigned team name when team task', async () => {
         jest.clearAllMocks();
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => mockTeamEntities());
+        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [mockTeamEntity({ id: 'mock-team-id-1' }), mockTeamEntity({ id: 'mock-team-id-2' })]);
         await doMount(true, {
-          data() {
-            return {
-              assignedTeam: mockTeamEntity(),
-            };
-          },
           computed: {
-            task: () => mockTeamTaskEntity({ id: 'mock-team-id-1', assignedTeamId: 'mock-team-id-1' }),
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-id-1' }),
             isTeamTask: () => true,
           },
+        });
+        await wrapper.setData({
+          assignedTeam: mockTeamEntity({ id: 'mock-team-id-1' }),
+          teamsByEvent: [mockTeamEntity({ id: 'mock-team-id-1' }), mockTeamEntity({ id: 'mock-team-id-2' })],
         });
         await flushPromises();
         const element = wrapper.findDataTest('task-details-assigned-to');
@@ -738,7 +739,7 @@ describe('TaskDetails.vue', () => {
       });
     });
 
-    describe('getAssignedTeam', () => {
+    describe('getTeamsByEventAndStoreAssignedTeam', () => {
       it('should call getTeamsByEvent and set assignedTeam', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ assignedTeamId: 'guid-team-1' }));
         caseFileStore.getById = jest.fn(() => mockCaseFileEntity({ eventId: 'event-id-1' }));
@@ -754,8 +755,9 @@ describe('TaskDetails.vue', () => {
           },
         });
         await flushPromises();
-        await wrapper.vm.getAssignedTeam();
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-id-1', 'guid-team-1');
+        await wrapper.vm.getTeamsByEventAndStoreAssignedTeam();
+        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-id-1');
+        expect(wrapper.vm.teamsByEvent).toEqual([mockTeamEntity({ id: 'guid-team-1' })]);
         expect(wrapper.vm.assignedTeam).toEqual(mockTeamEntity({ id: 'guid-team-1' }));
       });
     });
@@ -831,17 +833,17 @@ describe('TaskDetails.vue', () => {
         expect(userAccountMetadataStore.fetch).not.toHaveBeenCalled();
       });
 
-      it('should call useUserAccountMetadataStore fetch and getAssignedTeam if is team task', async () => {
+      it('should call useUserAccountMetadataStore fetch and getTeamsByEventAndStoreAssignedTeam if is team task', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ createdBy: 'mock-user-id-1' }));
         await doMount(true, {
           computed: {
             isTeamTask: () => true,
           },
         });
-        wrapper.vm.getAssignedTeam = jest.fn();
+        wrapper.vm.getTeamsByEventAndStoreAssignedTeam = jest.fn();
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
-        expect(wrapper.vm.getAssignedTeam).toHaveBeenCalled();
+        expect(wrapper.vm.getTeamsByEventAndStoreAssignedTeam).toHaveBeenCalled();
         expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
       });
 
@@ -882,7 +884,7 @@ describe('TaskDetails.vue', () => {
 
   describe('watcher', () => {
     describe('task.assignedTeamId', () => {
-      it('should call getAssignedTeam and set isWorkingOn to false when changed', async () => {
+      it('should set assignedTeam properly and set isWorkingOn to false when changed', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -894,6 +896,8 @@ describe('TaskDetails.vue', () => {
             return {
               mockTask: mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
               isWorkingOn: true,
+              teamsByEvent: [mockTeamEntity({ id: 'mock-team-1' }), mockTeamEntity({ id: 'mock-team-2' })],
+              assignedTeam: mockTeamEntity({ id: 'mock-team-1' }),
             };
           },
           computed: {
@@ -906,11 +910,13 @@ describe('TaskDetails.vue', () => {
               },
             },
           },
+          mocks: {
+            $services: services,
+          },
         });
         wrapper.vm.task = mockTeamTaskEntity({ assignedTeamId: 'mock-team-2' });
-        wrapper.vm.getAssignedTeam = jest.fn();
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.getAssignedTeam).toHaveBeenCalled();
+        expect(wrapper.vm.assignedTeam).toEqual(mockTeamEntity({ id: 'mock-team-2' }));
         expect(wrapper.vm.isWorkingOn).toEqual(false);
       });
     });
