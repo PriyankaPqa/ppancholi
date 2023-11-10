@@ -25,7 +25,7 @@ export interface BaseActions <T extends IEntity, IdParams> {
   fetchAllIncludingInactive: (parentId?: Omit<IdParams, 'id'>) => Promise<T[]>
   fetchByIds: (ids: uuid[], fetchMissingOnly: boolean, batchSize?: number) => Promise<T[]>,
   addNewlyCreatedId: (item: T) => void,
-  setItemFromOutsideNotification: () => void,
+  setItemFromOutsideNotification: (entity: T, initiatedByCurrentUser: boolean) => void,
 
 }
 export interface BaseStoreComponents<T extends IEntity, IdParams> extends BaseState<T>, BaseGetters<T>, BaseActions<T, IdParams> {}

@@ -130,6 +130,17 @@ export default Vue.extend({
     },
   },
 
+  watch: {
+    async notifications(newValues: INotificationEntity[], oldValues: INotificationEntity[]) {
+      if (this.initLoading) {
+        return;
+      }
+
+      const difference = newValues?.filter((n) => !oldValues?.find((o) => o.id === n.id));
+      await this.fetchTargetEntities(difference);
+    },
+  },
+
   async created() {
     await this.fetchNotifications({ numberOfDays: INITIAL_DAY_LIMIT });
   },

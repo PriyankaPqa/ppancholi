@@ -24,6 +24,8 @@ export class HttpClient implements IHttpClient {
 
   public baseUrl: string;
 
+  private localBaseUrl: string;
+
   private localApiPortMap: string;
 
   constructor(i18n: any, options: IHttpClientOptions) {
@@ -48,6 +50,7 @@ export class HttpClient implements IHttpClient {
     this.i18n = i18n;
     this.options = options;
     this.baseUrl = options.baseUrl;
+    this.localBaseUrl = options.localBaseUrl;
     this.localApiPortMap = options.localApiPortMap;
   }
 
@@ -293,11 +296,16 @@ export class HttpClient implements IHttpClient {
   }
 
   mapRequestForLocalhost(request: any, localhostApiPorts: string) {
-    if (!localhostApiPorts || localhostApiPorts.length === 0 || !request?.baseURL || !request?.url || !request.baseURL.includes('localhost')) {
+    if (!localhostApiPorts || localhostApiPorts.length === 0 || !request?.baseURL || !request?.url) {
       return;
     }
 
-    const urlParts = request.url.split('/');
+    // request url may be relative or absolute, strip baseUrl if present
+    const relativeUrl = request.url.startsWith(this.baseUrl)
+      ? request.url.substring(this.baseUrl.length)
+      : request.url;
+
+    const urlParts = relativeUrl.split('/');
     while (urlParts.length > 0) {
       const part = urlParts[0];
       if (part === 'http:' || part === 'https:' || part === '' || part === 'localhost') {
@@ -310,33 +318,40 @@ export class HttpClient implements IHttpClient {
       return;
     }
 
-    const port = this.getPortForApiUrlSuffix(urlParts[0], localhostApiPorts);
-    if (port === 0) {
+    const portAndPrefix = this.getPortAndPrefixForApiUrlSuffix(urlParts[0], localhostApiPorts);
+    if (portAndPrefix[0] === 0) {
       return;
     }
 
     urlParts.shift();
-    const baseUrl = request.baseURL.endsWith('/') ? request.baseURL.slice(0, request.baseURL.length - 1) : request.baseURL;
+    const baseUrl = this.localBaseUrl;
 
-    request.baseURL = `${baseUrl}:${port}`;
+    request.baseURL = `${baseUrl}:${portAndPrefix[0]}${portAndPrefix[1]}`;
     request.url = `/${urlParts.join('/')}`;
   }
 
-  getPortForApiUrlSuffix(apiUrlSuffix: string, localhostApiPorts: string): number {
+  getPortAndPrefixForApiUrlSuffix(apiUrlSuffix: string, localhostApiPorts: string): [number, string] {
     let port = 0;
+    let pathPrefix = '';
     try {
       if (localhostApiPorts.length === 0) {
-        return port;
+        return [port, pathPrefix];
       }
 
       const portMatch = localhostApiPorts.split(',').find((s) => s.startsWith(apiUrlSuffix));
       if (portMatch) {
-        port = parseInt(portMatch.split(':')[1], 10);
+        const portParts = portMatch.split(':');
+        if (portParts.length > 1) {
+          port = parseInt(portParts[1], 10);
+        }
+        if (portParts.length > 2) {
+          pathPrefix = `/${portParts[2]}`;
+        }
       }
     } catch {
       // ignore any errors
     }
-    return port;
+    return [port, pathPrefix];
   }
 
   getPayloadAsFile(payload: any, propertyName = 'contentAsFile') {

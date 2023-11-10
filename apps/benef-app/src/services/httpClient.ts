@@ -7,6 +7,7 @@ export const getHttpClient = (
     baseUrl,
     authentication,
     useErrorReport,
+    localBaseUrl,
     localApiPortMap,
   }:
   {
@@ -14,6 +15,7 @@ export const getHttpClient = (
     baseUrl: string;
     authentication: boolean;
     useErrorReport: boolean;
+    localBaseUrl: string;
     localApiPortMap: string
   },
 ) => new HttpClient(i18n, {
@@ -23,6 +25,7 @@ export const getHttpClient = (
   redirect403Url: null,
   timerBeforeRedirection: 3000,
   useErrorReport,
+  localBaseUrl,
   localApiPortMap,
 });
 
@@ -31,5 +34,6 @@ export const httpClient = getHttpClient({
   accessToken: null,
   baseUrl: `${process.env.VITE_API_BASE_URL}/`,
   useErrorReport: false,
+  localBaseUrl: process.env.VITE_API_LOCAL_BASE_URL,
   localApiPortMap: process.env.VITE_API_PORTS,
 });

@@ -274,5 +274,23 @@ describe('NotificationCenter.vue', () => {
         });
       });
     });
+
+    describe('watcher', () => {
+      describe('notifications', () => {
+        it('should call fetchTargetEntities when changed', async () => {
+          await doMount([]);
+          wrapper.vm.fetchTargetEntities = jest.fn();
+          wrapper.vm.$options.watch.notifications.call(wrapper.vm, [mockNotificationEntity], []);
+          expect(wrapper.vm.fetchTargetEntities).toHaveBeenCalledWith([mockNotificationEntity]);
+        });
+        it('should not call fetchTargetEntities when loading', async () => {
+          await doMount([]);
+          wrapper.vm.fetchTargetEntities = jest.fn();
+          wrapper.vm.initLoading = true;
+          wrapper.vm.$options.watch.notifications.call(wrapper.vm, [mockNotificationEntity], []);
+          expect(wrapper.vm.fetchTargetEntities).not.toHaveBeenCalled();
+        });
+      });
+    });
   });
 });

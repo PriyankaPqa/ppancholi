@@ -32,6 +32,8 @@ import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
+import { useNotificationStore } from '@/pinia/notification/notification';
+import { INotificationEntity } from '@libs/entities-lib/notification';
 
 export interface IOptions {
   service: ISignalRService | ISignalRServiceMock,
@@ -289,8 +291,21 @@ export class SignalR implements ISignalR {
       entityName: 'UserAccountMetadata',
       action: useUserAccountMetadataStore().setItemFromOutsideNotification,
     });
+
+    // Notifications: add to store on create or update when current user is recipient
+    this.connection.on('user-account.NotificationCreated', (entity: INotificationEntity) => {
+      const userId = useUserStore().getUserId();
+      useNotificationStore().setItemFromOutsideNotification(entity, entity.recipientId === userId);
+    });
+
+    this.connection.on('user-account.NotificationUpdated', (entity: INotificationEntity) => {
+      const userId = useUserStore().getUserId();
+      useNotificationStore().setItemFromOutsideNotification(entity, entity.recipientId === userId);
+    });
+
     this.watchedPiniaStores.push(useUserAccountStore());
     this.watchedPiniaStores.push(useUserAccountMetadataStore());
+    this.watchedPiniaStores.push(useNotificationStore());
   }
 
   private listenForEventModuleChanges() {

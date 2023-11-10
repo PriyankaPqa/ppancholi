@@ -232,6 +232,18 @@ describe('signalR', () => {
           action: useUserAccountMetadataStore().setItemFromOutsideNotification,
         });
     });
+    it('adds handler for NotificationCreated', () => {
+      conn.listenForUserAccountModuleChanges();
+      expect(conn.connection.on)
+        .toHaveBeenCalledWith('user-account.NotificationCreated', expect.any(Function));
+      expect(conn.connection.on)
+        .toHaveBeenCalledWith('user-account.NotificationUpdated', expect.any(Function));
+    });
+    it('adds handler for NotificationUpdated', () => {
+      conn.listenForUserAccountModuleChanges();
+      expect(conn.connection.on)
+        .toHaveBeenCalledWith('user-account.NotificationUpdated', expect.any(Function));
+    });
   });
 
   describe('listenForEventModuleChanges', () => {
