@@ -95,7 +95,7 @@ describe('#TC1829# - Pre-process a Financial Assistance custom file', { tags: ['
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Mass financial assistance - custom options');
           massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
-          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy().should('eq', getUserName(roleName));
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
         });
       });
     }
