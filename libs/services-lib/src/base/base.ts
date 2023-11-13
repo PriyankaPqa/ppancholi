@@ -54,14 +54,7 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
   }
 
   async getByIds(ids: uuid[]): Promise<T[]> {
-    return this.http.get<T[]>(`${this.getItemUrl(`${this.baseUrl}`, null)}`, {
-      params: {
-        ids,
-      },
-      paramsSerializer: {
-        indexes: null,
-      },
-    });
+    return this.http.get<T[]>(`${this.getItemUrl(`${this.baseUrl}`, null)}?${this.serializeArrayOfIdParams(ids)}`);
   }
 
   async activate(idParams: IdParams): Promise<T> {
@@ -97,5 +90,14 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
       return url2;
     }
     return url.replace('{id}', idParams.toString());
+  }
+
+  /*
+   * Note: model binding in the API supports multiple formats, but not the default for axios when { params: { 'ids': ids }} is used
+   * (this produces "?ids[]=1&ids[]=2"). The simplest supported form does not use indexers, and is done here: "?ids=1,ids=2". When/if
+   * we update axios to a more current version, this can be supported OOTB: https://github.com/axios/axios/issues/5058#issuecomment-1272107602.
+   */
+  protected serializeArrayOfIdParams(ids: uuid[]): string {
+    return ids.map((n) => `ids=${n}`).join('&');
   }
 }

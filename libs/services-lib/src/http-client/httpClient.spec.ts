@@ -104,7 +104,7 @@ describe('httpClient', () => {
       it('sets public token', () => {
         mockHttpClient.setPublicToken('test-id');
 
-        expect(mockHttpClient.axios.defaults.headers['x-public-token']).toBe('test-id');
+        expect(mockHttpClient.axios.defaults.headers.common['x-public-token']).toBe('test-id');
       });
     });
 
@@ -112,7 +112,7 @@ describe('httpClient', () => {
       it('sets tenantId', () => {
         mockHttpClient.setHeadersTenant('test-id');
 
-        expect(mockHttpClient.axios.defaults.headers['x-tenant-id']).toBe('test-id');
+        expect(mockHttpClient.axios.defaults.headers.common['x-tenant-id']).toBe('test-id');
       });
     });
 
@@ -120,7 +120,7 @@ describe('httpClient', () => {
       it('sets headers language', () => {
         mockHttpClient.setHeadersLanguage('test-language');
 
-        expect(mockHttpClient.axios.defaults.headers['Accept-Language']).toBe('test-language');
+        expect(mockHttpClient.axios.defaults.headers.common['Accept-Language']).toBe('test-language');
       });
     });
 
@@ -326,7 +326,7 @@ describe('httpClient', () => {
 
         const res = mockHttpClient.requestHandler(request);
 
-        expect(res.headers.Authorization).toEqual('Bearer accessToken');
+        expect(res.headers.common.Authorization).toEqual('Bearer accessToken');
       });
 
       it('should not set accessToken if ignoreJwt is true', () => {
@@ -342,7 +342,7 @@ describe('httpClient', () => {
 
         const res = mockHttpClient.requestHandler(request);
 
-        expect(res.headers.Authorization).toBeFalsy();
+        expect(res.headers.common.Authorization).toBeFalsy();
       });
 
       it('should set the X-Request-ID and X-Correlation-ID header with uuidv4', () => {
@@ -356,8 +356,8 @@ describe('httpClient', () => {
         };
         const res = mockHttpClient.requestHandler(request);
 
-        expect(res.headers['X-Request-ID']).toEqual('uuid-mock');
-        expect(res.headers['X-Correlation-ID']).toEqual('uuid-mock');
+        expect(res.headers.common['X-Request-ID']).toEqual('uuid-mock');
+        expect(res.headers.common['X-Correlation-ID']).toEqual('uuid-mock');
       });
 
       it('should define paramsSerializer if Odata', () => {
@@ -373,7 +373,7 @@ describe('httpClient', () => {
 
         const res = mockHttpClient.requestHandler(request);
 
-        expect(res.paramsSerializer).toEqual({ serialize: mockHttpClient.serializeParams });
+        expect(res.paramsSerializer).toEqual(mockHttpClient.serializeParams);
       });
 
       it('should sanitize932115', () => {

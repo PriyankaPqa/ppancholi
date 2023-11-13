@@ -81,7 +81,7 @@ describe('>>> Domain Base Service', () => {
   describe('getByIds', () => {
     it('should call the proper endpoint', async () => {
       await service.getByIds(['1', '2', '3']);
-      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}`, { params: { ids: ['1', '2', '3'] }, paramsSerializer: { indexes: null } });
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}?ids=1&ids=2&ids=3`);
     });
   });
 
