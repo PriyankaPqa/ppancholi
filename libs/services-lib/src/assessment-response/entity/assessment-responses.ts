@@ -24,11 +24,16 @@ export class AssessmentResponsesService extends DomainBaseService<IAssessmentRes
   }
 
   async update(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
-    return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), this.http.getPayloadAsFile(item), { globalHandler: GlobalHandler.Partial });
+    return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), item, {
+      globalHandler: GlobalHandler.Partial,
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    });
   }
 
   async saveAssessmentAnsweredQuestions(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
-    return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/saveAssessmentAnsweredQuestions`, item), this.http.getPayloadAsFile(item));
+    return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/saveAssessmentAnsweredQuestions`, item), item, {
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    });
   }
 
   async completeSurvey(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {

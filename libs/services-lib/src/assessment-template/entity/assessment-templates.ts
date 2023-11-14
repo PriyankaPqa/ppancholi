@@ -14,15 +14,23 @@ export class AssessmentTemplatesService extends DomainBaseService<IAssessmentTem
   }
 
   async create(item: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> {
-    return this.http.post<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}`, item), this.http.getPayloadAsFile(item), { globalHandler: GlobalHandler.Partial });
+    return this.http.post<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}`, item), item, {
+       globalHandler: GlobalHandler.Partial,
+       transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+      });
   }
 
   async update(item: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> {
-    return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), this.http.getPayloadAsFile(item), { globalHandler: GlobalHandler.Partial });
+    return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), item, {
+      globalHandler: GlobalHandler.Partial,
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    });
   }
 
   async updateAssessmentStructure(item: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> {
-    return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}/updateAssessmentStructure`, item), this.http.getPayloadAsFile(item));
+    return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}/updateAssessmentStructure`, item), item, {
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    });
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null):

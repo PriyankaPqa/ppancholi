@@ -47,7 +47,8 @@ describe('>>> AssessmentResponses Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentResponseEntity();
       await service.update(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}`, http.getPayloadAsFile(entity), { globalHandler: GlobalHandler.Partial });
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}`, entity, {
+        globalHandler: GlobalHandler.Partial, transformRequest: [expect.any(Function)] });
     });
   });
 
@@ -55,7 +56,12 @@ describe('>>> AssessmentResponses Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentResponseEntity();
       await service.saveAssessmentAnsweredQuestions(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}/saveAssessmentAnsweredQuestions`, http.getPayloadAsFile(entity));
+      expect(http.patch).toHaveBeenCalledWith(
+`www.test.com/assessment/assessment-responses/${entity.id}/saveAssessmentAnsweredQuestions`,
+entity,
+{
+  transformRequest: [expect.any(Function)] },
+);
     });
   });
 

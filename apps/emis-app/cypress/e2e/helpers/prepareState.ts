@@ -462,7 +462,7 @@ export const prepareStateMassActionFinancialAssistanceCustomFile = async (access
   const generatedFaCustomOptionsXlsxFileData = await fixtureGenerateFaCustomOptionsXlsxFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], tableId, tableName, fileName);
   const mockCreateMassFinancialAssistanceCustomFile = mockCreateMassFinancialAssistanceCustomFileRequest(event.id, generatedFaCustomOptionsXlsxFileData);
   // eslint-disable-next-line
-  const responseMassFinancialAssistance = await responseCreateHouseholds.provider.massActions.create('financial-assistance-custom-options', mockCreateMassFinancialAssistanceCustomFile);
+  const responseMassFinancialAssistance = await responseCreateHouseholds.provider.cypress.massAction.createWithFile('financial-assistance-custom-options', mockCreateMassFinancialAssistanceCustomFile);
   return { responseMassFinancialAssistance, responseCreateHouseholds };
 };
 
@@ -485,7 +485,7 @@ export const prepareStateMassActionFinancialAssistanceUploadFile = async (access
   const generatedFaCsvData = fixtureGenerateFaCsvFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], tableId, filePath);
   const mockCreateMassFinancialAssistanceUploadCsvFile = mockCreateMassFinancialAssistanceUploadCsvFileRequest(event.id, tableId, programId, generatedFaCsvData);
   // eslint-disable-next-line
-  const responseMassFinancialAssistance = await responseCreateHouseholds.provider.massActions.create('financial-assistance', mockCreateMassFinancialAssistanceUploadCsvFile);
+  const responseMassFinancialAssistance = await responseCreateHouseholds.provider.cypress.massAction.createWithFile('financial-assistance', mockCreateMassFinancialAssistanceUploadCsvFile);
   return { responseMassFinancialAssistance, responseCreateHouseholds };
 };
 

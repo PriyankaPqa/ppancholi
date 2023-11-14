@@ -55,19 +55,19 @@ export class HttpClient implements IHttpClient {
   }
 
   public setHeadersTenant(tenantId: string) {
-    this.axios.defaults.headers.common['x-tenant-id'] = tenantId;
+    this.axios.defaults.headers['x-tenant-id'] = tenantId;
   }
 
   public setPublicToken(token: string) {
-    this.axios.defaults.headers.common['x-public-token'] = token;
+    this.axios.defaults.headers['x-public-token'] = token;
   }
 
   public getTenant(): string {
-    return this.axios.defaults.headers.common['x-tenant-id'].toString();
+    return this.axios.defaults.headers['x-tenant-id'].toString();
   }
 
   public setHeadersLanguage(lang: string) {
-    this.axios.defaults.headers.common['Accept-Language'] = lang;
+    this.axios.defaults.headers['Accept-Language'] = lang;
   }
 
   public error403Handler() {
@@ -183,13 +183,13 @@ export class HttpClient implements IHttpClient {
       if (!request.ignoreJwt) {
         const accessToken = this.options.accessToken || localStorage.getItem(localStorageKeys.accessToken.name);
         if (accessToken) {
-          request.headers.common.Authorization = `Bearer ${accessToken}`;
+          request.headers.Authorization = `Bearer ${accessToken}`;
         }
       }
     }
     // Add 'X-Request-ID' and 'X-Correlation-ID' headers to each request
-    request.headers.common['X-Request-ID'] = uuidv4();
-    request.headers.common['X-Correlation-ID'] = uuidv4();
+    request.headers['X-Request-ID'] = uuidv4();
+    request.headers['X-Correlation-ID'] = uuidv4();
 
     if (this.getGlobalHandler(request) === GlobalHandler.Enabled) {
       // Add what you want when request is sent
@@ -199,8 +199,9 @@ export class HttpClient implements IHttpClient {
     sanitize932115(request.data);
 
     if (request.isOData) {
-      // build OData search query and remove the '?' that is added by the query building library at the beginning of the string
-      request.paramsSerializer = this.serializeParams;
+      request.paramsSerializer = {
+        serialize: this.serializeParams,
+      };
     }
     return request;
   }

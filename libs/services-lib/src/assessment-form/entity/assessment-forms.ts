@@ -20,15 +20,23 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
   }
 
   async create(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {
-    return this.http.post<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}`, item), this.http.getPayloadAsFile(item), { globalHandler: GlobalHandler.Partial });
+    return this.http.post<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}`, item), item, {
+      globalHandler: GlobalHandler.Partial,
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    });
   }
 
   async update(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {
-    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), this.http.getPayloadAsFile(item), { globalHandler: GlobalHandler.Partial });
+    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), item, {
+      globalHandler: GlobalHandler.Partial,
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    });
   }
 
   async updateAssessmentStructure(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {
-    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/updateAssessmentStructure`, item), this.http.getPayloadAsFile(item));
+    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/updateAssessmentStructure`, item), item, {
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    });
   }
 
   async fetchByProgramId(programId: uuid): Promise<IAssessmentFormEntity[]> {
@@ -36,7 +44,10 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
   }
 
   async htmlToWord(data: string, filename: string) {
-    return this.http.postFullResponse<BlobPart>(`${API_URL_SUFFIX}/tools/HtmlToWord/extract.docx`, this.http.getPayloadAsFile(data), { responseType: 'blob' }).then(
+    return this.http.postFullResponse<BlobPart>(`${API_URL_SUFFIX}/tools/HtmlToWord/extract.docx`, data, {
+      responseType: 'blob',
+      transformRequest: [(data) => this.http.getPayloadAsFile(data)],
+    }).then(
       (response) => this.http.getRestResponseAsFile(response, true, filename),
     );
   }

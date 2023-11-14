@@ -40,7 +40,14 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
   }
 
   async getByIds(ids: uuid[]): Promise<ITaskEntity[]> {
-    return this.http.get(`case-file/tasks?${this.serializeArrayOfIdParams(ids)}`);
+    return this.http.get('case-file/tasks', {
+      params: {
+        ids,
+      },
+      paramsSerializer: {
+        indexes: null,
+      },
+    });
   }
 
   /** Private methods * */
