@@ -32,7 +32,7 @@ const cannotRoles = [
   UserRoles.readonly,
 ];
 
-const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
+const { filteredCanRoles, filteredCannotRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
 
@@ -41,7 +41,7 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
+      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, [...canRoles, ...cannotRoles]);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
       const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
       await createApprovalTableWithMultipleApprovalGroup(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
