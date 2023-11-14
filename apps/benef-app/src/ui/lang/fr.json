@@ -57,7 +57,7 @@
     "common.yes": "Oui",
     "duplicate.CommunicationMethod.AlternatePhone": "Recevoir le code par un autre numéro de téléphone",
     "duplicate.CommunicationMethod.Email": "Recevoir le code par courriel",
-    "duplicate.CommunicationMethod.HomePhone": "Recevoir le code au numéro de téléphone résidentiel",
+    "duplicate.CommunicationMethod.HomePhone": "Recevoir le code au numéro de téléphone",
     "duplicate.CommunicationMethod.MobilePhone": "Recevoir le code au numéro de téléphone cellulaire",
     "duplicate.CommunicationMethod.alternatePhone": "Recevoir le code à un autre numéro de téléphone",
     "duplicate.alreadyRegistered.title": "La personne est déjà inscrite.",
