@@ -13,7 +13,7 @@ import { mockApprovalTableData, mockApprovalTableWithMultipleApprovalGroupData, 
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
+import { mockCreateHouseholdRequest, mockCustomCurrentAddressCreateRequest } from '@libs/cypress-lib/mocks/household/household';
 import { mockSetCaseFileStatusRequest } from '@libs/cypress-lib/mocks/casefiles/casefile';
 import {
   mockCreateMassFinancialAssistanceCustomFileRequest,
@@ -28,6 +28,7 @@ import { fixtureGenerateFaCsvFile, fixtureGenerateFaCustomOptionsXlsxFile } from
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus } from '@libs/entities-lib/household';
+import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import { linkEventToTeamForManyRoles } from './teams';
 
 /**
@@ -531,4 +532,15 @@ export const getHouseholdsSummary = async (provider: IProvider, HouseholdIds: st
   const getHouseholdsPromises = HouseholdIds.map((HouseholdId) => provider.households.get(HouseholdId));
   const householdsSummary = await Promise.all(getHouseholdsPromises);
   return householdsSummary;
+};
+
+/**
+ * Update Person Current Address
+ * @param provider
+ * @param personIds
+ * @param addressType
+*/
+export const updatePersonsCurrentAddress = async (provider: IProvider, personIds: string[], addressType: ECurrentAddressTypes) => {
+  const getUpdatePersonAddressPromises = personIds.map((personId) => provider.households.updatePersonAddress(personId, false, mockCustomCurrentAddressCreateRequest(addressType)));
+  await Promise.all(getUpdatePersonAddressPromises);
 };

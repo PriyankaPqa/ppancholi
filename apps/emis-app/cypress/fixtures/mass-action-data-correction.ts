@@ -134,6 +134,38 @@ export const generateRandomIdentitySetData = (personId:string, eTag: string): II
   ETag: eTag,
 });
 
+export interface ITemporaryAddressDataCorrectionTemplate {
+  PersonId: string,
+  PlaceName: string,
+  StreetAddress: string,
+  PlaceNumber: string,
+  UnitSuite: number,
+  City: string,
+  PostalCode: string,
+  ProvinceEn: string,
+  SpecifiedOtherProvince: string,
+  CrcProvided: string,
+  CheckIn: string,
+  CheckOut: string,
+  ETag: string
+}
+
+export const generateRandomTemporaryAddressSetData = (personId:string, eTag: string): ITemporaryAddressDataCorrectionTemplate => ({
+  PersonId: personId,
+  PlaceName: null,
+  StreetAddress: faker.address.streetAddress(),
+  PlaceNumber: null,
+  UnitSuite: null,
+  City: 'Brampton',
+  PostalCode: faker.helpers.replaceSymbols('?#?#?#'),
+  ProvinceEn: 'Ontario',
+  SpecifiedOtherProvince: null,
+  CrcProvided: null,
+  CheckIn: null,
+  CheckOut: null,
+  ETag: eTag,
+});
+
 export const fixtureGenerateContactInformationDataCorrectionCsvFile = (primaryMemberHouseholds: Record<string, string>, filePath: string) => {
   const correctionData: IContactInformationDataCorrectionTemplate[] = [];
 
@@ -175,6 +207,15 @@ export const fixtureGenerateIdentitySetDataCorrectionCsvFile = (primaryMemberHou
 
   for (const [id, eTag] of Object.entries(primaryMemberHouseholds)) {
     correctionData.push(generateRandomIdentitySetData(id, eTag.replace(/"/g, '')));
+  }
+  return writeCSVContentToFile(filePath, correctionData);
+};
+
+export const fixtureGenerateTemporaryAddressDataCorrectionCsvFile = (primaryMemberHouseholds: Record<string, string>, filePath: string) => {
+  const correctionData: ITemporaryAddressDataCorrectionTemplate[] = [];
+
+  for (const [id, eTag] of Object.entries(primaryMemberHouseholds)) {
+    correctionData.push(generateRandomTemporaryAddressSetData(id, eTag.replace(/"/g, '')));
   }
   return writeCSVContentToFile(filePath, correctionData);
 };

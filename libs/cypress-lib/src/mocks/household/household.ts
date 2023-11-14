@@ -3,6 +3,7 @@ import {
   IAddressData,
   IContactInformationCreateRequest,
   ICreateHouseholdRequest,
+  ICurrentAddress,
   ICurrentAddressCreateRequest,
   IIdentitySetCreateRequest,
   MemberCreateRequest,
@@ -101,3 +102,9 @@ export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdReque
   ...force,
   };
 };
+
+export const mockCustomCurrentAddressCreateRequest = (addressType: ECurrentAddressTypes): ICurrentAddress => ({
+  ...mockCurrentAddressCreateRequest(),
+  addressType,
+  address: mockBaseAddressData(),
+});
