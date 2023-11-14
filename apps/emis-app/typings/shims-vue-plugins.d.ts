@@ -23,7 +23,7 @@ declare module 'vue/types/vue' {
     $toasted: Toasted;
     $formatCurrency: IFormatCurrency;
     $m: IMFunction;
-    $hasLevel: (p: string) => boolean;
+    $hasLevel: (p: string, strictLevel = false) => boolean;
     $appInsights: typeof applicationInsights;
     $hasRole: (p: string) => boolean;
     $hasFeature: (feature: FeatureKeys) => boolean;

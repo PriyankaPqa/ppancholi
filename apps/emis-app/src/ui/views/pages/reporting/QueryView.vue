@@ -190,7 +190,7 @@ import { UserTeamMember } from '@libs/entities-lib/user-account';
 import { UserRolesNames } from '@libs/entities-lib/user';
 
 import { IDatasourceSettings, datasources } from './datasources';
-import { AllReports } from './standard_queries';
+import { AllReports } from './standard_queries/standard_queries';
 
 export default Vue.extend({
   name: 'QueryView',

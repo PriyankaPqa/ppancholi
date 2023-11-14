@@ -46,7 +46,7 @@ const AllReports = [{
   state: 'state',
 }];
 
-jest.mock('./standard_queries', () => ({ AllReports }));
+jest.mock('./standard_queries/standard_queries', () => ({ AllReports }));
 
 describe('QueryView.vue', () => {
   let wrapper;

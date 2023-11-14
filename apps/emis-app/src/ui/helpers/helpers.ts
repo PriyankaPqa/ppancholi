@@ -292,7 +292,7 @@ export default {
     window.location.href = `${window.location.origin}/${locale}/${routes.loginError.path}`;
   },
 
-  availableItems<Items extends { level?: string; roles?: string[]; feature?: string }>(vue: VuePlugin, items: Items[]): Items[] {
+  availableItems<Items extends { level?: string; roles?: string[]; feature?: string, strictLevel?: boolean }>(vue: VuePlugin, items: Items[]): Items[] {
     return items.filter((item) => {
       let levelOrRoleFilter = false;
       let levelCheck = false;
@@ -301,7 +301,7 @@ export default {
 
       if (item.level) {
         levelOrRoleFilter = true;
-        levelCheck = vue.$hasLevel(item.level);
+        levelCheck = vue.$hasLevel(item.level, item.strictLevel);
       }
 
       if (item.roles) {

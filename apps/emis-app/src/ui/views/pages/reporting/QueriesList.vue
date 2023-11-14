@@ -105,7 +105,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 
 import routes from '@/constants/routes';
 
-import { AllReports } from './standard_queries';
+import { AllReports } from './standard_queries/standard_queries';
 
 interface IQueryMapped {
   name: string;

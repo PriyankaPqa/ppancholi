@@ -18,7 +18,7 @@ const pinia = createTestingPinia({ stubActions: false });
 const userAccountMetadataStore = useMockUserAccountStore(pinia).userAccountMetadataStore;
 let services = mockProvider();
 
-jest.mock('./standard_queries', () => ({ AllReports: [{
+jest.mock('./standard_queries/standard_queries', () => ({ AllReports: [{
   id: 'someReporten',
   name: 'some report',
   queryType: 2,

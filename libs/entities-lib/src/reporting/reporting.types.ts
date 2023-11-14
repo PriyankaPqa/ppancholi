@@ -4,6 +4,12 @@ export enum QueryType {
   Custom = 1,
   StandardL6en = 2,
   StandardL6fr = 3,
+  StandardL5en = 4,
+  StandardL5fr = 5,
+  StandardL4en = 6,
+  StandardL4fr = 7,
+  StandardIMen = 8,
+  StandardIMfr = 9,
 }
 
 export enum ReportingTopic {
@@ -14,8 +20,8 @@ export enum ReportingTopic {
   CaseFileActivities = 5,
   Referrals = 6,
   PaymentGroup = 7,
-  CaseNotes = 9,
   UsersInTeams = 8,
+  CaseNotes = 9,
   LatestCaseFileActivities = 10,
 }
 

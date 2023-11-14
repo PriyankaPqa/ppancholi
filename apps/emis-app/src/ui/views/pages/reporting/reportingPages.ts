@@ -6,7 +6,7 @@ import { VuePlugin } from '@/ui/plugins/features';
 import { INavigationTab } from '@libs/shared-lib/types';
 
 export class ReportingPages {
-  cards(): ICardSettings[] {
+  cards(vue: VuePlugin): ICardSettings[] {
     return [{
       title: 'reporting.standardQueriesL6',
       button: 'reporting.start',
@@ -19,6 +19,43 @@ export class ReportingPages {
       dataTest: 'standardQueriesL6',
       level: UserRoles.level6,
     }, {
+        title: 'reporting.standardQueriesL5',
+        button: 'reporting.start',
+        route: {
+          name: routes.reporting.list.name,
+          params: {
+            queryTypeName: 'StandardL5',
+          },
+        },
+        dataTest: 'standardQueriesL5',
+        level: UserRoles.level5,
+        strictLevel: !vue.$hasLevel(UserRoles.level6),
+    }, {
+      title: 'reporting.standardQueriesL4',
+      button: 'reporting.start',
+      route: {
+        name: routes.reporting.list.name,
+        params: {
+          queryTypeName: 'StandardL4',
+        },
+      },
+      dataTest: 'standardQueriesL4',
+      level: UserRoles.level4,
+      strictLevel: !vue.$hasLevel(UserRoles.level6),
+    }, {
+      title: 'reporting.standardQueriesIM',
+      button: 'reporting.start',
+      route: {
+          name: routes.reporting.list.name,
+          params: {
+            queryTypeName: 'StandardIM',
+          },
+        },
+      dataTest: 'standardQueriesIM',
+      level: UserRoles.level6,
+      strictLevel: true,
+      roles: [UserRoles.contributorIM],
+    }, {
       title: 'reporting.customQueries',
       button: 'reporting.start',
       route: {
@@ -28,19 +65,22 @@ export class ReportingPages {
           },
         },
       dataTest: 'customQueries',
-      level: UserRoles.level6,
+      level: UserRoles.level4,
+      roles: [UserRoles.contributorIM],
     }, {
       title: 'reporting.eventStatistics',
       button: 'reporting.start',
       route: { name: routes.reporting.home.name },
       dataTest: 'eventStatistics',
-      level: UserRoles.level6,
+      level: UserRoles.level4,
+      roles: [UserRoles.contributorIM],
     },
     ];
   }
 
   availableCards(vue: VuePlugin): ICardSettings[] {
-    return helpers.availableItems(vue, this.cards());
+    const cards = this.cards(vue);
+    return helpers.availableItems(vue, cards);
   }
 
   availableTabs(vue: VuePlugin): INavigationTab[] {

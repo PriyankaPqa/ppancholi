@@ -9,10 +9,10 @@ export type VuePlugin = Vue & {
 
 export default {
   install: (V: typeof Vue) => {
-    function hasLevel(this: Vue, levelToCheck: UserRoles) {
+    function hasLevel(this: Vue, levelToCheck: UserRoles, strictLevel = false) {
       const user = useUserStore().getUser();
 
-      return user ? user.hasLevel(levelToCheck) : false;
+      return user ? user.hasLevel(levelToCheck, strictLevel) : false;
     }
 
     function hasRole(this: Vue, roleToCheck: UserRoles) {

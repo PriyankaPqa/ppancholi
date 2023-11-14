@@ -56,8 +56,8 @@ export class User implements IUser {
     return this.roles[0];
   }
 
-  // hasHigherLevelOrSameAs
-  hasLevel(levelToCheck: UserRoles): boolean {
+  // hasHigherLevelOrSameAs - strict Level is to check for an exact Level, not something included in another level
+  hasLevel(levelToCheck: UserRoles, strictLevel = false): boolean {
     // Index n + 1, inherit from index [0,n]
     const hierarchy = [UserRoles.level0, UserRoles.level1, UserRoles.level2,
       UserRoles.level3, UserRoles.level4, UserRoles.level5, UserRoles.level6];
@@ -81,6 +81,6 @@ export class User implements IUser {
         highestUserLevel = index;
       }
     });
-    return levelToCheckIndex <= highestUserLevel;
+    return strictLevel ? levelToCheckIndex === highestUserLevel : levelToCheckIndex <= highestUserLevel;
   }
 }

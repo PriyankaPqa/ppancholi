@@ -131,6 +131,31 @@ describe('>>>> helpers', () => {
       expect(helpers.availableItems(localVue.prototype, items)).toEqual([items[0]]);
     });
 
+    it('passes the strictLevel property', () => {
+      const items = [
+        {
+          to: 'routes.home.name',
+          icon: 'mdi-home',
+          text: 'leftMenu.home_title',
+          test: 'home',
+          level: UserRoles.level1,
+          strictLevel: true,
+        },
+        {
+          to: 'routes.home.name',
+          icon: 'mdi-home',
+          text: 'leftMenu.home_title',
+          test: 'home',
+          level: UserRoles.level1,
+        },
+      ];
+
+      const localVue = createLocalVue();
+      localVue.prototype.$hasLevel = (_: string, strict: boolean) => strict === true;
+      localVue.prototype.$hasRole = () => false;
+      expect(helpers.availableItems(localVue.prototype, items)).toEqual([items[0]]);
+    });
+
     it('returns items for which user has the proper role', () => {
       const items = [
         {

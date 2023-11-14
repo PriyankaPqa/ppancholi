@@ -108,8 +108,19 @@ describe('>>> User', () => {
 
     describe('hasLevel', () => {
       test('should return true if the user has a higher level than the one passed', () => {
-        const user = new User(mockUsersData()[0]);
+        const user = new User(mockUsersData()[3]);
         expect(user.hasLevel(UserRoles.level1)).toBeTruthy();
+        expect(user.hasLevel(UserRoles.level2)).toBeTruthy();
+        expect(user.hasLevel(UserRoles.level3)).toBeTruthy();
+        expect(user.hasLevel(UserRoles.level4)).toBeTruthy();
+      });
+
+      test('when strictLevel, should return true if the user has exact level passed', () => {
+        const user = new User(mockUsersData()[3]);
+        expect(user.hasLevel(UserRoles.level1, true)).toBeFalsy();
+        expect(user.hasLevel(UserRoles.level2, true)).toBeFalsy();
+        expect(user.hasLevel(UserRoles.level3, true)).toBeFalsy();
+        expect(user.hasLevel(UserRoles.level4, true)).toBeTruthy();
       });
 
       test('should return false if the user does not have a higher level than the one passed', () => {

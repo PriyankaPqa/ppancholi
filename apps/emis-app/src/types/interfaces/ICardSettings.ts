@@ -9,7 +9,8 @@ export interface ICardSettings {
   showSecondaryButton?: boolean;
   route: string | { name: string, [key: string]: any; };
   dataTest: string;
-  level: string;
+  level?: string;
+  strictLevel?: boolean;
   roles?: Array<string>;
   onClick?: string;
   onClickMenu?: string;
