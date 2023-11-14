@@ -250,21 +250,6 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-file-document');
         expect(item.text).toBe('leftMenu.mass_actions_title');
         expect(item.test).toBe('mass_actions');
-        expect(item.level).toBe(UserRoles.level6);
-        expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance]);
-      });
-
-      test('massActions when feature flag on', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          featureList: [FeatureKeys.MassActionCaseFileStatus],
-        });
-
-        const item = wrapper.vm.items[7];
-        expect(item.to).toBe(routes.massActions.home.name);
-        expect(item.icon).toBe('mdi-file-document');
-        expect(item.text).toBe('leftMenu.mass_actions_title');
-        expect(item.test).toBe('mass_actions');
         expect(item.level).toBe(UserRoles.level5);
         expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance]);
       });

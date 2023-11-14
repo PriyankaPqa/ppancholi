@@ -156,7 +156,7 @@ export default Vue.extend({
           text: 'leftMenu.mass_actions_title',
           test: 'mass_actions',
           exact: false,
-          level: this.$hasFeature(FeatureKeys.MassActionCaseFileStatus) ? UserRoles.level5 : UserRoles.level6,
+          level: UserRoles.level5,
           roles: [UserRoles.contributorIM, UserRoles.contributorFinance],
         },
         {

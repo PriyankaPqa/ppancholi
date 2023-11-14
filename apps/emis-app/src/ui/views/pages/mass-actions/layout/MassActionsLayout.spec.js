@@ -3,7 +3,6 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import routes from '@/constants/routes';
 import Component from './MassActionsLayout.vue';
@@ -46,7 +45,6 @@ describe('MassActionsLayout.vue', () => {
                 to: routes.massActions.caseFileStatus.home.name,
                 exact: false,
                 level: UserRoles.level5,
-                feature: FeatureKeys.MassActionCaseFileStatus,
               },
             ],
           },

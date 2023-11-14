@@ -23,7 +23,6 @@ import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import { INavigationTabGroup } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(massActions).extend({
   name: 'MassActionsLayout',
@@ -69,7 +68,6 @@ export default mixins(massActions).extend({
               to: routes.massActions.caseFileStatus.home.name,
               exact: false,
               level: UserRoles.level5,
-              feature: FeatureKeys.MassActionCaseFileStatus,
             },
           ],
         },

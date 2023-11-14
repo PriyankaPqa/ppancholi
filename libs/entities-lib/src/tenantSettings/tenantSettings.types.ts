@@ -10,7 +10,6 @@ export enum FeatureKeys {
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
   TaskManagement = 'TaskManagement',
-  MassActionCaseFileStatus = 'MassActionCaseFileStatus',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   InSystemQuerying = 'InSystemQuerying',
 }

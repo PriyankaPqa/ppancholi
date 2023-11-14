@@ -5,7 +5,6 @@ import {
 import routes from '@/constants/routes';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -52,7 +51,6 @@ describe('MassActionsHome.vue', () => {
             level: UserRoles.level5,
             roles: null,
             group: 1,
-            feature: FeatureKeys.MassActionCaseFileStatus,
           },
           {
             title: 'mass_action.card.finance_customoptions',

@@ -31,7 +31,6 @@ import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',
@@ -77,7 +76,6 @@ export default mixins(massActions).extend({
           level: UserRoles.level5,
           roles: null,
           group: MassActionGroup.Group1,
-          feature: FeatureKeys.MassActionCaseFileStatus,
         },
         {
           title: 'mass_action.card.finance_customoptions',
