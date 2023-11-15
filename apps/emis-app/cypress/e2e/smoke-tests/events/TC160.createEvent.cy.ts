@@ -19,7 +19,7 @@ const cannotRoles = [
 
 const { filteredCannotRoles } = getRoles([], cannotRoles);
 
-describe('#TC160# - Create an Event', { tags: ['@event'] }, () => {
+describe('#TC160# - Create an Event.', { tags: ['@event'] }, () => {
   describe('level6', () => {
     beforeEach(() => {
       cy.login();

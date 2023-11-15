@@ -24,11 +24,12 @@ stages:
         nodeJsVersion: ${{ parameters.nodeJsVersion }}
         appVersion: ${{ parameters.appVersion }}
 
-    # Run E2E Tests
-    - template: './stages/find-cypress-affected-stage.yml'
+    - template: './stages/determine-cypress-tests-stage.yml'
       parameters:
         workingDir: ${{ parameters.workingDir }}
+        testsDir: 'cypress/e2e/smoke-tests/**/*.ts'
 
+    # Run E2E Tests
     - stage: 'E2E_Test_Stage'
       condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
       displayName: 'E2E Tests'

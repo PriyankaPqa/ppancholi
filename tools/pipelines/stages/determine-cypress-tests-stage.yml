@@ -1,12 +1,14 @@
 parameters:
   workingDir: ''
+  testsDir: '' # The folder containing all tests we want to run
+
 
 stages:
-  - stage: FindCypressAffectedTestsStage
-    displayName: 'Get affected tests'
+  - stage: DetermineCypressTestsStage
+    displayName: 'Determine Cypress Tests'
     jobs:
-      - job: FindCypressAffectedTestsJob
-        displayName: 'Determine affected tests'
+      - job: DetermineCypressTestsJob
+        displayName: 'Determine cypress tests to run'
         steps:
           - checkout: 'self'
             submodules: 'true'
@@ -24,12 +26,14 @@ stages:
                  AFFECTED_TESTS=$(git diff --name-only --diff-filter=AMR HEAD^1 HEAD | grep -E '.*\.cy\.ts$' | sed "s|$WORKING_DIR||" | tr '\n' ',')
                  # Remove last , 
                  AFFECTED_TESTS=${AFFECTED_TESTS%?}
+                 echo "The following test will be run:"
                  echo "$AFFECTED_TESTS"
                 # Will only test changed tests
                 echo "##vso[task.setvariable variable=affectedTests;isOutput=true]$AFFECTED_TESTS"
               else
-                # Will test all critical-path-tests when triggered by a schedule job
-                echo "##vso[task.setvariable variable=affectedTests;isOutput=true]cypress/e2e/critical-path-tests/**/*.ts"
+                # Will run all tests contained in testDir when triggered by a schedule job or manually
+                echo "All tests contained in ${{parameters.testsDir}} will be run"
+                echo "##vso[task.setvariable variable=affectedTests;isOutput=true]${{parameters.testsDir}}"
               fi
-            name: getAffectedTests
+            name: getCypressTests
             displayName: 'Generate cypress spec parameter'

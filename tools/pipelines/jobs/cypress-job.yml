@@ -18,7 +18,7 @@ jobs:
       - group: Env-Dev
       - group: Cypress
       - name: cypressAffectedTests
-        value: $[ stageDependencies.FindCypressAffectedTestsStage.FindCypressAffectedTestsJob.outputs['getAffectedTests.affectedTests'] ]
+        value: $[ stageDependencies.DetermineCypressTestsStage.DetermineCypressTestsJob.outputs['getCypressTests.affectedTests'] ]
       - name: cypressCanRoleMode
         value: $[ dependencies.SetCypressRoleMode.outputs['cypressRoleMode.CYPRESS_CAN_MODE'] ]
       - name: cypressCannotRoleMode

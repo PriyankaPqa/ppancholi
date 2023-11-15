@@ -24,9 +24,10 @@ stages:
         nodeJsVersion: ${{ parameters.nodeJsVersion }}
         appVersion: ${{ parameters.appVersion }}
 
-    - template: './stages/find-cypress-affected-stage.yml'
+    - template: './stages/determine-cypress-tests-stage.yml'
       parameters:
         workingDir: ${{ parameters.workingDir }}
+        testsDir: 'cypress/e2e/critical-path-tests/**/*.ts'
 
     # Run E2E Tests
     - stage: 'E2E_Test_Stage'
