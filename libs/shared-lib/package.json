@@ -20,7 +20,7 @@
     "survey-knockout-ui": "1.9.58",
     "survey-vue": "1.9.58",
     "tslib": "^2.3.1",
-    "vue": "2.7.15",
+    "vue": "2.7.14",
     "vue-i18n": "8.27.0",
     "vue-router": "3.5.3",
     "vue-toasted": "1.1.28",

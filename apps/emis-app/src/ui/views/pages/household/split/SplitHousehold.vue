@@ -174,7 +174,7 @@ export default mixins(individual).extend({
     },
 
     title(): TranslateResult {
-      return this.$t(this.allTabs[this.currentTabIndex].titleKey) || '';
+      return this.$t(this.allTabs[this.currentTabIndex].titleKey);
     },
 
     nextButtonLabel(): TranslateResult {
