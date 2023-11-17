@@ -4,6 +4,13 @@ import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 
+export interface GenerateFaCustomOptionsXlsxFileData {
+  caseFiles: ICaseFileEntity[],
+  financialAssistanceTableId:string,
+  tableName: string,
+  fileName: string
+}
+
 export const fixtureBaseMassAction = (retries: number) : IBaseMassActionFields => ({
   name: `test mass action - ${getCurrentDateString()} - s${getRandomNumber()} - retry(${retries})`,
   description: `description mass action - retry ${retries}`,
@@ -106,8 +113,8 @@ function extractXlsxColumnNamesFromUserData(caseFile: ICaseFileEntity, Financial
   return columnNames;
 }
 
-export const fixtureGenerateFaCustomOptionsXlsxFile = (caseFiles: ICaseFileEntity[], FinancialAssistanceTableId:string, tableName: string, fileName: string) => {
-  const columns = extractXlsxColumnNamesFromUserData(caseFiles[0], FinancialAssistanceTableId);
-  const rows = generateXlsxRowsData(caseFiles, FinancialAssistanceTableId);
-  return generateXlsxFile(columns, rows, tableName, fileName);
+export const fixtureGenerateFaCustomOptionsXlsxFile = (params: GenerateFaCustomOptionsXlsxFileData) => {
+  const columns = extractXlsxColumnNamesFromUserData(params.caseFiles[0], params.financialAssistanceTableId);
+  const rows = generateXlsxRowsData(params.caseFiles, params.financialAssistanceTableId);
+  return generateXlsxFile(columns, rows, params.tableName, params.fileName);
 };

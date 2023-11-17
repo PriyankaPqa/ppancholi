@@ -3,8 +3,14 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
+import { GenerateFaCustomOptionsXlsxFileData, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMassActionFinancialAssistanceCustomFile } from '../../helpers/prepareState';
+import {
+  createProgramWithTableWithItemAndSubItem,
+  createEventAndTeam,
+  prepareStateMassActionFinancialAssistanceXlsxFile,
+  prepareStateCreateAndSearchHouseholds,
+  MassActionFinancialAssistanceXlsxFileParams } from '../../helpers/prepareState';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
@@ -29,7 +35,6 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const fileName = 'faCustomOptionsFile';
 const householdQuantity = 3;
 
 describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
@@ -40,17 +45,35 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
-            // eslint-disable-next-line
-            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
-            // eslint-disable-next-line
-            const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceCustomFile(accessTokenL6, resultPrepareStateEvent.event, resultCreateProgram.table.id, householdQuantity, fileName);
+            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(
+              resultPrepareStateEvent.provider,
+              resultPrepareStateEvent.event.id,
+              EFinancialAmountModes.Fixed,
+            );
+            const resultCreateSearchHouseholds = await prepareStateCreateAndSearchHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
+
+            const generateFaCustomOptionsXlsxFileParamData: GenerateFaCustomOptionsXlsxFileData = {
+              caseFiles: [resultCreateSearchHouseholds.caseFileCreated1, resultCreateSearchHouseholds.caseFileCreated2, resultCreateSearchHouseholds.caseFileCreated3],
+              financialAssistanceTableId: resultCreateProgram.table.id,
+              tableName: 'MassActionTable',
+              fileName: 'faCustomOptionsFile',
+            };
+            const generatedCustomFileData = await fixtureGenerateFaCustomOptionsXlsxFile(generateFaCustomOptionsXlsxFileParamData);
+
+            const massActionFaCustomFileParamData: MassActionFinancialAssistanceXlsxFileParams = {
+              provider: resultCreateSearchHouseholds.responseCreateHouseholds.provider,
+              event: resultPrepareStateEvent.event,
+              massAction: 'financial-assistance-custom-options',
+              generatedFaXlsxFileData: generatedCustomFileData,
+            };
+            const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceXlsxFile(massActionFaCustomFileParamData);
+
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultMassFinancialAssistance.responseMassFinancialAssistance.name).as('massFinancialAssistanceName');
-            cy.wrap(resultMassFinancialAssistance.responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile.id).as('caseFileId');
+            cy.wrap(resultCreateSearchHouseholds.caseFileCreated1.id).as('caseFileId');
             cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
             cy.login(roleName);
-            cy.goTo(`mass-actions/financial-assistance-custom/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
+            cy.goTo(`mass-actions/financial-assistance-custom/details/${resultMassFinancialAssistance.id}`);
           });
         });
         afterEach(function () {

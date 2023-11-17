@@ -16,7 +16,7 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest, mockCustomCurrentAddressCreateRequest } from '@libs/cypress-lib/mocks/household/household';
 import { mockSetCaseFileStatusRequest } from '@libs/cypress-lib/mocks/casefiles/casefile';
 import {
-  mockCreateMassFinancialAssistanceCustomFileRequest,
+  mockCreateMassFinancialAssistanceXlsxFileRequest,
   mockCreateMassFinancialAssistanceRequest,
   mockCreateMassFinancialAssistanceUploadCsvFileRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
@@ -24,12 +24,20 @@ import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockU
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
-import { fixtureGenerateFaCsvFile, fixtureGenerateFaCustomOptionsXlsxFile } from 'cypress/fixtures/mass-actions';
+import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import { linkEventToTeamForManyRoles } from './teams';
+
+export interface MassActionFinancialAssistanceXlsxFileParams {
+  provider: any,
+  event:IEventEntity,
+  massAction: string,
+  generatedFaXlsxFileData: Blob,
+  massActionType?: number
+}
 
 /**
  * Creates a event, add a team to it, and assign roles to this team
@@ -444,26 +452,32 @@ export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (accessTokenL
 };
 
 /**
- * Creates a Mass Financial Assistance using custom xlsx file
+ * Creates multiple households and performs recursive search to verify creation
  * @param accessToken
  * @param event
- * @param tableId
  * @param householdQuantity
- * @param fileName
- * @param tableName
  */
-// eslint-disable-next-line
-export const prepareStateMassActionFinancialAssistanceCustomFile = async (accessToken: string, event:IEventEntity, tableId: string, householdQuantity: number, fileName: string, tableName = 'MassActionTable') => {
+export const prepareStateCreateAndSearchHouseholds = async (accessToken: string, event:IEventEntity, householdQuantity: number) => {
   const responseCreateHouseholds = await prepareStateMultipleHouseholds(accessToken, event, householdQuantity);
   const caseFileCreated1 = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile;
   const caseFileCreated2 = responseCreateHouseholds.householdsCreated[1].registrationResponse.caseFile;
   const caseFileCreated3 = responseCreateHouseholds.householdsCreated[2].registrationResponse.caseFile;
   await searchCaseFilesRecursively(responseCreateHouseholds.provider, [caseFileCreated1, caseFileCreated2, caseFileCreated3]);
-  const generatedFaCustomOptionsXlsxFileData = await fixtureGenerateFaCustomOptionsXlsxFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], tableId, tableName, fileName);
-  const mockCreateMassFinancialAssistanceCustomFile = mockCreateMassFinancialAssistanceCustomFileRequest(event.id, generatedFaCustomOptionsXlsxFileData);
-  // eslint-disable-next-line
-  const responseMassFinancialAssistance = await responseCreateHouseholds.provider.cypress.massAction.createWithFile('financial-assistance-custom-options', mockCreateMassFinancialAssistanceCustomFile);
-  return { responseMassFinancialAssistance, responseCreateHouseholds };
+  return { responseCreateHouseholds, caseFileCreated1, caseFileCreated2, caseFileCreated3 };
+};
+
+/**
+ * Creates a Mass Financial Assistance using xlsx file
+ * @param provider
+ * @param event
+ * @param massAction
+ * @param generateXlsxFileFunction callback function
+ * @param massActionType optional
+ */
+export const prepareStateMassActionFinancialAssistanceXlsxFile = async (params: MassActionFinancialAssistanceXlsxFileParams) => {
+  const mockCreateMassFinancialAssistanceCustomFile = mockCreateMassFinancialAssistanceXlsxFileRequest(params.event.id, params.generatedFaXlsxFileData, params.massActionType);
+  const responseMassFinancialAssistance = await params.provider.cypress.massAction.createWithFile(params.massAction, mockCreateMassFinancialAssistanceCustomFile);
+  return responseMassFinancialAssistance;
 };
 
 /**

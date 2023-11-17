@@ -18,14 +18,17 @@ export const mockCreateMassFinancialAssistanceRequest = (event: IEventEntity, fo
   ...force,
 });
 
-export const mockCreateMassFinancialAssistanceCustomFileRequest = (eventId: string, fileContents: Blob) => {
+export const mockCreateMassFinancialAssistanceXlsxFileRequest = (eventId: string, fileContents: Blob, massActionType?: number) => {
   const data = new FormData();
 
   // Append each property individually to the FormData
   data.append('eventId', eventId);
-  data.append('name', `test mass financial assistance - custom file - ${getCurrentDateString()} - s${getRandomNumber()}`);
-  data.append('description', 'description mass action custom file');
-  data.append('file', fileContents, 'faCustomOptionsFile.xlsx');
+  if (massActionType) {
+    data.append('massActionType', massActionType.toString());
+  }
+  data.append('name', `test mass financial assistance - ${getCurrentDateString()} - s${getRandomNumber()}`);
+  data.append('description', 'description mass action');
+  data.append('file', fileContents, 'faMassActionFile.xlsx');
   const payload = data;
   return payload;
 };

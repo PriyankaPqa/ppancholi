@@ -6,7 +6,7 @@ import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
-import { fixtureBaseMassAction, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
+import { GenerateFaCustomOptionsXlsxFileData, fixtureBaseMassAction, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
 import { NewMassFinancialAssistancePage } from '../../../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 
 const canRoles = [
@@ -30,7 +30,6 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const tableName = 'MassActionTable';
 const fileName = 'faCustomOptionsFile';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
 
@@ -64,7 +63,14 @@ describe('#TC1829# - Pre-process a Financial Assistance custom file', { tags: ['
         });
         // eslint-disable-next-line max-statements
         it('should successfully pre-process a financial assistance custom file', function () {
-          fixtureGenerateFaCustomOptionsXlsxFile([this.caseFile1, this.caseFile2, this.caseFile3], this.faTable.id, tableName, fileName);
+          const generateFaCustomOptionsXlsxFileParamData: GenerateFaCustomOptionsXlsxFileData = {
+            caseFiles: [this.caseFile1, this.caseFile2, this.caseFile3],
+            financialAssistanceTableId: this.faTable.id,
+            tableName: 'MassActionTable',
+            fileName,
+          };
+          fixtureGenerateFaCustomOptionsXlsxFile(generateFaCustomOptionsXlsxFileParamData);
+
           const baseMassActionData = fixtureBaseMassAction(this.test.retries.length);
 
           const newMassFinancialAssistancePage = new NewMassFinancialAssistancePage();
