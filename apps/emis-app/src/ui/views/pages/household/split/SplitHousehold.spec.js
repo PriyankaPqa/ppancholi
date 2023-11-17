@@ -24,35 +24,7 @@ describe('SplitHousehold.vue', () => {
     jest.clearAllMocks();
   });
 
-  beforeEach(() => {
-    wrapper = shallowMount(Component, {
-      localVue,
-      pinia,
-      computed: {
-        currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
-        splitHousehold() {
-          return mockSplitHousehold();
-        },
-      },
-
-    });
-  });
-
   describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        pinia,
-        computed: {
-          currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
-          splitHousehold() {
-            return mockSplitHousehold();
-          },
-        },
-
-      });
-    });
-
     describe('back', () => {
       it('should return to search household page if user is seeing results', async () => {
         wrapper = shallowMount(Component, {
@@ -64,7 +36,6 @@ describe('SplitHousehold.vue', () => {
               return mockSplitHousehold();
             },
           },
-
         });
         await wrapper.vm.back();
         expect(registrationStore.householdResultsShown).toEqual(false);
@@ -167,7 +138,7 @@ describe('SplitHousehold.vue', () => {
           localVue,
           pinia,
           computed: {
-            currentTab: () => ({ id: '' }),
+            currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
           },
         });
         wrapper.vm.nextDefault = jest.fn();
@@ -179,6 +150,19 @@ describe('SplitHousehold.vue', () => {
 
     describe('nextDefault', () => {
       it('calls scrollToFirstError if isValid is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          computed: {
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
+            currentTabIndex: () => 1,
+            allTabs() {
+              return [{ id: '1' }, { id: 2 }, { id: 3 }];
+            },
+          },
+        });
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         helpers.scrollToFirstError = jest.fn();
 
@@ -273,7 +257,6 @@ describe('SplitHousehold.vue', () => {
               return mockSplitHousehold();
             },
           },
-
         });
         registrationStore.registrationResponse = null;
         wrapper.vm.closeSplit();

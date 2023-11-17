@@ -25,6 +25,7 @@ describe('AssessmentRunner.vue', () => {
         assessmentResponseId,
       },
       mocks: { $services: services },
+      stubs: ['Survey'],
     });
 
     await flushPromises();

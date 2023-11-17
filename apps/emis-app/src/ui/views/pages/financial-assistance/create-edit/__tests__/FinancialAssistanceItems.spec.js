@@ -4,11 +4,14 @@ import {
 } from '@libs/entities-lib/financial-assistance';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
+import Vue from 'vue';
 import Component from '../FinancialAssistanceItems.vue';
 
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 const localVue = createLocalVue();
+
+Vue.config.silent = true;
 describe('FinancialAssistanceItems.vue', () => {
   let wrapper;
 

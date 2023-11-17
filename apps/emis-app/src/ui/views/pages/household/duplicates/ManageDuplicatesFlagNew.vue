@@ -84,11 +84,20 @@ import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
 import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import { Status } from '@libs/entities-lib/base';
 
+import {
+  VTextAreaWithValidation,
+  VAutocompleteWithValidation,
+  VSelectWithValidation,
+} from '@libs/component-lib/components';
+
 const VISUAL_DELAY = 500;
 
 export default Vue.extend({
   name: 'ManageDuplicatesFlagNew',
   components: {
+    VSelectWithValidation,
+    VTextAreaWithValidation,
+    VAutocompleteWithValidation,
   },
 
   props: {

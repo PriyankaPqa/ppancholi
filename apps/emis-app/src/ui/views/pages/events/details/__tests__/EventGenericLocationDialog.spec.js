@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockEventEntity, EEventLocationStatus } from '@libs/entities-lib/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import entityUtils from '@libs/entities-lib/utils';
@@ -10,37 +10,18 @@ import { useMockEventStore } from '@/pinia/event/event.mock';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Address } from '@libs/entities-lib/value-objects/address';
+import Vue from 'vue';
 import Component from '../components/EventGenericLocationDialog.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 
+Vue.config.silent = true;
+
 describe('EventGenericLocationDialog.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          event: mockEvent,
-          isEditMode: false,
-          isRegistrationLocation: true,
-        },
-        computed: {
-          apiKey() {
-            return 'mock-apiKey';
-          },
-          enableAutocomplete() {
-            return true;
-          },
-        },
-        stubs: {
-          RcGoogleAutocomplete: true,
-        },
-      });
-    });
-
     describe('province', () => {
       it('renders when country is Canada', () => {
         wrapper = shallowMount(Component, {
@@ -54,9 +35,12 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return true;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
+          stubs: ['rc-google-autocomplete'],
         });
-
         const element = wrapper.findDataTest('location-province');
         expect(element.exists()).toBeTruthy();
       });
@@ -72,6 +56,9 @@ describe('EventGenericLocationDialog.vue', () => {
           computed: {
             isCanada() {
               return false;
+            },
+            apiKey() {
+              return 'mock-apiKey';
             },
           },
         });
@@ -94,6 +81,9 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return false;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -112,6 +102,9 @@ describe('EventGenericLocationDialog.vue', () => {
           computed: {
             isCanada() {
               return true;
+            },
+            apiKey() {
+              return 'mock-apiKey';
             },
           },
         });

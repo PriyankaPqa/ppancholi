@@ -7,14 +7,14 @@
   },
   "dependencies": {
     "@libs/entities-lib": "*",
+    "@libs/registration-lib": "*",
     "@libs/services-lib": "*",
     "@libs/shared-lib": "*",
-    "@libs/registration-lib": "*",
     "deepmerge": "^4.2.2",
     "lodash": "^4.17.21",
     "pinia": "^2.0.27",
     "uuid": "9.0.0",
-    "vue": "2.7.14",
+    "vue": "2.7.15",
     "vue-i18n": "8.27.0"
   },
   "devDependencies": {

@@ -338,7 +338,6 @@ describe('HouseholdCard.vue', () => {
           enabledMove: true,
           moveSubmitted: false,
         },
-
       });
     });
 
@@ -380,7 +379,7 @@ describe('HouseholdCard.vue', () => {
     });
 
     describe('openNewAddressDialog', () => {
-      it('sets the data into the right varibles', async () => {
+      it('sets the data into the right variables', async () => {
         const member = { ...mockMember(), selectedCurrentAddress: { newAddress: { address: 'foo' }, sameAddressSelected: true } };
         await wrapper.vm.openNewAddressDialog(member);
         expect(wrapper.vm.selectedMember).toEqual(member);
