@@ -459,6 +459,17 @@ export const teamDetailViewDS : IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.teamDetail.${x.dataField}` })),
 };
 
+export const caseFileAuthenticationIdViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'authenticationIdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'authenticationIdNameEn', dataType: 'string' },
+    { dataField: 'authenticationIdNameFr', dataType: 'string' },
+    // { dataField: 'csvAuthenticationIdNameEnFr', dataType: 'string', visible: false },
+    { dataField: 'authenticationIdSpecifiedOther', dataType: 'string', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileAuthenticationId.${x.dataField}` })),
+};
+
 export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
   url: 'common/data-providers/household-primary',
   reportingTopic: ReportingTopic.HouseholdPrimary,
@@ -592,6 +603,17 @@ export const caseNotesDs : IDatasourceSettings = {
   ],
 };
 
+export const caseFileAuthenticationIdsDs : IDatasourceSettings = {
+  url: 'common/data-providers/case-file-authentication-ids',
+  reportingTopic: ReportingTopic.CaseFileAuthenticationIds,
+  key: ['caseFileId', 'authenticationIdId'],
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(caseFileAuthenticationIdViewDS.columns.filter((c) => c.dataField !== 'caseFileId' && c.dataField !== 'authenticationIdId')
+      .map((x) => ({ ...x, dataField: `authenticationId.${x.dataField}` }))),
+  ],
+};
+
 export const datasources = [
   householdMembersDs,
   caseFileHouseholdPrimaryDs,
@@ -603,4 +625,5 @@ export const datasources = [
   householdActivitiesDs,
   latestCaseFileActivitiesDs,
   caseNotesDs,
+  caseFileAuthenticationIdsDs,
 ];

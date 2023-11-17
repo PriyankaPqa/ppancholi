@@ -294,6 +294,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           name: this.$t('reporting.query.theme.UsersInTeams'),
           description: this.$t('reporting.query.theme.UsersInTeams.description'),
         },
+        {
+          id: ReportingTopic.CaseFileAuthenticationIds,
+          name: this.$t('reporting.query.theme.CaseFileAuthenticationIds'),
+          description: this.$t('reporting.query.theme.CaseFileAuthenticationIds.description'),
+        },
       ], this.searchTheme);
 
       return _orderBy(themes, ['name'], ['asc']);
