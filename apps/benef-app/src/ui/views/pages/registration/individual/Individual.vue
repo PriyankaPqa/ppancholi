@@ -7,7 +7,7 @@
       <rc-page-content
         :show-help="false && currentTab.helpLink !== '' "
         :help-link="$t(currentTab.helpLink)"
-        :title="$t(currentTab.titleKey)"
+        :title="$t(currentTab.titleKey) || ''"
         :subtitle="$t('registration.type.individual')"
         :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"
         :content-padding="currentTab.id === TabId.Tier2auth ? '0' : '4'"
@@ -199,6 +199,10 @@ export default mixins(individual).extend({
       (this.$refs.recaptchaSubmit as any).render(lang);
     },
 
+    executeRecaptcha() {
+      (this.$refs.recaptchaSubmit as any).execute();
+    },
+
     async fetchPublicToken(continueFnct: () => void, onlyIfNotFetchedRecently: boolean = true) {
       // unless we specifically ask to renew the token, if one was fetched less then 30 minutes ago we continue
       if (onlyIfNotFetchedRecently && this.tokenFetchedLast > new Date(new Date().getTime() - (30 * 60 * 1000))) {
@@ -210,7 +214,7 @@ export default mixins(individual).extend({
       if (this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
         this.functionAfterToken = continueFnct;
         // eslint-disable-next-line
-        (this.$refs.recaptchaSubmit as any).execute();
+        this.executeRecaptcha();
       } else {
         // no need for recaptcha the BE will not require one
         await this.$services.households.getPublicToken(null);

@@ -315,7 +315,7 @@ export default Vue.extend({
       householdHelpers,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VITE_GOOGLE_API_KEY,
+        : process.env.VITE_GOOGLE_API_KEY || '',
       selectedMember: null as IMovingMember,
       newAddress: null as ICurrentAddress,
       CurrentAddress,
