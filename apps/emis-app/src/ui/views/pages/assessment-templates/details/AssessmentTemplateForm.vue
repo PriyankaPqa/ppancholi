@@ -244,7 +244,7 @@ import {
   VAutocompleteWithValidation,
   VCheckboxWithValidation,
 } from '@libs/component-lib/components';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import {
   AssessmentBaseEntity, IAssessmentBaseEntity, IAssessmentFormEntity, PublishStatus, AssessmentTemplateEntity, AssessmentFormEntity,
   AssessmentFrequencyType, IAssessmentScoringRange,
@@ -359,7 +359,7 @@ export default Vue.extend({
           max: MAX_LENGTH_LG,
         },
         messageIfUnavailable: {
-          max: MAX_LENGTH_LG,
+          max: MAX_LENGTH_XL,
         },
         frequency: {
           required: this.isFormMode,

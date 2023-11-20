@@ -5,7 +5,7 @@ import {
   mockAssessmentFormEntity, mockAssessmentTemplateEntity, PublishStatus, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
 import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import utils from '@libs/entities-lib/utils';
 import flushPromises from 'flush-promises';
@@ -102,7 +102,7 @@ describe('AssessmentTemplateForm.vue', () => {
             max: MAX_LENGTH_LG,
           },
           messageIfUnavailable: {
-            max: MAX_LENGTH_LG,
+            max: MAX_LENGTH_XL,
           },
           frequency: {
             required: wrapper.vm.isFormMode,
