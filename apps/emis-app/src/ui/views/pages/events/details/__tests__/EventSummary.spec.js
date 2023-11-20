@@ -17,7 +17,6 @@ import { Status } from '@libs/entities-lib/base';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
-import Vue from 'vue';
 import Component from '../EventSummary.vue';
 import { EDialogComponent } from '../components/DialogComponents';
 
@@ -25,7 +24,6 @@ const localVue = createLocalVue();
 
 const mockEvent = mockEventEntities()[0];
 const services = mockProvider();
-Vue.config.silent = true;
 
 const pinia = getPiniaForUser(UserRoles.level5);
 let eventStore;

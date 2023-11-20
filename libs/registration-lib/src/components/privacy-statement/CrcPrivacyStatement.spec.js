@@ -113,10 +113,10 @@ describe('CrcPrivacyStatement.vue', () => {
           },
           computed: {
             event: () => mockEventData(),
-            consentStatement: () => mockConsentStatments()[0],
+            consentStatement: () => mockConsentStatments(),
           },
         });
-        expect(wrapper.vm.consentStatement).toEqual(mockConsentStatments()[0]);
+        expect(wrapper.vm.consentStatement).toEqual(mockConsentStatments());
         expect(wrapper.vm.event.consentStatementId).toEqual(mockConsentStatments()[0].id);
       });
 

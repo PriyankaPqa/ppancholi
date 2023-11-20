@@ -4,5 +4,6 @@
   "packages": [
     "apps/*",
     "libs/*"
-  ]
+  ],
+  "useWorkspaces": true
 }
