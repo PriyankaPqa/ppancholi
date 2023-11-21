@@ -10,7 +10,7 @@ import {
   MassActionDataCorrectionType, MassActionMode, MassActionRunType, mockMassActionEntity,
 } from '@libs/entities-lib/mass-action';
 import { format } from 'date-fns';
-
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { mockProvider } from '@/services/provider';
 import Component from './DataCorrectionCreate.vue';
 
@@ -137,6 +137,13 @@ describe('DataCorrectionCreate.vue', () => {
     describe('allowedExtensions', () => {
       it('should be xlsx when selected type is Financial Assistance', () => {
         wrapper.vm.selectedType = MassActionDataCorrectionType.FinancialAssistance;
+        expect(wrapper.vm.allowedExtensions).toEqual(['xlsx']);
+      });
+
+      it('should be xlsx when feature flag is on', () => {
+        wrapper.vm.selectedType = MassActionDataCorrectionType.ContactInformation;
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.DataCorrectionPhaseII);
+
         expect(wrapper.vm.allowedExtensions).toEqual(['xlsx']);
       });
 

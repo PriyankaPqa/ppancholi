@@ -42,9 +42,9 @@ import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import helpers from '@/ui/helpers/helpers';
 import { format } from 'date-fns';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
-export default Vue.extend({
-  name: 'DataCorrectionCreate',
+export default Vue.extend({ name: 'DataCorrectionCreate',
 
   components: {
     MassActionBaseCreate,
@@ -83,7 +83,7 @@ export default Vue.extend({
     },
 
     allowedExtensions() : string[] {
-      return this.selectedType === MassActionDataCorrectionType.FinancialAssistance
+     return (this.selectedType === MassActionDataCorrectionType.FinancialAssistance || this.$hasFeature(FeatureKeys.DataCorrectionPhaseII))
         ? ['xlsx']
         : ['csv'];
     },

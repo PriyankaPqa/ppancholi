@@ -12,6 +12,7 @@ export enum FeatureKeys {
   TaskManagement = 'TaskManagement',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   InSystemQuerying = 'InSystemQuerying',
+  DataCorrectionPhaseII = 'DataCorrectionPhaseII',
 }
 
 export enum FeatureType {

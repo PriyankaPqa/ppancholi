@@ -4,6 +4,7 @@ import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {
@@ -214,6 +215,13 @@ describe('massActions', () => {
         wrapper.vm.downloadApiTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.FinancialAssistance);
         expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.FinancialAssistance);
+      });
+
+      it('should call downloadApiTemplate if feature flag is on', () => {
+        wrapper.vm.downloadApiTemplate = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.DataCorrectionPhaseII);
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
+        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.TemporaryAddress);
       });
     });
 
