@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  IPowerBiTokenDetails,
   IQuery, QueryType,
 } from '@libs/entities-lib/reporting';
 import { IHttpClient } from '../../http-client';
@@ -27,5 +28,9 @@ export class QueriesService extends DomainBaseService<IQuery, uuid> implements I
 
   async edit(query: IQuery) {
     return this.http.patch<Promise<IQuery>>(`${this.baseUrl}/${query.id}`, query);
+  }
+
+  async getPowerBiTokenForReport(reportName: string): Promise<IPowerBiTokenDetails> {
+      return this.http.get(`${this.http.baseUrl}/common/power-bi/embed-info/${reportName}`);
   }
 }

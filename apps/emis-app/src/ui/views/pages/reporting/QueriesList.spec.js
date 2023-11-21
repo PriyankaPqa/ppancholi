@@ -36,7 +36,7 @@ jest.mock('./standard_queries/standard_queries', () => ({ AllReports: [{
   id: 'second en',
   name: 'some report en 2',
   queryType: 2,
-  topic: 1,
+  topic: 99,
   state: 'state',
 }] }));
 
@@ -107,12 +107,14 @@ describe('QueriesList.vue', () => {
             name: 'some report',
             sharedBy: '',
             theme: 'reporting.query.theme.HouseholdMembers',
+            isPbiReport: false,
           },
           {
             id: 'second en',
             name: 'some report en 2',
             sharedBy: '',
-            theme: 'reporting.query.theme.HouseholdMembers',
+            theme: 'reporting.query.theme.PowerBi',
+            isPbiReport: true,
           },
         ]);
       });
@@ -356,10 +358,17 @@ describe('QueriesList.vue', () => {
     });
 
     describe('getQueryRoute', () => {
-      it('should redirect to the case referral edit page', async () => {
-        const result = wrapper.vm.getQueryRoute('abc');
+      it('should redirect to the query page according to isPbiReport', async () => {
+        let result = wrapper.vm.getQueryRoute('abc', false);
         expect(result).toEqual({
           name: routes.reporting.query.name,
+          params: {
+            queryId: 'abc',
+          },
+        });
+        result = wrapper.vm.getQueryRoute('abc', true);
+        expect(result).toEqual({
+          name: routes.reporting.powerbi.name,
           params: {
             queryId: 'abc',
           },

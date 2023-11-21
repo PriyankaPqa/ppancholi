@@ -27,8 +27,12 @@ import { UsersL5En, UsersL5Fr } from './UsersL5';
 import { CaseFileStatusAndActionL6En, CaseFileStatusAndActionL6Fr } from './CaseFileStatusAndActionL6';
 import { UserListL6En, UserListL6Fr } from './UserListL6';
 import { UserAccessListEMISL6En, UserAccessListEMISL6Fr } from './UserAccessListEMISL6';
+
 import { DataCorrectionAuthenticationOtherL6En, DataCorrectionAuthenticationOtherL6Fr } from './DataCorrectionAuthenticationOtherL6';
 import { DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr } from './DataCorrectionContactInformationL6';
+
+import { AllPbiReports } from './PowerBiEmbedded';
+
 /* clones of other queries available for different levels */
 export const ReferralsL4En = {
   ...ReferralsL5En,
@@ -141,6 +145,7 @@ export const PaymentApprovalsIMFr = {
 } as IQuery;
 
 export const AllReports : IQuery[] = [
+  ...AllPbiReports,
   RegistrationByBeneficiaryL6En, RegistrationByBeneficiaryL6Fr, 
   RegistrationByCaseFileL6En, RegistrationByCaseFileL6Fr, 
   DataCorrectionIdentitySetL6En, DataCorrectionIdentitySetL6Fr,

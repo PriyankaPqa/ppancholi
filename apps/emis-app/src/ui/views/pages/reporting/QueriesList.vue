@@ -18,7 +18,7 @@
         <router-link
           class="rc-link14 font-weight-bold pr-1"
           data-test="queryDetail-link"
-          :to="getQueryRoute(item.id)">
+          :to="getQueryRoute(item.id, item.isPbiReport)">
           {{ item.name }}
         </router-link>
       </template>
@@ -106,6 +106,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import routes from '@/constants/routes';
 
 import { AllReports } from './standard_queries/standard_queries';
+import { ReportingPages } from './reportingPages';
 
 interface IQueryMapped {
   name: string;
@@ -113,6 +114,7 @@ interface IQueryMapped {
   theme: string;
   sharedBy: string;
   pinned?: boolean;
+  isPbiReport?: boolean;
 }
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -149,10 +151,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   computed: {
     queryType(): QueryType {
-      if (this.queryTypeName === 'Custom') {
-        return QueryType.Custom;
-      }
-      return QueryType[this.queryTypeName + this.$i18n.locale as any] as any;
+      return ReportingPages.queryTypeByName(this.queryTypeName, this.$i18n.locale);
     },
 
     canAdd(): boolean {
@@ -173,6 +172,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         theme: this.$t(`reporting.query.theme.${ReportingTopic[q.topic]}`) as string,
         name: q.name,
         sharedBy: '',
+        isPbiReport: q.topic === ReportingTopic.PowerBi,
       }));
     },
 
@@ -369,9 +369,9 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-    getQueryRoute(id: string) {
+    getQueryRoute(id: string, isPbiReport: boolean) {
       return {
-        name: routes.reporting.query.name,
+        name: isPbiReport ? routes.reporting.powerbi.name : routes.reporting.query.name,
         params: {
           queryId: id,
         },

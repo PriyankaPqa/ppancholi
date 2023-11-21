@@ -53,6 +53,7 @@
     "js-convert-case": "^4.1.1",
     "lodash": "^4.17.21",
     "pinia": "^2.0.27",
+    "powerbi-client": "^2.22.3",
     "register-service-worker": "^1.7.1",
     "sanitize-html": "2.7.1",
     "survey-core": "1.9.58",

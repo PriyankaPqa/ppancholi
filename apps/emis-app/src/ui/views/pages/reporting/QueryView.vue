@@ -148,7 +148,7 @@
     <select-users-popup
       v-if="showSelectUserDialog"
       data-test="add-team-members"
-      :levels="[UserRolesNames.level4, UserRolesNames.level5, UserRolesNames.level6]"
+      :levels="[UserRolesNames.level4, UserRolesNames.level5, UserRolesNames.level6, UserRolesNames.contributorIM]"
       :title="$t('reporting.query.share.title') + query.name"
       :submit-action-label="$t('common.buttons.share')"
       :show.sync="showSelectUserDialog"
@@ -183,7 +183,7 @@ import { Workbook } from 'exceljs';
 import saveAs from 'file-saver';
 import { Column } from 'devextreme/ui/data_grid';
 import { RcDataTableHeader, RcConfirmationDialog, VTextFieldWithValidation } from '@libs/component-lib/components';
-import { IQuery, QueryType, ReportingTopic } from '@libs/entities-lib/reporting';
+import { IQuery, QueryType } from '@libs/entities-lib/reporting';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
 import { UserTeamMember } from '@libs/entities-lib/user-account';
@@ -191,6 +191,7 @@ import { UserRolesNames } from '@libs/entities-lib/user';
 
 import { IDatasourceSettings, datasources } from './datasources';
 import { AllReports } from './standard_queries/standard_queries';
+import { ReportingPages } from './reportingPages';
 
 export default Vue.extend({
   name: 'QueryView',
@@ -271,14 +272,11 @@ export default Vue.extend({
   },
   computed: {
     queryType(): QueryType {
-      if (this.queryTypeName === 'Custom') {
-        return QueryType.Custom;
-      }
-      return QueryType[this.queryTypeName + this.$i18n.locale as any] as any;
+      return ReportingPages.queryTypeByName(this.queryTypeName, this.$i18n.locale);
     },
 
     title(): string {
-      return `${this.$t(`reporting.query.title.${QueryType[this.query.queryType]}`)}: ${this.query.name || this.$t(`reporting.query.theme.${ReportingTopic[this.query.topic]}`)}`;
+      return ReportingPages.titleForQuery(this.query, this);
     },
     canSave(): boolean {
       return this.query.queryType === QueryType.Custom;

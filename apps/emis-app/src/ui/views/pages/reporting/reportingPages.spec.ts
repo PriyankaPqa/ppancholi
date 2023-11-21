@@ -3,6 +3,7 @@ import routes from '@/constants/routes';
 import { createLocalVue } from '@/test/testSetup';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockUserStore } from '@/pinia/user/user.mock';
+import { IQuery, QueryType } from '@libs/entities-lib/reporting';
 import { ReportingPages } from './reportingPages';
 
 const pinia = createTestingPinia({ stubActions: false });
@@ -120,6 +121,23 @@ describe('reportingPages', () => {
       test: 'eventStatistics',
       level: UserRoles.level4,
       roles: [UserRoles.contributorIM],
+    });
+  });
+
+  describe('queryTypeByName', () => {
+    it('returns the correct QueryType', async () => {
+      expect(ReportingPages.queryTypeByName('Custom', 'en')).toEqual(QueryType.Custom);
+      expect(ReportingPages.queryTypeByName('StandardL6', 'en')).toEqual(QueryType.StandardL6en);
+    });
+  });
+
+  describe('titleForQuery', () => {
+    it('returns the title according to the query', async () => {
+      localVue.prototype.$t = (t: string) => t;
+      expect(ReportingPages.titleForQuery({ queryType: QueryType.Custom, topic: 1 } as IQuery, localVue.prototype))
+        .toBe('reporting.query.title.Custom: reporting.query.theme.HouseholdMembers');
+      expect(ReportingPages.titleForQuery({ name: 'some name', queryType: QueryType.Custom, topic: 1 } as IQuery, localVue.prototype))
+        .toBe('reporting.query.title.Custom: some name');
     });
   });
 });

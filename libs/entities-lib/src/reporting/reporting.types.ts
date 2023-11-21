@@ -24,6 +24,7 @@ export enum ReportingTopic {
   CaseNotes = 9,
   LatestCaseFileActivities = 10,
   CaseFileAuthenticationIds = 11,
+  PowerBi = 99,
 }
 
 export interface IQuery extends IEntity {
@@ -32,4 +33,23 @@ export interface IQuery extends IEntity {
   topic: ReportingTopic;
   owner?: uuid;
   state: string;
+}
+
+export interface IEmbedReport {
+  reportId: uuid;
+  reportName: string;
+  embedUrl: string;
+  reportPageId?: string;
+}
+
+export interface IEmbedToken {
+  token: string;
+  tokenId: uuid;
+  expiration: string;
+}
+
+export interface IPowerBiTokenDetails {
+  type: string;
+  embedReport: IEmbedReport[];
+  embedToken: IEmbedToken;
 }

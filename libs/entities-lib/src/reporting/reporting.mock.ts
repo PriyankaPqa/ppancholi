@@ -1,6 +1,7 @@
 import { mockBaseData } from '../base';
 
 import {
+  IPowerBiTokenDetails,
   IQuery, QueryType, ReportingTopic,
 } from './reporting.types';
 
@@ -21,3 +22,10 @@ export const mockQueryEntities = () : IQuery[] => [
   mockQueryEntity({ id: '3', createdBy: 'd9cd254a-f527-4000-95ea-285442253cda', name: 'mon troisième', topic: ReportingTopic.HouseholdPrimary }),
   mockQueryEntity({ id: '4', createdBy: 'd9cd254a-f527-4000-95ea-285442253cda', name: 'mon quatrième', topic: ReportingTopic.HouseholdPrimary }),
 ];
+
+export const mockPowerBiToken = (force?: Partial<IPowerBiTokenDetails>) : IPowerBiTokenDetails => ({
+  type: 'Report',
+  embedReport: [{ embedUrl: 'some url', reportId: '1', reportName: 'some name', reportPageId: 'pageid' }],
+  embedToken: { token: 'token', expiration: '2030-01-01', tokenId: '1' },
+  ...force,
+});

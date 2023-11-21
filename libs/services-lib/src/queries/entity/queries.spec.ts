@@ -26,4 +26,9 @@ describe('>>> Queries Service', () => {
     await service.edit({ id: 'some Id', name: 'some name' } as IQuery);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/some Id`, { id: 'some Id', name: 'some name' });
   });
+
+  test('getPowerBiTokenForReport is linked to the correct URL', async () => {
+    await service.getPowerBiTokenForReport('name');
+    expect(http.get).toHaveBeenCalledWith('www.test.com/common/power-bi/embed-info/name');
+  });
 });

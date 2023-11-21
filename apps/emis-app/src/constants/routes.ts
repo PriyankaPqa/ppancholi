@@ -14,6 +14,10 @@ const routes = {
       path: 'reporting/menu',
       name: 'reporting.menu',
     },
+    powerbi: {
+      path: 'reporting/powerbi/:queryTypeName/:queryId',
+      name: 'reporting.powerbi',
+    },
     list: {
       path: ':queryTypeName',
       name: 'reporting.list',

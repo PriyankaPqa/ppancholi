@@ -4,6 +4,7 @@ import { ICardSettings } from '@/types/interfaces/ICardSettings';
 import helpers from '@/ui/helpers/helpers';
 import { VuePlugin } from '@/ui/plugins/features';
 import { INavigationTab } from '@libs/shared-lib/types';
+import { IQuery, QueryType, ReportingTopic } from '@libs/entities-lib/reporting';
 
 export class ReportingPages {
   cards(vue: VuePlugin): ICardSettings[] {
@@ -91,5 +92,16 @@ export class ReportingPages {
       roles: c.roles,
       route: c.route as { name: string },
     }));
+  }
+
+  static queryTypeByName(queryTypeName: string, locale: string): QueryType {
+    if (queryTypeName === 'Custom') {
+      return QueryType.Custom;
+    }
+    return QueryType[queryTypeName + locale as any] as any;
+  }
+
+  static titleForQuery(query: IQuery, vue: VuePlugin): string {
+    return `${vue.$t(`reporting.query.title.${QueryType[query.queryType]}`)}: ${query.name || vue.$t(`reporting.query.theme.${ReportingTopic[query.topic]}`)}`;
   }
 }
