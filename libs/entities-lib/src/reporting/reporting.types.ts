@@ -27,6 +27,37 @@ export enum ReportingTopic {
   PowerBi = 99,
 }
 
+export interface ODataResult<T> {
+  count?: number;
+  value: T[];
+}
+
+export interface EnumEntry {
+  entity: string;
+  english: string;
+  french: string;
+  value: number;
+}
+
+export interface ListOption {
+  id: uuid;
+  discriminator: string;
+  english: string;
+  french: string;
+  orderRank: number;
+  isOther: boolean;
+  isDefault: boolean;
+  restrictFinancial: boolean;
+  isHidden: boolean;
+  parentListOptionId?: uuid;
+}
+
+export interface ObjectName {
+  id: uuid;
+  english: string;
+  french: string;
+}
+
 export interface IQuery extends IEntity {
   name: string;
   queryType: QueryType;

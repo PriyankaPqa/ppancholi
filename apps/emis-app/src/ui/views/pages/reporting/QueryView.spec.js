@@ -11,6 +11,9 @@ import { exportDataGrid } from 'devextreme/excel_exporter';
 import frMessages from 'devextreme/localization/messages/fr.json';
 import enMessages from 'devextreme/localization/messages/en.json';
 import Component from './QueryView.vue';
+import {
+  LookupType,
+} from './datasources';
 
 const localVue = createLocalVue();
 
@@ -215,6 +218,7 @@ describe('QueryView.vue', () => {
             dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameEn',
             dataType: 'string',
             visible: false,
+            filterOperations: ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'],
           },
           {
             allowSearch: false,
@@ -223,6 +227,7 @@ describe('QueryView.vue', () => {
             dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameFr',
             dataType: 'string',
             visible: false,
+            filterOperations: ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'],
           },
           {
             allowSearch: false,
@@ -231,8 +236,227 @@ describe('QueryView.vue', () => {
             dataField: 'caseFileTagsCsv.csvTagNameEn',
             dataType: 'string',
             visible: false,
+            filterOperations: ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'],
           },
         ]);
+      });
+    });
+
+    describe('initializeLookups', () => {
+      it('initializes enum columns', async () => {
+        const columns = [
+          { dataField: 'activityTypeEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'AccessLevels' },
+          { dataField: 'activityTypeFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'AccessLevels' },
+          { dataField: 'dateOfChange', dataType: 'datetime', visible: true },
+        ];
+        await wrapper.vm.initializeLookups(columns);
+        expect(columns).toEqual(
+          [
+            {
+              dataField: 'activityTypeEn',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'Level1',
+                  'Level2',
+                  'Level3',
+                  'NoAccess',
+                ],
+              },
+              lookupKey: 'AccessLevels',
+              lookupType: 0,
+              visible: false,
+            },
+            {
+              dataField: 'activityTypeFr',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'Accès non autorisé',
+                  'Niveau d’accès1',
+                  'Niveau d’accès2',
+                  'Niveau d’accès3',
+                ],
+              },
+              lookupKey: 'AccessLevels',
+              lookupType: 1,
+              visible: false,
+            },
+            {
+              dataField: 'dateOfChange',
+              dataType: 'datetime',
+              filterOperations: ['=', '<>', '<', '>', '<=', '>=', 'between', 'isblank', 'isnotblank'],
+              visible: true,
+            },
+          ],
+        );
+      });
+
+      it('initializes listoptions columns', async () => {
+        const columns = [
+          { dataField: 'itemNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'FinancialAssistanceCategory' },
+          { dataField: 'itemNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'FinancialAssistanceCategory' },
+          { dataField: 'subItemNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'FinancialAssistanceCategory', lookupSubItems: true },
+          { dataField: 'subItemNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'FinancialAssistanceCategory', lookupSubItems: true },
+          { dataField: 'dateOfChange', dataType: 'datetime', visible: true },
+        ];
+        await wrapper.vm.initializeLookups(columns);
+        expect(columns).toEqual(
+          [
+            {
+              dataField: 'itemNameEn',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'Accommodation',
+                ],
+              },
+              lookupKey: 'FinancialAssistanceCategory',
+              lookupType: 2,
+              visible: false,
+            },
+            {
+              dataField: 'itemNameFr',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'Hébergement',
+                ],
+              },
+              lookupKey: 'FinancialAssistanceCategory',
+              lookupType: 3,
+              visible: false,
+            },
+            {
+              dataField: 'subItemNameEn',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'SubItem EN',
+                ],
+              },
+              lookupKey: 'FinancialAssistanceCategory',
+              lookupSubItems: true,
+              lookupType: 2,
+              visible: false,
+            },
+            {
+              dataField: 'subItemNameFr',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'SubItem Fr',
+                ],
+              },
+              lookupKey: 'FinancialAssistanceCategory',
+              lookupSubItems: true,
+              lookupType: 3,
+              visible: false,
+            },
+            {
+              dataField: 'dateOfChange',
+              dataType: 'datetime',
+              filterOperations: ['=', '<>', '<', '>', '<=', '>=', 'between', 'isblank', 'isnotblank'],
+              visible: true,
+            },
+          ],
+        );
+      });
+
+      it('initializes event columns', async () => {
+        const columns = [
+          { dataField: 'eventNameEn', dataType: 'string', visible: false, lookupType: LookupType.eventEn },
+          { dataField: 'eventNameFr', dataType: 'string', visible: false, lookupType: LookupType.eventFr },
+        ];
+        await wrapper.vm.initializeLookups(columns);
+        expect(columns).toEqual(
+          [
+            {
+              dataField: 'eventNameEn',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'event for Authtencation',
+                  'MANITOBA Wilfire 2022',
+                  'TEST THIS EVENT',
+                ],
+              },
+              lookupType: 5,
+              visible: false,
+            },
+            {
+              dataField: 'eventNameFr',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'event for Authtencation',
+                  'MANITOBA Wilfire 2022',
+                  'TEST fr',
+                ],
+              },
+              lookupType: 4,
+              visible: false,
+            },
+          ],
+        );
+      });
+
+      it('initializes program columns', async () => {
+        const columns = [
+          { dataField: 'eventNameEn', dataType: 'string', visible: false, lookupType: LookupType.programNameEn },
+          { dataField: 'eventNameFr', dataType: 'string', visible: false, lookupType: LookupType.programNameFr },
+        ];
+        await wrapper.vm.initializeLookups(columns);
+        expect(columns).toEqual(
+          [
+            {
+              dataField: 'eventNameEn',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'event for Authtencation',
+                  'MANITOBA Wilfire 2022',
+                  'TEST THIS EVENT',
+                ],
+              },
+              lookupType: 6,
+              visible: false,
+            },
+            {
+              dataField: 'eventNameFr',
+              dataType: 'string',
+              lookup: {
+                dataSource: [
+                  'event for Authtencation',
+                  'MANITOBA Wilfire 2022',
+                  'TEST fr',
+                ],
+              },
+              lookupType: 7,
+              visible: false,
+            },
+          ],
+        );
+      });
+
+      it('sets filterOperations for non lookups', async () => {
+        const columns = [
+          { dataField: 'str', dataType: 'string', visible: false },
+          { dataField: 'date time', dataType: 'datetime', visible: true },
+          { dataField: 'date', dataType: 'date', visible: true },
+          { dataField: 'bool', dataType: 'boolean', visible: true },
+          { dataField: 'number', dataType: 'number', visible: true },
+        ];
+        await wrapper.vm.initializeLookups(columns);
+        expect(columns).toEqual(
+          [
+            { dataField: 'str', dataType: 'string', visible: false, filterOperations: ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'] },
+            { dataField: 'date time', dataType: 'datetime', visible: true, filterOperations: ['=', '<>', '<', '>', '<=', '>=', 'between', 'isblank', 'isnotblank'] },
+            { dataField: 'date', dataType: 'date', visible: true, filterOperations: ['=', '<>', '<', '>', '<=', '>=', 'between', 'isblank', 'isnotblank'] },
+            { dataField: 'bool', dataType: 'boolean', visible: true, filterOperations: ['=', '<>', 'isblank', 'isnotblank'] },
+            { dataField: 'number', dataType: 'number', visible: true, filterOperations: ['=', '<>', '<', '>', '<=', '>=', 'between', 'isblank', 'isnotblank'] },
+          ],
+        );
       });
     });
 

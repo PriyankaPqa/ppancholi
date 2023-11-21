@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  IPowerBiTokenDetails,
-  IQuery, QueryType,
+  EnumEntry,
+  ObjectName,
+  IQuery, ListOption, QueryType, ODataResult, IPowerBiTokenDetails,
 } from '@libs/entities-lib/reporting';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -28,6 +29,22 @@ export class QueriesService extends DomainBaseService<IQuery, uuid> implements I
 
   async edit(query: IQuery) {
     return this.http.patch<Promise<IQuery>>(`${this.baseUrl}/${query.id}`, query);
+  }
+
+  async fetchEnums(): Promise<ODataResult<EnumEntry>> {
+    return this.http.get(`${this.http.baseUrl}/common/data-providers/enums`);
+  }
+
+  async fetchListOptions(): Promise<ODataResult<ListOption>> {
+    return this.http.get(`${this.http.baseUrl}/common/data-providers/list-options`);
+  }
+
+  async fetchPrograms(): Promise<ODataResult<ObjectName>> {
+    return this.http.get(`${this.http.baseUrl}/common/data-providers/program-names`);
+  }
+
+  async fetchEvents(): Promise<ODataResult<ObjectName>> {
+    return this.http.get(`${this.http.baseUrl}/common/data-providers/event-names`);
   }
 
   async getPowerBiTokenForReport(reportName: string): Promise<IPowerBiTokenDetails> {

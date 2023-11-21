@@ -27,6 +27,26 @@ describe('>>> Queries Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/some Id`, { id: 'some Id', name: 'some name' });
   });
 
+  test('fetchEnums is linked to the correct URL', async () => {
+    await service.fetchEnums();
+    expect(http.get).toHaveBeenCalledWith('www.test.com/common/data-providers/enums');
+  });
+
+  test('fetchListOptions is linked to the correct URL', async () => {
+    await service.fetchListOptions();
+    expect(http.get).toHaveBeenCalledWith('www.test.com/common/data-providers/list-options');
+  });
+
+  test('fetchPrograms is linked to the correct URL', async () => {
+    await service.fetchPrograms();
+    expect(http.get).toHaveBeenCalledWith('www.test.com/common/data-providers/program-names');
+  });
+
+  test('fetchEvents is linked to the correct URL', async () => {
+    await service.fetchEvents();
+    expect(http.get).toHaveBeenCalledWith('www.test.com/common/data-providers/event-names');
+  });
+
   test('getPowerBiTokenForReport is linked to the correct URL', async () => {
     await service.getPowerBiTokenForReport('name');
     expect(http.get).toHaveBeenCalledWith('www.test.com/common/power-bi/embed-info/name');

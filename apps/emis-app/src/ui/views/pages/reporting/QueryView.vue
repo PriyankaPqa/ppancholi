@@ -66,9 +66,9 @@
           :allow-column-reordering="true"
           :allow-column-resizing="true"
           :columns="columns"
+          :sync-lookup-filter-values="false"
           height="calc(100vh - 185px)"
           width="100%"
-          :key-expr="dsType.key"
           @option-changed="handlePropertyChange"
           @exporting="onExporting">
           <DxExport
@@ -186,10 +186,11 @@ import { RcDataTableHeader, RcConfirmationDialog, VTextFieldWithValidation } fro
 import { IQuery, QueryType } from '@libs/entities-lib/reporting';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { UserTeamMember } from '@libs/entities-lib/user-account';
 import { UserRolesNames } from '@libs/entities-lib/user';
 
-import { IDatasourceSettings, datasources } from './datasources';
+import { ColumnLookupBase, IDatasourceSettings, LookupType, datasources } from './datasources';
 import { AllReports } from './standard_queries/standard_queries';
 import { ReportingPages } from './reportingPages';
 
@@ -317,7 +318,7 @@ export default Vue.extend({
     async initializeGrid() {
       this.showGrid = false;
       this.grid = null;
-      this.initializeDatasource();
+      await this.initializeDatasource();
       loadMessages(this.$i18n.locale === 'fr' ? frMessages : enMessages);
       locale(this.$i18n.locale);
       await helpers.timeout(50);
@@ -334,30 +335,32 @@ export default Vue.extend({
     },
 
     /// this picks the right datasource for this query.  Also it sets the initial "select" list to the list of columns that are visible by default
-    initializeDatasource() {
+    async initializeDatasource() {
       const ds = datasources.find((d) => d.reportingTopic === this.query.topic);
       const columns = sortBy(ds.columns.map((c) => ({
         ...c,
         caption: this.$t(c.caption),
         cssClass: `grid-column ${c.cssClass || ''}`,
         allowSearch: c.allowSearch !== false && c.visible !== false,
-      })), 'caption');
+      })), 'caption') as Column<any, any>[];
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
-      ds.key.forEach((k) => {
+      Object.keys(ds.key).forEach((k) => {
           if (select.indexOf(k) === -1) {
           select.push(k);
         }
       });
 
+      await this.initializeLookups(columns);
+
       this.dsType = ds;
-      this.columns = columns as Column<any, any>[];
+      this.columns = columns;
 
       this.dataSource = {
         store: new ODataStore({
           url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`,
           // url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`.replace('api-dev.crc-tech.ca/common', 'localhost:44352'),
-          key: ds.key,
-          keyType: 'Guid',
+          key: Object.keys(ds.key),
+          keyType: ds.key,
           version: 4,
           filterToLower: false,
           beforeSend(e) {
@@ -370,6 +373,63 @@ export default Vue.extend({
         }),
         select,
       };
+    },
+
+    async initializeLookups(columns: ColumnLookupBase[]) {
+      const results = await Promise.all([
+              this.$services.queries.fetchEnums(),
+              this.$services.queries.fetchListOptions(),
+              columns.find((x) => x.lookupType === LookupType.eventEn || x.lookupType === LookupType.eventFr) ? this.$services.queries.fetchEvents() : null,
+              columns.find((x) => x.lookupType === LookupType.programNameEn || x.lookupType === LookupType.programNameFr)
+                    ? await this.$services.queries.fetchPrograms() : null,
+            ]);
+      const enums = results[0].value;
+      const listOptions = results[1].value;
+      const events = results[2]?.value || [];
+      const programs = results[3]?.value || [];
+      const normalize = (item: string) => sharedHelpers.getNormalizedString(item).toLocaleLowerCase();
+      for (let i = 0; i < columns.length; i += 1) {
+        const col = columns[i];
+        switch (col.lookupType) {
+          case LookupType.enumEn:
+            col.lookup = { dataSource: sortBy(enums.filter((e) => e.entity === col.lookupKey).map((x) => x.english), [normalize]) };
+            break;
+          case LookupType.enumFr:
+            col.lookup = { dataSource: sortBy(enums.filter((e) => e.entity === col.lookupKey).map((x) => x.french), [normalize]) };
+            break;
+          case LookupType.optionItemEn:
+            col.lookup = { dataSource: sortBy(listOptions
+                .filter((e) => e.discriminator === col.lookupKey && !!col.lookupSubItems === !!e.parentListOptionId).map((x) => x.english), [normalize]) };
+            break;
+          case LookupType.optionItemFr:
+            col.lookup = { dataSource: sortBy(listOptions
+                .filter((e) => e.discriminator === col.lookupKey && !!col.lookupSubItems === !!e.parentListOptionId).map((x) => x.french), [normalize]) };
+            break;
+          case LookupType.eventEn:
+            col.lookup = { dataSource: sortBy(events.map((x) => x.english), [normalize]) };
+            break;
+          case LookupType.eventFr:
+            col.lookup = { dataSource: sortBy(events.map((x) => x.french), [normalize]) };
+            break;
+          case LookupType.programNameEn:
+            col.lookup = { dataSource: sortBy(programs.map((x) => x.english), [normalize]) };
+            break;
+          case LookupType.programNameFr:
+            col.lookup = { dataSource: sortBy(programs.map((x) => x.french), [normalize]) };
+            break;
+          default:
+            // for non-lookups we need to remove 'anyof' and 'noneof' which if not using a lookup would download the whole dataset
+            // unfortunately you cant just remove you have to set so i'm setting to the default without those 2
+            // https://js.devexpress.com/Vue/Documentation/ApiReference/UI_Components/dxDataGrid/Configuration/columns/#filterOperations
+            if (col.dataType === 'string') {
+              col.filterOperations = ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'];
+            } else if (col.dataType === 'boolean') {
+              col.filterOperations = ['=', '<>', 'isblank', 'isnotblank'];
+            } else {
+              col.filterOperations = ['=', '<>', '<', '>', '<=', '>=', 'between', 'isblank', 'isnotblank'];
+            }
+        }
+      }
     },
 
     /// shows the dialog if we need a name, else saves
@@ -462,7 +522,7 @@ export default Vue.extend({
 
       const cols = grid.getVisibleColumns().map((x) => x.dataField);
 
-      const keys = this.dsType.key || ['id'];
+      const keys = Object.keys(this.dsType.key);
       keys.filter((k) => cols.indexOf(k) === -1).forEach((k) => {
         cols.push(k);
       });
