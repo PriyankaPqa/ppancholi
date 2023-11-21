@@ -1,5 +1,5 @@
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
-import { ActionStatus, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken, TaskType } from '@libs/entities-lib/task';
+import { ActionStatus, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { TaskService } from '@libs/services-lib/task/entity/task';
 import { ITaskServiceMock } from '@libs/services-lib/task/entity';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
@@ -105,8 +105,8 @@ export function getExtensionComponents(
 
     return {
       isUrgent: task.isUrgent,
-      isDueToday: dueDate && dueDate.toDateString() === today.toDateString(),
-      isOverdue: dueDate && dueDate < startOfDay,
+      isDueToday: task.taskStatus === TaskStatus.InProgress && dueDate && dueDate.toDateString() === today.toDateString(),
+      isOverdue: task.taskStatus === TaskStatus.InProgress && dueDate && dueDate < startOfDay,
       icon: task.taskType === TaskType.Personal ? 'mdi-account-check' : '',
       targetLink: {
         name: routes.caseFile.task.details.name,

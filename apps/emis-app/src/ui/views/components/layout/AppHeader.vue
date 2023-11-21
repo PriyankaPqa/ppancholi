@@ -44,10 +44,18 @@
 
       <rc-tooltip v-if="hasFeatureDisplayNotificationCenter" bottom>
         <template #activator="{ on }">
-          <v-btn icon data-test="right-menu-trigger-notifications" v-on="on" @click.stop="handleNotificationCenter">
-            <v-icon color="grey darken-2">
-              mdi-bell
-            </v-icon>
+          <v-btn icon data-test="right-menu-trigger-notifications" class="mr-1" v-on="on" @click.stop="handleNotificationCenter">
+            <v-badge
+              :content="unreadNotificationCount"
+              :value="showUnreadNotificationBadge"
+              color="error"
+              offset-x="10"
+              offset-y="13"
+              data-test="notification-badge">
+              <v-icon color="grey darken-2">
+                mdi-bell
+              </v-icon>
+            </v-badge>
           </v-btn>
         </template>
         {{ $t('notifications.title') }}
@@ -76,7 +84,10 @@ import { IBrandingEntity, FeatureKeys } from '@libs/entities-lib/tenantSettings'
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { useNotificationStore } from '@/pinia/notification/notification';
 import { UserRoles } from '@libs/entities-lib/user';
+
+const MAX_UNREAD_COUNT = 10; // value for testing, will bump up to 50 after QA is complete
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -91,6 +102,7 @@ export default Vue.extend({
       showGeneralHelp: false,
       routes,
       FeatureKeys,
+      maxUnreadCount: MAX_UNREAD_COUNT,
     };
   },
 
@@ -123,6 +135,25 @@ export default Vue.extend({
     hasFeatureDisplayNotificationCenter(): boolean {
       return this.$hasFeature(FeatureKeys.DisplayNotificationCenter);
     },
+
+    unreadNotificationCount(): string {
+      // note: badge component from newer Vuetify (3.x) has a max property
+      let count = useNotificationStore().getUnreadCount();
+      let suffix = '';
+      if (count > MAX_UNREAD_COUNT) {
+        count = MAX_UNREAD_COUNT;
+        suffix = '+';
+      }
+      return `${count}${suffix}`;
+    },
+
+    showUnreadNotificationBadge(): boolean {
+      return useNotificationStore().getUnreadCount() > 0;
+    },
+  },
+
+  async created() {
+    await useNotificationStore().fetchCurrentUserUnreadIds();
   },
 
   methods: {

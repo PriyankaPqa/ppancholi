@@ -8,6 +8,7 @@
           :label="getTabLabel(tab)"
           :data-test="`notificationCenter-category--${tab}`"
           :active="activeTab === tab"
+          :show-dot="hasUnreadNotifications(tab)"
           @click="switchTab(tab)" />
       </rc-tabs>
       <rc-page-loading v-if="initLoading" />
@@ -56,7 +57,7 @@
       </div>
     </template>
     <template #footer>
-      <div class="d-flex justify-center rc-body14 fw-normal footer-text pa-2">
+      <div v-if="!moreNotificationsLoaded" data-test="all-notifications-message" class="d-flex justify-center rc-body14 fw-normal footer-text pa-2">
         {{ $t('notifications.all_in_message') }}
       </div>
     </template>
@@ -95,6 +96,7 @@ export default Vue.extend({
       initLoading: true,
       selectedTab: NotificationCategoryType.General,
       noMoreNotifications: false,
+      moreNotificationsLoaded: false,
       initialDayLimit: INITIAL_DAY_LIMIT,
     };
   },
@@ -163,12 +165,17 @@ export default Vue.extend({
       this.selectedTab = tab;
     },
 
+    hasUnreadNotifications(tab: NotificationCategoryType): boolean {
+      return (this.notifications?.filter((n) => n.categoryType === tab && n.isRead === false) || []).length > 0;
+    },
+
     async loadMore(limit = LOAD_LIMIT) {
       const fetchParams = this.notifications.length > 0
         ? { limit, beforeDateTimeUtc: this.notifications[this.notifications.length - 1].created }
         : { limit };
       const loadMoreResults = await this.fetchNotifications(fetchParams);
       this.noMoreNotifications = !loadMoreResults?.length || loadMoreResults.length < limit;
+      this.moreNotificationsLoaded = true;
     },
 
     throttleLoadMore: _throttle(function func(this:any, limit = LOAD_LIMIT) {

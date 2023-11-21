@@ -11,6 +11,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { mockProvider } from '@/services/provider';
+import { useNotificationStore } from '@/pinia/notification/notification';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
@@ -122,6 +123,29 @@ describe('AppHeader.vue', () => {
         });
 
         expect(wrapper.vm.displayRegistrationButton).toBeFalsy();
+      });
+    });
+
+    describe('unreadNotificationCount', () => {
+      it('should return the count from the notification store', () => {
+        useNotificationStore().getUnreadCount = jest.fn(() => 2);
+        expect(wrapper.vm.unreadNotificationCount).toEqual('2');
+      });
+      it('should include a + suffix if the max value is exceeded', () => {
+        useNotificationStore().getUnreadCount = jest.fn(() => 1000);
+        expect(wrapper.vm.unreadNotificationCount).toEqual(`${wrapper.vm.maxUnreadCount}+`);
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('Created', () => {
+      it('should call fetchCurrentUserUnreadIds', async () => {
+        useNotificationStore().fetchCurrentUserUnreadIds = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(useNotificationStore().fetchCurrentUserUnreadIds).toHaveBeenCalled();
       });
     });
   });
@@ -271,6 +295,53 @@ describe('AppHeader.vue', () => {
           });
           const button = wrapper.find('[data-test="right-menu-trigger-notifications"]');
           expect(button.exists()).toBe(false);
+        });
+        it('shows the unread count badge when there are unread items', () => {
+          const wrapper = mount(Component, {
+            localVue,
+            featureList: [FeatureKeys.DisplayNotificationCenter],
+            pinia,
+            vuetify,
+            computed: {
+              unreadNotificationCount() {
+                return 1;
+              },
+            },
+            mocks: {
+              $route: {
+                name: routes.events.home.name,
+              },
+              $services: services,
+            },
+          });
+          const badge = wrapper.find('[data-test="notification-badge"]');
+          expect(badge.exists()).toBe(true);
+          expect(badge.text()).toEqual('1');
+        });
+        it('hides the unread count badge when there are no unread items', () => {
+          const wrapper = mount(Component, {
+            localVue,
+            featureList: [FeatureKeys.DisplayNotificationCenter],
+            pinia,
+            vuetify,
+            computed: {
+              unreadNotificationCount() {
+                return 0;
+              },
+              showUnreadNotificationBadge() {
+                return false;
+              },
+            },
+            mocks: {
+              $route: {
+                name: routes.events.home.name,
+              },
+              $services: services,
+            },
+          });
+          const badge = wrapper.find('[data-test="notification-badge"]');
+          expect(badge.text()).toEqual('');
+          expect(badge.element.innerHTML).toContain('display: none');
         });
       });
     });

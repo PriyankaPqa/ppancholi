@@ -113,6 +113,20 @@ describe('NotificationCenter.vue', () => {
         expect(element.exists()).toBe(true);
       });
     });
+
+    describe('Footer message', () => {
+      it('should be displayed initially', async () => {
+        await doMount([]);
+        const element = wrapper.findDataTest('all-notifications-message');
+        expect(element.exists()).toBe(true);
+      });
+      it('should be hidden when more notifications are loaded', async () => {
+        await doMount([]);
+        await wrapper.setData({ moreNotificationsLoaded: true });
+        const element = wrapper.findDataTest('all-notifications-message');
+        expect(element.exists()).toBe(false);
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -179,6 +193,18 @@ describe('NotificationCenter.vue', () => {
       expect(wrapper.vm.selectedTab).toEqual(NotificationCategoryType.General);
       wrapper.vm.switchTab(NotificationCategoryType.Tasks);
       expect(wrapper.vm.selectedTab).toEqual(NotificationCategoryType.Tasks);
+    });
+
+    describe('hasUnreadNotifications', () => {
+      it('should be true for General', () => {
+        expect(wrapper.vm.hasUnreadNotifications(NotificationCategoryType.General)).toBeTruthy();
+      });
+      it('should be true for Tasks', () => {
+        expect(wrapper.vm.hasUnreadNotifications(NotificationCategoryType.Tasks)).toBeTruthy();
+      });
+      it('should be false for Approvals', () => {
+        expect(wrapper.vm.hasUnreadNotifications(NotificationCategoryType.Approvals)).toBeFalsy();
+      });
     });
 
     describe('loadMore', () => {

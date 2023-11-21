@@ -20,6 +20,11 @@ describe('>>> Notifications Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/user`, { params, globalHandler: GlobalHandler.Partial });
   });
 
+  test('fetchCurrentUserUnreadIds is linked to the correct URL', async () => {
+    await service.fetchCurrentUserUnreadIds();
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/user/ids`, { params: { unreadOnly: true } });
+  });
+
   test('updateIsRead is linked to the correct URL', async () => {
     const id = 'id1';
     const isRead = true;

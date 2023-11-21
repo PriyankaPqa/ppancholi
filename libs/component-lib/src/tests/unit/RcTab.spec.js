@@ -41,4 +41,15 @@ describe('RcTab.vue', () => {
 
     expect(wrapper.element.classList.contains('active')).toBe(true);
   });
+
+  test('the showDot prop makes the badge visible', async () => {
+    const badge = wrapper.find('[data-test="rctab-label-badge"]');
+    expect(badge.element.innerHTML).toContain('display: none');
+
+    await wrapper.setProps({
+      showDot: true,
+    });
+
+    expect(badge.element.innerHTML).not.toContain('display: none');
+  });
 });

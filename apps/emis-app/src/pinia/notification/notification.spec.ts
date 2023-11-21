@@ -35,6 +35,7 @@ const useNotificationTestStore = (opts = {}) => {
 const createTestStore = (bComponents = {}) => {
   getPinia();
   const store = useNotificationTestStore(bComponents);
+  store.items.splice(0, 100); // clear any existing state
   return store;
 };
 
@@ -81,6 +82,36 @@ describe('>>> Notification Store', () => {
     });
   });
 
+  describe('setItemFromOutsideNotification', () => {
+    it('calls base component', () => {
+      const bComponents = {
+        ...baseComponents,
+        setItemFromOutsideNotification: jest.fn(),
+      };
+      const store = createTestStore(bComponents);
+      const notification = mockNotificationEntity();
+      store.setItemFromOutsideNotification(notification, true);
+      expect(bComponents.setItemFromOutsideNotification).toHaveBeenCalledWith(notification, true);
+    });
+    it('should track unread notifications', () => {
+      const store = createTestStore(baseComponents);
+      const notification = mockNotificationEntity();
+      expect(store.getUnreadCount()).toEqual(0);
+      store.setItemFromOutsideNotification(notification, true);
+      expect(store.getUnreadCount()).toEqual(1);
+      notification.isRead = true;
+      store.setItemFromOutsideNotification(notification, true);
+      expect(store.getUnreadCount()).toEqual(0);
+    });
+  });
+
+  describe('getUnreadCount', () => {
+    it('returns zero initially', () => {
+      const store = createTestStore(baseComponents);
+      expect(store.getUnreadCount()).toEqual(0);
+    });
+  });
+
   describe('fetchCurrentUserNotifications', () => {
     it('should call fetchCurrentUserNotifications service and set the result in the store', async () => {
       const bComponents = {
@@ -92,6 +123,11 @@ describe('>>> Notification Store', () => {
 
       expect(entityService.fetchCurrentUserNotifications).toBeCalledWith({ limit: 1 });
       expect(bComponents.setAll).toBeCalledWith(mockNotificationEntities());
+    });
+    it('should track unread notifications', async () => {
+      const store = createTestStore(baseComponents);
+      await store.fetchCurrentUserNotifications({});
+      expect(store.getUnreadCount()).toEqual(2);
     });
   });
 
@@ -106,6 +142,52 @@ describe('>>> Notification Store', () => {
       await store.updateIsRead([notificationId], true);
 
       expect(entityService.updateIsRead).toBeCalledWith([notificationId], true);
+    });
+    it('should result in update of unread count', async () => {
+      const mockNotification = mockNotificationEntities()[0];
+      mockNotification.isRead = true;
+      entityService.updateIsRead = jest.fn(() => [mockNotification]);
+      const store = createTestStore(baseComponents);
+      expect(store.getUnreadCount()).toEqual(0);
+      await store.fetchCurrentUserUnreadIds();
+      expect(store.getUnreadCount()).toEqual(2);
+      await store.updateIsRead([mockNotification.id], true);
+      expect(store.getUnreadCount()).toEqual(1);
+    });
+    it('should include duplicate notifications in the service call', async () => {
+      const store = createTestStore();
+      const mockNotification1 = mockNotificationEntity({ id: 'mn1', targetEntityId: 'te' });
+      const mockNotification2 = mockNotificationEntity({ id: 'mn2', targetEntityId: 'te' });
+      store.setAll([mockNotification1, mockNotification2]);
+
+      await store.updateIsRead([mockNotification1.id], true);
+
+      expect(entityService.updateIsRead).toBeCalledWith([mockNotification1.id, mockNotification2.id], true);
+    });
+    it('should eliminate duplicate ids from the service call', async () => {
+      const store = createTestStore();
+      const mockNotification1 = mockNotificationEntity({ id: 'mn1', targetEntityId: 'te' });
+      const mockNotification2 = mockNotificationEntity({ id: 'mn2', targetEntityId: 'te' });
+      store.setAll([mockNotification1, mockNotification2]);
+
+      await store.updateIsRead([mockNotification1.id, mockNotification2.id, mockNotification1.id], true);
+
+      expect(entityService.updateIsRead).toBeCalledWith([mockNotification1.id, mockNotification2.id], true);
+    });
+  });
+
+  describe('fetchCurrentUserUnreadIds', () => {
+    it('should call fetchCurrentUserUnreadIds service', async () => {
+      const store = createTestStore(baseComponents);
+      await store.fetchCurrentUserUnreadIds();
+      expect(entityService.fetchCurrentUserUnreadIds).toBeCalled();
+    });
+    it('should track result ids in the store', async () => {
+      const store = createTestStore(baseComponents);
+      expect(store.getUnreadCount()).toEqual(0);
+      await store.fetchCurrentUserUnreadIds();
+      // mock service returns ids of mockNotificationEntities() (2 items)
+      expect(store.getUnreadCount()).toEqual(2);
     });
   });
 });

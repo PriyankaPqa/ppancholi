@@ -1,10 +1,10 @@
-import { IEntity, mockBaseData } from '../base';
+import { mockBaseData } from '../base';
 
 import {
   NotificationType, NotificationRecipientType, INotificationEntity, NotificationCategoryType,
 } from './notification.types';
 
-export const mockNotificationEntity = (force?: Partial<IEntity>) : INotificationEntity => ({
+export const mockNotificationEntity = (force?: Partial<INotificationEntity>) : INotificationEntity => ({
   ...mockBaseData(),
   notificationType: NotificationType.General,
   categoryType: NotificationCategoryType.General,

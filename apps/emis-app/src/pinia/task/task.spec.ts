@@ -1,6 +1,6 @@
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { Entity } from '@/pinia/task/task';
-import { ActionStatus, IdParams, ITaskEntityData, mockPersonalTaskEntity, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken } from '@libs/entities-lib/task';
+import { ActionStatus, IdParams, ITaskEntityData, mockPersonalTaskEntity, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken, TaskStatus } from '@libs/entities-lib/task';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 
@@ -161,7 +161,9 @@ describe('Task Store', () => {
       const tomorrow = new Date(new Date().setDate(today.getDate() + 1));
       const taskMap = new Map<string, ITaskEntityData>();
       taskMap.set('yesterday', mockPersonalTaskEntity({ id: 'yesterday', dueDate: yesterday, isUrgent: true }));
+      taskMap.set('completedYesterday', mockPersonalTaskEntity({ id: 'completedYesterday', dueDate: yesterday, taskStatus: TaskStatus.Completed }));
       taskMap.set('today', mockPersonalTaskEntity({ id: 'today', dueDate: today, isUrgent: false }));
+      taskMap.set('completedToday', mockPersonalTaskEntity({ id: 'completedToday', dueDate: today, taskStatus: TaskStatus.Completed }));
       taskMap.set('tomorrow', mockPersonalTaskEntity({ id: 'tomorrow', dueDate: tomorrow }));
       taskMap.set('team', mockTeamTaskEntity());
       const bComponents = {
@@ -187,6 +189,9 @@ describe('Task Store', () => {
         it('is false when task due date is tomorrow', () => {
           expect(store.getNotificationHelperView('tomorrow').isDueToday).toBeFalsy();
         });
+        it('is false when task due date is today for a completed item', () => {
+          expect(store.getNotificationHelperView('completedToday').isDueToday).toBeFalsy();
+        });
       });
       describe('isOverdue', () => {
         it('is true when task due date is yesterday', () => {
@@ -197,6 +202,9 @@ describe('Task Store', () => {
         });
         it('is false when task due date is tomorrow', () => {
           expect(store.getNotificationHelperView('tomorrow').isOverdue).toBeFalsy();
+        });
+        it('is false when task due date is yesterday for a completed item', () => {
+          expect(store.getNotificationHelperView('completedYesterday').isOverdue).toBeFalsy();
         });
       });
       describe('icon', () => {
