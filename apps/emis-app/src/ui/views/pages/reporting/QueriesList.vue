@@ -299,6 +299,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           name: this.$t('reporting.query.theme.CaseFileAuthenticationIds'),
           description: this.$t('reporting.query.theme.CaseFileAuthenticationIds.description'),
         },
+        {
+          id: ReportingTopic.PotentialDuplicates,
+          name: this.$t('reporting.query.theme.PotentialDuplicates'),
+          description: this.$t('reporting.query.theme.PotentialDuplicates.description'),
+        },
       ], this.searchTheme);
 
       return _orderBy(themes, ['name'], ['asc']);

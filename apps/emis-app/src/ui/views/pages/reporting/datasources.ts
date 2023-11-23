@@ -319,6 +319,43 @@ export const financialAssistancePaymentLineViewDs : IDatasourceBase = {
   ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentline.${x.dataField}` })),
 };
 
+export const potentialDuplicateViewDs : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'householdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'registrationNumber', dataType: 'string', visible: true },
+    { dataField: 'eventId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'eventNameEn', dataType: 'string', visible: false, lookupType: LookupType.eventEn },
+    { dataField: 'eventNameFr', dataType: 'string', visible: false, lookupType: LookupType.eventFr },
+    { dataField: 'memberFirstName', dataType: 'string', visible: false },
+    { dataField: 'memberLastName', dataType: 'string', visible: false },
+    { dataField: 'primaryBeneficiaryFirstName', dataType: 'string', visible: false },
+    { dataField: 'primaryBeneficiaryLastName', dataType: 'string', visible: false },
+    { dataField: 'homeAddressEn', dataType: 'string', visible: false },
+    { dataField: 'homeAddressFr', dataType: 'string', visible: false },
+    { dataField: 'homePhoneNumber', dataType: 'string', visible: false },
+    { dataField: 'mobilePhoneNumber', dataType: 'string', visible: false },
+    { dataField: 'alternatePhoneNumber', dataType: 'string', visible: false },
+    { dataField: 'householdStatusEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'HouseholdStatus' },
+    { dataField: 'householdStatusFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'HouseholdStatus' },
+    { dataField: 'potentialDuplicateHouseholdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'potentialDuplicateRegistrationNumber', dataType: 'string', visible: true },
+    { dataField: 'potentialDuplicateHomeAddressEn', dataType: 'string', visible: false },
+    { dataField: 'potentialDuplicateHomeAddressFr', dataType: 'string', visible: false },
+    { dataField: 'potentialDuplicatePrimaryBeneficiaryFirstName', dataType: 'string', visible: false },
+    { dataField: 'potentialDuplicatePrimaryBeneficiaryLastName', dataType: 'string', visible: false },
+    { dataField: 'potentialDuplicateHomePhoneNumber', dataType: 'string', visible: false },
+    { dataField: 'potentialDuplicateMobilePhoneNumber', dataType: 'string', visible: false },
+    { dataField: 'potentialDuplicateAlternatePhoneNumber', dataType: 'string', visible: false },
+    { dataField: 'potentialDuplicateHouseholdStatusEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'HouseholdStatus' },
+    { dataField: 'potentialDuplicateHouseholdStatusFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'HouseholdStatus' },
+    { dataField: 'duplicateReasonsEn', dataType: 'string', visible: false },
+    { dataField: 'duplicateReasonsFr', dataType: 'string', visible: false },
+    { dataField: 'duplicateStatusEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'DuplicateStatus' },
+    { dataField: 'duplicateStatusFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'DuplicateStatus' },
+  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.potentialDuplicateViewDs.${x.dataField}` })),
+};
+
 export const caseFileLifetimeActivitiesViewDS : IDatasourceBase = {
   columns: ([
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
@@ -525,6 +562,15 @@ export const financialAssistancePaymentLineDs : IDatasourceSettings = {
   ],
 };
 
+export const potentialDuplicateDs : IDatasourceSettings = {
+  url: 'common/data-providers/potential-duplicates',
+  reportingTopic: ReportingTopic.PotentialDuplicates,
+  key: { duplicateId: 'Guid', eventId: 'Guid' },
+  columns: [
+    ...(potentialDuplicateViewDs.columns.map((x) => ({ ...x, dataField: `potentialDuplicate.${x.dataField}` }))),
+  ],
+};
+
 export const usersInTeamsDs : IDatasourceSettings = {
   url: 'common/data-providers/users-in-teams',
   reportingTopic: ReportingTopic.UsersInTeams,
@@ -588,4 +634,5 @@ export const datasources = [
   latestCaseFileActivitiesDs,
   caseNotesDs,
   caseFileAuthenticationIdsDs,
+  potentialDuplicateDs,
 ];

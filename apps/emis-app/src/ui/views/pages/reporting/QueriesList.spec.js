@@ -244,6 +244,11 @@ describe('QueriesList.vue', () => {
             description: 'reporting.query.theme.PaymentLine.description',
           },
           {
+            id: ReportingTopic.PotentialDuplicates,
+            name: 'reporting.query.theme.PotentialDuplicates',
+            description: 'reporting.query.theme.PotentialDuplicates.description',
+          },
+          {
             id: ReportingTopic.Referrals,
             name: 'reporting.query.theme.Referrals',
             description: 'reporting.query.theme.Referrals.description',

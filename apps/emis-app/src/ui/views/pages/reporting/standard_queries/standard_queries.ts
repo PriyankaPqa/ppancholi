@@ -30,6 +30,8 @@ import { UserAccessListEMISL6En, UserAccessListEMISL6Fr } from './UserAccessList
 
 import { DataCorrectionAuthenticationOtherL6En, DataCorrectionAuthenticationOtherL6Fr } from './DataCorrectionAuthenticationOtherL6';
 import { DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr } from './DataCorrectionContactInformationL6';
+import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDuplicatesL6';
+
 
 import { AllPbiReports } from './PowerBiEmbedded';
 
@@ -182,4 +184,5 @@ export const AllReports : IQuery[] = [
   UserAccessListEMISL6En, UserAccessListEMISL6Fr,
   DataCorrectionAuthenticationOtherL6En, DataCorrectionAuthenticationOtherL6Fr,
   DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr,
+  PotentialDuplicatesL6En, PotentialDuplicatesL6Fr,
 ];
