@@ -369,6 +369,9 @@ export default Vue.extend({
                 // Add the access token to the request headers
                 e.headers = { ...e.headers, Authorization: `Bearer ${accessToken}` };
               }
+              // give a 1 hour timeout on the FE - BE timeout is smaller anyways (like 2 minutes...)
+              // so the BE is driving the show
+              e.timeout = 60 * 60000;
           },
         }),
         select,
