@@ -6,7 +6,7 @@ import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureInvoicePaymentLine } from '../../../fixtures/financial-assistance';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
-import { paymentLineGeneralCanSteps } from './canSteps';
+import { PaymentLineCanStepsParams, paymentLineGeneralCanSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -59,12 +59,13 @@ describe('#TC209# - Create Invoice Payment Line', { tags: ['@financial-assistanc
           });
         });
         it('should successfully create Invoice Payment Line', function () {
-          paymentLineGeneralCanSteps({
+          const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
             paymentLineData: fixtureInvoicePaymentLine(),
             groupTitle: 'Invoice',
-          });
+          };
+          paymentLineGeneralCanSteps(canStepsParamData);
         });
       });
     }

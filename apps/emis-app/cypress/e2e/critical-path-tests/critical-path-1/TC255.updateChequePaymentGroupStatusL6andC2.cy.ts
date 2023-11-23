@@ -5,7 +5,7 @@ import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
 import { updatePaymentGroupStatusTo } from './canSteps';
 
 const canRoles = [
@@ -51,8 +51,14 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            // eslint-disable-next-line
-            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Cancelled, EPaymentModalities.Cheque);
+            const addSubmitUpdateFaPaymentParamData: AddSubmitUpdateFaPaymentParams = {
+              accessTokenL6,
+              event: this.event,
+              tableId: this.table.id,
+              paymentStatus: PaymentStatus.Cancelled,
+              paymentModalities: EPaymentModalities.Cheque,
+            };
+            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
             cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
             cy.login(roleName);
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
@@ -124,8 +130,14 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
   describe('Cannot roles', () => {
     before(() => {
       cy.then(async function () {
-        // eslint-disable-next-line
-        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Cancelled, EPaymentModalities.Cheque);
+        const addSubmitUpdateFaPaymentParamData: AddSubmitUpdateFaPaymentParams = {
+          accessTokenL6,
+          event: this.event,
+          tableId: this.table.id,
+          paymentStatus: PaymentStatus.Cancelled,
+          paymentModalities: EPaymentModalities.Cheque,
+        };
+        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
         cy.wrap(resultPrepareStateHouseholdFAPayment.caseFile.id).as('caseFileId');
         cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
       });

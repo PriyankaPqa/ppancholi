@@ -3,7 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
-import { GenerateFaCustomOptionsXlsxFileData, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
+import { GenerateFaCustomOptionsXlsxFileParams, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   createProgramWithTableWithItemAndSubItem,
@@ -52,7 +52,7 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
             );
             const resultCreateSearchHouseholds = await prepareStateCreateAndSearchHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
 
-            const generateFaCustomOptionsXlsxFileParamData: GenerateFaCustomOptionsXlsxFileData = {
+            const generateFaCustomOptionsXlsxFileParamData: GenerateFaCustomOptionsXlsxFileParams = {
               caseFiles: [resultCreateSearchHouseholds.caseFileCreated1, resultCreateSearchHouseholds.caseFileCreated2, resultCreateSearchHouseholds.caseFileCreated3],
               financialAssistanceTableId: resultCreateProgram.table.id,
               tableName: 'MassActionTable',

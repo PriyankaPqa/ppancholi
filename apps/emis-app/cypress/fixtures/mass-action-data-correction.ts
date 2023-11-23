@@ -1,4 +1,4 @@
-import { IXlsxTableColumnProperties, generateXlsxFile } from '@libs/cypress-lib/helpers';
+import { IXlsxTableColumnProperties, generateXlsxFile, removeSpecialCharacters } from '@libs/cypress-lib/helpers';
 import { faker } from '@faker-js/faker';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { IFinancialAssistanceMassActionTemplate, writeCSVContentToFile } from './mass-actions';
@@ -22,7 +22,7 @@ export const generateRandomFaDataCorrectionData = (faCorrectionData: GenerateRan
   FinancialAssistancePaymentGroupId: faCorrectionData.FinancialAssistancePaymentGroupId,
   PaymentModality: 'Cheque',
   PayeeType: 'Beneficiary',
-  PayeeName: faker.name.fullName(),
+  PayeeName: removeSpecialCharacters(faker.name.fullName()),
   PaymentStatus: 'InProgress',
   CancellationReason: null,
   FinancialAssistancePaymentLinesId: faCorrectionData.FinancialAssistancePaymentLinesId,
@@ -31,7 +31,7 @@ export const generateRandomFaDataCorrectionData = (faCorrectionData: GenerateRan
   Amount: 100,
   ActualAmount: null,
   RelatedNumber: null,
-  CareOf: faker.name.fullName(),
+  CareOf: removeSpecialCharacters(faker.name.fullName()),
   Country: 'CA',
   StreetAddress: faker.address.streetAddress(),
   UnitSuite: faker.datatype.number(1000),
@@ -127,8 +127,8 @@ export interface IIdentitySetDataCorrectionTemplate {
 
 export const generateRandomIdentitySetData = (personId:string, eTag: string): IIdentitySetDataCorrectionTemplate => ({
   PersonId: personId,
-  FirstName: faker.name.firstName(),
-  LastName: faker.name.lastName(),
+  FirstName: removeSpecialCharacters(faker.name.firstName()),
+  LastName: removeSpecialCharacters(faker.name.lastName()),
   MiddleName: null,
   GenderSpecifiedOther: null,
   ETag: eTag,
@@ -242,9 +242,15 @@ function extractXlsxColumnNamesFromFaDataCorrection(faCorrectionData: GenerateRa
   return columnNames;
 }
 
-// eslint-disable-next-line
-export const fixtureGenerateFaDataCorrectionXlsxFile = (faCorrectionData: GenerateRandomFaDataCorrectionParams, caseFiles: ICaseFileEntity[], tableName: string, fileName: string) => {
-  const columns = extractXlsxColumnNamesFromFaDataCorrection(faCorrectionData);
-  const rows = generateXlsxFaDataCorrectionRowsData(faCorrectionData, caseFiles);
-  return generateXlsxFile(columns, rows, tableName, fileName);
+export interface GenerateFaDataCorrectionXlsxFileParams {
+  faCorrectionData: GenerateRandomFaDataCorrectionParams,
+  caseFiles: ICaseFileEntity[],
+  tableName: string,
+  fileName: string
+}
+
+export const fixtureGenerateFaDataCorrectionXlsxFile = (params: GenerateFaDataCorrectionXlsxFileParams) => {
+  const columns = extractXlsxColumnNamesFromFaDataCorrection(params.faCorrectionData);
+  const rows = generateXlsxFaDataCorrectionRowsData(params.faCorrectionData, params.caseFiles);
+  return generateXlsxFile(columns, rows, params.tableName, params.fileName);
 };

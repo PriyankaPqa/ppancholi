@@ -6,7 +6,7 @@ import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
-import { GenerateFaCustomOptionsXlsxFileData, fixtureBaseMassAction, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
+import { GenerateFaCustomOptionsXlsxFileParams, fixtureBaseMassAction, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
 import { NewMassFinancialAssistancePage } from '../../../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 
 const canRoles = [
@@ -63,7 +63,7 @@ describe('#TC1829# - Pre-process a Financial Assistance custom file', { tags: ['
         });
         // eslint-disable-next-line max-statements
         it('should successfully pre-process a financial assistance custom file', function () {
-          const generateFaCustomOptionsXlsxFileParamData: GenerateFaCustomOptionsXlsxFileData = {
+          const generateFaCustomOptionsXlsxFileParamData: GenerateFaCustomOptionsXlsxFileParams = {
             caseFiles: [this.caseFile1, this.caseFile2, this.caseFile3],
             financialAssistanceTableId: this.faTable.id,
             tableName: 'MassActionTable',

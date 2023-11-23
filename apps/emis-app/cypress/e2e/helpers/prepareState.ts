@@ -18,7 +18,8 @@ import { mockSetCaseFileStatusRequest } from '@libs/cypress-lib/mocks/casefiles/
 import {
   mockCreateMassFinancialAssistanceXlsxFileRequest,
   mockCreateMassFinancialAssistanceRequest,
-  mockCreateMassFinancialAssistanceUploadCsvFileRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+  mockCreateMassFinancialAssistanceUploadCsvFileRequest,
+  MockCreateMassActionFaUploadCsvFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -37,6 +38,59 @@ export interface MassActionFinancialAssistanceXlsxFileParams {
   massAction: string,
   generatedFaXlsxFileData: Blob,
   massActionType?: number
+}
+
+export interface CreateFATableParams {
+  provider: IProvider,
+  eventId: string,
+  programId: string,
+  amountType:EFinancialAmountModes
+}
+
+export interface CasefileAssessmentParams {
+  provider: IProvider,
+  assessmentResponseId: string,
+  casefileId: string,
+  assessmentFormId: string,
+  answeredQuestionsHistory?:IAnsweredQuestion[]
+}
+
+export interface CreateMassFinancialAssistanceFilteredListParams {
+  accessToken: string,
+  event:IEventEntity,
+  tableId: string,
+  programId: string
+}
+
+export interface AddFinancialAssistancePaymentParams {
+  provider: IProvider,
+  modality: EPaymentModalities,
+  caseFileId: string,
+  financialAssistanceTableId: string
+}
+
+export interface UpdateFinancialAssistancePaymentParams {
+  provider: IProvider,
+  entityId: string,
+  paymentGroupId: string,
+  status: PaymentStatus
+}
+
+export interface AddSubmitUpdateFaPaymentParams {
+  accessTokenL6: string,
+  event:IEventEntity,
+  tableId:string,
+  paymentStatus:PaymentStatus,
+  paymentModalities: EPaymentModalities
+}
+
+export interface MassActionFinancialAssistanceUploadFileParams {
+  accessToken: string,
+  event:IEventEntity,
+  tableId: string,
+  programId: string,
+  householdQuantity: number,
+  filePath: string
 }
 
 /**
@@ -80,9 +134,11 @@ export const createProgram = async (provider: IProvider, eventId: string) => {
  * @param programId
  * @param amountType
  */
-export const createFATable = async (provider: IProvider, eventId: string, programId: string, amountType:EFinancialAmountModes) => {
-  const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest(amountType, { eventId, programId });
-  const table = await provider.financialAssistanceTables.createFinancialAssistanceTable(mockCreateFinancialAssistanceTable);
+export const createFATable = async (params: CreateFATableParams) => {
+  const eventId = params.eventId;
+  const programId = params.programId;
+  const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest(params.amountType, { eventId, programId });
+  const table = await params.provider.financialAssistanceTables.createFinancialAssistanceTable(mockCreateFinancialAssistanceTable);
   return table;
 };
 
@@ -152,7 +208,13 @@ export const setHouseholdStatus = async (provider: IProvider, householdId: strin
  */
 export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType:EFinancialAmountModes) => {
   const { program, mockCreateProgram } = await createProgram(provider, eventId);
-  const table = await createFATable(provider, eventId, program.id, amountType);
+  const createFaTableParamData: CreateFATableParams = {
+    provider,
+    eventId,
+    programId: program.id,
+    amountType,
+  };
+  const table = await createFATable(createFaTableParamData);
   return { program, mockCreateProgram, table };
 };
 
@@ -186,9 +248,9 @@ export const addAssessmentToCasefile = async (provider: IProvider, casefileId: s
  * @param casefileId
  * @param assessmentFormId
  */
-export const partiallyCompleteCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
-  const mockPartialSaveAssessmentAnsweredQuestions = mockPartialSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
-  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockPartialSaveAssessmentAnsweredQuestions);
+export const partiallyCompleteCasefileAssessment = async (params: CasefileAssessmentParams) => {
+  const mockPartialSaveAssessmentAnsweredQuestions = mockPartialSaveAssessmentAnsweredQuestionsRequest(params.assessmentResponseId, params.casefileId, params.assessmentFormId);
+  await params.provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockPartialSaveAssessmentAnsweredQuestions);
 };
 
 /**
@@ -198,10 +260,10 @@ export const partiallyCompleteCasefileAssessment = async (provider: IProvider, a
  * @param casefileId
  * @param assessmentFormId
  */
-export const completeAndSubmitCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
-  const mockSaveAssessmentAnsweredQuestions = mockSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
-  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockSaveAssessmentAnsweredQuestions);
-  const submitAssessmentResponse = await provider.assessmentResponses.completeSurveyByBeneficiary(mockSaveAssessmentAnsweredQuestions);
+export const completeAndSubmitCasefileAssessment = async (params: CasefileAssessmentParams) => {
+  const mockSaveAssessmentAnsweredQuestions = mockSaveAssessmentAnsweredQuestionsRequest(params.assessmentResponseId, params.casefileId, params.assessmentFormId);
+  await params.provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockSaveAssessmentAnsweredQuestions);
+  const submitAssessmentResponse = await params.provider.assessmentResponses.completeSurveyByBeneficiary(mockSaveAssessmentAnsweredQuestions);
   return submitAssessmentResponse;
 };
 
@@ -212,10 +274,10 @@ export const completeAndSubmitCasefileAssessment = async (provider: IProvider, a
  * @param casefileId
  * @param assessmentFormId
  */
-export const completeAndSubmitCasefileAssessmentByCrcUser = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
-  const mockSaveAssessmentAnsweredQuestions = mockSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
-  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockSaveAssessmentAnsweredQuestions);
-  const submitAssessmentResponse = await provider.assessmentResponses.completeSurvey(mockSaveAssessmentAnsweredQuestions);
+export const completeAndSubmitCasefileAssessmentByCrcUser = async (params: CasefileAssessmentParams) => {
+  const mockSaveAssessmentAnsweredQuestions = mockSaveAssessmentAnsweredQuestionsRequest(params.assessmentResponseId, params.casefileId, params.assessmentFormId);
+  await params.provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockSaveAssessmentAnsweredQuestions);
+  const submitAssessmentResponse = await params.provider.assessmentResponses.completeSurvey(mockSaveAssessmentAnsweredQuestions);
   return submitAssessmentResponse;
 };
 
@@ -226,10 +288,10 @@ export const completeAndSubmitCasefileAssessmentByCrcUser = async (provider: IPr
  * @param casefileId
  * @param assessmentFormId
  */
-// eslint-disable-next-line
-export const editCompletedCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string, answeredQuestionsHistory:IAnsweredQuestion[]) => {
-  const mockEditAssessmentAnsweredQuestions = mockEditAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId, answeredQuestionsHistory);
-  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockEditAssessmentAnsweredQuestions);
+export const editCompletedCasefileAssessment = async (params: CasefileAssessmentParams) => {
+  // eslint-disable-next-line
+  const mockEditAssessmentAnsweredQuestions = mockEditAssessmentAnsweredQuestionsRequest(params.assessmentResponseId, params.casefileId, params.assessmentFormId, params.answeredQuestionsHistory);
+  await params.provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockEditAssessmentAnsweredQuestions);
   return mockEditAssessmentAnsweredQuestions;
 };
 
@@ -341,14 +403,14 @@ export const searchCaseFilesRecursively = async (provider: IProvider, caseFiles:
  * @param tableId
  * @param programId
  */
-// eslint-disable-next-line
-export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: string, event:IEventEntity, tableId: string, programId: string) => {
-  const provider = useProvider(accessToken);
-  const responseCreateHousehold = await createHousehold(provider, event);
-  const eventId = event.id;
-  const caseFileId = responseCreateHousehold.registrationResponse.caseFile.id;
-  await searchCasefileAndWait(provider, caseFileId);
-  const mockCreateMassFinancialAssistance = mockCreateMassFinancialAssistanceRequest(event, { eventId, tableId, programId });
+export const prepareStateHouseholdMassFinancialAssistance = async (params: CreateMassFinancialAssistanceFilteredListParams) => {
+  const provider = useProvider(params.accessToken);
+  const responseCreateHousehold = await createHousehold(provider, params.event);
+  const eventId = params.event.id;
+  const tableId = params.tableId;
+  const programId = params.programId;
+  await searchCasefileAndWait(provider, responseCreateHousehold.registrationResponse.caseFile.id);
+  const mockCreateMassFinancialAssistance = mockCreateMassFinancialAssistanceRequest(params.event, { eventId, tableId, programId });
   const responseMassFinancialAssistance = await provider.massActions.create('financial-assistance-from-list', mockCreateMassFinancialAssistance);
   return { responseMassFinancialAssistance, responseCreateHousehold };
 };
@@ -360,9 +422,11 @@ export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: 
  * @param caseFileId
  * @param financialAssistanceTableId
  */
-export const addFinancialAssistancePayment = async (provider: IProvider, modality: EPaymentModalities, caseFileId: string, financialAssistanceTableId: string) => {
-  const mockFinancialAssistancePayment = mockFinancialAssistancePaymentRequest(modality, { caseFileId, financialAssistanceTableId });
-  const createdFinancialAssistancePayment = await provider.financialAssistancePaymentsService.addFinancialAssistancePayment(mockFinancialAssistancePayment);
+export const addFinancialAssistancePayment = async (params: AddFinancialAssistancePaymentParams) => {
+  const caseFileId = params.caseFileId;
+  const financialAssistanceTableId = params.financialAssistanceTableId;
+  const mockFinancialAssistancePayment = mockFinancialAssistancePaymentRequest(params.modality, { caseFileId, financialAssistanceTableId });
+  const createdFinancialAssistancePayment = await params.provider.financialAssistancePaymentsService.addFinancialAssistancePayment(mockFinancialAssistancePayment);
   return createdFinancialAssistancePayment;
 };
 
@@ -410,9 +474,11 @@ export const submitFinancialAssistancePayment = async (provider: IProvider, fina
  * @param paymentGroupId
  * @param status
  */
-export const updateFinancialAssistancePayment = async (provider: IProvider, entityId: string, paymentGroupId: string, status: PaymentStatus) => {
-  const mockUpdatePayment = mockUpdatePaymentRequest(status, { entityId, paymentGroupId });
-  const updatedFinancialAssistancePayment = await provider.financialAssistancePaymentsService.updatePaymentStatus(mockUpdatePayment);
+export const updateFinancialAssistancePayment = async (params: UpdateFinancialAssistancePaymentParams) => {
+  const entityId = params.entityId;
+  const paymentGroupId = params.paymentGroupId;
+  const mockUpdatePayment = mockUpdatePaymentRequest(params.status, { entityId, paymentGroupId });
+  const updatedFinancialAssistancePayment = await params.provider.financialAssistancePaymentsService.updatePaymentStatus(mockUpdatePayment);
   return updatedFinancialAssistancePayment;
 };
 
@@ -441,13 +507,25 @@ export const prepareStateEventTeamProgramTableWithItemSubItem = async (accessTok
  * @param paymentModalities
  */
 // eslint-disable-next-line
-export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (accessTokenL6: string, event:IEventEntity, tableId:string, paymentStatus:PaymentStatus, paymentModalities: EPaymentModalities) => {
-  const resultPrepareStateHousehold = await prepareStateHousehold(accessTokenL6, event);
+export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (params: AddSubmitUpdateFaPaymentParams) => {
+  const resultPrepareStateHousehold = await prepareStateHousehold(params.accessTokenL6, params.event);
   const caseFile = resultPrepareStateHousehold.registrationResponse.caseFile;
   const provider = resultPrepareStateHousehold.provider;
-  const createdFinancialAssistancePayment = await addFinancialAssistancePayment(provider, paymentModalities, caseFile.id, tableId);
+  const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+    provider,
+    modality: params.paymentModalities,
+    caseFileId: caseFile.id,
+    financialAssistanceTableId: params.tableId,
+  };
+  const createdFinancialAssistancePayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
   const submittedFinancialAssistancePayment = await submitFinancialAssistancePayment(provider, createdFinancialAssistancePayment.id);
-  await updateFinancialAssistancePayment(provider, submittedFinancialAssistancePayment.id, submittedFinancialAssistancePayment.groups[0].id, paymentStatus);
+  const updateFinancialAssistancePaymentParamData: UpdateFinancialAssistancePaymentParams = {
+    provider,
+    entityId: submittedFinancialAssistancePayment.id,
+    paymentGroupId: submittedFinancialAssistancePayment.groups[0].id,
+    status: params.paymentStatus,
+  };
+  await updateFinancialAssistancePayment(updateFinancialAssistancePaymentParamData);
   return { caseFile, submittedFinancialAssistancePayment };
 };
 
@@ -489,15 +567,21 @@ export const prepareStateMassActionFinancialAssistanceXlsxFile = async (params: 
  * @param householdQuantity
  * @param filePath
  */
-// eslint-disable-next-line
-export const prepareStateMassActionFinancialAssistanceUploadFile = async (accessToken: string, event:IEventEntity, tableId: string, programId: string, householdQuantity: number, filePath: string) => {
-  const responseCreateHouseholds = await prepareStateMultipleHouseholds(accessToken, event, householdQuantity);
+export const prepareStateMassActionFinancialAssistanceUploadFile = async (params: MassActionFinancialAssistanceUploadFileParams) => {
+  const responseCreateHouseholds = await prepareStateMultipleHouseholds(params.accessToken, params.event, params.householdQuantity);
   const caseFileCreated1 = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile;
   const caseFileCreated2 = responseCreateHouseholds.householdsCreated[1].registrationResponse.caseFile;
   const caseFileCreated3 = responseCreateHouseholds.householdsCreated[2].registrationResponse.caseFile;
   await searchCaseFilesRecursively(responseCreateHouseholds.provider, [caseFileCreated1, caseFileCreated2, caseFileCreated3]);
-  const generatedFaCsvData = fixtureGenerateFaCsvFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], tableId, filePath);
-  const mockCreateMassFinancialAssistanceUploadCsvFile = mockCreateMassFinancialAssistanceUploadCsvFileRequest(event.id, tableId, programId, generatedFaCsvData);
+  const generatedFaCsvData = fixtureGenerateFaCsvFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], params.tableId, params.filePath);
+
+  const mockRequestParamData: MockCreateMassActionFaUploadCsvFileRequestParams = {
+    eventId: params.event.id,
+    tableId: params.tableId,
+    programId: params.programId,
+    fileContents: generatedFaCsvData,
+  };
+  const mockCreateMassFinancialAssistanceUploadCsvFile = mockCreateMassFinancialAssistanceUploadCsvFileRequest(mockRequestParamData);
   // eslint-disable-next-line
   const responseMassFinancialAssistance = await responseCreateHouseholds.provider.cypress.massAction.createWithFile('financial-assistance', mockCreateMassFinancialAssistanceUploadCsvFile);
   return { responseMassFinancialAssistance, responseCreateHouseholds };

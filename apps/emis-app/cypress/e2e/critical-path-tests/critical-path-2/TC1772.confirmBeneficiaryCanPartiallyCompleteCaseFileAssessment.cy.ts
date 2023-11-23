@@ -5,7 +5,8 @@ import {
   prepareStateHousehold,
   createAndUpdateAssessment,
   addAssessmentToCasefile,
-  partiallyCompleteCasefileAssessment } from '../../helpers/prepareState';
+  partiallyCompleteCasefileAssessment,
+  CasefileAssessmentParams } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { verifyPartiallyCompletedCaseFileAssessment } from './canSteps';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
@@ -61,8 +62,14 @@ describe('#TC1772# - Confirm that the Beneficiary can partially complete a Case 
         });
         it('should successfully partially complete a Case File Assessment', function () {
           const assessmentsListPage = new AssessmentsListPage();
-          // eslint-disable-next-line
-          partiallyCompleteCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //partially respond to assessment as a beneficiary
+
+          const casefileAssessmentParamData: CasefileAssessmentParams = {
+            provider: this.householdCreated.provider,
+            assessmentResponseId: this.casefileAssessment.id,
+            casefileId: this.householdCreated.registrationResponse.caseFile.id,
+            assessmentFormId: this.assessmentFormId,
+          };
+          partiallyCompleteCasefileAssessment(casefileAssessmentParamData); // partially respond to assessment as a beneficiary
           assessmentsListPage.refreshUntilFilledAssessmentUpdated();
           verifyPartiallyCompletedCaseFileAssessment(roleName);
         });

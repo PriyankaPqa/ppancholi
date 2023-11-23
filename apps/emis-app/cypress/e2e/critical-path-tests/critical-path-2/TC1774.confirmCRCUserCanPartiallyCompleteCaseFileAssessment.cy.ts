@@ -5,7 +5,8 @@ import {
   prepareStateHousehold,
   createAndUpdateAssessment,
   addAssessmentToCasefile,
-  partiallyCompleteCasefileAssessment } from '../../helpers/prepareState';
+  partiallyCompleteCasefileAssessment,
+  CasefileAssessmentParams } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 import { verifyPartiallyCompletedCaseFileAssessment, verifyPendingCaseFileAssessment } from './canSteps';
@@ -67,8 +68,13 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
           const assessmentsListPage = new AssessmentsListPage();
           verifyPendingCaseFileAssessment(roleName, this.assessmentName);
           cy.wrap(1).then(() => {
-            // eslint-disable-next-line
-            partiallyCompleteCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //partially respond to assessment as a crc user
+            const casefileAssessmentParamData: CasefileAssessmentParams = {
+              provider: this.householdCreated.provider,
+              assessmentResponseId: this.casefileAssessment.id,
+              casefileId: this.householdCreated.registrationResponse.caseFile.id,
+              assessmentFormId: this.assessmentFormId,
+            };
+            partiallyCompleteCasefileAssessment(casefileAssessmentParamData); // partially respond to assessment as a crc user
           });
           assessmentsListPage.refreshUntilFilledAssessmentUpdated();
           verifyPartiallyCompletedCaseFileAssessment(roleName);

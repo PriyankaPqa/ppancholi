@@ -6,7 +6,7 @@ import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureETransferPaymentLine } from '../../../fixtures/financial-assistance';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
-import { paymentLineGeneralCanSteps } from './canSteps';
+import { PaymentLineCanStepsParams, paymentLineGeneralCanSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -59,12 +59,13 @@ describe('#TC207# - Create e-transfer payment line', { tags: ['@financial-assist
           });
         });
         it('should successfully create E-Transfer Payment Line', function () {
-          paymentLineGeneralCanSteps({
+          const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
             paymentLineData: fixtureETransferPaymentLine(),
             groupTitle: 'E-Transfer',
-          });
+          };
+          paymentLineGeneralCanSteps(canStepsParamData);
         });
       });
     }

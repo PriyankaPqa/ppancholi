@@ -1,13 +1,16 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { IEventEntity } from '@libs/entities-lib/event';
-import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
-import { IProgramEntity } from '@libs/entities-lib/program';
+import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHouseholdMassFinancialAssistance } from '../../helpers/prepareState';
+import {
+  CreateMassFinancialAssistanceFilteredListParams,
+  createEventAndTeam,
+  createProgramWithTableWithItemAndSubItem,
+  prepareStateHouseholdMassFinancialAssistance,
+} from '../../helpers/prepareState';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 
@@ -30,12 +33,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-let event = null as IEventEntity;
 let accessTokenL6 = '';
-let table = null as IFinancialAssistanceTableEntity;
-let program = null as IProgramEntity;
-let casefileId = '';
-let massFinancialAssistanceName = '';
 
 // There is a chance for this test to be flaky because of indexes and search. If that's the case, it's better to use test it with a CSV instead of filtered list
 describe(
@@ -56,17 +54,21 @@ describe(
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             const { provider, team } = resultPrepareStateEvent;
-            event = resultPrepareStateEvent.event;
-            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
-            table = resultCreateProgram.table;
-            program = resultCreateProgram.program;
-            const resultMassFinancialAssistance = await prepareStateHouseholdMassFinancialAssistance(accessTokenL6, event, table.id, program.id);
-            massFinancialAssistanceName = resultMassFinancialAssistance.responseMassFinancialAssistance.name;
-            casefileId = resultMassFinancialAssistance.responseCreateHousehold.registrationResponse.caseFile.id;
-            cy.login(roleName);
-            cy.goTo(`mass-actions/financial-assistance/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
+            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
+
+            const completeAndSubmitCasefileAssessmentParamData: CreateMassFinancialAssistanceFilteredListParams = {
+              accessToken: accessTokenL6,
+              event: resultPrepareStateEvent.event,
+              tableId: resultCreateProgram.table.id,
+              programId: resultCreateProgram.program.id,
+            };
+            const resultMassFinancialAssistance = await prepareStateHouseholdMassFinancialAssistance(completeAndSubmitCasefileAssessmentParamData);
             cy.wrap(provider).as('provider');
             cy.wrap(team).as('teamCreated');
+            cy.wrap(resultMassFinancialAssistance.responseMassFinancialAssistance.name).as('massFinancialAssistanceName');
+            cy.wrap(resultMassFinancialAssistance.responseCreateHousehold.registrationResponse.caseFile.id).as('casefileId');
+            cy.login(roleName);
+            cy.goTo(`mass-actions/financial-assistance/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
           });
         });
         afterEach(function () {
@@ -74,7 +76,7 @@ describe(
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process a financial assistance filtered list', () => {
+        it('should successfully process a financial assistance filtered list', function () {
           const massFinancialAssistanceDetailsPage = new MassFinancialAssistanceDetailsPage();
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
@@ -88,16 +90,16 @@ describe(
             if (quantity === '0') {
               massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
             }
-          cy.goTo(`casefile/${casefileId}`);
+          cy.goTo(`casefile/${this.casefileId}`);
 
           const caseFileDetailsPage = new CaseFileDetailsPage();
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Financial assistance payment - Approved - Final');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', massFinancialAssistanceName).and('string', '$80.00');
+          caseFileDetailsPage.getCaseFileActivityBodies().should('string', this.massFinancialAssistanceName).and('string', '$80.00');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // initialising to avoid dependency cycle
           financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
-          financialAssistanceHomePage.getFAPaymentName().should('eq', massFinancialAssistanceName);
+          financialAssistanceHomePage.getFAPaymentName().should('eq', this.massFinancialAssistanceName);
           financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');

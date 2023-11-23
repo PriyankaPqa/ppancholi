@@ -5,7 +5,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureGiftCardPaymentLine } from '../../../fixtures/financial-assistance';
-import { paymentLineGeneralCanSteps } from './canSteps';
+import { PaymentLineCanStepsParams, paymentLineGeneralCanSteps } from './canSteps';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 
 const canRoles = [
@@ -59,12 +59,13 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
           });
         });
         it('should successfully create Gift Card Payment Line', function () {
-          paymentLineGeneralCanSteps({
+          const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
             paymentLineData: fixtureGiftCardPaymentLine(),
             groupTitle: 'Gift card',
-          });
+          };
+          paymentLineGeneralCanSteps(canStepsParamData);
         });
       });
     }

@@ -5,6 +5,8 @@ import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/u
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { getToday } from '@libs/cypress-lib/helpers';
 import {
+  AddFinancialAssistancePaymentParams,
+  CreateFATableParams,
   addFinancialAssistancePayment,
   createApprovalTable,
   createCustomProgram,
@@ -42,7 +44,14 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
       accessTokenL6 = tokenResponse.access_token;
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, [...allRoles, UserRoles.level3, UserRoles.level4]);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
-      const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
+
+      const createFaTableParamData: CreateFATableParams = {
+        provider: resultPrepareStateEvent.provider,
+        eventId: resultPrepareStateEvent.event.id,
+        programId: resultProgram.id,
+        amountType: EFinancialAmountModes.Fixed,
+      };
+      const resultFATable = await createFATable(createFaTableParamData);
       await createApprovalTable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
       cy.wrap(resultPrepareStateEvent.provider).as('provider');
       cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -62,8 +71,14 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
         beforeEach(() => {
           cy.then(async function () {
             const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            // eslint-disable-next-line
-            const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.tableId);
+
+            const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+              provider: resultHousehold.provider,
+              modality: EPaymentModalities.Voucher,
+              caseFileId: resultHousehold.registrationResponse.caseFile.id,
+              financialAssistanceTableId: this.tableId,
+            };
+            const resultFAPayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
             cy.wrap(resultFAPayment.id).as('FAPaymentId');
             cy.wrap(resultFAPayment.name).as('FAPaymentName');
             cy.login(roleName);
@@ -115,8 +130,14 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
       before(() => {
         cy.then(async function () {
           const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-          // eslint-disable-next-line
-          const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.tableId);
+
+          const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+            provider: resultHousehold.provider,
+            modality: EPaymentModalities.Voucher,
+            caseFileId: resultHousehold.registrationResponse.caseFile.id,
+            financialAssistanceTableId: this.tableId,
+          };
+          const resultFAPayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
           cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('casefileId');
           cy.wrap(resultFAPayment.id).as('FAPaymentId');
         });

@@ -5,7 +5,8 @@ import {
   prepareStateHousehold,
   createAndUpdateAssessment,
   addAssessmentToCasefile,
-  completeAndSubmitCasefileAssessment } from '../../helpers/prepareState';
+  completeAndSubmitCasefileAssessment,
+  CasefileAssessmentParams } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { verifyFullyCompletedCaseFileAssessment } from './canSteps';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
@@ -62,8 +63,14 @@ describe('#TC1773# - Confirm that Beneficiary can complete a Case File Assessmen
         });
         it('should successfully complete a Case File Assessment', function () {
           const assessmentsListPage = new AssessmentsListPage();
-          // eslint-disable-next-line
-          completeAndSubmitCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //completely respond to assessment as a beneficiary and click on submit
+
+          const casefileAssessmentParamData: CasefileAssessmentParams = {
+            provider: this.householdCreated.provider,
+            assessmentResponseId: this.casefileAssessment.id,
+            casefileId: this.householdCreated.registrationResponse.caseFile.id,
+            assessmentFormId: this.assessmentFormId,
+          };
+          completeAndSubmitCasefileAssessment(casefileAssessmentParamData); // completely respond to assessment as a beneficiary and click on submit
           assessmentsListPage.refreshUntilFilledAssessmentUpdated();
           verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
         });

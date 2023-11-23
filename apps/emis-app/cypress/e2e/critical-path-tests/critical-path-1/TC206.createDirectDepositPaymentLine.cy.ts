@@ -6,7 +6,7 @@ import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureDirectDepositPaymentLine } from '../../../fixtures/financial-assistance';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
-import { paymentLineGeneralCanSteps } from './canSteps';
+import { PaymentLineCanStepsParams, paymentLineGeneralCanSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -59,12 +59,13 @@ describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-a
           });
         });
         it('should successfully create Direct Deposit Payment Line', function () {
-          paymentLineGeneralCanSteps({
+          const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
             paymentLineData: fixtureDirectDepositPaymentLine(),
             groupTitle: 'Direct deposit',
-          });
+          };
+          paymentLineGeneralCanSteps(canStepsParamData);
         });
       });
     }

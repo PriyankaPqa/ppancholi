@@ -82,3 +82,7 @@ export async function generateXlsxFile(columns: IXlsxTableColumnProperties[], ro
   saveAs(new Blob([buffer]), fileName + fileExtension);
   return new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 }
+
+export function removeSpecialCharacters(inputString: string) {
+  return inputString.replace(/[^a-zA-Z0-9]/g, '');
+}

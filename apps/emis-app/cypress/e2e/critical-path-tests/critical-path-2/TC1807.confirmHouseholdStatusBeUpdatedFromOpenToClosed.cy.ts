@@ -5,7 +5,7 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, prepareStateHousehold, setCasefileStatus, setHouseholdStatus } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
-import { updateHouseholdStatusCanSteps } from './canSteps';
+import { UpdateHouseholdStatusCanStepsParams, updateHouseholdStatusCanSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -27,7 +27,6 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const rationale = 'This is my reasoning for updating the status to Closed';
 
 describe('#TC1807# - Confirm that Household Status can be updated from Open to Closed (L2+)', { tags: ['@household'] }, () => {
   before(() => {
@@ -64,16 +63,17 @@ describe('#TC1807# - Confirm that Household Status can be updated from Open to C
           householdProfilePage.getHouseholdStatus().should('eq', 'Open');
           householdProfilePage.selectStatusToClosed();
 
-          updateHouseholdStatusCanSteps({
+          const canStepsParamData: Partial<UpdateHouseholdStatusCanStepsParams> = {
             actionUpdateHousehold: 'Close',
             updatedStatus: 'Closed',
             userActionInformation: 'Closed',
-            rationale,
+            rationale: 'This is my reasoning for updating the status to Closed',
             roleName,
             statusEnum: HouseholdStatus.Closed,
             casefileId: this.casefileId,
             casefileActivityBody: 'Open to Closed',
-          });
+          };
+          updateHouseholdStatusCanSteps(canStepsParamData);
         });
       });
     }

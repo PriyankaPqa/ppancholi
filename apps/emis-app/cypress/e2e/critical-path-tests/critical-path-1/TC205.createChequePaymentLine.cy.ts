@@ -7,7 +7,7 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureChequePaymentLine } from '../../../fixtures/financial-assistance';
 import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
-import { paymentLineChequeCanSteps } from './canSteps';
+import { PaymentLineCanStepsParams, paymentLineChequeCanSteps } from './canSteps';
 
 let caseFileCreated = null as ICaseFileEntity;
 let accessTokenL6 = '';
@@ -61,13 +61,14 @@ describe('#TC205# - Create Cheque Payment Line', { tags: ['@financial-assistance
           });
         });
         it('should successfully create Cheque Payment Line', function () {
-          paymentLineChequeCanSteps({
+          const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
             paymentLineData: fixtureChequePaymentLine(),
             groupTitle: 'Cheque',
             household: householdCreated,
-          });
+          };
+          paymentLineChequeCanSteps(canStepsParamData);
         });
       });
     }

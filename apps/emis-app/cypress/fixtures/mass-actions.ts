@@ -1,10 +1,17 @@
-import { generateXlsxFile, generateCSVContent, IXlsxTableColumnProperties, formatDate, getCurrentDateString, getRandomNumber } from '@libs/cypress-lib/helpers';
+import {
+  generateXlsxFile,
+  generateCSVContent,
+  IXlsxTableColumnProperties,
+  formatDate,
+  getCurrentDateString,
+  getRandomNumber,
+  removeSpecialCharacters } from '@libs/cypress-lib/helpers';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 
-export interface GenerateFaCustomOptionsXlsxFileData {
+export interface GenerateFaCustomOptionsXlsxFileParams {
   caseFiles: ICaseFileEntity[],
   financialAssistanceTableId:string,
   tableName: string,
@@ -67,8 +74,8 @@ export const generateRandomFaCustomFileUserData = (caseFile:ICaseFileEntity, Fin
   Amount: 80,
   RelatedNumber: null,
   PayeeType: 'Beneficiary',
-  PayeeName: faker.name.fullName(),
-  CareOf: faker.name.fullName(),
+  PayeeName: removeSpecialCharacters(faker.name.fullName()),
+  CareOf: removeSpecialCharacters(faker.name.fullName()),
   Country: 'CA',
   StreetAddress: faker.address.streetAddress(),
   UnitSuite: faker.datatype.number(1000),
@@ -113,7 +120,7 @@ function extractXlsxColumnNamesFromUserData(caseFile: ICaseFileEntity, Financial
   return columnNames;
 }
 
-export const fixtureGenerateFaCustomOptionsXlsxFile = (params: GenerateFaCustomOptionsXlsxFileData) => {
+export const fixtureGenerateFaCustomOptionsXlsxFile = (params: GenerateFaCustomOptionsXlsxFileParams) => {
   const columns = extractXlsxColumnNamesFromUserData(params.caseFiles[0], params.financialAssistanceTableId);
   const rows = generateXlsxRowsData(params.caseFiles, params.financialAssistanceTableId);
   return generateXlsxFile(columns, rows, params.tableName, params.fileName);

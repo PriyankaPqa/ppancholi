@@ -12,52 +12,52 @@ export interface PaymentLineCanStepsParams {
   household: ICreateHouseholdRequest,
 }
 
-export interface paymentGroupStatusUpdateParam {
+export interface PaymentGroupStatusUpdateParam {
   paymentStatus: string,
   paymentModality: string,
 }
 
-const addPaymentLineCanSteps = ({ faTable, retries, paymentLineData, groupTitle }: Partial<PaymentLineCanStepsParams>) => {
+const addPaymentLineCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
   const addFinancialAssistancePage = new AddFinancialAssistancePage();
-  addFinancialAssistancePage.selectTable(faTable.name.translation.en);
-  addFinancialAssistancePage.fillDescription(`Financial Description ${groupTitle} Payment Line - retries - ${retries}`);
+  addFinancialAssistancePage.selectTable(params.faTable.name.translation.en);
+  addFinancialAssistancePage.fillDescription(`Financial Description ${params.groupTitle} Payment Line - retries - ${params.retries}`);
 
   const addNewPaymentLinePage = addFinancialAssistancePage.addPaymentLine();
-  addNewPaymentLinePage.fill(paymentLineData);
-  if (groupTitle === 'Gift card' || groupTitle === 'Invoice' || groupTitle === 'Voucher') {
+  addNewPaymentLinePage.fill(params.paymentLineData);
+  if (params.groupTitle === 'Gift card' || params.groupTitle === 'Invoice' || params.groupTitle === 'Voucher') {
     addNewPaymentLinePage.getRelatedNumberField().should('be.visible');
-    addNewPaymentLinePage.fillRelatedNumber(paymentLineData.relatedNumber);
-    addNewPaymentLinePage.fillAmount(paymentLineData.amount);
+    addNewPaymentLinePage.fillRelatedNumber(params.paymentLineData.relatedNumber);
+    addNewPaymentLinePage.fillAmount(params.paymentLineData.amount);
   }
   addNewPaymentLinePage.addNewPaymentLine();
 };
 
-const addPaymentLineChequeCanSteps = ({ faTable, retries, paymentLineData, household }: Partial<PaymentLineCanStepsParams>) => {
+const addPaymentLineChequeCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
   const addFinancialAssistancePage = new AddFinancialAssistancePage();
   addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
   addFinancialAssistancePage.getCreateButton().should('not.be.enabled');
-  addFinancialAssistancePage.selectTable(faTable.name.translation.en);
-  addFinancialAssistancePage.fillDescription(`Financial Description Cheque Payment Line - retries - ${retries}`);
+  addFinancialAssistancePage.selectTable(params.faTable.name.translation.en);
+  addFinancialAssistancePage.fillDescription(`Financial Description Cheque Payment Line - retries - ${params.retries}`);
   addFinancialAssistancePage.getAddPaymentLineButton().click();
 
   const addNewPaymentLinePage = addFinancialAssistancePage.addPaymentLine();
-  addNewPaymentLinePage.fill(paymentLineData);
-  addNewPaymentLinePage.getAmountValue().should('eq', paymentLineData.amount);
+  addNewPaymentLinePage.fill(params.paymentLineData);
+  addNewPaymentLinePage.getAmountValue().should('eq', params.paymentLineData.amount);
   // eslint-disable-next-line
-  addNewPaymentLinePage.getPayeeNameValue().should('eq', `${household.primaryBeneficiary.identitySet.firstName} ${household.primaryBeneficiary.identitySet.lastName}`);
+  addNewPaymentLinePage.getPayeeNameValue().should('eq', `${params.household.primaryBeneficiary.identitySet.firstName} ${params.household.primaryBeneficiary.identitySet.lastName}`);
   addNewPaymentLinePage.getPayeeTypeElement().contains('Individual').should('be.visible');
-  addNewPaymentLinePage.getStreetValue().should('eq', household.homeAddress.streetAddress);
-  addNewPaymentLinePage.getUnitSuiteValue().should('eq', household.homeAddress.unitSuite);
-  addNewPaymentLinePage.getCityValue().should('eq', household.homeAddress.city);
+  addNewPaymentLinePage.getStreetValue().should('eq', params.household.homeAddress.streetAddress);
+  addNewPaymentLinePage.getUnitSuiteValue().should('eq', params.household.homeAddress.unitSuite);
+  addNewPaymentLinePage.getCityValue().should('eq', params.household.homeAddress.city);
   addNewPaymentLinePage.getProvinceElement().contains('Alberta').should('be.visible');
-  addNewPaymentLinePage.getPostalCodeValue().should('eq', household.homeAddress.postalCode);
+  addNewPaymentLinePage.getPostalCodeValue().should('eq', params.household.homeAddress.postalCode);
   addNewPaymentLinePage.addNewPaymentLine();
 };
 
-const financialAssistanceCanSteps = ({ paymentLineData, groupTitle }: Partial<PaymentLineCanStepsParams>) => {
+const financialAssistanceCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
   const addFinancialAssistancePage = new AddFinancialAssistancePage();
   addFinancialAssistancePage.getSectionTitleElement().contains('Payment line(s)').should('be.visible');
-  addFinancialAssistancePage.getPaymentLineGroupTitle().should('string', groupTitle);
+  addFinancialAssistancePage.getPaymentLineGroupTitle().should('string', params.groupTitle);
   addFinancialAssistancePage.getItemEditButton().should('be.visible');
   addFinancialAssistancePage.getItemDeleteButton().should('be.visible');
   addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
@@ -69,28 +69,28 @@ const financialAssistanceCanSteps = ({ paymentLineData, groupTitle }: Partial<Pa
   addFinancialAssistancePage.getPaymentLineGroupStatus().should('eq', 'Payment must be submitted');
   addFinancialAssistancePage.getPaymentEditButton().should('be.visible');
   addFinancialAssistancePage.getPaymentDeleteButton().should('be.visible');
-  addFinancialAssistancePage.getPaymentLineItemTitle().should('eq', `${paymentLineData.item} > ${paymentLineData.subItem}`);
-  if (groupTitle === 'Gift card' || groupTitle === 'Invoice' || groupTitle === 'Voucher') {
-    addFinancialAssistancePage.getRelatedNumber().should('string', paymentLineData.relatedNumber);
+  addFinancialAssistancePage.getPaymentLineItemTitle().should('eq', `${params.paymentLineData.item} > ${params.paymentLineData.subItem}`);
+  if (params.groupTitle === 'Gift card' || params.groupTitle === 'Invoice' || params.groupTitle === 'Voucher') {
+    addFinancialAssistancePage.getRelatedNumber().should('string', params.paymentLineData.relatedNumber);
   }
   addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
   addFinancialAssistancePage.getSubmitAssistanceButton().should('be.enabled');
   addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
 };
 
-export const paymentLineGeneralCanSteps = ({ faTable, retries, paymentLineData, groupTitle }: Partial<PaymentLineCanStepsParams>) => {
+export const paymentLineGeneralCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
   cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
-  addPaymentLineCanSteps({ faTable, retries, paymentLineData, groupTitle });
-  financialAssistanceCanSteps({ paymentLineData, groupTitle });
+  addPaymentLineCanSteps(params);
+  financialAssistanceCanSteps(params);
 };
 
-export const paymentLineChequeCanSteps = ({ faTable, retries, paymentLineData, groupTitle, household }: Partial<PaymentLineCanStepsParams>) => {
+export const paymentLineChequeCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
   cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
-  addPaymentLineChequeCanSteps({ faTable, retries, paymentLineData, household });
-  financialAssistanceCanSteps({ paymentLineData, groupTitle });
+  addPaymentLineChequeCanSteps(params);
+  financialAssistanceCanSteps(params);
 };
 
-export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: Partial<paymentGroupStatusUpdateParam>) => {
+export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: Partial<PaymentGroupStatusUpdateParam>) => {
   const financialAssistanceDetailsPage = new FinancialAssistanceDetailsPage();
   financialAssistanceDetailsPage.selectPaymentLineStatus(paymentStatus);
   if (paymentStatus === 'Cancelled') {

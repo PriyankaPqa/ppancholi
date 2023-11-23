@@ -6,7 +6,8 @@ import {
   prepareStateHousehold,
   createAndUpdateAssessment,
   addAssessmentToCasefile,
-  completeAndSubmitCasefileAssessmentByCrcUser } from '../../helpers/prepareState';
+  completeAndSubmitCasefileAssessmentByCrcUser,
+  CasefileAssessmentParams } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileAssessmentDetailsPage } from '../../../pages/assessments/caseFileAssessmentDetails.page';
 
@@ -36,8 +37,14 @@ describe('#TC1738# - Confirm that responses to a completed Case File Assessment 
       const resultAssessment = await createAndUpdateAssessment(provider, event.id, program.id);
       const resultHousehold = await prepareStateHousehold(accessTokenL6, event);
       const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, resultAssessment.id);
-      // eslint-disable-next-line
-      const resultSubmittedAssessmentResponse = await completeAndSubmitCasefileAssessmentByCrcUser(resultHousehold.provider, resultCreateAssessmentResponse.id, resultHousehold.registrationResponse.caseFile.id, resultAssessment.id); //complete and submit assessment
+
+      const completeAndSubmitCasefileAssessmentParamData: CasefileAssessmentParams = {
+        provider: resultHousehold.provider,
+        assessmentResponseId: resultCreateAssessmentResponse.id,
+        casefileId: resultHousehold.registrationResponse.caseFile.id,
+        assessmentFormId: resultAssessment.id,
+      };
+      const resultSubmittedAssessmentResponse = await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');

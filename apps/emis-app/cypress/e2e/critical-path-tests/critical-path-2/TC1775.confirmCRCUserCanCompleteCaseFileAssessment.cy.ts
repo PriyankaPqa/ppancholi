@@ -5,7 +5,8 @@ import {
   prepareStateHousehold,
   createAndUpdateAssessment,
   addAssessmentToCasefile,
-  completeAndSubmitCasefileAssessment } from '../../helpers/prepareState';
+  completeAndSubmitCasefileAssessment,
+  CasefileAssessmentParams } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 import { verifyFullyCompletedCaseFileAssessment, verifyPendingCaseFileAssessment } from './canSteps';
@@ -67,8 +68,13 @@ describe('#TC1775# - Confirm that the CRC User can complete a Case File Assessme
           const assessmentsListPage = new AssessmentsListPage();
           verifyPendingCaseFileAssessment(roleName, this.assessmentName);
           cy.wrap(1).then(() => {
-            // eslint-disable-next-line
-            completeAndSubmitCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); // completely respond to assessment as a CRC user and click on submit
+            const casefileAssessmentParamData: CasefileAssessmentParams = {
+              provider: this.householdCreated.provider,
+              assessmentResponseId: this.casefileAssessment.id,
+              casefileId: this.householdCreated.registrationResponse.caseFile.id,
+              assessmentFormId: this.assessmentFormId,
+            };
+            completeAndSubmitCasefileAssessment(casefileAssessmentParamData); // completely respond to assessment as a CRC user and click on submit
           });
           assessmentsListPage.refreshUntilFilledAssessmentUpdated();
           verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);

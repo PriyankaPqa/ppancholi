@@ -4,8 +4,14 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold, addFinancialAssistancePayment } from '../../helpers/prepareState';
-import { submitPaymentTypeCanSteps } from '../../steps/submitPaymentTypeCanSteps';
+import {
+  createProgramWithTableWithItemAndSubItem,
+  createEventAndTeam,
+  prepareStateHousehold,
+  addFinancialAssistancePayment,
+  AddFinancialAssistancePaymentParams,
+} from '../../helpers/prepareState';
+import { SubmitPaymentTypeCanStepsParams, submitPaymentTypeCanSteps } from '../../steps/submitPaymentTypeCanSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -52,20 +58,27 @@ describe('#TC299# - Submit a Gift Card Payment', { tags: ['@financial-assistance
         beforeEach(() => {
           cy.then(async function () {
             const resultPrepareStateHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            // eslint-disable-next-line
-            const financialAssistancePayment = await addFinancialAssistancePayment(resultPrepareStateHousehold.provider, EPaymentModalities.GiftCard, resultPrepareStateHousehold.registrationResponse.caseFile.id, this.table.id);
+
+            const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+              provider: resultPrepareStateHousehold.provider,
+              modality: EPaymentModalities.GiftCard,
+              caseFileId: resultPrepareStateHousehold.registrationResponse.caseFile.id,
+              financialAssistanceTableId: this.table.id,
+            };
+            const financialAssistancePayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
             cy.wrap(financialAssistancePayment).as('financialAssistancePayment');
             cy.login(roleName);
             cy.goTo(`casefile/${resultPrepareStateHousehold.registrationResponse.caseFile.id}/financialAssistance`);
           });
         });
         it('should successfully submit a Gift Card Payment', function () {
-          submitPaymentTypeCanSteps({
+          const canStepsParamData: Partial<SubmitPaymentTypeCanStepsParams> = {
             financialAssistancePayment: this.financialAssistancePayment,
             paymentType: 'Gift card',
             roleName,
             paymentGroupStatus: 'Issued',
-          });
+          };
+          submitPaymentTypeCanSteps(canStepsParamData);
         });
       });
     }
@@ -74,8 +87,14 @@ describe('#TC299# - Submit a Gift Card Payment', { tags: ['@financial-assistance
     before(() => {
       cy.then(async function () {
         const resultPrepareStateHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-        // eslint-disable-next-line
-        const financialAssistancePayment = await addFinancialAssistancePayment(resultPrepareStateHousehold.provider, EPaymentModalities.GiftCard, resultPrepareStateHousehold.registrationResponse.caseFile.id, this.table.id);
+
+        const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+          provider: resultPrepareStateHousehold.provider,
+          modality: EPaymentModalities.GiftCard,
+          caseFileId: resultPrepareStateHousehold.registrationResponse.caseFile.id,
+          financialAssistanceTableId: this.table.id,
+        };
+        const financialAssistancePayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
         cy.wrap(resultPrepareStateHousehold.registrationResponse.caseFile.id).as('caseFileId');
         cy.wrap(resultPrepareStateHousehold.provider).as('provider');
         cy.wrap(financialAssistancePayment.id).as('financialAssistancePaymentId');

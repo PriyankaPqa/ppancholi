@@ -62,29 +62,28 @@ export const verifyFullyCompletedCaseFileAssessment = (roleName:string, assessme
   }
 };
 
-// eslint-disable-next-line
-export const updateHouseholdStatusCanSteps = ({ actionUpdateHousehold, updatedStatus, userActionInformation, rationale, roleName, statusEnum, casefileId, casefileActivityBody }: Partial<UpdateHouseholdStatusCanStepsParams>) => {
+export const updateHouseholdStatusCanSteps = (params: Partial<UpdateHouseholdStatusCanStepsParams>) => {
   const householdProfilePage = new HouseholdProfilePage();
-  householdProfilePage.getDialogTitle().contains(`${actionUpdateHousehold} household profile`).should('be.visible');
-  householdProfilePage.getDialogStatus().should('eq', updatedStatus);
-  householdProfilePage.getDialogUserInfo().should('string', `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`);
+  householdProfilePage.getDialogTitle().contains(`${params.actionUpdateHousehold} household profile`).should('be.visible');
+  householdProfilePage.getDialogStatus().should('eq', params.updatedStatus);
+  householdProfilePage.getDialogUserInfo().should('string', `${getUserName(params.roleName)} (${getUserRoleDescription(params.roleName)})`);
   householdProfilePage.getDialogRationaleElement().should('have.attr', 'label').and('have.string', 'Rationale *');
   householdProfilePage.getDialogCancelButton().should('be.visible');
   householdProfilePage.getDialogApplyButton().should('be.visible');
-  householdProfilePage.enterDialogRationale(rationale);
+  householdProfilePage.enterDialogRationale(params.rationale);
   householdProfilePage.getDialogApplyButton().click();
-  householdProfilePage.refreshUntilHouseholdStatusUpdatedTo(statusEnum);
-  householdProfilePage.getHouseholdStatusElement().contains(updatedStatus).should('be.visible');
-  householdProfilePage.refreshUntilUserActionInformationUpdatedWithStatus(userActionInformation.toLowerCase());
+  householdProfilePage.refreshUntilHouseholdStatusUpdatedTo(params.statusEnum);
+  householdProfilePage.getHouseholdStatusElement().contains(params.updatedStatus).should('be.visible');
+  householdProfilePage.refreshUntilUserActionInformationUpdatedWithStatus(params.userActionInformation.toLowerCase());
   // eslint-disable-next-line
-  householdProfilePage.getUserActionInformationElement().contains(`Household ${userActionInformation.toLowerCase()} by ${getUserName(roleName)} (${getUserRoleDescription(roleName)}) - ${getToday()}`).should('be.visible');
-  householdProfilePage.getUserRationaleElement().contains(rationale).should('be.visible');
+  householdProfilePage.getUserActionInformationElement().contains(`Household ${params.userActionInformation.toLowerCase()} by ${getUserName(params.roleName)} (${getUserRoleDescription(params.roleName)}) - ${getToday()}`).should('be.visible');
+  householdProfilePage.getUserRationaleElement().contains(params.rationale).should('be.visible');
 
-  cy.visit(`en/casefile/${casefileId}`);
+  cy.visit(`en/casefile/${params.casefileId}`);
   const caseFileDetailsPage = new CaseFileDetailsPage();
   caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Household status changed:');
-  caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-  caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+  caseFileDetailsPage.getUserName().should('eq', getUserName(params.roleName));
+  caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(params.roleName)})`);
   caseFileDetailsPage.getCaseFileActivityTitle(0).should('string', 'Modified household information');
-  caseFileDetailsPage.getCaseFileActivityBody(0).should('string', 'Household status changed:').and('string', casefileActivityBody).and('string', rationale);
+  caseFileDetailsPage.getCaseFileActivityBody(0).should('string', 'Household status changed:').and('string', params.casefileActivityBody).and('string', params.rationale);
 };

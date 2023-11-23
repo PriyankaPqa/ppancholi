@@ -10,12 +10,12 @@ export interface SubmitPaymentTypeCanStepsParams {
   paymentGroupStatus: string,
 }
 
-export const submitPaymentTypeCanSteps = ({ financialAssistancePayment, paymentType, roleName, paymentGroupStatus }: Partial<SubmitPaymentTypeCanStepsParams>) => {
+export const submitPaymentTypeCanSteps = (params: Partial<SubmitPaymentTypeCanStepsParams>) => {
   const financialAssistanceHomePage = new FinancialAssistanceHomePage();
   financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
   financialAssistanceHomePage.getApprovalStatus().should('eq', 'New');
 
-  const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(financialAssistancePayment.id);
+  const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(params.financialAssistancePayment.id);
   financialAssistanceDetailsPage.getSubmitAssistanceButton().should('be.enabled');
   financialAssistanceDetailsPage.getBackToFinancialAssistanceButton().should('be.enabled');
   financialAssistanceDetailsPage.getAddPaymentLineButton().should('be.enabled');
@@ -26,19 +26,19 @@ export const submitPaymentTypeCanSteps = ({ financialAssistancePayment, paymentT
   financialAssistanceDetailsPage.getDialogSubmitFinancialAssistanceButton().click();
   cy.contains('The financial assistance has been successfully submitted').should('be.visible');
   financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'Approved');
-  financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', paymentGroupStatus);
+  financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', params.paymentGroupStatus);
   financialAssistanceDetailsPage.goToFinancialAssistanceHomePage();
 
   financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
-  financialAssistanceHomePage.getFAPaymentNameById(financialAssistancePayment.id).should('eq', financialAssistancePayment.name);
+  financialAssistanceHomePage.getFAPaymentNameById(params.financialAssistancePayment.id).should('eq', params.financialAssistancePayment.name);
   financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
   financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
   financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
   financialAssistanceHomePage.getApprovalStatusHistoryIcon().should('be.visible');
   financialAssistanceHomePage.expandFAPayment();
-  financialAssistanceHomePage.getFAPaymentGroupTitle().should('string', paymentType);
+  financialAssistanceHomePage.getFAPaymentGroupTitle().should('string', params.paymentType);
   financialAssistanceHomePage.getFAPaymentGroupTotal().should('eq', '$80.00');
-  financialAssistanceHomePage.getFAPaymentPaymentStatus().should('eq', `Status: ${paymentGroupStatus}`);
+  financialAssistanceHomePage.getFAPaymentPaymentStatus().should('eq', `Status: ${params.paymentGroupStatus}`);
   financialAssistanceHomePage.getApprovalStatusHistory();
 
   financialAssistanceHomePage.getApprovalHistoryRationaleByIndex(0).should('eq', '-');
@@ -48,9 +48,9 @@ export const submitPaymentTypeCanSteps = ({ financialAssistancePayment, paymentT
   financialAssistanceHomePage.getDialogCancelApprovalStatusHistoryButton().click();
 
   const caseFileDetailsPage = financialAssistanceHomePage.goToCaseFileDetailsPage();
-  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${financialAssistancePayment.name}`);
-  caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-  caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${params.financialAssistancePayment.name}`);
+  caseFileDetailsPage.getUserName().should('eq', getUserName(params.roleName));
+  caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(params.roleName)})`);
   caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Financial assistance payment - Approved - Final');
-  caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${financialAssistancePayment.name}`).and('string', 'Amount: $80.00');
+  caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${params.financialAssistancePayment.name}`).and('string', 'Amount: $80.00');
 };

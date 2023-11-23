@@ -6,6 +6,7 @@ import { MassActionDataCorrectionType, MassActionRunStatus } from '@libs/entitie
 import { BaseDetailsMassAction } from 'cypress/pages/mass-action/base/baseDetailsMassAction';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
+  AddFinancialAssistancePaymentParams,
   MassActionFinancialAssistanceXlsxFileParams,
   addFinancialAssistancePayment,
   createEventAndTeam,
@@ -13,7 +14,11 @@ import {
   prepareStateHousehold,
   prepareStateMassActionFinancialAssistanceXlsxFile,
   submitFinancialAssistancePayment } from '../../helpers/prepareState';
-import { GenerateRandomFaDataCorrectionParams, fixtureGenerateFaDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import {
+  GenerateFaDataCorrectionXlsxFileParams,
+  GenerateRandomFaDataCorrectionParams,
+  fixtureGenerateFaDataCorrectionXlsxFile,
+} from '../../../fixtures/mass-action-data-correction';
 
 const canRoles = [
   UserRoles.level6,
@@ -50,14 +55,17 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
             // eslint-disable-next-line
             const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
             const responseCreateHousehold = await prepareStateHousehold(accessTokenL6, resultPrepareStateEvent.event);
-            const financialAssistancePayment = await addFinancialAssistancePayment(
-              responseCreateHousehold.provider,
-              EPaymentModalities.Cheque,
-              responseCreateHousehold.registrationResponse.caseFile.id,
-              resultCreateProgram.table.id,
-            );
+
+            const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+              provider: responseCreateHousehold.provider,
+              modality: EPaymentModalities.Cheque,
+              caseFileId: responseCreateHousehold.registrationResponse.caseFile.id,
+              financialAssistanceTableId: resultCreateProgram.table.id,
+            };
+            const financialAssistancePayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
             await submitFinancialAssistancePayment(responseCreateHousehold.provider, financialAssistancePayment.id);
             const getFinancialAssistancePayment = await responseCreateHousehold.provider.financialAssistancePaymentsService.get(financialAssistancePayment.id);
+
             const faCorrectionData: GenerateRandomFaDataCorrectionParams = {
               caseFile: responseCreateHousehold.registrationResponse.caseFile,
               FinancialAssistancePaymentId: financialAssistancePayment.id,
@@ -66,8 +74,13 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
               FinancialAssistancePaymentLinesId: financialAssistancePayment.groups[0].lines[0].id,
               ETag: getFinancialAssistancePayment.etag,
             };
-            // eslint-disable-next-line
-            const generatedDataCorrectionFileData = await fixtureGenerateFaDataCorrectionXlsxFile(faCorrectionData, [responseCreateHousehold.registrationResponse.caseFile], tableName, fileName);
+            const xlsxFileParamData: GenerateFaDataCorrectionXlsxFileParams = {
+              faCorrectionData,
+              caseFiles: [responseCreateHousehold.registrationResponse.caseFile],
+              tableName,
+              fileName,
+            };
+            const generatedDataCorrectionFileData = await fixtureGenerateFaDataCorrectionXlsxFile(xlsxFileParamData);
 
             const massActionFaDataCorrectionFileParamData: MassActionFinancialAssistanceXlsxFileParams = {
               provider: responseCreateHousehold.provider,
@@ -77,7 +90,6 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
               massActionType: MassActionDataCorrectionType.FinancialAssistance,
             };
             const responseMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceXlsxFile(massActionFaDataCorrectionFileParamData);
-
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');

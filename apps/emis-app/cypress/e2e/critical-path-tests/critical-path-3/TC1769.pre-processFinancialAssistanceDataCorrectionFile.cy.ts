@@ -4,12 +4,17 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
+  AddFinancialAssistancePaymentParams,
   addFinancialAssistancePayment,
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem,
   prepareStateHousehold,
   submitFinancialAssistancePayment } from '../../helpers/prepareState';
-import { GenerateRandomFaDataCorrectionParams, fixtureGenerateFaDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import {
+  GenerateFaDataCorrectionXlsxFileParams,
+  GenerateRandomFaDataCorrectionParams,
+  fixtureGenerateFaDataCorrectionXlsxFile,
+} from '../../../fixtures/mass-action-data-correction';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
 const canRoles = [
@@ -33,7 +38,6 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 1;
-const tableName = 'MassActionTable';
 const fileName = 'faDataCorrectionFile';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDropDown = 'Financial Assistance';
@@ -50,8 +54,14 @@ describe('#TC1769# - Pre-process a Financial Assistance data correction file', {
             // eslint-disable-next-line
             const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
             const resultHousehold = await prepareStateHousehold(accessTokenL6, resultPrepareStateEvent.event);
-            // eslint-disable-next-line
-            const addedFinancialAssistancePayment = await addFinancialAssistancePayment(resultPrepareStateEvent.provider, EPaymentModalities.Cheque, resultHousehold.registrationResponse.caseFile.id, resultCreateProgram.table.id);
+
+            const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+              provider: resultPrepareStateEvent.provider,
+              modality: EPaymentModalities.Cheque,
+              caseFileId: resultHousehold.registrationResponse.caseFile.id,
+              financialAssistanceTableId: resultCreateProgram.table.id,
+            };
+            const addedFinancialAssistancePayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
             await submitFinancialAssistancePayment(resultPrepareStateEvent.provider, addedFinancialAssistancePayment.id);
             const financialAssistancePayment = await resultPrepareStateEvent.provider.financialAssistancePaymentsService.get(addedFinancialAssistancePayment.id);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
@@ -83,7 +93,13 @@ describe('#TC1769# - Pre-process a Financial Assistance data correction file', {
             ETag: this.faPayment.etag,
           };
 
-          fixtureGenerateFaDataCorrectionXlsxFile(faCorrectionData, [this.caseFile], tableName, fileName);
+          const xlsxFileParamData: GenerateFaDataCorrectionXlsxFileParams = {
+            faCorrectionData,
+            caseFiles: [this.caseFile],
+            tableName: 'MassActionTable',
+            fileName,
+          };
+          fixtureGenerateFaDataCorrectionXlsxFile(xlsxFileParamData);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,

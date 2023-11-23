@@ -4,7 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { prepareStateHouseholdAddSubmitUpdateFAPayment, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
+import { prepareStateHouseholdAddSubmitUpdateFAPayment, prepareStateEventTeamProgramTableWithItemSubItem, AddSubmitUpdateFaPaymentParams } from '../../helpers/prepareState';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { updatePaymentGroupStatusTo } from './canSteps';
 
@@ -51,8 +51,14 @@ describe('#TC243# - Update Gift Card payment group Status from Issued to Cancell
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            // eslint-disable-next-line
-            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Issued, EPaymentModalities.GiftCard);
+            const addSubmitUpdateFaPaymentParamData: AddSubmitUpdateFaPaymentParams = {
+              accessTokenL6,
+              event: this.event,
+              tableId: this.table.id,
+              paymentStatus: PaymentStatus.Issued,
+              paymentModalities: EPaymentModalities.GiftCard,
+            };
+            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
             cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
             cy.login(roleName);
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
@@ -76,8 +82,14 @@ describe('#TC243# - Update Gift Card payment group Status from Issued to Cancell
   describe('Cannot roles', () => {
     before(() => {
       cy.then(async function () {
-        // eslint-disable-next-line
-        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Issued, EPaymentModalities.GiftCard);
+        const addSubmitUpdateFaPaymentParamData: AddSubmitUpdateFaPaymentParams = {
+          accessTokenL6,
+          event: this.event,
+          tableId: this.table.id,
+          paymentStatus: PaymentStatus.Issued,
+          paymentModalities: EPaymentModalities.GiftCard,
+        };
+        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
         cy.wrap(resultPrepareStateHouseholdFAPayment.caseFile.id).as('caseFileId');
         cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
       });

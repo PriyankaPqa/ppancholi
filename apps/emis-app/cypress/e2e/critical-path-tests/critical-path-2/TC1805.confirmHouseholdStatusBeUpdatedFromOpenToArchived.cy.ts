@@ -5,7 +5,7 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, prepareStateHousehold, setCasefileStatus, setHouseholdStatus } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
-import { updateHouseholdStatusCanSteps } from './canSteps';
+import { UpdateHouseholdStatusCanStepsParams, updateHouseholdStatusCanSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -27,7 +27,6 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const rationale = 'This is my reasoning for updating the status to Archived';
 
 describe('#TC1805# - Confirm that Household Status can be updated from Open to Archived (L2+)', { tags: ['@household'] }, () => {
   before(() => {
@@ -64,16 +63,17 @@ describe('#TC1805# - Confirm that Household Status can be updated from Open to A
           householdProfilePage.getHouseholdStatus().should('eq', 'Open');
           householdProfilePage.selectStatusToArchived();
 
-          updateHouseholdStatusCanSteps({
+          const canStepsParamData: Partial<UpdateHouseholdStatusCanStepsParams> = {
             actionUpdateHousehold: 'Archive',
             updatedStatus: 'Archived',
             userActionInformation: 'Archived',
-            rationale,
+            rationale: 'This is my reasoning for updating the status to Archived',
             roleName,
             statusEnum: HouseholdStatus.Archived,
             casefileId: this.casefileId,
             casefileActivityBody: 'Open to Archived',
-          });
+          };
+          updateHouseholdStatusCanSteps(canStepsParamData);
         });
       });
     }

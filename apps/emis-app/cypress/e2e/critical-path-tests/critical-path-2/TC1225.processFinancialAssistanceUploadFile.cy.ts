@@ -4,7 +4,12 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateMassActionFinancialAssistanceUploadFile } from '../../helpers/prepareState';
+import {
+  MassActionFinancialAssistanceUploadFileParams,
+  createEventAndTeam,
+  createProgramWithTableWithItemAndSubItem,
+  prepareStateMassActionFinancialAssistanceUploadFile,
+} from '../../helpers/prepareState';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
@@ -29,7 +34,6 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const filePath = 'cypress/downloads/faCustomFile.csv';
 const householdQuantity = 3;
 
 describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
@@ -42,8 +46,15 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             // eslint-disable-next-line
             const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
-            // eslint-disable-next-line
-            const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceUploadFile(accessTokenL6, resultPrepareStateEvent.event, resultCreateProgram.table.id, resultCreateProgram.program.id, householdQuantity, filePath);
+            const massActionFaUploadFileParamData: MassActionFinancialAssistanceUploadFileParams = {
+              accessToken: accessTokenL6,
+              event: resultPrepareStateEvent.event,
+              tableId: resultCreateProgram.table.id,
+              programId: resultCreateProgram.program.id,
+              householdQuantity,
+              filePath: 'cypress/downloads/faCustomFile.csv',
+            };
+            const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceUploadFile(massActionFaUploadFileParamData);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.wrap(resultMassFinancialAssistance.responseMassFinancialAssistance.name).as('massFinancialAssistanceName');

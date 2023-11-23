@@ -138,6 +138,7 @@ module.exports = {
         'max-statements': ['error', 40, {
           ignoreTopLevelFunctions: true,
         }],
+        'max-params': ['error', 3],
       },
     },
   ],

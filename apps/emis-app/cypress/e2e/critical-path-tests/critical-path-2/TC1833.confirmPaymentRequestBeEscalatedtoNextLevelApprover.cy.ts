@@ -5,6 +5,8 @@ import { getUserId, getUserName, getUserRoleDescription } from '@libs/cypress-li
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { getToday } from '@libs/cypress-lib/helpers';
 import {
+  AddFinancialAssistancePaymentParams,
+  CreateFATableParams,
   addFinancialAssistancePayment,
   createApprovalTableWithMultipleApprovalGroup,
   createCustomProgram,
@@ -43,7 +45,14 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
       accessTokenL6 = tokenResponse.access_token;
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, [...canRoles, ...cannotRoles]);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
-      const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
+
+      const createFaTableParamData: CreateFATableParams = {
+        provider: resultPrepareStateEvent.provider,
+        eventId: resultPrepareStateEvent.event.id,
+        programId: resultProgram.id,
+        amountType: EFinancialAmountModes.Fixed,
+      };
+      const resultFATable = await createFATable(createFaTableParamData);
       await createApprovalTableWithMultipleApprovalGroup(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
       cy.wrap(resultPrepareStateEvent.provider).as('provider');
       cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -62,8 +71,14 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
         beforeEach(() => {
           cy.then(async function () {
             const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            // eslint-disable-next-line
-            const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.faTableId);
+
+            const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+              provider: resultHousehold.provider,
+              modality: EPaymentModalities.Voucher,
+              caseFileId: resultHousehold.registrationResponse.caseFile.id,
+              financialAssistanceTableId: this.faTableId,
+            };
+            const resultFAPayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
             await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId(roleName));
             cy.wrap(resultFAPayment.id).as('FAPaymentId');
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('CaseFileNumber');
@@ -124,8 +139,13 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
     before(() => {
       cy.then(async function () {
         const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-        // eslint-disable-next-line
-        const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.faTableId);
+        const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
+          provider: resultHousehold.provider,
+          modality: EPaymentModalities.Voucher,
+          caseFileId: resultHousehold.registrationResponse.caseFile.id,
+          financialAssistanceTableId: this.faTableId,
+        };
+        const resultFAPayment = await addFinancialAssistancePayment(addFinancialAssistancePaymentParamData);
         await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId('level3'));
         cy.wrap(resultFAPayment.id).as('FAPaymentId');
       });

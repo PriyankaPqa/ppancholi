@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { getCurrentDateString } from '@libs/cypress-lib/helpers';
+import { getCurrentDateString, removeSpecialCharacters } from '@libs/cypress-lib/helpers';
 import { IAddMembersPersonalInfoFields } from '@libs/cypress-lib/pages/registration/addHouseholdMembers.page';
 import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
 import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 
-const firstName = (retries: number) => `${faker.name.firstName()} ${getCurrentDateString()}- retires${retries}`;
-const lastName = faker.name.lastName();
+const firstName = (retries: number) => `${removeSpecialCharacters(faker.name.firstName())} ${getCurrentDateString()}- retires${retries}`;
+const lastName = removeSpecialCharacters(faker.name.lastName());
 
 export const fixturePrimaryMember = (retries: number) : IPersonalInfoFields => ({
   firstName: firstName(retries),
@@ -27,7 +27,7 @@ export const fixtureAddressData = () : IAddressPageFields => ({
 });
 
 export const fixtureAdditionalMemberPersonalData = (retries: number) : IAddMembersPersonalInfoFields => ({
-  firstName: `${faker.name.firstName()} - ${getCurrentDateString()} - retries${retries}`,
+  firstName: `${removeSpecialCharacters(faker.name.firstName())} - ${getCurrentDateString()} - retries${retries}`,
   lastName: faker.name.lastName(),
   gender: 'Female',
   dateOfBirth: faker.date.birthdate({ min: 16, max: 100, mode: 'age' }),
