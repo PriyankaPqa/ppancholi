@@ -100,7 +100,7 @@ export default Vue.extend({
   methods: {
 
     async loadReport() {
-      this.token = await this.$services.queries.getPowerBiTokenForReport(this.queryId);
+      this.token = await this.$services.queries.getPowerBiTokenForReport(this.queryId + this.$i18n.locale);
       this.embedPowerBIReport();
     },
 

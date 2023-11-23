@@ -48,6 +48,6 @@ export class QueriesService extends DomainBaseService<IQuery, uuid> implements I
   }
 
   async getPowerBiTokenForReport(reportName: string): Promise<IPowerBiTokenDetails> {
-      return this.http.get(`${this.http.baseUrl}/common/power-bi/embed-info/${reportName}`);
+    return this.http.get(`${this.http.baseUrl}/common/power-bi/embed-info/${reportName}`);
   }
 }
