@@ -22,7 +22,6 @@ import { ReferralsL5En, ReferralsL5Fr } from './ReferralsL5';
 import { CaseNotesL5En, CaseNotesL5Fr } from './CaseNotesL5';
 import { PaymentLinesL5En, PaymentLinesL5Fr } from './PaymentLinesL5';
 import { PaymentsL5En, PaymentsL5Fr } from './PaymentsL5';
-import { AuthenticationL5En, AuthenticationL5Fr } from './AuthenticationL5';
 import { UsersL5En, UsersL5Fr } from './UsersL5';
 import { CaseFileStatusAndActionL6En, CaseFileStatusAndActionL6Fr } from './CaseFileStatusAndActionL6';
 import { UserListL6En, UserListL6Fr } from './UserListL6';
@@ -34,8 +33,34 @@ import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDup
 
 
 import { AllPbiReports } from './PowerBiEmbedded';
+import { CaseNotesL6En, CaseNotesL6Fr } from './CaseNotesL6';
 
 /* clones of other queries available for different levels */
+
+export const PaymentsL6En = {
+  ...PaymentsL5En,
+  id: 'PaymentsL6',
+  queryType: QueryType.StandardL6en,
+} as IQuery;
+
+export const PaymentsL6Fr = {
+  ...PaymentsL5Fr,
+  id: 'PaymentsL6',
+  queryType: QueryType.StandardL6fr,
+} as IQuery;
+
+export const IDAuthenticationL5En = {
+  ...IDAuthenticationL6En,
+  id: 'AuthenticationL5',
+  queryType: QueryType.StandardL5en,
+} as IQuery;
+
+export const IDAuthenticationL5Fr = {
+  ...IDAuthenticationL6Fr,
+  id: 'AuthenticationL5',
+  queryType: QueryType.StandardL5fr,
+} as IQuery;
+
 export const ReferralsL4En = {
   ...ReferralsL5En,
   id: 'ReferralsL4',
@@ -148,6 +173,7 @@ export const PaymentApprovalsIMFr = {
 
 export const AllReports : IQuery[] = [
   ...AllPbiReports,
+  PaymentsL6En, PaymentsL6Fr,
   RegistrationByBeneficiaryL6En, RegistrationByBeneficiaryL6Fr, 
   RegistrationByCaseFileL6En, RegistrationByCaseFileL6Fr, 
   DataCorrectionIdentitySetL6En, DataCorrectionIdentitySetL6Fr,
@@ -168,11 +194,12 @@ export const AllReports : IQuery[] = [
   RegistrationByCaseFileL4En, RegistrationByCaseFileL4Fr,
   ReferralsL5En, ReferralsL5Fr,
   ReferralsL4En, ReferralsL4Fr,
+  CaseNotesL6En, CaseNotesL6Fr,
   CaseNotesL5En, CaseNotesL5Fr,
   CaseNotesL4En, CaseNotesL4Fr,
   PaymentLinesL5En, PaymentLinesL5Fr,
   PaymentsL5En, PaymentsL5Fr,
-  AuthenticationL5En, AuthenticationL5Fr,
+  IDAuthenticationL5En, IDAuthenticationL5Fr,
   UsersL5En, UsersL5Fr,
   RegistrationByBeneficiaryIMEn, RegistrationByBeneficiaryIMFr,
   RegistrationByCaseFileIMEn, RegistrationByCaseFileIMFr,
