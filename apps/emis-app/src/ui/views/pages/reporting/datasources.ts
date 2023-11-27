@@ -12,20 +12,22 @@ export enum LookupType {
   programNameFr,
 }
 
-export interface ColumnLookupBase extends Column<any, any> {
+export interface ExtendedColumn extends Column<any, any> {
   lookupType?: LookupType;
   lookupKey?: string;
   lookupSubItems?: boolean;
+
+  asUtcDate?: boolean; // whether we want to show the date field in the original UTC or as local.  most dates should be local.
 }
 
 export interface IDatasourceBase {
-  columns: ColumnLookupBase[];
+  columns: ExtendedColumn[];
 }
 
 export interface IDatasourceSettings extends IDatasourceBase {
   url: string,
   reportingTopic: ReportingTopic;
-  columns: ColumnLookupBase[]
+  columns: ExtendedColumn[]
   key: Record<string, 'String' | 'Int32' | 'Int64' | 'Guid' | 'Boolean' | 'Single' | 'Decimal'>;
 }
 
@@ -41,7 +43,7 @@ export const caseNoteViewDs : IDatasourceBase = {
     { dataField: 'userUpdatedByName', dataType: 'string', visible: false },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.casenote.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.casenote.${x.dataField}` })),
 };
 
 export const caseFileActivitiesViewDs : IDatasourceBase = {
@@ -54,7 +56,7 @@ export const caseFileActivitiesViewDs : IDatasourceBase = {
     { dataField: 'userName', dataType: 'string', visible: false },
     { dataField: 'userRoleNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'Role', lookupSubItems: true },
     { dataField: 'userRoleNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'Role', lookupSubItems: true },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.casefileactivities.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.casefileactivities.${x.dataField}` })),
 };
 
 export const latestCaseFileActivitiesViewDs : IDatasourceBase = {
@@ -68,7 +70,7 @@ export const latestCaseFileActivitiesViewDs : IDatasourceBase = {
     { dataField: 'userRoleNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'Role', lookupSubItems: true },
     { dataField: 'userRoleNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'Role', lookupSubItems: true },
     { dataField: 'daysSinceActivity', dataType: 'int', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.latestcasefileactivities.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.latestcasefileactivities.${x.dataField}` })),
 };
 
 export const caseFileViewDs : IDatasourceBase = {
@@ -117,7 +119,7 @@ export const caseFileViewDs : IDatasourceBase = {
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
     { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.casefile.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.casefile.${x.dataField}` })),
 };
 
 export const householdViewDs : IDatasourceBase = {
@@ -147,7 +149,7 @@ export const householdViewDs : IDatasourceBase = {
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
     { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.household.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.household.${x.dataField}` })),
 };
 
 export const personViewDs : IDatasourceBase = {
@@ -160,7 +162,7 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'middleName', dataType: 'string', visible: false },
     { dataField: 'preferredName', dataType: 'string', visible: false },
     { dataField: 'fullName', dataType: 'string', visible: false },
-    { dataField: 'dateOfBirth', dataType: 'date', visible: false },
+    { dataField: 'dateOfBirth', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'age', dataType: 'number', visible: false },
     { dataField: 'genderNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'Gender' },
     { dataField: 'genderNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'Gender' },
@@ -197,8 +199,8 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'address_PostalCode', dataType: 'string', visible: false },
     { dataField: 'address_Latitude', dataType: 'number', visible: false },
     { dataField: 'address_Longitude', dataType: 'number', visible: false },
-    { dataField: 'address_CheckIn', dataType: 'datetime', visible: false },
-    { dataField: 'address_CheckOut', dataType: 'datetime', visible: false },
+    { dataField: 'address_CheckIn', dataType: 'date', visible: false, asUtcDate: true },
+    { dataField: 'address_CheckOut', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'address_CrcProvided', dataType: 'boolean', visible: false },
     { dataField: 'address_EventId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
@@ -206,7 +208,7 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
     { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
 };
 
 export const programsPerCaseFileCsvViewDS : IDatasourceBase = {
@@ -214,7 +216,7 @@ export const programsPerCaseFileCsvViewDS : IDatasourceBase = {
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
     { dataField: 'programNameEn', dataType: 'string', visible: false, lookupType: LookupType.programNameEn },
     { dataField: 'programNameFr', dataType: 'string', visible: false, lookupType: LookupType.programNameFr },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.programsPerCaseFileCsv.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.programsPerCaseFileCsv.${x.dataField}` })),
 };
 
 export const caseFileAuthenticationIdsCsvViewDS : IDatasourceBase = {
@@ -222,7 +224,7 @@ export const caseFileAuthenticationIdsCsvViewDS : IDatasourceBase = {
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
     { dataField: 'csvAuthenticationIdNameEn', dataType: 'string', visible: false },
     { dataField: 'csvAuthenticationIdNameFr', dataType: 'string', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.caseFileAuthenticationIdsCsv.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.caseFileAuthenticationIdsCsv.${x.dataField}` })),
 };
 
 export const caseFileTagsCsvViewDS : IDatasourceBase = {
@@ -230,7 +232,7 @@ export const caseFileTagsCsvViewDS : IDatasourceBase = {
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
     { dataField: 'csvTagNameEn', dataType: 'string', visible: false },
     { dataField: 'csvTagNameFr', dataType: 'string', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.caseFileTagsCsv.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.caseFileTagsCsv.${x.dataField}` })),
 };
 
 export const financialAssistancePaymentViewDs : IDatasourceBase = {
@@ -253,7 +255,7 @@ export const financialAssistancePaymentViewDs : IDatasourceBase = {
     { dataField: 'submittedToName', dataType: 'string', visible: false },
     { dataField: 'initialSubmitterName', dataType: 'string', visible: false },
     { dataField: 'submissionStartedDate', dataType: 'datetime', visible: false },
-    { dataField: 'revisedCreateDate', dataType: 'datetime', visible: false },
+    { dataField: 'revisedCreateDate', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
@@ -263,7 +265,7 @@ export const financialAssistancePaymentViewDs : IDatasourceBase = {
     { dataField: 'lastUpdatedByRoleNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'Role', lookupSubItems: true },
     { dataField: 'lastUpdatedByRoleNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'Role', lookupSubItems: true },
     { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.financialassistancepayment.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.financialassistancepayment.${x.dataField}` })),
 };
 
 export const financialAssistancePaymentGroupViewDs : IDatasourceBase = {
@@ -285,7 +287,7 @@ export const financialAssistancePaymentGroupViewDs : IDatasourceBase = {
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentgroup.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentgroup.${x.dataField}` })),
 };
 
 export const financialAssistancePaymentLineViewDs : IDatasourceBase = {
@@ -316,7 +318,7 @@ export const financialAssistancePaymentLineViewDs : IDatasourceBase = {
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentline.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentline.${x.dataField}` })),
 };
 
 export const potentialDuplicateViewDs : IDatasourceBase = {
@@ -353,7 +355,7 @@ export const potentialDuplicateViewDs : IDatasourceBase = {
     { dataField: 'duplicateReasonsFr', dataType: 'string', visible: false },
     { dataField: 'duplicateStatusEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'DuplicateStatus' },
     { dataField: 'duplicateStatusFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'DuplicateStatus' },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.potentialDuplicateViewDs.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.potentialDuplicateViewDs.${x.dataField}` })),
 };
 
 export const caseFileLifetimeActivitiesViewDS : IDatasourceBase = {
@@ -363,7 +365,7 @@ export const caseFileLifetimeActivitiesViewDS : IDatasourceBase = {
     { dataField: 'inactiveDate', dataType: 'datetime', visible: false },
     { dataField: 'closedDate', dataType: 'datetime', visible: false },
     { dataField: 'archivedDate', dataType: 'datetime', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.caseFileLifetimeActivitiesViewDS.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.caseFileLifetimeActivitiesViewDS.${x.dataField}` })),
 };
 
 export const householdActivitiesViewDS : IDatasourceBase = {
@@ -384,7 +386,7 @@ export const householdActivitiesViewDS : IDatasourceBase = {
     { dataField: 'newDetailsFr', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
     { dataField: 'previousDetailsJson', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
     { dataField: 'newDetailsJson', dataType: 'string', visible: false, cssClass: 'wrapped-column' },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.householdActivitiesViewDS.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.householdActivitiesViewDS.${x.dataField}` })),
 };
 
 export const financialAssistanceSummaryByPaymentGroupViewDS : IDatasourceBase = {
@@ -394,7 +396,7 @@ export const financialAssistanceSummaryByPaymentGroupViewDS : IDatasourceBase = 
     { dataField: 'totalAmountCommitted', dataType: 'number', visible: false },
     { dataField: 'totalAmountCompleted', dataType: 'number', visible: false },
     { dataField: 'grandTotal', dataType: 'number', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.financialAssistanceSummaryByPaymentGroupViewDS.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.financialAssistanceSummaryByPaymentGroupViewDS.${x.dataField}` })),
 };
 
 export const financialAssistancePaymentSummaryViewDS : IDatasourceBase = {
@@ -404,7 +406,7 @@ export const financialAssistancePaymentSummaryViewDS : IDatasourceBase = {
     { dataField: 'totalAmountCommitted', dataType: 'number', visible: false },
     { dataField: 'totalAmountCompleted', dataType: 'number', visible: false },
     { dataField: 'grandTotal', dataType: 'number', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.financialAssistancePaymentSummary.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.financialAssistancePaymentSummary.${x.dataField}` })),
 };
 
 export const referralViewDs : IDatasourceBase = {
@@ -425,7 +427,7 @@ export const referralViewDs : IDatasourceBase = {
     { dataField: 'createdByRoleNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'Role', lookupSubItems: true },
     { dataField: 'createdByRoleNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'Role', lookupSubItems: true },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.referral.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.referral.${x.dataField}` })),
 };
 
 export const userAccountViewDS : IDatasourceBase = {
@@ -445,7 +447,7 @@ export const userAccountViewDS : IDatasourceBase = {
     { dataField: 'userPrincipalName', dataType: 'string', visible: false },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.userAccount.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.userAccount.${x.dataField}` })),
 };
 
 export const teamDetailViewDS : IDatasourceBase = {
@@ -455,7 +457,7 @@ export const teamDetailViewDS : IDatasourceBase = {
     { dataField: 'primaryContactId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'primaryContact', dataType: 'string', visible: false },
     { dataField: 'isActive', dataType: 'boolean', visible: false },
-  ] as ColumnLookupBase[]).map((x) => ({ ...x, caption: `ds.teamDetail.${x.dataField}` })),
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.teamDetail.${x.dataField}` })),
 };
 
 export const caseFileAuthenticationIdViewDS : IDatasourceBase = {

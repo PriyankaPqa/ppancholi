@@ -79,7 +79,7 @@
             mode="virtual"
             row-rendering-mode="virtual" />
           <DxFilterPanel :visible="true" />
-          <DxFilterBuilderPopup />
+          <DxFilterBuilderPopup max-height="600px" max-width="900px" />
           <DxFilterRow
             :visible="true"
             apply-filter="onClick" />
@@ -189,10 +189,16 @@ import helpers from '@/ui/helpers/helpers';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { UserTeamMember } from '@libs/entities-lib/user-account';
 import { UserRolesNames } from '@libs/entities-lib/user';
-
-import { ColumnLookupBase, IDatasourceSettings, LookupType, datasources } from './datasources';
+import config from 'devextreme/core/config';
+import { ExtendedColumn, IDatasourceSettings, LookupType, datasources } from './datasources';
 import { AllReports } from './standard_queries/standard_queries';
 import { ReportingPages } from './reportingPages';
+
+// with forceIsoDateParsing to false and deserializeDates to false
+// we can have some dates as utc and others local
+config({
+    forceIsoDateParsing: false,
+});
 
 export default Vue.extend({
   name: 'QueryView',
@@ -342,7 +348,7 @@ export default Vue.extend({
         caption: this.$t(c.caption),
         cssClass: `grid-column ${c.cssClass || ''}`,
         allowSearch: c.allowSearch !== false && c.visible !== false,
-      })), 'caption') as Column<any, any>[];
+      })), 'caption') as ExtendedColumn[];
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
       Object.keys(ds.key).forEach((k) => {
           if (select.indexOf(k) === -1) {
@@ -352,11 +358,20 @@ export default Vue.extend({
 
       await this.initializeLookups(columns);
 
+      columns.filter((c) => c.dataType === 'datetime' || c.dataType === 'date').forEach((c) => {
+        const format = c.dataType === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm';
+        c.format = c.asUtcDate ? (d: Date) => helpers.getUtcStringDate(d, format) : format;
+        if (!c.asUtcDate) {
+          c.calculateFilterExpression = (value, selectedFilterOperations, target) => this.calculateDateFilterForLocalDates(c, value, selectedFilterOperations, target);
+        }
+      });
+
       this.dsType = ds;
       this.columns = columns;
 
       this.dataSource = {
         store: new ODataStore({
+          deserializeDates: false,
           url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`,
           // url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`.replace('api-dev.crc-tech.ca/common', 'localhost:44352'),
           key: Object.keys(ds.key),
@@ -378,7 +393,7 @@ export default Vue.extend({
       };
     },
 
-    async initializeLookups(columns: ColumnLookupBase[]) {
+    async initializeLookups(columns: ExtendedColumn[]) {
       const results = await Promise.all([
               this.$services.queries.fetchEnums(),
               this.$services.queries.fetchListOptions(),
@@ -433,6 +448,25 @@ export default Vue.extend({
             }
         }
       }
+    },
+
+    calculateDateFilterForLocalDates(columnDef: Column, value: Date | Date[], selectedFilterOperation: string, target: string) {
+      // based on https://supportcenter.devexpress.com/ticket/details/t570706/how-to-avoid-ignoring-the-local-time-when-filtering-dates-in-odata
+      // gotta find the actual column (their "this") and ask for default filter for it
+      // because dates allow for weird equals and stuff (ie: equal => between date and time and next minute)
+      const filter = this.grid.instance.columnOption(columnDef.dataField).defaultCalculateFilterExpression(value, selectedFilterOperation, target);
+
+      // this returns either an array where the dates (between) are params 0-2 and 2-2, or a date as last parameter, which we'll change the offset back to utc
+      const getDateFilterAsUtc = (d: Date) => new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+      if (filter) {
+        if (Array.isArray(filter[0])) {
+          filter[0][2] = getDateFilterAsUtc(filter[0][2]);
+          filter[2][2] = getDateFilterAsUtc(filter[2][2]);
+        } else {
+          filter[2] = getDateFilterAsUtc(filter[2]);
+        }
+      }
+      return filter;
     },
 
     /// shows the dialog if we need a name, else saves
