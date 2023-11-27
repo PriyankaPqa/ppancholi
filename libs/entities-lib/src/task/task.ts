@@ -1,5 +1,5 @@
 import { IListOption } from '@libs/shared-lib/types';
-import { ActionStatus, ITaskEntity, ITaskEntityData, ITaskActionHistory, TaskStatus, TaskType } from './task.types';
+import { ActionTaken, ITaskEntity, ITaskEntityData, ITaskActionHistory, TaskStatus, TaskType } from './task.types';
 import { BaseEntity } from '../base';
 
 export class TaskEntity extends BaseEntity implements ITaskEntity {
@@ -25,7 +25,7 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
 
   userWorkingOn: string;
 
-  actionTaken: ActionStatus;
+  actionTaken: ActionTaken;
 
   taskActionHistories: ITaskActionHistory[];
 

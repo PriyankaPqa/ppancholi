@@ -34,7 +34,7 @@
       </template>
       <template #[`item.${customColumns.actionTaken}`]="{ item }">
         <div class="no-word-break">
-          {{ item.actionTaken }}
+          {{ item.actionTakenString }}
         </div>
       </template>
       <template #[`item.${customColumns.rationale}`]="{ item }">
@@ -50,13 +50,13 @@
 import Vue from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { ActionStatus, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
+import { ActionTaken, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { TranslateResult } from 'vue-i18n';
 
 interface IParsedTaskHistory extends ITaskActionHistory {
-  actionTaken: TranslateResult;
+  actionTakenString: TranslateResult;
 }
 
 export default Vue.extend({
@@ -144,16 +144,16 @@ export default Vue.extend({
     },
 
     generateTaskActionString(historyItem: ITaskActionHistory, assignedTeamName = '', actionTeamName = ''): TranslateResult | string {
-      if (historyItem.actionStatus) {
+      if (historyItem.actionTaken) {
         const actionType: { [index: number ]: TranslateResult } = {
-          [ActionStatus.Create]: this.$t('task.history.action_taken.created'),
-          [ActionStatus.Assign]: this.$t('task.history.action_taken.assigned', { x: assignedTeamName }),
-          [ActionStatus.Completed]: (historyItem.taskStatus === TaskStatus.InProgress
+          [ActionTaken.Create]: this.$t('task.history.action_taken.created'),
+          [ActionTaken.Assign]: this.$t('task.history.action_taken.assigned', { x: assignedTeamName }),
+          [ActionTaken.Completed]: (historyItem.taskStatus === TaskStatus.InProgress
             ? this.$t('task.history.action_taken.action_completed', { x: assignedTeamName, y: actionTeamName })
             : this.$t('task.history.action_taken.completed')),
-          [ActionStatus.Reopen]: this.$t('task.history.action_taken.reopen'),
+          [ActionTaken.Reopen]: this.$t('task.history.action_taken.reopen'),
         };
-        return actionType[historyItem.actionStatus];
+        return actionType[historyItem.actionTaken];
       }
       if (historyItem.taskStatus === TaskStatus.Completed) {
         return this.$t('task.history.action_taken.completed');
@@ -165,17 +165,17 @@ export default Vue.extend({
       this.parsedTaskActionHistoryData = this.taskActionHistories.reverse().map((historyItem: ITaskActionHistory) => {
         let assignedTeamName = '';
         let actionTeamName = '';
-        if (historyItem.actionStatus === ActionStatus.Assign) {
+        if (historyItem.actionTaken === ActionTaken.Assign) {
           assignedTeamName = this.teamsByEvent.find((t) => t.id === historyItem.currentTeamId)?.name;
         }
-        if (historyItem.actionStatus === ActionStatus.Completed && historyItem.taskStatus === TaskStatus.InProgress) {
+        if (historyItem.actionTaken === ActionTaken.Completed && historyItem.taskStatus === TaskStatus.InProgress) {
           actionTeamName = this.teamsByEvent.find((t) => t.id === historyItem.previousTeamId)?.name;
           assignedTeamName = this.teamsByEvent.find((t) => t.id === historyItem.currentTeamId)?.name;
         }
-        const actionString = this.generateTaskActionString(historyItem, assignedTeamName, actionTeamName);
+        const actionTakenString = this.generateTaskActionString(historyItem, assignedTeamName, actionTeamName);
         return {
           ...historyItem,
-          actionTaken: actionString,
+          actionTakenString,
         };
       });
     },

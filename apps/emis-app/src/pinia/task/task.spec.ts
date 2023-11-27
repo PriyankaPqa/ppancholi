@@ -1,6 +1,6 @@
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { Entity } from '@/pinia/task/task';
-import { ActionStatus, IdParams, ITaskEntityData, mockPersonalTaskEntity, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken, TaskStatus } from '@libs/entities-lib/task';
+import { ActionTaken, IdParams, ITaskEntityData, mockPersonalTaskEntity, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken, TaskStatus } from '@libs/entities-lib/task';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 
@@ -121,36 +121,36 @@ describe('Task Store', () => {
         expect(entityService.completeTask).toHaveBeenCalledWith('mock-task-id-1', 'mock-case-file-id-1', 'mock-rationale');
       });
 
-      it('should call service setTaskActionStatus when actionType is Assign', () => {
+      it('should call service setTaskActionTaken when actionType is Assign', () => {
         const store = createTestStore();
-        entityService.setTaskActionStatus = jest.fn();
+        entityService.setTaskActionTaken = jest.fn();
         store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Assign, rationale: 'mock-rationale', teamId: 'mock-team-id-1' });
-        expect(entityService.setTaskActionStatus).toHaveBeenCalledWith(
+        expect(entityService.setTaskActionTaken).toHaveBeenCalledWith(
           'mock-task-id-1',
           'mock-case-file-id-1',
-          { actionStatus: ActionStatus.Assign, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
+          { actionTaken: ActionTaken.Assign, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
         );
       });
 
-      it('should call service setTaskActionStatus when actionType is ActionCompleted', () => {
+      it('should call service setTaskActionTaken when actionType is ActionCompleted', () => {
         const store = createTestStore();
-        entityService.setTaskActionStatus = jest.fn();
+        entityService.setTaskActionTaken = jest.fn();
         store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.ActionCompleted, rationale: 'mock-rationale', teamId: 'mock-team-id-1' });
-        expect(entityService.setTaskActionStatus).toHaveBeenCalledWith(
+        expect(entityService.setTaskActionTaken).toHaveBeenCalledWith(
           'mock-task-id-1',
           'mock-case-file-id-1',
-          { actionStatus: ActionStatus.Completed, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
+          { actionTaken: ActionTaken.Completed, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
         );
       });
 
-      it('should call service setTaskActionStatus when actionType is Reopen', () => {
+      it('should call service setTaskActionTaken when actionType is Reopen', () => {
         const store = createTestStore();
-        entityService.setTaskActionStatus = jest.fn();
+        entityService.setTaskActionTaken = jest.fn();
         store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1' });
-        expect(entityService.setTaskActionStatus).toHaveBeenCalledWith(
+        expect(entityService.setTaskActionTaken).toHaveBeenCalledWith(
           'mock-task-id-1',
           'mock-case-file-id-1',
-          { actionStatus: ActionStatus.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
+          { actionTaken: ActionTaken.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
         );
       });
     });

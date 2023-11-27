@@ -1,10 +1,10 @@
 import { INotificationHelperView } from '../notification';
 import { IEntity, mockBaseData, mockBaseMetadata } from '../base';
-import { ActionStatus, ITaskActionHistory, ITaskCombined, ITaskEntity, ITaskEntityData, ITaskMetadata, TaskStatus, TaskType } from './task.types';
+import { ActionTaken, ITaskActionHistory, ITaskCombined, ITaskEntity, ITaskEntityData, ITaskMetadata, TaskStatus, TaskType } from './task.types';
 
 export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
   {
-  actionStatus: null,
+  actionTaken: null,
   taskStatus: TaskStatus.Completed,
   currentTeamId: '',
   previousTeamId: '',
@@ -22,7 +22,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
 },
   {
-    actionStatus: ActionStatus.Reopen,
+    actionTaken: ActionTaken.Reopen,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-3',
     previousTeamId: 'mock-team-id-3',
@@ -40,7 +40,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionStatus: ActionStatus.Completed,
+    actionTaken: ActionTaken.Completed,
     taskStatus: TaskStatus.Completed,
     currentTeamId: 'mock-team-id-3',
     previousTeamId: 'mock-team-id-3',
@@ -59,7 +59,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     },
   },
   {
-    actionStatus: ActionStatus.Completed,
+    actionTaken: ActionTaken.Completed,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-3',
     previousTeamId: 'mock-team-id-2',
@@ -77,7 +77,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
           } },
   },
   {
-    actionStatus: ActionStatus.Assign,
+    actionTaken: ActionTaken.Assign,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-2',
     previousTeamId: 'mock-team-id-1',
@@ -95,7 +95,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
           } },
   },
   {
-    actionStatus: ActionStatus.Create,
+    actionTaken: ActionTaken.Create,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-1',
     previousTeamId: '',
@@ -134,7 +134,7 @@ const mockBaseTaskEntityData = (force? : Partial<ITaskEntityData>): ITaskEntityD
   dateAdded: '2020-02-01T00:00:00Z',
   dueDate: '',
   userWorkingOn: '',
-  actionTaken: ActionStatus.Assign,
+  actionTaken: ActionTaken.Assign,
   taskActionHistories: mockTaskActionHistories(),
   ...force,
 });

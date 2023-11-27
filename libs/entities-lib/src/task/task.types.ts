@@ -11,6 +11,7 @@ export enum TaskStatus {
   Completed = 2,
 }
 
+// used in the FE
 export enum TaskActionTaken {
   Assign = 0,
   ActionCompleted = 1,
@@ -18,7 +19,7 @@ export enum TaskActionTaken {
   Reopen = 3,
 }
 
-export enum ActionStatus {
+export enum ActionTaken {
   Assign = 1,
   Completed = 2,
   Reopen = 3,
@@ -37,7 +38,7 @@ export interface ITaskEntityData extends IEntity {
   dateAdded: Date | string;
   dueDate: Date | string;
   userWorkingOn: string;
-  actionTaken: ActionStatus;
+  actionTaken: ActionTaken;
   taskActionHistories: ITaskActionHistory[];
 }
 
@@ -45,7 +46,7 @@ export interface ITaskEntity extends ITaskEntityData {
 }
 
 export interface ITaskActionHistory {
-  actionStatus: ActionStatus,
+  actionTaken: ActionTaken,
   taskStatus: TaskStatus,
   currentTeamId: uuid,
   previousTeamId: uuid,

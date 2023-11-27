@@ -112,8 +112,8 @@ describe('TaskHistoryDialog.vue', () => {
         wrapper.vm.parseTaskHistory();
         expect(wrapper.vm.parsedTaskActionHistoryData).toEqual([
           {
-            actionStatus: 4,
-            actionTaken: 'task.history.action_taken.created',
+            actionTaken: 4,
+            actionTakenString: 'task.history.action_taken.created',
             currentTeamId: 'mock-team-id-1',
             previousTeamId: '',
             rationale: 'create task',
@@ -132,8 +132,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionStatus: 1,
-            actionTaken: {
+            actionTaken: 1,
+            actionTakenString: {
               key: 'task.history.action_taken.assigned',
               params: [
                 {
@@ -159,8 +159,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionStatus: 2,
-            actionTaken: {
+            actionTaken: 2,
+            actionTakenString: {
               key: 'task.history.action_taken.action_completed',
               params: [
                 {
@@ -187,8 +187,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionStatus: 2,
-            actionTaken: 'task.history.action_taken.completed',
+            actionTaken: 2,
+            actionTakenString: 'task.history.action_taken.completed',
             currentTeamId: 'mock-team-id-3',
             previousTeamId: 'mock-team-id-3',
             rationale: 'team 3 complete task',
@@ -207,8 +207,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionStatus: 3,
-            actionTaken: 'task.history.action_taken.reopen',
+            actionTaken: 3,
+            actionTakenString: 'task.history.action_taken.reopen',
             currentTeamId: 'mock-team-id-3',
             previousTeamId: 'mock-team-id-3',
             rationale: 'team 3 re-open task',
@@ -227,8 +227,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionStatus: null,
-            actionTaken: 'task.history.action_taken.completed',
+            actionTaken: null,
+            actionTakenString: 'task.history.action_taken.completed',
             currentTeamId: '',
             previousTeamId: '',
             rationale: 'Personal task completed',

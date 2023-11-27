@@ -1,5 +1,5 @@
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
-import { ActionStatus, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { ActionTaken, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { TaskService } from '@libs/services-lib/task/entity/task';
 import { ITaskServiceMock } from '@libs/services-lib/task/entity';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
@@ -75,10 +75,10 @@ export function getExtensionComponents(
   async function taskAction(id: uuid, caseFileId: uuid, params: { actionType: TaskActionTaken, rationale: string, teamId?: uuid }) {
     const { actionType, rationale, teamId } = params;
     const actionServices : { [index: number ]: () => ITaskEntityData | Promise<ITaskEntityData> } = {
-      [TaskActionTaken.Assign]: () => entityService.setTaskActionStatus(id, caseFileId, { rationale, actionStatus: ActionStatus.Assign, teamId }),
-      [TaskActionTaken.ActionCompleted]: () => entityService.setTaskActionStatus(id, caseFileId, { rationale, actionStatus: ActionStatus.Completed, teamId }),
+      [TaskActionTaken.Assign]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Assign, teamId }),
+      [TaskActionTaken.ActionCompleted]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Completed, teamId }),
       [TaskActionTaken.TaskCompleted]: () => entityService.completeTask(id, caseFileId, rationale),
-      [TaskActionTaken.Reopen]: () => entityService.setTaskActionStatus(id, caseFileId, { rationale, actionStatus: ActionStatus.Reopen, teamId }),
+      [TaskActionTaken.Reopen]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Reopen, teamId }),
     };
 
     try {

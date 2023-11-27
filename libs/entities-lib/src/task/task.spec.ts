@@ -1,6 +1,6 @@
 import { TaskEntity } from '@/task/task';
 import { mockTaskActionHistories, mockTeamTaskEntity } from '@/task/task.mock';
-import { TaskStatus, TaskType } from '@/task/task.types';
+import { ActionTaken, TaskStatus, TaskType } from '@/task/task.types';
 
 const mockTaskData = mockTeamTaskEntity();
 
@@ -90,6 +90,11 @@ describe('>>> Task', () => {
       expect(task.taskActionHistories).toEqual(mockTaskActionHistories());
     });
 
+    it('should instantiate actionTaken', () => {
+      const task = new TaskEntity({ ...mockTaskData, actionTaken: ActionTaken.Assign });
+      expect(task.actionTaken).toBe(ActionTaken.Assign);
+    });
+
     it('should instantiate properties with proper data when no params', () => {
       const task = new TaskEntity();
       expect(task.id).toBe('');
@@ -104,6 +109,7 @@ describe('>>> Task', () => {
       expect(task.taskStatus).toBe(null);
       expect(task.assignedTeamId).toBe('');
       expect(task.userWorkingOn).toBe(null);
+      expect(task.actionTaken).toBe(null);
       expect(task.taskActionHistories).toEqual([]);
     });
   });
