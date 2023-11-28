@@ -19,7 +19,8 @@ import {
   mockCreateMassFinancialAssistanceXlsxFileRequest,
   mockCreateMassFinancialAssistanceRequest,
   mockCreateMassFinancialAssistanceUploadCsvFileRequest,
-  MockCreateMassActionFaUploadCsvFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+  MockCreateMassActionFaUploadCsvFileRequestParams,
+  mockCreateMassActionDataCorrectionFileRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -30,6 +31,7 @@ import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication } from '@libs/
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
@@ -641,4 +643,17 @@ export const getHouseholdsSummary = async (provider: IProvider, HouseholdIds: st
 export const updatePersonsCurrentAddress = async (provider: IProvider, personIds: string[], addressType: ECurrentAddressTypes) => {
   const getUpdatePersonAddressPromises = personIds.map((personId) => provider.households.updatePersonAddress(personId, false, mockCustomCurrentAddressCreateRequest(addressType)));
   await Promise.all(getUpdatePersonAddressPromises);
+};
+
+/**
+ * Create Authentication Other Data Correction file
+ * @param provider
+ * @param dataCorrectionType
+ * @param generatedCsvFile
+ */
+
+export const prepareStateMassActionDataCorrectionFile = async (provider: any, dataCorrectionType: MassActionDataCorrectionType, generatedCsvFile: string) => {
+  const mockDataCorrectionFile = mockCreateMassActionDataCorrectionFileRequest(dataCorrectionType, generatedCsvFile);
+  const responseMassFinancialAssistance = await provider.cypress.massAction.createWithFile('data-correction', mockDataCorrectionFile);
+  return responseMassFinancialAssistance;
 };

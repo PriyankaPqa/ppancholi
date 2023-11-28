@@ -2,8 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { MassActionDataCorrectionType, MassActionRunStatus } from '@libs/entities-lib/mass-action';
-import { BaseDetailsMassAction } from 'cypress/pages/mass-action/base/baseDetailsMassAction';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   AddFinancialAssistancePaymentParams,
@@ -19,6 +18,7 @@ import {
   GenerateRandomFaDataCorrectionParams,
   fixtureGenerateFaDataCorrectionXlsxFile,
 } from '../../../fixtures/mass-action-data-correction';
+import { processDataCorrectionFileSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -103,25 +103,7 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
           }
         });
         it('should successfully process a financial assistance data correction file', () => {
-          const baseDetailsMassActionPage = new BaseDetailsMassAction();
-          cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
-          baseDetailsMassActionPage.getMassActionProcessButton().should('be.visible');
-          baseDetailsMassActionPage.getMassActionProcessButton().click();
-          baseDetailsMassActionPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
-          baseDetailsMassActionPage.getDialogCancelButton().should('be.visible');
-          baseDetailsMassActionPage.getDialogSubmitButton().should('be.visible');
-          baseDetailsMassActionPage.confirmProcessing();
-          baseDetailsMassActionPage.getPreProcessingLabelOne().should('eq', 'Please wait while the financial assistance records are being processed.');
-          baseDetailsMassActionPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed records.');
-          cy.waitForMassActionToBe(MassActionRunStatus.Processed);
-          baseDetailsMassActionPage.getMassActionStatus().contains('Processed').should('be.visible');
-          baseDetailsMassActionPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
-            if (quantity === householdQuantity.toString()) {
-              baseDetailsMassActionPage.getInvalidCasefilesDownloadButton().should('be.disabled');
-            } else {
-              baseDetailsMassActionPage.getInvalidCasefilesDownloadButton().should('be.enabled');
-            }
-          });
+          processDataCorrectionFileSteps(householdQuantity, 'financial assistance records');
         });
       });
     }

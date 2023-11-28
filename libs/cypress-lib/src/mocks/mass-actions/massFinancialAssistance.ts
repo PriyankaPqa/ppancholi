@@ -60,3 +60,16 @@ export const mockCreateMassFinancialAssistanceUploadCsvFileRequest = (params: Mo
   const payload = data;
   return payload;
 };
+
+export const mockCreateMassActionDataCorrectionFileRequest = (massActionType: number, fileContents: string) => {
+  const data = new FormData();
+
+  data.append('name', `test mass action data correction - ${getCurrentDateString()} - s${getRandomNumber()}`);
+  data.append('description', 'description mass action');
+  data.append('massActionType', massActionType.toString());
+
+  const blob = new Blob([fileContents], { type: 'text/csv' });
+  data.append('file', blob);
+  const payload = data;
+  return payload;
+};
