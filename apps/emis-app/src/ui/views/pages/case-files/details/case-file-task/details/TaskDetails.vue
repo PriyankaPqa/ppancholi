@@ -287,6 +287,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 
   async created() {
     this.loading = true;
+    this.filterOutInactiveTaskNameAndCategory = false;
     await useTaskStore().fetch({ id: this.taskId, caseFileId: this.id });
     await useTaskStore().fetchTaskCategories();
     if (this.isTeamTask) {

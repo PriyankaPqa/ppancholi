@@ -1904,6 +1904,7 @@
     "errors.validation-of-impact-status-is-invalid": "Validation of impact status is invalid",
     "errors.validation-of-impact-status-must-be-impacted": "Validation of impact status must be impacted",
     "errors.working-on-cannot-have-a-value": "Working on cannot have a value",
+    "errors.values-cannot-be-the-same-as-current-values": "Values cannot be the same as current values",
     "event.beneficiaries.registration_number": "Registration number",
     "event.create.related_events.label": "Related events",
     "event.create.title": "Create event",

@@ -103,6 +103,7 @@ import { VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidatio
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
+import { UserRoles } from '@libs/entities-lib/user';
 
 interface ILocalTeamTaskForm {
   name: IListOption;
@@ -170,7 +171,7 @@ export default mixins(caseFileTask).extend({
     },
 
     formDisabled(): boolean {
-      return this.taskData.taskStatus === TaskStatus.Completed;
+      return !this.$hasLevel(UserRoles.level6) && this.taskData.taskStatus === TaskStatus.Completed;
     },
   },
 

@@ -879,6 +879,15 @@ describe('TaskDetails.vue', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.selectedCategoryId).toEqual('');
       });
+
+      it('should set filterOutInactiveTaskNameAndCategory to false', async () => {
+        await wrapper.setData({
+          filterOutInactiveTaskNameAndCategory: () => true,
+        });
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.filterOutInactiveTaskNameAndCategory).toEqual(false);
+      });
     });
   });
 

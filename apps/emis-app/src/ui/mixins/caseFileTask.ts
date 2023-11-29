@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { useTaskStore } from '@/pinia/task/task';
-import { Status } from '@libs/entities-lib/base';
 import { TranslateResult } from 'vue-i18n';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useUserStore } from '@/pinia/user/user';
@@ -22,17 +21,18 @@ export default Vue.extend({
       toggleLoading: false,
       isWorkingOn: false,
       filterOutHiddenTaskName: true,
+      filterOutInactiveTaskNameAndCategory: true,
     };
   },
 
   computed: {
     taskNames(): IOptionItem[] {
-      return useTaskStore().getTaskCategories(this.filterOutHiddenTaskName);
+      return useTaskStore().getTaskName(this.filterOutHiddenTaskName, this.filterOutInactiveTaskNameAndCategory, this.selectedTaskNameId);
     },
 
     taskCategories(): IOptionSubItem[] {
       const sub = this.taskNames?.find((t) => t?.id === this.selectedTaskNameId)?.subitems || [];
-      return sub.filter((s) => s.status === Status.Active);
+      return useTaskStore().filterAndSortActiveSubItems(sub, this.filterOutInactiveTaskNameAndCategory, this.selectedCategoryId);
     },
 
     selectedTaskName(): IOptionItem {

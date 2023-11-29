@@ -8,7 +8,7 @@ import {
   TaskStatus,
   TaskType,
 } from '@libs/entities-lib/task';
-import { mockOptionItems } from '@libs/entities-lib/optionItem';
+import { mockOptionItem, mockOptionItems } from '@libs/entities-lib/optionItem';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
@@ -21,13 +21,14 @@ import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { Status } from '@libs/entities-lib/base';
 import Component from './TasksTable.vue';
 
 const localVue = createLocalVue();
 const { pinia, taskStore } = useMockTaskStore();
 const { userStore } = useMockUserStore(pinia);
 const services = mockProvider();
-taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
+taskStore.getTaskName = jest.fn(() => mockOptionItems());
 
 describe('TasksTable.vue', () => {
   let wrapper;
@@ -41,13 +42,6 @@ describe('TasksTable.vue', () => {
       data() {
         return {
           personalTaskOnly: false,
-          dataTableParams: {
-            search: '',
-            orderBy: 'Entity/DateAdded',
-            descending: true,
-            pageIndex: 1,
-            pageSize: 10,
-          },
         };
       },
       computed: {
@@ -395,11 +389,19 @@ describe('TasksTable.vue', () => {
     });
 
     describe('filterOptions', () => {
-      it('should return proper data when is in Case file', async () => {
+      it('should return proper data when is in Case file, including inactive task name', async () => {
         await wrapper.setProps({
           isInCaseFile: true,
         });
-        taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
+        taskStore.getTaskName = jest.fn(() => [mockOptionItem(), mockOptionItem({
+          name: {
+            translation: {
+              en: 'Fire',
+              fr: 'Fue',
+            },
+          },
+          status: Status.Inactive,
+        })]);
         const priorityItems = [
           { text: 'common.yes', value: true },
           { text: 'common.no', value: false },
@@ -409,10 +411,16 @@ describe('TasksTable.vue', () => {
             key: 'Entity/Name/OptionItemId',
             type: EFilterType.MultiSelect,
             label: 'task.create_edit.task_name',
-            items: [{
-              text: 'Flood',
-              value: '1',
-            }],
+            items: [
+              {
+                text: 'Flood',
+                value: '1',
+              },
+              {
+                text: 'Fire',
+                value: '1',
+              },
+            ],
           },
           {
             key: 'Entity/DateAdded',
@@ -438,7 +446,7 @@ describe('TasksTable.vue', () => {
         await wrapper.setProps({
           isInCaseFile: false,
         });
-        taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
+        taskStore.getTaskName = jest.fn(() => mockOptionItems());
         const priorityItems = [
           { text: 'common.yes', value: true },
           { text: 'common.no', value: false },
@@ -514,13 +522,6 @@ describe('TasksTable.vue', () => {
           data() {
             return {
               personalTaskOnly: false,
-              dataTableParams: {
-                search: '',
-                orderBy: 'Entity/DateAdded',
-                descending: true,
-                pageIndex: 1,
-                pageSize: 10,
-              },
             };
           },
           mocks: {
@@ -852,9 +853,8 @@ describe('TasksTable.vue', () => {
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
         const options = mockOptionItems();
-        taskStore.getTaskCategories = jest.fn(() => options);
+        taskStore.getTaskName = jest.fn(() => options);
         expect(wrapper.vm.getTeamsByEvent).toHaveBeenCalled();
-        expect(wrapper.vm.search).toHaveBeenCalledWith(wrapper.vm.dataTableParams);
       });
 
       it('should call getTeamsByEvent when is not in case file', async () => {

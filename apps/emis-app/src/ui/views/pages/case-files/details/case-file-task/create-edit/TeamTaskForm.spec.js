@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
-import { mockTeamTaskEntity } from '@libs/entities-lib/task';
+import { mockTeamTaskEntity, TaskStatus } from '@libs/entities-lib/task';
 import { mockOptionItem, mockOptionItems, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import flushPromises from 'flush-promises';
@@ -11,7 +11,7 @@ const { pinia, taskStore } = useMockTaskStore();
 
 describe('TeamTaskForm.vue', () => {
   let wrapper;
-  const doMount = async (shallow = true, otherOptions = {}) => {
+  const doMount = async (shallow = true, otherOptions = {}, level = 5) => {
     const option = {
       localVue,
       pinia,
@@ -21,6 +21,9 @@ describe('TeamTaskForm.vue', () => {
       computed: {
         taskNames: () => mockOptionItems(),
       },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}`,
+      },
       ...otherOptions,
     };
     wrapper = shallow ? shallowMount(Component, option) : mount(Component, option);
@@ -28,7 +31,7 @@ describe('TeamTaskForm.vue', () => {
   };
   beforeEach(async () => {
     await doMount();
-    taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
+    taskStore.getTaskName = jest.fn(() => mockOptionItems());
   });
 
   describe('Template', () => {
@@ -183,7 +186,11 @@ describe('TeamTaskForm.vue', () => {
   describe('Computed', () => {
     describe('shouldDisableCategorySelect', () => {
       it('should be true if there is no selected task name', async () => {
-        await doMount();
+        await doMount(true, {
+          computed: {
+            taskCategories: () => [],
+          },
+        });
         await wrapper.setProps({
           task: mockTeamTaskEntity({
             name: {
@@ -191,6 +198,7 @@ describe('TeamTaskForm.vue', () => {
             },
           }),
         });
+        taskStore.getTaskCategory = jest.fn(() => []);
         const element = wrapper.findDataTest('task-category');
         expect(element.attributes('disabled')).toBeTruthy();
       });
@@ -209,7 +217,7 @@ describe('TeamTaskForm.vue', () => {
           }),
         });
         await wrapper.vm.$nextTick();
-        taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
+        taskStore.getTaskName = jest.fn(() => mockOptionItems());
         const element = wrapper.findDataTest('task-category');
         expect(element.attributes('disabled')).toBeTruthy();
       });
@@ -228,7 +236,7 @@ describe('TeamTaskForm.vue', () => {
           }),
         });
         await wrapper.vm.$nextTick();
-        taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
+        taskStore.getTaskName = jest.fn(() => mockOptionItems());
         const element = wrapper.findDataTest('task-category');
         expect(element.attributes('disabled')).toBeFalsy();
       });
@@ -256,6 +264,25 @@ describe('TeamTaskForm.vue', () => {
             required: true,
           },
         });
+      });
+    });
+
+    describe('formDisabled', () => {
+      it('should return false when user has L6', async () => {
+        await doMount(true, {}, 6);
+        expect(wrapper.vm.formDisabled).toEqual(false);
+      });
+
+      it('should based on the task status when user has no L6', async () => {
+        await wrapper.setProps({
+          taskData: mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
+        });
+        expect(wrapper.vm.formDisabled).toEqual(true);
+
+        await wrapper.setProps({
+          taskData: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+        });
+        expect(wrapper.vm.formDisabled).toEqual(false);
       });
     });
   });

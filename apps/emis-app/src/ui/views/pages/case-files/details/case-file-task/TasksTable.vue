@@ -204,13 +204,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   data() {
     return {
       personalTaskOnly: false,
-      dataTableParams: {
-        search: '',
-        orderBy: 'Entity/DateAdded',
-        descending: true,
-        pageIndex: 1,
-        pageSize: 10,
-      },
       options: {
         page: 1,
         sortBy: ['Entity/DateAdded'],
@@ -340,7 +333,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     filterOptions(): Array<IFilterSettings> {
-      const taskNames = useTaskStore().getTaskCategories().map((t: IOptionItem) => ({ text: this.$m(t.name), value: t.id }));
+      const taskNames = useTaskStore().getTaskName(true, false).map((t: IOptionItem) => ({ text: this.$m(t.name), value: t.id }));
       const priorityItems = [
         { text: this.$t('common.yes') as string, value: true },
         { text: this.$t('common.no') as string, value: false },
@@ -440,7 +433,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       await this.getTeamsByEvent();
     }
      await useTaskStore().fetchTaskCategories();
-     await this.search(this.dataTableParams);
      },
 
   methods: {

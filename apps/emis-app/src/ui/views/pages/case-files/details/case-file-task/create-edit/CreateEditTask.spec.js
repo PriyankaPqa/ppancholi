@@ -23,7 +23,7 @@ const services = mockProvider();
 describe('CreateEditTask.vue', () => {
   let wrapper;
 
-  taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
+  taskStore.getTaskName = jest.fn(() => mockOptionItems());
   teamStore.getByIds = jest.fn(() => mockTeamEntities());
 
   const doMount = async (shallow = true, otherOptions = {}, level = 6) => {
@@ -583,7 +583,7 @@ describe('CreateEditTask.vue', () => {
             taskNames: () => mockOptionItems(),
           },
         });
-        taskStore.getTaskCategories = jest.fn();
+        taskStore.getTaskName = jest.fn();
         wrapper.vm.prepareCreateTask = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);

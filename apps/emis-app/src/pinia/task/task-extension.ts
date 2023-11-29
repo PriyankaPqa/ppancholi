@@ -1,4 +1,4 @@
-import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
+import { BaseStoreComponents, filterAndSortActiveItems, filterAndSortActiveSubItems } from '@libs/stores-lib/base';
 import { ActionTaken, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { TaskService } from '@libs/services-lib/task/entity/task';
 import { ITaskServiceMock } from '@libs/services-lib/task/entity';
@@ -17,7 +17,7 @@ export function getExtensionComponents(
   const taskCategoriesFetched = ref(false);
   const taskCategories = ref([]) as Ref<IOptionItem[]>;
 
-  function getTaskCategories(filterOutHidden = true, filterOutInactive = true, actualValue?: string[] | string) {
+  function getTaskName(filterOutHidden = true, filterOutInactive = true, actualValue?: string[] | string) {
     const items = filterAndSortActiveItems(taskCategories.value, filterOutInactive, actualValue);
     return filterOutHidden ? items.filter((i) => !i.isHidden) : items;
   }
@@ -29,7 +29,7 @@ export function getExtensionComponents(
       taskCategoriesFetched.value = true;
     }
 
-    return getTaskCategories();
+    return getTaskName();
   }
 
   async function createTask(task: ITaskEntityData) {
@@ -124,9 +124,10 @@ export function getExtensionComponents(
     createTask,
     editTask,
     fetchTaskCategories,
-    getTaskCategories,
+    getTaskName,
     setWorkingOn,
     taskAction,
     getNotificationHelperView,
+    filterAndSortActiveSubItems,
   };
 }

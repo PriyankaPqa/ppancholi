@@ -6,6 +6,7 @@ import { useMockUserStore } from '@/pinia/user/user.mock';
 import { mockTeamTaskEntity } from '@libs/entities-lib/task';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { Status } from '@libs/entities-lib/base';
 
 const Component = {
   render() {},
@@ -31,7 +32,16 @@ describe('caseFileTask', () => {
     describe('taskNames', () => {
       it('should return proper data from store', () => {
         const options = mockOptionItems();
-        taskStore.getTaskCategories = () => options;
+        taskStore.getTaskName = () => options;
+        expect(wrapper.vm.taskNames).toEqual(options);
+      });
+
+      it('should get the inactive actual value item', async () => {
+        const options = [mockOptionItem({ id: '1', status: Status.Active }), mockOptionItem({ id: '2', status: Status.Inactive })];
+        await wrapper.setData({
+          selectedTaskNameId: '2',
+        });
+        taskStore.getTaskName = jest.fn(() => options);
         expect(wrapper.vm.taskNames).toEqual(options);
       });
     });
@@ -42,8 +52,20 @@ describe('caseFileTask', () => {
           selectedTaskNameId: '1',
         });
         const options = mockOptionItems();
-        taskStore.getTaskCategories = jest.fn(() => options);
-        const expectedRes = [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }), mockOptionSubItem({ id: '2' })];
+        taskStore.getTaskName = jest.fn(() => options);
+        const expectedRes = [mockOptionSubItem({ id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f' })];
+        expect(wrapper.vm.taskCategories).toEqual(expectedRes);
+      });
+
+      it('should get the inactive actual value sub-item', async () => {
+        const expectedRes = [[mockOptionSubItem({ id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f' }), mockOptionSubItem({ id: '2', status: Status.Inactive })]];
+        await wrapper.setData({
+          selectedTaskNameId: '1',
+          selectedCategoryId: '2',
+        });
+        const options = mockOptionItems({ subitems: [mockOptionSubItem({ id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f' }), mockOptionSubItem({ id: '2', status: Status.Inactive })] });
+        taskStore.getTaskName = jest.fn(() => options);
+        taskStore.filterAndSortActiveSubItems = jest.fn(() => expectedRes);
         expect(wrapper.vm.taskCategories).toEqual(expectedRes);
       });
     });
@@ -54,7 +76,7 @@ describe('caseFileTask', () => {
           selectedTaskNameId: '1',
         });
         const options = [mockOptionItem({ id: '1' }), mockOptionItem({ id: '2' })];
-        taskStore.getTaskCategories = jest.fn(() => options);
+        taskStore.getTaskName = jest.fn(() => options);
         const expectedRes = options.filter((o) => o.id === '1')[0];
         expect(wrapper.vm.selectedTaskName).toEqual(expectedRes);
       });

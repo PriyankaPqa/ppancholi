@@ -627,7 +627,7 @@ const routes = {
   },
   tasks: {
     home: {
-      path: '',
+      path: 'tasks',
       name: 'tasks.home',
     },
   },
