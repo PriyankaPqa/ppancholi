@@ -3,18 +3,21 @@ import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
-import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFile, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, CaseFileTriage, mockCaseFileEntity, mockCaseFileMetadata, mockCombinedCaseFile, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { mockProvider } from '@/services/provider';
+import flushPromises from 'flush-promises';
 import Component from './CaseFilesTable.vue';
 
 const mockCaseFiles = mockCombinedCaseFiles();
-const { caseFileStore, pinia } = useMockCaseFileStore(createTestingPinia({ stubActions: false }));
+const { caseFileStore, pinia, caseFileMetadataStore } = useMockCaseFileStore(createTestingPinia({ stubActions: false }));
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 describe('CaseFilesTable.vue', () => {
   let wrapper;
@@ -30,6 +33,9 @@ describe('CaseFilesTable.vue', () => {
         pinia,
         computed: {
           tableData: () => mockCombinedCaseFiles(),
+        },
+        mocks: {
+          $services: services,
         },
       });
 
@@ -61,7 +67,7 @@ describe('CaseFilesTable.vue', () => {
         const headers = wrapper.findAll('th');
 
         expect(headers.length)
-          .toBe(6);
+          .toBe(7);
 
         expect(headers.wrappers[0].find('span')
           .text())
@@ -81,6 +87,9 @@ describe('CaseFilesTable.vue', () => {
         expect(headers.wrappers[5].find('span')
           .text())
           .toBe('caseFilesTable.tableHeaders.createdDate');
+        expect(headers.wrappers[6].find('span')
+          .text())
+          .toBe('');
       });
 
       describe('help button', () => {
@@ -125,6 +134,7 @@ describe('CaseFilesTable.vue', () => {
           },
           mocks: {
             $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
+            $services: services,
           },
         });
 
@@ -141,6 +151,7 @@ describe('CaseFilesTable.vue', () => {
           },
           mocks: {
             $hasFeature: (f) => f !== FeatureKeys.ManageDuplicates,
+            $services: services,
           },
         });
 
@@ -155,6 +166,9 @@ describe('CaseFilesTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         pinia: createTestingPinia({ stubActions: false }),
+        mocks: {
+          $services: services,
+        },
       });
       await wrapper.setData({
         myCaseFiles: false,
@@ -183,6 +197,18 @@ describe('CaseFilesTable.vue', () => {
         expect(wrapper.vm.applyCustomFilter).toHaveBeenCalledWith(true, wrapper.vm.duplicatesOnlyFilter);
       });
     });
+
+    describe('recentlyViewed', () => {
+      it('should call applyCustomFilter with the right arguments', async () => {
+        caseFileStore.recentlyViewedCaseFileIds = ['mock-id-1'];
+        wrapper.vm.applyCustomFilter = jest.fn();
+        await wrapper.setData({
+          recentlyViewedOnly: true,
+        });
+
+        expect(wrapper.vm.applyCustomFilter).toHaveBeenCalledWith(true, wrapper.vm.isRecentlyViewedFilter);
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -190,6 +216,9 @@ describe('CaseFilesTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         pinia: createTestingPinia({ stubActions: false }),
+        mocks: {
+          $services: services,
+        },
       });
       userStore = useUserStore();
       userStore.getUserId = jest.fn(() => 'mock-id');
@@ -205,6 +234,9 @@ describe('CaseFilesTable.vue', () => {
               return 'en';
             },
           },
+          mocks: {
+            $services: services,
+          },
         });
         const expectedColumns = {
           caseFileNumber: 'Entity/CaseFileNumber',
@@ -213,6 +245,7 @@ describe('CaseFilesTable.vue', () => {
           triage: 'Metadata/TriageName/Translation/en',
           status: 'Metadata/CaseFileStatusName/Translation/en',
           created: 'Entity/Created',
+          recentlyViewed: 'RecentlyViewed',
         };
 
         expect(wrapper.vm.customColumns)
@@ -264,8 +297,12 @@ describe('CaseFilesTable.vue', () => {
                 triage: 'Metadata/TriageName/Translation/en',
                 status: 'Metadata/CaseFileStatusName/Translation/en',
                 created: 'Entity/Created',
+                recentlyViewed: 'RecentlyViewed',
               };
             },
+          },
+          mocks: {
+            $services: services,
           },
         });
 
@@ -301,6 +338,12 @@ describe('CaseFilesTable.vue', () => {
               sortable: true,
               value: 'Entity/Created',
             },
+            {
+              sortable: false,
+              text: '',
+              value: 'RecentlyViewed',
+              width: '5%',
+            },
           ]);
       });
     });
@@ -325,6 +368,9 @@ describe('CaseFilesTable.vue', () => {
           pinia,
           computed: {
             tableData: () => mockCombinedCaseFiles(),
+          },
+          mocks: {
+            $services: services,
           },
         });
         caseFileStore.searchLoading = false;
@@ -419,6 +465,7 @@ describe('CaseFilesTable.vue', () => {
           pinia: createTestingPinia({ stubActions: false }),
           mocks: {
             $hasFeature: jest.fn((f) => f === FeatureKeys.ManageDuplicates),
+            $services: services,
           },
         });
         const expected = [
@@ -487,6 +534,74 @@ describe('CaseFilesTable.vue', () => {
         expect(wrapper.vm.filters).toEqual(expected);
       });
     });
+
+    describe('tableData', () => {
+      it('should return parsed tableData based on recentlyViewedCaseFileIds', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => [mockCombinedCaseFile({ id: '1' }), mockCombinedCaseFile({ id: '2' })]);
+        caseFileStore.items = [mockCaseFileEntity({ id: '1' }), mockCaseFileEntity({ id: '2' })];
+        caseFileMetadataStore.items = [mockCaseFileMetadata({ id: '1' }), mockCaseFileMetadata({ id: '2' })];
+        caseFileStore.recentlyViewedCaseFileIds = ['1'];
+        wrapper = mount(Component, {
+          localVue,
+          pinia,
+          mocks: {
+            $services: services,
+          },
+        });
+        expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify([
+          {
+            entity: mockCombinedCaseFile({ id: '1' }).entity,
+            metadata: {},
+            pinned: false,
+            recentlyViewed: true,
+          },
+          {
+            entity: mockCombinedCaseFile({ id: '2' }).entity,
+            metadata: {},
+            pinned: false,
+            recentlyViewed: false,
+          },
+        ]));
+      });
+    });
+
+    describe('isRecentlyViewedFilter', () => {
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia,
+          mocks: {
+            $services: services,
+          },
+        });
+      });
+      it('should return empty objet when there is no recently viewed case file', async () => {
+        caseFileStore.recentlyViewedCaseFileIds = [];
+        expect(wrapper.vm.isRecentlyViewedFilter).toEqual({
+          Entity: {
+            Id: '',
+          },
+        });
+      });
+
+      it('should generate filter object properly', async () => {
+        caseFileStore.fetchRecentlyViewed = jest.fn(() => ['mock-id-1', 'mock-id-2']);
+        caseFileStore.recentlyViewedCaseFileIds = ['mock-id-1', 'mock-id-2'];
+        expect(wrapper.vm.isRecentlyViewedFilter).toEqual({
+          or: [
+            { Entity: {
+              Id: 'mock-id-1',
+            },
+            },
+            { Entity: {
+              Id: 'mock-id-2',
+            },
+            },
+          ],
+        });
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -494,6 +609,9 @@ describe('CaseFilesTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         pinia: createTestingPinia({ stubActions: false }),
+        mocks: {
+          $services: services,
+        },
       });
 
       wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({
@@ -647,12 +765,12 @@ describe('CaseFilesTable.vue', () => {
         });
       });
 
-      describe('when user is using both duplicates and my cases filter', () => {
-        it('should call onApplyFilter with proper filters if filters panel also', async () => {
+      describe('when user is using is recently viewed filter', () => {
+        it('should call onApplyFilter with proper filters if filters panel also, and recentlyViewedCaseFileIds is not empty', async () => {
           wrapper.vm.onApplyFilter = jest.fn();
+          caseFileStore.recentlyViewedCaseFileIds = ['mock-id-1'];
           await wrapper.setData({
-            duplicatesOnly: true,
-            myCaseFiles: true,
+            recentlyViewedOnly: true,
           });
 
           const preparedFilters = { test: {} };
@@ -664,7 +782,31 @@ describe('CaseFilesTable.vue', () => {
 
           expect(wrapper.vm.onApplyFilter)
             .toHaveBeenLastCalledWith({
-              preparedFilters: { ...preparedFilters, ...wrapper.vm.duplicatesOnlyFilter, ...wrapper.vm.myCaseFilesFilter },
+              preparedFilters: { ...preparedFilters, ...wrapper.vm.isRecentlyViewedFilter },
+              searchFilters: null,
+            }, { name: 'filterState' });
+        });
+      });
+
+      describe('when user is using both duplicates and my cases filter and is recently viewed filter', () => {
+        it('should call onApplyFilter with proper filters if filters panel also', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            duplicatesOnly: true,
+            myCaseFiles: true,
+            recentlyViewedOnly: true,
+          });
+
+          const preparedFilters = { test: {} };
+
+          await wrapper.vm.onApplyFilterLocal({
+            preparedFilters,
+            searchFilters: null,
+          }, { name: 'filterState' });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters: { ...preparedFilters, ...wrapper.vm.duplicatesOnlyFilter, ...wrapper.vm.myCaseFilesFilter, ...wrapper.vm.isRecentlyViewedFilter },
               searchFilters: null,
             }, { name: 'filterState' });
         });
@@ -674,6 +816,7 @@ describe('CaseFilesTable.vue', () => {
           await wrapper.setData({
             duplicatesOnly: true,
             myCaseFiles: true,
+            recentlyViewedOnly: true,
           });
 
           await wrapper.vm.onApplyFilterLocal({
@@ -683,7 +826,7 @@ describe('CaseFilesTable.vue', () => {
 
           expect(wrapper.vm.onApplyFilter)
             .toHaveBeenLastCalledWith({
-              preparedFilters: { ...wrapper.vm.duplicatesOnlyFilter, ...wrapper.vm.myCaseFilesFilter },
+              preparedFilters: { ...wrapper.vm.duplicatesOnlyFilter, ...wrapper.vm.myCaseFilesFilter, ...wrapper.vm.isRecentlyViewedFilter },
               searchFilters: null,
             }, { name: 'filterState' });
         });
@@ -732,6 +875,32 @@ describe('CaseFilesTable.vue', () => {
           metadata: {},
         };
         expect(wrapper.vm.getBeneficiaryName(combinedCaseFile)).toEqual('caseFilesTable.tableContent.empty_household');
+      });
+    });
+  });
+
+  describe('lifecycle', () => {
+    describe('created', () => {
+      beforeEach(() => {
+        caseFileStore.recentlyViewedCaseFileIds = [];
+        wrapper = mount(Component, {
+          localVue,
+          pinia,
+          mocks: {
+            $services: services,
+          },
+        });
+      });
+      it('should set saveState to true and load State, fetchRecentlyViewed', async () => {
+        wrapper.vm.loadState = jest.fn();
+        caseFileStore.fetchRecentlyViewed = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.saveState).toEqual(true);
+        expect(wrapper.vm.loadState).toHaveBeenCalled();
+        expect(caseFileStore.fetchRecentlyViewed).toHaveBeenCalled();
       });
     });
   });

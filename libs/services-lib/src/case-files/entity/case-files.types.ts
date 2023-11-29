@@ -46,6 +46,8 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   getTier2Result(id: string, addCaseFileActivity: boolean): Promise<ITier2Response>;
   getTier2Details(id: string): Promise<ITier2Details>;
   getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]>;
+  getRecentlyViewed(): Promise<string[]>;
+  addRecentlyViewed(caseFileId: string): Promise<string[]>;
 }
 
 export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity> {
@@ -69,4 +71,6 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   getTier2Result: jest.Mock<ITier2Response>;
   getTier2Details: jest.Mock<ITier2Details>;
   getExceptionalTypeCounts: jest.Mock<Promise<ICaseFileCountByExceptionalAuthentication[]>>;
+  getRecentlyViewed: jest.Mock<string[]>;
+  addRecentlyViewed: jest.Mock<string[]>;
 }

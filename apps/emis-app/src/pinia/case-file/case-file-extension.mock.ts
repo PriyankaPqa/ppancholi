@@ -25,5 +25,7 @@ export function getMockExtensionComponents(entity = mockCaseFileEntity()) {
     createCaseFile: jest.fn(() => mockDetailedRegistrationResponse()),
     assignCaseFile: jest.fn(() => entity),
     genericSetAction: jest.fn(),
+    fetchRecentlyViewed: jest.fn(() => ['mock-id-1', 'mock-id-2']),
+    addRecentlyViewed: jest.fn(() => ['mock-id-1', 'mock-id-2']),
   };
 }

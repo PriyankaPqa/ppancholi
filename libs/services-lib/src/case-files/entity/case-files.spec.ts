@@ -253,4 +253,18 @@ describe('>>> Case File Service', () => {
       expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/exceptional-type-counts`, { params: { eventId } });
     });
   });
+
+  describe('getRecentlyViewed', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.getRecentlyViewed();
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/recently-viewed`);
+    });
+  });
+
+  describe('addRecentlyViewed', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.addRecentlyViewed('mock-id-1');
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/recently-viewed`, { id: 'mock-id-1' });
+    });
+  });
 });

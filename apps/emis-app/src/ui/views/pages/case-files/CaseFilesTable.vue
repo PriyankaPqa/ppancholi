@@ -54,6 +54,19 @@
               </span>
             </div>
           </template>
+          <v-divider vertical class="mx-3" />
+          <div class="flex-row">
+            <v-switch
+              v-model="recentlyViewedOnly"
+              data-test="caseFilesTable__recentlyViewedSwitch"
+              hide-details />
+            <v-icon class="mr-2">
+              mdi-eye
+            </v-icon>
+            <span class="rc-body14">
+              {{ $t('caseFilesTable.recentlyViewed') }}
+            </span>
+          </div>
         </template>
       </filter-toolbar>
     </template>
@@ -115,6 +128,12 @@
     <template #[`item.${customColumns.created}`]="{ item: caseFile }">
       {{ getLocalStringDate(caseFile.entity.created, 'Entity.created', 'PP') }}
     </template>
+
+    <template #[`item.${customColumns.recentlyViewed}`]="{ item: caseFile }">
+      <v-icon v-if="caseFile.recentlyViewed">
+        mdi-eye
+      </v-icon>
+    </template>
   </rc-data-table>
 </template>
 
@@ -141,6 +160,10 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useCaseFileStore, useCaseFileMetadataStore } from '@/pinia/case-file/case-file';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { TranslateResult } from 'vue-i18n';
+
+interface IParsedCaseFileCombined extends ICaseFileCombined {
+  recentlyViewed: boolean;
+}
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'CaseFilesTable',
@@ -169,6 +192,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       FeatureKeys,
       myCaseFiles: false,
       duplicatesOnly: false,
+      recentlyViewedOnly: false,
       getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
       searchEventsResultIds: [] as string[],
@@ -186,6 +210,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   async created() {
     this.saveState = true;
     this.loadState();
+    await useCaseFileStore().fetchRecentlyViewed();
   },
 
   computed: {
@@ -215,8 +240,34 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       };
     },
 
-    tableData(): ICaseFileCombined[] {
-      return this.combinedCaseFileStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+    isRecentlyViewedFilter(): Record<string, unknown> {
+      if (useCaseFileStore().recentlyViewedCaseFileIds.length === 0) {
+        return {
+          Entity: {
+            Id: '',
+          },
+        };
+      }
+      const recentlyViewedObjectList = useCaseFileStore().recentlyViewedCaseFileIds.map((id) => ({
+          Entity: {
+            Id: id,
+          },
+        }));
+      return {
+          or: recentlyViewedObjectList,
+      };
+    },
+
+    tableData(): IParsedCaseFileCombined[] {
+      const rawData = this.combinedCaseFileStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      const parsedData: IParsedCaseFileCombined[] = rawData.map((d) => {
+        const recentlyViewed = useCaseFileStore().recentlyViewedCaseFileIds.indexOf(d.entity.id) > -1;
+        return {
+          ...d,
+          recentlyViewed,
+        };
+      });
+      return parsedData;
     },
 
     customColumns(): Record<string, string> {
@@ -227,6 +278,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         triage: `Metadata/TriageName/Translation/${this.$i18n.locale}`,
         status: `Metadata/CaseFileStatusName/Translation/${this.$i18n.locale}`,
         created: 'Entity/Created',
+        recentlyViewed: 'RecentlyViewed',
       };
     },
 
@@ -261,6 +313,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           text: this.$t('caseFilesTable.tableHeaders.createdDate') as string,
           sortable: true,
           value: this.customColumns.created,
+        },
+        {
+          text: '',
+          sortable: false,
+          value: this.customColumns.recentlyViewed,
+          width: '5%',
         },
       ];
     },
@@ -374,6 +432,13 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       }
       this.applyCustomFilter(newValue, this.duplicatesOnlyFilter);
     },
+
+    recentlyViewedOnly(newValue, oldValue) {
+      if (oldValue == null || newValue === oldValue) {
+        return;
+      }
+        this.applyCustomFilter(newValue, this.isRecentlyViewedFilter);
+    },
   },
 
   methods: {
@@ -397,6 +462,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       return {
         myCaseFilesFilter: this.myCaseFiles,
         duplicatesOnlyFilter: this.duplicatesOnly,
+        isRecentlyViewedFilter: this.recentlyViewedOnly,
       };
     },
 
@@ -404,6 +470,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       // eslint-disable-next-line
       this.myCaseFiles = (state as any)?.myCaseFilesFilter || false;
       this.duplicatesOnly = (state as any)?.duplicatesOnlyFilter || false;
+      this.recentlyViewedOnly = (state as any)?.isRecentlyViewedFilter || false;
     },
 
     async fetchData(params: IAzureSearchParams) {
@@ -458,6 +525,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
       if (this.duplicatesOnly) {
         finalFilters = { ...finalFilters, ...this.duplicatesOnlyFilter };
+      }
+
+      if (this.recentlyViewedOnly) {
+        finalFilters = { ...finalFilters, ...this.isRecentlyViewedFilter };
       }
 
       await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);

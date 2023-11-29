@@ -31,6 +31,7 @@ export function getExtensionComponents(
   const inactiveReasonsFetched = ref(false);
   const closeReasonsFetched = ref(false);
   const screeningIdsFetched = ref(false);
+  const recentlyViewedCaseFileIds = ref([]) as Ref<string[]>;
 
   function getTagsOptions(filterOutInactive = true, actualValue?: string[] | string) {
     return filterAndSortActiveItems(tagsOptions.value, filterOutInactive, actualValue);
@@ -182,6 +183,32 @@ export function getExtensionComponents(
     }
   }
 
+  async function fetchRecentlyViewed(): Promise<string[]> {
+    try {
+      const res = await entityService.getRecentlyViewed();
+      if (res) {
+        recentlyViewedCaseFileIds.value = res;
+      }
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, {}, 'module.caseFileEntity', 'fetchRecentlyViewed');
+      return [];
+    }
+  }
+
+  async function addRecentlyViewed(id: uuid): Promise<string[]> {
+    try {
+      const res = await entityService.addRecentlyViewed(id);
+      if (res) {
+        recentlyViewedCaseFileIds.value = res;
+      }
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, {}, 'module.caseFileEntity', 'addRecentlyViewed');
+      return [];
+    }
+  }
+
   return {
     tagsOptions,
     inactiveReasons,
@@ -191,6 +218,7 @@ export function getExtensionComponents(
     inactiveReasonsFetched,
     closeReasonsFetched,
     screeningIdsFetched,
+    recentlyViewedCaseFileIds,
     getTagsOptions,
     getInactiveReasons,
     getCloseReasons,
@@ -212,5 +240,7 @@ export function getExtensionComponents(
     fetchCaseFileDetailedCounts,
     assignCaseFile,
     genericSetAction,
+    fetchRecentlyViewed,
+    addRecentlyViewed,
   };
 }

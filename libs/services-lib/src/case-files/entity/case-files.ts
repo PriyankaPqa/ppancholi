@@ -124,4 +124,12 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
   async getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]> {
     return this.http.get(`${this.baseUrl}/exceptional-type-counts`, { params: { eventId } });
   }
+
+  async getRecentlyViewed(): Promise<string[]> {
+    return this.http.get(`${this.baseUrl}/recently-viewed`);
+  }
+
+  async addRecentlyViewed(id: string) : Promise<string[]> {
+    return this.http.patch(`${this.baseUrl}/recently-viewed`, { id });
+  }
 }

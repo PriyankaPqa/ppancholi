@@ -332,6 +332,7 @@ export default mixins(caseFileDetail).extend({
         await useCaseFileMetadataStore().fetch(this.caseFileId, false);
         await useEventStore().fetch(this.caseFile.eventId);
         await this.getHouseholdInfo();
+        await useCaseFileStore().addRecentlyViewed(this.caseFileId);
       } finally {
         this.loading = false;
       }

@@ -316,4 +316,22 @@ describe('>>> Case File Store', () => {
       expect(entityService.assignCaseFile).toBeCalledWith(id, payload);
     });
   });
+
+  describe('fetchRecentlyViewed', () => {
+    it('should call getRecentlyViewed service with proper params', async () => {
+      const store = createTestStore();
+      await store.fetchRecentlyViewed();
+
+      expect(entityService.getRecentlyViewed).toBeCalledWith();
+    });
+  });
+
+  describe('addRecentlyViewed', () => {
+    it('should call addRecentlyViewed service with proper params', async () => {
+      const store = createTestStore();
+      await store.addRecentlyViewed('id-1');
+
+      expect(entityService.addRecentlyViewed).toBeCalledWith('id-1');
+    });
+  });
 });

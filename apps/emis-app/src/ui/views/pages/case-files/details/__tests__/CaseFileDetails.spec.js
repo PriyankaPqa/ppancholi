@@ -11,9 +11,11 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import flushPromises from 'flush-promises';
+import { mockProvider } from '@/services/provider';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const mockCaseFile = mockCaseFileEntity({ id: '1' });
 const mockCaseFileMeta = mockCaseFileMetadata();
@@ -41,6 +43,9 @@ describe('CaseFileDetails.vue', () => {
           return mockEvent;
         },
         ...otherComputed,
+      },
+      mocks: {
+        $services: services,
       },
     };
     wrapper = mount(Component, params);
@@ -119,6 +124,9 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
+          mocks: {
+            $services: services,
+          },
         });
 
         element = wrapper.findDataTest('caseFileDetails-verify-identity-icon');
@@ -139,6 +147,9 @@ describe('CaseFileDetails.vue', () => {
           pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: mockCaseFile.id,
+          },
+          mocks: {
+            $services: services,
           },
         });
 
@@ -177,6 +188,7 @@ describe('CaseFileDetails.vue', () => {
             },
           },
           mocks: {
+            $services: services,
             getPrimaryMember: () => ({
               email: null,
             }),
@@ -218,6 +230,7 @@ describe('CaseFileDetails.vue', () => {
             },
           },
           mocks: {
+            $services: services,
             getPrimaryMember: () => ({}),
           },
         });
@@ -255,6 +268,7 @@ describe('CaseFileDetails.vue', () => {
             },
           },
           mocks: {
+            $services: services,
             getPrimaryMember: () => ({}),
           },
         });
@@ -290,6 +304,9 @@ describe('CaseFileDetails.vue', () => {
             event() {
               return mockEvent;
             },
+          },
+          mocks: {
+            $services: services,
           },
         });
         element = wrapper.findDataTest('caseFileDetails-alternate-phone-number');
@@ -367,7 +384,9 @@ describe('CaseFileDetails.vue', () => {
         computed: {
           primaryBeneficiary: () => mockMember(),
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -379,7 +398,9 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-
+          mocks: {
+            $services: services,
+          },
         });
         expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFile));
       });
@@ -398,6 +419,9 @@ describe('CaseFileDetails.vue', () => {
             primaryBeneficiary: () => mockMember(),
             readonly: () => false,
           },
+          mocks: {
+            $services: services,
+          },
         });
 
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -409,6 +433,9 @@ describe('CaseFileDetails.vue', () => {
           pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: mockCaseFile.id,
+          },
+          mocks: {
+            $services: services,
           },
         });
 
@@ -429,6 +456,9 @@ describe('CaseFileDetails.vue', () => {
               return { email: null };
             },
           },
+          mocks: {
+            $services: services,
+          },
         });
         expect(wrapper.vm.canL0AccessAssessment).toBe(true);
       });
@@ -445,6 +475,9 @@ describe('CaseFileDetails.vue', () => {
             primaryBeneficiary() {
               return { email: null };
             },
+          },
+          mocks: {
+            $services: services,
           },
         });
         expect(wrapper.vm.canL0AccessAssessment).toBe(false);
@@ -464,6 +497,7 @@ describe('CaseFileDetails.vue', () => {
               householdMetadata: mockHouseholdMetadata({ potentialDuplicatesCount: 1 }) };
           },
           mocks: {
+            $services: services,
             $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
         });
@@ -482,6 +516,7 @@ describe('CaseFileDetails.vue', () => {
             return { household: mockHouseholdEntity(), householdMetadata: mockHouseholdMetadata({ potentialDuplicatesCount: 0 }) };
           },
           mocks: {
+            $services: services,
             $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
         });
@@ -497,6 +532,7 @@ describe('CaseFileDetails.vue', () => {
             id: mockCaseFile.id,
           },
           mocks: {
+            $services: services,
             $hasFeature: (f) => f !== FeatureKeys.ManageDuplicate,
           },
         });
@@ -520,7 +556,9 @@ describe('CaseFileDetails.vue', () => {
         propsData: {
           id: mockCaseFile.id,
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -536,6 +574,14 @@ describe('CaseFileDetails.vue', () => {
       await hook.call(wrapper.vm);
 
       expect(wrapper.vm.getHouseholdInfo).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call addRecentlyViewed', async () => {
+      jest.clearAllMocks();
+      caseFileStore.addRecentlyViewed = jest.fn();
+      const hook = wrapper.vm.$options.created[0];
+      await hook.call(wrapper.vm);
+      expect(caseFileStore.addRecentlyViewed).toHaveBeenCalledWith(wrapper.vm.caseFileId);
     });
   });
 
@@ -555,7 +601,9 @@ describe('CaseFileDetails.vue', () => {
             return mockEvent;
           },
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 
