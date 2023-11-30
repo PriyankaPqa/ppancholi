@@ -6,7 +6,19 @@ import {
   mockBrandingEntityData,
   mockTenantSettingsEntityData,
   TenantSettingsEntity,
-  IdParams, mockCreateTenantSettingsRequest, mockSetDomainsRequest, IBrandingEntityData, mockEditColoursRequest, mockEditTenantDetailsRequest, mockFeatures,
+  IdParams,
+  mockCreateTenantSettingsRequest,
+  mockSetDomainsRequest,
+  IBrandingEntityData,
+  mockEditColoursRequest,
+  mockEditTenantDetailsRequest,
+  mockFeatures,
+  mockCreateFeatureRequest,
+  mockRemoveFeatureRequest,
+  mockEditFeatureRequest,
+  mockCanEnableFeatureRequest,
+  mockCanDisableFeatureRequest,
+  mockSetFeatureEnabledRequest,
 } from '@libs/entities-lib/tenantSettings';
 import { mockTenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { getBaseStoreComponents } from '@/base';
@@ -114,6 +126,21 @@ describe('>>> Tenant Settings module', () => {
     });
   });
 
+  describe('fetchAllTenantSettings', () => {
+    it('calls the getAllTenants service', async () => {
+      const store = createTestStore();
+      await store.fetchAllTenantSettings();
+      expect(entityService.getAllTenants).toHaveBeenCalledTimes(1);
+    });
+
+    it('commits the tenant settings', async () => {
+      const store = createTestStore();
+      const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
+      await store.fetchAllTenantSettings();
+      expect(store.getById(expected.id)).toEqual(expected);
+    });
+  });
+
   describe('fetchCurrentTenantSettings', () => {
     it('calls the getCurrentTenantSettings service', async () => {
       const store = createTestStore();
@@ -181,14 +208,32 @@ describe('>>> Tenant Settings module', () => {
     });
   });
 
+  describe('createFeature', () => {
+    it('calls the service', async () => {
+      const store = createTestStore();
+      const request = mockCreateFeatureRequest();
+      await store.createFeature(request);
+
+      expect(entityService.createFeature).toHaveBeenCalledWith(request);
+    });
+
+    it('commits the tenant settings', async () => {
+      const store = createTestStore();
+      const request = mockCreateFeatureRequest();
+      const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
+      await store.createFeature(request);
+
+      expect(store.getById(expected.id)).toEqual(expected);
+    });
+  });
+
   describe('enableFeature', () => {
     it('calls the service', async () => {
       const featureId = 'id';
       const store = createTestStore();
       await store.enableFeature(featureId);
 
-      expect(entityService.enableFeature)
-        .toHaveBeenCalledWith(featureId);
+      expect(entityService.enableFeature).toHaveBeenCalledWith(featureId);
     });
 
     it('updates the entity', async () => {
@@ -196,8 +241,8 @@ describe('>>> Tenant Settings module', () => {
       const store = createTestStore();
       const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
       await store.enableFeature(featureId);
-      expect(store.currentTenantSettings)
-        .toEqual(expected);
+
+      expect(store.getById(expected.id)).toEqual(expected);
     });
   });
 
@@ -206,8 +251,8 @@ describe('>>> Tenant Settings module', () => {
       const featureId = 'id';
       const store = createTestStore();
       await store.disableFeature(featureId);
-      expect(entityService.disableFeature)
-        .toHaveBeenCalledWith(featureId);
+
+      expect(entityService.disableFeature).toHaveBeenCalledWith(featureId);
     });
 
     it('updates the entity', async () => {
@@ -215,8 +260,103 @@ describe('>>> Tenant Settings module', () => {
       const store = createTestStore();
       await store.disableFeature(featureId);
       const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
-      expect(store.currentTenantSettings)
-        .toEqual(expected);
+
+      expect(store.getById(expected.id)).toEqual(expected);
+    });
+  });
+
+  describe('setFeatureEnabled', () => {
+    it('calls the service', async () => {
+      const store = createTestStore();
+      const request = mockSetFeatureEnabledRequest({ tenantIds: ['1'] });
+      await store.setFeatureEnabled(request.enabled, request.key, request.tenantIds[0]);
+
+      expect(entityService.setFeatureEnabled).toHaveBeenCalledWith(request);
+    });
+
+    it('updates the entity', async () => {
+      const store = createTestStore();
+      const request = mockSetFeatureEnabledRequest();
+      await store.setFeatureEnabled(request.enabled, request.key, request.tenantIds[0]);
+      const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
+
+      expect(store.getById(expected.id)).toEqual(expected);
+    });
+  });
+
+  describe('removeFeature', () => {
+    it('calls the service', async () => {
+      const store = createTestStore();
+      const request = mockRemoveFeatureRequest();
+      await store.removeFeature(request);
+
+      expect(entityService.removeFeature).toHaveBeenCalledWith(request);
+    });
+
+    it('updates the entity', async () => {
+      const store = createTestStore();
+      const request = mockRemoveFeatureRequest();
+      await store.removeFeature(request);
+      const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
+
+      expect(store.getById(expected.id)).toEqual(expected);
+    });
+  });
+
+  describe('editFeature', () => {
+    it('calls the service', async () => {
+      const store = createTestStore();
+      const request = mockEditFeatureRequest();
+      await store.editFeature(request);
+
+      expect(entityService.editFeature).toHaveBeenCalledWith(request);
+    });
+
+    it('updates the entity', async () => {
+      const store = createTestStore();
+      const request = mockEditFeatureRequest();
+      await store.editFeature(request);
+      const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
+
+      expect(store.getById(expected.id)).toEqual(expected);
+    });
+  });
+
+  describe('setCanEnableFeature', () => {
+    it('calls the service', async () => {
+      const store = createTestStore();
+      const request = mockCanEnableFeatureRequest({ tenantIds: ['1'] });
+      await store.setCanEnableFeature(request.canEnable, request.key, request.tenantIds[0]);
+
+      expect(entityService.canEnableFeature).toHaveBeenCalledWith(request);
+    });
+
+    it('updates the entity', async () => {
+      const store = createTestStore();
+      const request = mockCanEnableFeatureRequest();
+      await store.setCanEnableFeature(request.canEnable, request.key, request.tenantIds[0]);
+      const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
+
+      expect(store.getById(expected.id)).toEqual(expected);
+    });
+  });
+
+  describe('setCanDisableFeature', () => {
+    it('calls the service', async () => {
+      const store = createTestStore();
+      const request = mockCanDisableFeatureRequest({ tenantIds: ['1'] });
+      await store.setCanDisableFeature(request.canDisable, request.key, request.tenantIds[0]);
+
+      expect(entityService.canDisableFeature).toHaveBeenCalledWith(request);
+    });
+
+    it('updates the entity', async () => {
+      const store = createTestStore();
+      const request = mockCanDisableFeatureRequest();
+      await store.setCanDisableFeature(request.canDisable, request.key, request.tenantIds[0]);
+      const expected = new TenantSettingsEntity(mockTenantSettingsEntityData());
+
+      expect(store.getById(expected.id)).toEqual(expected);
     });
   });
 

@@ -2,8 +2,9 @@ import {
   FeatureKeys,
   IBrandingEntity,
   IBrandingEntityData,
-  ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest,
-  IFeatureEntity, ISetDomainsRequest,
+  ICreateFeatureRequest,
+  ICreateTenantSettingsRequest, IEditColoursRequest, IEditFeatureRequest, IEditTenantDetailsRequest,
+  IFeatureEntity, IRemoveFeatureRequest, ISetDomainsRequest,
   ITenantSettingsEntity,
   ITenantSettingsEntityData, IValidateCaptchaAllowedIpAddressResponse, IdParams,
 } from '@libs/entities-lib/tenantSettings';
@@ -26,18 +27,25 @@ export interface TenantSettingsActions extends BaseActions<ITenantSettingsEntity
   setCurrentTenantSettings: (tenantSettingsData: ITenantSettingsEntityData) => IBrandingEntity
   setFeatures: (features: IFeatureEntity[]) => void
   setBranding: (brandingData: IBrandingEntityData) => void
+  fetchAllTenantSettings: () => Promise<ITenantSettingsEntityData[]>
   fetchCurrentTenantSettings: () => Promise<ITenantSettingsEntityData>
   createTenantSettings: (payload: ICreateTenantSettingsRequest) => Promise<ITenantSettingsEntityData>
   createTenantDomains: (payload: ISetDomainsRequest) => Promise<ITenantSettingsEntityData>
+  createFeature: (payload: ICreateFeatureRequest) => Promise<ITenantSettingsEntityData[]>
+  removeFeature: (payload: IRemoveFeatureRequest) => Promise<ITenantSettingsEntityData[]>
+  editFeature: (payload: IEditFeatureRequest) => Promise<ITenantSettingsEntityData>
   enableFeature: (featureId: uuid) => Promise<ITenantSettingsEntityData>
   disableFeature: (featureId: uuid) => Promise<ITenantSettingsEntityData>
+  setFeatureEnabled: (enabled: boolean, featureKey: string, tenantId: uuid) => Promise<ITenantSettingsEntityData[]>
+  setCanEnableFeature: (canEnable: boolean, featureKey: string, tenantId: uuid) => Promise<ITenantSettingsEntityData[]>
+  setCanDisableFeature: (canDisable: boolean, featureKey: string, tenantId: uuid) => Promise<ITenantSettingsEntityData[]>
   fetchUserTenants: () => Promise<IBrandingEntity[]>
   updateColours: (payload: IEditColoursRequest) => Promise<ITenantSettingsEntity>
   updateTenantDetails: (payload: IEditTenantDetailsRequest) => Promise<ITenantSettingsEntity>
   fetchPublicFeatures: () => Promise<IFeatureEntity[]>
   validateCaptchaAllowedIpAddress: () => Promise<IValidateCaptchaAllowedIpAddressResponse>
   fetchBranding: () => Promise<IBrandingEntity>
-  updateTheme: (branding: IBrandingEntity) => void;
+  updateTheme: (branding: IBrandingEntity) => void
   updateSupportEmails: (payload: IMultilingual) => Promise<ITenantSettingsEntity>
 }
 

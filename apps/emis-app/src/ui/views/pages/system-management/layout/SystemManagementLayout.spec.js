@@ -95,6 +95,25 @@ describe('SystemManagementLayout.vue', () => {
           level: UserRoles.level6,
         }]);
       });
+
+      it('contains multi-tenant features when feature flag is on', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $route: {
+              name: '',
+            },
+            $hasFeature: jest.fn(() => true),
+          },
+        });
+
+        const tab = wrapper.vm.tabs.find((t) => t.test === 'systemManagement__menu__multiTenantFeatures');
+        expect(tab).toBeTruthy();
+        expect(tab.text).toEqual('system_management.card.multiTenantFeatures.title');
+        expect(tab.to).toEqual(routes.systemManagement.multiTenantFeatures.home.name);
+        expect(tab.exact).toEqual(false);
+        expect(tab.level).toEqual(UserRoles.level6);
+      });
     });
   });
 });

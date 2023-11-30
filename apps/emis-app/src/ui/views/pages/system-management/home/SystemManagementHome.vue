@@ -20,6 +20,7 @@ import routes from '@/constants/routes';
 import { UserRoles } from '@libs/entities-lib/user';
 import { ICardSettings } from '@/types/interfaces/ICardSettings';
 import helpers from '@/ui/helpers/helpers';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'SystemManagementHome',
@@ -34,7 +35,7 @@ export default Vue.extend({
     },
 
     cards(): ICardSettings[] {
-      return [{
+      const cards = [{
         title: 'system_management.card.lists_title',
         description: 'system_management.card.lists_description',
         button: 'system_management.card.btn.lists_title',
@@ -77,6 +78,21 @@ export default Vue.extend({
         dataTest: 'sysManagementHome__features',
         level: UserRoles.level6,
       }];
+
+      if (this.$hasFeature(FeatureKeys.FeatureDashboard)) {
+        cards.push(
+        {
+          title: 'system_management.card.multiTenantFeatures.title',
+          description: 'system_management.card.multiTenantFeatures.description',
+          button: 'system_management.card.multiTenantFeatures.btn.label',
+          route: routes.systemManagement.multiTenantFeatures.home.name,
+          dataTest: 'sysManagementHome__multiTenantFeatures',
+          level: UserRoles.level6,
+        },
+);
+      }
+
+      return cards;
     },
 
     accessibleCards(): ICardSettings[] {

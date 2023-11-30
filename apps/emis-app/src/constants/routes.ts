@@ -562,6 +562,20 @@ const routes = {
       path: 'features',
       name: 'systemManagement.lists.features',
     },
+    multiTenantFeatures: {
+      home: {
+        path: 'multi-tenant-features',
+        name: 'systemManagement.lists.multiTenantFeatures',
+      },
+      create: {
+        path: 'multi-tenant-features/create',
+        name: 'systemManagement.lists.multiTenantFeatures.create',
+      },
+      edit: {
+        path: 'multi-tenant-features/:tenantId/:featureId/edit',
+        name: 'systemManagement.lists.multiTenantFeatures.edit',
+      },
+    },
     caseFileInactiveReasons: {
       path: 'lists/case-file-inactive-reasons',
       name: 'systemManagement.lists.caseFileInactiveReasons',

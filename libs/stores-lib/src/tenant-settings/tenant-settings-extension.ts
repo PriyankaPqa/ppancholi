@@ -7,7 +7,17 @@ import {
   IBrandingEntity,
   IFeatureEntity,
   IBrandingEntityData,
-  ICreateTenantSettingsRequest, ISetDomainsRequest, IEditColoursRequest, IEditTenantDetailsRequest, IValidateCaptchaAllowedIpAddressResponse,
+  ICreateTenantSettingsRequest,
+  ISetDomainsRequest,
+  IEditColoursRequest,
+  IEditTenantDetailsRequest,
+  IValidateCaptchaAllowedIpAddressResponse,
+  ICanEnableFeatureRequest,
+  ICanDisableFeatureRequest,
+  IEditFeatureRequest,
+  ICreateFeatureRequest,
+  IRemoveFeatureRequest,
+  ISetFeatureEnabledRequest,
 } from '@libs/entities-lib/tenantSettings';
 import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/services-lib/tenantSettings/entity';
 import { ref } from 'vue';
@@ -15,6 +25,7 @@ import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { BaseStoreComponents } from '../base';
 
+// eslint-disable-next-line max-lines-per-function
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<ITenantSettingsEntity, IdParams>,
   entityService: ITenantSettingsService | ITenantSettingsServiceMock,
@@ -54,6 +65,17 @@ export function getExtensionComponents(
     updateTheme(currentTenantSettings.value.branding);
   }
 
+  function setAndReturnTenantSettingsResult(result: ITenantSettingsEntityData) {
+    if (result) {
+      baseComponents.set(new TenantSettingsEntity(result));
+      if (result?.id === currentTenantSettings.value.id) {
+        setCurrentTenantSettings(result);
+      }
+    }
+
+    return result;
+  }
+
   function setBranding(brandingData: IBrandingEntityData) {
     currentTenantSettings.value.branding = {
       ...brandingData,
@@ -61,6 +83,15 @@ export function getExtensionComponents(
     };
 
     updateTheme(currentTenantSettings.value.branding);
+  }
+
+  async function fetchAllTenantSettings(): Promise<ITenantSettingsEntityData[]> {
+    const result = await entityService.getAllTenants();
+    if (result) {
+      // side-effect: store may contain tenants not available to user
+      result.forEach((ts) => setAndReturnTenantSettingsResult(ts));
+    }
+    return result;
   }
 
   async function fetchCurrentTenantSettings(): Promise<ITenantSettingsEntityData> {
@@ -98,21 +129,82 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function enableFeature(featureId: uuid): Promise<ITenantSettingsEntityData> {
-    const result = await entityService.enableFeature(featureId);
+  async function createFeature(payload: ICreateFeatureRequest): Promise<ITenantSettingsEntityData[]> {
+    const result = await entityService.createFeature(payload);
+
     if (result) {
-      setCurrentTenantSettings(result);
+      // side-effect: store may contain tenants not available to user
+      result.forEach((ts) => setAndReturnTenantSettingsResult(ts));
     }
 
     return result;
   }
 
-  async function disableFeature(featureId: uuid): Promise<ITenantSettingsEntityData> {
-    const result = await entityService.disableFeature(featureId);
+  async function removeFeature(payload: IRemoveFeatureRequest): Promise<ITenantSettingsEntityData[]> {
+    const result = await entityService.removeFeature(payload);
+
     if (result) {
-      setCurrentTenantSettings(result);
+      // side-effect: store may contain tenants not available to user
+      result.forEach((ts) => setAndReturnTenantSettingsResult(ts));
     }
 
+    return result;
+  }
+
+  async function editFeature(payload: IEditFeatureRequest): Promise<ITenantSettingsEntityData> {
+    const result = await entityService.editFeature(payload);
+    return setAndReturnTenantSettingsResult(result);
+  }
+
+  async function enableFeature(featureId: uuid): Promise<ITenantSettingsEntityData> {
+    const result = await entityService.enableFeature(featureId);
+    return setAndReturnTenantSettingsResult(result);
+  }
+
+  async function disableFeature(featureId: uuid): Promise<ITenantSettingsEntityData> {
+    const result = await entityService.disableFeature(featureId);
+    return setAndReturnTenantSettingsResult(result);
+  }
+
+  async function setFeatureEnabled(enabled: boolean, featureKey: string, tenantId: uuid): Promise<ITenantSettingsEntityData[]> {
+    const payload: ISetFeatureEnabledRequest = {
+      key: featureKey,
+      enabled,
+      tenantIds: [tenantId],
+    };
+    const result = await entityService.setFeatureEnabled(payload);
+    if (result) {
+      // side-effect: store may contain tenants not available to user
+      result.forEach((ts) => setAndReturnTenantSettingsResult(ts));
+    }
+    return result;
+  }
+
+  async function setCanEnableFeature(canEnable: boolean, featureKey: string, tenantId: uuid): Promise<ITenantSettingsEntityData[]> {
+    const payload: ICanEnableFeatureRequest = {
+      key: featureKey,
+      canEnable,
+      tenantIds: [tenantId],
+    };
+    const result = await entityService.canEnableFeature(payload);
+    if (result) {
+      // side-effect: store may contain tenants not available to user
+      result.forEach((ts) => setAndReturnTenantSettingsResult(ts));
+    }
+    return result;
+  }
+
+  async function setCanDisableFeature(canDisable: boolean, featureKey: string, tenantId: uuid): Promise<ITenantSettingsEntityData[]> {
+    const payload: ICanDisableFeatureRequest = {
+      key: featureKey,
+      canDisable,
+      tenantIds: [tenantId],
+    };
+    const result = await entityService.canDisableFeature(payload);
+    if (result) {
+      // side-effect: store may contain tenants not available to user
+      result.forEach((ts) => setAndReturnTenantSettingsResult(ts));
+    }
     return result;
   }
 
@@ -193,11 +285,18 @@ export function getExtensionComponents(
     getBranding,
     setCurrentTenantSettings,
     setBranding,
+    fetchAllTenantSettings,
     fetchCurrentTenantSettings,
     createTenantSettings,
     createTenantDomains,
+    createFeature,
+    removeFeature,
+    editFeature,
     enableFeature,
     disableFeature,
+    setFeatureEnabled,
+    setCanEnableFeature,
+    setCanDisableFeature,
     fetchUserTenants,
     updateColours,
     updateTenantDetails,

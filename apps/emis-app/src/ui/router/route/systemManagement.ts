@@ -18,6 +18,8 @@ const Roles = () => import('@/ui/views/pages/system-management/lists/Roles.vue')
 const Branding = () => import('@/ui/views/pages/system-management/lists/branding/Branding.vue');
 const TenantSettings = () => import('@/ui/views/pages/system-management/lists/tenantSettings/TenantSettings.vue');
 const FeaturesComponent = () => import('@/ui/views/pages/system-management/lists/features/Features.vue');
+const MultiTenantFeatures = () => import('@/ui/views/pages/system-management/lists/multi-tenant-features/MultiTenantFeatures.vue');
+const MultiTenantFeaturesCreateEditFeature = () => import('@/ui/views/pages/system-management/lists/multi-tenant-features/CreateEditFeature.vue');
 const CaseNoteCategories = () => import('@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 const CaseFileCloseReasons = () => import('@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
 const ReferralOutcomeStatuses = () => import('@/ui/views/pages/system-management/lists/pages/ReferralOutcomeStatuses.vue');
@@ -124,6 +126,25 @@ export const systemManagement: RouteConfig = {
       name: Routes.systemManagement.features.name,
       component: FeaturesComponent,
       meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.systemManagement.multiTenantFeatures.home.path,
+      name: Routes.systemManagement.multiTenantFeatures.home.name,
+      component: MultiTenantFeatures,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.systemManagement.multiTenantFeatures.create.path,
+      name: Routes.systemManagement.multiTenantFeatures.create.name,
+      component: MultiTenantFeaturesCreateEditFeature,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.systemManagement.multiTenantFeatures.edit.path,
+      name: Routes.systemManagement.multiTenantFeatures.edit.name,
+      component: MultiTenantFeaturesCreateEditFeature,
+      meta: { level: UserRoles.level6 },
+      props: true,
     },
     {
       path: Routes.systemManagement.caseNoteCategories.path,

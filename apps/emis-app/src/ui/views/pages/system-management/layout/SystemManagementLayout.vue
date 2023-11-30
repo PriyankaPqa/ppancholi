@@ -18,6 +18,7 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'SystemManagementLayout',
@@ -39,7 +40,7 @@ export default Vue.extend({
     },
 
     tabs(): Array<INavigationTab> {
-      return [{
+      const tabs = [{
         text: this.$t('system_management.leftMenu.lists_title'),
         test: 'systemManagement__menu__optionsLists',
         to: routes.systemManagement.lists.name,
@@ -76,6 +77,18 @@ export default Vue.extend({
         exact: false,
         level: UserRoles.level6,
       }];
+
+      if (this.$hasFeature(FeatureKeys.FeatureDashboard)) {
+        tabs.push({
+          text: this.$t('system_management.card.multiTenantFeatures.title'),
+          test: 'systemManagement__menu__multiTenantFeatures',
+          to: routes.systemManagement.multiTenantFeatures.home.name,
+          exact: false,
+          level: UserRoles.level6,
+        });
+      }
+
+      return tabs;
     },
 
     showLeftMenu(): boolean {

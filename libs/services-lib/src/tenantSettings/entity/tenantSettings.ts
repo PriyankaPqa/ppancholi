@@ -1,6 +1,20 @@
 import {
-  IBrandingEntityData, IConsentStatement, ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, IFeatureEntity,
-  ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData, IValidateCaptchaAllowedIpAddressResponse,
+  IBrandingEntityData,
+  ICanDisableFeatureRequest,
+  ICanEnableFeatureRequest,
+  IConsentStatement,
+  ICreateTenantSettingsRequest,
+  IEditColoursRequest,
+  IEditFeatureRequest,
+  IEditTenantDetailsRequest,
+  IFeatureEntity,
+  ISetDomainsRequest,
+  ITenantSettingsEntity,
+  ITenantSettingsEntityData,
+  IValidateCaptchaAllowedIpAddressResponse,
+  ICreateFeatureRequest,
+  IRemoveFeatureRequest,
+  ISetFeatureEnabledRequest,
 } from '@libs/entities-lib/tenantSettings';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { GlobalHandler, IHttpClient } from '../../http-client';
@@ -16,8 +30,14 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
+  // getAll: returns all tenants in which the user has an account in the environment
   async getAll(): Promise<ITenantSettingsEntityData[]> {
     return this.http.get(`${this.baseApi}/tenants/settings`, { globalHandler: GlobalHandler.Partial });
+  }
+
+  // getAllTenants: returns all tenants, restricted to Level6 CRC Tech Main users
+  async getAllTenants(): Promise<ITenantSettingsEntityData[]> {
+    return this.http.get(`${this.baseApi}/tenants/all`, { globalHandler: GlobalHandler.Partial });
   }
 
   async getCurrentTenantSettings(): Promise<ITenantSettingsEntityData> {
@@ -44,6 +64,10 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
 
   async disableFeature(featureId: string): Promise<ITenantSettingsEntityData> {
     return this.http.patch(`${this.baseUrl}/feature/${featureId}/disable`);
+  }
+
+  async setFeatureEnabled(payload: ISetFeatureEnabledRequest): Promise<ITenantSettingsEntityData[]> {
+    return this.http.patch(`${this.baseUrl}/multitenant/feature/enable`, payload);
   }
 
   async getUserTenants(): Promise<IBrandingEntityData[]> {
@@ -80,5 +104,25 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
 
   async getConsentStatement(eventId: string): Promise<IConsentStatement> {
     return this.http.get(`${this.baseUrl}/consent-statements/${eventId}`);
+  }
+
+  async createFeature(payload: ICreateFeatureRequest): Promise<ITenantSettingsEntityData[]> {
+    return this.http.post(`${this.baseUrl}/multitenant/feature`, payload);
+  }
+
+  async removeFeature(payload: IRemoveFeatureRequest): Promise<ITenantSettingsEntityData[]> {
+    return this.http.post(`${this.baseUrl}/multitenant/feature/remove`, payload);
+  }
+
+  async editFeature(payload: IEditFeatureRequest): Promise<ITenantSettingsEntityData> {
+    return this.http.patch(`${this.baseUrl}/feature`, payload);
+  }
+
+  async canEnableFeature(payload: ICanEnableFeatureRequest): Promise<ITenantSettingsEntityData[]> {
+    return this.http.patch(`${this.baseUrl}/multitenant/feature/can-enable`, payload);
+  }
+
+  async canDisableFeature(payload: ICanDisableFeatureRequest): Promise<ITenantSettingsEntityData[]> {
+    return this.http.patch(`${this.baseUrl}/multitenant/feature/can-disable`, payload);
   }
 }

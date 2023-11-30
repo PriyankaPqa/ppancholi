@@ -13,11 +13,17 @@ export enum FeatureKeys {
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   InSystemQuerying = 'InSystemQuerying',
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
+  FeatureDashboard = 'FeatureDashboard',
 }
 
 export enum FeatureType {
   Temporary = 0,
   Permanent = 1,
+}
+
+export enum FeatureVisibility {
+  Private = 1,
+  Public = 2,
 }
 
 export interface ITenantDetailsEntityData {
@@ -62,6 +68,7 @@ export interface IFeatureEntity extends IEntity {
   canEnable: boolean;
   canDisable: boolean;
   type: FeatureType;
+  visibility: FeatureVisibility;
 }
 
 export interface IConsentStatementData {
@@ -107,6 +114,46 @@ export interface ICreateTenantSettingsRequest {
 export interface IValidateCaptchaAllowedIpAddressResponse {
   ipAddressIsAllowed: boolean;
   clientIpAddress: string;
+}
+
+export interface IMultiTenantFeatureRequest {
+  key: string;
+  tenantIds: uuid[];
+}
+
+export interface ICreateFeatureRequest extends IMultiTenantFeatureRequest {
+  name: IMultilingual;
+  description: IMultilingual;
+  type: FeatureType;
+}
+
+export interface IRemoveFeatureRequest extends IMultiTenantFeatureRequest {
+  key: string;
+}
+
+export interface IEditFeatureRequest {
+  tenantId: uuid;
+  id: uuid;
+  name: IMultilingual;
+  description: IMultilingual;
+  type: FeatureType;
+  key: string;
+  enabled: boolean;
+  canEnable: boolean;
+  canDisable: boolean;
+  visibility: FeatureVisibility;
+}
+
+export interface ISetFeatureEnabledRequest extends IMultiTenantFeatureRequest {
+  enabled: boolean;
+}
+
+export interface ICanEnableFeatureRequest extends IMultiTenantFeatureRequest {
+  canEnable: boolean;
+}
+
+export interface ICanDisableFeatureRequest extends IMultiTenantFeatureRequest {
+  canDisable: boolean;
 }
 
 export type ITenantSettingsCombined = IEntityCombined<ITenantSettingsEntity, never>;

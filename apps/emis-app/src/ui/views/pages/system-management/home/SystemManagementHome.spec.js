@@ -150,5 +150,38 @@ describe('SystemManagementHome.vue', () => {
         expect(card.button).toBe('system_management.card.features.btn.label');
       });
     });
+
+    describe('Multi-tenant Features card', () => {
+      describe('when feature is enabled', () => {
+        beforeEach(async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            mocks: {
+              $hasFeature: jest.fn(() => true),
+            },
+          });
+        });
+        it('has the correct title', async () => {
+          const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__multiTenantFeatures');
+          expect(card.title).toBe('system_management.card.multiTenantFeatures.title');
+        });
+
+        it('has the correct description', async () => {
+          const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__multiTenantFeatures');
+          expect(card.description).toBe('system_management.card.multiTenantFeatures.description');
+        });
+
+        it('has the correct button label', async () => {
+          const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__multiTenantFeatures');
+          expect(card.button).toBe('system_management.card.multiTenantFeatures.btn.label');
+        });
+      });
+      describe('when feature is disabled', () => {
+        it('is not shown', async () => {
+          const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__multiTenantFeatures');
+          expect(card).toBeFalsy();
+        });
+      });
+    });
   });
 });

@@ -12,6 +12,13 @@ import {
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
   IConsentStatement,
+  FeatureVisibility,
+  ICreateFeatureRequest,
+  IRemoveFeatureRequest,
+  IEditFeatureRequest,
+  ICanEnableFeatureRequest,
+  ICanDisableFeatureRequest,
+  ISetFeatureEnabledRequest,
 } from './tenantSettings.types';
 
 export const mockEditColoursRequest = (): IEditColoursRequest => ({
@@ -85,6 +92,8 @@ export const mockFeatures = (): IFeatureEntity[] => [{
   canDisable: true,
 
   type: FeatureType.Temporary,
+
+  visibility: FeatureVisibility.Private,
 }, {
   ...mockBaseData(),
 
@@ -113,6 +122,8 @@ export const mockFeatures = (): IFeatureEntity[] => [{
   canDisable: true,
 
   type: FeatureType.Permanent,
+
+  visibility: FeatureVisibility.Private,
 }];
 
 export const mockConsentStatements = (): IConsentStatement[] => [{
@@ -222,4 +233,74 @@ export const mockTenantSettingsEntities = () => [
 export const mockCombinedTenantSettings = (force?: Partial<IEntity>): ITenantSettingsCombined => ({
   metadata: null as never,
   entity: mockTenantSettingsEntity(force),
+});
+
+export const mockCreateFeatureRequest = (): ICreateFeatureRequest => ({
+  name: {
+    translation: {
+    en: 'name en',
+    fr: 'name fr',
+    },
+  },
+  description: {
+    translation: {
+    en: 'description en',
+    fr: 'description fr',
+    },
+  },
+  type: FeatureType.Temporary,
+  key: 'key',
+  tenantIds: ['1', '2'],
+});
+
+export const mockRemoveFeatureRequest = (): IRemoveFeatureRequest => ({
+  key: 'key',
+  tenantIds: ['1', '2'],
+});
+
+export const mockEditFeatureRequest = (): IEditFeatureRequest => ({
+  tenantId: '1',
+  id: 'id-1',
+  name: {
+    translation: {
+    en: 'name en',
+    fr: 'name fr',
+    },
+  },
+  description: {
+    translation: {
+    en: 'description en',
+    fr: 'description fr',
+    },
+  },
+  type: FeatureType.Temporary,
+  key: 'key',
+  enabled: true,
+  canEnable: true,
+  canDisable: false,
+  visibility: FeatureVisibility.Private,
+});
+
+export const mockSetFeatureEnabledRequest = (force?: Partial<ISetFeatureEnabledRequest>): ISetFeatureEnabledRequest => ({
+  enabled: true,
+  key: 'key',
+  tenantIds: ['1', '2'],
+
+  ...force,
+});
+
+export const mockCanEnableFeatureRequest = (force?: Partial<ICanEnableFeatureRequest>): ICanEnableFeatureRequest => ({
+  canEnable: true,
+  key: 'key',
+  tenantIds: ['1', '2'],
+
+  ...force,
+});
+
+export const mockCanDisableFeatureRequest = (force?: Partial<ICanDisableFeatureRequest>): ICanDisableFeatureRequest => ({
+  canDisable: true,
+  key: 'key',
+  tenantIds: ['1', '2'],
+
+  ...force,
 });

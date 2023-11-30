@@ -1,7 +1,10 @@
+import { FeatureEntity } from './feature';
 import { TenantSettingsEntity } from './tenantSettings';
-import { mockTenantSettingsEntityData } from './tenantSettings.mock';
+import { mockFeatures, mockTenantSettingsEntityData } from './tenantSettings.mock';
+import { FeatureType, FeatureVisibility } from './tenantSettings.types';
 
 const mock = mockTenantSettingsEntityData();
+const mockFeature = mockFeatures()[0];
 
 describe('>>> TenantSettingsEntity', () => {
   describe('>> constructor', () => {
@@ -101,6 +104,71 @@ describe('>>> TenantSettingsEntity', () => {
             fr: '',
           },
         });
+      });
+    });
+  });
+});
+
+describe('>>> FeatureEntity', () => {
+  describe('>> constructor', () => {
+    describe('if data is passed', () => {
+      const feature = new FeatureEntity(mockFeature);
+      it('should instantiate name', () => {
+        expect(feature.name).toEqual(mockFeature.name);
+      });
+      it('should instantiate description', () => {
+        expect(feature.description).toEqual(mockFeature.description);
+      });
+      it('should instantiate key', () => {
+        expect(feature.key).toEqual(mockFeature.key);
+      });
+      it('should instantiate enabled', () => {
+        expect(feature.enabled).toEqual(mockFeature.enabled);
+      });
+      it('should instantiate canEnable', () => {
+        expect(feature.canEnable).toEqual(mockFeature.canEnable);
+      });
+      it('should instantiate canDisable', () => {
+        expect(feature.canDisable).toEqual(mockFeature.canDisable);
+      });
+      it('should instantiate type', () => {
+        expect(feature.type).toEqual(mockFeature.type);
+      });
+      it('should instantiate visibility', () => {
+        expect(feature.visibility).toEqual(mockFeature.visibility);
+      });
+    });
+    describe('if data is not passed', () => {
+      const feature = new FeatureEntity();
+      const emptyMultilingual = {
+        translation: {
+          en: '',
+          fr: '',
+        },
+      };
+      it('should instantiate name', () => {
+        expect(feature.name).toEqual(emptyMultilingual);
+      });
+      it('should instantiate description', () => {
+        expect(feature.description).toEqual(emptyMultilingual);
+      });
+      it('should instantiate key as empty string', () => {
+        expect(feature.key).toEqual('');
+      });
+      it('should instantiate enabled as false', () => {
+        expect(feature.enabled).toEqual(false);
+      });
+      it('should instantiate canEnable as false', () => {
+        expect(feature.canEnable).toEqual(false);
+      });
+      it('should instantiate canDisable as false', () => {
+        expect(feature.canDisable).toEqual(false);
+      });
+      it('should instantiate type as temporary', () => {
+        expect(feature.type).toEqual(FeatureType.Temporary);
+      });
+      it('should instantiate visibility as private', () => {
+        expect(feature.visibility).toEqual(FeatureVisibility.Private);
       });
     });
   });

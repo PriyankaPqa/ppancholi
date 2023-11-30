@@ -3,6 +3,12 @@ import {
   mockEditColoursRequest,
   mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
+  mockCreateFeatureRequest,
+  mockRemoveFeatureRequest,
+  mockEditFeatureRequest,
+  mockCanEnableFeatureRequest,
+  mockCanDisableFeatureRequest,
+  mockSetFeatureEnabledRequest,
 } from '@libs/entities-lib/tenantSettings';
 import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { TenantSettingsService } from './tenantSettings';
@@ -17,6 +23,20 @@ describe('>>> TenantSettings service', () => {
     jest.clearAllMocks();
     http = mockHttp();
     service = new TenantSettingsService(http as never);
+  });
+
+  describe('getAll', () => {
+    it('is linked to the correct url', async () => {
+      await service.getAll();
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenants/settings', { globalHandler: GlobalHandler.Partial });
+    });
+  });
+
+  describe('getAllTenants', () => {
+    it('is linked to the correct url', async () => {
+      await service.getAllTenants();
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenants/all', { globalHandler: GlobalHandler.Partial });
+    });
   });
 
   describe('getCurrentTenantSettings', () => {
@@ -59,6 +79,14 @@ describe('>>> TenantSettings service', () => {
       const featureId = 'MOCK_ID';
       await service.disableFeature(featureId);
       expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/feature/${featureId}/disable`);
+    });
+  });
+
+  describe('setFeatureEnabled', () => {
+    it('is linked to the correct URL and params', async () => {
+      const payload = mockSetFeatureEnabledRequest();
+      await service.setFeatureEnabled(payload);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/multitenant/feature/enable', payload);
     });
   });
 
@@ -134,6 +162,46 @@ describe('>>> TenantSettings service', () => {
     it('is linked to the correct url', async () => {
       await service.validateCaptchaAllowedIpAddress();
       expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/validate-captcha-allowed-ip-address');
+    });
+  });
+
+  describe('createFeature', () => {
+    it('is linked to the correct url', async () => {
+      const payload = mockCreateFeatureRequest();
+      await service.createFeature(payload);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/multitenant/feature', payload);
+    });
+  });
+
+  describe('removeFeature', () => {
+    it('is linked to the correct url', async () => {
+      const payload = mockRemoveFeatureRequest();
+      await service.removeFeature(payload);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/multitenant/feature/remove', payload);
+    });
+  });
+
+  describe('editFeature', () => {
+    it('is linked to the correct url', async () => {
+      const payload = mockEditFeatureRequest();
+      await service.editFeature(payload);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/feature', payload);
+    });
+  });
+
+  describe('canEnableFeature', () => {
+    it('is linked to the correct url', async () => {
+      const payload = mockCanEnableFeatureRequest();
+      await service.canEnableFeature(payload);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/multitenant/feature/can-enable', payload);
+    });
+  });
+
+  describe('canDisableFeature', () => {
+    it('is linked to the correct url', async () => {
+      const payload = mockCanDisableFeatureRequest();
+      await service.canDisableFeature(payload);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/multitenant/feature/can-disable', payload);
     });
   });
 });
