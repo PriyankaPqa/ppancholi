@@ -108,6 +108,49 @@ export const QuarterlyReportPaymentsPbiIMFr = {
   queryType: QueryType.StandardIMfr,
 } as IQuery;
 
+export const HouseholdStatisticsL6En = {
+  id: 'HouseholdStatistics',
+  queryType: QueryType.Cardslevel6en,
+  name: 'Household Statistics',
+  topic: ReportingTopic.PowerBi,
+} as IQuery;
+
+export const HouseholdStatisticsL6Fr = {
+  ...HouseholdStatisticsL6En,
+  queryType: QueryType.Cardslevel6fr,
+  name: 'Statistiques des ménages',
+} as IQuery;
+
+export const HouseholdStatisticsL5En = {
+  ...HouseholdStatisticsL6En,
+  queryType: QueryType.Cardslevel5en,
+} as IQuery;
+
+export const HouseholdStatisticsL5Fr = {
+  ...HouseholdStatisticsL6Fr,
+  queryType: QueryType.Cardslevel5fr,
+} as IQuery;
+
+export const HouseholdStatisticsL4En = {
+  ...HouseholdStatisticsL6En,
+  queryType: QueryType.Cardslevel4en,
+} as IQuery;
+
+export const HouseholdStatisticsL4Fr = {
+  ...HouseholdStatisticsL6Fr,
+  queryType: QueryType.Cardslevel4fr,
+} as IQuery;
+
+export const HouseholdStatisticsIMEn = {
+  ...HouseholdStatisticsL6En,
+  queryType: QueryType.CardscontributorIMen,
+} as IQuery;
+
+export const HouseholdStatisticsIMFr = {
+  ...HouseholdStatisticsL6Fr,
+  queryType: QueryType.CardscontributorIMfr,
+} as IQuery;
+
 export const AllPbiReports : IQuery[] = [
   AssessmentPbiL6En, AssessmentPbiL6Fr,
   AssessmentPbiL5En, AssessmentPbiL5Fr,
@@ -118,4 +161,8 @@ export const AllPbiReports : IQuery[] = [
   QuarterlyReportBeneficiariesPbiIMEn, QuarterlyReportBeneficiariesPbiIMFr,
   QuarterlyReportPaymentsPbiL6En, QuarterlyReportPaymentsPbiL6Fr,
   QuarterlyReportPaymentsPbiIMEn, QuarterlyReportPaymentsPbiIMFr,
+  HouseholdStatisticsL6En, HouseholdStatisticsL6Fr,
+  HouseholdStatisticsL5En, HouseholdStatisticsL5Fr,
+  HouseholdStatisticsL4En, HouseholdStatisticsL4Fr,
+  HouseholdStatisticsIMEn, HouseholdStatisticsIMFr,
 ];

@@ -5,6 +5,7 @@ import helpers from '@/ui/helpers/helpers';
 import { VuePlugin } from '@/ui/plugins/features';
 import { INavigationTab } from '@libs/shared-lib/types';
 import { IQuery, QueryType, ReportingTopic } from '@libs/entities-lib/reporting';
+import { AllPbiReports } from './standard_queries/PowerBiEmbedded';
 
 export class ReportingPages {
   cards(vue: VuePlugin): ICardSettings[] {
@@ -68,19 +69,20 @@ export class ReportingPages {
       dataTest: 'customQueries',
       level: UserRoles.level4,
       roles: [UserRoles.contributorIM],
-    }, {
-      title: 'reporting.eventStatistics',
-      button: 'reporting.start',
-      route: { name: routes.reporting.home.name },
-      dataTest: 'eventStatistics',
-      level: UserRoles.level4,
-      roles: [UserRoles.contributorIM],
     },
     ];
   }
 
   availableCards(vue: VuePlugin): ICardSettings[] {
-    const cards = this.cards(vue);
+    let cards = this.cards(vue);
+    cards = [...cards,
+        ...AllPbiReports.filter((x) => x.queryType === ReportingPages.queryTypeByName(`Cards${vue.$currentUser().currentRole()}`, vue.$i18n?.locale || 'en'))
+        .map((r) => ({
+          title: r.name,
+          button: 'reporting.start',
+          route: { name: routes.reporting.powerbi.name, params: { queryId: r.id, queryTypeName: `Cards${vue.$currentUser().currentRole()}` } },
+          dataTest: `pbiCard${r.id}`,
+        } as ICardSettings))];
     return helpers.availableItems(vue, cards);
   }
 

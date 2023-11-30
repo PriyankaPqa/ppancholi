@@ -5,6 +5,7 @@ import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/ap
 import { IMultilingual, IServerError } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { SignalR } from '@/ui/plugins/signal-r';
+import { User } from '@libs/entities-lib/user';
 
 interface IFormatCurrency {
   (value: number): string;
@@ -26,6 +27,7 @@ declare module 'vue/types/vue' {
     $hasLevel: (p: string, strictLevel = false) => boolean;
     $appInsights: typeof applicationInsights;
     $hasRole: (p: string) => boolean;
+    $currentUser: () => User;
     $hasFeature: (feature: FeatureKeys) => boolean;
     $confirm: ({
       title, messages, htmlContent, submitActionLabel, cancelActionLabel, showCancelButton,

@@ -12,6 +12,7 @@ useMockUserStore(pinia);
 const localVue = createLocalVue();
 localVue.prototype.$hasLevel = () => true;
 localVue.prototype.$t = (t: string) => t;
+localVue.prototype.$currentUser = () => ({ currentRole: () => 'level6' });
 
 const reportingPages = new ReportingPages();
 describe('reportingPages', () => {
@@ -97,30 +98,30 @@ describe('reportingPages', () => {
         roles: [UserRoles.contributorIM],
       });
     });
+  });
 
-    it('includes event stats', () => {
-      const card = reportingPages.cards(localVue.prototype).find((c) => c.dataTest === 'eventStatistics');
+  describe('availableCards', () => {
+    it('includes powerbi cards', () => {
+      const card = reportingPages.availableCards(localVue.prototype).find((c) => c.dataTest === 'pbiCardHouseholdStatistics');
       expect(card).toEqual({
-        title: 'reporting.eventStatistics',
+        title: 'Household Statistics',
         button: 'reporting.start',
-        route: { name: routes.reporting.home.name },
-        dataTest: 'eventStatistics',
-        level: UserRoles.level4,
-        roles: [UserRoles.contributorIM],
+        route: { name: routes.reporting.powerbi.name, params: { queryId: 'HouseholdStatistics', queryTypeName: 'Cardslevel6' } },
+        dataTest: 'pbiCardHouseholdStatistics',
       });
     });
   });
 
   describe('availableTabs', () => {
-    localVue.prototype.$hasLevel = () => true;
-    localVue.prototype.$t = (t: string) => t;
-    const card = reportingPages.availableTabs(localVue.prototype).find((c) => c.test === 'eventStatistics');
-    expect(card).toEqual({
-      text: 'reporting.eventStatistics',
-      route: { name: routes.reporting.home.name },
-      test: 'eventStatistics',
-      level: UserRoles.level4,
-      roles: [UserRoles.contributorIM],
+    it('returns data in correct format', () => {
+      localVue.prototype.$hasLevel = () => true;
+      localVue.prototype.$t = (t: string) => t;
+      const card = reportingPages.availableTabs(localVue.prototype).find((c) => c.test === 'pbiCardHouseholdStatistics');
+      expect(card).toEqual({
+        text: 'Household Statistics',
+        route: { name: routes.reporting.powerbi.name, params: { queryId: 'HouseholdStatistics', queryTypeName: 'Cardslevel6' } },
+        test: 'pbiCardHouseholdStatistics',
+      });
     });
   });
 

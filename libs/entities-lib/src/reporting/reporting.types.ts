@@ -10,6 +10,14 @@ export enum QueryType {
   StandardL4fr = 7,
   StandardIMen = 8,
   StandardIMfr = 9,
+  Cardslevel6en = 10,
+  Cardslevel6fr = 11,
+  Cardslevel5en = 12,
+  Cardslevel5fr = 13,
+  Cardslevel4en = 14,
+  Cardslevel4fr = 15,
+  CardscontributorIMen = 16,
+  CardscontributorIMfr = 17,
 }
 
 export enum ReportingTopic {
