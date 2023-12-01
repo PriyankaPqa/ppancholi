@@ -1,17 +1,16 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { fixtureGenerateContactInformationDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
 import {
   MassActionDataCorrectionFileParams,
   createEventAndTeam,
-  getCaseFilesSummary,
+  getPersonsInfo,
   prepareStateMassActionDataCorrectionFile,
   prepareStateMultipleHouseholds,
-  setCaseFileIdentityAuthentication,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { processDataCorrectionFileSteps, updatedIdentityAuthenticationStatus } from './canSteps';
-import { fixtureGenerateAuthenticationOtherDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { processDataCorrectionFileSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -34,9 +33,9 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/authenticationOtherDataCorrectionMassAction.csv';
+const filePath = 'cypress/downloads/contactInfoDataCorrectionMassAction.csv';
 
-describe('#TC1834# - Process an Authentication Other data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('#TC1835# - Process a Contact Information data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -46,26 +45,25 @@ describe('#TC1834# - Process an Authentication Other data correction file', { ta
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
 
-            const casefileIds: string[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
+            const personIds: string[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            await setCaseFileIdentityAuthentication(resultMultipleHousehold.provider, casefileIds, updatedIdentityAuthenticationStatus);
-            const resultCaseFilesSummary = await getCaseFilesSummary(resultMultipleHousehold.provider, casefileIds);
+            const resultPersonsInfo = await getPersonsInfo(resultMultipleHousehold.provider, personIds);
 
-            const casefiles: Record<string, string> = {
-              [resultCaseFilesSummary[0].id]: resultCaseFilesSummary[0].etag,
-              [resultCaseFilesSummary[1].id]: resultCaseFilesSummary[1].etag,
-              [resultCaseFilesSummary[2].id]: resultCaseFilesSummary[2].etag,
+            const primaryMemberHouseholds: Record<string, string> = {
+              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag,
+              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag,
+              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag,
             };
-            const resultGenerateCsvFile = fixtureGenerateAuthenticationOtherDataCorrectionCsvFile(casefiles, filePath);
+            const resultGenerateCsvFile = fixtureGenerateContactInformationDataCorrectionCsvFile(primaryMemberHouseholds, filePath);
 
             const massActionDataCorrectionFileParamData: MassActionDataCorrectionFileParams = {
               provider: resultMultipleHousehold.provider,
-              dataCorrectionType: MassActionDataCorrectionType.AuthenticationSpecifiedOther,
+              dataCorrectionType: MassActionDataCorrectionType.ContactInformation,
               generatedCsvFile: resultGenerateCsvFile,
-              correctionType: 'Authentication Other',
+              correctionType: 'Contact Information',
             };
             const resultMassFinancialAssistance = await prepareStateMassActionDataCorrectionFile(massActionDataCorrectionFileParamData);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
@@ -80,24 +78,23 @@ describe('#TC1834# - Process an Authentication Other data correction file', { ta
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process an Authentication Other data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records');
+        it('should successfully process a Contact Information data correction file', () => {
+          processDataCorrectionFileSteps(householdQuantity, 'household records');
         });
       });
     }
   });
-
   describe('Cannot Roles', () => {
-    for (const roleName of filteredCannotRoles) {
-     describe(`${roleName}`, () => {
-       beforeEach(() => {
-         cy.login(roleName);
-         cy.goTo('mass-actions/data-correction/create');
-       });
-       it('should not be able to process an Authentication Other data correction file', () => {
-         cy.contains('You do not have permission to access this page').should('be.visible');
-       });
-     });
-   }
- });
+     for (const roleName of filteredCannotRoles) {
+      describe(`${roleName}`, () => {
+        beforeEach(() => {
+          cy.login(roleName);
+          cy.goTo('mass-actions/data-correction/create');
+        });
+        it('should not be able to process a Contact Information data correction file', () => {
+          cy.contains('You do not have permission to access this page').should('be.visible');
+        });
+      });
+    }
+  });
 });

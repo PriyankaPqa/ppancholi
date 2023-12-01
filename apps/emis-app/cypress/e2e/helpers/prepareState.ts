@@ -95,6 +95,13 @@ export interface MassActionFinancialAssistanceUploadFileParams {
   filePath: string
 }
 
+export interface MassActionDataCorrectionFileParams {
+  provider: any,
+  dataCorrectionType: MassActionDataCorrectionType,
+  generatedCsvFile: string,
+  correctionType: string
+}
+
 /**
  * Creates a event, add a team to it, and assign roles to this team
  * @param provider
@@ -652,8 +659,8 @@ export const updatePersonsCurrentAddress = async (provider: IProvider, personIds
  * @param generatedCsvFile
  */
 
-export const prepareStateMassActionDataCorrectionFile = async (provider: any, dataCorrectionType: MassActionDataCorrectionType, generatedCsvFile: string) => {
-  const mockDataCorrectionFile = mockCreateMassActionDataCorrectionFileRequest(dataCorrectionType, generatedCsvFile);
-  const responseMassFinancialAssistance = await provider.cypress.massAction.createWithFile('data-correction', mockDataCorrectionFile);
+export const prepareStateMassActionDataCorrectionFile = async (params: MassActionDataCorrectionFileParams) => {
+  const mockDataCorrectionFile = mockCreateMassActionDataCorrectionFileRequest(params.dataCorrectionType, params.generatedCsvFile, params.correctionType);
+  const responseMassFinancialAssistance = await params.provider.cypress.massAction.createWithFile('data-correction', mockDataCorrectionFile);
   return responseMassFinancialAssistance;
 };
