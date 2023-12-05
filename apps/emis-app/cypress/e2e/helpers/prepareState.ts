@@ -6,7 +6,8 @@ import {
   mockEditAssessmentAnsweredQuestionsRequest,
   mockPartialSaveAssessmentAnsweredQuestionsRequest,
   mockSaveAssessmentAnsweredQuestionsRequest,
-  mockUpdateAssessmentRequest } from '@libs/cypress-lib/mocks/assessments/assessment';
+  mockUpdateAssessmentRequest,
+  mockUpdateAssessmentWithAllPossibleComponentsRequest } from '@libs/cypress-lib/mocks/assessments/assessment';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { mockApprovalTableData, mockApprovalTableWithMultipleApprovalGroupData, mockCreateApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
@@ -365,6 +366,18 @@ export const createAssessment = async (provider: IProvider, eventId: string, pro
 export const createAndUpdateAssessment = async (provider: IProvider, eventId: string, programId: string) => {
   const assessment = await provider.assessmentForms.create(mockCreateAssessmentRequest({ eventId, programId }));
   const updatedAssessment = await provider.assessmentForms.updateAssessmentStructure(mockUpdateAssessmentRequest(assessment.id, { eventId, programId }));
+  return updatedAssessment;
+};
+
+/**
+ * Create and updates an assessment to build survey
+ * @param provider
+ * @param eventId
+ * @param programId
+ */
+export const createAndUpdateAssessmentWithAllPossibleComponents = async (provider: IProvider, eventId: string, programId: string) => {
+  const assessment = await provider.assessmentForms.create(mockCreateAssessmentRequest({ eventId, programId }));
+  const updatedAssessment = await provider.assessmentForms.updateAssessmentStructure(mockUpdateAssessmentWithAllPossibleComponentsRequest(assessment.id, { eventId, programId }));
   return updatedAssessment;
 };
 
