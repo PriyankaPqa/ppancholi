@@ -1,17 +1,14 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div>
     <div v-if="consentStatement" class="rc-body14 consent">
-      <!-- eslint-disable-next-line vue/no-v-html -->
-      <div v-html="activeStatementText" />
+      <div v-html="sanitizeHtml(getStatementWithLinksText($m(consentStatement.statement)))" />
     </div>
-    <i18n v-else-if="$hasFeature(FeatureKeys.UpdateRegistrationConsent)" path="registration.privacy_consent_updated" tag="p" class="rc-body14 consent" data-test="content-text">
-      <template #website>
-        <a :href="$t('registration.privacy_statement.website')" target="_blank" rel="noopener noreferrer">{{ $t('registration.privacy_statement.website') }}</a>
-      </template>
-      <template #email>
-        <a :href="`mailto:${$t('registration.privacy_statement.email')}`">{{ $t('registration.privacy_statement.email') }}</a>
-      </template>
-    </i18n>
+    <div
+      v-else-if="$hasFeature(FeatureKeys.UpdateRegistrationConsent)"
+      class="rc-body14 consent"
+      data-test="content-text"
+      v-html="sanitizeHtml(getStatementWithLinksText($t('registration.privacy_consent_formatted')))" />
     <i18n v-else path="registration.privacy_consent" tag="p" class="rc-body14 consent" data-test="content-text">
       <template #website>
         <a :href="$t('registration.privacy_statement.website')" target="_blank" rel="noopener noreferrer">{{ $t('registration.privacy_statement.website') }}</a>
@@ -33,6 +30,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import sanitizeHtml from 'sanitize-html';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
 import { utcToZonedTime, format } from 'date-fns-tz';
 import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -56,7 +54,7 @@ export default Vue.extend({
   },
 
   data() {
-    return { FeatureKeys };
+    return { FeatureKeys, sanitizeHtml };
   },
 
   computed: {
@@ -81,8 +79,11 @@ export default Vue.extend({
           : null;
       },
     },
-    activeStatementText(): string {
-      return this.$m(this.consentStatement.statement).replaceAll(
+  },
+
+  methods: {
+    getStatementWithLinksText(statement:string): string {
+      return statement.replaceAll(
         '{website}',
         `<a href="${this.$t('registration.privacy_statement.website')}" target="_blank" rel="noopener noreferrer">${
           this.$t('registration.privacy_statement.website')}</a>`,
@@ -95,11 +96,16 @@ export default Vue.extend({
 
   },
 });
+
 </script>
 
 <style lang="scss">
 .consent {
   white-space: pre-line;
-  text-align: justify
+  text-align: justify;
+
+  ul > li {
+    list-style-type: disc;
+  }
 }
 </style>

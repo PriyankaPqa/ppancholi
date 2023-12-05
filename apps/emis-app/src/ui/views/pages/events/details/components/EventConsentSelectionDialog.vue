@@ -31,7 +31,7 @@
           <v-col md="8" sm="12">
             <language-tabs :language="languageMode" @click="setLanguageMode" />
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-if="selectedStatement" class="rc-body14 consent" data-test="selected-consent-statement" v-html="selectedStatementText" />
+            <div v-if="selectedStatement" class="rc-body14 consent" data-test="selected-consent-statement" v-html="sanitizeHtml(selectedStatementText)" />
           </v-col>
         </v-row>
       </v-container>
@@ -44,6 +44,7 @@ import Vue from 'vue';
 
 import { EEventSummarySections } from '@/types';
 import { VForm } from '@libs/shared-lib/types';
+import sanitizeHtml from 'sanitize-html';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { RcDialog } from '@libs/component-lib/components';
 import { FeatureKeys, IConsentStatementData } from '@libs/entities-lib/tenantSettings';
@@ -70,6 +71,7 @@ export default Vue.extend({
 
   data() {
     return {
+      sanitizeHtml,
       languageMode: 'en',
       statements: [] as IConsentStatementData[],
       selectedStatement: null as IConsentStatementData,
@@ -83,8 +85,8 @@ export default Vue.extend({
         },
         statement: {
           translation: this.$hasFeature(FeatureKeys.UpdateRegistrationConsent) ? {
-            en: this.$t('registration.privacy_consent_updated', 'en'),
-            fr: this.$t('registration.privacy_consent_updated', 'fr'),
+            en: this.$t('registration.privacy_consent_formatted', 'en'),
+            fr: this.$t('registration.privacy_consent_formatted', 'fr'),
           }
           : {
             en: this.$t('registration.privacy_consent', 'en'),
@@ -148,6 +150,10 @@ export default Vue.extend({
 <style lang="scss">
 .consent {
   white-space: pre-line;
-  text-align: justify
+  text-align: justify;
+
+  ul > li {
+    list-style-type: disc;
+  }
 }
 </style>

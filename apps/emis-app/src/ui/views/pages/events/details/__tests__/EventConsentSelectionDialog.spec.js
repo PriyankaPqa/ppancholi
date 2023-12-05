@@ -91,7 +91,7 @@ describe('EventConsentSelectionDialog.vue', () => {
             $hasFeature: (flag) => flag === FeatureKeys.UpdateRegistrationConsent,
           },
         });
-        expect(wrapper.vm.selectedStatement.statement.translation.en).toEqual('registration.privacy_consent_updated');
+        expect(wrapper.vm.selectedStatement.statement.translation.en).toEqual('registration.privacy_consent_formatted');
       });
 
       it('Should initialize the correct default consent text statements if feature flag is off', async () => {

@@ -56,7 +56,7 @@ describe('PrivacyStatementLib.vue', () => {
       });
     });
 
-    describe('activeStatementText', () => {
+    describe('getStatementWithLinksText', () => {
       beforeEach(() => {
         const consent = { id: 'id-1', name: { translation: { en: 'hello' } }, statement: { translation: { en: 'hello' } } };
         wrapper = shallowMount(Component, {
@@ -73,26 +73,26 @@ describe('PrivacyStatementLib.vue', () => {
       });
 
       it('returns correct value if website placeholder is found', async () => {
-        await wrapper.vm.activeStatementText;
-        wrapper.vm.consentStatement.statement.translation.en = '{website} more';
+        const websiteText = '{website} more';
+        const result = await wrapper.vm.getStatementWithLinksText(websiteText);
         const url = wrapper.vm.$t('registration.privacy_statement.website', 'en');
-        expect(wrapper.vm.activeStatementText).toEqual(
+        expect(result).toEqual(
           `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> more`,
         );
       });
 
       it('returns correct value if email placeholder is found', async () => {
-        await wrapper.vm.activeStatementText;
-        wrapper.vm.consentStatement.statement.translation.en = '{email} more';
-        expect(wrapper.vm.activeStatementText).toEqual(
+        const emailText = '{email} more';
+        const result = await wrapper.vm.getStatementWithLinksText(emailText);
+        expect(result).toEqual(
           `<a href="mailto:${wrapper.vm.$t('registration.privacy_statement.email', 'en')}">${wrapper.vm.$t('registration.privacy_statement.email', 'en')}</a> more`,
         );
       });
 
       it('returns correct value if either website nor email placeholder is found', async () => {
-        await wrapper.vm.activeStatementText;
-        wrapper.vm.consentStatement.statement.translation.en = 'statement';
-        expect(wrapper.vm.activeStatementText).toEqual(
+        const statement = 'statement';
+        const result = await wrapper.vm.getStatementWithLinksText(statement);
+        expect(result).toEqual(
           'statement',
         );
       });
@@ -148,7 +148,7 @@ describe('PrivacyStatementLib.vue', () => {
       });
       const element = wrapper.findDataTest('content-text');
       expect(element.exists()).toBeTruthy();
-      expect(element.text()).toContain('registration.privacy_consent_updated');
+      expect(element.text()).toContain('registration.privacy_consent_formatted');
     });
   });
 });
