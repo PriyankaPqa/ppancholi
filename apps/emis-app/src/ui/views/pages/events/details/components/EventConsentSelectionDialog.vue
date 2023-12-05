@@ -46,7 +46,7 @@ import { EEventSummarySections } from '@/types';
 import { VForm } from '@libs/shared-lib/types';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { RcDialog } from '@libs/component-lib/components';
-import { IConsentStatementData } from '@libs/entities-lib/tenantSettings';
+import { FeatureKeys, IConsentStatementData } from '@libs/entities-lib/tenantSettings';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
@@ -82,7 +82,11 @@ export default Vue.extend({
           },
         },
         statement: {
-          translation: {
+          translation: this.$hasFeature(FeatureKeys.UpdateRegistrationConsent) ? {
+            en: this.$t('registration.privacy_consent_updated', 'en'),
+            fr: this.$t('registration.privacy_consent_updated', 'fr'),
+          }
+          : {
             en: this.$t('registration.privacy_consent', 'en'),
             fr: this.$t('registration.privacy_consent', 'fr'),
           },

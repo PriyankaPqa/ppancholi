@@ -1,12 +1,16 @@
 <template>
-  <privacy-statement-lib :checkbox-label="$t('registration.privacy_statement.agreeSelf')" :consent-statement="consentStatement" />
+  <privacy-statement-lib
+    :checkbox-label="$hasFeature(FeatureKeys.UpdateRegistrationConsent)
+      ? $t('registration.privacy_statement.agreeSelf_updated')
+      : $t('registration.privacy_statement.agreeSelf')"
+    :consent-statement="consentStatement" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import PrivacyStatementLib from '@libs/registration-lib/components/privacy-statement/PrivacyStatementLib.vue';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'PrivacyStatement',
@@ -15,6 +19,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      FeatureKeys,
       consentStatement: null as IConsentStatement,
     };
   },

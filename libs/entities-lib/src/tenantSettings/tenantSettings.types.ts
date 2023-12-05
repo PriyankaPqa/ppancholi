@@ -14,6 +14,7 @@ export enum FeatureKeys {
   InSystemQuerying = 'InSystemQuerying',
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
   FeatureDashboard = 'FeatureDashboard',
+  UpdateRegistrationConsent = 'UpdateRegistrationConsent',
 }
 
 export enum FeatureType {

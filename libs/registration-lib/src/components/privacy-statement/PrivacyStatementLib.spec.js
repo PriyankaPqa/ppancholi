@@ -1,6 +1,7 @@
 import { HouseholdCreate } from '@libs/entities-lib/src/household-create';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { format, utcToZonedTime } from 'date-fns-tz';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
 import Component from './PrivacyStatementLib.vue';
 
@@ -115,6 +116,39 @@ describe('PrivacyStatementLib.vue', () => {
         const element = wrapper.findDataTest('isPrivacyAgreed');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.isPrivacyAgreed);
       });
+    });
+  });
+
+  describe('Template', () => {
+    it('contains the right consent text with feature flag off', () => {
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          household: new HouseholdCreate(),
+          checkboxLabel: 'label',
+        },
+      });
+      const element = wrapper.findDataTest('content-text');
+      expect(element.exists()).toBeTruthy();
+      expect(element.text()).toContain('registration.privacy_consent');
+    });
+
+    it('contains the right consent text', () => {
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          household: new HouseholdCreate(),
+          checkboxLabel: 'label',
+        },
+        mocks: {
+          $hasFeature: (flag) => flag === FeatureKeys.UpdateRegistrationConsent,
+        },
+      });
+      const element = wrapper.findDataTest('content-text');
+      expect(element.exists()).toBeTruthy();
+      expect(element.text()).toContain('registration.privacy_consent_updated');
     });
   });
 });

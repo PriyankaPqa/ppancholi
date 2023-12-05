@@ -4,7 +4,15 @@
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-html="activeStatementText" />
     </div>
-    <i18n v-else path="registration.privacy_consent" tag="p" class="rc-body14 consent">
+    <i18n v-else-if="$hasFeature(FeatureKeys.UpdateRegistrationConsent)" path="registration.privacy_consent_updated" tag="p" class="rc-body14 consent" data-test="content-text">
+      <template #website>
+        <a :href="$t('registration.privacy_statement.website')" target="_blank" rel="noopener noreferrer">{{ $t('registration.privacy_statement.website') }}</a>
+      </template>
+      <template #email>
+        <a :href="`mailto:${$t('registration.privacy_statement.email')}`">{{ $t('registration.privacy_statement.email') }}</a>
+      </template>
+    </i18n>
+    <i18n v-else path="registration.privacy_consent" tag="p" class="rc-body14 consent" data-test="content-text">
       <template #website>
         <a :href="$t('registration.privacy_statement.website')" target="_blank" rel="noopener noreferrer">{{ $t('registration.privacy_statement.website') }}</a>
       </template>
@@ -27,7 +35,7 @@
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
 import { utcToZonedTime, format } from 'date-fns-tz';
-import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'PrivacyStatement',
@@ -46,6 +54,11 @@ export default Vue.extend({
       default: null,
     },
   },
+
+  data() {
+    return { FeatureKeys };
+  },
+
   computed: {
     rules(): Record<string, unknown> {
       return {
@@ -79,6 +92,7 @@ export default Vue.extend({
           this.$t('registration.privacy_statement.email')}</a>`,
       );
     },
+
   },
 });
 </script>
