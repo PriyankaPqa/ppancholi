@@ -234,10 +234,6 @@ const routes = {
       path: '',
       name: 'events.summary',
     },
-    summaryForIM: {
-      path: '', // TODO EMISV2-6088
-      name: 'events.summaryForIM', // Please remove this route when you remove the feature flag "letIMViewEventDetails"
-    },
     financialAssistance: {
       home: {
         path: 'financial-assistance',
