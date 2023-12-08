@@ -209,6 +209,11 @@ export default mixins(caseFileDetail).extend({
       return useUserStore().getUser().currentRole() === 'level0';
     },
 
+    recoveryPlanInvisible(): boolean {
+      const recoveryPlanInvisibleRoles = ['level0', 'contributorIM', 'contributorFinance', 'readonly'];
+      return recoveryPlanInvisibleRoles.indexOf(useUserStore().getUser().currentRole()) > -1;
+    },
+
     tabs(): Array<INavigationTab> {
       const taskTab = {
           text: this.$t('caseFileDetail.menu_tasks') as string,
@@ -254,10 +259,11 @@ export default mixins(caseFileDetail).extend({
             to: routes.caseFile.impactedIndividuals.home.name,
             exact: false,
           },
-          !this.isL0 && {
+          !this.recoveryPlanInvisible && {
             text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
             test: 'recovery-plan',
-            disabled: true,
+            to: this.caseFile.recoveryPlan === null ? routes.caseFile.recoveryPlan.create.name : routes.caseFile.recoveryPlan.details.name,
+            disabled: !this.$hasFeature(FeatureKeys.RecoveryPlan),
           },
           !this.isL0 && {
             text: this.$t('caseFileDetail.menu_documents') as string,

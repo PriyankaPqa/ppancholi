@@ -1,5 +1,5 @@
 import {
-  ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus, mockAssignedTeamMembers, ITier2Request,
+  ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus, mockAssignedTeamMembers, ITier2Request, IRecoveryPlan,
 } from '@libs/entities-lib/case-file';
 import { IListOption } from '@libs/shared-lib/types';
 import { IHttpMock, mockHttp } from '../../http-client';
@@ -251,6 +251,18 @@ describe('>>> Case File Service', () => {
       const eventId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
       await service.getExceptionalTypeCounts(eventId);
       expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/exceptional-type-counts`, { params: { eventId } });
+    });
+  });
+
+  describe('editRecoveryPlan', () => {
+    it('is linked to the correct URL and params', async () => {
+      const recoveryPlan: IRecoveryPlan = {
+        hasRecoveryPlan: true,
+        crcProvided: true,
+        startDate: '2023-11-16',
+      };
+      await service.editRecoveryPlan('mock-id-1', recoveryPlan);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/mock-id-1/recovery-plan`, recoveryPlan);
     });
   });
 

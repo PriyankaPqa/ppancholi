@@ -27,6 +27,7 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   getTier2Result: jest.fn(() => mockTier2Response()),
   getTier2Details: jest.fn(() => mockTier2Details()),
   getExceptionalTypeCounts: jest.fn(() => Promise.resolve([{ exceptionalAuthenticationTypeId: 'id1', caseFileCount: 3 }])),
+  editRecoveryPlan: jest.fn(() => mockCaseFileEntity()),
   getRecentlyViewed: jest.fn(() => ['mock-case-file-id-1', 'mock-case-file-id-2']),
   addRecentlyViewed: jest.fn(() => ['mock-case-file-id-1', 'mock-case-file-id-2']),
 });

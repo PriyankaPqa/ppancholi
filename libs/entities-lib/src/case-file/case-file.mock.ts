@@ -92,6 +92,11 @@ export const mockCaseFileEntity = (force? : Partial<ICaseFileEntity>): ICaseFile
         personId: 'mock-member-id-2',
         receivingAssistance: false,
       }],
+  recoveryPlan: {
+    hasRecoveryPlan: true,
+    crcProvided: true,
+    startDate: '2023-11-26',
+  },
 });
 
 export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICaseFileMetadata => ({

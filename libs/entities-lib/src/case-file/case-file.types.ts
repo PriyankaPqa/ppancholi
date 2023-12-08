@@ -159,6 +159,7 @@ export interface ICaseFileEntity extends IEntity {
   privacyDateTimeConsent?: Date | string;
   identityAuthentication?: IIdentityAuthentication;
   impactedIndividuals?: IImpactedIndividual[];
+  recoveryPlan: IRecoveryPlan;
 
   readonly?: boolean;
 
@@ -255,6 +256,12 @@ export interface ITier2Details {
   firstName: string;
   middleName: string;
   lastName: string;
+}
+
+export interface IRecoveryPlan {
+  hasRecoveryPlan: boolean;
+  crcProvided: boolean;
+  startDate: string | Date;
 }
 
 export type IdParams = uuid;

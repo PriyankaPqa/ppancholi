@@ -176,6 +176,20 @@ const routes = {
         name: 'casefile.impactedIndividuals',
       },
     },
+    recoveryPlan: {
+      create: {
+        path: 'recovery-plan/create',
+        name: 'casefile.recoveryPlan.create',
+      },
+      edit: {
+        path: 'recovery-plan/edit',
+        name: 'casefile.recoveryPlan.edit',
+      },
+      details: {
+        path: 'recovery-plan/details',
+        name: 'casefile.recoveryPlan.details',
+      },
+    },
     task: {
       home: {
         path: 'task',

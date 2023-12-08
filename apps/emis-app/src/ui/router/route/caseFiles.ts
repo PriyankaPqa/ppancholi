@@ -32,6 +32,8 @@ const ImpactedIndividuals = () => import('@/ui/views/pages/case-files/details/ca
 const CaseFileTaskTable = () => import('@/ui/views/pages/case-files/details/case-file-task/CaseFileTaskTable.vue');
 const CreateEditTask = () => import('@/ui/views/pages/case-files/details/case-file-task/create-edit/CreateEditTask.vue');
 const TaskDetails = () => import('@/ui/views/pages/case-files/details/case-file-task/details/TaskDetails.vue');
+const CreateEditRecoveryPlan = () => import('@/ui/views/pages/case-files/details/case-file-recovery-plan/create-edit/CreateEditRecoveryPlan.vue');
+const RecoveryPlanDetails = () => import('@/ui/views/pages/case-files/details/case-file-recovery-plan/details/RecoveryPlanDetails.vue');
 
 export const caseFiles: RouteConfig = {
   path: Routes.caseFile.layout.path,
@@ -204,6 +206,27 @@ export const caseFiles: RouteConfig = {
           name: Routes.caseFile.task.details.name,
           component: TaskDetails,
           meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.recoveryPlan.create.path,
+          name: Routes.caseFile.recoveryPlan.create.name,
+          component: CreateEditRecoveryPlan,
+          meta: { level: UserRoles.level1, roles: [UserRoles.contributor3] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.recoveryPlan.edit.path,
+          name: Routes.caseFile.recoveryPlan.edit.name,
+          component: CreateEditRecoveryPlan,
+          meta: { level: UserRoles.level1, roles: [UserRoles.contributor3] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.recoveryPlan.details.path,
+          name: Routes.caseFile.recoveryPlan.details.name,
+          component: RecoveryPlanDetails,
+          meta: { level: UserRoles.level1, roles: [UserRoles.contributor3] },
           props: true,
         },
       ],

@@ -66,6 +66,11 @@ describe('>>> Case File', () => {
         const caseFile = new CaseFileEntity(mockCaseFileData);
         expect(caseFile.impactedIndividuals).toEqual(mockCaseFileData.impactedIndividuals);
       });
+
+      it('should instantiate recoveryPlan', () => {
+        const caseFile = new CaseFileEntity(mockCaseFileData);
+        expect(caseFile.recoveryPlan).toEqual(mockCaseFileData.recoveryPlan);
+      });
     });
 
     describe('instantiate when data is not passed', () => {
@@ -153,6 +158,11 @@ describe('>>> Case File', () => {
       it('should instantiate impactedIndividuals', () => {
         const caseFile = new CaseFileEntity();
         expect(caseFile.impactedIndividuals).toEqual([]);
+      });
+
+      it('should instantiate recoveryPlan', () => {
+        const caseFile = new CaseFileEntity();
+        expect(caseFile.recoveryPlan).toEqual(null);
       });
     });
   });

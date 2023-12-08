@@ -2,7 +2,7 @@ import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount, IAssignedTeamMembers,
+  ICaseFileDetailedCount, IAssignedTeamMembers, IRecoveryPlan,
 } from '@libs/entities-lib/case-file';
 import { IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
 import { ICaseFileMetadata, ITier2Details, ITier2Request, ITier2Response } from '@libs/entities-lib/src/case-file/case-file.types';
@@ -123,6 +123,10 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]> {
     return this.http.get(`${this.baseUrl}/exceptional-type-counts`, { params: { eventId } });
+  }
+
+  async editRecoveryPlan(id: uuid, recoveryPlan: IRecoveryPlan) : Promise<ICaseFileEntity> {
+    return this.http.patch(`${this.baseUrl}/${id}/recovery-plan`, recoveryPlan);
   }
 
   async getRecentlyViewed(): Promise<string[]> {

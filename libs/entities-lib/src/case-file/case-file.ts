@@ -4,7 +4,7 @@ import { BaseEntity } from '../base';
 import {
   CaseFileStatus, CaseFileTriage, IAssignedTeamMembers, ICaseFileEntity, ICaseFileLabel,
   IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication, IImpactedIndividual,
-  IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus,
+  IImpactStatusValidation, ImpactValidationMethod, IRecoveryPlan, ValidationOfImpactStatus,
 } from './case-file.types';
 
 export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
@@ -36,6 +36,9 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
 
   impactedIndividuals?: IImpactedIndividual[];
 
+  recoveryPlan: IRecoveryPlan;
+
+  // eslint-disable-next-line max-statements
   constructor(data?: ICaseFileEntity) {
     if (data) {
       super(data);
@@ -58,6 +61,7 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
         status: IdentityAuthenticationStatus.NotVerified,
       };
       this.impactedIndividuals = _cloneDeep(data.impactedIndividuals);
+      this.recoveryPlan = _cloneDeep(data.recoveryPlan);
     } else {
       super();
       this.assignedTeamMembers = [];
@@ -78,6 +82,7 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
         status: IdentityAuthenticationStatus.NotVerified,
       };
       this.impactedIndividuals = [];
+      this.recoveryPlan = null;
     }
   }
 

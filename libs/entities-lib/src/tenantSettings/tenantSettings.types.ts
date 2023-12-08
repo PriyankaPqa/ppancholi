@@ -13,6 +13,7 @@ export enum FeatureKeys {
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   InSystemQuerying = 'InSystemQuerying',
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
+  RecoveryPlan = 'RecoveryPlan',
   FeatureDashboard = 'FeatureDashboard',
   UpdateRegistrationConsent = 'UpdateRegistrationConsent',
 }

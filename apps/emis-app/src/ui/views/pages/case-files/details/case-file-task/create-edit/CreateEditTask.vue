@@ -146,8 +146,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    // TODO need to complete this and add unit test in Edit Task 3204
-
     if (this.isEditMode && !this.isDirty) {
       next();
     }

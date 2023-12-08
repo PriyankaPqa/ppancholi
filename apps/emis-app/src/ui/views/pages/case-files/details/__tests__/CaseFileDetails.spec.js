@@ -4,7 +4,7 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
-import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
@@ -25,6 +25,7 @@ mockEvent.schedule.status = EEventStatus.Open;
 const pinia = getPiniaForUser(UserRoles.level1);
 const { caseFileStore, caseFileMetadataStore } = useMockCaseFileStore(pinia);
 const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
+const { userStore } = useMockUserStore(pinia);
 describe('CaseFileDetails.vue', () => {
   let wrapper;
   const doMount = async (featureList = [], otherComputed = {}) => {
@@ -544,6 +545,68 @@ describe('CaseFileDetails.vue', () => {
     describe('receivingAssistanceMembersCount', () => {
       it('should return proper data', async () => {
         expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(1);
+      });
+    });
+
+    describe('recoveryPlanInvisible', () => {
+      it('should return true when user is L0', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.level0),
+          propsData: {
+            id: mockCaseFile.id,
+          },
+        });
+        userStore.getUser().currentRole = jest.fn(() => 'level0');
+        expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
+      });
+
+      it('should return true when user is readOnly', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser('readOnly'),
+          propsData: {
+            id: mockCaseFile.id,
+          },
+        });
+        userStore.getUser().currentRole = jest.fn(() => 'readonly');
+        expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
+      });
+
+      it('should return true when user is contributorIM', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.contributorIM),
+          propsData: {
+            id: mockCaseFile.id,
+          },
+        });
+        userStore.getUser().currentRole = jest.fn(() => 'contributorIM');
+        expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
+      });
+
+      it('should return true when user is contributorFinance', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.contributorFinance),
+          propsData: {
+            id: mockCaseFile.id,
+          },
+        });
+        userStore.getUser().currentRole = jest.fn(() => 'contributorFinance');
+        expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
+      });
+
+      it('should return false when user is level1', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.level1),
+          propsData: {
+            id: mockCaseFile.id,
+          },
+        });
+        userStore.getUser().currentRole = jest.fn(() => 'level1');
+        expect(wrapper.vm.recoveryPlanInvisible).toEqual(false);
       });
     });
   });
