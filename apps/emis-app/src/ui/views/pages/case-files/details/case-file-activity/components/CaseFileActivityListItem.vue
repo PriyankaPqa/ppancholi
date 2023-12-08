@@ -23,6 +23,7 @@ import {
   IdentityAuthenticationMethod,
   RegistrationType,
   ValidationOfImpactStatus,
+  IRecoveryPlan,
 } from '@libs/entities-lib/case-file';
 import { ERegistrationMethod, IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -31,6 +32,7 @@ import { HouseholdStatus } from '@libs/entities-lib/household';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useEventStore } from '@/pinia/event/event';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import helpers from '@/ui/helpers/helpers';
 
 export interface IAssignInfo {
   id: string;
@@ -174,6 +176,9 @@ export default Vue.extend({
         case CaseFileActivityType.TaskManagementTaskCompleted:
           return this.makeContentForTaskManagementAction();
 
+        case CaseFileActivityType.RecoveryPlanUpdate:
+          return this.makeContentForRecoveryPlanUpdate();
+
         default:
           return null;
       }
@@ -199,6 +204,7 @@ export default Vue.extend({
         case CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance:
         case CaseFileActivityType.TaskManagementTaskCreated:
         case CaseFileActivityType.TaskManagementTaskCompleted:
+        case CaseFileActivityType.RecoveryPlanUpdate:
           return '$rctech-actions';
 
         case CaseFileActivityType.AddedDuplicateFlag:
@@ -694,7 +700,6 @@ export default Vue.extend({
     },
 
     makeContentForTaskManagementAction(): { title: TranslateResult, body: TranslateResult | string } {
-      // TODO titleObject and contentObject will be updated in the following task
       const titleObject: { [index: number ]: TranslateResult | string } = {
         [CaseFileActivityType.TaskManagementTaskCreated]: this.$t('caseFileActivity.activityList.title.TaskManagement.Created'),
         [CaseFileActivityType.TaskManagementTaskCompleted]: this.$t('caseFileActivity.activityList.title.TaskManagement.Completed'),
@@ -707,6 +712,23 @@ export default Vue.extend({
       };
       const title = titleObject[this.item.activityType as CaseFileActivityType];
       const body = contentObject[this.item.activityType as CaseFileActivityType];
+      return { title, body };
+    },
+
+    makeContentForRecoveryPlanUpdate(): { title: TranslateResult, body: TranslateResult | string } {
+      const recoveryPlan = this.item.details.recoveryPlan as IRecoveryPlan;
+      const title = this.$t('caseFileActivity.activityList.title.recoveryPlanUpdate');
+      let body = `${this.$t('caseFileActivity.activityList.body.hasRecoveryPlan')} `;
+      body += recoveryPlan.hasRecoveryPlan ? this.$t('common.yes') as string : this.$t('common.no') as string;
+      if (recoveryPlan.hasRecoveryPlan) {
+        body += `\n${this.$t('caseFileActivity.activityList.body.crcProvided')} `;
+        body += recoveryPlan.crcProvided ? this.$t('common.yes') as string : this.$t('common.no') as string;
+        if (recoveryPlan.crcProvided) {
+          body += `\n${this.$t('caseFileActivity.activityList.body.startDate')} `;
+          body += helpers.getLocalStringDate(recoveryPlan.startDate as string, '', 'PP');
+        }
+      }
+
       return { title, body };
     },
   },

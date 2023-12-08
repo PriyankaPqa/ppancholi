@@ -883,6 +883,51 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         },
       },
     },
+    {
+      id: 'mock-activity-id-48',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.RecoveryPlanUpdate,
+      details: {
+        recoveryPlan: {
+          hasRecoveryPlan: false,
+          crcProvided: false,
+          startDate: '',
+        },
+      },
+    },
+    {
+      id: 'mock-activity-id-49',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.RecoveryPlanUpdate,
+      details: {
+        recoveryPlan: {
+          hasRecoveryPlan: true,
+          crcProvided: false,
+          startDate: '',
+        },
+      },
+    },
+    {
+      id: 'mock-activity-id-48',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.RecoveryPlanUpdate,
+      details: {
+        recoveryPlan: {
+          hasRecoveryPlan: true,
+          crcProvided: true,
+          startDate: '2023-11-26',
+        },
+      },
+    },
   ];
 
   if (type) {

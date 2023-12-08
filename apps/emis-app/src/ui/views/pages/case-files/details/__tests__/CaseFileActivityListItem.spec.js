@@ -458,6 +458,13 @@ describe('CaseFileActivityListItem.vue', () => {
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
+
+      it('returns the correct icon when activity type is RecoveryPlanUpdate', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.RecoveryPlanUpdate)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
     });
 
     describe('Methods', () => {
@@ -1438,6 +1445,51 @@ describe('CaseFileActivityListItem.vue', () => {
         const title = wrapper.vm.$t('caseFileActivity.activityList.title.TaskManagement.Completed');
         const body = wrapper.vm.$t('caseFileActivity.activityList.body.TaskManagement.Completed', { x: wrapper.vm.$m(wrapper.vm.item.details.name.name) });
         expect(wrapper.vm.makeContentForTaskManagementAction()).toEqual({
+          title,
+          body,
+        });
+      });
+    });
+
+    describe('makeContentForRecoveryPlanUpdate', () => {
+      it('should return proper data when action type is RecoveryPlanUpdate, hasRecoveryPlan is false', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.RecoveryPlanUpdate)[0],
+        });
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.recoveryPlanUpdate');
+        const body = `${wrapper.vm.$t('caseFileActivity.activityList.body.hasRecoveryPlan')} ${wrapper.vm.$t('common.no')}`;
+        expect(wrapper.vm.makeContentForRecoveryPlanUpdate()).toEqual({
+          title,
+          body,
+        });
+      });
+
+      it('should return proper data when action type is RecoveryPlanUpdate, hasRecoveryPlan is true, crcProvided is false', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.RecoveryPlanUpdate)[1],
+        });
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.recoveryPlanUpdate');
+        let body = `${wrapper.vm.$t('caseFileActivity.activityList.body.hasRecoveryPlan')} ${wrapper.vm.$t('common.yes')}`;
+        body += `\n${wrapper.vm.$t('caseFileActivity.activityList.body.crcProvided')} `;
+        body += wrapper.vm.$t('common.no');
+
+        expect(wrapper.vm.makeContentForRecoveryPlanUpdate()).toEqual({
+          title,
+          body,
+        });
+      });
+
+      it('should return proper data when action type is RecoveryPlanUpdate, hasRecoveryPlan is false', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.RecoveryPlanUpdate)[2],
+        });
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.recoveryPlanUpdate');
+        let body = `${wrapper.vm.$t('caseFileActivity.activityList.body.hasRecoveryPlan')} ${wrapper.vm.$t('common.yes')}`;
+        body += `\n${wrapper.vm.$t('caseFileActivity.activityList.body.crcProvided')} `;
+        body += wrapper.vm.$t('common.yes');
+        body += `\n${wrapper.vm.$t('caseFileActivity.activityList.body.startDate')} `;
+        body += 'Nov 26, 2023';
+        expect(wrapper.vm.makeContentForRecoveryPlanUpdate()).toEqual({
           title,
           body,
         });
