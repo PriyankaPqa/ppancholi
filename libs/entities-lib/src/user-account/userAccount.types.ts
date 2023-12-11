@@ -60,14 +60,38 @@ export interface IAssignedCaseFileCountByTeam {
   allCaseFileCount: number;
 }
 
-export interface IUserAccountEntity extends IEntity {
+export interface IUserProfileData {
+  id: uuid;
+  displayName?: string;
+  emailAddress?: string;
+  preferredLanguage?: string;
+  givenName?: string;
+  surname?: string;
+  userPrincipalName?: string;
+  phoneNumber?: string;
+}
+
+export interface IRolesData {
+  id: uuid;
+  displayName: string;
+  value: string;
+}
+
+export interface IUserAccountEntity extends IEntity, IUserProfileData {
+  displayName?: string;
+  emailAddress?: string;
+  preferredLanguage?: string;
+  givenName?: string;
+  surname?: string;
+  userPrincipalName?: string;
+  phoneNumber?: string;
   filters?: Array<IFilter>;
   roles?: Array<IListOption>;
   accessLevels?: AccessLevels;
   accountStatus?: AccountStatus;
 }
 
-export interface IUserAccountMetadata extends IEntity {
+export interface IUserAccountMetadata extends IEntity, IUserProfileData {
   displayName?: string;
   emailAddress?: string;
   phoneNumber?: string;
@@ -80,6 +104,10 @@ export interface IUserAccountMetadata extends IEntity {
   surname?: string;
   userPrincipalName?: string;
   assignedCaseFileCountByTeam: IAssignedCaseFileCountByTeam[]
+}
+
+export interface IUserProfileQueryResponse extends IUserProfileData {
+  existsInEmis?: boolean;
 }
 
 export interface UserTeamMember {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  IFilter, IUserAccountEntity, IUserAccountMetadata,
+  IFilter, IUserAccountEntity, IUserAccountMetadata, IUserProfileQueryResponse,
 } from '@libs/entities-lib/user-account';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { GlobalHandler, IHttpClient } from '../../http-client';
@@ -67,5 +67,9 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IUserAccountEntity, unknown>> {
     return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
+  }
+
+  async searchDirectoryUsers(searchTerm: string): Promise<IUserProfileQueryResponse[]> {
+    return this.http.get(`${API_URL_SUFFIX}/search/directory-users?searchTerm=${searchTerm}`);
   }
 }

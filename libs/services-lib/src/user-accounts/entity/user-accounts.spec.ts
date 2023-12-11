@@ -117,4 +117,11 @@ describe('>>> UserAccounts Service', () => {
       expect(http.get).toHaveBeenCalledWith('user-account/search/user-accounts', { params, isOData: true });
     });
   });
+
+  describe('searchDirectoryUsers', () => {
+    it('should call the expected endpoint', async () => {
+      await service.searchDirectoryUsers('searchTerm');
+      expect(http.get).toHaveBeenCalledWith('user-account/search/directory-users?searchTerm=searchTerm');
+    });
+  });
 });

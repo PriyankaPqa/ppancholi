@@ -3,7 +3,6 @@ import { HouseholdsService } from '@libs/services-lib/households/entity';
 import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
 import { httpClient as client } from '@/services/httpClient';
 import { CaseFilesService } from '@libs/services-lib/case-files/entity';
-import { AppUsersService } from '@libs/services-lib/app-users';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { ErrorReportingService } from '@libs/services-lib/error-reporting';
 import { TeamsService } from '@libs/services-lib/teams/entity';
@@ -36,7 +35,6 @@ import { IProvider } from './provider.types';
 export const provider = (httpClient = client): IProvider => ({
   approvalTables: new ApprovalTablesService(httpClient),
   approvalTablesMetadata: new ApprovalTablesMetadataService(httpClient),
-  appUsers: new AppUsersService(httpClient),
   caseFiles: new CaseFilesService(httpClient),
   caseFilesMetadata: new CaseFilesMetadataService(httpClient),
   caseFileNotes: new CaseNotesService(httpClient),

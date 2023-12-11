@@ -54,16 +54,16 @@
                 <v-simple-checkbox
                   :data-test="`select_${item.id}`"
                   :ripple="false"
-                  :value="isSelected(item) || item.isEMISUser"
-                  :readonly="item.isEMISUser"
-                  :disabled="item.isEMISUser"
+                  :value="isSelected(item) || item.existsInEmis"
+                  :readonly="item.existsInEmis"
+                  :disabled="item.existsInEmis"
                   @input="toggleUserSelection(item)" />
               </template>
               <template #[`item.displayName`]="{ item }">
                 {{ item.displayName }}
               </template>
               <template #[`item.emailAddress`]="{ item }">
-                {{ item.mail }}
+                {{ item.emailAddress }}
               </template>
             </v-data-table>
           </div>
@@ -132,21 +132,13 @@ import { RcDialog, VSelectWithValidation } from '@libs/component-lib/components'
 import { TranslateResult } from 'vue-i18n';
 import _debounce from 'lodash/debounce';
 import { DataTableHeader } from 'vuetify';
-import helpers from '@/ui/helpers/helpers';
-import {
-  IOptionSubItem,
-} from '@libs/entities-lib/optionItem';
-import {
- IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
-} from '@libs/entities-lib/user-account';
-import { IAppUserData } from '@libs/entities-lib/app-user';
+import { IOptionSubItem } from '@libs/entities-lib/optionItem';
+import { IRolesData, IUserProfileQueryResponse } from '@libs/entities-lib/user-account';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { Status } from '@libs/entities-lib/base';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
-interface IAppUser extends IAppUserData {
-  isEMISUser: boolean;
+interface IAppUser extends IUserProfileQueryResponse {
+  role: IRolesData;
 }
 
 export default Vue.extend({
@@ -177,11 +169,9 @@ export default Vue.extend({
     return {
       searchTerm: '',
       filteredActiveDirectoryUsers: [] as IAppUser[],
-      filteredAppUsers: [] as IUserAccountCombined[],
-      selectedUsers: [] as IAppUserData[],
+      selectedUsers: [] as IAppUser[],
       loading: false,
       isSubmitAllowed: false as boolean,
-      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -221,7 +211,7 @@ export default Vue.extend({
       return _orderBy(this.filteredActiveDirectoryUsers, 'displayName');
     },
 
-    orderedSelectedUsers():IAppUserData[] {
+    orderedSelectedUsers():IAppUser[] {
       return _orderBy(this.selectedUsers, 'displayName');
     },
   },
@@ -237,44 +227,29 @@ export default Vue.extend({
   },
 
   methods: {
-    async fetchAppUsers(searchTerm: string) {
-      const res = await this.combinedUserAccountStore.search({
-        search: helpers.toQuickSearch(searchTerm),
-        queryType: 'full',
-        searchMode: 'all',
-      });
-      if (res?.ids?.length) {
-        this.filteredAppUsers = this.combinedUserAccountStore.getByIds(res.ids);
-      }
-    },
-
     close() {
       this.$emit('update:show', false);
     },
 
     async fetchActiveDirectoryUsers(searchTerm: string) {
       try {
-        const ActiveDirectoryUsers = await this.$services.appUsers.findAppUsers(searchTerm);
-        this.filteredActiveDirectoryUsers = ActiveDirectoryUsers.map((u) => ({
-          ...u,
-          isEMISUser: this.isAlreadyInEmis(u),
+        const directoryUsers = await this.$services.userAccounts.searchDirectoryUsers(searchTerm);
+        this.filteredActiveDirectoryUsers = directoryUsers.map((du) => ({
+          ...du,
+          role: null,
         }));
       } catch {
         this.filteredActiveDirectoryUsers = [];
       }
     },
 
-    isAlreadyInEmis(user: IAppUserData): boolean {
-      return this.filteredAppUsers.some((u) => u.entity.id === user.id && u.entity.status === Status.Active);
-    },
-
-    isSelected(user: IAppUserData):boolean {
+    isSelected(user: IAppUser):boolean {
       return this.selectedUsers && this.selectedUsers.findIndex((u) => user.id === u.id) > -1;
     },
 
     toggleUserSelection(user: IAppUser) {
       if (user) {
-        user.roles = []; // Reset role assignment
+        user.role = null; // Reset role assignment
         const indexOfSelectedUser:number = this.selectedUsers.findIndex((item) => item.id === user.id);
         if (indexOfSelectedUser >= 0) {
           this.selectedUsers.splice(indexOfSelectedUser, 1);
@@ -286,7 +261,7 @@ export default Vue.extend({
     },
 
     getClassRow(user: IAppUser): string {
-      if (user.isEMISUser) {
+      if (user.existsInEmis) {
         return 'row_disabled';
       }
       if (this.isSelected(user)) {
@@ -297,22 +272,20 @@ export default Vue.extend({
 
     onSelectAll({ items, value }: { items: Array<IAppUser>; value: boolean }) {
       if (value) { // select all, get the new ones + old ones
-        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !i.isEMISUser && !this.selectedUsers.find((u) => u.id === i.id))];
+        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !i.existsInEmis && !this.selectedUsers.find((u) => u.id === i.id))];
       } else { // deselect, only remove what is currently removed
         this.selectedUsers = _difference(this.selectedUsers, items);
       }
       this.updateIsSubmitAllowed();
     },
 
-    assignRoleToUser(roleData: { text: IMultilingual, value: string }, user: IAppUserData) {
+    assignRoleToUser(roleData: { text: IMultilingual, value: string }, user: IAppUser) {
       if (roleData) {
-        user.roles = [
-          {
-            id: roleData.value,
-            displayName: this.$m(roleData.text),
-            value: null,
-          },
-        ];
+        user.role = {
+          id: roleData.value,
+          displayName: this.$m(roleData.text),
+          value: null,
+        };
         this.updateIsSubmitAllowed();
       }
     },
@@ -333,8 +306,8 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    async setUserRole(user: IAppUserData) {
-      const subRole:IOptionSubItem = this.getSubRoleById(user.roles[0].id);
+    async setUserRole(user: IAppUser) {
+      const subRole:IOptionSubItem = this.getSubRoleById(user.role.id);
 
       if (subRole) {
         const payload = {
@@ -353,14 +326,13 @@ export default Vue.extend({
 
     // Recheck if the Submit button should be enabled or not. It should be disabled if some selected users don't have a role set (their roles list is empty)
     updateIsSubmitAllowed() {
-      this.isSubmitAllowed = this.selectedUsers?.length && !this.selectedUsers.find((u) => !u.roles?.length);
+      this.isSubmitAllowed = this.selectedUsers?.length && !this.selectedUsers.find((u) => !u.role);
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     debounceSearch: _debounce(async function func(this:any, value) {
       if (value) {
         this.loading = true;
-        await this.fetchAppUsers(value);
         await this.fetchActiveDirectoryUsers(value);
         this.loading = false;
       }

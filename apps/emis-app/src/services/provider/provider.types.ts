@@ -8,7 +8,6 @@ import { IMassActionService, IMassActionServiceMock } from '@libs/services-lib/m
 import { ICaseFilesService, ICaseFilesServiceMock } from '@libs/services-lib/case-files/entity';
 import { IOptionItemsService, IOptionItemsServiceMock } from '@libs/services-lib/optionItems';
 import { ITeamsService, ITeamsServiceMock } from '@libs/services-lib/teams/entity';
-import { IAppUsersService, IAppUsersServiceMock } from '@libs/services-lib/app-users';
 import { IProgramsService, IProgramsServiceMock } from '@libs/services-lib/programs/entity';
 import { IUserAccountsServiceMock, UserAccountsService } from '@libs/services-lib/user-accounts/entity';
 import { IEventsService, IEventsServiceMock } from '@libs/services-lib/events/entity';
@@ -37,7 +36,6 @@ import { IQueriesService, IQueriesServiceMock } from '@libs/services-lib/queries
 export interface IProvider {
   approvalTables: IApprovalTablesService,
   approvalTablesMetadata: IApprovalTablesMetadataService,
-  appUsers: IAppUsersService,
   caseFiles: ICaseFilesService,
   caseFilesMetadata: ICaseFilesMetadataService,
   caseFileNotes: ICaseNotesService,
@@ -72,7 +70,6 @@ export interface IProvider {
 export interface IProviderMock {
   approvalTables: IApprovalTablesServiceMock,
   approvalTablesMetadata: IApprovalTablesMetadataServiceMock,
-  appUsers: IAppUsersServiceMock,
   caseFiles: ICaseFilesServiceMock,
   caseFilesMetadata: ICaseFilesMetadataServiceMock,
   caseFileNotes: ICaseNotesServiceMock,

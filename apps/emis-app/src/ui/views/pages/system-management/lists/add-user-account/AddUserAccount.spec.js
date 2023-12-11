@@ -149,7 +149,7 @@ describe('AddUserAccount.vue', () => {
         expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
         const roleData = { value: optionData[0].id, text: optionData[0].name };
         wrapper.vm.onRoleSelected(roleData);
-        expect(wrapper.vm.user.roles[0]).toEqual(
+        expect(wrapper.vm.user.role).toEqual(
           {
             id: optionData[0].id,
             displayName: optionData[0].name.translation.en,

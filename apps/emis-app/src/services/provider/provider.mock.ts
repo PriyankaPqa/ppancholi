@@ -1,7 +1,6 @@
 import { mockPublicService } from '@libs/services-lib/public';
 import { mockHouseholdsService } from '@libs/services-lib/households/entity';
 import { mockMassActionService } from '@libs/services-lib/mass-actions/entity';
-import { mockAppUsersService } from '@libs/services-lib/app-users';
 import { mockCaseFilesService } from '@libs/services-lib/case-files/entity';
 import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { mockTeamsService } from '@libs/services-lib/teams/entity';
@@ -29,7 +28,6 @@ import { IProviderMock } from './provider.types';
 export const mockProvider = (): IProviderMock => ({
   approvalTables: mockApprovalTablesService(),
   approvalTablesMetadata: mockApprovalTablesMetadataService(),
-  appUsers: mockAppUsersService(),
   caseFiles: mockCaseFilesService(),
   caseFilesMetadata: mockCaseFilesMetadataService(),
   caseFileNotes: mockCaseNotesService(),

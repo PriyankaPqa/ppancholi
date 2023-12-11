@@ -9,7 +9,7 @@
       :footer-text="footerText"
       :labels="labels"
       :table-props="tableProps"
-      :show-add-button="true"
+      :show-add-button="!hasFeatureUseIdentityServer"
       :options.sync="options"
       :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
@@ -22,6 +22,15 @@
           :to="getUserAccountDetailsRoute(item.entity.id)">
           <span data-test="user_displayName"> {{ item.metadata.displayName }}</span>
         </router-link>
+      </template>
+
+      <template #headerLeft>
+        <rc-add-button-with-menu
+          v-if="hasFeatureUseIdentityServer"
+          :items="menuItems"
+          data-test="create-user-account-button"
+          :add-button-label="$t('system_management.userAccounts.add_user_account_title')"
+          @click-item="addUser($event)" />
       </template>
 
       <template #[`item.${customColumns.email}`]="{ item }">
@@ -209,6 +218,20 @@ export default mixins(TablePaginationSearchMixin).extend({
       return this.$hasFeature(FeatureKeys.UseIdentityServer);
     },
 
+    menuItems(): Array<Record<string, string>> {
+      return [{
+        text: this.$t('system_management.userAccounts.add_new_user') as string,
+        value: 'standard',
+        icon: 'mdi-account',
+        dataTest: 'add-standard-user-link',
+      }, {
+        text: this.$t('system_management.userAccounts.add_new_ad_user') as string,
+        value: 'activeDirectory',
+        icon: 'mdi-account-outline',
+        dataTest: 'add-activeDirectory-user-link',
+      }];
+    },
+
     headers(): Array<DataTableHeader> {
       return [
         {
@@ -325,8 +348,14 @@ export default mixins(TablePaginationSearchMixin).extend({
       return res;
     },
 
-    addUser() {
-      if (this.hasFeatureUseIdentityServer) {
+    addUser(item: Record<string, string> = null) {
+      if (!this.$hasFeature(FeatureKeys.UseIdentityServer)) {
+        this.showAddEmisUserDialog = true;
+        return;
+      }
+
+      const addType = item.value;
+      if (addType === 'standard') {
         this.showAddUserAccountDialog = true;
       } else {
         this.showAddEmisUserDialog = true;

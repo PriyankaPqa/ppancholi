@@ -2,7 +2,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { IEntity, mockBaseData, Status } from '../base';
 
 import {
-  IUserAccountEntity, IFilter, FilterKey, AccountStatus, IUserAccountMetadata, IUserAccountCombined,
+  IUserAccountEntity, IFilter, FilterKey, AccountStatus, IUserAccountMetadata, IUserAccountCombined, IUserProfileQueryResponse, IUserProfileData,
 } from './userAccount.types';
 
 export const mockListOption = (force?: Partial<IListOption>) : IListOption => ({
@@ -95,4 +95,27 @@ export const mockCombinedUserAccount = (force?: Partial<IEntity>): IUserAccountC
 export const mockCombinedUserAccounts = (): IUserAccountCombined[] => [
   mockCombinedUserAccount({ id: '1' }),
   mockCombinedUserAccount({ id: '2' }),
+];
+
+export const mockUserProfileData = (force?: Partial<IUserProfileData>): IUserProfileData => ({
+  id: 'fc8e449b-cfe7-41ea-a74c-1db865b99ab0',
+  displayName: 'Display Name',
+  emailAddress: 'user@company.com',
+  preferredLanguage: 'fr',
+  givenName: 'First',
+  surname: 'Last',
+  userPrincipalName: 'upn@company.com',
+  phoneNumber: '+15551212',
+  ...force,
+});
+
+export const mockUserProfileQueryResponse = (force?: Partial<IUserProfileQueryResponse>): IUserProfileQueryResponse => ({
+  ...mockUserProfileData(force),
+  existsInEmis: false,
+  ...force,
+});
+
+export const mockUserProfileQueryResponses = () : IUserProfileQueryResponse[] => [
+  mockUserProfileQueryResponse({ id: '1', existsInEmis: true }),
+  mockUserProfileQueryResponse({ id: '2', existsInEmis: false }),
 ];

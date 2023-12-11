@@ -3,7 +3,6 @@ import { HouseholdsService } from '@libs/services-lib/households/entity';
 import { MassActionService } from '@libs/services-lib/mass-actions/entity';
 import { EventsService } from '@libs/services-lib/events/entity';
 import { UserAccountsService } from '@libs/services-lib/user-accounts/entity';
-import { AppUsersService } from '@libs/services-lib/app-users';
 import { CaseFilesService } from '@libs/services-lib/case-files/entity';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { TeamsService } from '@libs/services-lib/teams/entity';
@@ -25,7 +24,6 @@ import { provider } from './index';
 
 jest.mock('@libs/services-lib/user-accounts/entity');
 jest.mock('@libs/services-lib/events/entity');
-jest.mock('@libs/services-lib/app-users');
 jest.mock('@libs/services-lib/case-files/entity');
 jest.mock('@libs/services-lib/events/entity');
 jest.mock('@libs/services-lib/optionItems');
@@ -49,11 +47,6 @@ jest.mock('@libs/services-lib/assessment-form/entity');
 jest.mock('@libs/services-lib/notifications/entity');
 
 describe('Provider', () => {
-  it('should instantiate AppUsersService', () => {
-    provider();
-    expect(AppUsersService.prototype.constructor).toBeCalled();
-  });
-
   it('should instantiate UserAccountsService', () => {
     provider();
     expect(UserAccountsService.prototype.constructor).toBeCalled();

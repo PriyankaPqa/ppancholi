@@ -25,7 +25,7 @@
           <v-row>
             <v-col cols="6">
               <v-text-field-with-validation
-                v-model="user.firstName"
+                v-model="user.givenName"
                 data-test="first-name"
                 :label="`${$t('user.accountSettings.first_name')} *`"
                 :rules="rules.name" />
@@ -33,7 +33,7 @@
 
             <v-col cols="6">
               <v-text-field-with-validation
-                v-model="user.lastName"
+                v-model="user.surname"
                 data-test="last-name"
                 :label="`${$t('user.accountSettings.last_name')} *`"
                 :rules="rules.name" />
@@ -71,16 +71,15 @@
 import Vue from 'vue';
 import { RcDialog, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { IOptionSubItem } from '@libs/entities-lib/optionItem';
-import { IAppUserData } from '@libs/entities-lib/app-user';
 import { IMultilingual, VForm } from '@libs/shared-lib/types';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IServerError } from '@libs/shared-lib/src/types';
+import { IUserProfileData, IRolesData } from '@libs/entities-lib/user-account';
 
-interface IAppUser extends IAppUserData {
-  firstName: string;
-  lastName: string;
+interface IAppUser extends IUserProfileData {
+  role: IRolesData
 }
 
 export default Vue.extend({
@@ -139,13 +138,11 @@ export default Vue.extend({
 
     onRoleSelected(roleData: { text: IMultilingual, value: string }) {
       if (roleData) {
-        this.user.roles = [
-          {
-            id: roleData.value,
-            displayName: this.$m(roleData.text),
-            value: null,
-          },
-        ];
+        this.user.role = {
+          id: roleData.value,
+          displayName: this.$m(roleData.text),
+          value: null,
+        };
         this.isSubmitAllowed = true;
       }
     },
@@ -170,14 +167,14 @@ export default Vue.extend({
     },
 
     async createUserAccount(user: IAppUser) : Promise<boolean> {
-      const subRole:IOptionSubItem = this.getSubRoleById(user.roles[0].id);
+      const subRole:IOptionSubItem = this.getSubRoleById(user.role.id);
       let errorCode = 'system_management.add_users.error';
 
       if (subRole) {
         const payload = {
           emailAddress: user.emailAddress,
-          givenName: user.firstName,
-          surname: user.lastName,
+          givenName: user.givenName,
+          surname: user.surname,
           roleId: subRole.id,
         };
 
