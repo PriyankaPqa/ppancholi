@@ -67,7 +67,9 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
   computed: {
 
     massActionTypes() {
-      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
+        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthentication || this.$hasFeature(FeatureKeys.DataCorrectionAuthentication))
+        && (m.value !== MassActionDataCorrectionType.AuthenticationSpecifiedOther || !this.$hasFeature(FeatureKeys.DataCorrectionAuthentication)));
     },
 
     rules(): Record<string, unknown> {
@@ -83,7 +85,9 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
     },
 
     allowedExtensions() : string[] {
-     return (this.selectedType === MassActionDataCorrectionType.FinancialAssistance || this.$hasFeature(FeatureKeys.DataCorrectionPhaseII))
+     return (this.selectedType === MassActionDataCorrectionType.FinancialAssistance || this.$hasFeature(FeatureKeys.DataCorrectionPhaseII)
+            || this.selectedType === MassActionDataCorrectionType.DataCorrectionAuthentication)
+            && this.selectedType !== MassActionDataCorrectionType.AuthenticationSpecifiedOther
         ? ['xlsx']
         : ['csv'];
     },

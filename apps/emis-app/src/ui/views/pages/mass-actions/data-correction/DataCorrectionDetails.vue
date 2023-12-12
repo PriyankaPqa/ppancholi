@@ -31,6 +31,7 @@ export default mixins(massActionDetails).extend({
       switch (this.massAction.type as MassActionDataCorrectionType) {
         case MassActionDataCorrectionType.AuthenticationSpecifiedOther:
         case MassActionDataCorrectionType.Labels:
+        case MassActionDataCorrectionType.DataCorrectionAuthentication:
           return {
             preProcessingWaitTitle: '',
             preProcessingWaitLabelOne: 'massActions.preProcessing.info1',

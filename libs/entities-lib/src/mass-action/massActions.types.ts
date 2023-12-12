@@ -34,6 +34,7 @@ export enum MassActionDataCorrectionType {
   IdentitySet = 11,
   ContactInformation = 12,
   FinancialAssistance = 13,
+  DataCorrectionAuthentication = 17,
 }
 
 export enum MassActionMode {

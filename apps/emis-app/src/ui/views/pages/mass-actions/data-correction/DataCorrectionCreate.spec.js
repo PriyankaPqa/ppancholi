@@ -111,6 +111,17 @@ describe('DataCorrectionCreate.vue', () => {
           expect(massActionTypes.find((t) => t.value === type)).toBeTruthy();
         });
       });
+
+      it('should return DataCorrectionAuthentication according to flag', () => {
+        let maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthentication);
+        expect(maType).toBeFalsy();
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.DataCorrectionAuthentication],
+        });
+        maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthentication);
+        expect(maType).toBeTruthy();
+      });
     });
 
     describe('rules', () => {
@@ -137,6 +148,11 @@ describe('DataCorrectionCreate.vue', () => {
     describe('allowedExtensions', () => {
       it('should be xlsx when selected type is Financial Assistance', () => {
         wrapper.vm.selectedType = MassActionDataCorrectionType.FinancialAssistance;
+        expect(wrapper.vm.allowedExtensions).toEqual(['xlsx']);
+      });
+
+      it('should be xlsx when selected type is DataCorrectionAuthentication', () => {
+        wrapper.vm.selectedType = MassActionDataCorrectionType.DataCorrectionAuthentication;
         expect(wrapper.vm.allowedExtensions).toEqual(['xlsx']);
       });
 

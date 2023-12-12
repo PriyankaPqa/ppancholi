@@ -5,6 +5,7 @@ import {
 import routes from '@/constants/routes';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -154,6 +155,17 @@ describe('MassActionsHome.vue', () => {
         expect(wrapper.vm.massActionTypes.length).toBeGreaterThan(1);
         const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance);
         expect(!!maType.text && !!maType.value).toBeTruthy();
+      });
+
+      it('should return DataCorrectionAuthentication according to flag', () => {
+        let maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthentication);
+        expect(maType).toBeFalsy();
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.DataCorrectionAuthentication],
+        });
+        maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthentication);
+        expect(maType).toBeTruthy();
       });
     });
   });

@@ -217,6 +217,12 @@ describe('massActions', () => {
         expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.FinancialAssistance);
       });
 
+      it('should call downloadApiTemplate for DataCorrectionAuthentication', () => {
+        wrapper.vm.downloadApiTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.DataCorrectionAuthentication);
+        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.DataCorrectionAuthentication);
+      });
+
       it('should call downloadApiTemplate if feature flag is on', () => {
         wrapper.vm.downloadApiTemplate = jest.fn();
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.DataCorrectionPhaseII);

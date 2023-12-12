@@ -31,6 +31,7 @@ import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',
@@ -171,7 +172,9 @@ export default mixins(massActions).extend({
     },
 
     massActionTypes(): Array<Record<string, unknown>> {
-      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
+        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthentication || this.$hasFeature(FeatureKeys.DataCorrectionAuthentication))
+        && (m.value !== MassActionDataCorrectionType.AuthenticationSpecifiedOther || !this.$hasFeature(FeatureKeys.DataCorrectionAuthentication)));
     },
   },
 });
