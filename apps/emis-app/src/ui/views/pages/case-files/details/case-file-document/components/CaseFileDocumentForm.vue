@@ -4,7 +4,7 @@
       <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11">
           <v-row class="mt-4">
-            <v-col sm="12" md="9">
+            <v-col v-if="!$hasFeature(FeatureKeys.RecoveryPlan)" sm="12" md="9">
               <v-text-field-with-validation
                 v-model="localDocument.name"
                 :rules="rules.name"
@@ -12,7 +12,7 @@
                 data-test="document-name" />
             </v-col>
 
-            <v-col sm="12" md="3">
+            <v-col sm="12" :md="$hasFeature(FeatureKeys.RecoveryPlan) ? 4 : 3">
               <div :class="['status', isStatusActive ? 'status_success' : 'grey']">
                 <div class="pl-4 white--text">
                   {{ $t('caseFile.document.status') }}
@@ -125,6 +125,7 @@ import { CASE_FILE_DOC_EXTENSIONS } from '@/constants/documentExtensions';
 import { CaseFileDocumentEntity, DocumentStatus, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 
 export default mixins(fileUpload).extend({
@@ -159,6 +160,7 @@ export default mixins(fileUpload).extend({
       localDocument,
       DocumentStatus,
       allowedExtensions: CASE_FILE_DOC_EXTENSIONS,
+      FeatureKeys,
     };
   },
 

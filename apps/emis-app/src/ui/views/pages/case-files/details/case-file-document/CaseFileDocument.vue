@@ -90,14 +90,12 @@ import mixins from 'vue-typed-mixins';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import isEmpty from 'lodash/isEmpty';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import {
-  DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined, ICaseFileDocumentMetadata,
-} from '@libs/entities-lib/case-file-document';
+import { DocumentStatus, ICaseFileDocumentCombined, ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@libs/entities-lib/case-file-document';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { useCaseFileDocumentStore, useCaseFileDocumentMetadataStore, IdParams } from '@/pinia/case-file-document/case-file-document';
+import { IdParams, useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { UserRoles } from '@libs/entities-lib/user';
 
 import routes from '@/constants/routes';
@@ -167,6 +165,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       if (!documents) {
         return [];
       }
+
       return documents.map((d: ICaseFileDocumentCombined) => ({
         name: d.entity?.name || '-',
         id: d.entity?.id,

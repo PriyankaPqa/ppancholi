@@ -5,6 +5,8 @@ import {
 } from '@libs/entities-lib/case-file-document';
 
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { format } from 'date-fns';
 import Component from './CreateEditCaseFileDocument.vue';
 
 const localVue = createLocalVue();
@@ -170,8 +172,9 @@ describe('CreateEditDocument', () => {
     });
 
     describe('uploadNewDocument', () => {
-      it('calls upload with the formData', async () => {
+      it('calls upload with the formData when feature is off', async () => {
         await mountWrapper(false);
+        await wrapper.setFeature(FeatureKeys.RecoveryPlan, false);
         await wrapper.setData({ file: {} });
         await wrapper.setData({ document: mockDocument });
 
@@ -184,6 +187,35 @@ describe('CreateEditDocument', () => {
 
         await wrapper.vm.uploadNewDocument();
         expect(wrapper.vm.$refs.documentForm.upload).toHaveBeenCalledWith(formData, 'case-file/case-files/CASEFILE_ID/documents');
+      });
+
+      it('calls upload with the formData with auto-naming when feature is on', async () => {
+        await mountWrapper(false, false, 5, {
+          computed: {
+            category: () => 'mock-catgory-name',
+          },
+        });
+        await wrapper.setFeature(FeatureKeys.RecoveryPlan, true);
+        await wrapper.setData({ file: {} });
+        await wrapper.setData({ document: mockDocument });
+
+        const formData = new FormData();
+        const autoNaming = `${wrapper.vm.category} - ${format(new Date(), 'yyyyMMdd-HHmmss')}`;
+        formData.set('name', autoNaming);
+        formData.set('note', mockDocument.note || '');
+        formData.set('categoryId', mockDocument.category.optionItemId.toString());
+        formData.set('documentStatus', mockDocument.documentStatus.toString());
+        formData.set('file', {});
+
+        await wrapper.vm.uploadNewDocument();
+        expect(wrapper.vm.$refs.documentForm.upload).toHaveBeenCalledWith(formData, 'case-file/case-files/CASEFILE_ID/documents');
+      });
+
+      it('should format date correctly', async () => {
+        let time = new Date('2020-01-02 03:04:05');
+        expect(format(time, 'yyyyMMdd-HHmmss')).toEqual('20200102-030405');
+        time = new Date('2021-11-12 13:14:15');
+        expect(format(time, 'yyyyMMdd-HHmmss')).toEqual('20211112-131415');
       });
     });
   });

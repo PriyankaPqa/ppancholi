@@ -6,6 +6,7 @@ import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './CaseFileDocumentForm.vue';
 import DownloadComponent from './DownloadViewDocument.vue';
 
@@ -260,6 +261,22 @@ describe('CaseFileDocumentForm.vue', () => {
       it('should be passed the document entity in props', async () => {
         await (mountWrapper(true, true));
         expect(wrapper.findComponent(DownloadComponent).props('document')).toEqual(wrapper.vm.localDocument);
+      });
+    });
+
+    describe('document-name', () => {
+      it('should be rendered when feature RecoveryPlan is off', async () => {
+        await (mountWrapper(false, true));
+        await wrapper.setFeature(FeatureKeys.RecoveryPlan, false);
+        const element = wrapper.findDataTest('document-name');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered when feature RecoveryPlan is on', async () => {
+        await (mountWrapper(false, true));
+        await wrapper.setFeature(FeatureKeys.RecoveryPlan, true);
+        const element = wrapper.findDataTest('document-name');
+        expect(element.exists()).toBeFalsy();
       });
     });
   });

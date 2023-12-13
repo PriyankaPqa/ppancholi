@@ -7,6 +7,7 @@ import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import flushPromises from 'flush-promises';
 import Component from './CaseFileDocumentDetails.vue';
 
 const localVue = createLocalVue();
@@ -88,6 +89,7 @@ describe('CaseFileDocumentDetails', () => {
     describe('document', () => {
       it('calls the document getter', async () => {
         await mountWrapper();
+        await flushPromises();
         expect(caseFileDocumentStore.getById).toHaveBeenCalledTimes(1);
       });
       it('sets the right data', async () => {
@@ -99,6 +101,7 @@ describe('CaseFileDocumentDetails', () => {
     describe('category', () => {
       it('calls the getter categories', async () => {
         await mountWrapper();
+        await flushPromises();
         expect(caseFileDocumentStore.getCategories).toHaveBeenCalledWith(false);
       });
 
@@ -188,6 +191,7 @@ describe('CaseFileDocumentDetails', () => {
             },
           },
         });
+        await flushPromises();
         element = wrapper.findDataTest('document_details_mock-test');
       });
       it('displays the right label', () => {
@@ -223,6 +227,7 @@ describe('CaseFileDocumentDetails', () => {
             canEdit: () => true,
           },
         });
+        await flushPromises();
         element = wrapper.findDataTest('editDocument-link');
         expect(element.exists()).toBeTruthy();
         await mountWrapper(false, 6, null, {
@@ -230,12 +235,14 @@ describe('CaseFileDocumentDetails', () => {
             canEdit: () => false,
           },
         });
+        await flushPromises();
         element = wrapper.findDataTest('editDocument-link');
         expect(element.exists()).toBeFalsy();
       });
 
       it('is linked to edit route', async () => {
         await mountWrapper();
+        await flushPromises();
         element = wrapper.findDataTest('editDocument-link');
         expect(element.props('to')).toEqual(wrapper.vm.documentEditRoute);
       });
@@ -249,6 +256,7 @@ describe('CaseFileDocumentDetails', () => {
             canDelete: () => true,
           },
         });
+        await flushPromises();
         element = wrapper.findDataTest('deleteDocument-link');
         expect(element.exists()).toBeTruthy();
         await mountWrapper(false, 6, null, {
@@ -256,12 +264,14 @@ describe('CaseFileDocumentDetails', () => {
             canDelete: () => false,
           },
         });
+        await flushPromises();
         element = wrapper.findDataTest('deleteDocument-link');
         expect(element.exists()).toBeFalsy();
       });
 
       it('calls deleteDocument when clicked', async () => {
         await mountWrapper();
+        await flushPromises();
         wrapper.vm.deleteDocument = jest.fn();
         element = wrapper.findDataTest('deleteDocument-link');
         await element.vm.$emit('click');

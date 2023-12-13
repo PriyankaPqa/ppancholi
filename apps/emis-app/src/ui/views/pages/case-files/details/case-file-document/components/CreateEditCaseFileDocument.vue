@@ -30,6 +30,8 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { format } from 'date-fns';
 import DocumentForm from './CaseFileDocumentForm.vue';
 
 export default mixins(handleUniqueNameSubmitError).extend({
@@ -72,6 +74,18 @@ export default mixins(handleUniqueNameSubmitError).extend({
         ? this.$t('common.save')
         : this.$t('common.buttons.add');
     },
+
+    category(): string {
+      if (!this.document?.category?.optionItemId) {
+        return null;
+      }
+      const types = useCaseFileDocumentStore().getCategories(false);
+      const type = types.find((t) => t.id === this.document.category.optionItemId);
+      if (type.isOther && this.document.category.specifiedOther) {
+        return this.document.category.specifiedOther;
+      }
+      return this.$m(type?.name);
+      },
   },
 
   async created() {
@@ -144,7 +158,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async uploadNewDocument(): Promise<ICaseFileDocumentEntity> {
       const formData = new FormData();
-      formData.set('name', this.document.name);
+      const autoNaming = `${this.category} - ${format(new Date(), 'yyyyMMdd-HHmmss')}`;
+      formData.set('name', this.$hasFeature(FeatureKeys.RecoveryPlan) ? autoNaming : this.document.name);
       formData.set('note', this.document.note || '');
       formData.set('categoryId', this.document.category.optionItemId.toString());
       if (this.document.category.specifiedOther) {
