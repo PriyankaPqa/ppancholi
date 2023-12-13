@@ -103,14 +103,10 @@ describe('EventSummary.vue', () => {
     });
 
     describe('exceptional-authentication-section', () => {
-      it('shows depending on flag', async () => {
-        doMount(getPiniaForUser(UserRoles.level5), {}, [FeatureKeys.AuthenticationPhaseII], false);
-        let element = wrapper.findDataTest('exceptional-authentication-section');
-        expect(element.exists()).toBeTruthy();
-
+      it('renders', async () => {
         doMount(getPiniaForUser(UserRoles.level5), {}, [], false);
-        element = wrapper.findDataTest('exceptional-authentication-section');
-        expect(element.exists()).toBeFalsy();
+        const element = wrapper.findDataTest('exceptional-authentication-section');
+        expect(element.exists()).toBeTruthy();
       });
     });
 

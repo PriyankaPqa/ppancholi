@@ -8,7 +8,6 @@ import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import flushPromises from 'flush-promises';
 import { useMockEventStore } from '@/pinia/event/event.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../components/CaseFileVerifyIdentityDialog.vue';
 
 const localVue = createLocalVue();
@@ -20,7 +19,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
   let wrapper;
 
   const doMount = async (fullMount = false, level = 5, additionalOverwrites = {}) => {
-    const featureList = additionalOverwrites.featureList || [FeatureKeys.AuthenticationPhaseII];
+    const featureList = additionalOverwrites.featureList;
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       featureList,
@@ -209,13 +208,6 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.Exceptional && x.disabled).length).toBe(1);
         expect(verifs.filter((x) => x.disabled).length).toBe(verifs.length);
 
-        await doMount(false, 3, { featureList: [] });
-        verifs = wrapper.vm.verificationMethods;
-        expect(verifs.length).toBe(3);
-        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.NotApplicable).length).toBe(0);
-        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.System && x.disabled).length).toBe(1);
-        expect(verifs.filter((x) => x.disabled).length).toBe(1);
-
         await doMount(false, 4);
         verifs = wrapper.vm.verificationMethods;
         expect(verifs.length).toBe(3);
@@ -227,7 +219,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
     });
 
     describe('readonly', () => {
-      it('When no address and not l4+ and flag is on', async () => {
+      it('When no address and not l4+', async () => {
         const household = mockHouseholdEntity();
         householdStore.getById = jest.fn(() => household);
         await doMount(false, 3);
@@ -238,9 +230,6 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(wrapper.vm.readonly).toBeTruthy();
 
         await doMount(false, 4);
-        expect(wrapper.vm.readonly).toBeFalsy();
-
-        await doMount(false, 3, { featureList: [] });
         expect(wrapper.vm.readonly).toBeFalsy();
       });
     });

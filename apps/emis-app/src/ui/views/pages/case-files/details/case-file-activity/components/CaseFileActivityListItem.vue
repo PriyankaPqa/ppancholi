@@ -373,7 +373,7 @@ export default Vue.extend({
       return { title, body: null };
     },
 
-    // will not be needed when AuthenticationPhaseII feature flag is removed
+    // for activities prior to deploying AuthenticationPhaseII
     makeContentForIdentityAuthenticationUpdatedStatus():{ title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdated');
 
@@ -395,8 +395,7 @@ export default Vue.extend({
 
     makeContentForIdentityAuthenticationUpdatedId():{ title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId');
-      let body = this.$hasFeature(FeatureKeys.AuthenticationPhaseII) ? '' : this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated');
-      if (this.$hasFeature(FeatureKeys.AuthenticationPhaseII)) {
+      let body = '';
         if (this.item.details.isTier2) {
           body += `${this.$t('caseFileActivity.authentication.tier2')}\n`;
         }
@@ -445,7 +444,7 @@ export default Vue.extend({
         });
 
         body += (identifications && identifications.length > 0) ? `\n${this.$t('caseFileDetail.verifyIdentityDialog.options')}: ${identifications.join(', ')}` : '';
-      }
+
       return { title, body };
     },
 

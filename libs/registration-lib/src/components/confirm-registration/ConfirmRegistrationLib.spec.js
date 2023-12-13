@@ -2,7 +2,6 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { mockEvent } from '@libs/entities-lib/registration-event';
 import { mockServerError } from '@libs/services-lib/src/http-client';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './ConfirmRegistrationLib.vue';
 
 const localVue = createLocalVue();
@@ -170,24 +169,15 @@ describe('ConfirmRegistrationLib.vue', () => {
     });
 
     describe('showCompleteAssessmentMessage', () => {
-      it('returns the proper data according to flag and assessmentToComplete', async () => {
+      it('returns the proper data according to assessmentToComplete', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.AuthenticationPhaseII],
         });
         wrapper.vm.$registrationStore.assessmentToComplete = true;
         expect(wrapper.vm.showCompleteAssessmentMessage).toBeTruthy();
 
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [],
-        });
-        wrapper.vm.$registrationStore.assessmentToComplete = true;
-        expect(wrapper.vm.showCompleteAssessmentMessage).toBeFalsy();
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          featureList: [FeatureKeys.AuthenticationPhaseII],
         });
         wrapper.vm.$registrationStore.assessmentToComplete = false;
         expect(wrapper.vm.showCompleteAssessmentMessage).toBeFalsy();

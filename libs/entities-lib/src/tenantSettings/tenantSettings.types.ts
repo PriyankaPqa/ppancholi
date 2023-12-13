@@ -7,7 +7,6 @@ export enum FeatureKeys {
   BotProtection = 'BotProtection',
   SelfRegistration = 'SelfRegistration',
   ManageDuplicates = 'manageDuplicates',
-  AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
   TaskManagement = 'TaskManagement',
   DisplayNotificationCenter = 'DisplayNotificationCenter',

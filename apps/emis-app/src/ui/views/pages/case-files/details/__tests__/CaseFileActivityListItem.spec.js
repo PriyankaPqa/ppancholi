@@ -6,7 +6,6 @@ import { HouseholdStatus } from '@libs/entities-lib/household';
 
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 
@@ -101,9 +100,6 @@ describe('CaseFileActivityListItem.vue', () => {
         localVue,
         propsData: {
           item,
-        },
-        mocks: {
-          $hasFeature: (f) => f === FeatureKeys.AuthenticationPhaseII,
         },
       });
     });
@@ -857,25 +853,6 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedId()).toEqual({
             title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId',
             body: 'caseFileActivity.activityList.identity_authentication_status: caseFile.beneficiaryIdentityVerificationStatus.Passed',
-          });
-        });
-
-        it('returns the correct data when action type is IdentityAuthenticationUpdatedId and AuthenticationPhaseII flag is off', async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              item,
-            },
-            mocks: {
-              $hasFeature: (f) => f !== FeatureKeys.AuthenticationPhaseII,
-            },
-          });
-          await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0],
-          });
-          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedId()).toEqual({
-            title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId',
-            body: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated',
           });
         });
       });

@@ -196,7 +196,7 @@ export default Vue.extend({
     },
 
     showCompleteAssessmentMessage(): boolean {
-      return this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && !!this.$registrationStore.assessmentToComplete;
+      return !!this.$registrationStore.assessmentToComplete;
     },
 
     identityAuthenticationMessage(): { color?: string, icon?: string, header?: TranslateResult, details?: string } {

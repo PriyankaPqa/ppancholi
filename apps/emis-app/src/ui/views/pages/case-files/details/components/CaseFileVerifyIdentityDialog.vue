@@ -76,7 +76,7 @@
                 :rules="rules.method" />
             </v-col>
           </v-row>
-          <div v-if="$hasFeature(FeatureKeys.AuthenticationPhaseII) && form.method === IdentityAuthenticationMethod.Exceptional">
+          <div v-if="form.method === IdentityAuthenticationMethod.Exceptional">
             <v-row>
               <v-col cols="12" xl="12" lg="12">
                 <v-select-with-validation
@@ -199,8 +199,7 @@ export default Vue.extend({
   },
   computed: {
     readonly(): boolean {
-      return this.$hasFeature(FeatureKeys.AuthenticationPhaseII)
-        && useHouseholdStore().getById(this.caseFile.householdId)?.address?.address === null && !this.$hasLevel(UserRoles.level4);
+      return useHouseholdStore().getById(this.caseFile.householdId)?.address?.address === null && !this.$hasLevel(UserRoles.level4);
     },
     /**
      * Return list of methods. System method is read only
@@ -211,7 +210,7 @@ export default Vue.extend({
       const systemMethod = methods.find((m) => m.value === IdentityAuthenticationMethod.System);
       systemMethod.disabled = true;
       // if the household doesnt have a permanent address, only exceptional is allowed with level4+.
-      if (this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && useHouseholdStore().getById(this.caseFile.householdId)?.address?.address === null) {
+      if (useHouseholdStore().getById(this.caseFile.householdId)?.address?.address === null) {
         methods.forEach((m) => {
           m.disabled = !(m.value === IdentityAuthenticationMethod.Exceptional && this.$hasLevel(UserRoles.level4));
         });
@@ -313,7 +312,7 @@ export default Vue.extend({
         this.loading = true;
 
         const value = ({ status: this.form.status, method: this.form.method, identificationIds: [] }) as IIdentityAuthentication;
-        if (this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && value.method === IdentityAuthenticationMethod.Exceptional) {
+        if (value.method === IdentityAuthenticationMethod.Exceptional) {
           value.exceptionalAuthenticationTypeId = { optionItemId: this.form.exceptionalTypeId, specifiedOther: this.form.exceptionalTypeOther };
         }
         value.identificationIds = this.form.identificationIds.map((m: string) => (

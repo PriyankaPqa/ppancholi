@@ -21,7 +21,6 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { mockProvider } from '@/services/provider';
 import { EEventSummarySections } from '@/types';
@@ -893,16 +892,8 @@ describe('EventForm.vue', () => {
     });
 
     it('event tier section shows up depending on flag', async () => {
-      let section = wrapper.findDataTest('event-tier-section');
-      expect(section.exists()).toBe(false);
-
-      await wrapper.setFeature(FeatureKeys.AuthenticationPhaseII, true);
-      section = wrapper.findDataTest('event-tier-section');
+      const section = wrapper.findDataTest('event-tier-section');
       expect(section.exists()).toBe(true);
-
-      await wrapper.setFeature(FeatureKeys.AuthenticationPhaseII, false);
-      section = wrapper.findDataTest('event-tier-section');
-      expect(section.exists()).toBe(false);
     });
 
     describe('Event handlers', () => {

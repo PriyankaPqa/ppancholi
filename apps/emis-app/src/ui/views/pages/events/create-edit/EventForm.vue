@@ -181,43 +181,41 @@
             </v-row>
           </div>
 
-          <div v-if="$hasFeature(FeatureKeys.AuthenticationPhaseII)" data-test="event-tier-section">
-            <v-row>
-              <v-col cols="12">
-                <div class="grey-container py-4 px-8">
-                  <p class="rc-body16 fw-bold">
-                    {{ $t('eventSummary.authentication') }}
-                  </p>
-                  <v-divider class="my-4" />
-                  <div class="d-flex justify-space-between">
-                    <div class="fw-bold">
-                      {{ $t('eventSummary.authentication.tier1') }}
-                    </div>
-                    <v-switch
-                      v-model="tier1Enabled"
-                      class="mt-0 ml-auto mr-3 pt-0"
-                      flat
-                      :disabled="inputDisabled"
-                      data-test="event-tier-1"
-                      hide-details />
+          <v-row data-test="event-tier-section">
+            <v-col cols="12">
+              <div class="grey-container py-4 px-8">
+                <p class="rc-body16 fw-bold">
+                  {{ $t('eventSummary.authentication') }}
+                </p>
+                <v-divider class="my-4" />
+                <div class="d-flex justify-space-between">
+                  <div class="fw-bold">
+                    {{ $t('eventSummary.authentication.tier1') }}
                   </div>
-                  <v-divider class="my-4" />
-                  <div class="d-flex justify-space-between">
-                    <div class="fw-bold">
-                      {{ $t('eventSummary.authentication.tier2') }}
-                    </div>
-                    <v-switch
-                      v-model="tier2Enabled"
-                      class="mt-0 ml-auto mr-3 pt-0"
-                      flat
-                      :disabled="inputDisabled"
-                      data-test="event-tier-2"
-                      hide-details />
-                  </div>
+                  <v-switch
+                    v-model="tier1Enabled"
+                    class="mt-0 ml-auto mr-3 pt-0"
+                    flat
+                    :disabled="inputDisabled"
+                    data-test="event-tier-1"
+                    hide-details />
                 </div>
-              </v-col>
-            </v-row>
-          </div>
+                <v-divider class="my-4" />
+                <div class="d-flex justify-space-between">
+                  <div class="fw-bold">
+                    {{ $t('eventSummary.authentication.tier2') }}
+                  </div>
+                  <v-switch
+                    v-model="tier2Enabled"
+                    class="mt-0 ml-auto mr-3 pt-0"
+                    flat
+                    :disabled="inputDisabled"
+                    data-test="event-tier-2"
+                    hide-details />
+                </div>
+              </div>
+            </v-col>
+          </v-row>
 
           <v-row>
             <v-col cols="12">

@@ -136,19 +136,17 @@
           @edit="editSection($event, EEventSummarySections.Agreement)" />
       </event-summary-section-body>
 
-      <div v-if="$hasFeature(FeatureKeys.AuthenticationPhaseII)">
-        <event-summary-section-title
-          :section="EEventSummarySections.ExceptionalAuthenticationType"
-          :can-add="$hasLevel(UserRoles.level6)"
-          @click-add-button="onSectionAdd($event)" />
-        <event-summary-section-body v-slot="{ item, index }" :items="sortedExceptionalAuth">
-          <event-exceptional-authentication-section
-            data-test="exceptional-authentication-section"
-            :excpt-auth="item"
-            :index="index"
-            :event-id="event.id" />
-        </event-summary-section-body>
-      </div>
+      <event-summary-section-title
+        :section="EEventSummarySections.ExceptionalAuthenticationType"
+        :can-add="$hasLevel(UserRoles.level6)"
+        @click-add-button="onSectionAdd($event)" />
+      <event-summary-section-body v-slot="{ item, index }" :items="sortedExceptionalAuth">
+        <event-exceptional-authentication-section
+          data-test="exceptional-authentication-section"
+          :excpt-auth="item"
+          :index="index"
+          :event-id="event.id" />
+      </event-summary-section-body>
 
       <div v-if="$hasLevel(UserRoles.level6)">
         <event-summary-section-title
