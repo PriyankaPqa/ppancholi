@@ -1,12 +1,11 @@
 import { CreateEventPage } from '../events/createEvent.page';
 
 export enum DataTest {
-  eventsTable = 'events-table',
   eventsTableAddButton = 'table__addButton',
 }
 
 export class HomePage {
-  private addEventButton = `//div[@data-test='${DataTest.eventsTable}']//button[@data-test='${DataTest.eventsTableAddButton}']`;
+  private addEventButton = { selector: DataTest.eventsTableAddButton };
 
   public goToCreateEventPage() {
     this.getAddEventButton().click();
@@ -14,6 +13,6 @@ export class HomePage {
   }
 
   public getAddEventButton() {
-    return cy.xpath(this.addEventButton);
+    return cy.getByDataTest(this.addEventButton);
   }
 }

@@ -54,10 +54,12 @@ describe('#TC160# - Create an Event.', { tags: ['@event'] }, () => {
    for (const roleName of filteredCannotRoles) {
     describe(`${roleName}`, () => {
       beforeEach(() => {
+        cy.login(roleName);
         cy.goTo('home');
       });
       it('should not be able to create an event', () => {
         const homePage = new HomePage();
+        cy.contains('Refresh').should('be.visible'); // Refresh is a common text displayed in each table of home page across all roles
         homePage.getAddEventButton().should('not.exist');
       });
     });
