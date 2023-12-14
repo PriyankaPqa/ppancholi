@@ -5,18 +5,10 @@
       <div v-html="sanitizeHtml(getStatementWithLinksText($m(consentStatement.statement)))" />
     </div>
     <div
-      v-else-if="$hasFeature(FeatureKeys.UpdateRegistrationConsent)"
+      v-else
       class="rc-body14 consent"
       data-test="content-text"
       v-html="sanitizeHtml(getStatementWithLinksText($t('registration.privacy_consent_formatted')))" />
-    <i18n v-else path="registration.privacy_consent" tag="p" class="rc-body14 consent" data-test="content-text">
-      <template #website>
-        <a :href="$t('registration.privacy_statement.website')" target="_blank" rel="noopener noreferrer">{{ $t('registration.privacy_statement.website') }}</a>
-      </template>
-      <template #email>
-        <a :href="`mailto:${$t('registration.privacy_statement.email')}`">{{ $t('registration.privacy_statement.email') }}</a>
-      </template>
-    </i18n>
     <div class="full-width grey-container py-1 px-5">
       <v-checkbox-with-validation
         v-model="isPrivacyAgreed"

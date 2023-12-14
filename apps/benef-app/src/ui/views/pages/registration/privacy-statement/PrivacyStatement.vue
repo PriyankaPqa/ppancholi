@@ -1,8 +1,6 @@
 <template>
   <privacy-statement-lib
-    :checkbox-label="$hasFeature(FeatureKeys.UpdateRegistrationConsent)
-      ? $t('registration.privacy_statement.agreeSelf_updated')
-      : $t('registration.privacy_statement.agreeSelf')"
+    :checkbox-label="$t('registration.privacy_statement.agreeSelf_updated')"
     :consent-statement="consentStatement" />
 </template>
 

@@ -41,3 +41,6 @@ teams.status.Inactive
 event_stats.tier4.label
 event_stats.tier5.label
 event.status.on_hold
+registration.privacy_statement.agreeSelf
+registration.privacy_consent
+registration.privacy_consent_updated

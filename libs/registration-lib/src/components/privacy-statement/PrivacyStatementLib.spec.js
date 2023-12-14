@@ -1,7 +1,6 @@
 import { HouseholdCreate } from '@libs/entities-lib/src/household-create';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
 import Component from './PrivacyStatementLib.vue';
 
@@ -141,9 +140,6 @@ describe('PrivacyStatementLib.vue', () => {
         propsData: {
           household: new HouseholdCreate(),
           checkboxLabel: 'label',
-        },
-        mocks: {
-          $hasFeature: (flag) => flag === FeatureKeys.UpdateRegistrationConsent,
         },
       });
       const element = wrapper.findDataTest('content-text');

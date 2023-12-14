@@ -47,7 +47,7 @@ import { VForm } from '@libs/shared-lib/types';
 import sanitizeHtml from 'sanitize-html';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { RcDialog } from '@libs/component-lib/components';
-import { FeatureKeys, IConsentStatementData } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatementData } from '@libs/entities-lib/tenantSettings';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
@@ -84,13 +84,9 @@ export default Vue.extend({
           },
         },
         statement: {
-          translation: this.$hasFeature(FeatureKeys.UpdateRegistrationConsent) ? {
+          translation: {
             en: this.$t('registration.privacy_consent_formatted', 'en'),
             fr: this.$t('registration.privacy_consent_formatted', 'fr'),
-          }
-          : {
-            en: this.$t('registration.privacy_consent', 'en'),
-            fr: this.$t('registration.privacy_consent', 'fr'),
           },
         },
       } as IConsentStatementData,

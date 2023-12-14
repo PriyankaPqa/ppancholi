@@ -5,7 +5,6 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { EEventSummarySections } from '@/types';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../components/EventConsentSelectionDialog.vue';
 
 const localVue = createLocalVue();
@@ -85,17 +84,9 @@ describe('EventConsentSelectionDialog.vue', () => {
       it('Should initialize consent statements', async () => {
         expect(wrapper.vm.selectedStatement.name.translation.en).toEqual('eventSummary.defaultConsentName');
       });
-      it('Should initialize the correct default consent text statements if feature flag is on', async () => {
-        mountWrapper(false, { mocks:
-          { $t: (k) => k,
-            $hasFeature: (flag) => flag === FeatureKeys.UpdateRegistrationConsent,
-          },
-        });
-        expect(wrapper.vm.selectedStatement.statement.translation.en).toEqual('registration.privacy_consent_formatted');
-      });
 
-      it('Should initialize the correct default consent text statements if feature flag is off', async () => {
-        expect(wrapper.vm.selectedStatement.statement.translation.en).toEqual('registration.privacy_consent');
+      it('Should initialize the correct default consent text statements', async () => {
+        expect(wrapper.vm.selectedStatement.statement.translation.en).toEqual('registration.privacy_consent_formatted');
       });
 
       it('Should get the statement in tenant settings if it exists', async () => {
