@@ -17,6 +17,7 @@ export enum DataTest {
   editButton = '"inlineEdit__open__Personal information"',
   changePersonalInfoPreferredLanguage = 'personalInfo__preferredLanguage',
   saveAfterEdit = '"inlineEdit__save__Personal information"',
+  cancelAfterEdit = '"inlineEdit__cancel__Personal information"',
 }
 
 export class ReviewRegistrationPage {
@@ -49,6 +50,8 @@ export class ReviewRegistrationPage {
   private editButton = { selector: DataTest.editButton };
 
   private saveAfterEditButton = { selector: DataTest.saveAfterEdit };
+
+  private cancelAfterEditButton = { selector: DataTest.cancelAfterEdit };
 
   public getFirstName() {
     return cy.getByDataTest(this.firstName).getAndTrimText();
@@ -109,7 +112,15 @@ export class ReviewRegistrationPage {
   }
 
   public submitRegistration() {
-  cy.getByDataTest(this.saveAfterEditButton).click();
+    cy.getByDataTest(this.saveAfterEditButton).click();
+  }
+
+  public getSaveAfterEditButton() {
+    return cy.getByDataTest(this.saveAfterEditButton);
+  }
+
+  public getCancelAfterEditButton() {
+    return cy.getByDataTest(this.cancelAfterEditButton);
   }
 
   public goToConfirmationPage() {

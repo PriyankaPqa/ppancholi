@@ -46,11 +46,11 @@ export class PersonalInformationPage {
 
   async fill(data: IPersonalInfoFields, roleName: string) {
     if (data.firstName) {
-      cy.getByDataTest(this.firstName).type(`${roleName}${data.firstName}`);
+      cy.getByDataTest(this.firstName).clear().type(`${roleName}${data.firstName}`);
     }
 
     if (data.lastName) {
-      cy.getByDataTest(this.lastName).type(data.lastName);
+      cy.getByDataTest(this.lastName).clear().type(data.lastName);
     }
 
     if (data.gender) {
@@ -59,12 +59,11 @@ export class PersonalInformationPage {
 
     if (data.dateOfBirth) {
       const date = new Date(data.dateOfBirth);
-      const month = date.toLocaleString('default', { month: 'long' });
-      const dayOfMonth = date.getDate();
-      const year = date.getFullYear();
-      cy.selectListElementByValue(DataTest.month, month);
-      cy.getByDataTest(this.day).type(`${dayOfMonth}`);
-      cy.getByDataTest(this.year).type(`${year}`);
+      const dayOfMonth = date.getUTCDate();
+      const year = date.getUTCFullYear();
+      cy.selectListElementByIndex(DataTest.month, date.getUTCMonth());
+      cy.getByDataTest(this.day).clear().type(`${dayOfMonth}`);
+      cy.getByDataTest(this.year).clear().type(`${year}`);
     }
 
     if (data.preferredLanguage) {
