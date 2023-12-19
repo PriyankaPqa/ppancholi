@@ -12486,11 +12486,6 @@ vite@^3.2.3:
   optionalDependencies:
     fsevents "~2.3.2"
 
-vue-axe@^2.4.4:
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/vue-axe/-/vue-axe-2.4.4.tgz#fbe7ee93bc7e4cacf9dac0a1b0cfaa9e91f66dda"
-  integrity sha512-zIhIenmvSzzDYLSGMRCZWHPXGryW5qAWNSKGzuzgn1/tK9zwYpWXagIihD91egyHKz9yWkPjcTO25bnxq9/OPg==
-
 vue-cookies@^1.7.4:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/vue-cookies/-/vue-cookies-1.8.2.tgz#39515fa09ebb585a50ac86c0e182a6b9307dc6ad"

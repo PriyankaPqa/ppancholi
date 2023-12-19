@@ -106,7 +106,6 @@
     "unplugin-vue-components": "^0.22.12",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-vue-inspector": "^3.3.0",
-    "vue-axe": "^2.4.4",
     "vue-typed-mixins": "^0.2.0"
   },
   "resolutions": {

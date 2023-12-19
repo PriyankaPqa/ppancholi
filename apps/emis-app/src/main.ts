@@ -31,7 +31,6 @@ import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { createPinia, PiniaVuePlugin } from 'pinia';
 import resetStore from '@libs/stores-lib/store-reset';
 import registrationStore from '@/ui/plugins/registrationStore';
-import VueAxe from 'vue-axe';
 import router from './ui/router';
 import App from './ui/App.vue';
 
@@ -58,12 +57,6 @@ Vue.use(formatCurrency);
 Vue.use(rolesAndPermissions);
 Vue.use(features);
 Vue.use(VueCookies);
-
-if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'lab' || process.env.VITE_API_BASE_URL.toString() === 'https://api-dev.crc-tech.ca') {
-  Vue.use(VueAxe, {
-    allowConsoleClears: false,
-  });
-}
 
 SignalR.Initialize({
   service: signalRService,
