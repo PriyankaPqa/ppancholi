@@ -311,7 +311,7 @@ describe('>>> Household Service', () => {
   describe('getPublicToken', () => {
     it('should call the proper endpoint and set header', async () => {
       await service.getPublicToken('token');
-      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-recaptcha?recaptchaToken=token`, null, { globalHandler: GlobalHandler.Partial });
+      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-recaptcha`, { recaptchaToken: 'token' }, { globalHandler: GlobalHandler.Partial });
       expect(http.setPublicToken).toHaveBeenCalledWith(await http.post());
     });
   });

@@ -184,8 +184,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async getPublicToken(recaptchaToken: string): Promise<string> {
     const publicToken = await this.http.post<string>(
-      `${this.baseApi}/persons/public/validate-recaptcha?recaptchaToken=${encodeURIComponent(recaptchaToken)}`,
-      null,
+      `${this.baseApi}/persons/public/validate-recaptcha`,
+      { recaptchaToken },
       { globalHandler: GlobalHandler.Partial },
     );
 
