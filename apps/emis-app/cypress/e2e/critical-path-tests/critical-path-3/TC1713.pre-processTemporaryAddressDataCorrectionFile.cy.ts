@@ -1,7 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
-import { fixtureGenerateTemporaryAddressDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { fixtureGenerateTemporaryAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import { createEventAndTeam, getPersonsInfo, prepareStateMultipleHouseholds, updatePersonsCurrentAddress } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
@@ -27,7 +27,8 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/temporaryAddressDataCorrectionMassAction.csv';
+const fileName = 'temporaryAddressDataCorrectionMassAction';
+const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDataTest = 'Temporary Address';
 const dataCorrectionTypeDropDown = 'Temporary Address';
 
@@ -65,12 +66,12 @@ describe('#TC1713# - Pre-process a Temporary Address data correction file', { ta
 
         it('should successfully pre-process a Temporary Address data correction file', function () {
           const memberHouseholds: Record<string, string> = {
-            [this.householdMembers[0].id]: this.householdMembers[0].etag,
-            [this.householdMembers[1].id]: this.householdMembers[1].etag,
-            [this.householdMembers[2].id]: this.householdMembers[2].etag,
+            [this.householdMembers[0].id]: this.householdMembers[0].etag.replace(/"/g, ''),
+            [this.householdMembers[1].id]: this.householdMembers[1].etag.replace(/"/g, ''),
+            [this.householdMembers[2].id]: this.householdMembers[2].etag.replace(/"/g, ''),
           };
 
-          fixtureGenerateTemporaryAddressDataCorrectionCsvFile(memberHouseholds, filePath);
+          fixtureGenerateTemporaryAddressDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,

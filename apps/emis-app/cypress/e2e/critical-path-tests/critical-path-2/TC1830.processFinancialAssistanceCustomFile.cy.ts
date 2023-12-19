@@ -3,14 +3,15 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
+import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { GenerateFaCustomOptionsXlsxFileParams, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   createProgramWithTableWithItemAndSubItem,
   createEventAndTeam,
-  prepareStateMassActionFinancialAssistanceXlsxFile,
   prepareStateCreateAndSearchHouseholds,
-  MassActionFinancialAssistanceXlsxFileParams } from '../../helpers/prepareState';
+  prepareStateMassActionXlsxFile,
+} from '../../helpers/prepareState';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
@@ -36,6 +37,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
+const fileName = 'faCustomOptionsFile';
 
 describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
@@ -60,13 +62,18 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
             };
             const generatedCustomFileData = await fixtureGenerateFaCustomOptionsXlsxFile(generateFaCustomOptionsXlsxFileParamData);
 
-            const massActionFaCustomFileParamData: MassActionFinancialAssistanceXlsxFileParams = {
-              provider: resultCreateSearchHouseholds.responseCreateHouseholds.provider,
-              event: resultPrepareStateEvent.event,
-              massAction: 'financial-assistance-custom-options',
-              generatedFaXlsxFileData: generatedCustomFileData,
+            const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
+              eventId: resultPrepareStateEvent.event.id,
+              fileContents: generatedCustomFileData,
+              fileName,
+              massActionType: null,
             };
-            const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceXlsxFile(massActionFaCustomFileParamData);
+
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(
+              resultCreateSearchHouseholds.responseCreateHouseholds.provider,
+              'financial-assistance-custom-options',
+              mockRequestDataParams,
+            );
 
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -129,7 +136,7 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
     }
   });
   describe('Cannot Roles', () => {
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);

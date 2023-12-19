@@ -13,6 +13,10 @@ export const updatedIdentityAuthenticationStatus: IIdentityAuthentication = {
     optionItemId: 'd9c5618e-40df-446c-86d4-19d5d6b37a04',
     specifiedOther: 'Update Identity Authentication using Mass Action',
   }],
+  exceptionalAuthenticationTypeId: {
+    optionItemId: 'c4241dd7-c727-4a4c-bc93-752a58e9fe03',
+    specifiedOther: null,
+  },
 };
 
 export interface PreProcessDataCorrectionFileCanStepsParams {

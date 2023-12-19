@@ -1,12 +1,12 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
-import { fixtureGenerateContactInformationDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { fixtureGenerateContactInformationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
-  MassActionDataCorrectionFileParams,
   createEventAndTeam,
   getPersonsInfo,
-  prepareStateMassActionDataCorrectionFile,
+  prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -33,7 +33,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/contactInfoDataCorrectionMassAction.csv';
+const fileName = 'contactInformationDataCorrectionFile';
 
 describe('#TC1835# - Process a Contact Information data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
@@ -53,19 +53,20 @@ describe('#TC1835# - Process a Contact Information data correction file', { tags
             const resultPersonsInfo = await getPersonsInfo(resultMultipleHousehold.provider, personIds);
 
             const primaryMemberHouseholds: Record<string, string> = {
-              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag,
-              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag,
-              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag,
+              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
+              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
+              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag.replace(/"/g, ''),
             };
-            const resultGenerateCsvFile = fixtureGenerateContactInformationDataCorrectionCsvFile(primaryMemberHouseholds, filePath);
 
-            const massActionDataCorrectionFileParamData: MassActionDataCorrectionFileParams = {
-              provider: resultMultipleHousehold.provider,
-              dataCorrectionType: MassActionDataCorrectionType.ContactInformation,
-              generatedCsvFile: resultGenerateCsvFile,
-              correctionType: 'Contact Information',
+            const resultGeneratedXlsxFile = await fixtureGenerateContactInformationDataCorrectionXlsxFile(primaryMemberHouseholds, 'MassActionTable', fileName);
+
+            const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
+              fileContents: resultGeneratedXlsxFile,
+              massActionType: MassActionDataCorrectionType.ContactInformation,
+              fileName,
+              eventId: null,
             };
-            const resultMassFinancialAssistance = await prepareStateMassActionDataCorrectionFile(massActionDataCorrectionFileParamData);
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -85,7 +86,7 @@ describe('#TC1835# - Process a Contact Information data correction file', { tags
     }
   });
   describe('Cannot Roles', () => {
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);

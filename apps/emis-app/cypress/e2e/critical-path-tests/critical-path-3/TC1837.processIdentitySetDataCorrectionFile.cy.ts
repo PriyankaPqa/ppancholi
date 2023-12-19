@@ -1,13 +1,14 @@
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureGenerateIdentitySetDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { fixtureGenerateIdentitySetDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
-  MassActionDataCorrectionFileParams,
   createEventAndTeam,
   getPersonsInfo,
-  prepareStateMassActionDataCorrectionFile,
+  prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
+  updatePersonsGender,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
@@ -33,7 +34,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/identitySetDataCorrectionMassAction.csv';
+const fileName = 'identitySetDataCorrectionMassAction';
 
 describe('#TC1837# - Process an Identity Set data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
@@ -50,21 +51,22 @@ describe('#TC1837# - Process an Identity Set data correction file', { tags: ['@h
               resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
               resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
+            updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, householdMemberIds);
             const memberHouseholds: Record<string, string> = {
-              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag,
-              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag,
-              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag,
+              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
+              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
+              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag.replace(/"/g, ''),
             };
-            const resultGenerateCsvFile = fixtureGenerateIdentitySetDataCorrectionCsvFile(memberHouseholds, filePath);
+            const resultGenerateXlsxFile = await fixtureGenerateIdentitySetDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
+            const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
+              fileContents: resultGenerateXlsxFile,
+              massActionType: MassActionDataCorrectionType.IdentitySet,
+              fileName,
+              eventId: null,
+            };
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultCreatedMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
 
-            const massActionDataCorrectionFileParamData: MassActionDataCorrectionFileParams = {
-              provider: resultCreatedMultipleHousehold.provider,
-              dataCorrectionType: MassActionDataCorrectionType.IdentitySet,
-              generatedCsvFile: resultGenerateCsvFile,
-              correctionType: 'Identity Set',
-            };
-            const resultMassFinancialAssistance = await prepareStateMassActionDataCorrectionFile(massActionDataCorrectionFileParamData);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.login(roleName);

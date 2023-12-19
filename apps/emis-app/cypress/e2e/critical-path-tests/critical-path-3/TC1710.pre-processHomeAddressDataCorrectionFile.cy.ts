@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureGenerateHomeAddressDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { fixtureGenerateHomeAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import { createEventAndTeam, getHouseholdsSummary, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
@@ -26,7 +26,8 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/homeAddressDataCorrectionMassAction.csv';
+const fileName = 'homeAddressDataCorrectionMassAction';
+const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDataTest = 'Home Address';
 const dataCorrectionTypeDropDown = 'Home Address';
 
@@ -61,11 +62,11 @@ describe('#TC1710# - Pre-process a Home Address data correction file', { tags: [
         });
         it('should successfully pre-process a Home Address data correction file', function () {
           const householdIds: Record<string, string> = {
-            [this.householdsSummary[0].id]: this.householdsSummary[0].etag,
-            [this.householdsSummary[1].id]: this.householdsSummary[1].etag,
-            [this.householdsSummary[2].id]: this.householdsSummary[2].etag,
+            [this.householdsSummary[0].id]: this.householdsSummary[0].etag.replace(/"/g, ''),
+            [this.householdsSummary[1].id]: this.householdsSummary[1].etag.replace(/"/g, ''),
+            [this.householdsSummary[2].id]: this.householdsSummary[2].etag.replace(/"/g, ''),
           };
-          fixtureGenerateHomeAddressDataCorrectionCsvFile(householdIds, filePath);
+          fixtureGenerateHomeAddressDataCorrectionXlsxFile(householdIds, 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,

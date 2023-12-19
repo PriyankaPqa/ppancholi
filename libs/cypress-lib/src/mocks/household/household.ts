@@ -60,7 +60,7 @@ export const mockContactInformationCreateRequest = (force?: Partial<IContactInfo
   ...force,
 });
 
- export const mockBaseAddressData = (force?: Partial<IAddressData>): IAddressData => ({
+export const mockBaseAddressData = (force?: Partial<IAddressData>): IAddressData => ({
   country: 'CA',
   streetAddress: faker.address.streetAddress(),
   city: 'Quebec',
@@ -97,9 +97,9 @@ export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdReque
       registrationMethod: 2,
       registrationLocationId: null,
       privacyDateTimeConsent: today,
-  },
+    },
     name: null,
-  ...force,
+    ...force,
   };
 };
 
@@ -107,4 +107,16 @@ export const mockCustomCurrentAddressCreateRequest = (addressType: ECurrentAddre
   ...mockCurrentAddressCreateRequest(),
   addressType,
   address: mockBaseAddressData(),
+});
+
+export const mockUpdatePersonIdentityRequest = () => ({
+  contactInformation: mockContactInformationCreateRequest(),
+  identitySet: {
+    ...mockIdentitySetCreateRequest(),
+    gender: {
+      id: '02b9bedd-08fa-4e4f-898c-dbcd4296390e',
+      isOther: true,
+    },
+    genderOther: 'before mass action data correction',
+  },
 });

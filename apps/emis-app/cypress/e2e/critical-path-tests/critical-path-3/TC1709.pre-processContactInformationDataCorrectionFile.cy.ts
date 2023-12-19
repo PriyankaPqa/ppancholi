@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureGenerateContactInformationDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { fixtureGenerateContactInformationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import { createEventAndTeam, getPersonsInfo, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
@@ -26,7 +26,8 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/contactInfoDataCorrectionMassAction.csv';
+const fileName = 'contactInformationDataCorrectionFile';
+const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDataTest = 'Contact Information';
 const dataCorrectionTypeDropDown = 'Contact Information';
 
@@ -61,11 +62,11 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
         });
         it('should successfully pre-process a Contact Information data correction file', function () {
           const primaryMemberHouseholds: Record<string, string> = {
-            [this.primaryMemberHouseholds[0].id]: this.primaryMemberHouseholds[0].etag,
-            [this.primaryMemberHouseholds[1].id]: this.primaryMemberHouseholds[1].etag,
-            [this.primaryMemberHouseholds[2].id]: this.primaryMemberHouseholds[2].etag,
+            [this.primaryMemberHouseholds[0].id]: this.primaryMemberHouseholds[0].etag.replace(/"/g, ''),
+            [this.primaryMemberHouseholds[1].id]: this.primaryMemberHouseholds[1].etag.replace(/"/g, ''),
+            [this.primaryMemberHouseholds[2].id]: this.primaryMemberHouseholds[2].etag.replace(/"/g, ''),
           };
-          fixtureGenerateContactInformationDataCorrectionCsvFile(primaryMemberHouseholds, filePath);
+          fixtureGenerateContactInformationDataCorrectionXlsxFile(primaryMemberHouseholds, 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,
@@ -81,7 +82,7 @@ describe('#TC1709# - Pre-process a Contact Information data correction file', { 
     }
   });
   describe('Cannot Roles', () => {
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);

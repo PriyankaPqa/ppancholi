@@ -1,16 +1,16 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import {
-  MassActionDataCorrectionFileParams,
   createEventAndTeam,
   getCaseFilesSummary,
-  prepareStateMassActionDataCorrectionFile,
+  prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
-import { fixtureGenerateLabelDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { fixtureGenerateLabelDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 
 const canRoles = [
   UserRoles.level6,
@@ -33,7 +33,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/labelsDataCorrectionMassAction.csv';
+const fileName = 'labelsDataCorrectionMassAction';
 
 describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
@@ -53,18 +53,19 @@ describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file
             const resultCaseFilesSummary = await getCaseFilesSummary(resultMultipleHousehold.provider, casefileIds);
 
             const casefiles: Record<string, string> = {
-              [resultCaseFilesSummary[0].id]: resultCaseFilesSummary[0].etag,
-              [resultCaseFilesSummary[1].id]: resultCaseFilesSummary[1].etag,
-              [resultCaseFilesSummary[2].id]: resultCaseFilesSummary[2].etag,
+              [resultCaseFilesSummary[0].id]: resultCaseFilesSummary[0].etag.replace(/"/g, ''),
+              [resultCaseFilesSummary[1].id]: resultCaseFilesSummary[1].etag.replace(/"/g, ''),
+              [resultCaseFilesSummary[2].id]: resultCaseFilesSummary[2].etag.replace(/"/g, ''),
             };
-            const resultGenerateCsvFile = fixtureGenerateLabelDataCorrectionCsvFile(casefiles, filePath);
-            const massActionDataCorrectionFileParamData: MassActionDataCorrectionFileParams = {
-              provider: resultMultipleHousehold.provider,
-              dataCorrectionType: MassActionDataCorrectionType.Labels,
-              generatedCsvFile: resultGenerateCsvFile,
-              correctionType: 'Labels',
+            const resultGeneratedXlsxFile = await fixtureGenerateLabelDataCorrectionXlsxFile(casefiles, 'MassActionTable', fileName);
+
+            const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
+              fileContents: resultGeneratedXlsxFile,
+              massActionType: MassActionDataCorrectionType.Labels,
+              fileName,
+              eventId: null,
             };
-            const resultMassFinancialAssistance = await prepareStateMassActionDataCorrectionFile(massActionDataCorrectionFileParamData);
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');

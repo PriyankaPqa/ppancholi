@@ -14,14 +14,15 @@ import { mockApprovalTableData, mockApprovalTableWithMultipleApprovalGroupData, 
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest, mockCustomCurrentAddressCreateRequest } from '@libs/cypress-lib/mocks/household/household';
+import { mockCreateHouseholdRequest, mockCustomCurrentAddressCreateRequest, mockUpdatePersonIdentityRequest } from '@libs/cypress-lib/mocks/household/household';
 import { mockSetCaseFileStatusRequest } from '@libs/cypress-lib/mocks/casefiles/casefile';
 import {
-  mockCreateMassFinancialAssistanceXlsxFileRequest,
+  mockCreateMassActionXlsxFileRequest,
   mockCreateMassFinancialAssistanceRequest,
   mockCreateMassFinancialAssistanceUploadCsvFileRequest,
   MockCreateMassActionFaUploadCsvFileRequestParams,
-  mockCreateMassActionDataCorrectionFileRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+  mockCreateMassActionDataCorrectionFileRequest,
+  MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -37,10 +38,11 @@ import { linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
   provider: any,
-  event:IEventEntity,
+  event?:IEventEntity,
   massAction: string,
-  generatedFaXlsxFileData: Blob,
-  massActionType?: number
+  generatedXlsxFileData: Blob,
+  massActionType?: number,
+  fileName: string,
 }
 
 export interface CreateFATableParams {
@@ -567,16 +569,16 @@ export const prepareStateCreateAndSearchHouseholds = async (accessToken: string,
 };
 
 /**
- * Creates a Mass Financial Assistance using xlsx file
+ * Creates a Mass Action using xlsx file
  * @param provider
  * @param event
  * @param massAction
  * @param generateXlsxFileFunction callback function
  * @param massActionType optional
  */
-export const prepareStateMassActionFinancialAssistanceXlsxFile = async (params: MassActionFinancialAssistanceXlsxFileParams) => {
-  const mockCreateMassFinancialAssistanceCustomFile = mockCreateMassFinancialAssistanceXlsxFileRequest(params.event.id, params.generatedFaXlsxFileData, params.massActionType);
-  const responseMassFinancialAssistance = await params.provider.cypress.massAction.createWithFile(params.massAction, mockCreateMassFinancialAssistanceCustomFile);
+export const prepareStateMassActionXlsxFile = async (provider: any, massAction: string, mockRequestDataparams: MockCreateMassActionXlsxFileRequestParams) => {
+  const mockCreateMassFinancialAssistanceCustomFile = mockCreateMassActionXlsxFileRequest(mockRequestDataparams);
+  const responseMassFinancialAssistance = await provider.cypress.massAction.createWithFile(massAction, mockCreateMassFinancialAssistanceCustomFile);
   return responseMassFinancialAssistance;
 };
 
@@ -626,8 +628,8 @@ export const getPersonsInfo = async (provider: IProvider, personIds: string[]) =
  * @param casefileIds
  * @param identityAuthenticationStatus
  */
-export const setCaseFileIdentityAuthentication = async (provider: IProvider, caseFileIds: string[], identityAuthenticationStatus: IIdentityAuthentication) => {
-  const setCaseFileIdentityAuthenticationPromises = caseFileIds.map((caseFileId) => provider.caseFiles.setCaseFileIdentityAuthentication(caseFileId, identityAuthenticationStatus));
+export const setCaseFileIdentityAuthentication = async (provider: IProvider, caseFiles: ICaseFileEntity[], identityAuthenticationStatus: IIdentityAuthentication) => {
+  const setCaseFileIdentityAuthenticationPromises = caseFiles.map((caseFiles) => provider.caseFiles.setCaseFileIdentityAuthentication(caseFiles.id, identityAuthenticationStatus));
   const caseFileIdentityAuthentication = await Promise.all(setCaseFileIdentityAuthenticationPromises);
   return caseFileIdentityAuthentication;
 };
@@ -676,4 +678,14 @@ export const prepareStateMassActionDataCorrectionFile = async (params: MassActio
   const mockDataCorrectionFile = mockCreateMassActionDataCorrectionFileRequest(params.dataCorrectionType, params.generatedCsvFile, params.correctionType);
   const responseMassFinancialAssistance = await params.provider.cypress.massAction.createWithFile('data-correction', mockDataCorrectionFile);
   return responseMassFinancialAssistance;
+};
+
+/**
+ * Update Person Gender
+ * @param provider
+ * @param personIds
+*/
+export const updatePersonsGender = async (provider: IProvider, personIds: string[]) => {
+  const getUpdatedPersonGenderPromises = personIds.map((personId) => provider.households.updatePersonIdentity(personId, false, mockUpdatePersonIdentityRequest()));
+  await Promise.all(getUpdatedPersonGenderPromises);
 };

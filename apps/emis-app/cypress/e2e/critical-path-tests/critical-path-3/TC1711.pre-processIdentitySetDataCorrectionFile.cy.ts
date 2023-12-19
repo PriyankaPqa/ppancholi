@@ -1,7 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureGenerateIdentitySetDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
-import { createEventAndTeam, getPersonsInfo, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
+import { fixtureGenerateIdentitySetDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import { createEventAndTeam, getPersonsInfo, prepareStateMultipleHouseholds, updatePersonsGender } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
@@ -26,7 +26,8 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/identitySetDataCorrectionMassAction.csv';
+const fileName = 'identitySetDataCorrectionMassAction';
+const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDataTest = 'Identity Set';
 const dataCorrectionTypeDropDown = 'Identity Set';
 
@@ -45,6 +46,7 @@ describe('#TC1711# - Pre-process a Identity Set data correction file', { tags: [
               resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
               resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
+            updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, householdMemberIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
@@ -61,11 +63,11 @@ describe('#TC1711# - Pre-process a Identity Set data correction file', { tags: [
         });
         it('should successfully pre-process a Identity Set data correction file', function () {
           const memberHouseholds: Record<string, string> = {
-            [this.householdMembers[0].id]: this.householdMembers[0].etag,
-            [this.householdMembers[1].id]: this.householdMembers[1].etag,
-            [this.householdMembers[2].id]: this.householdMembers[2].etag,
+            [this.householdMembers[0].id]: this.householdMembers[0].etag.replace(/"/g, ''),
+            [this.householdMembers[1].id]: this.householdMembers[1].etag.replace(/"/g, ''),
+            [this.householdMembers[2].id]: this.householdMembers[2].etag.replace(/"/g, ''),
           };
-          fixtureGenerateIdentitySetDataCorrectionCsvFile(memberHouseholds, filePath);
+          fixtureGenerateIdentitySetDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,

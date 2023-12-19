@@ -2,12 +2,12 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
-import { fixtureGenerateTemporaryAddressDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { fixtureGenerateTemporaryAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
-  MassActionDataCorrectionFileParams,
   createEventAndTeam,
   getPersonsInfo,
-  prepareStateMassActionDataCorrectionFile,
+  prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
   updatePersonsCurrentAddress,
 } from '../../helpers/prepareState';
@@ -35,7 +35,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/temporaryAddressDataCorrectionMassAction.csv';
+const fileName = 'temporaryAddressDataCorrectionFile';
 
 describe('#TC1839# - Process a Temporary Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
@@ -55,19 +55,20 @@ describe('#TC1839# - Process a Temporary Address data correction file', { tags: 
             updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, personIds);
             const memberHouseholds: Record<string, string> = {
-              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag,
-              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag,
-              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag,
+              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
+              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
+              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag.replace(/"/g, ''),
             };
 
-            const resultGenerateCsvFile = fixtureGenerateTemporaryAddressDataCorrectionCsvFile(memberHouseholds, filePath);
-            const massActionDataCorrectionFileParamData: MassActionDataCorrectionFileParams = {
-              provider: resultCreatedMultipleHousehold.provider,
-              dataCorrectionType: MassActionDataCorrectionType.TemporaryAddress,
-              generatedCsvFile: resultGenerateCsvFile,
-              correctionType: 'Temporary Address',
+            const resultGeneratedXlsxFile = await fixtureGenerateTemporaryAddressDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
+
+            const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
+              fileContents: resultGeneratedXlsxFile,
+              massActionType: MassActionDataCorrectionType.TemporaryAddress,
+              fileName,
+              eventId: null,
             };
-            const resultMassFinancialAssistance = await prepareStateMassActionDataCorrectionFile(massActionDataCorrectionFileParamData);
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultCreatedMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');

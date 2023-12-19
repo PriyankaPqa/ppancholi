@@ -3,16 +3,17 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   AddFinancialAssistancePaymentParams,
-  MassActionFinancialAssistanceXlsxFileParams,
   addFinancialAssistancePayment,
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem,
   prepareStateHousehold,
-  prepareStateMassActionFinancialAssistanceXlsxFile,
-  submitFinancialAssistancePayment } from '../../helpers/prepareState';
+  prepareStateMassActionXlsxFile,
+  submitFinancialAssistancePayment,
+} from '../../helpers/prepareState';
 import {
   GenerateFaDataCorrectionXlsxFileParams,
   GenerateRandomFaDataCorrectionParams,
@@ -82,14 +83,13 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
             };
             const generatedDataCorrectionFileData = await fixtureGenerateFaDataCorrectionXlsxFile(xlsxFileParamData);
 
-            const massActionFaDataCorrectionFileParamData: MassActionFinancialAssistanceXlsxFileParams = {
-              provider: responseCreateHousehold.provider,
-              event: resultPrepareStateEvent.event,
-              massAction: 'data-correction',
-              generatedFaXlsxFileData: generatedDataCorrectionFileData,
+            const mockRequestParamData: MockCreateMassActionXlsxFileRequestParams = {
+              eventId: resultPrepareStateEvent.event.id,
+              fileContents: generatedDataCorrectionFileData,
               massActionType: MassActionDataCorrectionType.FinancialAssistance,
+              fileName,
             };
-            const responseMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceXlsxFile(massActionFaDataCorrectionFileParamData);
+            const responseMassFinancialAssistance = await prepareStateMassActionXlsxFile(responseCreateHousehold.provider, 'data-correction', mockRequestParamData);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -109,7 +109,7 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
     }
   });
   describe('Cannot Roles', () => {
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);

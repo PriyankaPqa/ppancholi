@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureGenerateLabelDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
+import { fixtureGenerateLabelDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import { createEventAndTeam, getCaseFilesSummary, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
@@ -26,7 +26,8 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/labelsDataCorrectionMassAction.csv';
+const fileName = 'labelsDataCorrectionMassAction';
+const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDataTest = 'Labels';
 const dataCorrectionTypeDropDown = 'Labels';
 
@@ -63,12 +64,12 @@ describe('#TC1712# - Pre-process a Label data correction file', { tags: ['@case-
 
         it('should successfully pre-process a Label data correction file', function () {
           const casefiles: Record<string, string> = {
-            [this.caseFilesSummary[0].id]: this.caseFilesSummary[0].etag,
-            [this.caseFilesSummary[1].id]: this.caseFilesSummary[1].etag,
-            [this.caseFilesSummary[2].id]: this.caseFilesSummary[2].etag,
+            [this.caseFilesSummary[0].id]: this.caseFilesSummary[0].etag.replace(/"/g, ''),
+            [this.caseFilesSummary[1].id]: this.caseFilesSummary[1].etag.replace(/"/g, ''),
+            [this.caseFilesSummary[2].id]: this.caseFilesSummary[2].etag.replace(/"/g, ''),
           };
 
-          fixtureGenerateLabelDataCorrectionCsvFile(casefiles, filePath);
+          fixtureGenerateLabelDataCorrectionXlsxFile(casefiles, 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,

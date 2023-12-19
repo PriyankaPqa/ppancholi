@@ -1,7 +1,12 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureGenerateAuthenticationOtherDataCorrectionCsvFile } from '../../../fixtures/mass-action-data-correction';
-import { createEventAndTeam, getCaseFilesSummary, prepareStateMultipleHouseholds, setCaseFileIdentityAuthentication } from '../../helpers/prepareState';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { fixtureGenerateAuthenticationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import {
+  createEventAndTeam,
+  prepareStateMultipleHouseholds,
+  setCaseFileIdentityAuthentication,
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps, updatedIdentityAuthenticationStatus } from './canSteps';
 
@@ -26,11 +31,12 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const filePath = 'cypress/downloads/authenticationOtherDataCorrectionMassAction.csv';
-const dataCorrectionTypeDataTest = 'Authentication Specified Other';
-const dataCorrectionTypeDropDown = 'Authentication Other';
+const fileName = 'authenticationDataCorrectionFile';
+const filePath = `cypress/downloads/${fileName}.xlsx`;
+const dataCorrectionTypeDataTest = 'Data Correction Authentication';
+const dataCorrectionTypeDropDown = 'Authentication';
 
-describe('#TC1708# - Pre-process a Authentication Other data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('#TC1708# - Pre-process a Authentication data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -40,17 +46,16 @@ describe('#TC1708# - Pre-process a Authentication Other data correction file', {
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             // eslint-disable-next-line
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const casefileIds: string[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
+            const casefiles: ICaseFileEntity[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile,
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile,
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile,
             ];
-            await setCaseFileIdentityAuthentication(resultMultipleHousehold.provider, casefileIds, updatedIdentityAuthenticationStatus);
-            const resultCaseFilesSummary = await getCaseFilesSummary(resultMultipleHousehold.provider, casefileIds);
+            await setCaseFileIdentityAuthentication(resultMultipleHousehold.provider, casefiles, updatedIdentityAuthenticationStatus);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultCaseFilesSummary).as('caseFilesSummary');
+            cy.wrap(casefiles).as('caseFiles');
             cy.login(roleName);
             cy.goTo('mass-actions/data-correction/create');
           });
@@ -60,13 +65,8 @@ describe('#TC1708# - Pre-process a Authentication Other data correction file', {
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully pre-process an Authentication Other data correction file', function () {
-          const casefiles: Record<string, string> = {
-            [this.caseFilesSummary[0].id]: this.caseFilesSummary[0].etag,
-            [this.caseFilesSummary[1].id]: this.caseFilesSummary[1].etag,
-            [this.caseFilesSummary[2].id]: this.caseFilesSummary[2].etag,
-          };
-          fixtureGenerateAuthenticationOtherDataCorrectionCsvFile(casefiles, filePath);
+        it('should successfully pre-process an Authentication data correction file', function () {
+          fixtureGenerateAuthenticationDataCorrectionXlsxFile([this.caseFiles[0], this.caseFiles[1], this.caseFiles[2]], 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,
@@ -82,7 +82,7 @@ describe('#TC1708# - Pre-process a Authentication Other data correction file', {
     }
   });
   describe('Cannot Roles', () => {
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);
