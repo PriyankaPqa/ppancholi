@@ -124,7 +124,6 @@ export default {
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VITE_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VITE_API_BASE_URL);
     sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VITE_VERSION);
-
     if (window.Cypress) {
       initializeStores();
     }

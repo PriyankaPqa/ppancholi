@@ -3807,6 +3807,11 @@ axe-core@^4.4.3:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.5.2.tgz#823fdf491ff717ac3c58a52631d4206930c1d9f7"
   integrity sha512-u2MVsXfew5HBvjsczCv+xlwdNnB1oQR9HlAcsejZttNjKKSkeDNVwB1vMThIUIFI9GoT57Vtk8iQLwqOfAkboA==
 
+axe-core@^4.8.2:
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.8.2.tgz#2f6f3cde40935825cf4465e3c1c9e77b240ff6ae"
+  integrity sha512-/dlp0fxyM3R8YW7MFzaHWXrf4zzbr0vaYb23VBFCl83R7nWNPg/yaQw2Dc8jzCMmDVLhSdzH8MjrsuIUuvX+6g==
+
 axios-retry@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/axios-retry/-/axios-retry-3.4.0.tgz#f464dbe9408e5aa78fa319afd38bb69b533d8854"
@@ -12480,6 +12485,11 @@ vite@^3.2.3:
     rollup "^2.79.1"
   optionalDependencies:
     fsevents "~2.3.2"
+
+vue-axe@^2.4.4:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/vue-axe/-/vue-axe-2.4.4.tgz#fbe7ee93bc7e4cacf9dac0a1b0cfaa9e91f66dda"
+  integrity sha512-zIhIenmvSzzDYLSGMRCZWHPXGryW5qAWNSKGzuzgn1/tK9zwYpWXagIihD91egyHKz9yWkPjcTO25bnxq9/OPg==
 
 vue-cookies@^1.7.4:
   version "1.8.2"

@@ -26,6 +26,7 @@
             :value="caseFile.triage"
             class="triage-select"
             data-test="caseFileActivity-triage-select"
+            :aria-label="$t('a11y.caseFileActivity.triage_select')"
             :readonly="!canEdit || saving"
             :menu-props="{
               bottom: true, offsetY: true, contentClass: 'case-file-triage-dropdown', maxWidth: 'fit-content',

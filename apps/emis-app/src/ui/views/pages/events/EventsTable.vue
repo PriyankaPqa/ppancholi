@@ -59,7 +59,7 @@
     </template>
 
     <template #[`item.editButton`]="{ item }">
-      <v-btn v-if="canEdit(item)" icon class="mr-2" data-test="edit_event" @click="goToEditEvent(item)">
+      <v-btn v-if="canEdit(item)" icon class="mr-2" data-test="edit_event" :aria-label="$t('common.buttons.edit')" @click="goToEditEvent(item)">
         <v-icon size="24" color="grey darken-2">
           mdi-pencil
         </v-icon>

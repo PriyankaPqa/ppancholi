@@ -538,6 +538,7 @@
     "casefile.summary.referrals": "Références fournies",
     "casefile.summary.title": "Résumé du dossier",
     "casefile.summary.totalHousehold": "Ménage total ({x})",
+    "a11y.caseFileActivity.triage_select": "Sélection du triage",
     "common.N\/A": "Sans objet",
     "common.account_status.Active": "Actif",
     "common.account_status.Inactive": "Inactif",

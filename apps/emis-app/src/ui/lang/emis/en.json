@@ -538,6 +538,7 @@
     "casefile.summary.referrals": "Referrals provided",
     "casefile.summary.title": "Case file summary",
     "casefile.summary.totalHousehold": "Total household ({x})",
+    "a11y.caseFileActivity.triage_select": "Triage select",
     "common.N\/A": "N\/A",
     "common.account_status.Active": "Active",
     "common.account_status.Inactive": "Inactive",

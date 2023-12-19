@@ -31,6 +31,7 @@
               text
               :color="colorVerifyIdentity"
               data-test="caseFileDetails-verify-identity-icon"
+              :aria-label="$t('caseFileDetail.verifyIdentityDialog.title')"
               v-on="on"
               @click="openVerifyIdentity">
               <v-icon>mdi-shield-check</v-icon>
@@ -50,6 +51,7 @@
               text
               :color="colorValidationImpact"
               data-test="caseFileDetails-verify-impact-icon"
+              :aria-label="$t('caseFileDetail.impactValidationDialog.title')"
               v-on="on"
               @click="openImpactValidation">
               <v-icon>mdi-map-check</v-icon>

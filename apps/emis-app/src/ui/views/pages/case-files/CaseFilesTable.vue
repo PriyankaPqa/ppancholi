@@ -31,6 +31,7 @@
             <v-switch
               v-model="myCaseFiles"
               data-test="caseFilesTable__myCaseFilesSwitch"
+              :aria-label="$t('caseFilesTable.myCaseFiles')"
               hide-details />
             <v-icon class="mr-2">
               mdi-account-check
@@ -45,6 +46,7 @@
               <v-switch
                 v-model="duplicatesOnly"
                 data-test="caseFilesTable__duplicatesOnlySwitch"
+                :aria-label="$t('caseFilesTable.duplicates')"
                 hide-details />
               <v-icon class="mx-2" small>
                 $rctech-duplicate
@@ -59,6 +61,7 @@
             <v-switch
               v-model="recentlyViewedOnly"
               data-test="caseFilesTable__recentlyViewedSwitch"
+              :aria-label="$t('caseFilesTable.recentlyViewed')"
               hide-details />
             <v-icon class="mr-2">
               mdi-eye

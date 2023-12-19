@@ -4,11 +4,11 @@
     class="border-radius-top">
     <slot name="headerLeft" />
 
-    <v-toolbar-title
+    <h1
       v-if="labels.title"
       class="rc-title-3 white--text">
       {{ labels.title }}
-    </v-toolbar-title>
+    </h1>
 
     <v-spacer />
 

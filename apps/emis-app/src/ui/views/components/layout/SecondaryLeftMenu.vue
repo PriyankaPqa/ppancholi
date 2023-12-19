@@ -10,6 +10,7 @@
             fab
             small
             data-test="back-button"
+            :aria-label="$t('common.buttons.back')"
             v-on="on"
             @click="$emit('backButtonClicked')">
             <v-icon>mdi-arrow-left</v-icon>
@@ -47,7 +48,7 @@
         :value="true"
         permanent>
         <v-divider v-if="!hideDividers" />
-        <v-list class="full-width">
+        <v-list class="full-width" aria-busy="true">
           <template v-if="groupMode">
             <template v-for="(group, groupIndex) in tabs">
               <div :key="groupIndex" class="rc-body12 grey--text ml-5 my-1">
@@ -95,6 +96,7 @@
             dense
             :data-test="tab.test"
             :disabled="tab.disabled"
+            role="link"
             link
             :exact="typeof tab.exact === 'undefined' ? true : tab.exact"
             :to="tab.to ? { name: tab.to } : tab.route"

@@ -13,7 +13,7 @@
         {{ $t(titleKey) }}
       </v-toolbar-title>
       <v-spacer />
-      <v-btn icon data-test="close-button" @click="updateShow(false)">
+      <v-btn icon data-test="close-button" :aria-label="$t('common.close')" @click="updateShow(false)">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>

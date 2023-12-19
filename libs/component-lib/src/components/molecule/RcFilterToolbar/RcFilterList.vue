@@ -12,6 +12,7 @@
               icon
               color="secondary"
               data-test="rcFilterList__newButton"
+              :aria-label="$t('genericFilter.newFilter')"
               v-on="on"
               @click="onNew">
               <v-icon size="22">
@@ -30,6 +31,7 @@
               color="secondary"
               data-test="rcFilterList__copyButton"
               :disabled="!currentFilter || currentFilter.filterKey === -1"
+              :aria-label="$t('genericFilter.copyFilter')"
               v-on="on"
               @click="onCopy">
               <v-icon size="22">
@@ -48,6 +50,7 @@
               color="secondary"
               data-test="rcFilterList__deleteButton"
               :disabled="!currentFilter || currentFilter.filterKey === -1"
+              :aria-label="$t('genericFilter.deleteFilter')"
               v-on="on"
               @click="onDelete">
               <v-icon size="22">
