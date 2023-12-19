@@ -354,6 +354,7 @@
     "errors.place-number-not-unit-suite-must-have-avalue": "Le numéro de l’emplacement, pas le numéro d'appartement ou bureau, doit avoir une valeur",
     "errors.postal-code-cannot-be-null-or-empty": "Le code postal ne peut pas être vide.",
     "errors.potential-duplicate-household-address": "L’adresse du ménage est un doublon potentiel.",
+    "errors.preferred-language-must-have-a-value": "La langue de préférence ne peut être vide.",
     "errors.preferred-language-must-have-value": "La langue de préférence ne peut être vide.",
     "errors.primary-beneficiary-address-must-have-a-value-on-cheque-payment-modality": "Pour le paiement par chèque, le représentant ou la représentante du ménage doit avoir une adresse.",
     "errors.primary-beneficiary-cannot-change-when-setting-members": "Le bénéficiaire principal ne peut pas changer lors de la définition des membres",

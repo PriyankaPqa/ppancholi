@@ -1,6 +1,7 @@
 {
     "DuplicateStatus.Added": "Le dossier a été signalé comme étant un doublon potentiel",
     "DuplicateStatus.Removed": "L'indicateur de doublon potentiel a été supprimé du dossier",
+    "a11y.caseFileActivity.triage_select": "Sélection du triage",
     "account_settings.preferredLanguage.notSet": "Pas de langue définie",
     "account_settings.preferredLanguage.tooltip": "Détermine la langue dans laquelle l'utilisateur recevra les communications du système",
     "app.checkingAccount": "Vérification de l'authentification",
@@ -1738,6 +1739,7 @@
     "errors.scoring-range-cannot-overlap": "La plage de notation ne peut pas se chevaucher",
     "errors.scoring-range-min-value-must-be-lower-or-equal-to-max-value": "La valeur minimale de la plage de notation doit être inférieure ou égale à la valeur maximale",
     "errors.screening-id-is-invalid": "Pièce d'identité invalide",
+    "errors.send-grid-general-exception": "",
     "errors.shelter-location-cannot-be-null": "Le lieu d’hébergement ne peut pas être vide",
     "errors.shelter-location-id-should-not-be-populated-for-this-address-type": "ShelterLocationId ne doit pas être rempli pour ce AddressType.",
     "errors.shelter-location-not-found": "Lieu d’hébergement introuvable",
@@ -1745,6 +1747,7 @@
     "errors.some-required-assessment-forms-not-found-for-eligibility-criteria": "Impossible de trouver certains des formulaires exigés dans les critères d'admissibilité.",
     "errors.something-unexpected-happened": "Un problème inattendu s’est produit.",
     "errors.specified-other-is-invalid": "Autre spécifié invalide",
+    "errors.specified-other-must-not-have-a-value": "Le champ « Autre : préciser » ne doit pas avoir une valeur",
     "errors.specified-other-province-length-is-invalid": "La longueur de l'autre province spécifiée n'est pas valide",
     "errors.specified-other-province-must-be-null-when-in-canada": "L’option « Autre » doit rester vide lorsque le pays sélectionné est le Canada.",
     "errors.specified-other-province-must-have-value-when-not-in-canada": "L’option « Autre » doit être remplie lorsque le pays sélectionné n’est pas le Canada.",
