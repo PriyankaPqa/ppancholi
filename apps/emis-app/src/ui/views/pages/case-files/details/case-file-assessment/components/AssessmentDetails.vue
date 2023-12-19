@@ -4,9 +4,9 @@
     <div v-if="assessmentForm">
       <div class="ma-4">
         <v-row class="justify-space-between">
-          <h3>
+          <div class="details-page-title">
             {{ $m(assessmentForm.name) }}
-          </h3>
+          </div>
           <div>
             <status-chip status-name="AssessmentResponseCompletionStatus" :status="assessmentResponse.completionStatus" />
             <v-btn v-if="canEdit" class="ml-4" icon @click="launchAssessment()">

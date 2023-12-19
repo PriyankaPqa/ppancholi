@@ -6,7 +6,7 @@
       :class="classes"
       :error-messages="errors"
       v-bind="$attrs"
-      onfocus="this.setAttribute('autocomplete','nope');"
+      onfocus="this.setAttribute('autocomplete','off');"
       v-on="$listeners" />
   </validation-provider>
 </template>

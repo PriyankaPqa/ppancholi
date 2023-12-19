@@ -18,7 +18,7 @@
       :attach="attach"
       :menu-props="{ contentClass: 'v-autocomplete-with-validation-dropdown' }"
       v-bind="$attrs"
-      onfocus="this.setAttribute('autocomplete','nope');"
+      onfocus="this.setAttribute('autocomplete','on');"
       v-on="$listeners">
       <template v-if="asyncMode && $attrs['loading']" #prepend-item>
         <div class="v-list-item">

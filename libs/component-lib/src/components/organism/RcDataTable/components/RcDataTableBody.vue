@@ -76,4 +76,8 @@ export default Vue.extend({
 ::v-deep .v-data-table__selected {
   background: var(--v-primary-lighten2)!important;
 }
+
+::v-deep .v-data-table__empty-wrapper {
+    color: #656565 !important;
+  }
 </style>

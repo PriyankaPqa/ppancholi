@@ -400,4 +400,5 @@ export default Vue.extend({
   padding-left: 8px;
   font-weight: bold;
 }
+
 </style>

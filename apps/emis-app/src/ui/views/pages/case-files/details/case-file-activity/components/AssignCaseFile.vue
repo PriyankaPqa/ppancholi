@@ -23,11 +23,12 @@
       <v-col cols="12" md="3" class="px-6 py-0 my-4 d-flex flex-column border-right ">
         <span class="rc-body16 fw-bold pb-4">{{ $t('caseFile.assign.select_team') }}</span>
         <v-sheet rounded outlined height="100%">
-          <v-list-item-group v-model="currentTeam" active-class="team-selected" data-test="all-teams-list">
+          <v-list-item-group v-model="currentTeam" active-class="team-selected" data-test="all-teams-list" role="list">
             <v-list-item
               v-for="team in allTeams"
               :key="team.id"
               class="team-list-item"
+              role="listitem"
               :ripple="false"
               :value="team"
               :data-test="`team-list-item-${team.id}`">

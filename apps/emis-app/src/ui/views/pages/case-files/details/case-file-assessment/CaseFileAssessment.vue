@@ -69,7 +69,7 @@
           </template>
 
           <template #[`item.${customColumns.actions_icons}`]="{ item }">
-            <v-btn v-if="canDelete" icon data-test="delete-link" @click="deleteAssessment(item)">
+            <v-btn v-if="canDelete" icon data-test="delete-link" :aria-label="$t('common.delete')" @click="deleteAssessment(item)">
               <v-icon size="24" color="grey darken-2">
                 mdi-delete
               </v-icon>
@@ -137,7 +137,7 @@
           </template>
 
           <template #[`item.${customColumns.actions_icons}`]="{ item }">
-            <v-btn v-if="item.canEdit" icon data-test="edit-link" @click="launchAssessment(item)">
+            <v-btn v-if="item.canEdit" icon data-test="edit-link" :aria-label="$t('common.edit')" @click="launchAssessment(item)">
               <v-icon size="24" color="grey darken-2">
                 mdi-pencil
               </v-icon>
