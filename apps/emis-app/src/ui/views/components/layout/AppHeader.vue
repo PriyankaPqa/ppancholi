@@ -3,7 +3,7 @@
     <v-app-bar color="white" app clipped-right clipped-left class="elevation-2">
       <rc-tooltip v-if="hasRole" bottom>
         <template #activator="{ on }">
-          <v-app-bar-nav-icon id="hamburgerMenu" data-test="left-menu-trigger" v-on="on" @click.stop="handleLeftMenu" />
+          <v-app-bar-nav-icon id="hamburgerMenu" data-test="left-menu-trigger" :aria-label="$t('aria.label.menu')" v-on="on" @click.stop="handleLeftMenu" />
         </template>
         {{ $t('aria.label.menu') }}
       </rc-tooltip>
@@ -44,7 +44,7 @@
 
       <rc-tooltip v-if="hasFeatureDisplayNotificationCenter" bottom>
         <template #activator="{ on }">
-          <v-btn icon data-test="right-menu-trigger-notifications" class="mr-1" v-on="on" @click.stop="handleNotificationCenter">
+          <v-btn icon data-test="right-menu-trigger-notifications" class="mr-1" :aria-label="$t('notifications.title')" v-on="on" @click.stop="handleNotificationCenter">
             <v-badge
               :content="unreadNotificationCount"
               :value="showUnreadNotificationBadge"

@@ -12,11 +12,11 @@
           :show-eligibility-criteria-warning.sync="showEligibilityCriteriaWarning" />
 
         <template slot="actions">
-          <v-btn data-test="cancel" @click.stop="back()">
+          <v-btn data-test="cancel" :aria-label="$t('common.cancel')" @click.stop="back()">
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="(failed || !dirty) && !dataRemoved" @click.stop="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :aria-label="submitLabel" :disabled="(failed || !dirty) && !dataRemoved" @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>

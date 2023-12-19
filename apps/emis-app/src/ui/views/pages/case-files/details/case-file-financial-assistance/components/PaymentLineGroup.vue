@@ -13,6 +13,7 @@
         <v-icon
           v-if="paymentGroup.paymentStatusHistory"
           data-test="paymentLineGroup__historyLink"
+          :aria-label="$t('caseFile.financialAssistance.approvalHistory')"
           class="mr-2"
           @click="showPaymentStatusHistoryDialog()">
           mdi-history

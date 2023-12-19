@@ -132,7 +132,7 @@ export default Vue.extend({
 
   .category {
     background: var(--v-primary-lighten2);
-    color: var(--v-primary-base);
+    color: var(--v-primary-darken-1);
     margin: 4px 8px 4px 0;
     border-radius: 4px;
     padding: 1px 4px;

@@ -7,6 +7,7 @@
             v-bind="attrs"
             class="mr-3"
             :data-test="$attrs['data-test']"
+            :aria-label="addButtonLabel"
             fab
             color="white"
             small

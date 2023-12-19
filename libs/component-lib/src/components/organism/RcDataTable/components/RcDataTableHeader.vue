@@ -36,6 +36,7 @@
             icon
             class="ml-2"
             data-test="dataTableHeader__helpButton"
+            :aria-label="$t('common.help')"
             v-on="on"
             @click="openHelpCenter">
             <v-icon color="primary lighten-1">

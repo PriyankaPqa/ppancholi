@@ -15,6 +15,7 @@
                   data-test="table__addButton"
                   fab
                   color="white"
+                  :aria-label="labels.header.addButtonLabel"
                   small
                   v-on="on"
                   @click="addAssessment">

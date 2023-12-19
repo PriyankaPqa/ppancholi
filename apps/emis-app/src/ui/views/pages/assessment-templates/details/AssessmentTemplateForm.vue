@@ -33,6 +33,7 @@
                   <v-switch
                     v-model="isStatusActive"
                     data-test="assessment-switch-status"
+                    :aria-label="`${$t('common.status')} ${$t(`enums.Status.${Status[localAssessment.status]}`)}`"
                     class="pt-0 mt-0"
                     hide-details
                     color="white"
@@ -83,6 +84,7 @@
                     <v-switch
                       v-model="isPublished"
                       data-test="assessment-switch-publishstatus"
+                      :aria-label="$t('assessmentTemplate.published')"
                       class="pt-0 mt-0"
                       hide-details
                       flat />
@@ -101,6 +103,7 @@
                     <v-checkbox
                       v-model="localAssessment.savePartialSurveyResults"
                       class="mt-0"
+                      :aria-label="$t('assessmentTemplate.savePartialSurveyResults')"
                       hide-details
                       data-test="save-partial-survey-results" />
                   </validation-provider>

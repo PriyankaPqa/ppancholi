@@ -118,6 +118,7 @@
           v-if="item.entity.taskType === TaskType.Team || item.entity.taskStatus === TaskStatus.InProgress"
           color="primary"
           small
+          :aria-label="$t('task.action')"
           :data-test="`task-table-action-btn-${item.entity.id}`"
           @click="setActioningTask(item)">
           {{ $t('task.action') }}
@@ -128,6 +129,7 @@
           v-if="canEdit(item.entity)"
           icon
           small
+          :aria-label="$t('common.edit')"
           @click="getEditTaskRoute(item.entity)">
           <v-icon>
             mdi-pencil

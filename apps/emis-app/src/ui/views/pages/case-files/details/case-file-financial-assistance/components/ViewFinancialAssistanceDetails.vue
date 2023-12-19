@@ -3,11 +3,16 @@
     <v-row>
       <v-col cols="12">
         <div class="pb-4 d-flex justify-space-between">
-          <h3 data-test="fa-name">
+          <div class="details-page-title" data-test="fa-name">
             {{ financialAssistance.name }}
-          </h3>
+          </div>
           <div class="d-flex flex-nowrap align-start">
-            <v-icon v-if="canViewHistory" class="mr-2 mt-1" data-test="approval-status-history-icon" @click="showApprovalHistory = true">
+            <v-icon
+              v-if="canViewHistory"
+              class="mr-2 mt-1"
+              :aria-label="$t('caseFile.financialAssistance.approvalHistory')"
+              data-test="approval-status-history-icon"
+              @click="showApprovalHistory = true">
               mdi-history
             </v-icon>
             <status-chip class="mt-1" data-test="approval_status" status-name="ApprovalStatus" :status="financialAssistance.approvalStatus" />

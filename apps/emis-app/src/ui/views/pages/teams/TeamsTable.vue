@@ -26,6 +26,7 @@
         <rc-add-button-with-menu
           :items="menuItems"
           data-test="create-team-button"
+          :aria-label="$t('teams.add_team')"
           :add-button-label="$t('teams.add_team')"
           @click-item="goToCreateTeam($event)" />
       </template>
@@ -65,7 +66,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn v-if="$hasLevel(UserRoles.level4)" icon class="mr-2" :data-test="`edit_team_${item.entity.id}`" @click="goToEditTeam(item)">
+        <v-btn v-if="$hasLevel(UserRoles.level4)" icon class="mr-2" :aria-label="$t('common.edit')" :data-test="`edit_team_${item.entity.id}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>

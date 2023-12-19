@@ -19,6 +19,7 @@
                 fab
                 color="white"
                 small
+                :aria-label="mergedLabels.header.addButtonLabel"
                 v-on="on"
                 @click="$emit('add-button')">
                 <v-icon color="primary">

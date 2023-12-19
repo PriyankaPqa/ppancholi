@@ -8,6 +8,7 @@
         <v-btn
           icon
           data-test="filterToolbar__showFilterBtn"
+          :aria-label="labels.tooltipAdd"
           v-on="on"
           @click="onToggleFilterPanel">
           <v-icon>mdi-filter-variant</v-icon>

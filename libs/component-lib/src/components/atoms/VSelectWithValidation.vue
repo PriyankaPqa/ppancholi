@@ -18,7 +18,7 @@
       outlined
       :attach="attach"
       v-bind="$attrs"
-      onfocus="this.setAttribute('autocomplete','nope');"
+      onfocus="this.setAttribute('autocomplete','off');"
       v-on="$listeners">
       <template v-if="multiple" #selection="{ item, index }">
         <v-chip

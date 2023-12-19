@@ -52,7 +52,12 @@
       </template>
 
       <template #[`item.${customColumns.approvalStatus}`]="{ item }">
-        <v-icon v-if="canViewHistory(item)" data-test="history-link" class="mr-2" @click="showApprovalDialog(item)">
+        <v-icon
+          v-if="canViewHistory(item)"
+          data-test="history-link"
+          :aria-label="$t('caseFile.financialAssistance.approvalHistory')"
+          class="mr-2"
+          @click="showApprovalDialog(item)">
           mdi-history
         </v-icon>
         <status-chip :data-test="`approval_status_${item.entity.id}`" status-name="ApprovalStatus" :status="item.entity.approvalStatus" />

@@ -55,6 +55,7 @@
               data-test="rightMenu__tenantdd"
               :items="tenants"
               item-value="id"
+              :aria-label="$t('rightmenu.switchTenant')"
               outlined
               @change="changeTenant()">
               <template #item="data">
@@ -85,6 +86,7 @@
 
         <v-select
           v-if="isDev"
+          :aria-label="$t('approvals.nestedTable.headers.roles')"
           outlined
           :items="[
             { text: 'No role', value: '' },

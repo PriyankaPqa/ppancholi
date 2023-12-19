@@ -42,6 +42,7 @@
           v-if="showClose"
           :disabled="loading"
           icon
+          :aria-label="$t('common.close')"
           data-test="dialog-close"
           @click="close">
           <v-icon color="primary lighten-2">
