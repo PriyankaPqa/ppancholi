@@ -10,6 +10,7 @@ export enum DataTest {
   preferredLanguage = 'personalInfo__preferredLanguage',
   emailAddress = 'personalInfo__email',
   indigenousIdentity = 'personalInfo__indigenousType',
+  phoneNumber = 'personalInfo__homePhoneNumber',
   nextButton = 'nextButton',
 }
 
@@ -21,6 +22,7 @@ export interface IPersonalInfoFields {
   preferredLanguage?: string;
   emailAddress?: string;
   indigenousIdentity?: string;
+  phoneNumber?: string;
 }
 
 export class PersonalInformationPage {
@@ -41,6 +43,8 @@ export class PersonalInformationPage {
   private emailAddress = { selector: DataTest.emailAddress, type: 'input' };
 
   private indigenousIdentity = { selector: DataTest.indigenousIdentity, type: 'input' };
+
+  private phoneNumber = { selector: DataTest.phoneNumber, type: 'input' };
 
   private nextButton = { selector: DataTest.nextButton };
 
@@ -89,5 +93,9 @@ export class PersonalInformationPage {
   goToAddressPage() {
     cy.getByDataTest(this.nextButton).click();
     return new AddressPage();
+  }
+
+  public fillPhoneNumber(phone: string) {
+    cy.getByDataTest(this.phoneNumber).type(phone);
   }
 }

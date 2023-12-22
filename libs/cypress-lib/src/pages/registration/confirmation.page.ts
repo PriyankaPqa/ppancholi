@@ -6,6 +6,9 @@ export enum DataTest {
   phoneAssistance = 'confirm-registration-phoneAssistance',
   printButton = 'printButton',
   closeRegistrationButton = 'nextButton',
+  title = 'page-title',
+  errorTitleDuplicateRegistration = 'confirmation-errorRegistration-errorTitle',
+  errorMessageDuplicateRegistration = 'confirmation-errorRegistration-errorMessage',
 }
 
 export class ConfirmationPage {
@@ -22,6 +25,12 @@ export class ConfirmationPage {
   private printButton = { selector: DataTest.printButton };
 
   private closeRegistrationButton = { selector: DataTest.closeRegistrationButton };
+
+  private title = { selector: DataTest.title };
+
+  private errorDuplicateRegistration = { selector: DataTest.errorTitleDuplicateRegistration };
+
+  private errorMessageDuplicateRegistration = { selector: DataTest.errorMessageDuplicateRegistration };
 
   public getMessage() {
     return cy.getByDataTest(this.registrationMessage).getAndTrimText();
@@ -49,5 +58,17 @@ export class ConfirmationPage {
 
   public closeRegistration() {
     cy.getByDataTest(this.closeRegistrationButton).click();
+  }
+
+  public getPageTitle() {
+    return cy.getByDataTest(this.title).getAndTrimText();
+  }
+
+  public getErrorTitleDuplicateRegistration() {
+    return cy.getByDataTest(this.errorDuplicateRegistration).getAndTrimText();
+  }
+
+  public getErrorMessageDuplicateRegistration() {
+    return cy.getByDataTest(this.errorMessageDuplicateRegistration).getAndTrimText();
   }
 }

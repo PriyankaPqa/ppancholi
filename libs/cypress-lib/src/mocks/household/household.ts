@@ -120,3 +120,35 @@ export const mockUpdatePersonIdentityRequest = () => ({
     genderOther: 'before mass action data correction',
   },
 });
+
+export const mockCreateHouseholdManageDuplicateRequest = (force?: Partial<ICreateHouseholdRequest>): ICreateHouseholdRequest => {
+  const firstName = faker.name.firstName();
+  const lastName = faker.name.lastName();
+  const phoneNumber = faker.phone.number('5143######');
+
+  return {
+    noFixedHome: false,
+    primaryBeneficiary: {
+      identitySet: mockIdentitySetCreateRequest({ firstName, lastName }),
+      currentAddress: mockCurrentAddressCreateRequest(),
+      contactInformation: mockContactInformationCreateRequest({
+        homePhoneNumber: {
+          number: phoneNumber,
+          countryCode: 'CA',
+          e164Number: `+1${phoneNumber}`,
+        },
+      }),
+    },
+    additionalMembers: [],
+    homeAddress: mockBaseAddressData(),
+    eventId: faker.datatype.uuid(),
+    consentInformation: {
+      crcUserName: faker.name.fullName(),
+      registrationMethod: 2,
+      registrationLocationId: null,
+      privacyDateTimeConsent: today,
+  },
+    name: null,
+  ...force,
+  };
+};
