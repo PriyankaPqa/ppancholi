@@ -16,7 +16,6 @@ import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/moc
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import {
-  mockCreateDuplicateHouseholdRequest,
   mockCreateHouseholdRequest,
   mockCustomCurrentAddressCreateRequest,
   mockUpdatePersonIdentityRequest,
@@ -39,7 +38,7 @@ import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus } from '@libs/entities-lib/household';
-import { ECurrentAddressTypes, IAddressData } from '@libs/entities-lib/household-create';
+import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { linkEventToTeamForManyRoles } from './teams';
 
@@ -695,16 +694,4 @@ export const prepareStateMassActionDataCorrectionFile = async (params: MassActio
 export const updatePersonsGender = async (provider: IProvider, personIds: string[]) => {
   const getUpdatedPersonGenderPromises = personIds.map((personId) => provider.households.updatePersonIdentity(personId, false, mockUpdatePersonIdentityRequest()));
   await Promise.all(getUpdatedPersonGenderPromises);
-};
-
-/**
- * Create a potential duplicate household with same Household Address
- * @param provider
- * @param eventId
- * @param homeAddress
-*/
-export const createDuplicateHousehold = async (provider: IProvider, eventId: string, homeAddress: IAddressData) => {
-  const createDuplicateHousehold = mockCreateDuplicateHouseholdRequest(homeAddress, eventId);
-  const duplicateHousehold = await provider.households.postPublicRegistration(createDuplicateHousehold);
-  return { createDuplicateHousehold, duplicateHousehold };
 };

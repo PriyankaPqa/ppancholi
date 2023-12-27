@@ -1,7 +1,8 @@
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { getToday } from '@libs/cypress-lib/helpers';
+import { mockCreateDuplicateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { useProvider } from '../../../provider/provider';
-import { createDuplicateHousehold, createHousehold } from '../../helpers/prepareState';
+import { createHousehold } from '../../helpers/prepareState';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 describe('#TC1866# : SELF REG - Potential duplicate records created when individual enters same home Address as an existing EMIS household', { tags: ['@registration'] }, () => {
@@ -25,8 +26,9 @@ describe('#TC1866# : SELF REG - Potential duplicate records created when individ
   });
   it('should create potential duplicate records when entering same home address', function () {
     cy.then(async () => {
-      const duplicateHouseholdCreated = await createDuplicateHousehold(this.provider, this.eventId, this.homeAddress);
-      cy.goTo(`casefile/household/${duplicateHouseholdCreated.duplicateHousehold.caseFile.householdId}`);
+      const createDuplicateHousehold = mockCreateDuplicateHouseholdRequest(this.homeAddress, this.eventId);
+      const duplicateHousehold = await this.provider.households.postPublicRegistration(createDuplicateHousehold);
+      cy.goTo(`casefile/household/${duplicateHousehold.caseFile.householdId}`);
       const householdProfilePage = new HouseholdProfilePage();
       const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
       manageDuplicatesPage.getDuplicateHouseholdPrimaryMemberName().should('eq', `${this.personalInfo.firstName} ${this.personalInfo.lastName}`);
