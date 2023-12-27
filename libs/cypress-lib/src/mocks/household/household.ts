@@ -147,8 +147,52 @@ export const mockCreateHouseholdManageDuplicateRequest = (force?: Partial<ICreat
       registrationMethod: 2,
       registrationLocationId: null,
       privacyDateTimeConsent: today,
-  },
+    },
     name: null,
-  ...force,
+    ...force,
   };
+};
+
+export const mockCreateDuplicateHouseholdRequest = (previousHousholdAddress: IAddressData, eventId: string): ICreateHouseholdRequest => {
+  const firstName = faker.name.firstName();
+  const lastName = faker.name.lastName();
+  const phoneNumber = faker.phone.number('5143######');
+
+  const mockRequest: ICreateHouseholdRequest = {
+    noFixedHome: false,
+    primaryBeneficiary:
+    {
+      identitySet: mockIdentitySetCreateRequest({ firstName, lastName }),
+      currentAddress: mockCurrentAddressCreateRequest(),
+      contactInformation: mockContactInformationCreateRequest({
+        homePhoneNumber: {
+          number: phoneNumber,
+          countryCode: 'CA',
+          e164Number: `+1${phoneNumber}`,
+        },
+      }),
+    },
+    additionalMembers: [],
+    homeAddress:
+    {
+      country: 'CA',
+      streetAddress: previousHousholdAddress.streetAddress,
+      unitSuite: previousHousholdAddress.unitSuite,
+      province: previousHousholdAddress.province,
+      specifiedOtherProvince: null,
+      city: previousHousholdAddress.city,
+      postalCode: previousHousholdAddress.postalCode,
+      latitude: 0,
+      longitude: 0,
+    },
+    eventId,
+    consentInformation: {
+      crcUserName: '',
+      registrationMethod: null,
+      registrationLocationId: null,
+      privacyDateTimeConsent: today,
+    },
+    name: null,
+  };
+  return mockRequest;
 };

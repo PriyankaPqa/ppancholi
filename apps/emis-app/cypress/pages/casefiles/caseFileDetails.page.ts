@@ -12,6 +12,7 @@ export enum DataTest {
   eventName = 'caseFileDetails-event',
   financialAssistance = 'case-financial-assistance',
   pageTitle = 'page-title',
+  registrationNumber = 'caseFileActivity-listItem-content-body-registration-number',
 }
 
 export class CaseFileDetailsPage {
@@ -38,6 +39,8 @@ export class CaseFileDetailsPage {
   private financialAssistance = { selector: DataTest.financialAssistance };
 
   private pageTitle = { selector: DataTest.pageTitle };
+
+  private registrationNumber = { selector: DataTest.registrationNumber };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -104,5 +107,9 @@ export class CaseFileDetailsPage {
         foundMsg: 'Case file Activity visible',
       },
     );
+  }
+
+  public goToDuplicateHouseholdProfile() {
+    cy.getByDataTest(this.registrationNumber).click();
   }
 }
