@@ -1,8 +1,8 @@
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
-import { mockCreateDuplicateHouseholdWithSamePhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
+import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
 import { useProvider } from '../../../provider/provider';
 import { createHousehold } from '../../helpers/prepareState';
-import { PotentialDuplicateCreatedStepsParams, potentialDuplicateCreatedSteps } from './canSteps';
+import { potentialDuplicateCreatedSteps } from './canSteps';
 
 describe('#TC1867# : SELF REG - Potential duplicate records created when individual enters same Phone number as an existing EMIS household', { tags: ['@registration'] }, () => {
   beforeEach(() => {
@@ -24,19 +24,18 @@ describe('#TC1867# : SELF REG - Potential duplicate records created when individ
   });
   it('should create potential duplicate records when entering same phone number', function () {
     cy.then(async () => {
-      const createDuplicateHousehold = mockCreateDuplicateHouseholdWithSamePhoneNumberRequest(this.eventId, this.phoneNumber);
+      const createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(this.eventId, this.phoneNumber);
       const duplicateHousehold = await this.provider.households.postPublicRegistration(createDuplicateHousehold);
       cy.goTo(`casefile/household/${duplicateHousehold.caseFile.householdId}`);
     });
 
-    const potentialDuplicateCreatedStepsParamData: PotentialDuplicateCreatedStepsParams = {
+    potentialDuplicateCreatedSteps({
       firstName: this.personalInfo.firstName,
       lastName: this.personalInfo.lastName,
       registrationNumber: this.registrationNumber,
       caseFileNumber: this.caseFileNumber,
       eventName: this.eventName.translation.en,
       phoneNumber: this.phoneNumber,
-    };
-    potentialDuplicateCreatedSteps(potentialDuplicateCreatedStepsParamData);
+    });
   });
 });

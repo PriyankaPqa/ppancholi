@@ -125,58 +125,10 @@ export const mockUpdatePersonIdentityRequest = () => ({
   },
 });
 
-export const mockCreateHouseholdManageDuplicateRequest = (force?: Partial<ICreateHouseholdRequest>): ICreateHouseholdRequest => {
-  const firstName = faker.name.firstName();
-  const lastName = faker.name.lastName();
-  const phoneNumber = faker.phone.number('5143######');
-
+// eslint-disable-next-line
+export const mockCreateDuplicateHouseholdWithSameAddressRequest = (previousHouseholdAddress: IAddressData, eventId: string, force?: Partial<ICreateHouseholdRequest>): ICreateHouseholdRequest => {
   return {
-    noFixedHome: false,
-    primaryBeneficiary: {
-      identitySet: mockIdentitySetCreateRequest({ firstName, lastName }),
-      currentAddress: mockCurrentAddressCreateRequest(),
-      contactInformation: mockContactInformationCreateRequest({
-        homePhoneNumber: {
-          number: phoneNumber,
-          countryCode: 'CA',
-          e164Number: `+1${phoneNumber}`,
-        },
-      }),
-    },
-    additionalMembers: [],
-    homeAddress: mockBaseAddressData(),
-    eventId: faker.datatype.uuid(),
-    consentInformation: {
-      crcUserName: faker.name.fullName(),
-      registrationMethod: 2,
-      registrationLocationId: null,
-      privacyDateTimeConsent: today,
-    },
-    name: null,
-    ...force,
-  };
-};
-
-export const mockCreateDuplicateHouseholdWithSameAddressRequest = (previousHouseholdAddress: IAddressData, eventId: string): ICreateHouseholdRequest => {
-  const firstName = faker.name.firstName();
-  const lastName = faker.name.lastName();
-  const phoneNumber = faker.phone.number('5143######');
-
-  const mockRequest: ICreateHouseholdRequest = {
-    noFixedHome: false,
-    primaryBeneficiary:
-    {
-      identitySet: mockIdentitySetCreateRequest({ firstName, lastName }),
-      currentAddress: mockCurrentAddressCreateRequest(),
-      contactInformation: mockContactInformationCreateRequest({
-        homePhoneNumber: {
-          number: phoneNumber,
-          countryCode: 'CA',
-          e164Number: `+1${phoneNumber}`,
-        },
-      }),
-    },
-    additionalMembers: [],
+    ...mockCreateHouseholdRequest({ eventId }),
     homeAddress:
     {
       country: 'CA',
@@ -189,21 +141,14 @@ export const mockCreateDuplicateHouseholdWithSameAddressRequest = (previousHouse
       latitude: 0,
       longitude: 0,
     },
-    eventId,
-    consentInformation: {
-      crcUserName: '',
-      registrationMethod: null,
-      registrationLocationId: null,
-      privacyDateTimeConsent: today,
-    },
-    name: null,
+    ...force,
   };
-  return mockRequest;
 };
 
-export const mockCreateDuplicateHouseholdWithSamePhoneNumberRequest = (eventId: string, phoneNumber: string): ICreateHouseholdRequest => {
-  const mockRequest: ICreateHouseholdRequest = {
-    noFixedHome: false,
+// eslint-disable-next-line
+export const mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest = (eventId: string, phoneNumber: string, force?: Partial<ICreateHouseholdRequest>): ICreateHouseholdRequest => {
+  return {
+    ...mockCreateHouseholdRequest({ eventId }),
     primaryBeneficiary: {
       identitySet: mockIdentitySetCreateRequest({ firstName: faker.name.firstName(), lastName: faker.name.lastName() }),
       currentAddress: mockCurrentAddressCreateRequest(),
@@ -215,16 +160,6 @@ export const mockCreateDuplicateHouseholdWithSamePhoneNumberRequest = (eventId: 
         },
       }),
     },
-    additionalMembers: [],
-    homeAddress: mockBaseAddressData(),
-    eventId,
-    consentInformation: {
-      crcUserName: faker.name.fullName(),
-      registrationMethod: 2,
-      registrationLocationId: null,
-      privacyDateTimeConsent: today,
-    },
-    name: null,
+    ...force,
   };
-  return mockRequest;
 };
