@@ -7,6 +7,7 @@ export enum DataTest {
   duplicateHistoryUser = 'householdDetails-duplicate-history-user',
   duplicateHistoryRationale = 'householdDetails-duplicate-history-rationale',
   duplicateActionDropdown = 'householdDetails-manageDuplicates-actionDropdown',
+  duplicatePhoneNumber = 'duplicate-home-phone-number',
   closeButton = 'dialog-cancel-action',
 }
 
@@ -24,6 +25,8 @@ export class ManageDuplicatesPage {
   private duplicateHistoryUser = { selector: DataTest.duplicateHistoryUser };
 
   private duplicateHistoryRationale = { selector: DataTest.duplicateHistoryRationale };
+
+  private duplicatePhoneNumber = { selector: DataTest.duplicatePhoneNumber };
 
   private duplicateActionDropdown = { selector: DataTest.duplicateActionDropdown, type: 'input' };
 
@@ -55,6 +58,10 @@ export class ManageDuplicatesPage {
 
   public getDuplicateHistoryRationale() {
     return cy.getByDataTest(this.duplicateHistoryRationale).getAndTrimText();
+  }
+
+  public getDuplicatePhoneNumber() {
+    return cy.getByDataTest(this.duplicatePhoneNumber).getAndTrimText();
   }
 
   public getActionDropdown() {

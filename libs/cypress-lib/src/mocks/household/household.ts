@@ -43,22 +43,26 @@ export const mockAdditionalMemberCreateRequest = (force?: Partial<MemberCreateRe
   ...force,
 });
 
-export const mockContactInformationCreateRequest = (force?: Partial<IContactInformationCreateRequest>): IContactInformationCreateRequest => ({
-  homePhoneNumber: {
-    number: faker.phone.number('(514) 3##-####'), // Digit 1 of seven digit local phone number cannot be 0 or 1.
-    countryCode: 'CA',
-    e164Number: faker.phone.number('+15143######'),
-  },
-  mobilePhoneNumber: null,
-  alternatePhoneNumber: null,
-  email: faker.internet.email(),
-  preferredLanguage: {
-    optionItemId: PreferredLanguages.French,
-    specifiedOther: null,
-  },
-  primarySpokenLanguage: null,
-  ...force,
-});
+export const mockContactInformationCreateRequest = (force?: Partial<IContactInformationCreateRequest>): IContactInformationCreateRequest => {
+  const phoneNumber = faker.phone.number('5143######'); // Digit 1 of seven digit local phone number cannot be 0 or 1.
+
+  return {
+    homePhoneNumber: {
+      number: phoneNumber,
+      countryCode: 'CA',
+      e164Number: `+1${phoneNumber}`,
+    },
+    mobilePhoneNumber: null,
+    alternatePhoneNumber: null,
+    email: faker.internet.email(),
+    preferredLanguage: {
+      optionItemId: PreferredLanguages.French,
+      specifiedOther: null,
+    },
+    primarySpokenLanguage: null,
+    ...force,
+  };
+};
 
 export const mockBaseAddressData = (force?: Partial<IAddressData>): IAddressData => ({
   country: 'CA',
@@ -153,7 +157,7 @@ export const mockCreateHouseholdManageDuplicateRequest = (force?: Partial<ICreat
   };
 };
 
-export const mockCreateDuplicateHouseholdRequest = (previousHousholdAddress: IAddressData, eventId: string): ICreateHouseholdRequest => {
+export const mockCreateDuplicateHouseholdWithSameAddressRequest = (previousHouseholdAddress: IAddressData, eventId: string): ICreateHouseholdRequest => {
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
   const phoneNumber = faker.phone.number('5143######');
@@ -176,12 +180,12 @@ export const mockCreateDuplicateHouseholdRequest = (previousHousholdAddress: IAd
     homeAddress:
     {
       country: 'CA',
-      streetAddress: previousHousholdAddress.streetAddress,
-      unitSuite: previousHousholdAddress.unitSuite,
-      province: previousHousholdAddress.province,
+      streetAddress: previousHouseholdAddress.streetAddress,
+      unitSuite: previousHouseholdAddress.unitSuite,
+      province: previousHouseholdAddress.province,
       specifiedOtherProvince: null,
-      city: previousHousholdAddress.city,
-      postalCode: previousHousholdAddress.postalCode,
+      city: previousHouseholdAddress.city,
+      postalCode: previousHouseholdAddress.postalCode,
       latitude: 0,
       longitude: 0,
     },
@@ -189,6 +193,34 @@ export const mockCreateDuplicateHouseholdRequest = (previousHousholdAddress: IAd
     consentInformation: {
       crcUserName: '',
       registrationMethod: null,
+      registrationLocationId: null,
+      privacyDateTimeConsent: today,
+    },
+    name: null,
+  };
+  return mockRequest;
+};
+
+export const mockCreateDuplicateHouseholdWithSamePhoneNumberRequest = (eventId: string, phoneNumber: string): ICreateHouseholdRequest => {
+  const mockRequest: ICreateHouseholdRequest = {
+    noFixedHome: false,
+    primaryBeneficiary: {
+      identitySet: mockIdentitySetCreateRequest({ firstName: faker.name.firstName(), lastName: faker.name.lastName() }),
+      currentAddress: mockCurrentAddressCreateRequest(),
+      contactInformation: mockContactInformationCreateRequest({
+        homePhoneNumber: {
+          number: phoneNumber,
+          countryCode: 'CA',
+          e164Number: `+1${phoneNumber}`,
+        },
+      }),
+    },
+    additionalMembers: [],
+    homeAddress: mockBaseAddressData(),
+    eventId,
+    consentInformation: {
+      crcUserName: faker.name.fullName(),
+      registrationMethod: 2,
       registrationLocationId: null,
       privacyDateTimeConsent: today,
     },
