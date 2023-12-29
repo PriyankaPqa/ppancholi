@@ -1,3 +1,4 @@
+import { ManageDuplicatesPage } from '../manage-duplicates/manageDuplicates.page';
 import { AddHouseholdMemberPage } from './addHouseholdMember.page';
 import { CaseFileDetailsPage } from './caseFileDetails.page';
 import { EditHouseholdAddressPage } from './editHouseholdAddress.page';
@@ -36,6 +37,9 @@ export enum DataTest {
   actionUserInformation = 'action_user_information',
   rationale = 'rationale',
   statusSelectChevronIcon = 'chevron-icon',
+  buttonManageDuplicate = 'household-profile-manageDuplicatesBtn',
+  duplicateIcon = 'household-profile-duplicatesIcon',
+  duplicateCount = 'household-profile-duplicateCount',
 }
 
 export class HouseholdProfilePage {
@@ -100,6 +104,12 @@ export class HouseholdProfilePage {
   private rationale = { selector: DataTest.rationale };
 
   private statusSelectChevronIcon = { selector: DataTest.statusSelectChevronIcon };
+
+  private manageDuplicatesButton = { selector: DataTest.buttonManageDuplicate };
+
+  private duplicateIcon = { selector: DataTest.duplicateIcon };
+
+  private duplicateCount = { selector: DataTest.duplicateCount };
 
   public getCaseFileNumber() {
     return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
@@ -316,5 +326,18 @@ export class HouseholdProfilePage {
         foundMsg: 'User action successfully updated on UI',
       },
     );
+  }
+
+  public goToManageDuplicatesPage() {
+    cy.getByDataTest(this.manageDuplicatesButton).click();
+    return new ManageDuplicatesPage();
+  }
+
+  public getDuplicatesIcon() {
+    return cy.getByDataTest(this.duplicateIcon);
+  }
+
+  public getDuplicatesCount() {
+    return cy.getByDataTest(this.duplicateCount).getAndTrimText();
   }
 }

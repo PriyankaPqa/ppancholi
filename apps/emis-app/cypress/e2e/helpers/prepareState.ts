@@ -7,14 +7,19 @@ import {
   mockPartialSaveAssessmentAnsweredQuestionsRequest,
   mockSaveAssessmentAnsweredQuestionsRequest,
   mockUpdateAssessmentRequest,
-  mockUpdateAssessmentWithAllPossibleComponentsRequest } from '@libs/cypress-lib/mocks/assessments/assessment';
+  mockUpdateAssessmentWithAllPossibleComponentsRequest,
+} from '@libs/cypress-lib/mocks/assessments/assessment';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { mockApprovalTableData, mockApprovalTableWithMultipleApprovalGroupData, mockCreateApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest, mockCustomCurrentAddressCreateRequest, mockUpdatePersonIdentityRequest } from '@libs/cypress-lib/mocks/household/household';
+import {
+  mockCreateHouseholdRequest,
+  mockCustomCurrentAddressCreateRequest,
+  mockUpdatePersonIdentityRequest,
+} from '@libs/cypress-lib/mocks/household/household';
 import { mockSetCaseFileStatusRequest } from '@libs/cypress-lib/mocks/casefiles/casefile';
 import {
   mockCreateMassActionXlsxFileRequest,
@@ -22,7 +27,8 @@ import {
   mockCreateMassFinancialAssistanceUploadCsvFileRequest,
   MockCreateMassActionFaUploadCsvFileRequestParams,
   mockCreateMassActionDataCorrectionFileRequest,
-  MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+  MockCreateMassActionXlsxFileRequestParams,
+} from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
@@ -38,7 +44,7 @@ import { linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
   provider: any,
-  event?:IEventEntity,
+  event?: IEventEntity,
   massAction: string,
   generatedXlsxFileData: Blob,
   massActionType?: number,
@@ -49,7 +55,7 @@ export interface CreateFATableParams {
   provider: IProvider,
   eventId: string,
   programId: string,
-  amountType:EFinancialAmountModes
+  amountType: EFinancialAmountModes
 }
 
 export interface CasefileAssessmentParams {
@@ -57,12 +63,12 @@ export interface CasefileAssessmentParams {
   assessmentResponseId: string,
   casefileId: string,
   assessmentFormId: string,
-  answeredQuestionsHistory?:IAnsweredQuestion[]
+  answeredQuestionsHistory?: IAnsweredQuestion[]
 }
 
 export interface CreateMassFinancialAssistanceFilteredListParams {
   accessToken: string,
-  event:IEventEntity,
+  event: IEventEntity,
   tableId: string,
   programId: string
 }
@@ -83,15 +89,15 @@ export interface UpdateFinancialAssistancePaymentParams {
 
 export interface AddSubmitUpdateFaPaymentParams {
   accessTokenL6: string,
-  event:IEventEntity,
-  tableId:string,
-  paymentStatus:PaymentStatus,
+  event: IEventEntity,
+  tableId: string,
+  paymentStatus: PaymentStatus,
   paymentModalities: EPaymentModalities
 }
 
 export interface MassActionFinancialAssistanceUploadFileParams {
   accessToken: string,
-  event:IEventEntity,
+  event: IEventEntity,
   tableId: string,
   programId: string,
   householdQuantity: number,
@@ -218,7 +224,7 @@ export const setHouseholdStatus = async (provider: IProvider, householdId: strin
  * @param eventId
  * @param amountType
  */
-export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType:EFinancialAmountModes) => {
+export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType: EFinancialAmountModes) => {
   const { program, mockCreateProgram } = await createProgram(provider, eventId);
   const createFaTableParamData: CreateFATableParams = {
     provider,
@@ -391,21 +397,21 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
     if (searchResult === 1) {
       cy.log('Casefile index successfully updated');
     } else if (attempt < maxAttempt) {
-        const search = await provider.caseFiles.search({
-          filter: { Entity: { Id: caseFileId } },
-          top: 1,
-        });
-        searchResult = search.odataCount;
-        attempt += 1;
-        if (searchResult === 0) {
-          // eslint-disable-next-line
-          await helpers.timeout(throttle)
-          cy.log(`Casefile index search attempt ${attempt}`);
-          return waitForCaseFileIndexToBeUpdated();
-        }
-      } else {
-        throw new Error(`Failed to search for index after ${maxAttempt} retries.`);
+      const search = await provider.caseFiles.search({
+        filter: { Entity: { Id: caseFileId } },
+        top: 1,
+      });
+      searchResult = search.odataCount;
+      attempt += 1;
+      if (searchResult === 0) {
+        // eslint-disable-next-line
+        await helpers.timeout(throttle)
+        cy.log(`Casefile index search attempt ${attempt}`);
+        return waitForCaseFileIndexToBeUpdated();
       }
+    } else {
+      throw new Error(`Failed to search for index after ${maxAttempt} retries.`);
+    }
     cy.log('Casefile index successfully updated');
     return searchResult;
   };
@@ -415,7 +421,7 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
 export const searchCaseFilesRecursively = async (provider: IProvider, caseFiles: ICaseFileEntity[]) => {
   await Promise.all(
     caseFiles.map(async (caseFile) => {
-    await searchCasefileAndWait(provider, caseFile.id);
+      await searchCasefileAndWait(provider, caseFile.id);
     }),
   );
 };
@@ -513,7 +519,7 @@ export const updateFinancialAssistancePayment = async (params: UpdateFinancialAs
  * @param allRoles
  * @param amountMode
  */
-export const prepareStateEventTeamProgramTableWithItemSubItem = async (accessTokenL6: string, allRoles: UserRoles[], amountMode:EFinancialAmountModes) => {
+export const prepareStateEventTeamProgramTableWithItemSubItem = async (accessTokenL6: string, allRoles: UserRoles[], amountMode: EFinancialAmountModes) => {
   const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
   const event = resultPrepareStateEvent.event;
   const { provider, team } = resultPrepareStateEvent;
@@ -559,7 +565,7 @@ export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (params: AddS
  * @param event
  * @param householdQuantity
  */
-export const prepareStateCreateAndSearchHouseholds = async (accessToken: string, event:IEventEntity, householdQuantity: number) => {
+export const prepareStateCreateAndSearchHouseholds = async (accessToken: string, event: IEventEntity, householdQuantity: number) => {
   const responseCreateHouseholds = await prepareStateMultipleHouseholds(accessToken, event, householdQuantity);
   const caseFileCreated1 = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile;
   const caseFileCreated2 = responseCreateHouseholds.householdsCreated[1].registrationResponse.caseFile;
