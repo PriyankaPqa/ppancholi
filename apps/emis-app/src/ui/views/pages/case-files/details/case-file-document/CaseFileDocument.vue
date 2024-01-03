@@ -49,7 +49,11 @@
       </template>
 
       <template #[`item.${customColumns.preview}`]="{ item }">
-        <v-btn icon data-test="editDocument-link" @click="preview(item)">
+        <v-btn
+          icon
+          data-test="editDocument-link"
+          :aria-label="$t('documentDetails.title')"
+          @click="preview(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-file-find
           </v-icon>
@@ -57,7 +61,7 @@
       </template>
 
       <template #[`item.${customColumns.download}`]="{ item }">
-        <v-btn icon data-test="editDocument-link" @click="download(item)">
+        <v-btn icon data-test="editDocument-link" :aria-label="$t('common.download')" @click="download(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-download
           </v-icon>
@@ -65,7 +69,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn icon data-test="editDocument-link" :to="getDocumentEditRoute(item.id)">
+        <v-btn icon data-test="editDocument-link" :aria-label="$t('common.edit')" :to="getDocumentEditRoute(item.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -73,7 +77,7 @@
       </template>
 
       <template #[`item.${customColumns.delete}`]="{ item }">
-        <v-btn icon data-test="editDocument-link" @click="deleteDocument(item)">
+        <v-btn icon data-test="editDocument-link" :aria-label="$t('common.delete')" @click="deleteDocument(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>

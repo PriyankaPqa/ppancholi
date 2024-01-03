@@ -13,7 +13,7 @@ export default {
     green_pale: '#DAEDD9',
     red: '#CC3300',
     red_pale: '#FFE5DB',
-    grey: '#999999',
+    grey: '#656565',
     light_grey: '#E5E5E5',
     blue_pale: '#D3F3F3',
     orange: '#E3A53B',

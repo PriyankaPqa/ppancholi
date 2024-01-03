@@ -2,7 +2,7 @@
   <validation-observer ref="form" slim>
     <v-row>
       <v-col v-if="!hideTitle" cols="12">
-        <h5 class="rc-heading-5">
+        <div class="rc-heading-5">
           {{ $t('registration.addresses.currentAddress') }}
           <v-tooltip bottom>
             <template #activator="{ on }">
@@ -14,7 +14,7 @@
             </template>
             <span>{{ $t('tooltip.temporary_address') }}</span>
           </v-tooltip>
-        </h5>
+        </div>
       </v-col>
 
       <v-col cols="12" sm="6" md="8" :class="{ 'pb-0': compactView }">

@@ -4,9 +4,9 @@
       <v-row class="justify-center mt-10">
         <v-col cols="12" lg="7">
           <div class="pb-4 d-flex justify-space-between">
-            <h3>
+            <div class="details-page-title">
               {{ $m(assessmentTemplate.name) }}
-            </h3>
+            </div>
             <div>
               <status-chip data-test="assessmentTemplate_details_status" status-name="Status" :status="assessmentTemplate.status" class="mr-4" />
               <v-tooltip bottom>

@@ -28,7 +28,14 @@
         </v-chip>
 
         <div v-else-if="canChangePrimary" class="pr-4 mr-1 border-right">
-          <v-btn small depressed class="mr-2" data-test="household_profile_member_make_primary_btn" :disabled="editingDisabled" @click="makePrimary">
+          <v-btn
+            small
+            depressed
+            class="mr-2"
+            :aria-label="$t('household.profile.member.make_primary')"
+            data-test="household_profile_member_make_primary_btn"
+            :disabled="editingDisabled"
+            @click="makePrimary">
             <v-icon color="grey darken-3" small class="mr-1">
               mdi-account
             </v-icon>
@@ -62,6 +69,7 @@
               class="ml-2"
               :data-test="`household_profile_member_action_btn_${btn.test}`"
               :disabled="btn.disabled"
+              :aria-label="btn.ariaLabel"
               v-on="on"
               @click="btn.event">
               <v-icon size="24" color="grey darken-2">
@@ -248,6 +256,7 @@ export default Vue.extend({
           event: () => this.openEditDialog(),
           hide: !this.canEdit,
           disabled: this.editingDisabled,
+          ariaLabel: this.$t('common.edit'),
         },
         {
           test: 'transfer',
@@ -257,6 +266,7 @@ export default Vue.extend({
           hide: !this.canSplit,
           tooltipText: this.$t('household.profile.split.member.title'),
           disabled: this.editingDisabled,
+          ariaLabel: this.$t('household.profile.split.member.title'),
         },
         {
           test: 'delete',
@@ -265,6 +275,7 @@ export default Vue.extend({
           event: this.deleteAdditionalMember,
           hide: !this.canEdit,
           disabled: this.editingDisabled,
+          ariaLabel: this.$t('common.delete'),
         },
       ];
     },
@@ -490,7 +501,7 @@ export default Vue.extend({
   }
 
   .disabled-table{
-    color: var(--v-grey-lighten1) !important;
+    color: var(--v-grey-darken2) !important;
   }
 </style>
 

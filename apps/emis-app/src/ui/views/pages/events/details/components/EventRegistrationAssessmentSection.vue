@@ -22,6 +22,7 @@
               v-if="canEdit"
               icon
               class="mr-2"
+              :aria-label="$t('common.edit')"
               :data-test="`edit-event-registrationAssessment-${index}`"
               @click="$emit('edit', registrationAssessment.id)">
               <v-icon size="24" color="grey darken-2">
@@ -31,6 +32,7 @@
             <v-btn
               v-if="canEdit"
               icon
+              :aria-label="$t('common.delete')"
               :data-test="`delete-event-registrationAssessment-${index}`"
               @click="deleteRegistrationAssessment">
               <v-icon size="24" color="grey darken-2">

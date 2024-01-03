@@ -4,17 +4,17 @@
     <v-row class="justify-center mt-10">
       <v-col cols="12" lg="7">
         <div class="pb-4 d-flex justify-space-between">
-          <h3>
+          <div class="details-page-title">
             {{ document.name }}
-          </h3>
+          </div>
           <div>
             <status-chip status-name="DocumentStatus" :status="document.documentStatus" />
-            <v-btn v-if="canEdit" icon :to="documentEditRoute" data-test="editDocument-link">
+            <v-btn v-if="canEdit" icon :aria-label="$t('common.edit')" :to="documentEditRoute" data-test="editDocument-link">
               <v-icon>
                 mdi-pencil
               </v-icon>
             </v-btn>
-            <v-btn v-if="canDelete" icon data-test="deleteDocument-link" @click="deleteDocument()">
+            <v-btn v-if="canDelete" icon :aria-label="$t('common.delete')" data-test="deleteDocument-link" @click="deleteDocument()">
               <v-icon>
                 mdi-delete
               </v-icon>

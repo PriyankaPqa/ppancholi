@@ -13,7 +13,9 @@
 
       <template v-if="branding && branding.showName">
         <v-divider vertical class="mx-5" />
-        <span class="rc-heading-4">{{ $m(branding.name) }}</span>
+        <h1 class="rc-heading-4">
+          {{ $m(branding.name) }}
+        </h1>
       </template>
 
       <v-spacer />

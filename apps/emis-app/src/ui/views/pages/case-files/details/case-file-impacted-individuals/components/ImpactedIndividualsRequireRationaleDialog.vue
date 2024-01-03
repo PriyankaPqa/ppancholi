@@ -12,7 +12,7 @@
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"
       content-padding="5"
-      data-test="household-status-dialog"
+      data-test="impacted-individual-rationale-dialog"
       @cancel="$emit('close');"
       @close="$emit('close');"
       @submit="onSubmit">

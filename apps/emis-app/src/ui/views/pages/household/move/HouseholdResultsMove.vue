@@ -1,13 +1,13 @@
 <template>
   <div v-resize="onResize">
-    <h5 class="rc-heading-5 mb-4">
+    <div class="rc-heading-5 mb-4">
       <template v-if="items.length > 0">
         {{ $t('registration.isRegistered.search_result', { length: items.length }) }}
       </template>
       <template v-else>
         {{ $t('registration.isRegistered.no_result') }}
       </template>
-    </h5>
+    </div>
     <v-row no-gutters class="rc-body14 fw-bold border pa-4 border-radius-top">
       <v-col cols="4">
         {{ $t('household.move.results.name') }}

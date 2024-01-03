@@ -20,7 +20,7 @@
         </v-col>
 
         <v-col v-if="canEdit" cols="2" class="text-right ma-0 pa-0">
-          <v-btn icon data-test="event-edit-button" @click="editEvent()">
+          <v-btn icon data-test="event-edit-button" :aria-label="$t('common.edit')" @click="editEvent()">
             <v-icon>
               mdi-pencil
             </v-icon>

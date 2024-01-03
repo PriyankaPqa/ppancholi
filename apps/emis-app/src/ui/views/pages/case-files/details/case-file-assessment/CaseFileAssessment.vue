@@ -29,9 +29,9 @@
           </template>
         </rc-data-table-header>
 
-        <h3 class="pa-2 pt-12 rc-heading-5">
+        <div class="pa-2 pt-12 rc-heading-5">
           {{ $t('assessment.pending.title') }}
-        </h3>
+        </div>
         <rc-data-table
           data-test="pending-assessment-table"
           :items="pendingAssessments"
@@ -78,9 +78,9 @@
           </template>
         </rc-data-table>
 
-        <h3 class="pa-2 pt-12 rc-heading-5">
+        <div class="pa-2 pt-12 rc-heading-5">
           {{ $t('assessment.completed.title') }}
-        </h3>
+        </div>
         <rc-data-table
           data-test="completed-assessment-table"
           :items="completedAssessments"

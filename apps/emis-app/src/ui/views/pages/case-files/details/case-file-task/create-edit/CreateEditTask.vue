@@ -47,6 +47,7 @@
                         color="primary"
                         small
                         data-test="working-on-it-toggle"
+                        :aria-label="$t('task.task_details.working_on_it')"
                         class="ma-0"
                         :loading="toggleLoading"
                         :disabled="toggleLoading"

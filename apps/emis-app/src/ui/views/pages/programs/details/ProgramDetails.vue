@@ -9,9 +9,9 @@
       <v-row justify="center">
         <v-col class="mt-10" cols="12" md="10">
           <div class="flex-row justify-space-between">
-            <h5 class="rc-heading-5" data-test="program-details-name">
+            <div class="rc-heading-5" data-test="program-details-name">
               {{ $m(program.name) }}
-            </h5>
+            </div>
 
             <div>
               <status-chip status-name="Status" :status="program.status" data-test="program-details-status" />
@@ -131,9 +131,9 @@
         </v-col>
 
         <v-col class="mt-4" cols="12" md="10">
-          <h5 class="rc-heading-5" data-test="program-details-financialAssistanceTables-title">
+          <div class="rc-heading-5" data-test="program-details-financialAssistanceTables-title">
             {{ $t('event.programManagement.financialAssistance') }} ({{ financialAssistanceTables.length }})
-          </h5>
+          </div>
         </v-col>
 
         <v-col cols="12" md="10">
@@ -152,9 +152,9 @@
         </v-col>
 
         <v-col class="mt-4" cols="12" md="10">
-          <h5 class="rc-heading-5">
+          <div class="rc-heading-5">
             {{ $t('event.programManagement.assessments.title') }} ({{ assessmentIds.length }})
-          </h5>
+          </div>
         </v-col>
 
         <v-col cols="12" md="10">

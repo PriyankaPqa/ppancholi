@@ -3,7 +3,7 @@
     <v-text-field-with-validation
       v-model="localValue"
       v-bind="$attrs"
-      autocomplete="nope"
+      autocomplete="off"
       :rules="rules"
       @keydown="menuActive = true"
       @click="menuActive = true">

@@ -5,9 +5,9 @@
     <v-row class="justify-center mt-10">
       <v-col cols="12" lg="7">
         <div class="pb-4 d-flex justify-space-between" data-test="detail_modality">
-          <h3>
+          <div class="details-page-title">
             {{ $t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`) }}
-          </h3>
+          </div>
         </div>
         <div class="pb-4 d-flex justify-space-between" data-test="detail_title">
           <h2>

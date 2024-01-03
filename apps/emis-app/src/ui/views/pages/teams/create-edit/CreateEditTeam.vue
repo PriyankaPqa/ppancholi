@@ -23,9 +23,9 @@
             <v-row class="firstSection">
               <v-col md="9" sm="12">
                 <div class="flex flex-row mb-4">
-                  <h5 data-test="team-title" class="rc-heading-5 mr-3">
+                  <div data-test="team-title" class="rc-heading-5 mr-3">
                     {{ teamTitle }}
-                  </h5>
+                  </div>
                   <validation-provider
                     name="status"
                     tag="div">

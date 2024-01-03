@@ -3,7 +3,6 @@
     :title="$t('household.profile.history.title')"
     :show.sync="show"
     :submit-action-label="$t('common.close')"
-    :content-only-scrolling="true"
     content-padding="0"
     fullscreen
     persistent

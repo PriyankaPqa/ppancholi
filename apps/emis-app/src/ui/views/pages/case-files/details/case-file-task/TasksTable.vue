@@ -37,6 +37,7 @@
                 <v-switch
                   v-model="personalTaskOnly"
                   data-test="task-table-personal-task-switch"
+                  :aria-label="$t('task.task_table.my_personal_tasks')"
                   hide-details />
                 <v-icon class="mx-2" small>
                   mdi-account-check
@@ -100,7 +101,7 @@
         </router-link>
       </template>
       <template #[`item.${customColumns.isUrgent}`]="{ item }">
-        <span class="red--text font-weight-bold"> {{ item.entity.isUrgent ? $t('task.create_edit.urgent') : '' }}</span>
+        <span class="rc-red-text font-weight-bold"> {{ item.entity.isUrgent ? $t('task.create_edit.urgent') : '' }}</span>
       </template>
       <template #[`item.${customColumns.dateAdded}`]="{ item }">
         <span data-test="task-table-date-added"> {{ helpers.getLocalStringDate(item.entity.dateAdded, '', 'PP') }}</span>
@@ -575,6 +576,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 }
 
 .adjust-margin{
-  margin-left: -16px
+  margin-left: -16px;
 }
 </style>

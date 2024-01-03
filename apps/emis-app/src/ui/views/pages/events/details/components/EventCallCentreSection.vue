@@ -21,6 +21,7 @@
               v-if="canEdit"
               icon
               :data-test="`edit-event-call-centre-${index}`"
+              :aria-label="$t('common.edit')"
               @click="$emit('edit', callCentre.id)">
               <v-icon size="24" color="grey darken-2">
                 mdi-pencil

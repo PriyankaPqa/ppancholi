@@ -42,6 +42,7 @@
                     <v-switch
                       v-model="isActive"
                       data-test="callcentre-switch-status"
+                      :aria-label="$t('eventSummary.status')"
                       class="pt-0 mt-0"
                       height="48"
                       hide-details

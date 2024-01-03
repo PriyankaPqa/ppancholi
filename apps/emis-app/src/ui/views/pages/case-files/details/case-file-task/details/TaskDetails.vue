@@ -13,11 +13,11 @@
             </div>
             <div class="d-flex align-center">
               <template v-if="isTeamTask && task.isUrgent">
-                <span class="red--text font-weight-bold" data-test="task-details-is-urgent">{{ $t('task.create_edit.urgent') }}</span>
+                <span class="rc-red-text font-weight-bold" data-test="task-details-is-urgent">{{ $t('task.create_edit.urgent') }}</span>
                 <v-divider vertical class="ml-4" />
               </template>
 
-              <v-btn icon color="primary" class="mx-2" @click="showTaskHistoryDialog = true">
+              <v-btn icon color="primary" :aria-label="$t('common.buttons.history')" class="mx-2" @click="showTaskHistoryDialog = true">
                 <v-icon>
                   mdi-history
                 </v-icon>
@@ -26,14 +26,14 @@
               <status-chip v-if="isTeamTask || task.taskStatus === TaskStatus.Completed" status-name="TaskStatus" :status="task.taskStatus" class="mr-4" />
               <template v-if="canEdit">
                 <v-divider vertical class="mr-2" />
-                <v-btn icon data-test="task-details-edit-button" @click="getEditTaskRoute()">
+                <v-btn icon data-test="task-details-edit-button" :aria-label="$t('common.edit')" @click="getEditTaskRoute()">
                   <v-icon> mdi-pencil </v-icon>
                 </v-btn>
               </template>
             </div>
           </v-row>
           <template v-if="isTeamTask">
-            <div class="creator-info px-13 grey--text rc-body12" data-test="task-details-team-task-creator-info">
+            <div class="creator-info px-13 grey-darken-2 rc-body12" data-test="task-details-team-task-creator-info">
               {{ teamTaskCreatorInfo }}
             </div>
             <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 grey-text rc-body14">
@@ -81,6 +81,7 @@
                 color="primary"
                 small
                 data-test="task-details-working-on-it-toggle"
+                :aria-label="$t('task.task_details.working_on_it')"
                 class="ma-0"
                 :loading="toggleLoading"
                 :disabled="toggleLoading"
@@ -372,5 +373,4 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 .task-details-description {
   white-space: pre-line;
 }
-
 </style>

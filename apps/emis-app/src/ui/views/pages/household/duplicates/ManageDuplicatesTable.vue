@@ -117,10 +117,11 @@
               data-test="householdDetails-manageDuplicates-actionDropdown"
               :items="statuses"
               :disabled="!canAction"
+              :aria-label="$t('householdDetails.manageDuplicates.table.action')"
               hide-details
               @input="action(duplicate)">
               <template #selection>
-                <div class="d-flex flex-nowrap justify-center">
+                <div class="d-flex flex-nowrap justify-center z-index" :aria-label="$t('householdDetails.manageDuplicates.table.action')">
                   <v-icon
                     class="mr-1"
                     :color="isPotentialTable ? 'secondary' : 'green'">
@@ -134,7 +135,7 @@
               </template>
 
               <template #item="{ item }">
-                <div class="d-flex flex-nowrap justify-center">
+                <div class="d-flex flex-nowrap justify-center" :aria-label="item.text">
                   <v-icon
                     class="mr-2"
                     :data-test="`householdDetails-manageDuplicates-action-menu-${item.id}`"

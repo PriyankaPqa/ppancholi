@@ -25,6 +25,7 @@
                   <v-switch
                     v-model="isStatusActive"
                     data-test="document-switch-status"
+                    :aria-label="$t('caseFile.document.status')"
                     class="pt-0 mt-0"
                     hide-details
                     color="white"

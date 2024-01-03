@@ -35,6 +35,7 @@
                 color="white"
                 fab
                 small
+                :aria-label="$t('common.button.back')"
                 data-test="pageContent_backButton"
                 v-on="on"
                 @click="$emit('back')">

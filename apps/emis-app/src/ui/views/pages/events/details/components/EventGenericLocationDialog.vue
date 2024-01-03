@@ -46,6 +46,7 @@
                       height="48"
                       hide-details
                       color="white"
+                      :aria-label="$t('eventSummary.status')"
                       flat
                       @change="updateStatus" />
                   </validation-provider>

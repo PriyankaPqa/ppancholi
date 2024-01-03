@@ -21,9 +21,9 @@
           <div class="household-details-header rc-body14 px-6 py-3">
             {{ $t('householdDetails.manageDuplicates.referenceHousehold') }}
           </div>
-          <h5 class="rc-heading-5 px-6 py-3" data-test="householdDetails-manageDuplicate-primaryBeneficiaryFullName">
+          <div class="rc-heading-5 px-6 py-3" data-test="householdDetails-manageDuplicate-primaryBeneficiaryFullName">
             {{ getPrimaryMemberFullName() }}
-          </h5>
+          </div>
 
           <div class="px-4 pb-4">
             <div

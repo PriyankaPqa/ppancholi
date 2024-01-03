@@ -14,6 +14,7 @@
         :height="toolbarHeight"
         color="primary darken-1"
         dark
+        tag="div"
         flat>
         <slot name="button" />
         <v-toolbar-title

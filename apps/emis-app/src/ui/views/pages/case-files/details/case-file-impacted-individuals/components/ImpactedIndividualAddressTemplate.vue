@@ -28,7 +28,7 @@
       </div>
     </v-col>
     <v-col cols="1" class="pt-2 d-flex justify-end">
-      <v-btn v-if="showEditButton" icon :disabled="disableEditing" data-test="edit_button" @click="$emit('open-edit-temporary-address-dialog')">
+      <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-temporary-address-dialog')">
         <v-icon>
           mdi-pencil
         </v-icon>

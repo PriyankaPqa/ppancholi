@@ -21,12 +21,12 @@
           <v-row class="firstSection">
             <v-col md="11" sm="12">
               <div class="flex flex-row mb-4">
-                <h5 data-test="team-title" class="rc-heading-5 mr-3">
+                <div data-test="team-title" class="rc-heading-5 mr-3">
                   {{ team.name }}
-                </h5>
-                <h5 v-if="displayEscalationLabel" data-test="team-title-escalation" class="rc-heading-5 mr-3">
+                </div>
+                <div v-if="displayEscalationLabel" data-test="team-title-escalation" class="rc-heading-5 mr-3">
                   {{ `(${$t('teams.escalation')})` }}
-                </h5>
+                </div>
                 <status-chip :status="team.status" data-test="team_status" status-name="Status" />
               </div>
 

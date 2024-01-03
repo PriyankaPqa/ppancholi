@@ -14,6 +14,7 @@
           <v-btn
             v-if="canEdit"
             icon
+            :aria-label="$t('common.edit')"
             :data-test="getDataTest('edit', index)"
             @click="$emit('edit', location.id)">
             <v-icon size="24" color="grey darken-2">

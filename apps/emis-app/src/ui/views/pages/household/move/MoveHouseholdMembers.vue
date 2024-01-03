@@ -19,9 +19,9 @@
           </div>
         </v-col>
         <v-col cols="6" class="pr-3">
-          <h5 class="rc-heading-5 mb-4">
+          <div class="rc-heading-5 mb-4">
             {{ $t('household.move.left.title') }}
-          </h5>
+          </div>
           <household-card
             v-if="firstHousehold"
             :household="firstHousehold"
@@ -33,9 +33,9 @@
         </v-col>
         <v-col cols="6" class="pl-3">
           <template v-if="!showResults">
-            <h5 class="rc-heading-5 mb-4">
+            <div class="rc-heading-5 mb-4">
               {{ $t('household.move.search.title') }}
-            </h5>
+            </div>
             <div v-if="!showResults" class="border py-2 px-4">
               <household-search
                 hide-title
@@ -54,12 +54,12 @@
           <template v-if="secondHousehold">
             <v-row>
               <v-col cols="11">
-                <h5 class="rc-heading-5 mb-4">
+                <div class="rc-heading-5 mb-4">
                   {{ $t('household.move.right.title') }}
-                </h5>
+                </div>
               </v-col>
               <v-col cols="1">
-                <v-btn v-if="!moveSubmitted" icon small data-test="removeSelection" @click="removeSelection()">
+                <v-btn v-if="!moveSubmitted" icon small :aria-label="$t('common.close')" data-test="removeSelection" @click="removeSelection()">
                   <v-icon>
                     mdi-close
                   </v-icon>

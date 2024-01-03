@@ -11,6 +11,7 @@
         class="mt-0 pt-2"
         :loading="loading"
         :disabled="loading"
+        :aria-label="titleOfToggle"
         data-test="event-summary-toggle-switch"
         @change="$emit('toggleChanged', $event)" />
     </v-col>

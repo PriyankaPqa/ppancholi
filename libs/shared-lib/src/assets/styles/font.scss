@@ -1,6 +1,5 @@
 $font-family: 'Roboto', sans-serif;
 
-
 /* Make type rendering look crisper */
 /* Disable auto-enlargement of small text in Safari */
 /* Enable kerning and optional ligatures */
@@ -169,4 +168,8 @@ html {
 
 .fw-light {
   font-weight: 300;
+}
+
+.rc-red-text {
+  color: #cc3300;
 }

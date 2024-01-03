@@ -16,6 +16,7 @@
               v-if="canEdit"
               icon
               class="mr-2"
+              :aria-label="$t('common.edit')"
               :data-test="`edit-event-agreement-${index}`"
               @click="$emit('edit', agreement.id)">
               <v-icon size="24" color="grey darken-2">
@@ -25,6 +26,7 @@
             <v-btn
               v-if="canEdit"
               icon
+              :aria-label="$t('common.delete')"
               :data-test="`delete-event-agreement-${index}`"
               @click="showDeleteConfirmationDialog = true">
               <v-icon size="24" color="grey darken-2">

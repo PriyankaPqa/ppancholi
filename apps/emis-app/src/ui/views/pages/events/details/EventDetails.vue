@@ -69,7 +69,7 @@
       </div>
 
       <div class="d-flex justify-center pt-1 pb-3">
-        <v-icon size="26" class="toggle-left-menu-icon" color="gray darken-2" data-test="expand-button" @click="toggleExpandLeftMenu">
+        <v-icon size="26" class="toggle-left-menu-icon" color="gray darken-2" :aria-label="$t('common.buttons.expand')" data-test="expand-button" @click="toggleExpandLeftMenu">
           {{ `mdi-chevron-${showExpandedLeftMenu ? 'up' : 'down'}` }}
         </v-icon>
       </div>

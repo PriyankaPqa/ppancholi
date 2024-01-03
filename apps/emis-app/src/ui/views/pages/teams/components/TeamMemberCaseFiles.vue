@@ -19,9 +19,9 @@
     </v-row>
     <v-row v-if="!loading && !isEmpty(caseFileGroups)" class="d-flex align-center justify-start no-gutter flex-column no-wrap mx-0 my-6">
       <v-col v-for="group in caseFileGroups" :key="group[0] && group[0].event.id || 0" col="12" md="6" class="eventTable mb-2">
-        <h5 class=" fw-bold rc-heading-5 mb-4 align-left" data-test="team_member_caseFile_event_name">
+        <div class=" fw-bold rc-heading-5 mb-4 align-left" data-test="team_member_caseFile_event_name">
           {{ group[0] ? $m(group[0].event.name) : '' }}
-        </h5>
+        </div>
         <v-sheet v-if="group[0]" rounded outlined>
           <v-simple-table class="member_teams_table">
             <thead>
@@ -75,9 +75,9 @@
       </v-col>
     </v-row>
     <v-row v-if="!loading && isEmpty(caseFileGroups)" class="d-flex align-center justify-start no-gutter flex-column mx-0 my-14">
-      <h5 class="rc-heading-5">
+      <div class="rc-heading-5">
         {{ $t('teams.member.caseFile.noCaseFiles') }}
-      </h5>
+      </div>
     </v-row>
 
     <assign-case-file

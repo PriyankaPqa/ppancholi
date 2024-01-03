@@ -33,6 +33,7 @@
                 icon
                 x-small
                 data-test="member_address_edit_btn"
+                :aria-label="$t('common.edit')"
                 :disabled="editingDisabled"
                 @click="editAddress()">
                 <v-icon color="gray darken-2">
@@ -126,9 +127,9 @@
           <pinned-status
             :pinned-household-status-activity="pinnedHouseholdStatusActivity" />
 
-          <h5 class="rc-heading-5">
+          <div class="rc-heading-5">
             {{ $t('household.profile.active_in_events', { x: activeCaseFiles.length }) }}
-          </h5>
+          </div>
 
           <v-row class="pt-4">
             <v-col v-for="caseFile in activeCaseFiles" :key="caseFile.id" cols="12" md="6">
@@ -137,9 +138,9 @@
           </v-row>
 
           <v-row class="no-gutters pt-8 pb-4 d-flex justify-space-between">
-            <h5 class="rc-heading-5 ">
+            <div class="rc-heading-5 ">
               {{ $t('household.profile.household_members') }} ({{ household.primaryBeneficiary ? household.additionalMembers.length + 1 : 0 }})
-            </h5>
+            </div>
             <div>
               <v-btn
                 v-if="canMove && household.primaryBeneficiary"
@@ -200,9 +201,9 @@
             :moved-status="member.status"
             moved-member />
 
-          <h5 v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
+          <div v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
             {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
-          </h5>
+          </div>
           <v-row>
             <v-col v-for="caseFile in inactiveCaseFiles" :key="caseFile.id" cols="12" md="6">
               <household-case-file-card :event-names="eventNames" :case-file="caseFile" :is-active="false" />

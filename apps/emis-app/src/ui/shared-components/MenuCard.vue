@@ -1,8 +1,8 @@
 <template>
   <v-card class="pa-6">
-    <h5 class="rc-heading-5 mb-3">
+    <div class="rc-heading-5 mb-3">
       {{ title }}
-    </h5>
+    </div>
 
     <div class="cardText rc-body14">
       {{ text }}

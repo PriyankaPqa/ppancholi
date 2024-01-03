@@ -55,6 +55,7 @@
               icon
               small
               class="mt-n1 ml-n1 mr-1"
+              :aria-label="$t('common.buttons.expand')"
               :disabled="expandDisabled(m)"
               @click="showHide(m.id)">
               <v-icon>

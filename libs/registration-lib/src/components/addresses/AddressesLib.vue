@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters class="d-flex flex-column">
     <v-col cols="12" class="pb-0">
-      <h5 class="rc-heading-5">
+      <div class="rc-heading-5">
         {{ $t('registration.addresses.homeAddress') }}
         <v-tooltip bottom>
           <template #activator="{ on }">
@@ -13,7 +13,7 @@
           </template>
           <span>{{ $t('tooltip.home_address') }}</span>
         </v-tooltip>
-      </h5>
+      </div>
     </v-col>
     <v-col cols="12" class="pb-6">
       <v-row no-gutters>

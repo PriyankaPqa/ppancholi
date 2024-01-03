@@ -142,6 +142,7 @@
                     class="pt-0 mt-0"
                     hide-details
                     color="white"
+                    :aria-label="$t('event.status')"
                     :disabled="inputDisabled"
                     flat />
                 </div>
@@ -153,6 +154,7 @@
                     data-test="reopen-reason"
                     background-color="white"
                     autocomplete="nope"
+                    :aria-label="$t('event.reOpenReason')"
                     :label="`${$t('event.reOpenReason')} *`"
                     :disabled="inputDisabled"
                     :rules="rules.schedule.reOpenReason" />
@@ -227,7 +229,7 @@
 
                   <rc-tooltip bottom>
                     <template #activator="{ on }">
-                      <v-btn data-test="copy-link-btn" icon bottom v-on="on" @click="copyRegistrationLink">
+                      <v-btn data-test="copy-link-btn" icon :aria-label="$t('common.copy')" bottom v-on="on" @click="copyRegistrationLink">
                         <v-icon size="24" color="grey darken-2">
                           mdi-content-copy
                         </v-icon>
@@ -239,6 +241,7 @@
                 <v-row>
                   <v-col cols="12" xl="12" lg="12">
                     <v-text-field
+                      id="registration-link-input"
                       :value="registrationLink"
                       background-color="white"
                       disabled
@@ -275,6 +278,7 @@
                 v-model="localEvent.description.translation[languageMode]"
                 data-test="event-description"
                 full-width
+                :aria-label="$t('event.description')"
                 :label="$t('event.description')"
                 :rules="rules.description"
                 clearable
@@ -782,5 +786,13 @@ export default Vue.extend({
   justify-content: space-between;
   margin-bottom: 20px;
   border-radius: 7px;
+}
+
+::v-deep #registration-link-input {
+  color: var(--v-grey-darken2) !important;
+}
+
+::v-deep .v-text-field__prefix {
+  color: var(--v-grey-darken2) !important;
 }
 </style>

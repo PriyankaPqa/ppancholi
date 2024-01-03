@@ -59,6 +59,7 @@
                   full-width
                   rows="3"
                   :label="$t('eventSummary.agreement.details')"
+                  :aria-label="$t('eventSummary.agreement.details')"
                   :rules="rules.details"
                   clearable
                   @click:clear="clearDetails()" />

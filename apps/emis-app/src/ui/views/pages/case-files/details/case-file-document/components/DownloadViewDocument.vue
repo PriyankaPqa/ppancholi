@@ -6,7 +6,12 @@
     <div>
       <v-tooltip bottom>
         <template #activator="{ on }">
-          <v-btn icon data-test="open-link" v-on="on" @click="preview()">
+          <v-btn
+            icon
+            data-test="open-link"
+            :aria-label="$t('documentDetails.title')"
+            v-on="on"
+            @click="preview()">
             <v-icon size="24" color="grey darken-2">
               mdi-file-find
             </v-icon>
@@ -16,7 +21,7 @@
       </v-tooltip>
       <v-tooltip v-if="canDownload" bottom>
         <template #activator="{ on }">
-          <v-btn icon data-test="download-link" v-on="on" @click="download()">
+          <v-btn icon :aria-label="$t('common.download')" data-test="download-link" v-on="on" @click="download()">
             <v-icon size="24" color="grey darken-2">
               mdi-download
             </v-icon>

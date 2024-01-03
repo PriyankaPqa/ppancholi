@@ -78,6 +78,6 @@ export default Vue.extend({
 }
 
 ::v-deep .v-data-table__empty-wrapper {
-    color: #656565 !important;
+    color: var(--v-grey-darken2) !important;
   }
 </style>

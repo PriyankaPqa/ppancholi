@@ -22,6 +22,7 @@
           <v-btn
             data-test="event-summary-copy-link-btn"
             icon
+            :aria-label="$t('eventSummary.copyLinkTooltip')"
             v-on="on"
             @click="copyRegistrationLink()">
             <v-icon size="16" color="grey darken-2">
@@ -41,6 +42,7 @@
               v-model="selfRegistrationEnabled"
               :loading="updatingSelfRegistration"
               :disabled="updatingSelfRegistration"
+              :aria-label="$t('event.self-registration.enable')"
               class="mt-0 pt-0 mr-2"
               data-test="event-summary-toggle-self-registration"
               hide-details

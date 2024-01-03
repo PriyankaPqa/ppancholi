@@ -33,6 +33,7 @@
           v-model="isReceivingAssistance"
           :disabled="disableEditing"
           class="mt-1 ml-3"
+          :aria-label="$t('impactedIndividuals.receiving_assistance')"
           data-test="receiving_assistance_toggle"
           @change="onToggleChange($event)" />
         <span class="rc-body12">
@@ -49,8 +50,12 @@
 
     <div v-if="reorderedAddressHistory.length > 0" data-test="previous-address-row">
       <div class="px-4 py-0 rc-body14 fw-bold background">
-        <v-btn icon>
-          <v-icon data-test="previous-address-icon" @click="showPreviousTemporaryAddress = !showPreviousTemporaryAddress">
+        <v-btn
+          icon
+          :aria-label="$t('impactedIndividuals.Previous_temporary_address')"
+          data-test="previous-address-icon"
+          @click="showPreviousTemporaryAddress = !showPreviousTemporaryAddress">
+          <v-icon>
             {{ showPreviousTemporaryAddress ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
           </v-icon>
         </v-btn>

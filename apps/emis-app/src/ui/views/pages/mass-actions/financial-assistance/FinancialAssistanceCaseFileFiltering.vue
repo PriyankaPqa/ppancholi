@@ -402,7 +402,7 @@ export default mixins(massActionCaseFileFiltering).extend({
    }
 
    .no-data {
-     color: #656565 !important;
+     color: var(--v-grey-darken2) !important;
      font-weight: bold;
    }
  }
