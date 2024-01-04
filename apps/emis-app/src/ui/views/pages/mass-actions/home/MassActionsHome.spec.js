@@ -3,7 +3,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsHome.vue';
@@ -31,7 +31,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_financial',
             level: UserRoles.level6,
             roles: null,
-            group: 1,
+            group: MassActionGroup.Group1,
           },
           {
             title: 'mass_action.card.assessments',
@@ -41,7 +41,17 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_assessments',
             level: UserRoles.level6,
             roles: null,
-            group: 1,
+            group: MassActionGroup.Group1,
+          },
+          {
+            title: 'mass_action.card.communications',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 1 }),
+            button: 'mass_action.card.action.view',
+            route: null,
+            dataTest: 'massAction_communications',
+            level: UserRoles.level6,
+            roles: null,
+            group: MassActionGroup.Group1,
           },
           {
             title: 'mass_action.card.caseFileStatus',
@@ -51,7 +61,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_case_file_status',
             level: UserRoles.level5,
             roles: null,
-            group: 1,
+            group: MassActionGroup.Group1,
           },
           {
             title: 'mass_action.card.finance_customoptions',
@@ -63,7 +73,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_finance_customoptions',
             level: UserRoles.level6,
             roles: null,
-            group: 3,
+            group: MassActionGroup.Group3,
             onSecondaryClick: 'downloadFACustomTemplate',
           },
           {
@@ -74,7 +84,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_export_validation_impact',
             level: UserRoles.level6,
             roles: [UserRoles.contributorIM],
-            group: 4,
+            group: MassActionGroup.Group4,
             onClick: 'exportImpactValidation',
           },
           {
@@ -85,7 +95,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_import_validation_impact',
             level: UserRoles.level6,
             roles: [UserRoles.contributorIM],
-            group: 4,
+            group: MassActionGroup.Group4,
           },
           {
             title: 'mass_action.card.generate_funding',
@@ -95,7 +105,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_generate_funding',
             level: UserRoles.level6,
             roles: [UserRoles.contributorFinance],
-            group: 4,
+            group: MassActionGroup.Group4,
             onClick: 'generateFundingRequest',
           },
           {
@@ -108,7 +118,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_import_payment_statuses',
             level: UserRoles.level6,
             roles: [UserRoles.contributorFinance],
-            group: 4,
+            group: MassActionGroup.Group4,
             onSecondaryClick: 'downloadImportPaymentStatusesTemplate',
           },
           {
@@ -121,7 +131,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_import_users',
             level: UserRoles.level6,
             roles: null,
-            group: 4,
+            group: MassActionGroup.Group4,
             onSecondaryClick: 'downloadImportUsersTemplate',
           },
           {
@@ -132,7 +142,7 @@ describe('MassActionsHome.vue', () => {
             dataTest: 'massAction_data_correction',
             level: UserRoles.level6,
             roles: null,
-            group: 5,
+            group: MassActionGroup.Group5,
             secondaryButton: 'mass_action.card.action.download_template',
             showSecondaryButton: true,
             secondaryButtonIsMenu: true,

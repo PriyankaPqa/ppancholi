@@ -40,6 +40,13 @@ describe('MassActionsLayout.vue', () => {
                 level: UserRoles.level6,
               },
               {
+                text: wrapper.vm.$t('mass_action.card.communications'),
+                test: 'mass_action.card.communications',
+                to: null,
+                exact: false,
+                level: UserRoles.level6,
+              },
+              {
                 text: wrapper.vm.$t('mass_action.card.caseFileStatus'),
                 test: 'mass_action.card.case_file_status',
                 to: routes.massActions.caseFileStatus.home.name,
