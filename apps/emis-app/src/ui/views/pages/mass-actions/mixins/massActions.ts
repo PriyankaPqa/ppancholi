@@ -67,7 +67,11 @@ export default Vue.extend({
           this.downloadTemplate(this.templateData.importPaymentStatuses.fileName, this.templateData.importPaymentStatuses.blobsParts);
           break;
         case 'downloadImportUsersTemplate':
-          this.downloadTemplate(this.templateData.importUsers.fileName, this.templateData.importUsers.blobsParts);
+          if (this.$hasFeature(FeatureKeys.UseIdentityServer)) {
+            this.downloadApiTemplate(MassActionType.ImportUsers);
+          } else {
+            this.downloadTemplate(this.templateData.importUsers.fileName, this.templateData.importUsers.blobsParts);
+          }
           break;
         case 'downloadFACustomTemplate':
           this.downloadApiTemplate(MassActionType.FinancialAssistanceCustomOptions);

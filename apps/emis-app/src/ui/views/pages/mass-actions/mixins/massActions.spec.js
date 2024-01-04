@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
-import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { MassActionDataCorrectionType, MassActionType } from '@libs/entities-lib/mass-action';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -55,6 +55,13 @@ describe('massActions', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.onClick('downloadImportUsersTemplate');
         expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ImportUsersTemplate.csv', 'FirstName,LastName,Email,Role');
+      });
+
+      it('should trigger proper method downloadImportUsersTemplate when the feature flag is on', () => {
+        wrapper.vm.downloadApiTemplate = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.UseIdentityServer);
+        wrapper.vm.onClick('downloadImportUsersTemplate');
+        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionType.ImportUsers);
       });
 
       it('should trigger proper method downloadFACustomTemplate', () => {
