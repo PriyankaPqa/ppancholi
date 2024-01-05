@@ -10,7 +10,7 @@
     @search="searchString = $event">
     <div class="lists__container">
       <div class="lists__list">
-        <v-list>
+        <v-list aria-busy="true">
           <v-subheader class="rc-body14 fw-bold pl-4 pointer" @click="toggleSorting">
             {{ $t('system_management.lists.lists_header') }}
             <v-icon size="16px">
@@ -24,6 +24,7 @@
             <v-list-item
               :key="`customizable-list-id-${list.dataTest}`"
               :data-test="`customizable-list-id-${list.dataTest}`"
+              role="link"
               :to="{ name: list.route }">
               <v-list-item-content class="full-height rc-link14 fw-bold">
                 {{ $t(list.name) }}

@@ -32,7 +32,7 @@
           </v-col>
         </v-row>
 
-        <v-row no-gutters :class="[isPreprocessed ? 'green-background' : '', 'row-data']">
+        <v-row no-gutters :class="[isPreprocessed ? 'rc-green-background' : '', 'row-data']">
           <v-col cols="12" md="5">
             <span class="rc-body14 fw-bold green-text" data-test="successesLabel=">
               <v-icon class="mr-2" small :color="colors.status.success">mdi-check-circle</v-icon>
@@ -67,7 +67,7 @@
           </v-col>
         </v-row>
 
-        <v-row no-gutters :class="[isPreprocessed ? 'red-background' : '', 'row-data']">
+        <v-row no-gutters :class="[isPreprocessed ? 'rc-red-background' : '', 'row-data']">
           <v-row no-gutters :class="[showErrors ? 'mt-4' : '', 'full-width']">
             <v-col cols="12" md="5">
               <span class="rc-body14 fw-bold red-text">
@@ -82,7 +82,7 @@
             </v-col>
             <v-col md="2" class="d-flex justify-end">
               <template v-if="hasErrors">
-                <v-btn icon class="mr-2" small @click="showErrors = !showErrors">
+                <v-btn icon class="mr-2" :aria-label="$t('common.buttons.expand')" small @click="showErrors = !showErrors">
                   <v-icon>{{ showErrors ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                 </v-btn>
 
@@ -373,14 +373,6 @@ export default Vue.extend({
 
 .red-text {
   color:  var(--v-status_error-base);
-}
-
-.green-background {
-  background: var(--v-status_green_pale-base);
-}
-
-.red-background {
-  background: var(--v-status_red_pale-base);
 }
 
 .row-data {

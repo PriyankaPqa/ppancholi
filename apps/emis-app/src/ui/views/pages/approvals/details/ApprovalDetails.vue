@@ -15,7 +15,7 @@
             <v-col cols="4" align-self="end">
               <v-row no-gutters align="center" justify="end">
                 <status-chip status-name="Status" data-test="approvalDetail_approval_status" :status="approval.approvalBaseStatus" />
-                <v-btn icon class="ml-2" data-test="approval_edit_button" @click="goToEdit()">
+                <v-btn icon class="ml-2" data-test="approval_edit_button" :aria-label="$t('common.edit')" @click="goToEdit()">
                   <v-icon>
                     mdi-pencil
                   </v-icon>

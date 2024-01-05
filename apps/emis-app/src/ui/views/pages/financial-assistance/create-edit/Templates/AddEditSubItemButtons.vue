@@ -10,7 +10,7 @@
       {{ saveButtonLabel }}
     </v-btn>
 
-    <v-btn icon :data-test="cancelButtonDataTest" :disabled="loading" @click="onCancel">
+    <v-btn icon :data-test="cancelButtonDataTest" :aria-label="$t('common.buttons.close')" :disabled="loading" @click="onCancel">
       <v-icon>
         mdi-close
       </v-icon>

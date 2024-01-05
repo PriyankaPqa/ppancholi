@@ -76,7 +76,7 @@
 
         <v-menu offset-y data-test="assessment__menu">
           <template #activator="{ on }">
-            <v-btn icon data-test="menu-link" class="ml-4" v-on="on">
+            <v-btn icon data-test="menu-link" :aria-label="$t('task.action')" class="ml-4" v-on="on">
               <v-icon>
                 mdi-dots-vertical
               </v-icon>

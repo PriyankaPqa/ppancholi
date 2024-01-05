@@ -90,6 +90,7 @@
                       icon
                       x-small
                       class="mr-4"
+                      :aria-label="$t('common.delete')"
                       :data-test="`unselect_${user.id}`"
                       @click="updateSelection(user)"
                       v-on="on">

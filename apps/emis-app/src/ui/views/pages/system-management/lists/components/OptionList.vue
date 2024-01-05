@@ -10,7 +10,7 @@
     @search="search = $event"
     @add-button="addItem">
     <template v-if="embedded" #buttons>
-      <v-btn class="ml-2" icon data-test="optionsList__closeDialog" @click="closeDialog()">
+      <v-btn class="ml-2" icon :aria-label="$t('common.close')" data-test="optionsList__closeDialog" @click="closeDialog()">
         <v-icon color="primary lighten-2">
           mdi-close
         </v-icon>

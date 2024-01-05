@@ -90,6 +90,7 @@
           v-if="showDeleteIcon(item)"
           icon
           x-small
+          :aria-label="$t('common.delete')"
           :data-test="`remove_team_member_${item.entity.id}`"
           @click="handleRemoveTeamMember(item)">
           <v-icon color="grey darken-2">

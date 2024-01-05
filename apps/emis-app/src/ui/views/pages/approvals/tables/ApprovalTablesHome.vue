@@ -49,12 +49,12 @@
       </template>
 
       <template #[`item.actions`]="{ item }">
-        <v-btn icon class="mr-2" data-test="edit_approval_table" @click="goToEdit(item.entity.id)">
+        <v-btn icon class="mr-2" data-test="edit_approval_table" :aria-label="$t('common.edit')" @click="goToEdit(item.entity.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
         </v-btn>
-        <v-btn icon class="mr-2" data-test="delete_approval_table" @click="deleteItem(item.entity.id)">
+        <v-btn icon class="mr-2" data-test="delete_approval_table" :aria-label="$t('common.delete')" @click="deleteItem(item.entity.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>

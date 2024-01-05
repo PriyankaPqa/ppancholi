@@ -622,4 +622,12 @@ export default Vue.extend({
 ::v-deep .wrapped-column {
   white-space: pre-line;
 }
+
+::v-deep .dx-group-panel-message {
+  color: var(--v-grey-darken2) !important;
+}
+
+::v-deep .dx-datagrid-headers {
+  color: var(--v-grey-darken2) !important;
+}
 </style>

@@ -63,6 +63,7 @@
                 data-test="assessment-description"
                 full-width
                 clearable
+                :aria-label="$t('common.description')"
                 :label="$t('common.description')"
                 :rules="rules.description"
                 @click:clear="clearDescription()" />
@@ -141,6 +142,7 @@
                 data-test="assessment-messageIfUnavailable"
                 full-width
                 clearable
+                :aria-label="$t('assessmentTemplate.messageIfUnavailable')"
                 :label="$t('assessmentTemplate.messageIfUnavailable')"
                 :rules="rules.messageIfUnavailable"
                 @click:clear="clearMessage()" />
@@ -208,10 +210,11 @@
                       <td>
                         <v-checkbox-with-validation
                           v-model="scoringRange.restrictFinancial"
+                          :aria-label="$t('assessmentTemplate.restrictFinancial')"
                           dense />
                       </td>
                       <td>
-                        <v-btn class="ml-3" icon data-test="cancel" @click="deleteScoring(scoringRange)">
+                        <v-btn class="ml-3" icon data-test="cancel" :aria-label="$t('common.delete')" @click="deleteScoring(scoringRange)">
                           <v-icon size="20">
                             mdi-delete
                           </v-icon>

@@ -15,7 +15,7 @@
 
             <div>
               <status-chip status-name="Status" :status="program.status" data-test="program-details-status" />
-              <v-btn class="ml-4" icon data-test="edit-button" :to="getEditRoute()">
+              <v-btn class="ml-4" icon data-test="edit-button" :aria-label="$t('common.edit')" :to="getEditRoute()">
                 <v-icon>
                   mdi-pencil
                 </v-icon>
@@ -314,6 +314,6 @@ export default Vue.extend({
 
 <style scoped lang="scss">
 .disabled {
-  opacity: 0.6;
+  color: var(--v-grey-darken2);
 }
 </style>

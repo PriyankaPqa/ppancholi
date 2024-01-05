@@ -183,6 +183,14 @@ div.status {
   font-size: 19px;
   font-weight: bold;
 }
+
+.rc-green-background {
+  background: #E6F5E6;
+}
+
+.rc-red-background {
+  background: #FFEDE5;
+}
 /* knockout surveyjs bug - wont be required in a future version - start */
 .sv-list__item--selected {
   background-color: var(--v-primary-base) !important;

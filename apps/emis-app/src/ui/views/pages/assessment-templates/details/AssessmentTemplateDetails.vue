@@ -15,6 +15,7 @@
                     icon
                     :to="assessmentTemplateEditRoute"
                     bottom
+                    :aria-label="$t('common.edit')"
                     data-test="editAssessmentTemplate-link"
                     v-on="on">
                     <v-icon>

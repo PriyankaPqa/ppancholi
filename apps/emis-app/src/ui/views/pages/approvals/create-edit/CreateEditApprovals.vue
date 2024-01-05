@@ -63,6 +63,7 @@
                         v-model="isActive"
                         class="mt-0 ml-auto mr-3 pt-0"
                         flat
+                        :aria-label="$t('common.status')"
                         :disabled="disabledStatus || disableUpperForm"
                         data-test="approval-status-toggle"
                         hide-details

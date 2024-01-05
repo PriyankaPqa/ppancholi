@@ -53,8 +53,8 @@
             {{ $t('common.buttons.save') }}
           </v-btn>
 
-          <v-btn data-test="optionListNewItem__cancelBtn" icon class="ml-2" :disabled="loading">
-            <v-icon @click="cancel">
+          <v-btn data-test="optionListNewItem__cancelBtn" :aria-label="$t('common.buttons.close')" icon class="ml-2" :disabled="loading" @click="cancel">
+            <v-icon>
               mdi-close
             </v-icon>
           </v-btn>

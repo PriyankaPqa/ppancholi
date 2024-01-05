@@ -17,6 +17,7 @@
                 fab
                 color="white"
                 small
+                :aria-label="$t('common.buttons.add')"
                 v-on="on"
                 @click="$emit('add-button')">
                 <v-icon color="primary">
@@ -84,6 +85,7 @@
               <v-btn
                 icon
                 data-test="pageContent_editButton"
+                :aria-label="$t('common.edit')"
                 v-on="on"
                 @click="$emit('edit')">
                 <v-icon color="primary lighten-2">

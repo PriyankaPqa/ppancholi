@@ -85,11 +85,11 @@
           <v-col :cols="2">
             <div style="float: right;">
               <template v-if="group.editMode">
-                <v-btn color="primary" :disabled="failed || groupSameAsBackup(group)" :loading="editGroupLoading" small @click="applyEdit($index)">
+                <v-btn color="primary" :disabled="failed || groupSameAsBackup(group)" :loading="editGroupLoading" :aria-label="$t('common.apply')" small @click="applyEdit($index)">
                   {{ $t('common.apply') }}
                 </v-btn>
 
-                <v-btn class="ml-3" icon data-test="cancel" @click="cancelEdit($index)">
+                <v-btn class="ml-3" icon data-test="cancel" :aria-label="$t('common.buttons.close')" @click="cancelEdit($index)">
                   <v-icon size="20">
                     mdi-close
                   </v-icon>
@@ -97,11 +97,18 @@
               </template>
 
               <template v-if="group.addMode">
-                <v-btn color="primary" :disabled="failed" :loading="addGroupLoading" data-test="approvals_groupTable_add" small @click="addGroup(group)">
+                <v-btn
+                  color="primary"
+                  :disabled="failed"
+                  :loading="addGroupLoading"
+                  data-test="approvals_groupTable_add"
+                  :aria-label="$t('common.add')"
+                  small
+                  @click="addGroup(group)">
                   {{ $t('common.add') }}
                 </v-btn>
 
-                <v-btn class="ml-3" icon data-test="cancel" @click="deleteGroup($index)">
+                <v-btn class="ml-3" icon data-test="cancel" :aria-label="$t('common.delete')" @click="deleteGroup($index)">
                   <v-icon size="20">
                     mdi-delete
                   </v-icon>
@@ -112,6 +119,7 @@
                 <v-btn
                   icon
                   :disabled="disableAction($index)"
+                  :aria-label="$t('common.edit')"
                   data-test="approvals_groupTable_edit"
                   @click="editGroup(group, $index)">
                   <v-icon size="20">
@@ -122,6 +130,7 @@
                   icon
                   data-test="approvals_groupTable_delete"
                   :loading="deleteGroupLoadingIndex === $index"
+                  :aria-label="$t('common.delete')"
                   :disabled="disableAction($index) || editMode && hasOnlyOneGroup"
                   @click="deleteGroupWithConfirmation($index)">
                   <v-icon size="20">

@@ -94,6 +94,7 @@
                         class="mt-0 ml-auto mr-3 pt-0"
                         flat
                         :disabled="(isEdit && isOperating)"
+                        :aria-label="$t('common.status')"
                         data-test="financial-assistance-table-status-toggle"
                         hide-details
                         color="white" />

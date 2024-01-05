@@ -5,13 +5,13 @@
       <div class="actions">
         <status-chip :show-loading="loadingChip" data-test="mass_action_status" status-name="MassActionRunStatus" :status="massActionStatus" />
         <div>
-          <v-btn v-if="showEditIcon" class="ml-2" icon data-test="edit" @click="$emit('edit')">
+          <v-btn v-if="showEditIcon" class="ml-2" icon :aria-label="$t('common.edit')" data-test="edit" @click="$emit('edit')">
             <v-icon size="24" color="grey darken-2">
               mdi-pencil
             </v-icon>
           </v-btn>
 
-          <v-btn v-if="showDeleteIcon" icon data-test="delete" @click="$emit('delete')">
+          <v-btn v-if="showDeleteIcon" icon data-test="delete" :aria-label="$t('common.delete')" @click="$emit('delete')">
             <v-icon size="24" color="grey darken-2">
               mdi-delete
             </v-icon>

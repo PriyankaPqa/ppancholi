@@ -55,6 +55,7 @@
               icon
               small
               :data-test="`${dataTest}__collapseButton--${$index}`"
+              :aria-label="$t('common.buttons.expand')"
               @click="collapseItem($index)">
               <v-icon v-if="getIsItemCollapsed($index)">
                 mdi-menu-right
@@ -178,6 +179,7 @@
                   color="primary"
                   :disabled="getIsAddSubItemDisabled($index) || addItem !== false"
                   :data-test="`${dataTest}__addSubItem--${$index}`"
+                  :aria-label="$t('financialAssistance.addSubItem')"
                   @click="onAddSubItem($index)">
                   <v-icon>
                     mdi-plus

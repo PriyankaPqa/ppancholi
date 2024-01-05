@@ -51,7 +51,7 @@
         <v-list class="full-width" aria-busy="true">
           <template v-if="groupMode">
             <template v-for="(group, groupIndex) in tabs">
-              <div :key="groupIndex" class="rc-body12 grey--text ml-5 my-1">
+              <div :key="groupIndex" class="rc-body12 rc-grey-text ml-5 my-1">
                 {{ group.name }}
               </div>
               <v-list-item
@@ -66,6 +66,7 @@
                 :data-test="tab.test"
                 :disabled="tab.disabled"
                 link
+                role="link"
                 :exact="typeof tab.exact === 'undefined' ? true : tab.exact"
                 :to="tab.to ? { name: tab.to } : tab.route"
                 replace

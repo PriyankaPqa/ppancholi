@@ -20,7 +20,7 @@
       <div class="flex-row justify-space-between pa-4 pb-0">
         <status-chip status-name="Status" :status="status" />
 
-        <v-btn icon data-test="financialDetails__editBtn" @click="goToEdit()">
+        <v-btn icon data-test="financialDetails__editBtn" :aria-label="$t('common.edit')" @click="goToEdit()">
           <v-icon>
             mdi-pencil
           </v-icon>

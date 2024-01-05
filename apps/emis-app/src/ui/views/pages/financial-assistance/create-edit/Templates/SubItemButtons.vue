@@ -3,6 +3,7 @@
     <v-btn
       icon
       :disabled="isOperating"
+      :aria-label="$t('common.edit')"
       :data-test="`financialAssistanceItems__editSubItemBtn--${parentIndex}--${index}`"
       @click="onEditSubItem">
       <v-icon small>
@@ -13,6 +14,7 @@
     <v-btn
       icon
       :disabled="isOperating"
+      :aria-label="$t('common.delete')"
       :data-test="`financialAssistanceItems__deleteSubItemBtn--${parentIndex}--${index}`"
       @click="onDeleteSubItem">
       <v-icon small>

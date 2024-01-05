@@ -4,6 +4,7 @@
       v-if="!item.subItems.length"
       icon
       :disabled="isOperating"
+      :aria-label="$t('common.edit')"
       :data-test="`financialAssistanceItems__editItemBtn--${index}`"
       @click="onEditItem">
       <v-icon small>
@@ -14,6 +15,7 @@
     <v-btn
       icon
       :disabled="isOperating"
+      :aria-label="$t('common.delete')"
       :data-test="`financialAssistanceItems__deleteItemBtn--${index}`"
       @click="onDeleteItem">
       <v-icon small>

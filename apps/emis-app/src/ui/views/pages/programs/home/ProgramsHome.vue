@@ -40,7 +40,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item: program }">
-        <v-btn icon :to="getProgramEditRoute(program.entity)" data-test="editProgram-link">
+        <v-btn icon :to="getProgramEditRoute(program.entity)" :aria-label="$t('common.edit')" data-test="editProgram-link">
           <v-icon>
             mdi-pencil
           </v-icon>

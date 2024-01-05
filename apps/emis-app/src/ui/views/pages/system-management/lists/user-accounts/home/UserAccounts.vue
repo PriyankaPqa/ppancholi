@@ -74,6 +74,7 @@
           <v-btn
             icon
             data-test="cancel-role-change"
+            :aria-label="$t('common.buttons.close')"
             @click="cancelRoleChange(item)">
             <v-icon>
               mdi-close
@@ -87,6 +88,7 @@
           icon
           :disabled="canNotManageRoleForUser(item)"
           data-test="delete-user"
+          :aria-label="$t('common.delete')"
           @click="deleteUserAccount(item)">
           <v-icon>
             mdi-delete

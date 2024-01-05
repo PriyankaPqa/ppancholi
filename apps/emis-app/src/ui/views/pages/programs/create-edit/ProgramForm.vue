@@ -31,6 +31,7 @@
                 <v-switch
                   v-model="isStatusActive"
                   data-test="program-status-toggle"
+                  :aria-label="$t('common.status')"
                   class="pt-0 mt-0"
                   hide-details
                   color="white"

@@ -5,6 +5,7 @@
       color="primary"
       :disabled="failed || (mode === 'edit' && pristine)"
       :data-test="saveButtonDataTest"
+      :aria-label="$t('common.buttons.save')"
       @click="onSave">
       {{ mode === 'add' ? $t('common.buttons.add') : $t('common.buttons.save') }}
     </v-btn>

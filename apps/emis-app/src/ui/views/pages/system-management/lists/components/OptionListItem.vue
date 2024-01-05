@@ -14,6 +14,7 @@
           icon
           small
           class="mr-1"
+          :aria-label="$t('common.buttons.expand')"
           @click="subItemsExpanded = !subItemsExpanded">
           <v-icon v-if="subItemsExpanded">
             mdi-menu-up
@@ -99,13 +100,13 @@
       </v-col>
 
       <v-col v-if="!editMode" :class="{ search: isSearchResult, 'pb-2': true }" class="alignRight" cols="2">
-        <v-btn data-test="optionsListItem__editBtn" icon :disabled="editDisabled" @click="editItem">
+        <v-btn data-test="optionsListItem__editBtn" icon :aria-label="$t('common.edit')" :disabled="editDisabled" @click="editItem">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
 
         <v-menu v-if="hasOther || hasDefault || hasRestrictFinancial" offset-y>
           <template #activator="{ on, attrs }">
-            <v-btn v-bind="attrs" data-test="optionsListItem__menuBtn" icon :disabled="editDisabled" v-on="on">
+            <v-btn v-bind="attrs" data-test="optionsListItem__menuBtn" :aria-label="$t('task.action')" icon :disabled="editDisabled" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
@@ -113,21 +114,21 @@
           <v-list>
             <v-list-item v-if="hasDefault" @click="setIsDefault">
               {{ $t('common.default') }}
-              <v-icon v-if="item.isDefault" class="ml-2" small>
+              <v-icon v-if="item.isDefault" :aria-label="$t('common.buttons.close')" class="ml-2" small>
                 mdi-close
               </v-icon>
             </v-list-item>
 
             <v-list-item v-if="hasOther" @click="setIsOther">
               {{ $t('common.pleaseSpecify') }}
-              <v-icon v-if="item.isOther" class="ml-2" small>
+              <v-icon v-if="item.isOther" :aria-label="$t('common.buttons.close')" class="ml-2" small>
                 mdi-close
               </v-icon>
             </v-list-item>
 
             <v-list-item v-if="hasRestrictFinancial" @click="setRestrictFinancial">
               {{ $t('common.restrictFinancial') }}
-              <v-icon v-if="item.restrictFinancial" class="ml-2" small>
+              <v-icon v-if="item.restrictFinancial" :aria-label="$t('common.buttons.close')" class="ml-2" small>
                 mdi-close
               </v-icon>
             </v-list-item>
@@ -140,7 +141,7 @@
           {{ $t('common.buttons.save') }}
         </v-btn>
 
-        <v-btn data-test="optionsListItem__cancelBtn" icon class="ml-2" :disabled="loading" @click="cancelEdit">
+        <v-btn data-test="optionsListItem__cancelBtn" icon class="ml-2" :aria-label="$t('common.buttons.close')" :disabled="loading" @click="cancelEdit">
           <v-icon>
             mdi-close
           </v-icon>
