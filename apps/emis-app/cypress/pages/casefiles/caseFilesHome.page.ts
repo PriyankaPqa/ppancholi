@@ -20,9 +20,9 @@ export class CaseFilesHomePage {
     cy.waitItemsRefreshUntilDisplayed('case-file-entities', beneficiarySelector);
   }
 
-  public goToHouseholdProfile(primaryBeneficiary: MemberCreateRequest) {
+  public goToFirstHouseholdProfile(primaryBeneficiary: MemberCreateRequest) {
     const beneficiarySelector = { selector: `"${DataTest.beneficiaryNameLink}_${primaryBeneficiary.identitySet.firstName} ${primaryBeneficiary.identitySet.lastName}"`, type: 'a' };
-    cy.getByDataTest(beneficiarySelector).click();
+    cy.getByDataTest(beneficiarySelector).eq(0).click();
     return new HouseholdProfilePage();
   }
 
@@ -44,7 +44,7 @@ export class CaseFilesHomePage {
     cy.waitAndRefreshUntilConditions(
       {
         visibilityCondition: () => this.getCaseFileTable().should('be.visible'),
-        checkCondition: () => Cypress.$(`[data-test='beneficiaryName-link_${beneficiaryName}']`).length > 0,
+        checkCondition: () => Cypress.$(`[data-test="beneficiaryName-link_${beneficiaryName}"]`).length > 0,
       },
       {
         timeoutInSec: 45,

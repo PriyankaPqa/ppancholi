@@ -2,7 +2,7 @@ import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
 import { useProvider } from '../../../provider/provider';
 import { createHousehold } from '../../helpers/prepareState';
-import { potentialDuplicateCreatedSteps } from './canSteps';
+import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
 
 describe('#TC1867# : SELF REG - Potential duplicate records created when individual enters same Phone number as an existing EMIS household', { tags: ['@registration'] }, () => {
   beforeEach(() => {
@@ -36,6 +36,7 @@ describe('#TC1867# : SELF REG - Potential duplicate records created when individ
       caseFileNumber: this.caseFileNumber,
       eventName: this.eventName.translation.en,
       phoneNumber: this.phoneNumber,
+      potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
     });
   });
 });

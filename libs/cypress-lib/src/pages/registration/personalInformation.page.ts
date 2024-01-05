@@ -12,6 +12,7 @@ export enum DataTest {
   indigenousIdentity = 'personalInfo__indigenousType',
   phoneNumber = 'personalInfo__homePhoneNumber',
   nextButton = 'nextButton',
+  personalInfoDuplicateError = 'personal_info_duplicate_error',
 }
 
 export interface IPersonalInfoFields {
@@ -47,6 +48,8 @@ export class PersonalInformationPage {
   private phoneNumber = { selector: DataTest.phoneNumber, type: 'input' };
 
   private nextButton = { selector: DataTest.nextButton };
+
+  private personalInfoDuplicateError = { selector: DataTest.personalInfoDuplicateError };
 
   async fill(data: IPersonalInfoFields, roleName: string) {
     if (data.firstName) {
@@ -97,5 +100,9 @@ export class PersonalInformationPage {
 
   public fillPhoneNumber(phone: string) {
     cy.getByDataTest(this.phoneNumber).type(phone);
+  }
+
+  public getPersonalInfoDuplicateErrorElement() {
+    return cy.getByDataTest(this.personalInfoDuplicateError);
   }
 }

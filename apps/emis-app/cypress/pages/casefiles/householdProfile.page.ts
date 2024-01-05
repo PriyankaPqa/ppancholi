@@ -333,6 +333,10 @@ export class HouseholdProfilePage {
     return new ManageDuplicatesPage();
   }
 
+  public getManageDuplicatesButton() {
+    return cy.getByDataTest(this.manageDuplicatesButton);
+  }
+
   public getDuplicatesIcon() {
     return cy.getByDataTest(this.duplicateIcon);
   }

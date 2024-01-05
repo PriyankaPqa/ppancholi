@@ -10,6 +10,13 @@ export interface PotentialDuplicateCreatedStepsParams {
   eventName: string,
   phoneNumber?: string,
   duplicateHouseholdAddress?: IAddressData,
+  potentialDuplicateBasis: string,
+}
+
+export enum PotentialDuplicateBasis {
+  'PhoneNumber' = 'PhoneNumber',
+  'HomeAddress' = 'HomeAddress',
+  'NameAndDob' = 'NameAndDob',
 }
 
 export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreatedStepsParams) => {
@@ -20,14 +27,16 @@ export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreated
   manageDuplicatesPage.getDuplicateHouseholdCaseFileData()
     .should('string', `Case file number: ${params.caseFileNumber}`)
     .and('string', `Event: ${params.eventName}`);
-  if (params.phoneNumber) {
+  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
     manageDuplicatesPage.getDuplicatePhoneNumber().should('eq', params.phoneNumber);
-  } else if (params.duplicateHouseholdAddress) {
+  } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.HomeAddress) {
     manageDuplicatesPage.getDuplicateHouseholdDetails()
       .should(
         'eq',
         `${params.duplicateHouseholdAddress.unitSuite}-${params.duplicateHouseholdAddress.streetAddress}, Quebec, AB, ${params.duplicateHouseholdAddress.postalCode}, Canada`,
       );
+  } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
+    manageDuplicatesPage.getDuplicateName().should('eq', `${params.firstName} ${params.lastName}`);
   }
   manageDuplicatesPage.getDuplicateHistoryStatus().should('eq', 'Flagged as potential');
   manageDuplicatesPage.getDuplicateHistoryUser().should('string', 'By: System').and('string', getToday());
