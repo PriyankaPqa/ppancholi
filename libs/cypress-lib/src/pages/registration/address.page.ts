@@ -1,6 +1,7 @@
 import { HouseholdMembersPage } from './householdMembers.page';
 
 export enum DataTest {
+  unitSuite = 'address__unitSuite',
   streetAddress = 'address__street',
   municipality = 'address__city',
   province = 'address__province',
@@ -26,6 +27,8 @@ export interface IAddressPageFields {
 }
 
 export class AddressPage {
+  private unitSuite = { selector: DataTest.unitSuite, type: 'input' };
+
   private streetAddress = { selector: DataTest.streetAddress, type: 'input' };
 
   private municipality = { selector: DataTest.municipality, type: 'input' };
@@ -39,6 +42,10 @@ export class AddressPage {
   private nextButton = { selector: DataTest.nextButton };
 
   async fill(data:IAddressPageFields) {
+    if (data.unitNumber) {
+      cy.getByDataTest(this.unitSuite).clear().type(data.unitNumber);
+    }
+
     if (data.streetAddress) {
       cy.getByDataTest(this.streetAddress).clear().type(data.streetAddress);
     }

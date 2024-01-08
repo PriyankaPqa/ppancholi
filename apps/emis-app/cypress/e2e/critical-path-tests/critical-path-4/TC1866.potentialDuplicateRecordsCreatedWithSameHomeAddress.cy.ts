@@ -1,5 +1,6 @@
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { mockCreateDuplicateHouseholdWithSameAddressRequest } from '@libs/cypress-lib/mocks/household/household';
+import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { useProvider } from '../../../provider/provider';
 import { createHousehold } from '../../helpers/prepareState';
 import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
@@ -38,6 +39,7 @@ describe('#TC1866# : SELF REG - Potential duplicate records created when individ
       eventName: this.eventName.translation.en,
       duplicateHouseholdAddress: this.duplicateHouseholdAddress,
       potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+      roleName: UserRoles.level6,
     });
   });
 });

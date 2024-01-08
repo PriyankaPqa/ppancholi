@@ -1,6 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { HouseholdProfilePage } from 'cypress/pages/casefiles/householdProfile.page';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureAddressData, fixturePrimaryMember } from '../../../fixtures/registration';
@@ -77,20 +76,15 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
             potentialDuplicateAddressData,
           });
 
-          if (roleName === UserRoles.level0) {
-            const householdProfilePage = new HouseholdProfilePage();
-            householdProfilePage.getDuplicatesIcon().should('be.visible');
-            householdProfilePage.getManageDuplicatesButton().should('not.exist');
-          } else {
-            potentialDuplicateCreatedSteps({
-              firstName: this.primaryBeneficiary.identitySet.firstName,
-              lastName: this.primaryBeneficiary.identitySet.lastName,
-              registrationNumber: this.registrationNumber,
-              caseFileNumber: this.caseFileNumber,
-              eventName: this.eventCreated.name.translation.en,
-              potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
-            });
-          }
+          potentialDuplicateCreatedSteps({
+            firstName: this.primaryBeneficiary.identitySet.firstName,
+            lastName: this.primaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.registrationNumber,
+            caseFileNumber: this.caseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            roleName,
+          });
         });
       });
     }

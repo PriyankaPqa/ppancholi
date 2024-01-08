@@ -18,13 +18,14 @@ export const fixturePrimaryMember = (retries: number, force?:IPersonalInfoFields
   ...force,
 });
 
-export const fixtureAddressData = () : IAddressPageFields => ({
+export const fixtureAddressData = (force?: IAddressPageFields) : IAddressPageFields => ({
   placeName: faker.address.city(),
   streetAddress: faker.address.streetAddress(),
   municipality: faker.address.cityName(),
   province: 'ON',
   postalCode: faker.helpers.replaceSymbols('?#?#?#'),
   tempAddress: 'Remaining in home',
+  ...force,
 });
 
 export const fixtureAdditionalMemberPersonalData = (retries: number) : IAddMembersPersonalInfoFields => ({

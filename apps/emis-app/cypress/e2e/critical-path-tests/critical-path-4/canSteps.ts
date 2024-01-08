@@ -13,9 +13,10 @@ export interface PotentialDuplicateCreatedStepsParams {
   registrationNumber: string,
   caseFileNumber: string,
   eventName: string,
+  potentialDuplicateBasis: string,
+  roleName: UserRoles,
   phoneNumber?: string,
   duplicateHouseholdAddress?: IAddressData,
-  potentialDuplicateBasis: string,
 }
 
 export enum PotentialDuplicateBasis {
@@ -34,28 +35,34 @@ export interface CrcRegisterPotentialDuplicateStepsParams {
 
 export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreatedStepsParams) => {
   const householdProfilePage = new HouseholdProfilePage();
-  const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
-  manageDuplicatesPage.getDuplicateHouseholdPrimaryMemberName().should('eq', `${params.firstName} ${params.lastName}`);
-  manageDuplicatesPage.getDuplicateHouseholdRegistrationNumber().should('eq', `Registration number: ${params.registrationNumber}`);
-  manageDuplicatesPage.getDuplicateHouseholdCaseFileData()
-    .should('string', `Case file number: ${params.caseFileNumber}`)
-    .and('string', `Event: ${params.eventName}`);
-  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
-    manageDuplicatesPage.getDuplicatePhoneNumber().should('eq', params.phoneNumber);
-  } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.HomeAddress) {
-    manageDuplicatesPage.getDuplicateHouseholdDetails()
-      .should(
-        'eq',
-        `${params.duplicateHouseholdAddress.unitSuite}-${params.duplicateHouseholdAddress.streetAddress}, Quebec, AB, ${params.duplicateHouseholdAddress.postalCode}, Canada`,
-      );
-  } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
-    manageDuplicatesPage.getDuplicateName().should('eq', `${params.firstName} ${params.lastName}`);
+
+  if (params.roleName === UserRoles.level0) {
+    householdProfilePage.getDuplicatesIcon().should('be.visible');
+    householdProfilePage.getManageDuplicatesButton().should('not.exist');
+  } else {
+    const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
+    manageDuplicatesPage.getDuplicateHouseholdPrimaryMemberName().should('eq', `${params.firstName} ${params.lastName}`);
+    manageDuplicatesPage.getDuplicateHouseholdRegistrationNumber().should('eq', `Registration number: ${params.registrationNumber}`);
+    manageDuplicatesPage.getDuplicateHouseholdCaseFileData()
+      .should('string', `Case file number: ${params.caseFileNumber}`)
+      .and('string', `Event: ${params.eventName}`);
+    if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
+      manageDuplicatesPage.getDuplicatePhoneNumber().should('eq', params.phoneNumber);
+    } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.HomeAddress) {
+      manageDuplicatesPage.getDuplicateHouseholdDetails()
+        .should(
+          'eq',
+          `${params.duplicateHouseholdAddress.unitSuite}-${params.duplicateHouseholdAddress.streetAddress}, Quebec, AB, ${params.duplicateHouseholdAddress.postalCode}, Canada`,
+        );
+    } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
+      manageDuplicatesPage.getDuplicateName().should('eq', `${params.firstName} ${params.lastName}`);
+    }
+    manageDuplicatesPage.getDuplicateHistoryStatus().should('eq', 'Flagged as potential');
+    manageDuplicatesPage.getDuplicateHistoryUser().should('string', 'By: System').and('string', getToday());
+    manageDuplicatesPage.getDuplicateHistoryRationale().should('eq', 'Rationale: Flagged by the system');
+    manageDuplicatesPage.getActionDropdown().should('exist');
+    manageDuplicatesPage.goToHouseholdProfilePage();
   }
-  manageDuplicatesPage.getDuplicateHistoryStatus().should('eq', 'Flagged as potential');
-  manageDuplicatesPage.getDuplicateHistoryUser().should('string', 'By: System').and('string', getToday());
-  manageDuplicatesPage.getDuplicateHistoryRationale().should('eq', 'Rationale: Flagged by the system');
-  manageDuplicatesPage.getActionDropdown().should('exist');
-  manageDuplicatesPage.goToHouseholdProfilePage();
 
   const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
   caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('potential duplicate');
