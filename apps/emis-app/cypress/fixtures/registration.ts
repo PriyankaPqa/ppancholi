@@ -7,7 +7,7 @@ import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/person
 const firstName = (retries: number) => `${removeSpecialCharacters(faker.name.firstName())} ${getCurrentDateString()}- retires${retries}`;
 const lastName = removeSpecialCharacters(faker.name.lastName());
 
-export const fixturePrimaryMember = (retries: number) : IPersonalInfoFields => ({
+export const fixturePrimaryMember = (retries: number, force?:IPersonalInfoFields) : IPersonalInfoFields => ({
   firstName: firstName(retries),
   lastName,
   gender: faker.helpers.arrayElement(['Female', 'Male']),
@@ -15,6 +15,7 @@ export const fixturePrimaryMember = (retries: number) : IPersonalInfoFields => (
   preferredLanguage: 'French',
   emailAddress: faker.internet.email(firstName(retries), lastName),
   indigenousIdentity: faker.helpers.arrayElement(['First Nation', 'Metis', 'Inuit', 'Other']),
+  ...force,
 });
 
 export const fixtureAddressData = () : IAddressPageFields => ({

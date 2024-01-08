@@ -1,6 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { HouseholdProfilePage } from 'cypress/pages/casefiles/householdProfile.page';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureAddressData, fixturePrimaryMember } from '../../../fixtures/registration';
@@ -9,6 +8,7 @@ import {
   crcRegisterPotentialDuplicateSteps,
   potentialDuplicateCreatedSteps,
 } from './canSteps';
+import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -32,7 +32,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when user registers individual with same Name & DOB as another EMIS member', { tags: ['@household', '@registration'] }, () => {
+describe('#TC1869# - CRC REG NEW HOUSEHOLD - Potential duplicate records created when user registers individual with same Phone number as existing EMIS member', { tags: ['@household', '@registration'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -62,11 +62,9 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
             cy.goTo('registration');
           });
         });
-        it('should flag potential duplicates when crc user registers with same name and dob', function () {
+        it('should flag potential duplicates when crc user registers with same phone number', function () {
           const potentialDuplicateMemberData = fixturePrimaryMember(this.test.retries.length, {
-            firstName: this.primaryBeneficiary.identitySet.firstName,
-            lastName: this.primaryBeneficiary.identitySet.lastName,
-            dateOfBirth: this.primaryBeneficiary.identitySet.dateOfBirth,
+            phoneNumber: this.primaryBeneficiary.contactInformation.homePhoneNumber.number,
           });
           const potentialDuplicateAddressData = fixtureAddressData();
 
@@ -75,6 +73,7 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
             roleName,
             potentialDuplicateMemberData,
             potentialDuplicateAddressData,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
           });
 
           if (roleName === UserRoles.level0) {
@@ -88,7 +87,8 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
               registrationNumber: this.registrationNumber,
               caseFileNumber: this.caseFileNumber,
               eventName: this.eventCreated.name.translation.en,
-              potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+              phoneNumber: this.primaryBeneficiary.contactInformation.homePhoneNumber.number,
+              potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
             });
           }
         });
@@ -103,7 +103,7 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
           cy.login(roleName);
           cy.goTo('registration');
         });
-        it('should not be able to flag potential duplicates when crc user registers with same name and dob', () => {
+        it('should not be able to flag potential duplicates when crc user registers with same phone number', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

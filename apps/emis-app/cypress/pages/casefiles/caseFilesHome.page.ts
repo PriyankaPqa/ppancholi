@@ -20,8 +20,8 @@ export class CaseFilesHomePage {
     cy.waitItemsRefreshUntilDisplayed('case-file-entities', beneficiarySelector);
   }
 
-  public goToFirstHouseholdProfile(primaryBeneficiary: MemberCreateRequest) {
-    const beneficiarySelector = { selector: `"${DataTest.beneficiaryNameLink}_${primaryBeneficiary.identitySet.firstName} ${primaryBeneficiary.identitySet.lastName}"`, type: 'a' };
+  public goToFirstHouseholdProfile(firstName: string, lastName: string) {
+    const beneficiarySelector = { selector: `"${DataTest.beneficiaryNameLink}_${firstName} ${lastName}"`, type: 'a' };
     cy.getByDataTest(beneficiarySelector).eq(0).click();
     return new HouseholdProfilePage();
   }

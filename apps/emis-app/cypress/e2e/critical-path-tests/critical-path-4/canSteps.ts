@@ -1,5 +1,10 @@
 import { getToday } from '@libs/cypress-lib/helpers';
 import { IAddressData } from '@libs/entities-lib/household-create';
+import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { CrcRegistrationPage } from 'cypress/pages/registration/crcRegistration.page';
+import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
+import { ConfirmBeneficiaryRegistrationPage } from 'cypress/pages/registration/confirmBeneficiaryRegistration.page';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 export interface PotentialDuplicateCreatedStepsParams {
@@ -17,6 +22,14 @@ export enum PotentialDuplicateBasis {
   'PhoneNumber' = 'PhoneNumber',
   'HomeAddress' = 'HomeAddress',
   'NameAndDob' = 'NameAndDob',
+}
+
+export interface CrcRegisterPotentialDuplicateStepsParams {
+  eventName: string,
+  roleName: UserRoles,
+  potentialDuplicateMemberData: IPersonalInfoFields,
+  potentialDuplicateAddressData: IAddressPageFields,
+  potentialDuplicateBasis?: string,
 }
 
 export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreatedStepsParams) => {
@@ -54,4 +67,45 @@ export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreated
 
   householdProfilePage.getDuplicatesIcon().should('be.visible');
   householdProfilePage.getDuplicatesCount().should('eq', '1 potential duplicate(s)');
+};
+
+export const crcRegisterPotentialDuplicateSteps = (params: CrcRegisterPotentialDuplicateStepsParams) => {
+  const crcRegistrationPage = new CrcRegistrationPage();
+  crcRegistrationPage.getPageTitle().should('eq', 'Welcome, let\'s get started. Please select an event:');
+  crcRegistrationPage.fillEvent(params.eventName);
+
+  const beneficiarySearchPage = crcRegistrationPage.beginRegistration();
+
+  const crcPrivacyStatementPage = beneficiarySearchPage.goToCrcPrivacyStatementPage();
+  crcPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
+  crcPrivacyStatementPage.fillUserNameIfEmpty(params.roleName);
+  crcPrivacyStatementPage.fillPrivacyRegistrationMethod('Phone');
+
+  const personalInformationPage = crcPrivacyStatementPage.goToPersonalInfoPage();
+
+  personalInformationPage.fill(params.potentialDuplicateMemberData, '');
+  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
+    personalInformationPage.fillPhoneNumber(params.potentialDuplicateMemberData.phoneNumber);
+  }
+  const addressPage = personalInformationPage.goToAddressPage();
+  addressPage.fill(params.potentialDuplicateAddressData);
+
+  const householdMembersPage = addressPage.goToHouseholdMembersPage();
+
+  const reviewRegistrationPage = householdMembersPage.goToReviewPage();
+  reviewRegistrationPage.goToConfirmationPage();
+
+  const confirmBeneficiaryRegistrationPage = new ConfirmBeneficiaryRegistrationPage();
+  confirmBeneficiaryRegistrationPage.getFullName()
+    .should('string', params.potentialDuplicateMemberData.firstName)
+    .and('string', params.potentialDuplicateMemberData.lastName);
+  confirmBeneficiaryRegistrationPage.getMessage().should('string', ' is now registered!');
+  confirmBeneficiaryRegistrationPage.getRegistrationNumber().should('exist');
+  confirmBeneficiaryRegistrationPage.getEventName().should('string', params.eventName);
+  confirmBeneficiaryRegistrationPage.getPrintButton().should('be.visible');
+  confirmBeneficiaryRegistrationPage.getNewRegistrationButton().should('be.visible');
+
+  const caseFilesHomePage = confirmBeneficiaryRegistrationPage.goToCaseFiles();
+  caseFilesHomePage.refreshUntilCaseFilesUpdated(`${params.potentialDuplicateMemberData.firstName} ${params.potentialDuplicateMemberData.lastName}`);
+  caseFilesHomePage.goToFirstHouseholdProfile(params.potentialDuplicateMemberData.firstName, params.potentialDuplicateMemberData.lastName);
 };
