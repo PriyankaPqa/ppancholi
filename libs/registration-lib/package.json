@@ -13,7 +13,7 @@
     "@libs/stores-lib": "*",
     "@mdi/font": "^6.5.95",
     "awesome-phonenumber": "2.68.0",
-    "axios": "1.6.1",
+    "axios": "1.6.4",
     "deepmerge": "^4.2.2",
     "lodash": "^4.17.21",
     "date-fns": "2.30.0",
