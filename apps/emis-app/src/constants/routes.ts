@@ -392,6 +392,20 @@ const routes = {
         name: 'massActions.assessments.details',
       },
     },
+    communications: {
+      home: {
+        path: 'communications',
+        name: 'massActions.communications.home',
+      },
+      create: {
+        path: 'communications/create',
+        name: 'massActions.communications.create',
+      },
+      details: {
+        path: 'communications/details/:id',
+        name: 'massActions.communications.details',
+      },
+    },
     importValidationStatus: {
       home: {
         path: 'import-validation-status',

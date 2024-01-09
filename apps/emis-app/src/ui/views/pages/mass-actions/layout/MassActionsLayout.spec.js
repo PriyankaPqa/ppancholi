@@ -42,7 +42,7 @@ describe('MassActionsLayout.vue', () => {
               {
                 text: wrapper.vm.$t('mass_action.card.communications'),
                 test: 'mass_action.card.communications',
-                to: null,
+                to: routes.massActions.communications.home.name,
                 exact: false,
                 level: UserRoles.level6,
               },

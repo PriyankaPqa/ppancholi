@@ -72,7 +72,7 @@ export default mixins(massActions).extend({
           title: 'mass_action.card.communications',
           description: this.$t('mass_action.card.group', { x: 1 }),
           button: 'mass_action.card.action.view',
-          route: null,
+          route: routes.massActions.communications.home.name,
           dataTest: 'massAction_communications',
           level: UserRoles.level6,
           roles: null,

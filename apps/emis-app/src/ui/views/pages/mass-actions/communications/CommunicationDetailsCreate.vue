@@ -1,0 +1,189 @@
+<template>
+  <div>
+    <div class="rc-body16 fw-bold mb-6">
+      {{ $t('massActions.communication.details.title') }}
+    </div>
+    <div class="pa-6">
+      <v-row>
+        <v-col cols="12">
+          <span>{{ $t('massActions.communication.create.communicationMethod.label') }} *</span>
+          <validation-provider v-slot="{ errors }" :rules="rules.method">
+            <v-radio-group v-model="formCopy.method" :error-messages="errors" class="mt-0" row>
+              <v-radio
+                :label="$t('enums.communicationMethod.Email')"
+                data-test="communication-form-method-email"
+                :value="CommunicationMethod.Email" />
+              <v-radio
+                :label="$t('enums.communicationMethod.SMS')"
+                data-test="communication-form-method-sms"
+                :value="CommunicationMethod.SMS" />
+            </v-radio-group>
+          </validation-provider>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <events-selector
+            v-model="formCopy.event"
+            async-mode
+            :force-events="filteredEvents"
+            return-object
+            data-test="payment_event_name"
+            fetch-all-events
+            :label="`${$t('massActions.financialAssistance.create.event.label')} *`"
+            :rules="rules.event"
+            @click:clear="onClearEvent()"
+            @change="onSetEvent($event)" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <language-tabs :language="languageMode" @click="setLanguageMode" />
+          <v-text-field-with-validation
+            v-model="formCopy.messageSubject.translation[languageMode]"
+            data-test="communication-message-subject"
+            :label="`${$t('massActions.communication.create.messageSubject.label')} *`"
+            :rules="rules.messageSubject" />
+
+          <span>{{ $t('massActions.communication.create.messageText.label') }}</span>
+
+          <template v-if="formCopy.method === CommunicationMethod.SMS">
+            <span>: {{ smsLength }}/{{ MAX_LENGTH_SMS }} {{ $t('massActions.communication.create.smsLength.label') }}</span>
+            <v-text-area-with-validation
+              v-model="formCopy.smsMessage.translation[languageMode]"
+              data-test="communication-sms-description"
+              persistent-hint
+              :rules="rules.smsMessage" />
+          </template>
+
+          <template v-else>
+            <v-btn class="ma-2" small @click="clearEmailText">
+              {{ $t('common.clear') }}
+            </v-btn>
+            <vue-editor id="editor1" v-model="formCopy.emailMessage.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          </template>
+        </v-col>
+      </v-row>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { VueEditor } from 'vue2-editor';
+import isEmpty from 'lodash/isEmpty';
+import cloneDeep from 'lodash/cloneDeep';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { CASE_FILE_DOC_EXTENSIONS } from '@/constants/documentExtensions';
+import { MAX_LENGTH_MD, MAX_LENGTH_SMS } from '@libs/shared-lib/constants/validations';
+import { IEventEntity } from '@libs/entities-lib/event';
+import { MassActionCommunicationMethod } from '@libs/entities-lib/mass-action';
+import utils from '@libs/entities-lib/utils';
+import { ui } from '@/constants/ui';
+import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
+import {
+VTextFieldWithValidation, VTextAreaWithValidation,
+} from '@libs/component-lib/components';
+import { CommunicationDetailsForm } from './CommunicationCreate.vue';
+
+export default Vue.extend({
+  name: 'CommunicationDetailsCreate',
+
+  components: {
+    EventsSelector,
+    VueEditor,
+    LanguageTabs,
+    VTextFieldWithValidation,
+    VTextAreaWithValidation,
+  },
+
+  props: {
+    form: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      languageMode: 'en',
+      loadingEvent: false,
+      filteredEvents: [],
+      formCopy: null as CommunicationDetailsForm,
+      isEmpty,
+      MAX_LENGTH_SMS,
+      CommunicationMethod: MassActionCommunicationMethod,
+      allowedExtensions: CASE_FILE_DOC_EXTENSIONS,
+      toolbarSettings: ui.vueEditorToolbarSettings,
+      smsLength: 0,
+    };
+  },
+
+  computed: {
+    rules(): Record<string, unknown> {
+      return {
+        event: {
+          required: true,
+        },
+        method: {
+          required: true,
+        },
+        messageSubject: {
+          required: true,
+          max: MAX_LENGTH_MD,
+        },
+        smsMessage: {
+          max: MAX_LENGTH_SMS,
+        },
+      };
+    },
+  },
+
+  watch: {
+    formCopy: {
+      deep: true,
+      handler(newVal) {
+        this.$emit('update', newVal);
+        this.smsLength = newVal.smsMessage.translation.en.length;
+      },
+    },
+
+    'formCopy.event': {
+      async handler(newEvent) {
+        if (newEvent) {
+          this.onSetEvent(newEvent);
+        }
+      },
+    },
+  },
+
+  async created() {
+    this.formCopy = cloneDeep(this.form);
+  },
+
+  methods: {
+    onClearEvent() {
+      this.onSetEvent(null);
+    },
+
+    async onSetEvent(event: IEventEntity) {
+      this.formCopy.event = event;
+    },
+
+    fillEmptyMultilingualFields() {
+      this.formCopy.messageSubject = utils.getFilledMultilingualField(this.formCopy.messageSubject);
+      this.formCopy.emailMessage = utils.getFilledMultilingualField(this.formCopy.emailMessage);
+      this.formCopy.smsMessage = utils.getFilledMultilingualField(this.formCopy.smsMessage);
+    },
+
+    clearEmailText() {
+      this.formCopy.emailMessage = utils.initMultilingualAttributes();
+    },
+
+    setLanguageMode(lang: string) {
+      this.languageMode = lang;
+      this.fillEmptyMultilingualFields();
+    },
+  },
+});
+</script>

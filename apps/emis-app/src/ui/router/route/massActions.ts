@@ -17,6 +17,10 @@ const MassActionsAssessmentHome = () => import('@/ui/views/pages/mass-actions/as
 const MassActionsAssessmentCreate = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentCreate.vue');
 const MassActionsAssessmentDetails = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentDetailsMassAction.vue');
 
+const MassActionsCommunicationHome = () => import('@/ui/views/pages/mass-actions/communications/CommunicationHomeMassAction.vue');
+const MassActionsCommunicationCreate = () => import('@/ui/views/pages/mass-actions/communications/CommunicationCreate.vue');
+const MassActionsCommunicationDetails = () => import('@/ui/views/pages/mass-actions/communications/CommunicationDetailsMassAction.vue');
+
 const MassActionsImportValidationStatusHome = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
 const MassActionsImportValidationStatusCreate = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
 const MassActionsImportValidationStatusDetails = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
@@ -110,6 +114,26 @@ export const massActions: RouteConfig = {
       path: Routes.massActions.assessments.details.path,
       name: Routes.massActions.assessments.details.name,
       component: MassActionsAssessmentDetails,
+      meta: { level: UserRoles.level6 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.communications.home.path,
+      name: Routes.massActions.communications.home.name,
+      component: MassActionsCommunicationHome,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.massActions.communications.create.path,
+      name: Routes.massActions.communications.create.name,
+      component: MassActionsCommunicationCreate,
+      meta: { level: UserRoles.level6 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.communications.details.path,
+      name: Routes.massActions.communications.details.name,
+      component: MassActionsCommunicationDetails,
       meta: { level: UserRoles.level6 },
       props: true,
     },

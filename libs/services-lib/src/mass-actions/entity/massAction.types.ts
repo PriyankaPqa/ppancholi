@@ -1,5 +1,5 @@
 import {
-  IMassActionEntity, MassActionRunType, MassActionType, MassActionDataCorrectionType,
+  IMassActionEntity, MassActionRunType, MassActionType, MassActionDataCorrectionType, MassActionCommunicationMethod,
 } from '@libs/entities-lib/mass-action/massActions.types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { IListOption, IMultilingual } from '@libs/shared-lib/src/types';
@@ -28,6 +28,17 @@ export interface IMassActionAssessmentCreatePayload {
   assessmentFormId: uuid;
   emailSubject: IMultilingual;
   emailAdditionalDescription: IMultilingual;
+  search: string;
+  filter: string;
+}
+
+export interface IMassActionCommunicationCreatePayload {
+  name: string;
+  description: string;
+  eventId: uuid;
+  method: MassActionCommunicationMethod;
+  messageSubject: IMultilingual;
+  message: IMultilingual;
   search: string;
   filter: string;
 }

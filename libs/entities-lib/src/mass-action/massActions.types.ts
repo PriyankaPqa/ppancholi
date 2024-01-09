@@ -23,6 +23,7 @@ export enum MassActionType {
   Assessments = 14,
   FinancialAssistanceCustomOptions = 15,
   CaseFileStatus = 16,
+  Communications = 18,
 }
 
 // this is actually also part of MassActionType!!
@@ -56,6 +57,11 @@ export enum MassActionRunStatus {
   Processed = 4,
 }
 
+export enum MassActionCommunicationMethod {
+  Email = 1,
+  SMS = 2,
+}
+
 export interface IMassActionDetails {
   paymentModality?: EPaymentModalities;
   amount?: number;
@@ -77,6 +83,13 @@ export interface IMassActionCaseFileStatusDetails {
   status: CaseFileStatus;
   reason: IListOption;
   rationale: string ;
+}
+
+export interface IMassActionCommunicationDetails {
+  eventId: uuid;
+  method: MassActionCommunicationMethod;
+  messageSubject: IMultilingual;
+  message: IMultilingual;
 }
 
 export interface IMassActionRun extends IEntity {
