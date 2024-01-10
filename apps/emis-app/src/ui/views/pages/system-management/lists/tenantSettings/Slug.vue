@@ -9,7 +9,7 @@
           <v-btn v-if="slug" data-test="slug__editBtn_locked" icon disabled>
             <v-icon>mdi-lock-outline</v-icon>
           </v-btn>
-          <v-btn v-else data-test="slug__editBtn" icon :disabled="disableEditBtn" @click="enterEditMode()">
+          <v-btn v-else data-test="slug__editBtn" icon :aria-label="$t('common.edit')" :disabled="disableEditBtn" @click="enterEditMode()">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-col>
@@ -35,7 +35,7 @@
                   <span v-if="slug">
                     {{ slug }}
                   </span>
-                  <span v-else class="grey--text">
+                  <span v-else class="rc-grey-text">
                     {{ $t('system_management.userAccounts.tenantSettings.slug.name.not.defined') }}
                   </span>
                 </v-col>

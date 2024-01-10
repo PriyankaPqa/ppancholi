@@ -139,7 +139,7 @@
         <v-col cols="12" md="10">
           <v-container>
             <v-row v-if="financialAssistanceTables.length === 0" class="list-row">
-              <v-col data-test="no-financialAssistance" class="rc-body14 fw-bold disabled" cols="12">
+              <v-col data-test="no-financialAssistance" class="rc-body14 fw-bold rc-grey-text" cols="12">
                 {{ $t('event.programManagement.noFinancialAssistance') }}
               </v-col>
             </v-row>
@@ -160,7 +160,7 @@
         <v-col cols="12" md="10">
           <v-container>
             <v-row v-if="assessmentIds.length === 0" class="list-row">
-              <v-col data-test="no-Assessments" class="rc-body14 fw-bold disabled" cols="12">
+              <v-col data-test="no-Assessments" class="rc-body14 fw-bold rc-grey-text" cols="12">
                 {{ $t('event.programManagement.noAssessments') }}
               </v-col>
             </v-row>
@@ -311,9 +311,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped lang="scss">
-.disabled {
-  color: var(--v-grey-darken2);
-}
-</style>

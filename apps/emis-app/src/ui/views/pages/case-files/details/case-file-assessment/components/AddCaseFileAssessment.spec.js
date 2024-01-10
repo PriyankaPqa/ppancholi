@@ -63,7 +63,7 @@ describe('AddCaseFileAssessment.vue', () => {
 
         expect(headers.wrappers[0].find('span').text()).toBe('assessmentTemplate.name');
         expect(headers.wrappers[1].find('span').text()).toBe('assessmentTemplate.program');
-        expect(headers.wrappers[2].find('span').text()).toBe('');
+        expect(headers.wrappers[2].find('span').text()).toBe('common.buttons.add');
       });
 
       it('displays the correct row for templates mode', async () => {

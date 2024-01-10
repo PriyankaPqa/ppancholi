@@ -88,7 +88,7 @@
               <v-text-field-with-validation
                 v-model="localEvent.responseDetails.eventType.specifiedOther"
                 data-test="event-type-specified-other"
-                autocomplete="nope"
+                autocomplete="off"
                 :label="`${$t('common.pleaseSpecify')} *`"
                 :disabled="inputDisabled"
                 :rules="rules.responseDetails.eventTypeOther" />
@@ -153,7 +153,7 @@
                     v-model="localEvent.schedule.updateReason"
                     data-test="reopen-reason"
                     background-color="white"
-                    autocomplete="nope"
+                    autocomplete="off"
                     :aria-label="$t('event.reOpenReason')"
                     :label="`${$t('event.reOpenReason')} *`"
                     :disabled="inputDisabled"

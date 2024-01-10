@@ -302,7 +302,8 @@ export default Vue.extend({
           width: '20px',
         },
         {
-          text: '',
+          text: this.$t('task.action') as string,
+          class: 'rc-transparent-text',
           value: this.customColumns.actions,
           width: '10px',
           sortable: false,

@@ -51,7 +51,7 @@ describe('CopyAssessment.vue', () => {
         expect(headers.length).toBe(2);
 
         expect(headers.wrappers[0].find('span').text()).toBe('assessmentTemplate.assessmentTemplateName');
-        expect(headers.wrappers[1].find('span').text()).toBe('');
+        expect(headers.wrappers[1].find('span').text()).toBe('common.copy');
       });
 
       it('displays the correct row for templates mode', async () => {

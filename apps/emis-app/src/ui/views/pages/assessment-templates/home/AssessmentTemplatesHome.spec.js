@@ -63,7 +63,7 @@ describe('AssessmentTemplatesHome.vue', () => {
         expect(headers.wrappers[0].find('span').text()).toBe('common.name');
         expect(headers.wrappers[1].find('span').text()).toBe('assessmentTemplate.published');
         expect(headers.wrappers[2].find('span').text()).toBe('common.status');
-        expect(headers.wrappers[3].find('span').text()).toBe('');
+        expect(headers.wrappers[3].find('span').text()).toBe('common.edit');
       });
 
       it('displays the correct row for templates mode', async () => {
@@ -84,7 +84,7 @@ describe('AssessmentTemplatesHome.vue', () => {
         expect(headers.wrappers[1].find('span').text()).toBe('common.name');
         expect(headers.wrappers[2].find('span').text()).toBe('assessmentTemplate.published');
         expect(headers.wrappers[3].find('span').text()).toBe('common.status');
-        expect(headers.wrappers[4].find('span').text()).toBe('');
+        expect(headers.wrappers[4].find('span').text()).toBe('common.edit');
       });
 
       it('displays the correct row for forms mode', async () => {

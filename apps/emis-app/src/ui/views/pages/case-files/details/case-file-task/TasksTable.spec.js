@@ -316,13 +316,15 @@ describe('TasksTable.vue', () => {
 
           },
           {
-            text: '',
+            text: 'task.action',
+            class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.action,
             width: '5%',
           },
           {
-            text: '',
+            text: 'common.edit',
+            class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.edit,
             width: '5%',
@@ -373,13 +375,15 @@ describe('TasksTable.vue', () => {
 
           },
           {
-            text: '',
+            text: 'task.action',
+            class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.action,
             width: '5%',
           },
           {
-            text: '',
+            text: 'common.edit',
+            class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.edit,
             width: '5%',

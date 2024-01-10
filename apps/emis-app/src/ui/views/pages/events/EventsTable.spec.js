@@ -272,7 +272,8 @@ describe('EventsTable.vue', () => {
             sortable: true,
           }, {
             align: 'end',
-            text: '',
+            text: 'common.edit',
+            class: 'rc-transparent-text',
             value: 'editButton',
             sortable: false,
           },

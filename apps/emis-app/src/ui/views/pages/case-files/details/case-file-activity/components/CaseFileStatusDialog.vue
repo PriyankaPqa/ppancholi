@@ -38,7 +38,7 @@
           v-if="selectedReason && selectedReason.isOther"
           v-model="specifiedOther"
           data-test="reason-specified-other"
-          autocomplete="nope"
+          autocomplete="off"
           :label="`${$t('common.pleaseSpecify')} *`"
           :rules="rules.specifiedOther" />
 

@@ -115,7 +115,8 @@ describe('FinancialAssistanceHomeMassAction.vue', () => {
             sortable: false,
           }, {
             align: 'end',
-            text: '',
+            text: 'common.delete',
+            class: 'rc-transparent-text',
             value: 'deleteButton',
             sortable: false,
           }];

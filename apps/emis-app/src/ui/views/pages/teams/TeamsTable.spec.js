@@ -209,7 +209,8 @@ describe('TeamsTable.vue', () => {
             width: '10%',
           },
           {
-            text: '',
+            text: 'common.edit',
+            class: 'rc-transparent-text',
             value: wrapper.vm.customColumns.edit,
             width: '10%',
             sortable: false,

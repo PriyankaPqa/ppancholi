@@ -265,7 +265,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
         {
           align: 'end',
-          text: '',
+          text: this.$t('task.action') as string,
+          class: 'rc-transparent-text',
           value: 'actions',
           sortable: false,
           width: '120px',

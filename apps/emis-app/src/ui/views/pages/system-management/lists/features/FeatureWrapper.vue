@@ -20,6 +20,7 @@
             v-model="enabled"
             class="mt-0 pt-0"
             hide-details
+            :aria-label="$m(feature.name)"
             :data-test="`feature-switch-${feature.id}`"
             :disabled="loading || shouldLock"
             :loading="loading"

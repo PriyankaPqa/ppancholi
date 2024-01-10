@@ -121,7 +121,8 @@ describe('MassActionBaseTable.vue', () => {
             sortable: false,
           }, {
             align: 'end',
-            text: '',
+            text: 'common.delete',
+            class: 'rc-transparent-text',
             value: 'deleteButton',
             sortable: false,
           }];
@@ -162,7 +163,8 @@ describe('MassActionBaseTable.vue', () => {
             sortable: false,
           }, {
             align: 'end',
-            text: '',
+            text: 'common.delete',
+            class: 'rc-transparent-text',
             value: 'deleteButton',
             sortable: false,
           }];
@@ -201,7 +203,8 @@ describe('MassActionBaseTable.vue', () => {
             sortable: false,
           }, {
             align: 'end',
-            text: '',
+            text: 'common.delete',
+            class: 'rc-transparent-text',
             value: 'deleteButton',
             sortable: false,
           }];

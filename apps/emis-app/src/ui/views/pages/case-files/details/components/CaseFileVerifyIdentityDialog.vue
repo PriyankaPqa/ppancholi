@@ -96,7 +96,7 @@
                 <v-text-field-with-validation
                   v-model="form.exceptionalTypeOther"
                   data-test="exceptional-specified-other"
-                  autocomplete="nope"
+                  autocomplete="off"
                   :disabled="readonly"
                   :label="`${$t('common.pleaseSpecify')} *`"
                   :rules="rules.exceptionalTypeOther" />
@@ -127,7 +127,7 @@
               <v-text-field-with-validation
                 v-model="form.specifiedOther"
                 data-test="specified-other"
-                autocomplete="nope"
+                autocomplete="off"
                 :disabled="readonly"
                 :label="`${$t('common.pleaseSpecify')} *`"
                 :rules="rules.specifiedOther" />

@@ -28,6 +28,7 @@
               v-if="canEdit"
               icon
               class="mx-2"
+              :aria-label="$t('common.edit')"
               data-test="edit-section-from-info-dialog"
               @click="$emit('edit')">
               <v-icon size="24" color="grey darken-2">

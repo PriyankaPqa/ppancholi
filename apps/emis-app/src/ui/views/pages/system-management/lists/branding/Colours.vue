@@ -6,7 +6,7 @@
           {{ $t('system_management.branding.colours') }}
         </v-col>
         <v-col v-if="!isEditing" class="d-flex justify-end">
-          <v-btn data-test="colours__editBtn" icon :disabled="disableEditBtn" @click="toggleEditMode(true)">
+          <v-btn data-test="colours__editBtn" icon :aria-label="$t('common.edit')" :disabled="disableEditBtn" @click="toggleEditMode(true)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-col>
@@ -19,7 +19,7 @@
       </span>
       <div class="border-radius-all colour-container px-1 rc-body14 " :style="{ backgroundColor: colour.value }">
         <input v-if="isEditing" v-model="colour.value" class="border-radius-all mb-1 colour-input bottom-element">
-        <span v-else class="white--text bottom-element">
+        <span v-else :class="`bottom-element ${ colour.value === '#A7D0E1' ? 'primary-darken1-text' : 'white--text' }`">
           {{ colour.value }}
         </span>
       </div>
@@ -165,7 +165,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .colour-container {
   border: 1px solid var(--v-grey-lighten2);
   height: 104px;
@@ -185,5 +185,8 @@ export default Vue.extend({
 }
 .error-box {
   height: 20px;
+}
+.primary-darken1-text {
+  color: var(--v-primary-darken1) !important;
 }
 </style>

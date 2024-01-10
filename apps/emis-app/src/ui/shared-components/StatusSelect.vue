@@ -1,7 +1,7 @@
 <template>
   <v-menu data-test="menu_status" :disabled="disabled">
     <template #activator="{ on }">
-      <span v-on="on">
+      <span v-on="setMenuAriaLabel(on)">
         <status-chip
           v-bind="$attrs"
           :class="{ pointer: !disabled, 'status-chip': true }"
@@ -12,7 +12,6 @@
           data-test="statusSelect__chip" />
       </span>
     </template>
-
     <v-list :dense="true" width="300">
       <template v-for="status in statuses">
         <v-list-item
@@ -35,6 +34,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import helpers from '@libs/component-lib/helpers';
 
 export default Vue.extend({
   name: 'StatusSelect',
@@ -68,6 +68,12 @@ export default Vue.extend({
   methods: {
     onChange(status: number) {
       this.$emit('input', status);
+    },
+
+// needed in order to solve a11y issue Certain ARIA roles must contain particular children
+    setMenuAriaLabel(on: any) {
+      helpers.setElementA11yAttribute('.v-menu__content.theme--light.menuable__content__active', 'aria-busy', 'true');
+      return on;
     },
   },
 });

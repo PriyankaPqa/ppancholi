@@ -61,7 +61,7 @@ describe('ProgramsHome.vue', () => {
 
         expect(headers.wrappers[0].find('span').text()).toBe('common.name');
         expect(headers.wrappers[1].find('span').text()).toBe('common.status');
-        expect(headers.wrappers[2].find('span').text()).toBe('');
+        expect(headers.wrappers[2].find('span').text()).toBe('common.edit');
       });
 
       describe('help button', () => {
@@ -158,7 +158,8 @@ describe('ProgramsHome.vue', () => {
             width: '100px',
           },
           {
-            text: '',
+            text: 'common.edit',
+            class: 'rc-transparent-text',
             sortable: false,
             value: 'edit',
           },

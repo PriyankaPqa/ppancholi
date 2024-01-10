@@ -6,10 +6,10 @@
           <span> {{ $t('system_management.userAccounts.tenantSettings.domains') }} </span>
         </v-col>
         <v-col v-if="!isEditing" class="text-right">
-          <v-btn v-if="$m(emisDomain) && $m(registrationDomain)" data-test="domains__editBtn_locked" icon disabled>
+          <v-btn v-if="$m(emisDomain) && $m(registrationDomain)" :aria-label="$t('common.edit')" data-test="domains__editBtn_locked" icon disabled>
             <v-icon>mdi-lock-outline</v-icon>
           </v-btn>
-          <v-btn v-else data-test="domains__editBtn" icon :disabled="disableEditBtn || hasNoSlug" @click="enterEditMode()">
+          <v-btn v-else data-test="domains__editBtn" icon :aria-label="$t('common.edit')" :disabled="disableEditBtn || hasNoSlug" @click="enterEditMode()">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-col>

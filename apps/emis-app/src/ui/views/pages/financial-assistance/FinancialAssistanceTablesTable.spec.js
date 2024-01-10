@@ -110,7 +110,8 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           },
           {
             align: 'end',
-            text: '',
+            text: 'common.edit',
+            class: 'rc-transparent-text',
             value: 'editButton',
             sortable: false,
           },

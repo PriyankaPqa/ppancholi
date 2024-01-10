@@ -42,4 +42,15 @@ export default {
       document.body.removeChild(link);
     }
   },
+
+  setElementA11yAttribute(selector: string, attribute: string, value: string) {
+    const elements = document.querySelectorAll(selector);
+    if (elements?.length > 0) {
+      elements.forEach((el) => {
+        if (el.getAttribute(attribute) !== value) {
+          el.setAttribute(attribute, value);
+        }
+      });
+    }
+  },
 };

@@ -311,7 +311,7 @@ describe('CaseFileAssessment.vue', () => {
       it('contains the right items', async () => {
         await mountWrapper();
         expect(wrapper.vm.pendingAssessmentsHeaders.map((h) => h.text))
-          .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'common.status', '', '']);
+          .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'common.status', 'task.action', 'task.action']);
         expect(wrapper.vm.pendingAssessmentsHeaders.filter((h) => h.sortable !== false).map((h) => h.text))
           .toEqual(['common.name', 'assessmentResponse.dateAssigned']);
       });
@@ -321,7 +321,16 @@ describe('CaseFileAssessment.vue', () => {
       it('contains the right items', async () => {
         await mountWrapper();
         expect(wrapper.vm.completedAssessmentsHeaders.map((h) => h.text))
-          .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'assessmentResponse.dateModified', 'assessmentResponse.dateCompleted', 'common.status', '', '']);
+          .toEqual(
+            [
+              'common.name',
+              'assessmentResponse.dateAssigned',
+              'assessmentResponse.dateModified',
+              'assessmentResponse.dateCompleted',
+              'common.status',
+              'task.action',
+              'task.action'],
+          );
         expect(wrapper.vm.completedAssessmentsHeaders.filter((h) => h.sortable !== false).map((h) => h.text))
           .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'assessmentResponse.dateModified', 'assessmentResponse.dateCompleted']);
       });

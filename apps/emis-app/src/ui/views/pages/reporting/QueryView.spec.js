@@ -10,6 +10,8 @@ import { locale, loadMessages } from 'devextreme/localization';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import frMessages from 'devextreme/localization/messages/fr.json';
 import enMessages from 'devextreme/localization/messages/en.json';
+import libHelpers from '@libs/component-lib/helpers';
+import helpers from '@/ui/helpers/helpers';
 import Component from './QueryView.vue';
 import {
   LookupType,
@@ -113,6 +115,16 @@ describe('QueryView.vue', () => {
         await hook.call(wrapper.vm);
 
         expect(wrapper.vm.bindQuery).toHaveBeenCalledWith(true);
+      });
+
+      it('calls setElementA11yAttributeWithDelay', async () => {
+        wrapper.vm.setElementA11yAttributeWithDelay = jest.fn();
+        jest.clearAllMocks();
+
+        const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
+        await hook.call(wrapper.vm);
+
+        expect(wrapper.vm.setElementA11yAttributeWithDelay).toHaveBeenCalled();
       });
     });
   });
@@ -574,6 +586,16 @@ describe('QueryView.vue', () => {
             owner: 'def',
           },
         );
+      });
+    });
+
+    describe('setElementA11yAttributeWithDelay', () => {
+      it('should call helpers setElementA11yAttribute with proper params', async () => {
+        libHelpers.setElementA11yAttribute = jest.fn();
+        helpers.timeout = jest.fn();
+        await wrapper.vm.setElementA11yAttributeWithDelay();
+        expect(helpers.timeout).toHaveBeenCalled();
+        expect(libHelpers.setElementA11yAttribute).toHaveBeenCalledWith('.dx-menu-item.dx-menu-item-has-icon.dx-menu-item-has-submenu', 'aria-label', 'common.search');
       });
     });
 

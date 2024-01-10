@@ -104,7 +104,8 @@ export default Vue.extend({
           width: '100%',
         },
         {
-          text: '',
+          text: this.$t('common.copy') as string,
+          class: 'rc-transparent-text',
           value: 'copy',
           sortable: false,
         },

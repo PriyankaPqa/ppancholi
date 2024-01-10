@@ -36,7 +36,7 @@
             <div class="creator-info px-13 grey-darken-2 rc-body12" data-test="task-details-team-task-creator-info">
               {{ teamTaskCreatorInfo }}
             </div>
-            <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 grey-text rc-body14">
+            <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 rc-grey-text rc-body14">
               <v-icon small class="mr-1 pb-1">
                 mdi-alert-circle
               </v-icon>
@@ -336,10 +336,6 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 </script>
 
 <style scoped lang="scss">
-.grey-text{
-  color: var(--v-grey-darken2)
-}
-
 .assigned-to-action {
   background-color: var(--v-grey-lighten4);
   border-radius: 4px;

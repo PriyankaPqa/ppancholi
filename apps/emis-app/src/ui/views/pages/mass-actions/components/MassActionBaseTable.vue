@@ -190,7 +190,8 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
           sortable: false,
         }, {
           align: 'end',
-          text: '',
+          text: this.$t('common.delete') as string,
+          class: 'rc-transparent-text',
           value: 'deleteButton',
           sortable: false,
         },

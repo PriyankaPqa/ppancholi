@@ -64,7 +64,7 @@
               <v-text-field-with-validation
                 v-model="localDocument.category.specifiedOther"
                 data-test="category-specified-other"
-                autocomplete="nope"
+                autocomplete="off"
                 :label="`${$t('common.pleaseSpecify')} *`"
                 :rules="rules.specifiedOther" />
             </v-col>

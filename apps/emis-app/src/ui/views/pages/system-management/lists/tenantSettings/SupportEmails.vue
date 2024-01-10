@@ -6,7 +6,7 @@
           <span> {{ $t('system_management.tenantSettings.supportEmails.title') }} </span>
         </v-col>
         <v-col v-if="!isEditing" class="text-right">
-          <v-btn data-test="supportEmails__editBtn" icon :disabled="disableEditBtn" @click="enterEditMode()">
+          <v-btn data-test="supportEmails__editBtn" icon :aria-label="$t('common.edit')" :disabled="disableEditBtn" @click="enterEditMode()">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-col>

@@ -217,7 +217,8 @@ export default mixins(TablePaginationSearchMixin).extend({
           sortable: true,
         },
         {
-          text: '',
+          text: this.$t('common.edit') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.edit,
           width: '200px',

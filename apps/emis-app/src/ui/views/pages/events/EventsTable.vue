@@ -181,7 +181,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortable: true,
       }, {
         align: 'end',
-        text: '',
+        text: this.$t('common.edit') as string,
+        class: 'rc-transparent-text',
         value: 'editButton',
         sortable: false,
       }];

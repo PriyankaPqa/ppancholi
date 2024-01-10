@@ -4,7 +4,7 @@
       <v-text-field
         :name="fieldName"
         :label="`${labelName}*`"
-        autocomplete="nope"
+        autocomplete="off"
         tabindex="-1"
         @change="$emit('change', $event)" />
     </v-col>

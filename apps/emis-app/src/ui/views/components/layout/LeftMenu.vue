@@ -6,6 +6,7 @@
     :mini-variant="mini"
     :class="{ expanded: !mini }"
     mini-variant-width="80"
+    :aria-label="$t('a11y.left_menu')"
     :mobile-breakpoint="$vuetify.breakpoint.thresholds.sm"
     app
     left

@@ -234,7 +234,8 @@ describe('ApprovalTablesHome.vue', () => {
           },
           {
             align: 'end',
-            text: '',
+            text: 'task.action',
+            class: 'rc-transparent-text',
             value: 'actions',
             sortable: false,
             width: '120px',

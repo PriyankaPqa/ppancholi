@@ -186,6 +186,7 @@ import { RcDataTableHeader, RcConfirmationDialog, VTextFieldWithValidation } fro
 import { IQuery, QueryType } from '@libs/entities-lib/reporting';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
+import libHelpers from '@libs/component-lib/helpers';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { UserTeamMember } from '@libs/entities-lib/user-account';
 import { UserRolesNames } from '@libs/entities-lib/user';
@@ -295,8 +296,9 @@ export default Vue.extend({
       this.bindQuery();
     },
   },
-  mounted() {
-      this.bindQuery(true);
+  async mounted() {
+    await this.bindQuery(true);
+    await this.setElementA11yAttributeWithDelay();
   },
 
   methods: {
@@ -601,6 +603,14 @@ export default Vue.extend({
           });
         }
       });
+    },
+
+    // needed in order to solve a11y issue "ARIA commands must have an accessible name"
+    // https://dequeuniversity.com/rules/axe/4.8/aria-command-name?application=AxeChrome
+    // this function has 1s delay in order to make sure all the elements of DxDataGrid have been rendered properly
+    async setElementA11yAttributeWithDelay(delay = 1000) {
+      await helpers.timeout(delay);
+      libHelpers.setElementA11yAttribute('.dx-menu-item.dx-menu-item-has-icon.dx-menu-item-has-submenu', 'aria-label', this.$t('common.search') as string);
     },
   },
 });

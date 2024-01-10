@@ -159,15 +159,21 @@ describe('UserAccounts.vue', () => {
             value: wrapper.vm.customColumns.accountStatus,
           },
           {
-            text: '',
-            class: 'emis_member_header',
+            text: 'common.edit',
+            class: [
+              'emis_member_header',
+              'rc-transparent-text',
+            ],
             filterable: false,
             sortable: false,
             value: 'edit',
           },
           {
-            text: '',
-            class: 'emis_member_header',
+            text: 'common.delete',
+            class: [
+              'emis_member_header',
+              'rc-transparent-text',
+            ],
             filterable: false,
             sortable: false,
             align: 'end',

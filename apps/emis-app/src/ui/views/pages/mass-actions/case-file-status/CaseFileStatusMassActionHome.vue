@@ -43,7 +43,7 @@
       </template>
 
       <template #[`item.deleteButton`]="{ item }">
-        <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" data-test="delete" @click="onDelete(item)">
+        <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" :aria-label="$t('common.delete')" data-test="delete" @click="onDelete(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -127,7 +127,8 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
         },
         {
           align: 'end',
-          text: '',
+          text: this.$t('common.delete') as string,
+          class: 'rc-transparent-text',
           value: 'deleteButton',
           sortable: false,
         },

@@ -1,5 +1,6 @@
 import Component from '../../components/atoms/RcDialog.vue';
 import { createLocalVue, mount } from '../testSetup';
+import helpers from '../../helpers';
 
 describe('RcDialog.vue', () => {
   let localVue;
@@ -113,6 +114,21 @@ describe('RcDialog.vue', () => {
     test('minHeightContent', async () => {
       const computed = wrapper.vm.minHeightContent;
       expect(computed).toBe('45px');
+    });
+  });
+
+  describe('lifecycle', () => {
+    describe('mounted', () => {
+      it('should call a11ySetDialogAriaLabel', async () => {
+        helpers.setElementA11yAttribute = jest.fn();
+        await wrapper.setProps({
+          title: 'mock-title',
+        });
+        await wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-dialog__content.v-dialog__content--active', 'aria-label', wrapper.vm.title);
+      });
     });
   });
 });

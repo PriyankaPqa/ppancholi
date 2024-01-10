@@ -54,6 +54,7 @@
                 icon
                 :loading="loading"
                 :disabled="!canEdit || saving"
+                :aria-label="$t('caseFileActivity.duplicate')"
                 v-on="on"
                 @click="setCaseFileIsDuplicate">
                 <v-icon :color="caseFile && caseFile.isDuplicate ? 'secondary' : ''">

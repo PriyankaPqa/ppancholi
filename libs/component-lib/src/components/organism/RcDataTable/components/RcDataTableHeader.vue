@@ -109,4 +109,9 @@ export default Vue.extend({
     display: none;
   }
 }
+
+::v-deep .v-text-field__slot > .theme--dark.v-label {
+  color: white !important;
+  font-size: 14px;
+}
 </style>

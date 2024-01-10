@@ -68,7 +68,7 @@
           <v-text-field-with-validation
             v-model="formCopy.reason.specifiedOther"
             data-test="reason-specified-other"
-            autocomplete="nope"
+            autocomplete="off"
             background-color="white"
             :label="`${$t('common.pleaseSpecify')} *`"
             :rules="rules.specifiedOther" />

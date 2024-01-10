@@ -89,7 +89,7 @@ describe('CaseFilesTable.vue', () => {
           .toBe('caseFilesTable.tableHeaders.createdDate');
         expect(headers.wrappers[6].find('span')
           .text())
-          .toBe('');
+          .toBe('caseFilesTable.recentlyViewed');
       });
 
       describe('help button', () => {
@@ -340,7 +340,8 @@ describe('CaseFilesTable.vue', () => {
             },
             {
               sortable: false,
-              text: '',
+              text: 'caseFilesTable.recentlyViewed',
+              class: 'rc-transparent-text',
               value: 'RecentlyViewed',
               width: '5%',
             },

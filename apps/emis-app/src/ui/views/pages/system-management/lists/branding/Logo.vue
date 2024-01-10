@@ -16,7 +16,7 @@
           :class="{ 'img-container d-flex flex-column': true, 'mr-2': lang.key === 'en', 'ml-2': lang.key === 'fr' }">
           <div class="logo-title rc-body14 ml-2">
             <span>{{ $t(`tab.${lang.key}`) }}</span>
-            <v-btn :data-test="`logo-${lang}__editBtn`" icon :disabled="disableEditBtn" @click="enterEditMode(lang.key)">
+            <v-btn :data-test="`logo-${lang}__editBtn`" icon :aria-label="$t('common.edit')" :disabled="disableEditBtn" @click="enterEditMode(lang.key)">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
           </div>

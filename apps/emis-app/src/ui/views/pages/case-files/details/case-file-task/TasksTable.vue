@@ -309,13 +309,15 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
         },
         {
-          text: '',
+          text: this.$t('task.action') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.action,
           width: '5%',
         },
         {
-          text: '',
+          text: this.$t('common.edit') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.edit,
           width: '5%',

@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" class="pt-12">
-    <v-col cols="12" md="8" xl="7" sm="12">
+    <v-col cols="12" md="8" xl="7" sm="12" tabindex="0">
       <mass-action-title-description
         v-if="!editMode"
         :show-delete-icon="showDeleteIcon"

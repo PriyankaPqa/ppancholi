@@ -6,7 +6,7 @@
           {{ $t('system_management.branding.tenantDetails') }}
         </v-col>
         <v-col v-if="!isEditing" class="d-flex justify-end">
-          <v-btn data-test="colours__editBtn" icon :disabled="disableEditBtn" @click="enterEditMode()">
+          <v-btn data-test="colours__editBtn" icon :aria-label="$t('common.edit')" :disabled="disableEditBtn" @click="enterEditMode()">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-col>
@@ -25,7 +25,7 @@
               <br>
               <span
                 v-if="tenantDetails.showName"
-                class="rc-body12 grey--text">✔ {{ $t('system_management.branding.tenantDetails.showName.label') }}</span>
+                class="rc-body12 rc-grey-text">✔ {{ $t('system_management.branding.tenantDetails.showName.label') }}</span>
             </td>
           </tr>
 

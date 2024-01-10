@@ -302,6 +302,13 @@ export default Vue.extend({
       return { 'min-height': this.minHeightContent };
     },
   },
+
+  // Need in order to comply with the ARIA rule "ARIA dialog and alertdialog nodes should have an accessible name"
+  // The issue has been fixed in Vuetify version 3.x https://github.com/vuetifyjs/vuetify/issues/14755#issuecomment-1532661240
+  mounted() {
+    helpers.setElementA11yAttribute('.v-dialog__content.v-dialog__content--active', 'aria-label', this.title);
+  },
+
   /**
      * Will open a new window containing an contextual help
      * @public

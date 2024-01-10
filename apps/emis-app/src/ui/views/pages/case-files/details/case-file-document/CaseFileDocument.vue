@@ -219,7 +219,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           value: this.customColumns.documentStatusName,
         },
         {
-          text: '',
+          text: this.$t('caseFile.document.preview') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.preview,
           width: '5%',
@@ -228,7 +229,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       if (this.canDownload) {
         headers.push({
-          text: '',
+          text: this.$t('common.download') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.download,
           width: '5%',
@@ -237,7 +239,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       if (this.canEdit) {
         headers.push({
-          text: '',
+          text: this.$t('common.edit') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.edit,
           width: '5%',
@@ -246,7 +249,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       if (this.canDelete) {
         headers.push({
-          text: '',
+          text: this.$t('common.delete') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.delete,
           width: '5%',

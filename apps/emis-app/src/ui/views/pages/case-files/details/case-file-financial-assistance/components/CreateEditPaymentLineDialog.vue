@@ -97,7 +97,7 @@
                 v-model="currentPaymentLine.amount"
                 data-test="txt_amount"
                 show-all-decimal
-                autocomplete="nope"
+                autocomplete="off"
                 type="number"
                 prefix="$"
                 :disabled="fixedAmount || paymentApproved || paymentPending"
@@ -112,7 +112,7 @@
                 v-model="currentPaymentLine.actualAmount"
                 data-test="txt_actualamount"
                 show-all-decimal
-                autocomplete="nope"
+                autocomplete="off"
                 type="number"
                 prefix="$"
                 :disabled="!paymentApproved"
@@ -125,7 +125,7 @@
               <v-text-field-with-validation
                 v-model="currentPaymentLine.relatedNumber"
                 data-test="txt_related_number"
-                autocomplete="nope"
+                autocomplete="off"
                 :rules="rules.relatedNumber"
                 :label="`${$t('caseFile.financialAssistance.relatedNumber')}`" />
             </v-col>
@@ -153,7 +153,7 @@
                 <v-text-field-with-validation
                   v-model="paymentGroup.groupingInformation.payeeName"
                   data-test="payment_payeename"
-                  autocomplete="nope"
+                  autocomplete="off"
                   :rules="rules.payeeName"
                   :disabled="paymentApproved || paymentPending"
                   :label="`${$t('caseFile.financialAssistance.payee.payeeName')} *`" />
@@ -164,7 +164,7 @@
                 <v-text-field-with-validation
                   v-model="currentPaymentLine.careOf"
                   data-test="payment_careof"
-                  autocomplete="nope"
+                  autocomplete="off"
                   :rules="rules.careOf"
                   :disabled="paymentApproved || paymentPending"
                   :label="`${$t('caseFile.financialAssistance.payee.careOf')}`" />

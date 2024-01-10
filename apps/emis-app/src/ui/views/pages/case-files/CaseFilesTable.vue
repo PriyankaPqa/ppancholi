@@ -318,7 +318,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           value: this.customColumns.created,
         },
         {
-          text: '',
+          text: this.$t('caseFilesTable.recentlyViewed') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.recentlyViewed,
           width: '5%',

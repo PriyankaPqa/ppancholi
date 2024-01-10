@@ -43,7 +43,7 @@
       </template>
 
       <template v-if="canEdit" #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn icon :to="getReferralEditRoute(item.entity.id)" data-test="editReferral-link">
+        <v-btn icon :to="getReferralEditRoute(item.entity.id)" :aria-label="$t('common.edit')" data-test="editReferral-link">
           <v-icon>
             mdi-pencil
           </v-icon>

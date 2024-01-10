@@ -125,7 +125,8 @@ export default Vue.extend({
           width: '50%',
         },
         {
-          text: '',
+          text: this.$t('common.buttons.add') as string,
+          class: 'rc-transparent-text',
           value: 'select',
           sortable: false,
         },

@@ -326,12 +326,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           width: '50px',
         },
         {
-          text: '',
+          text: this.$t('task.action') as string,
+          class: 'rc-transparent-text',
           value: this.customColumns.actions,
           sortable: false,
         },
         {
-          text: '',
+          text: this.$t('task.action') as string,
+          class: 'rc-transparent-text',
           value: this.customColumns.actions_icons,
           sortable: false,
           width: '30px',
