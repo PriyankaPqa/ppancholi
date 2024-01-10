@@ -51,7 +51,7 @@ let benefToAdd = []
 let benefToRemove = [];
 let confirm = null;
 
-const jiraStatusCleanTarget = 'Resolved';
+const jiraStatusCleanTarget = ['resolved', 'done', 'duplicate', 'cannot reproduce', 'work as expected', "won't do"];
 
 function generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
   const emisText = (emisToAdd.length > 0 || emisToRemove.length > 0) ? `EMIS: ${emisToAdd.length > 0 ? 'add ' + emisToAdd : ''} ${emisToRemove.length > 0 ? 'remove ' + emisToRemove : ''}` : '';
@@ -346,18 +346,18 @@ async function verifyJiraAuth () {
 
 }
 
-async function hasJiraItemStatus(id, status) {
+async function hasJiraItemStatus(id, statuses) {
   const item = await getJiraItemById(id);
   if (item) {
-    return item.fields.status.name === status;
+    return statuses.includes(item.fields.status.name.toLowerCase());
   }
   return false;
 }
 
-async function filterJiraItemsByStatus(ids, status) {
+async function filterJiraItemsByStatuses(ids, statuses) {
   const resolvedPromises = ids.map(async (id) => {
-    const isResolved = await hasJiraItemStatus(id, status)
-    return isResolved === true ? id : null;
+    const hasStatus = await hasJiraItemStatus(id, statuses)
+    return hasStatus === true ? id : null;
   })
   const results = await Promise.all(resolvedPromises)
   return results.filter(r => r !== null)
@@ -379,7 +379,7 @@ if (mode === Mode.preview) {
         .split(",")
         .filter(v => v !== '');
 
-      filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((items) => {
+        filterJiraItemsByStatuses(emisArr, jiraStatusCleanTarget).then((items) => {
         console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
         emisToRemove = items;
         console.log(items)
@@ -389,7 +389,7 @@ if (mode === Mode.preview) {
         .split(",")
         .filter(v => v !== '');
 
-        filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((items) => {
+        filterJiraItemsByStatuses(benefArr, jiraStatusCleanTarget).then((items) => {
           console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
           benefToRemove = items;
           console.log(items)
@@ -408,11 +408,11 @@ else if (mode === Mode.clean) {
     console.log('Starting cleaning process');
     preview()
       .then(([benefArr, emisArr]) => {
-        filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((items) => {
+        filterJiraItemsByStatuses(benefArr, jiraStatusCleanTarget).then((items) => {
           console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
           benefToRemove = items;
           console.log(items)
-          filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((items) => {
+          filterJiraItemsByStatuses(emisArr, jiraStatusCleanTarget).then((items) => {
             console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
             emisToRemove = items;
             console.log(items);
