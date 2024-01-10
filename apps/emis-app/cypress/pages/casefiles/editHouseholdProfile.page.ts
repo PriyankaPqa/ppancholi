@@ -1,9 +1,11 @@
+import { PersonalInformationPage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+
 export enum DataTest {
   middleName = 'personalInfo__middleName',
   save = 'dialog-submit-action',
 }
 
-export class EditHouseholdProfilePage {
+export class EditHouseholdProfilePage extends PersonalInformationPage {
   private middleName = { selector: DataTest.middleName, type: 'input' };
 
   private save = { selector: DataTest.save };

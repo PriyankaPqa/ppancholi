@@ -17,6 +17,7 @@ export interface PotentialDuplicateCreatedStepsParams {
   roleName: UserRoles,
   phoneNumber?: string,
   duplicateHouseholdAddress?: IAddressData,
+  caseFileLogIndex?: number,
 }
 
 export enum PotentialDuplicateBasis {
@@ -66,9 +67,10 @@ export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreated
 
   const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
   caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('potential duplicate');
-  caseFileDetailsPage.getUserName().should('eq', 'System');
-  caseFileDetailsPage.getCaseFileActivityTitle(0).should('string', 'Potential duplicate flagged');
-  caseFileDetailsPage.getCaseFileActivityBody(0).should('string', `This household has been identified as a potential duplicate with  #${params.registrationNumber}`)
+  caseFileDetailsPage.getUserName(params.caseFileLogIndex).should('eq', 'System');
+  caseFileDetailsPage.getCaseFileActivityTitle(params.caseFileLogIndex).should('string', 'Potential duplicate flagged');
+  caseFileDetailsPage.getCaseFileActivityBody(params.caseFileLogIndex)
+    .should('string', `This household has been identified as a potential duplicate with  #${params.registrationNumber}`)
     .and('string', 'Rationale: Flagged by the system');
   caseFileDetailsPage.goToDuplicateHouseholdProfile();
 
