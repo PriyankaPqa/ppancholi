@@ -6,7 +6,6 @@ export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
   BotProtection = 'BotProtection',
   SelfRegistration = 'SelfRegistration',
-  ManageDuplicates = 'manageDuplicates',
   UseIdentityServer = 'UseIdentityServer',
   TaskManagement = 'TaskManagement',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
@@ -15,7 +14,6 @@ export enum FeatureKeys {
   DataCorrectionAuthentication = 'DataCorrectionAuthentication',
   RecoveryPlan = 'RecoveryPlan',
   FeatureDashboard = 'FeatureDashboard',
-  UpdateRegistrationConsent = 'UpdateRegistrationConsent',
 }
 
 export enum FeatureType {

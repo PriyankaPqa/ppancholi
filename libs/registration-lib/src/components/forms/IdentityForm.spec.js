@@ -3,7 +3,6 @@ import {
   mockGenders,
   mockIdentitySet,
 } from '@libs/entities-lib/src/household-create';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IdentityForm.vue';
@@ -39,10 +38,9 @@ describe('IdentityForm.vue', () => {
       expect(wrapper.vm.$emit).toHaveBeenCalledWith('change', wrapper.vm.formCopy);
     });
 
-    test('displays the error if there is a duplicate if feature flag is on', async () => {
+    test('displays the error if there is a duplicate', async () => {
       const identitySet = mockIdentitySet();
       identitySet.getMemberDuplicateStatus = jest.fn(() => MemberDuplicateStatus.Duplicate);
-      wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
       await wrapper.setProps({ form: identitySet });
       const element = wrapper.findDataTest('personal_info_duplicate_error');
       expect(element.exists()).toBeTruthy();

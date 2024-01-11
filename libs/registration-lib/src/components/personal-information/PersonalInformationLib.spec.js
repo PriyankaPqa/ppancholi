@@ -13,7 +13,6 @@ import {
   mockGenders, mockSplitHousehold,
 } from '@libs/entities-lib/src/household-create';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import IdentityForm from '../forms/IdentityForm.vue';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
@@ -425,7 +424,7 @@ describe('PersonalInformationLib.vue', () => {
         expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
       });
 
-      it('calls checkDuplicates if the feature flag is on and it is not split mode', async () => {
+      it('calls checkDuplicates if it is not split mode', async () => {
         doMount(
           true,
           {
@@ -436,7 +435,6 @@ describe('PersonalInformationLib.vue', () => {
           },
         );
         wrapper.vm.checkDuplicates = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
         await wrapper.vm.setIdentity(mockIdentitySet());
         expect(wrapper.vm.checkDuplicates).toHaveBeenCalledWith(mockIdentitySet());
       });

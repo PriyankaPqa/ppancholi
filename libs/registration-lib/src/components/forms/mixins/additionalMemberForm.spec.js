@@ -3,7 +3,6 @@ import { mockMember } from '@libs/entities-lib/src/household-create';
 import { ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address/index';
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { createLocalVue, shallowMount } from '../../../test/testSetup';
 import additionalMemberForm from './additionalMemberForm';
 
@@ -112,12 +111,11 @@ describe('additionalMemberForm.spec', () => {
         );
       });
 
-      it('calls checkDuplicates if the feature flag is on', async () => {
+      it('calls checkDuplicates', async () => {
         doMount({ computed: { currentAdditionalMember() {
           return mockAdditionalMember();
         } } });
         wrapper.vm.checkDuplicates = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
         await wrapper.vm.setIdentity(mockIdentitySet());
         expect(wrapper.vm.checkDuplicates).toHaveBeenCalledWith(mockIdentitySet());
       });

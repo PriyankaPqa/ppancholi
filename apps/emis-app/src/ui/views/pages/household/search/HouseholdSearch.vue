@@ -13,7 +13,7 @@
             <v-col :col=" sameLine ? 12 : 6">
               <v-text-field-with-validation
                 v-model="form.firstName"
-                :disabled="$hasFeature(FeatureKeys.ManageDuplicates) && isSplitMode"
+                :disabled="isSplitMode"
                 data-test="isRegistered__firstName"
                 outlined
                 :rules="rules.firstName"
@@ -24,7 +24,7 @@
               <v-text-field-with-validation
                 v-model="form.lastName"
                 data-test="isRegistered__lastName"
-                :disabled="$hasFeature(FeatureKeys.ManageDuplicates) && isSplitMode"
+                :disabled="isSplitMode"
                 outlined
                 :rules="rules.lastName"
                 :label="$t('registration.personal_info.lastName')"
@@ -74,7 +74,7 @@
                 <v-col cols="6" class="pr-2">
                   <v-select-with-validation
                     v-model="birthDate.month"
-                    :disabled="$hasFeature(FeatureKeys.ManageDuplicates) && isSplitMode"
+                    :disabled="isSplitMode"
                     clearable
                     :items="months"
                     :item-text="(item) => $t(item.label)"
@@ -85,7 +85,7 @@
                 <v-col cols="3" class="pr-2">
                   <v-text-field-with-validation
                     v-model="birthDate.day"
-                    :disabled="$hasFeature(FeatureKeys.ManageDuplicates) && isSplitMode"
+                    :disabled="isSplitMode"
                     type="number"
                     min="1"
                     max="31"
@@ -95,7 +95,7 @@
                 <v-col cols="3">
                   <v-text-field-with-validation
                     v-model="birthDate.year"
-                    :disabled="$hasFeature(FeatureKeys.ManageDuplicates) && isSplitMode"
+                    :disabled="isSplitMode"
                     :rules="rules.year"
                     :label="`${$t('registration.personal_info.year')}${dateComponentNotEmpty ? '*' : ''}`" />
                 </v-col>

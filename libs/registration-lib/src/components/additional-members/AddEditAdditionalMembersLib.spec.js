@@ -10,7 +10,6 @@ import {
 import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-create';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { MemberDuplicateStatus } from '@libs/entities-lib/src/household-create';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditAdditionalMembersLib.vue';
@@ -161,15 +160,13 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         expect(wrapper.vm.submitDisabled).toEqual(true);
       });
 
-      it('returns true if identity is duplicate and feature flag is on and is not crc registration', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+      it('returns true if identity is duplicate and  is not crc registration', async () => {
         wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
         await wrapper.setProps({ member: mockAdditionalMember({ identitySet: { getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } }) });
         expect(wrapper.vm.submitDisabled).toEqual(true);
       });
 
-      it('returns false if identity is duplicate and feature flag is on and is  crc registration', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+      it('returns false if identity is duplicate  and is crc registration', async () => {
         wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
         await wrapper.setProps({ member: mockAdditionalMember({ identitySet: { getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } }) });
         expect(wrapper.vm.submitDisabled).toEqual(true);
@@ -283,15 +280,8 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         expect(wrapper.vm.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
       });
 
-      it('calls setIdentity of the class IdentitySet ', async () => {
-        jest.spyOn(wrapper.vm.memberClone.identitySet, 'setIdentity');
-        await wrapper.vm.setIdentity(mockIdentitySet());
-        expect(wrapper.vm.memberClone.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
-      });
-
-      it('calls checkDuplicates if the feature flag is on and it is crc registration', async () => {
+      it('calls checkDuplicates if it is crc registration', async () => {
         wrapper.vm.checkDuplicates = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
         wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
         await wrapper.vm.setIdentity(mockIdentitySet());
         expect(wrapper.vm.checkDuplicates).toHaveBeenCalledWith(mockIdentitySet());

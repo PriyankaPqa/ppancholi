@@ -79,7 +79,7 @@
         :address-first-line="getAddressFirstLine()"
         :address-second-line="getAddressSecondLine()"
         :has-phone-numbers="hasPhoneNumbers()"
-        :country="$hasFeature(FeatureKeys.ManageDuplicates) ? getCountry() : ''" />
+        :country="getCountry()" />
 
       <div
         class="d-flex flex-row rc-body14">
@@ -287,7 +287,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     isDuplicate(): boolean {
-      return this.$hasFeature(FeatureKeys.ManageDuplicates) && (this.householdMetadata as unknown as IHouseholdMetadata)?.potentialDuplicatesCount > 0;
+      return (this.householdMetadata as unknown as IHouseholdMetadata)?.potentialDuplicatesCount > 0;
     },
 
     receivingAssistanceMembersCount(): number {

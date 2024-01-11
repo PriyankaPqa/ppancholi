@@ -43,27 +43,6 @@
               </div>
             </template>
           </v-select>
-
-          <v-divider v-if="!$hasFeature(FeatureKeys.ManageDuplicates)" vertical class="ml-4 mr-4" />
-
-          <rc-tooltip v-if="!$hasFeature(FeatureKeys.ManageDuplicates)" right>
-            <template #activator="{ on }">
-              <v-btn
-                data-test="caseFileActivity-duplicateBtn"
-                :class="{ 'no-pointer': !canEdit }"
-                icon
-                :loading="loading"
-                :disabled="!canEdit || saving"
-                :aria-label="$t('caseFileActivity.duplicate')"
-                v-on="on"
-                @click="setCaseFileIsDuplicate">
-                <v-icon :color="caseFile && caseFile.isDuplicate ? 'secondary' : ''">
-                  $rctech-duplicate
-                </v-icon>
-              </v-btn>
-            </template>
-            {{ $t('caseFileActivity.duplicate') }}
-          </rc-tooltip>
         </div>
 
         <case-file-assignments

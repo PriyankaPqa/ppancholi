@@ -50,7 +50,6 @@
 import Vue, { VueConstructor } from 'vue';
 import { IMember } from '@libs/entities-lib/value-objects/member';
 import { MemberDuplicateStatus } from '@libs/entities-lib/value-objects/identity-set';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 const vueComponent: VueConstructor = Vue.extend({
   name: 'AdditionalMemberSection',
@@ -93,7 +92,7 @@ const vueComponent: VueConstructor = Vue.extend({
 
   computed: {
     saveDisabled():boolean {
-      return this.member.identitySet && this.$hasFeature(FeatureKeys.ManageDuplicates) && this.saveDisabledIfDuplicate
+      return this.member.identitySet && this.saveDisabledIfDuplicate
           && this.member.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
     },
   },

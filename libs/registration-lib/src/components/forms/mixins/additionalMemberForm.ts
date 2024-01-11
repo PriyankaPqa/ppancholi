@@ -7,7 +7,6 @@ import helpers from '@libs/entities-lib/helpers';
 import {
   IShelterLocationData, IHouseholdCreate, IIdentitySet, IdentitySet,
 } from '@libs/entities-lib/household-create';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IMember } from '@libs/entities-lib/value-objects/member/index';
 import { ECurrentAddressTypes, ICurrentAddress } from '@libs/entities-lib/value-objects/current-address/index';
 import { IOptionItemData, EOptionItemStatus } from '@libs/shared-lib/types';
@@ -217,10 +216,8 @@ export default Vue.extend({
           this.additionalMembers[this.indexAdditionalMember].sameAddress,
           );
 
-        if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
           this.additionalMembers[this.indexAdditionalMember].loading = true;
           this.checkDuplicates(new IdentitySet(form));
-        }
       }
     },
 

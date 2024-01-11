@@ -90,11 +90,8 @@ const vueComponent: VueConstructor = Vue.extend({
   computed: {
     firstError(): string {
       const errors = (this.errors as IServerError)?.response?.data?.errors;
-      let code = errors?.[0].code;
-      if (code === 'errors.this-individual-already-exists-in-the-system' && !this.$hasFeature(FeatureKeys.ManageDuplicates)) {
-        code = 'errors.person-identified-as-duplicate';
-      }
-      return code || (this.isDuplicateError ? 'errors.person-identified-as-duplicate' : '');
+      const code = errors?.[0].code;
+      return code || (this.isDuplicateError ? 'errors.this-individual-already-exists-in-the-system' : '');
     },
 
     isDuplicateError(): boolean {

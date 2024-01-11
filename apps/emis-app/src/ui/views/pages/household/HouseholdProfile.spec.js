@@ -309,9 +309,6 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('duplicates count', () => {
-      beforeEach(async () => {
-        await wrapper.setFeature(FeatureKeys.ManageDuplicates, true);
-      });
       it('renders', async () => {
         const element = wrapper.findDataTest('household-profile-duplicateCount');
         expect(element.exists()).toBeTruthy();
@@ -324,22 +321,9 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('manage duplicates button', () => {
-      beforeEach(async () => {
-        await wrapper.setFeature(FeatureKeys.ManageDuplicates, true);
-      });
       it('renders if canManageDuplicates is true', async () => {
         const element = wrapper.findDataTest('household-profile-manageDuplicatesBtn');
         expect(element.exists()).toBeTruthy();
-      });
-
-      it('does not render if canManageDuplicates is false', async () => {
-        doMount({
-          canManageDuplicates() {
-            return true;
-          },
-        });
-        const element = wrapper.findDataTest('household-profile-manageDuplicatesBtn');
-        expect(element.exists()).toBeFalsy();
       });
     });
 

@@ -98,11 +98,10 @@
               @input="onStatusChangeInit($event)" />
 
             <v-divider
-              v-if="$hasFeature(FeatureKeys.ManageDuplicates)"
               vertical
               class="ml-4 mr-4" />
 
-            <div v-if="$hasFeature(FeatureKeys.ManageDuplicates)" class="flex-row rc-body12 align-center">
+            <div class="flex-row rc-body12 align-center">
               <v-icon
                 class="mr-2"
                 data-test="household-profile-duplicatesIcon"
