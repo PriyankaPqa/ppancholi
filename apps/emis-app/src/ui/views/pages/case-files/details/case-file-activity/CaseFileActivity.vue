@@ -43,27 +43,6 @@
               </div>
             </template>
           </v-select>
-
-          <v-divider v-if="!$hasFeature(FeatureKeys.ManageDuplicates)" vertical class="ml-4 mr-4" />
-
-          <rc-tooltip v-if="!$hasFeature(FeatureKeys.ManageDuplicates)" right>
-            <template #activator="{ on }">
-              <v-btn
-                data-test="caseFileActivity-duplicateBtn"
-                :class="{ 'no-pointer': !canEdit }"
-                icon
-                :loading="loading"
-                :disabled="!canEdit || saving"
-                :aria-label="$t('caseFileActivity.duplicate')"
-                v-on="on"
-                @click="setCaseFileIsDuplicate">
-                <v-icon :color="caseFile && caseFile.isDuplicate ? 'secondary' : ''">
-                  $rctech-duplicate
-                </v-icon>
-              </v-btn>
-            </template>
-            {{ $t('caseFileActivity.duplicate') }}
-          </rc-tooltip>
         </div>
 
         <case-file-assignments
@@ -124,7 +103,9 @@ import { IIdMultilingualName } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import entityUtils from '@libs/entities-lib/utils';
 import { UserRoles } from '@libs/entities-lib/user';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useEventStore } from '@/pinia/event/event';
 import caseFileActivity from '@/ui/mixins/caseFileActivity';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
@@ -209,6 +190,9 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
       this.loading = true;
 
       await Promise.all([
+        useUserAccountStore().fetchRoles(),
+        useCaseFileStore().fetchScreeningIds(),
+        useEventStore().fetchExceptionalAuthenticationTypes(),
         useCaseFileStore().fetchTagsOptions(),
         useCaseFileStore().fetch(this.caseFileId),
         this.fetchCaseFileActivities(),

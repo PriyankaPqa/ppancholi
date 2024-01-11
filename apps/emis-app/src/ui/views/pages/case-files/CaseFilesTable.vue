@@ -40,22 +40,22 @@
               {{ $t('caseFilesTable.myCaseFiles') }}
             </span>
           </div>
-          <template v-if="$hasFeature(FeatureKeys.ManageDuplicates)">
-            <v-divider vertical class="mx-3" />
-            <div class="flex-row">
-              <v-switch
-                v-model="duplicatesOnly"
-                data-test="caseFilesTable__duplicatesOnlySwitch"
-                :aria-label="$t('caseFilesTable.duplicates')"
-                hide-details />
-              <v-icon class="mx-2" small>
-                $rctech-duplicate
-              </v-icon>
-              <span class="rc-body14">
-                {{ $t('caseFilesTable.duplicates') }}
-              </span>
-            </div>
-          </template>
+
+          <v-divider vertical class="mx-3" />
+          <div class="flex-row">
+            <v-switch
+              v-model="duplicatesOnly"
+              data-test="caseFilesTable__duplicatesOnlySwitch"
+              :aria-label="$t('caseFilesTable.duplicates')"
+              hide-details />
+            <v-icon class="mx-2" small>
+              $rctech-duplicate
+            </v-icon>
+            <span class="rc-body14">
+              {{ $t('caseFilesTable.duplicates') }}
+            </span>
+          </div>
+
           <v-divider vertical class="mx-3" />
           <div class="flex-row">
             <v-switch
@@ -88,13 +88,6 @@
           :to="getCaseFileRoute(caseFile)">
           {{ caseFile.entity.caseFileNumber }}
         </router-link>
-        <v-icon
-          v-if="!$hasFeature(FeatureKeys.ManageDuplicates) && caseFile.entity.isDuplicate"
-          :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
-          small
-          color="secondary">
-          $rctech-duplicate
-        </v-icon>
       </div>
     </template>
 
@@ -106,7 +99,7 @@
         :to="getHouseholdProfileRoute(caseFile)">
         {{ getBeneficiaryName(caseFile) }}
         <v-icon
-          v-if="$hasFeature(FeatureKeys.ManageDuplicates) && caseFile.metadata.hasPotentialDuplicates"
+          v-if="caseFile.metadata.hasPotentialDuplicates"
           :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
           small
           class="ml-1"
@@ -161,7 +154,6 @@ import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import { useUserStore } from '@/pinia/user/user';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useCaseFileStore, useCaseFileMetadataStore } from '@/pinia/case-file/case-file';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { TranslateResult } from 'vue-i18n';
 
 interface IParsedCaseFileCombined extends ICaseFileCombined {
@@ -192,7 +184,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     return {
       CaseFileStatus,
       FilterKey,
-      FeatureKeys,
       myCaseFiles: false,
       duplicatesOnly: false,
       recentlyViewedOnly: false,
@@ -372,18 +363,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
         },
         {
-          key: 'Entity/IsDuplicate',
-          type: EFilterType.Select,
-          label: this.$t('caseFilesTable.filters.isDuplicate') as string,
-          items: [{
-            text: this.$t('common.yes') as string,
-            value: true,
-          }, {
-            text: this.$t('common.no') as string,
-            value: false,
-          }],
-        },
-        {
           key: 'Entity/AssignedTeamMembers',
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.isAssigned') as string,
@@ -402,7 +381,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         },
       ];
 
-      return this.$hasFeature(FeatureKeys.ManageDuplicates) ? filters.filter((f) => f.key !== 'Entity/IsDuplicate') : filters;
+      return filters;
     },
 
     labels(): Record<string, unknown> {

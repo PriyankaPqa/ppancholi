@@ -8,7 +8,6 @@ import helpers from '@/ui/helpers/helpers';
 import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
 import Component from './CaseFilesTable.vue';
@@ -125,7 +124,7 @@ describe('CaseFilesTable.vue', () => {
     });
 
     describe('isDuplicate', () => {
-      it('renders the filter if the feature flag is on', () => {
+      it('renders the filter', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: createTestingPinia({ stubActions: false }),
@@ -133,30 +132,12 @@ describe('CaseFilesTable.vue', () => {
             tableData: () => mockCombinedCaseFiles(),
           },
           mocks: {
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
             $services: services,
           },
         });
 
         const toggle = wrapper.findDataTest('caseFilesTable__duplicatesOnlySwitch');
         expect(toggle.exists()).toBeTruthy();
-      });
-
-      it('does not render the filter if the feature flag is on', () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia: createTestingPinia({ stubActions: false }),
-          computed: {
-            tableData: () => mockCombinedCaseFiles(),
-          },
-          mocks: {
-            $hasFeature: (f) => f !== FeatureKeys.ManageDuplicates,
-            $services: services,
-          },
-        });
-
-        const toggle = wrapper.findDataTest('caseFilesTable__duplicatesOnlySwitch');
-        expect(toggle.exists()).toBeFalsy();
       });
     });
   });
@@ -383,89 +364,10 @@ describe('CaseFilesTable.vue', () => {
 
     describe('filters', () => {
       it('should have correct filters', () => {
-        const expected = [
-          {
-            key: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
-            type: EFilterType.Text,
-            label: 'caseFilesTable.tableHeaders.firstName',
-          },
-          {
-            key: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-            type: EFilterType.Text,
-            label: 'caseFilesTable.tableHeaders.lastName',
-          },
-          {
-            key: 'Entity/EventId',
-            type: EFilterType.Select,
-            label: 'caseFileTable.filters.eventName',
-            items: wrapper.vm.eventsFilter,
-            loading: wrapper.vm.eventsFilterLoading,
-            disabled: wrapper.vm.eventsFilterDisabled,
-            props: {
-              'no-data-text': 'common.inputs.start_typing_to_search',
-              'search-input': null,
-              'no-filter': true,
-              'return-object': true,
-              placeholder: 'common.filters.autocomplete.placeholder',
-            },
-          },
-          {
-            key: `Metadata/TriageName/Translation/${wrapper.vm.$i18n.locale}`,
-            type: EFilterType.MultiSelect,
-            label: 'caseFileTable.tableHeaders.triage',
-            items: helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage', true),
-          },
-          {
-            key: 'Entity/Created',
-            type: EFilterType.Date,
-            label: 'caseFileTable.filters.createdDate',
-          },
-          {
-            key: `Metadata/CaseFileStatusName/Translation/${wrapper.vm.$i18n.locale}`,
-            type: EFilterType.MultiSelect,
-            label: 'caseFileTable.tableHeaders.status',
-            items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
-          },
-          {
-            key: 'Entity/IsDuplicate',
-            type: EFilterType.Select,
-            label: 'caseFilesTable.filters.isDuplicate',
-            items: [{
-              text: 'common.yes',
-              value: true,
-            }, {
-              text: 'common.no',
-              value: false,
-            }],
-          },
-          {
-            key: 'Entity/AssignedTeamMembers',
-            type: EFilterType.Select,
-            label: 'caseFileTable.filters.isAssigned',
-            items: [{
-              text: 'common.yes',
-              value: 'arrayNotEmpty',
-            }, {
-              text: 'common.no',
-              value: 'arrayEmpty',
-            }],
-          },
-          {
-            key: 'Metadata/LastActionDate',
-            type: EFilterType.Date,
-            label: 'caseFileTable.filters.lastActionDate',
-          },
-        ];
-
-        expect(wrapper.vm.filters).toEqual(expected);
-      });
-
-      it('should have correct filters when feature flag is on', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: createTestingPinia({ stubActions: false }),
           mocks: {
-            $hasFeature: jest.fn((f) => f === FeatureKeys.ManageDuplicates),
             $services: services,
           },
         });

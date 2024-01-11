@@ -52,7 +52,6 @@ import {
   IOptionItemData,
   VForm,
 } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
   ECurrentAddressTypes, ICurrentAddress, IShelterLocationData,
 } from '@libs/entities-lib/value-objects/current-address';
@@ -192,7 +191,7 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     submitDisabled():boolean {
-      const isMemberDuplicate = this.$hasFeature(FeatureKeys.ManageDuplicates) && !this.$registrationStore.isCRCRegistration()
+      const isMemberDuplicate = !this.$registrationStore.isCRCRegistration()
       && this.identityChanged && this.memberClone.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
       return (!this.identityChanged && !this.addressChanged && !this.sameAddressChanged) || isMemberDuplicate;
     },
@@ -272,13 +271,8 @@ const vueComponent: VueConstructor = Vue.extend({
       if (!_isEqual(form, this.backupPerson?.identitySet)) {
         this.identityChanged = true;
       }
-
-      if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
         this.submitLoading = true;
         this.checkDuplicates(new IdentitySet(form));
-      } else {
-        this.memberClone.identitySet.setIdentity(form);
-      }
     },
 
     setIndigenousIdentity(form: IIdentitySet) {

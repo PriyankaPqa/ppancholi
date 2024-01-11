@@ -10,7 +10,6 @@ import {
   mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member, mockContactInformation, MemberDuplicateStatus,
 } from '@libs/entities-lib/household-create';
 import { mockUserL6 } from '@libs/entities-lib/src/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { i18n } from '../../ui/plugins/i18n';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
@@ -936,7 +935,7 @@ describe('ReviewRegistrationLib.vue', () => {
     });
 
     describe('saveDisabled', () => {
-      it('returns false is feature flag is off', () => {
+      it('returns true if duplicateStatusInCurrentHousehold of getPersonalInformation is Duplicate and not in crc registration', () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -944,26 +943,6 @@ describe('ReviewRegistrationLib.vue', () => {
             i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
-          },
-          mocks: {
-            $hasFeature: (f) => f !== FeatureKeys.ManageDuplicates,
-          },
-        });
-
-        expect(wrapper.vm.saveDisabled).toBeFalsy();
-      });
-
-      it('returns true is feature flag is on and duplicateStatusInCurrentHousehold of getPersonalInformation is Duplicate and not in crc registration', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          vuetify,
-          propsData: {
-            i18n,
-            disableAutocomplete: false,
-            user: mockUserL6(),
-          },
-          mocks: {
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
           computed: {
             getPersonalInformation() {
@@ -976,7 +955,7 @@ describe('ReviewRegistrationLib.vue', () => {
 
         expect(wrapper.vm.saveDisabled).toBeTruthy();
       });
-      it('returns true is feature flag is on and duplicateStatusInDb of getPersonalInformation is Duplicate and not in crc registration', () => {
+      it('returns true if duplicateStatusInDb of getPersonalInformation is Duplicate and not in crc registration', () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -984,9 +963,6 @@ describe('ReviewRegistrationLib.vue', () => {
             i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
-          },
-          mocks: {
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
           computed: {
             getPersonalInformation() {
@@ -999,7 +975,7 @@ describe('ReviewRegistrationLib.vue', () => {
         expect(wrapper.vm.saveDisabled).toBeTruthy();
       });
 
-      it('returns false if is feature flag is on and is crc registration', async () => {
+      it('returns false if is crc registration', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -1007,9 +983,6 @@ describe('ReviewRegistrationLib.vue', () => {
             i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
-          },
-          mocks: {
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
           computed: {
             getPersonalInformation() {
@@ -1023,7 +996,7 @@ describe('ReviewRegistrationLib.vue', () => {
         expect(wrapper.vm.saveDisabled).toBeFalsy();
       });
 
-      it('returns false is feature flag is on and duplicateStatusInDb and duplicateStatusInCurrentHousehold of getPersonalInformation are unique', () => {
+      it('returns false if duplicateStatusInDb and duplicateStatusInCurrentHousehold of getPersonalInformation are unique', () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -1031,9 +1004,6 @@ describe('ReviewRegistrationLib.vue', () => {
             i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
-          },
-          mocks: {
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
           computed: {
             getPersonalInformation() {

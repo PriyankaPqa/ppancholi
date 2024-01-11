@@ -234,11 +234,6 @@ export default Vue.extend({
       }
     },
   },
-  async created() {
-    await useCaseFileStore().fetchScreeningIds();
-    await useEventStore().fetchExceptionalAuthenticationTypes();
-  },
-
   methods: {
     makeContentForTags(activityType:CaseFileActivityType): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t(`caseFileActivity.activityList.title.${CaseFileActivityType[activityType]}`);

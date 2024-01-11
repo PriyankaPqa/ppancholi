@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col v-if="$hasFeature(FeatureKeys.ManageDuplicates) && form.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate" cols="12" sm="12" class="failed">
+    <v-col v-if="form.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate" cols="12" sm="12" class="failed">
       <message-box
         icon="mdi-alert"
         data-test="personal_info_duplicate_error"

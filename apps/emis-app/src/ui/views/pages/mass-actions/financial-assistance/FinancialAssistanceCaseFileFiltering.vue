@@ -141,7 +141,6 @@ import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import massActionCaseFileFiltering from '@/ui/views/pages/mass-actions/mixins/massActionCaseFileFiltering';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(massActionCaseFileFiltering).extend({
   name: 'FinancialAssistanceCaseFileFiltering',
@@ -176,7 +175,7 @@ export default mixins(massActionCaseFileFiltering).extend({
         email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
         authenticationStatus: `Metadata/IdentityAuthenticationStatusName/Translation/${this.$i18n.locale}`,
         validationOfImpact: `Metadata/ImpactStatusValidationName/Translation/${this.$i18n.locale}`,
-        isDuplicate: this.$hasFeature(FeatureKeys.ManageDuplicates) ? 'Metadata/HasPotentialDuplicates' : 'Entity/IsDuplicate',
+        isDuplicate: 'Metadata/HasPotentialDuplicates',
       };
     },
 
@@ -386,10 +385,7 @@ export default mixins(massActionCaseFileFiltering).extend({
     },
 
     getIsDuplicateText(caseFile: ICaseFileCombined): TranslateResult {
-      if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
-        return caseFile.metadata.hasPotentialDuplicates ? this.$t('common.yes') : this.$t('common.no');
-      }
-      return caseFile.entity.isDuplicate ? this.$t('common.yes') : this.$t('common.no');
+      return caseFile.metadata.hasPotentialDuplicates ? this.$t('common.yes') : this.$t('common.no');
     },
   },
 });

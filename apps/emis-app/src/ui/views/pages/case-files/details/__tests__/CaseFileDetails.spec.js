@@ -8,7 +8,6 @@ import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
@@ -499,7 +498,6 @@ describe('CaseFileDetails.vue', () => {
           },
           mocks: {
             $services: services,
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
         });
 
@@ -518,23 +516,6 @@ describe('CaseFileDetails.vue', () => {
           },
           mocks: {
             $services: services,
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
-          },
-        });
-
-        expect(wrapper.vm.isDuplicate).toEqual(false);
-      });
-
-      it('returns false if feature flag is off', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          mocks: {
-            $services: services,
-            $hasFeature: (f) => f !== FeatureKeys.ManageDuplicate,
           },
         });
 

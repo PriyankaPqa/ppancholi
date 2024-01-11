@@ -5,6 +5,8 @@ import { mockCaseFileActivities, CaseFileTriage, mockCaseFileEntity } from '@lib
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
@@ -15,6 +17,9 @@ const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const { pinia, caseFileStore } = useMockCaseFileStore();
+const eventStore = useMockEventStore(pinia).eventStore;
+const userStore = useMockUserAccountStore(pinia).userAccountStore;
+
 describe('CaseFileActivity', () => {
   let wrapper;
 
@@ -139,104 +144,6 @@ describe('CaseFileActivity', () => {
       });
       it('is renders', () => {
         expect(element.exists()).toBeTruthy();
-      });
-    });
-
-    describe('duplicate button', () => {
-      let element;
-      beforeEach(async () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          data() {
-            return {
-              caseFileActivities: mockActivities,
-            };
-          },
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            canEdit() {
-              return true;
-            },
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-          },
-
-        });
-
-        await wrapper.setData({
-          loading: false,
-        });
-        element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
-      });
-      it('renders', () => {
-        expect(element.exists()).toBeTruthy();
-      });
-
-      it('sets disabled according to readonly', async () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          data() {
-            return {
-              caseFileActivities: mockActivities,
-            };
-          },
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            canEdit() {
-              return false;
-            },
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-          },
-
-        });
-
-        await wrapper.setData({
-          loading: false,
-        });
-
-        let element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
-        expect(element.props('disabled')).toBeTruthy();
-
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          data() {
-            return {
-              caseFileActivities: mockActivities,
-            };
-          },
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            canEdit() {
-              return true;
-            },
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-          },
-
-        });
-
-        await wrapper.setData({
-          loading: false,
-        });
-
-        element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
-        expect(element.props('disabled')).toBeFalsy();
       });
     });
 
@@ -373,6 +280,18 @@ describe('CaseFileActivity', () => {
         });
 
         expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call fetchRoles', () => {
+        expect(userStore.fetchRoles).toHaveBeenCalled();
+      });
+
+      it('should call fetchScreeningIds', () => {
+        expect(caseFileStore.fetchScreeningIds).toHaveBeenCalled();
+      });
+
+      it('should call fetchExceptionalAuthenticationTypes', () => {
+        expect(eventStore.fetchExceptionalAuthenticationTypes).toHaveBeenCalled();
       });
 
       it('should call fetchTagsOptions', () => {

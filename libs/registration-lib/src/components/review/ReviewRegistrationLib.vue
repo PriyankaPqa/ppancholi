@@ -171,7 +171,7 @@ import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 import { IHouseholdCreate, IIdentitySet, Member, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
 import _isEqual from 'lodash/isEqual';
-import { FeatureKeys, IConsentStatement } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 import helpers from '@libs/entities-lib/helpers';
 import { MAX_ADDITIONAL_MEMBERS, MIN_AGE_REGISTRATION } from '@libs/registration-lib/constants/validations';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
@@ -273,7 +273,7 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
     },
 
     saveDisabled():boolean {
-      return this.$hasFeature(FeatureKeys.ManageDuplicates) && !this.$registrationStore.isCRCRegistration()
+      return !this.$registrationStore.isCRCRegistration()
       && (this.getPersonalInformation.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate
        || this.getPersonalInformation.duplicateStatusInDb === MemberDuplicateStatus.Duplicate);
     },

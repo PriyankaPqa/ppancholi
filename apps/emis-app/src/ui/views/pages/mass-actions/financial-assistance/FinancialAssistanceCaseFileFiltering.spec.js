@@ -10,7 +10,6 @@ import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { MassActionMode } from '@libs/entities-lib/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { mockProvider } from '@/services/provider';
 import Component from './FinancialAssistanceCaseFileFiltering.vue';
@@ -35,25 +34,7 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
     });
 
     describe('customColumns', () => {
-      it('should return proper data if feature flag is off', () => {
-        const expected = {
-          caseFileNumber: 'Entity/CaseFileNumber',
-          firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
-          lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-          street: 'Metadata/Household/Address/Address/StreetAddress',
-          city: 'Metadata/Household/Address/Address/City',
-          province: 'Metadata/Household/Address/Address/ProvinceCode/Translation/en',
-          postalCode: 'Metadata/Household/Address/Address/PostalCode',
-          email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
-          authenticationStatus: 'Metadata/IdentityAuthenticationStatusName/Translation/en',
-          validationOfImpact: 'Metadata/ImpactStatusValidationName/Translation/en',
-          isDuplicate: 'Entity/IsDuplicate',
-        };
-
-        expect(wrapper.vm.customColumns).toEqual(expected);
-      });
-
-      it('should return proper data if feature flag is on', () => {
+      it('should return proper data', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -61,7 +42,6 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
           },
           mocks: {
             $services: services,
-            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
         });
         const expected = {
@@ -343,30 +323,14 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
     });
 
     describe('getIsDuplicateText', () => {
-      it('returns yes if is duplicate and feature flag is on', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+      it('returns yes if is duplicate ', async () => {
         const caseFile = { entity: mockCombinedCaseFile().entity, metadata: { ...mockCombinedCaseFile().metadata, hasPotentialDuplicates: true } };
         const result = wrapper.vm.getIsDuplicateText(caseFile);
         expect(result).toEqual('common.yes');
       });
 
-      it('returns no  if is not duplicate and feature flag is on', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+      it('returns no  if is not duplicate ', async () => {
         const caseFile = { entity: mockCombinedCaseFile().entity, metadata: { ...mockCombinedCaseFile().metadata, isDuplicate: false } };
-        const result = wrapper.vm.getIsDuplicateText(caseFile);
-        expect(result).toEqual('common.no');
-      });
-
-      it('returns yes if is duplicate and feature flag is off', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f !== FeatureKeys.ManageDuplicates);
-        const caseFile = { metadata: mockCombinedCaseFile().metadata, entity: { ...mockCombinedCaseFile().entity, isDuplicate: true } };
-        const result = wrapper.vm.getIsDuplicateText(caseFile);
-        expect(result).toEqual('common.yes');
-      });
-
-      it('returns no  if is not duplicate and feature flag is off', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f !== FeatureKeys.ManageDuplicates);
-        const caseFile = { metadata: mockCombinedCaseFile().metadata, entity: { ...mockCombinedCaseFile().entity, isDuplicate: false } };
         const result = wrapper.vm.getIsDuplicateText(caseFile);
         expect(result).toEqual('common.no');
       });

@@ -3,7 +3,7 @@
     <identity-form
       :form="identitySet"
       :gender-items="genderItems"
-      :name-dob-disabled="$hasFeature(FeatureKeys.ManageDuplicates) && isSplitMode"
+      :name-dob-disabled="isSplitMode"
       :min-age-restriction="minAgeRegistration"
       @change="setIdentity($event)" />
 
@@ -187,7 +187,7 @@ const vueComponent: VueConstructor = Vue.extend({
 
   methods: {
     setIdentity(form: IIdentitySet) {
-      if (!this.isSplitMode && this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+      if (!this.isSplitMode) {
         this.$registrationStore.submitLoading = true;
         this.checkDuplicates(new IdentitySet(form));
       }

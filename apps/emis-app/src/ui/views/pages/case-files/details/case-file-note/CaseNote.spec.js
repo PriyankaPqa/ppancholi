@@ -9,6 +9,7 @@ import * as searchEndpoints from '@/constants/searchEndpoints';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 
@@ -19,6 +20,7 @@ const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 const { pinia, caseNoteStore } = useMockCaseNoteStore();
 useMockCaseFileStore(pinia);
+const userStore = useMockUserAccountStore(pinia).userAccountStore;
 
 describe('CaseNote.vue', () => {
   let wrapper;
@@ -309,11 +311,11 @@ describe('CaseNote.vue', () => {
       it('should call fetchCaseNoteCategories and searchCaseNotes', async () => {
         caseNoteStore.fetchCaseNoteCategories = jest.fn();
         wrapper.vm.search = jest.fn();
+        jest.clearAllMocks();
 
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
+        await wrapper.vm.$options.created[0].call(wrapper.vm);
 
+        expect(userStore.fetchRoles).toHaveBeenCalledTimes(1);
         expect(caseNoteStore.fetchCaseNoteCategories).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
       });
