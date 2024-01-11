@@ -103,7 +103,9 @@ import { IIdMultilingualName } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import entityUtils from '@libs/entities-lib/utils';
 import { UserRoles } from '@libs/entities-lib/user';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useEventStore } from '@/pinia/event/event';
 import caseFileActivity from '@/ui/mixins/caseFileActivity';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
@@ -188,6 +190,9 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
       this.loading = true;
 
       await Promise.all([
+        useUserAccountStore().fetchRoles(),
+        useCaseFileStore().fetchScreeningIds(),
+        useEventStore().fetchExceptionalAuthenticationTypes(),
         useCaseFileStore().fetchTagsOptions(),
         useCaseFileStore().fetch(this.caseFileId),
         this.fetchCaseFileActivities(),

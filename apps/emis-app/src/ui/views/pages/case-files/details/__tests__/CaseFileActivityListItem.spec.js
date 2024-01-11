@@ -4,15 +4,10 @@ import { ERegistrationMethod } from '@libs/shared-lib/src/types/enums/ERegistrat
 import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 
-import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-import { useMockEventStore } from '@/pinia/event/event.mock';
-
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 
 const localVue = createLocalVue();
 const item = mockCaseFileActivities()[0];
-const { pinia, caseFileStore } = useMockCaseFileStore();
-const eventStore = useMockEventStore(pinia).eventStore;
 
 describe('CaseFileActivityListItem.vue', () => {
   let wrapper;
@@ -23,7 +18,6 @@ describe('CaseFileActivityListItem.vue', () => {
 
       wrapper = shallowMount(Component, {
         localVue,
-        pinia,
         propsData: {
           item,
         },
@@ -82,13 +76,6 @@ describe('CaseFileActivityListItem.vue', () => {
         const element = wrapper.findDataTest('caseFileActivity-listItem-content-body');
         expect(element.text()).toEqual(wrapper.vm.content.body);
       });
-    });
-  });
-
-  describe('Created', () => {
-    it('calls stores', async () => {
-      expect(caseFileStore.fetchScreeningIds).toHaveBeenCalled();
-      expect(eventStore.fetchExceptionalAuthenticationTypes).toHaveBeenCalled();
     });
   });
 

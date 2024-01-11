@@ -5,6 +5,8 @@ import { mockCaseFileActivities, CaseFileTriage, mockCaseFileEntity } from '@lib
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
@@ -15,6 +17,9 @@ const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const { pinia, caseFileStore } = useMockCaseFileStore();
+const eventStore = useMockEventStore(pinia).eventStore;
+const userStore = useMockUserAccountStore(pinia).userAccountStore;
+
 describe('CaseFileActivity', () => {
   let wrapper;
 
@@ -275,6 +280,18 @@ describe('CaseFileActivity', () => {
         });
 
         expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call fetchRoles', () => {
+        expect(userStore.fetchRoles).toHaveBeenCalled();
+      });
+
+      it('should call fetchScreeningIds', () => {
+        expect(caseFileStore.fetchScreeningIds).toHaveBeenCalled();
+      });
+
+      it('should call fetchExceptionalAuthenticationTypes', () => {
+        expect(eventStore.fetchExceptionalAuthenticationTypes).toHaveBeenCalled();
       });
 
       it('should call fetchTagsOptions', () => {

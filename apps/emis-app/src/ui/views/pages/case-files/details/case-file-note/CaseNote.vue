@@ -71,6 +71,7 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/case-note';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { UserRoles } from '@libs/entities-lib/user';
 import CaseNoteForm from './components/CaseNoteForm.vue';
@@ -176,6 +177,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   async created() {
+    await useUserAccountStore().fetchRoles();
     await useCaseNoteStore().fetchCaseNoteCategories();
     await this.search(this.dataTableParams);
   },

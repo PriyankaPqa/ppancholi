@@ -149,6 +149,8 @@ export default Vue.extend({
   },
 
   async created() {
+    // preferable to have this in the parent page to make sure it's fetched once only.  but since this wrapper is used in multiple places
+    // i'm leaving it here as well as a precaution
     await useUserAccountStore().fetchRoles();
   },
 });
