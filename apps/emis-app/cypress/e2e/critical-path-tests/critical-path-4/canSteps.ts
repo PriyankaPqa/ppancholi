@@ -38,7 +38,7 @@ export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreated
   const householdProfilePage = new HouseholdProfilePage();
 
   if (params.roleName === UserRoles.level0) {
-    householdProfilePage.getDuplicatesIcon().should('be.visible');
+    householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
     householdProfilePage.getManageDuplicatesButton().should('not.exist');
   } else {
     const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();

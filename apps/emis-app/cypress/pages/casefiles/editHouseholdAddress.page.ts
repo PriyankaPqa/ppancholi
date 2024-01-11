@@ -21,6 +21,10 @@ export class EditHouseholdAddressPage extends AddressPage {
     }
   }
 
+  public fillUnitNumber(data: IAddressPageFields) {
+    cy.getByDataTest(this.unitAddress).clear().type(data.unitNumber);
+  }
+
   public getNoFixedHomeAddressCheckbox() {
     return cy.getByDataTest(this.noFixedHomeAdress);
   }
