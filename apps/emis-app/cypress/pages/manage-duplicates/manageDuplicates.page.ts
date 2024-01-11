@@ -64,7 +64,8 @@ export class ManageDuplicatesPage {
   }
 
   public getDuplicatePhoneNumber() {
-    return cy.getByDataTest(this.duplicatePhoneNumber).getAndTrimText();
+    // eslint-disable-next-line
+    return cy.getByDataTest(this.duplicatePhoneNumber).getAndTrimText().then(phoneNumber => phoneNumber.replace(/[\(\)\-\s]/g, ''));
   }
 
   public getDuplicateName() {
