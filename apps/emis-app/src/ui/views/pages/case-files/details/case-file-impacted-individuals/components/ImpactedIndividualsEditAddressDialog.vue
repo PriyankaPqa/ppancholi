@@ -125,6 +125,7 @@ export default Vue.extend({
       memberClone: null as IMember,
       sameAddress: null,
       changedAddress: false,
+      noFixedHome: false,
     };
   },
 
@@ -151,10 +152,10 @@ export default Vue.extend({
         list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
       }
 
-      if (this.isPrimaryMember) {
-        return list;
-      }
-      return list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+      // Remaining In Home is only an option for primary beneficiaries with home addresses
+      return this.isPrimaryMember && !this.noFixedHome
+        ? list
+        : list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
     },
 
     title(): TranslateResult {
@@ -184,6 +185,7 @@ export default Vue.extend({
       this.backupAddress = _cloneDeep(this.member.currentAddress);
       this.sameAddress = _isEqual(this.member.currentAddress, household.primaryBeneficiary.currentAddress);
       this.memberClone = _cloneDeep(this.member);
+      this.noFixedHome = household.noFixedHome;
     }
   },
 

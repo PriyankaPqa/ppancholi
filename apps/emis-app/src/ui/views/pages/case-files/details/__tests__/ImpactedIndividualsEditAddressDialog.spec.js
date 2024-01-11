@@ -135,7 +135,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
     });
 
     describe('currentAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types when is primary member', async () => {
+      it('returns the expected list of temporary addresses types for the primary member', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -153,6 +153,8 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
         });
 
         expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
+        await wrapper.setData({ noFixedHome: true });
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome));
       });
 
       it('returns the full list of temporary addresses types when is not primary member', async () => {
