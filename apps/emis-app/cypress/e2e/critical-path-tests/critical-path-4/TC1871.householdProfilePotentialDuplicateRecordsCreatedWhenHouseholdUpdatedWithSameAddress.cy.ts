@@ -5,6 +5,7 @@ import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepare
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -112,10 +113,14 @@ describe('#TC1871# - Household Profile - Potential duplicate records created whe
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);
-          cy.goTo('registration');
+          cy.goTo('casefile');
         });
-        it('should not flag potential duplicates when crc user updates home address to match another household', () => {
-          cy.contains('You do not have permission to access this page').should('be.visible');
+        it('should not be able to flag potential duplicates with crc user not able to update home address to match another household', () => {
+          const caseFileHomePage = new CaseFilesHomePage();
+
+          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
+          householdProfilePage.getHouseholdSize().should('be.visible');
+          householdProfilePage.getEditAddressButton().should('not.exist');
         });
       });
     }

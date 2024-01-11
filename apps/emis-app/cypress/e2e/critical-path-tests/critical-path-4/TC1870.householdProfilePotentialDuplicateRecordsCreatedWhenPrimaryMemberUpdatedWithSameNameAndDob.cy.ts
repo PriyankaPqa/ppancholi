@@ -5,6 +5,7 @@ import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepare
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -61,7 +62,7 @@ describe('#TC1870# - Household Profile - Potential duplicate records created whe
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should flag potential duplicates when crc user registers primary member with same name and dob', function () {
+        it('should flag potential duplicates when crc user updates name and dob to match another household', function () {
           const potentialDuplicateMemberData: IPersonalInfoFields = {
             firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
             lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
@@ -107,10 +108,14 @@ describe('#TC1870# - Household Profile - Potential duplicate records created whe
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);
-          cy.goTo('registration');
+          cy.goTo('casefile');
         });
-        it('should not be able to flag potential duplicates when crc user registers primary member with same name and dob', () => {
-          cy.contains('You do not have permission to access this page').should('be.visible');
+        it('should not be able to flag potential duplicates with crc user not able to update name and dob to match another household', () => {
+          const caseFileHomePage = new CaseFilesHomePage();
+
+          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
+          householdProfilePage.getHouseholdSize().should('be.visible');
+          householdProfilePage.getEditMemberButtons().should('not.exist');
         });
       });
     }
