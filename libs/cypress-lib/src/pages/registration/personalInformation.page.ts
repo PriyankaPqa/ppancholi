@@ -99,7 +99,7 @@ export class PersonalInformationPage {
   }
 
   public fillPhoneNumber(phone: string) {
-    cy.getByDataTest(this.phoneNumber).type(phone);
+    cy.getByDataTest(this.phoneNumber).clear().type(phone);
   }
 
   public getPersonalInfoDuplicateErrorElement() {

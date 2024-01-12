@@ -1,0 +1,114 @@
+import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
+import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+  UserRoles.level1,
+  UserRoles.level0,
+];
+
+const cannotRoles = [
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
+
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
+
+let accessTokenL6 = '';
+
+// eslint-disable-next-line
+describe('#TC1872# - Household Profile - Potential duplicate records created when Primary member Phone number updated to match that of another EMIS member', { tags: ['@household'] }, () => {
+  before(() => {
+    cy.getToken().then(async (tokenResponse) => {
+      accessTokenL6 = tokenResponse.access_token;
+      const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
+      cy.wrap(resultCreatedEvent.provider).as('provider');
+      cy.wrap(resultCreatedEvent.team).as('teamCreated');
+      cy.wrap(resultCreatedEvent.event).as('eventCreated');
+    });
+  });
+
+  after(function () {
+    if (this.provider && this.teamCreated?.id) {
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
+    }
+  });
+
+  describe('Can Roles', () => {
+    for (const roleName of filteredCanRoles) {
+      describe(`${roleName}`, () => {
+        beforeEach(() => {
+          cy.then(async function () {
+            const resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+            const resultComparisonHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
+            cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
+            cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
+            cy.wrap(resultComparisonHousehold.mockCreateHousehold.primaryBeneficiary).as('comparisonHouseholdPrimaryBeneficiary');
+            cy.wrap(resultComparisonHousehold.registrationResponse.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
+            cy.wrap(resultComparisonHousehold.registrationResponse.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            cy.login(roleName);
+            cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
+          });
+        });
+        it('should create potential duplicates when crc user registers primary member with same phone number', function () {
+          const householdProfilePage = new HouseholdProfilePage();
+          const editHouseholdProfilePage = householdProfilePage.editMemberByIndex(0);
+          editHouseholdProfilePage.fillPhoneNumber(this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number);
+          editHouseholdProfilePage.saveEdit();
+
+          potentialDuplicateCreatedSteps({
+            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.originalHouseholdRegistrationNumber,
+            caseFileNumber: this.originalHouseholdCaseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            roleName,
+          });
+
+          potentialDuplicateCreatedSteps({
+            firstName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.comparisonHouseholdRegistrationNumber,
+            caseFileNumber: this.comparisonHouseholdCaseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            roleName,
+          });
+        });
+      });
+    }
+  });
+
+  describe('Cannot roles', () => {
+    for (const roleName of filteredCannotRoles) {
+      describe(`${roleName}`, () => {
+        beforeEach(() => {
+          cy.login(roleName);
+          cy.goTo('casefile');
+        });
+        it('should not be able to create potential duplicates with crc user not able to update phone number', () => {
+          const caseFileHomePage = new CaseFilesHomePage();
+
+          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
+          householdProfilePage.getHouseholdSize().should('be.visible');
+          householdProfilePage.getEditMemberButtons().should('not.exist');
+        });
+      });
+    }
+  });
+});
