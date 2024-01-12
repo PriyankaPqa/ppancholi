@@ -65,7 +65,7 @@ export class ManageDuplicatesPage {
 
   public getDuplicatePhoneNumber() {
     // eslint-disable-next-line
-    return cy.getByDataTest(this.duplicatePhoneNumber).getAndTrimText().then(phoneNumber => phoneNumber.replace(/[\(\)\-\s]/g, ''));
+    return cy.getByDataTest(this.duplicatePhoneNumber).getAndTrimText().then(phoneNumber => phoneNumber.replace(/[\(\)\-\s]/g, '')); //Modifies phoneNumber from bracketed type i.e. (646) - 767 8898 to unformatted type i.e. 6467678898
   }
 
   public getDuplicateName() {
