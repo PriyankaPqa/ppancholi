@@ -13,6 +13,7 @@ export enum FeatureKeys {
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
   DataCorrectionAuthentication = 'DataCorrectionAuthentication',
   RecoveryPlan = 'RecoveryPlan',
+  MassActionCommunications = 'MassActionCommunications',
   FeatureDashboard = 'FeatureDashboard',
 }
 

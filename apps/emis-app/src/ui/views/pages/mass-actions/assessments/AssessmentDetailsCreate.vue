@@ -41,11 +41,20 @@
             :label="`${$t('massActions.assessment.create.emailSubject.label')} *`"
             :rules="rules.emailSubject" />
 
-          <span>{{ $t('massActions.assessment.create.emailText.label') }}</span>
-          <v-btn class="ma-2" small @click="clearEmailText">
+          <div v-if="$hasFeature(FeatureKeys.MassActionCommunications)">
+            <span>{{ $t('massActions.assessment.create.emailTopCustomContent.label') }}</span>
+            <v-btn class="ma-2" small @click="clearEmailText(true)">
+              {{ $t('common.clear') }}
+            </v-btn>
+            <vue-editor v-model="formCopy.emailTopCustomContent.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          </div>
+
+          <span>{{ $hasFeature(FeatureKeys.MassActionCommunications)
+            ? $t('massActions.assessment.create.emailBottomCustomContent.label') : $t('massActions.assessment.create.emailText.label') }}</span>
+          <v-btn class="ma-2" small @click="clearEmailText(false)">
             {{ $t('common.clear') }}
           </v-btn>
-          <vue-editor id="editor1" v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          <vue-editor v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
         </v-col>
       </v-row>
     </div>
@@ -68,6 +77,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import {
   VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { AssessmentDetailsForm } from './AssessmentCreate.vue';
 
 export default Vue.extend({
@@ -97,6 +107,7 @@ export default Vue.extend({
       isEmpty,
       assessments: [] as IAssessmentFormEntity[],
       toolbarSettings: ui.vueEditorToolbarSettings,
+      FeatureKeys,
     };
   },
 
@@ -155,11 +166,16 @@ export default Vue.extend({
 
     fillEmptyMultilingualFields() {
       this.formCopy.emailSubject = utils.getFilledMultilingualField(this.formCopy.emailSubject);
+      this.formCopy.emailTopCustomContent = utils.getFilledMultilingualField(this.formCopy.emailTopCustomContent);
       this.formCopy.emailAdditionalDescription = utils.getFilledMultilingualField(this.formCopy.emailAdditionalDescription);
     },
 
-    clearEmailText() {
-      this.formCopy.emailAdditionalDescription = utils.initMultilingualAttributes();
+    clearEmailText(topSection: boolean) {
+      if (topSection) {
+        this.formCopy.emailTopCustomContent = utils.initMultilingualAttributes();
+      } else {
+        this.formCopy.emailAdditionalDescription = utils.initMultilingualAttributes();
+      }
     },
 
     setLanguageMode(lang: string) {

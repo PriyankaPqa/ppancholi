@@ -30,6 +30,7 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'AssessmentDetailsTable',
@@ -69,12 +70,18 @@ export default Vue.extend({
           value: this.$m((this.massAction.details as IMassActionAssessmentDetails).emailSubject),
           dataTest: 'emailSubject',
         },
+        this.$hasFeature(FeatureKeys.MassActionCommunications) ? {
+            label: 'massActions.assessment.create.emailTopCustomContent.label',
+            html: this.$m((this.massAction.details as IMassActionAssessmentDetails).emailTopCustomContent),
+            dataTest: 'emailTopCustomContent',
+          } : null,
         {
-          label: 'massActions.assessment.create.emailText.label',
+          label: this.$hasFeature(FeatureKeys.MassActionCommunications)
+            ? 'massActions.assessment.create.emailBottomCustomContent.label' : 'massActions.assessment.create.emailText.label',
           html: this.$m((this.massAction.details as IMassActionAssessmentDetails).emailAdditionalDescription),
           dataTest: 'emailAdditionalDescription',
         },
-      ];
+      ].filter((x) => x);
     },
   },
   async created() {

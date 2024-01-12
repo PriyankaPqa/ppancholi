@@ -35,6 +35,7 @@ export interface AssessmentDetailsForm {
   event: IEventEntity,
   assessment: IAssessmentFormEntity,
   emailSubject: IMultilingual,
+  emailTopCustomContent: IMultilingual,
   emailAdditionalDescription: IMultilingual,
 }
 
@@ -55,6 +56,7 @@ export default Vue.extend({
         event: null,
         assessment: null,
         emailSubject: utils.initMultilingualAttributes(),
+        emailTopCustomContent: utils.initMultilingualAttributes(),
         emailAdditionalDescription: utils.initMultilingualAttributes(),
       } as AssessmentDetailsForm,
       loading: false,
@@ -80,6 +82,7 @@ export default Vue.extend({
 
     fillEmptyMultilingualFields() {
       this.details.emailSubject = utils.getFilledMultilingualField(this.details.emailSubject);
+      this.details.emailTopCustomContent = utils.getFilledMultilingualField(this.details.emailTopCustomContent);
       this.details.emailAdditionalDescription = utils.getFilledMultilingualField(this.details.emailAdditionalDescription);
     },
 
@@ -99,6 +102,7 @@ export default Vue.extend({
         eventId: this.details.event.id,
         assessmentFormId: this.details.assessment.id,
         emailSubject: this.details.emailSubject,
+        emailTopCustomContent: this.details.emailTopCustomContent,
         emailAdditionalDescription: this.details.emailAdditionalDescription,
         search: azureSearchParams.search,
         filter: `${filter} and Entity/Status eq 1`,
@@ -121,6 +125,7 @@ export default Vue.extend({
       this.formData.set('eventId', this.details.event.id);
       this.formData.set('assessmentFormId', this.details.assessment.id);
       this.formData.set('emailSubject', JSON.stringify(this.details.emailSubject.translation));
+      this.formData.set('emailTopCustomContent', JSON.stringify(this.details.emailTopCustomContent.translation));
       this.formData.set('emailAdditionalDescription', JSON.stringify(this.details.emailAdditionalDescription.translation));
 
       this.loading = true;

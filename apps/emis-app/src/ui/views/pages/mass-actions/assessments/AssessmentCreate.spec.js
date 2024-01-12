@@ -136,6 +136,12 @@ describe('AssessmentCreate.vue', () => {
         expect(wrapper.vm.details.emailAdditionalDescription).toEqual({ translation: { en: 'mock-name-en' } });
         spy.mockRestore();
       });
+      it('calls entityUtils.getFilledMultilingualField and assigns the result to emailTopCustomContent', () => {
+        const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
+        wrapper.vm.fillEmptyMultilingualFields();
+        expect(wrapper.vm.details.emailTopCustomContent).toEqual({ translation: { en: 'mock-name-en' } });
+        spy.mockRestore();
+      });
     });
 
     describe('onUpdate', () => {
@@ -145,6 +151,7 @@ describe('AssessmentCreate.vue', () => {
           assessment: mockAssessmentFormEntity(),
           emailSubject: { translation: { en: 'en', fr: 'fr' } },
           emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
+          emailTopCustomContent: { translation: { en: 'en top', fr: 'fr top' } },
         };
 
         wrapper.vm.onUpdate(formCopy);
@@ -163,6 +170,7 @@ describe('AssessmentCreate.vue', () => {
           assessment: mockAssessmentFormEntity(),
           emailSubject: { translation: { en: 'en', fr: 'fr' } },
           emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
+          emailTopCustomContent: { translation: { en: 'en top', fr: 'fr top' } },
         };
 
         wrapper.vm.onUpdate(formCopy);
@@ -173,6 +181,7 @@ describe('AssessmentCreate.vue', () => {
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('assessmentFormId', wrapper.vm.details.assessment.id);
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('emailSubject', JSON.stringify(wrapper.vm.details.emailSubject.translation));
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('emailAdditionalDescription', JSON.stringify(wrapper.vm.details.emailAdditionalDescription.translation));
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('emailTopCustomContent', JSON.stringify(wrapper.vm.details.emailTopCustomContent.translation));
       });
 
       it('should call upload method of the child', () => {
@@ -181,6 +190,7 @@ describe('AssessmentCreate.vue', () => {
           assessment: mockAssessmentFormEntity(),
           emailSubject: { translation: { en: 'en', fr: 'fr' } },
           emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
+          emailTopCustomContent: { translation: { en: 'en top', fr: 'fr top' } },
         };
 
         wrapper.vm.onUpdate(formCopy);
@@ -210,6 +220,7 @@ describe('AssessmentCreate.vue', () => {
             assessment: mockAssessmentFormEntity(),
             emailSubject: { translation: { en: 'en', fr: 'fr' } },
             emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
+            emailTopCustomContent: { translation: { en: 'en top', fr: 'fr top' } },
           },
         });
 
@@ -220,6 +231,7 @@ describe('AssessmentCreate.vue', () => {
           assessmentFormId: wrapper.vm.details.assessment.id,
           emailSubject: wrapper.vm.details.emailSubject,
           emailAdditionalDescription: wrapper.vm.details.emailAdditionalDescription,
+          emailTopCustomContent: wrapper.vm.details.emailTopCustomContent,
           search: azureSearchParams.search,
           filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
         };
@@ -241,6 +253,7 @@ describe('AssessmentCreate.vue', () => {
                 assessment: mockAssessmentFormEntity(),
                 emailSubject: { translation: { en: 'en', fr: 'fr' } },
                 emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
+                emailTopCustomContent: { translation: { en: 'en top', fr: 'fr top' } },
               },
             };
           },

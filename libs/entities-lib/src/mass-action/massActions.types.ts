@@ -76,6 +76,7 @@ export interface IMassActionAssessmentDetails {
   assessmentFormId: uuid;
   eventId: uuid;
   emailSubject: IMultilingual;
+  emailTopCustomContent: IMultilingual;
   emailAdditionalDescription: IMultilingual;
 }
 

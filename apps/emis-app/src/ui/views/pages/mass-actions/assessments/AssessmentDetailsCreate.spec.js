@@ -17,6 +17,7 @@ const formCopy = {
   assessment: mockAssessmentFormEntity(),
   emailSubject: { translation: { en: 'en', fr: 'fr' } },
   emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
+  emailTopCustomContent: { translation: { en: 'en top', fr: 'fr top' } },
 };
 
 const localVue = createLocalVue();
@@ -107,6 +108,12 @@ describe('AssessmentDetailsCreate.vue', () => {
         expect(wrapper.vm.formCopy.emailAdditionalDescription).toEqual({ translation: { en: 'mock-name-en' } });
         spy.mockRestore();
       });
+      it('calls entityUtils.getFilledMultilingualField and assigns the result to emailTopCustomContent', () => {
+        const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
+        wrapper.vm.fillEmptyMultilingualFields();
+        expect(wrapper.vm.formCopy.emailTopCustomContent).toEqual({ translation: { en: 'mock-name-en' } });
+        spy.mockRestore();
+      });
     });
 
     describe('clearEmailText', () => {
@@ -114,6 +121,14 @@ describe('AssessmentDetailsCreate.vue', () => {
         const spy = jest.spyOn(utils, 'initMultilingualAttributes').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
         wrapper.vm.clearEmailText();
         expect(wrapper.vm.formCopy.emailAdditionalDescription).toEqual({ translation: { en: 'mock-name-en' } });
+        expect(wrapper.vm.formCopy.emailTopCustomContent).not.toEqual({ translation: { en: 'mock-name-en' } });
+        spy.mockRestore();
+      });
+      it('calls entityUtils.initMultilingualAttributes and assigns the result to emailTopCustomContent if true', () => {
+        const spy = jest.spyOn(utils, 'initMultilingualAttributes').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
+        wrapper.vm.clearEmailText(true);
+        expect(wrapper.vm.formCopy.emailAdditionalDescription).not.toEqual({ translation: { en: 'mock-name-en' } });
+        expect(wrapper.vm.formCopy.emailTopCustomContent).toEqual({ translation: { en: 'mock-name-en' } });
         spy.mockRestore();
       });
     });
@@ -127,7 +142,7 @@ describe('AssessmentDetailsCreate.vue', () => {
       it('calls fillEmptyMultilingualAttributes entity method', () => {
         const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
         wrapper.vm.setLanguageMode('fr');
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
         spy.mockRestore();
       });
     });
