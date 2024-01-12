@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table
+    <v-data-table-a11y
       :data-test="`duplicate-table-${isPotentialTable ? 'potential' : 'resolved'}`"
       must-sort
       :headers="headers"
@@ -112,14 +112,14 @@
       <template #[`item.action`]="{ item: duplicate }">
         <div class="pb-3 full-height d-flex flex-column justify-start">
           <div class="duplicate-action-wrapper border-radius-all mt-3 px-1 pt-0 pb-1">
-            <v-select
+            <v-select-a11y
               v-model="initialSelect"
               data-test="householdDetails-manageDuplicates-actionDropdown"
               :items="statuses"
               :disabled="!canAction"
               :aria-label="$t('householdDetails.manageDuplicates.table.action')"
               hide-details
-              @input="action(duplicate)">
+              @change="action(duplicate)">
               <template #selection>
                 <div class="d-flex flex-nowrap justify-center z-index" :aria-label="$t('householdDetails.manageDuplicates.table.action')">
                   <v-icon
@@ -138,18 +138,18 @@
                 <div class="d-flex flex-nowrap justify-center" :aria-label="item.text">
                   <v-icon
                     class="mr-2"
-                    :data-test="`householdDetails-manageDuplicates-action-menu-${item.id}`"
+                    :data-test="`householdDetails-manageDuplicates-action-menu-${item.text}`"
                     :color="item.value === DuplicateStatus.Potential ? 'secondary' : 'green'">
                     {{ item.value === DuplicateStatus.Potential ? '$rctech-duplicate' : '$rctech-resolved' }}
                   </v-icon>
                   <span class="select-text rc-body14">{{ item.text }}</span>
                 </div>
               </template>
-            </v-select>
+            </v-select-a11y>
           </div>
         </div>
       </template>
-    </v-data-table>
+    </v-data-table-a11y>
 
     <manage-duplicates-action-dialog
       v-if="showActionDialog"
@@ -173,6 +173,7 @@ import helpers from '@/ui/helpers/helpers';
 import CaseFileDetailsBeneficiaryPhoneNumber from '@/ui/views/pages/case-files/details/components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import { UserRoles } from '@libs/entities-lib/user';
 import { format, parseISO } from 'date-fns';
+import { VSelectA11y, VDataTableA11y } from '@libs/component-lib/components';
 import ManageDuplicatesActionDialog from './ManageDuplicatesActionDialog.vue';
 
 export default Vue.extend({
@@ -181,6 +182,8 @@ export default Vue.extend({
   components: {
     CaseFileDetailsBeneficiaryPhoneNumber,
     ManageDuplicatesActionDialog,
+    VSelectA11y,
+    VDataTableA11y,
   },
 
   props: {

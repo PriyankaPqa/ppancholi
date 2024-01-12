@@ -50,7 +50,7 @@
             {{ $t('rightmenu.switchTenant') }}
           </div>
           <div data-test="rightMenu__tenant">
-            <v-select
+            <v-select-a11y
               v-model="currentTenantId"
               data-test="rightMenu__tenantdd"
               :items="tenants"
@@ -78,13 +78,13 @@
                   </v-icon>
                 </div>
               </template>
-            </v-select>
+            </v-select-a11y>
           </div>
         </div>
 
         <v-divider v-if="isDev" class="my-4" />
 
-        <v-select
+        <v-select-a11y
           v-if="isDev"
           :aria-label="$t('approvals.nestedTable.headers.roles')"
           outlined
@@ -151,6 +151,7 @@ import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { VSelectA11y } from '@libs/component-lib/components';
 import RightMenuTemplate from './RightMenuTemplate.vue';
 
 export default Vue.extend({
@@ -158,6 +159,7 @@ export default Vue.extend({
 
   components: {
     RightMenuTemplate,
+    VSelectA11y,
   },
 
   data() {

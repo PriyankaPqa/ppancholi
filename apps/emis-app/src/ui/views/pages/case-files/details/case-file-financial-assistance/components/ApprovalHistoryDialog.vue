@@ -20,7 +20,7 @@
         <status-chip status-name="ApprovalStatus" :status="financialAssistance.approvalStatus" />
       </div>
     </div>
-    <v-data-table
+    <v-data-table-a11y
       data-test="history-table"
       class="flex-grow-1 scrollable"
       :headers="headers"
@@ -56,14 +56,14 @@
           </div>
         </div>
       </template>
-    </v-data-table>
+    </v-data-table-a11y>
   </rc-dialog>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { system } from '@/constants/system';
-import { RcDialog } from '@libs/component-lib/components';
+import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { IVersionedEntityCombined } from '@libs/entities-lib/src/value-objects/versioned-entity';
 import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -76,6 +76,7 @@ export default Vue.extend({
   components: {
     RcDialog,
     StatusChip,
+    VDataTableA11y,
   },
 
   props: {

@@ -30,7 +30,7 @@
               :placeholder="$t('common.search')" />
           </div>
           <div class="table-container">
-            <v-data-table
+            <v-data-table-a11y
               v-if="search"
               data-test="table"
               class="search_members"
@@ -68,7 +68,7 @@
                   {{ $m(item.roleName) }}
                 </span>
               </template>
-            </v-data-table>
+            </v-data-table-a11y>
           </div>
         </div>
       </v-col>
@@ -113,7 +113,7 @@ import Vue from 'vue';
 import _debounce from 'lodash/debounce';
 import _difference from 'lodash/difference';
 import helpers from '@/ui/helpers/helpers';
-import { RcDialog } from '@libs/component-lib/components';
+import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -126,6 +126,7 @@ export default Vue.extend({
 
   components: {
     RcDialog,
+    VDataTableA11y,
   },
 
   props: {

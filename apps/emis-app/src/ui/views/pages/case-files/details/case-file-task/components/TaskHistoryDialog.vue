@@ -11,7 +11,7 @@
     :show-submit="false"
     @close="close"
     @cancel="close">
-    <v-data-table
+    <v-data-table-a11y
       data-test="history-table"
       class="flex-grow-1 scrollable"
       :headers="headers"
@@ -42,13 +42,13 @@
           {{ item.rationale || $t('common.N/A') }}
         </div>
       </template>
-    </v-data-table>
+    </v-data-table-a11y>
   </rc-dialog>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog } from '@libs/component-lib/components';
+import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { ActionTaken, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
@@ -64,6 +64,7 @@ export default Vue.extend({
 
   components: {
     RcDialog,
+    VDataTableA11y,
   },
 
   props: {

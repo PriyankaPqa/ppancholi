@@ -24,7 +24,7 @@
             :placeholder="$t('assessmentTemplate.search_assessment')" />
         </div>
         <div>
-          <v-data-table
+          <v-data-table-a11y
             data-test="table"
             must-sort
             hide-default-footer
@@ -48,7 +48,7 @@
                 {{ $t('common.add') }}
               </v-btn>
             </template>
-          </v-data-table>
+          </v-data-table-a11y>
         </div>
       </v-col>
     </v-row>
@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog } from '@libs/component-lib/components';
+import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
 import { Status } from '@libs/entities-lib/base';
@@ -79,6 +79,7 @@ export default Vue.extend({
 
   components: {
     RcDialog,
+    VDataTableA11y,
   },
 
   props: {

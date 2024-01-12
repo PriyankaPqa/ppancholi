@@ -36,3 +36,5 @@ export { default as RcMenu } from './atoms/RcMenu.vue';
 export { default as RcItemAmount } from './atoms/RcItemAmount.vue';
 export { default as MessageBox } from './atoms/MessageBox.vue';
 export { default as RcBtn } from './atoms/RcBtn.vue';
+export { default as VSelectA11y } from './atoms/VSelectA11y.vue';
+export { default as VDataTableA11y } from './atoms/VDataTableA11y.vue';

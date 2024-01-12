@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <v-data-table
+    <v-data-table-a11y
       v-if="showMembers"
       id="table_member"
       :class="{ 'table border-radius-bottom': true, loading: loading }"
@@ -98,7 +98,7 @@
           </v-icon>
         </v-btn>
       </template>
-    </v-data-table>
+    </v-data-table-a11y>
 
     <select-users-popup
       v-if="showAddTeamMemberDialog"
@@ -126,7 +126,7 @@ import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import _isEmpty from 'lodash/isEmpty';
 import { DataTableHeader } from 'vuetify';
-import { RcPhoneDisplay } from '@libs/component-lib/components';
+import { RcPhoneDisplay, VDataTableA11y } from '@libs/component-lib/components';
 import {
   ITeamEntity, ITeamMember, ITeamMemberAsUser,
 } from '@libs/entities-lib/team';
@@ -157,6 +157,7 @@ export default Vue.extend({
     RcPhoneDisplay,
     TeamMemberTeams,
     TeamMemberCaseFiles,
+    VDataTableA11y,
   },
 
   props: {
