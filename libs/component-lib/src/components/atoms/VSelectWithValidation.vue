@@ -5,7 +5,7 @@
     :rules="rules"
     :mode="mode"
     tag="div">
-    <v-select-a11y
+    <v-select
       v-model="selectedItem"
       :menu-props="{ bottom: true, offsetY: true, contentClass: 'v-select-with-validation-dropdown' }"
       :items="items"
@@ -53,7 +53,7 @@
           {{ getItemText(item) }}
         </div>
       </template>
-    </v-select-a11y>
+    </v-select>
   </validation-provider>
 </template>
 
@@ -61,13 +61,11 @@
 import Vue from 'vue';
 import { ValidationProvider } from 'vee-validate';
 import { IMultilingual } from '@libs/shared-lib/types';
-import VSelectA11y from './VSelectA11y.vue';
 
 export default Vue.extend({
   name: 'VSelectWithValidation',
   components: {
     ValidationProvider,
-    VSelectA11y,
   },
 
   props: {

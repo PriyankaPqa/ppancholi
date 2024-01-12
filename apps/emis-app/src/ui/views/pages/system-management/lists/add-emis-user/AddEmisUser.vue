@@ -33,7 +33,7 @@
               @input="debounceSearch($event)" />
           </div>
           <div class="table-container">
-            <v-data-table-a11y
+            <v-data-table
               v-if="searchTerm"
               ref="userResultTable"
               data-test="table"
@@ -65,7 +65,7 @@
               <template #[`item.emailAddress`]="{ item }">
                 {{ item.emailAddress }}
               </template>
-            </v-data-table-a11y>
+            </v-data-table>
           </div>
         </div>
       </v-col>
@@ -128,7 +128,7 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import _difference from 'lodash/difference';
-import { RcDialog, VSelectWithValidation, VDataTableA11y } from '@libs/component-lib/components';
+import { RcDialog, VSelectWithValidation } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import _debounce from 'lodash/debounce';
 import { DataTableHeader } from 'vuetify';
@@ -147,7 +147,6 @@ export default Vue.extend({
   components: {
     RcDialog,
     VSelectWithValidation,
-    VDataTableA11y,
   },
 
   props: {

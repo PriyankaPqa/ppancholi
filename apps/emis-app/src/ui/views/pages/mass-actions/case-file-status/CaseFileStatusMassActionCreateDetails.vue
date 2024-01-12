@@ -24,7 +24,7 @@
             :name="$attrs.name"
             :rules="rules.status"
             tag="div">
-            <v-select-a11y
+            <v-select
               v-model="formCopy.status"
               :class="[$attrs.class, classes]"
               outlined
@@ -44,7 +44,7 @@
                   :status="item"
                   status-name="CaseFileStatus" />
               </template>
-            </v-select-a11y>
+            </v-select>
           </validation-provider>
         </v-col>
       </v-row>
@@ -99,7 +99,8 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { VTextFieldWithValidation, VTextAreaWithValidation, VSelectWithValidation, VSelectA11y } from '@libs/component-lib/components';
+import { VTextFieldWithValidation, VTextAreaWithValidation, VSelectWithValidation,
+} from '@libs/component-lib/components';
 import { UserRoles } from '@libs/entities-lib/user';
 import { MassActionCaseFileStatusForm } from './CaseFileStatusMassActionCreate.vue';
 
@@ -113,7 +114,6 @@ export default Vue.extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     VTextAreaWithValidation,
-    VSelectA11y,
   },
 
   props: {

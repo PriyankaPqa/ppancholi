@@ -25,7 +25,7 @@
           </v-col>
 
           <v-col class="pa-0 pr-6" cols="4">
-            <v-select-a11y
+            <v-select
               v-model="filterValues[filter.key].operator"
               class="flex-right"
               :menu-props="menuProps"
@@ -58,7 +58,7 @@
           </v-col>
 
           <v-col class="pa-0 pr-6" cols="4">
-            <v-select-a11y
+            <v-select
               v-model="filterValues[filter.key].operator"
               class="flex-right"
               :menu-props="menuProps"
@@ -128,7 +128,7 @@
           </v-col>
 
           <v-col class="pa-0 pr-6" cols="4">
-            <v-select-a11y
+            <v-select
               v-model="filterValues[filter.key].operator"
               :disabled="filter.disabled"
               class="flex-right"
@@ -181,7 +181,6 @@ import { MAX_LENGTH_MD } from '@libs/component-lib/constants/validations';
 import Number from './inputs/Number.vue';
 import Date from './inputs/Date.vue';
 import DateRange from './inputs/DateRange.vue';
-import VSelectA11y from '../../atoms/VSelectA11y.vue';
 
 /**
  * Maps the filterOptions to filter values. The filter values are bound to UI controls and
@@ -228,7 +227,6 @@ const vueComponent: VueConstructor = Vue.extend({
     Date,
     DateRange,
     VAutocompleteWithValidation,
-    VSelectA11y,
   },
 
   props: {

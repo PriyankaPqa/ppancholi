@@ -122,10 +122,10 @@ describe('CaseFileActivity', () => {
       it('passes readonly as props', async () => {
         await mountWrapperOverwriteComputed(false);
         let element = wrapper.findDataTest('caseFileActivity-triage-select');
-        expect(element.attributes('readonly')).toBeTruthy();
+        expect(element.props('readonly')).toBeTruthy();
         await mountWrapperOverwriteComputed(true);
         element = wrapper.findDataTest('caseFileActivity-triage-select');
-        expect(element.attributes('readonly')).toBeFalsy();
+        expect(element.props('readonly')).toBeFalsy();
       });
 
       it('calls setTriage when the value is changed', async () => {

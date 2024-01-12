@@ -11,7 +11,7 @@
       </div>
     </v-col>
     <v-col cols="12">
-      <v-data-table-a11y
+      <v-data-table
         class="elevation-0 full-width"
         data-test="resultsTable"
         :headers="headers"
@@ -122,7 +122,7 @@
             </v-btn>
           </div>
         </template>
-      </v-data-table-a11y>
+      </v-data-table>
       <div class="legend">
         <div class="mr-4 rc-body12">
           <v-icon small class="status success--text mr-1">
@@ -149,7 +149,7 @@
 
 <script lang="ts">
 import { HouseholdStatus, IHouseholdCombined } from '@libs/entities-lib/household';
-import { VDataTableA11y } from '@libs/component-lib/components';
+import { RcDataTable } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import mixins from 'vue-typed-mixins';
 import { tabs } from '@/pinia/registration/tabs';
@@ -166,8 +166,8 @@ import { format, utcToZonedTime } from 'date-fns-tz';
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
   components: {
+    RcDataTable,
     StatusSelect,
-    VDataTableA11y,
   },
   props: {
     items: {

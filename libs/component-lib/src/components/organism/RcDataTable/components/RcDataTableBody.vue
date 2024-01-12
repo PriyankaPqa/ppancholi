@@ -1,5 +1,5 @@
 <template>
-  <v-data-table-a11y
+  <v-data-table
     :value="value"
     class="border-radius-bottom"
     v-bind="$attrs"
@@ -25,19 +25,14 @@
         :name="`item.${col}`"
         v-bind="data" />
     </template>
-  </v-data-table-a11y>
+  </v-data-table>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import VDataTableA11y from '../../../atoms/VDataTableA11y.vue';
 
 export default Vue.extend({
   name: 'RcDataTableBody',
-
-  components: {
-    VDataTableA11y,
-  },
 
   props: {
     value: {
