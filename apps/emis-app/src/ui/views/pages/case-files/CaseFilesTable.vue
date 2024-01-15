@@ -363,6 +363,18 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
         },
         {
+          key: 'Metadata/HasPotentialDuplicates',
+          type: EFilterType.Select,
+          label: this.$t('caseFilesTable.filters.isDuplicate') as string,
+          items: [{
+            text: this.$t('common.yes') as string,
+            value: true,
+          }, {
+            text: this.$t('common.no') as string,
+            value: false,
+          }],
+        },
+        {
           key: 'Entity/AssignedTeamMembers',
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.isAssigned') as string,

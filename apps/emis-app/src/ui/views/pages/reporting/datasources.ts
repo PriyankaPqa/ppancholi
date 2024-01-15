@@ -88,7 +88,6 @@ export const caseFileViewDs : IDatasourceBase = {
     { dataField: 'triageFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'Triage' },
     { dataField: 'registrationTypeEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'RegistrationType' },
     { dataField: 'registrationTypeFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'RegistrationType' },
-    { dataField: 'isDuplicate', dataType: 'boolean', visible: false },
     { dataField: 'identityAuthenticationMethodEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'IdentityAuthenticationMethod' },
     { dataField: 'identityAuthenticationMethodFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'IdentityAuthenticationMethod' },
     { dataField: 'identityAuthenticationStatusEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'IdentityAuthenticationStatus' },

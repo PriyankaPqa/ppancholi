@@ -80,7 +80,7 @@ export default Vue.extend({
      * The selected value(s) of the dropdown
      */
     value: {
-      type: [Object, Array, String, Number],
+      type: [Object, Array, String, Number, Boolean],
       default: () => [] as unknown[],
     },
 

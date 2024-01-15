@@ -414,7 +414,18 @@ describe('CaseFilesTable.vue', () => {
             label: 'caseFileTable.tableHeaders.status',
             items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
           },
-
+          {
+            key: 'Metadata/HasPotentialDuplicates',
+            type: EFilterType.Select,
+            label: 'caseFilesTable.filters.isDuplicate',
+            items: [{
+              text: 'common.yes',
+              value: true,
+            }, {
+              text: 'common.no',
+              value: false,
+            }],
+          },
           {
             key: 'Entity/AssignedTeamMembers',
             type: EFilterType.Select,
