@@ -119,7 +119,7 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
           {
             text: 'massActions.financialAssistance.table.header.isDuplicate',
             value: wrapper.vm.customColumns.isDuplicate,
-            sortable: true,
+            sortable: false,
           },
         ];
 

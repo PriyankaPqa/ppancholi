@@ -235,7 +235,7 @@ export default mixins(massActionCaseFileFiltering).extend({
         {
           text: this.$t('massActions.financialAssistance.table.header.isDuplicate') as string,
           value: this.customColumns.isDuplicate,
-          sortable: true,
+          sortable: false,
         },
       ];
     },
