@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete
+  <v-autocomplete-a11y
     v-model="innerValue"
     autocomplete="off"
     :attach="attach"
@@ -40,7 +40,7 @@
         </v-list-item-title>
       </v-list-item-content>
     </template>
-  </v-autocomplete>
+  </v-autocomplete-a11y>
 </template>
 
 <script lang="ts">
@@ -48,6 +48,7 @@ import Vue from 'vue';
 import '../../styles/sprite.css';
 import en from '@libs/shared-lib/constants/countries/en';
 import fr from '@libs/shared-lib/constants/countries/fr';
+import VAutocompleteA11y from '../VAutocompleteA11y.vue';
 
 /**
  * A country select built using v-autocomplete. Uses iso2 country names and codes.
@@ -56,6 +57,10 @@ import fr from '@libs/shared-lib/constants/countries/fr';
  */
 export default Vue.extend({
   name: 'RcCountrySelect',
+
+  components: {
+    VAutocompleteA11y,
+  },
 
   props: {
     /**

@@ -14,7 +14,7 @@ export enum DataTest {
 export class CreateNewTeamPage {
   private teamName = { selector: DataTest.teamName, type: 'input' };
 
-  private primaryContact = { selector: DataTest.primaryContact, type: 'input' };
+  private primaryContact = { selector: DataTest.primaryContact };
 
   private teamCreate = { selector: DataTest.teamCreate };
 

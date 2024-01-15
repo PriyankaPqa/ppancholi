@@ -13,6 +13,7 @@
     <v-btn
       icon
       :data-test="cancelButtonDataTest"
+      :aria-label="$t('common.delete')"
       @click="onCancel">
       <v-icon>
         mdi-close

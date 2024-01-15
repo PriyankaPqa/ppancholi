@@ -5,7 +5,7 @@
     :rules="rules"
     :mode="mode"
     tag="div">
-    <v-autocomplete
+    <v-autocomplete-a11y
       v-model="selectedItem"
       :items="items"
       :class="[$attrs.class, classes]"
@@ -14,11 +14,10 @@
       :item-text="itemText"
       :return-object="returnObject"
       :error-messages="errors"
+      :data-test="`${$attrs['data-test']}_inner`"
       outlined
       :attach="attach"
-      :menu-props="{ contentClass: 'v-autocomplete-with-validation-dropdown' }"
       v-bind="$attrs"
-      onfocus="this.setAttribute('autocomplete','on');"
       v-on="$listeners">
       <template v-if="asyncMode && $attrs['loading']" #prepend-item>
         <div class="v-list-item">
@@ -60,7 +59,7 @@
           {{ getItemText(item) }}
         </div>
       </template>
-    </v-autocomplete>
+    </v-autocomplete-a11y>
   </validation-provider>
 </template>
 
@@ -68,11 +67,13 @@
 import Vue from 'vue';
 import { ValidationProvider } from 'vee-validate';
 import { IMultilingual } from '@libs/shared-lib/types';
+import VAutocompleteA11y from './VAutocompleteA11y.vue';
 
 export default Vue.extend({
   name: 'VAutocompleteWithValidation',
   components: {
     ValidationProvider,
+    VAutocompleteA11y,
   },
   props: {
     /**

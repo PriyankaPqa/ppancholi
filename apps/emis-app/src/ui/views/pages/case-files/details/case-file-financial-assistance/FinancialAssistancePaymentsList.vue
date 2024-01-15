@@ -318,7 +318,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       if (this.canEdit) {
         headers.push({
-          text: '',
+          text: this.$t('common.edit') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           align: 'end',
           value: this.customColumns.edit,
@@ -328,7 +329,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       if (this.canDelete) {
         headers.push({
-          text: '',
+          text: this.$t('common.delete') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.delete,
           width: '5%',

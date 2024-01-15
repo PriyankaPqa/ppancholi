@@ -6,7 +6,7 @@
     :show-help="false">
     <v-row class="justify-center mb-0">
       <v-col cols="12" md="12" lg="8" class="d-flex justify-end pr-0">
-        <v-btn icon :disabled="!canEdit" @click="getEditRecoveryPlanRoute()">
+        <v-btn icon :disabled="!canEdit" :aria-label="$t('common.edit')" @click="getEditRecoveryPlanRoute()">
           <v-icon>
             mdi-pencil
           </v-icon>

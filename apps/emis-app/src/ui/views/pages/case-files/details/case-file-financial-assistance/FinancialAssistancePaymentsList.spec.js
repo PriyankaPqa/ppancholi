@@ -83,8 +83,8 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         expect(headers.wrappers[2].find('span').text()).toBe('caseFilesTable.filters.createdDate');
         expect(headers.wrappers[3].find('span').text()).toBe('caseFile.financialAssistance.totals');
         expect(headers.wrappers[4].find('span').text()).toBe('caseFile.financialAssistance.approvalStatus');
-        expect(headers.wrappers[5].find('span').text()).toBe('');
-        expect(headers.wrappers[6].find('span').text()).toBe('');
+        expect(headers.wrappers[5].find('span').text()).toBe('common.edit');
+        expect(headers.wrappers[6].find('span').text()).toBe('common.delete');
       });
 
       it('displays the correct row', async () => {

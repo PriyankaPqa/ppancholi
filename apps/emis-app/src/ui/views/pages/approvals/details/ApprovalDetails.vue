@@ -51,7 +51,7 @@
                 @click:clear="search = ''" />
             </v-col>
           </v-row>
-          <v-data-table
+          <v-data-table-a11y
             class="approval_group_table"
             data-test="approvalDetail_groupTable"
             :headers="headers"
@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
-import { RcPageContent } from '@libs/component-lib/components';
+import { RcPageContent, VDataTableA11y } from '@libs/component-lib/components';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
 import { IApprovalTableEntity, IApprovalTableMetadata, IdParams } from '@libs/entities-lib/approvals/approvals-table';
@@ -98,6 +98,7 @@ export default mixins(approvalRoles).extend({
   components: {
     RcPageContent,
     StatusChip,
+    VDataTableA11y,
   },
 
   data() {

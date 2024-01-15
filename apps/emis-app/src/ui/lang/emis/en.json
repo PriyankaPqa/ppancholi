@@ -3,6 +3,8 @@
     "DuplicateStatus.Removed": "Duplicate flag has been removed from the case file",
     "a11y.caseFileActivity.triage_select": "Triage select",
     "a11y.left_menu": "Left menu",
+    "a11y.empty_table_header_cell": "Empty table header cell",
+    "a11y.dialog": "Dialog",
     "account_settings.preferredLanguage.notSet": "No set language",
     "account_settings.preferredLanguage.tooltip": "Determines the language in which the user will receive communications from the system",
     "app.checkingAccount": "Verifying authentication",

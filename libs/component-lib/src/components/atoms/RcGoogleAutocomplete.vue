@@ -2,7 +2,7 @@
   <div class="autocomplete_container">
     <v-text-field
       ref="input"
-      onfocus="this.setAttribute('autocomplete','nope');"
+      onfocus="this.setAttribute('autocomplete','off');"
       :placeholder="''"
       v-bind="$attrs"
       @input="onInput($event)" />

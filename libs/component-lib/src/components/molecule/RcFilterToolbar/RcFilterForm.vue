@@ -25,11 +25,12 @@
           </v-col>
 
           <v-col class="pa-0 pr-6" cols="4">
-            <v-select
+            <v-select-a11y
               v-model="filterValues[filter.key].operator"
               class="flex-right"
               :menu-props="menuProps"
               :disabled="filter.disabled"
+              :aria-label="filter.label"
               :attach="true"
               outlined
               :items="filterOperators[filter.type]"
@@ -58,12 +59,13 @@
           </v-col>
 
           <v-col class="pa-0 pr-6" cols="4">
-            <v-select
+            <v-select-a11y
               v-model="filterValues[filter.key].operator"
               class="flex-right"
               :menu-props="menuProps"
               outlined
               :attach="true"
+              :aria-label="filter.label"
               :disabled="filter.disabled"
               :items="filterOperators[filter.type]"
               :item-text="(item) => filterOperators[filter.type].find(i => item.operator === i.operator).label || labels.operators[item.operator]"
@@ -128,11 +130,12 @@
           </v-col>
 
           <v-col class="pa-0 pr-6" cols="4">
-            <v-select
+            <v-select-a11y
               v-model="filterValues[filter.key].operator"
               :disabled="filter.disabled"
               class="flex-right"
               :attach="true"
+              :aria-label="filter.label"
               :menu-props="menuProps"
               outlined
               :items="filterOperators[filter.type]"
@@ -181,6 +184,7 @@ import { MAX_LENGTH_MD } from '@libs/component-lib/constants/validations';
 import Number from './inputs/Number.vue';
 import Date from './inputs/Date.vue';
 import DateRange from './inputs/DateRange.vue';
+import VSelectA11y from '../../atoms/VSelectA11y.vue';
 
 /**
  * Maps the filterOptions to filter values. The filter values are bound to UI controls and
@@ -227,6 +231,7 @@ const vueComponent: VueConstructor = Vue.extend({
     Date,
     DateRange,
     VAutocompleteWithValidation,
+    VSelectA11y,
   },
 
   props: {

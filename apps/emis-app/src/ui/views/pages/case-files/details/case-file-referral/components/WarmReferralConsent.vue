@@ -27,7 +27,7 @@
             </span>
           </template>
         </v-checkbox-with-validation>
-        <div v-if="localConsentInfo" class="rc-body12 grey--text pl-8 mt-n4">
+        <div v-if="localConsentInfo" class="rc-body12 rc-grey-text pl-8 mt-n4">
           {{ $t('referral.consent.CRC') }}: {{ localConsentInfo.crcUserName }}
         </div>
       </div>

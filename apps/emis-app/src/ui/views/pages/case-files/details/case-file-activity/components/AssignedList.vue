@@ -6,12 +6,13 @@
       {{ $t('caseFile.assign.assigned_team') }}
     </div>
     <v-sheet rounded outlined height="100%" class="px-4 py-1">
-      <v-list v-if="assignedTeams.length" data-test="assigned-teams-list">
-        <v-list-item-group>
+      <v-list v-if="assignedTeams.length" aria-busy="true" data-test="assigned-teams-list">
+        <v-list-item-group role="list" :aria-label="$t('caseFile.assign.assigned_team')">
           <v-list-item
             v-for="team in assignedTeams"
             :key="team.id"
             :disabled="isViewOnly"
+            role="listitem"
             class="pl-3 assigned-list-item"
             :data-test="`assigned-teams-list-item-${team.id}`">
             <v-list-item-content class="py-1">
@@ -25,6 +26,7 @@
                     icon
                     x-small
                     :data-test="`unassign_${team.id}`"
+                    :aria-label="$t('caseFile.assign.tooltip.unassign')"
                     @click="$emit('removeTeam', team)"
                     v-on="on">
                     <v-icon>mdi-close</v-icon>
@@ -45,13 +47,14 @@
       {{ $t('caseFile.assign.assigned_individual') }}
     </div>
     <v-sheet rounded outlined height="100%" class="px-4 py-1">
-      <v-list v-if="assignedIndividuals.length" data-test="assigned-individuals-list">
-        <v-list-item-group>
+      <v-list v-if="assignedIndividuals.length" aria-busy="true" data-test="assigned-individuals-list">
+        <v-list-item-group role="list" :aria-label="$t('caseFile.assign.assigned_individual')">
           <v-list-item
             v-for="individual in assignedIndividuals"
             :key="individual.entity.id"
             :disabled="isViewOnly"
             class="pl-3 assigned-list-item"
+            role="listitem"
             :data-test="`assigned-individuals-list-item-${individual.entity.id}`">
             <v-list-item-content class="py-2">
               <span class="rc-body14 fw-bold">{{ individual.metadata.displayName }}</span>
@@ -65,6 +68,7 @@
                     icon
                     x-small
                     :data-test="`unassign_${individual.entity.id}`"
+                    :aria-label="$t('caseFile.assign.tooltip.unassign')"
                     @click="$emit('removeIndividual', individual)"
                     v-on="on">
                     <v-icon>mdi-close</v-icon>

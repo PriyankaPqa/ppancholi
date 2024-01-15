@@ -81,7 +81,8 @@ describe('CaseFileReferral.vue', () => {
             sortable: true,
           },
           {
-            text: '',
+            text: 'common.edit',
+            class: 'rc-transparent-text',
             value: wrapper.vm.customColumns.edit,
             sortable: false,
           },

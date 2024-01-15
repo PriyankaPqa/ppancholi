@@ -199,6 +199,7 @@
                     class="mt-0 ml-auto mr-3 pt-0"
                     flat
                     :disabled="inputDisabled"
+                    :aria-label="$t('eventSummary.authentication.tier1')"
                     data-test="event-tier-1"
                     hide-details />
                 </div>
@@ -212,6 +213,7 @@
                     class="mt-0 ml-auto mr-3 pt-0"
                     flat
                     :disabled="inputDisabled"
+                    :aria-label="$t('eventSummary.authentication.tier1')"
                     data-test="event-tier-2"
                     hide-details />
                 </div>

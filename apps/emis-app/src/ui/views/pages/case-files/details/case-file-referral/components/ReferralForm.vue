@@ -45,7 +45,7 @@
                       :value="methodsEnum.Referral"
                       data-test="refmethod_referral"
                       @click="confirmResetConsent" />
-                    <div class="rc-body12 grey--text ml-8">
+                    <div class="rc-body12 rc-grey-text ml-8">
                       {{ $t('referral.method.referral.details.individual') }}
                     </div>
                   </v-col>
@@ -55,7 +55,7 @@
                       :value="methodsEnum.Warm"
                       data-test="refmethod_warm"
                       @click="showConsent = true" />
-                    <div class="rc-body12 grey--text ml-8">
+                    <div class="rc-body12 rc-grey-text ml-8">
                       {{ $t('referral.method.warm.details.individual') }}
                     </div>
                   </v-col>

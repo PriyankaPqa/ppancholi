@@ -30,7 +30,7 @@
               </v-col>
 
               <v-col cols="4" md="4" sm="12">
-                <div :class="['status', isActive ? 'status_success' : 'grey']">
+                <div :class="['status', isActive ? 'status_success' : 'rc-grey-background']">
                   <div class="pl-4 white--text" sm="12" md="9">
                     {{ $t('eventSummary.status') }}
                     <span class="rc-body14 fw-bold white--text text-uppercase" data-test="callCentre-status">

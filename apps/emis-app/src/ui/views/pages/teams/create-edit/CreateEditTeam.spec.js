@@ -506,7 +506,7 @@ describe('CreateEditTeam.vue', () => {
 
       test('Primary contact input is disabled for L4 or less', async () => {
         let element = wrapper.findSelectWithValidation('team-contact');
-        expect(element.props('disabled')).toBeTruthy();
+        expect(element.attributes('disabled')).toBeTruthy();
 
         await mountWrapper(true, 5, {
           computed: {
@@ -521,7 +521,7 @@ describe('CreateEditTeam.vue', () => {
 
       test('Event selection is disabled for L4 or less', async () => {
         let element = wrapper.findSelectWithValidation('events');
-        expect(element.props('disabled')).toBeTruthy();
+        expect(element.attributes('disabled')).toBeTruthy();
 
         await mountWrapper(true, 5, {
           computed: {
@@ -531,12 +531,12 @@ describe('CreateEditTeam.vue', () => {
           },
         });
         element = wrapper.findSelectWithValidation('events');
-        expect(element.props('disabled')).toBeFalsy();
+        expect(element.attributes('disabled')).toBeFalsy();
       });
 
       test('Cancel button is disabled for L4 or less', () => {
         const element = wrapper.findDataTest('createEditTeam__cancel');
-        expect(element.props('disabled')).toBeTruthy();
+        expect(element.attributes('disabled')).toBeTruthy();
       });
     });
   });

@@ -119,9 +119,9 @@ Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeou
       throw new Error(`${searchString} was not found and could not be selected. Try another query or increase timeout`);
     }
 
-    cy.getByDataTest({ selector: dataTest, type: 'input' }).clear({ force: true }).type(searchString, { force: true });
+    cy.getByDataTest({ selector: `${dataTest}_inner_input`, type: 'input' }).clear({ force: true }).type(searchString, { force: true });
 
-    cy.getByDataTest({ selector: dataTest, type: 'div' }).click().then(() => {
+    cy.getByDataTest({ selector: `${dataTest}_inner`, type: 'div' }).click().then(() => {
       if (Cypress.$(optionSelector).length) {
         cy.get(optionSelector).click();
       } else {

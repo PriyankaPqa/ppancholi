@@ -7,7 +7,7 @@ export enum DataTest {
   duplicateHistoryUser = 'householdDetails-duplicate-history-user',
   duplicateHistoryRationale = 'householdDetails-duplicate-history-rationale',
   duplicateHistoryName = 'householdDetails-duplicate-name',
-  duplicateActionDropdown = 'householdDetails-manageDuplicates-actionDropdown',
+  duplicateActionDropdown = 'householdDetails-manageDuplicates-actionDropdown_input',
   duplicatePhoneNumber = 'duplicate-home-phone-number',
   closeButton = 'dialog-cancel-action',
 }

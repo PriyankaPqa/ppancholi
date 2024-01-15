@@ -40,7 +40,7 @@ export class FinancialAssistanceDetailsPage {
 
   private dialogSubmit = { selector: DataTest.dialogSubmit };
 
-  private dialogCancellationReasonETransfer = { selector: DataTest.dialogCancellationReasonETransfer, type: 'input' };
+  private dialogCancellationReasonETransfer = { selector: DataTest.dialogCancellationReasonETransfer };
 
   private dialogCancellationReasonETransferItems = { selector: DataTest.dialogCancellationReasonETransferItems };
 

@@ -128,7 +128,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           value: this.customColumns.outcomeStatus,
         },
         {
-          text: '',
+          text: this.$t('common.edit') as string,
+          class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.edit,
         },

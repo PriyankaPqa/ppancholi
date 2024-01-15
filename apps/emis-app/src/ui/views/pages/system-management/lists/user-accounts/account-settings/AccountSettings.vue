@@ -18,6 +18,7 @@
                   </span>
                 </th>
                 <th class="text-right">
+                  <span class="rc-transparent-text">icon</span>
                   <v-icon>
                     mdi-account-circle
                   </v-icon>

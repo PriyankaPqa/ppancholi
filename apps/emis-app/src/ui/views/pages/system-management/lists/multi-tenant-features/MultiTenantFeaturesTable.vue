@@ -18,7 +18,9 @@
           <th v-for="tenant in tenants" :key="tenant.id" class="text-center">
             {{ $m(tenant.branding.name) }}
           </th>
-          <th />
+          <th class="rc-transparent-text">
+            {{ $t('common.delete') }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -67,7 +69,7 @@
                 {{ $t('common.turn_on') }}
               </v-btn>
 
-              <v-btn icon :data-test="`feature-table-edit-btn-${feature.key}-${tenant.id}`" @click="editFeature(tenant, feature)">
+              <v-btn icon :data-test="`feature-table-edit-btn-${feature.key}-${tenant.id}`" :aria-label="$t('common.edit')" @click="editFeature(tenant, feature)">
                 <v-icon>
                   mdi-pencil
                 </v-icon>
@@ -82,6 +84,7 @@
                     icon
                     class="mr-2"
                     :disabled="!canDeleteFeature(feature)"
+                    :aria-label="$t('common.delete')"
                     data-test="delete"
                     @click="deleteFeature(feature)">
                     <v-icon size="24" color="grey darken-2">
@@ -277,7 +280,7 @@ export default Vue.extend({
 
 .off {
   padding: 4px;
-  background: red;
+  background: #cc3300;
   margin-right: 10px;
   text-transform: uppercase;
   font-weight: 500;

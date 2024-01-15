@@ -191,6 +191,10 @@ div.status {
 .rc-red-background {
   background: #FFEDE5;
 }
+
+.rc-grey-background {
+  background: var(--v-grey-darken2);
+}
 /* knockout surveyjs bug - wont be required in a future version - start */
 .sv-list__item--selected {
   background-color: var(--v-primary-base) !important;

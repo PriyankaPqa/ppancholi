@@ -22,4 +22,14 @@ describe('setElementA11yAttribute', () => {
     helpers.setElementA11yAttribute('selector', 'role', 'foo');
     expect(element.setAttribute).not.toHaveBeenCalled();
   });
+
+  it('does add the attribute of the elements if they dont have', async () => {
+    const element = {
+      getAttribute: jest.fn(() => ''),
+      setAttribute: jest.fn(),
+    };
+    jest.spyOn(document, 'querySelectorAll').mockImplementation(() => ([element]));
+    helpers.setElementA11yAttribute('selector', 'role', 'foo');
+    expect(element.setAttribute).toHaveBeenCalledWith('role', 'foo');
+  });
 });

@@ -22,7 +22,7 @@
           <v-divider vertical class="ml-4 mr-4" />
 
           <span class="pr-2 rc-body12">{{ $t('caseFileActivity.triage') }}:</span>
-          <v-select
+          <v-select-a11y
             :value="caseFile.triage"
             class="triage-select"
             data-test="caseFileActivity-triage-select"
@@ -42,7 +42,7 @@
                 {{ item.text }}
               </div>
             </template>
-          </v-select>
+          </v-select-a11y>
         </div>
 
         <case-file-assignments
@@ -65,13 +65,14 @@
             <v-row>
               <v-col cols="12" class="d-flex justify-end align-center rc-body14">
                 <span> {{ $t('caseFileActivity.sortBy') }}: </span>
-                <v-select
+                <v-select-a11y
                   class="case-file-activity-sort-select"
                   :placeholder="$t('caseFileActivity.date')"
                   data-test="caseFileActivity-case-file-activity-sort-select"
                   :menu-props="{
                     bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content',
                   }"
+                  :aria-label="$t('caseFileActivity.sortBy')"
                   :items="sortingListItems"
                   :min-width="500"
                   hide-details
@@ -96,7 +97,7 @@
 import mixins from 'vue-typed-mixins';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
-import { RcPageContent, RcPageLoading, RcTooltip } from '@libs/component-lib/components';
+import { RcPageContent, RcPageLoading, RcTooltip, VSelectA11y } from '@libs/component-lib/components';
 import { CaseFileActivityType, CaseFileTriage, ICaseFileActivity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
@@ -131,6 +132,7 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     AssignCaseFile,
     CaseFileAssignments,
     CaseFileActivityDuplicateUpdated,
+    VSelectA11y,
   },
   props: {
     /*

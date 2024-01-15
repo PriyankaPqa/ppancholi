@@ -121,13 +121,10 @@ describe('RcDialog.vue', () => {
     describe('mounted', () => {
       it('should call a11ySetDialogAriaLabel', async () => {
         helpers.setElementA11yAttribute = jest.fn();
-        await wrapper.setProps({
-          title: 'mock-title',
-        });
         await wrapper.vm.$options.mounted.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-dialog__content.v-dialog__content--active', 'aria-label', wrapper.vm.title);
+        expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-dialog__content.v-dialog__content--active', 'aria-label', 'a11y.dialog');
       });
     });
   });

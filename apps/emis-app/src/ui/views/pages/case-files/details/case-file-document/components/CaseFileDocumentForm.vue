@@ -13,7 +13,7 @@
             </v-col>
 
             <v-col sm="12" :md="$hasFeature(FeatureKeys.RecoveryPlan) ? 4 : 3">
-              <div :class="['status', isStatusActive ? 'status_success' : 'grey']">
+              <div :class="['status', isStatusActive ? 'status_success' : 'rc-grey-background']">
                 <div class="pl-4 white--text">
                   {{ $t('caseFile.document.status') }}
                   <span class="rc-body14 fw-bold white--text text-uppercase" :data-test="`document-status`">

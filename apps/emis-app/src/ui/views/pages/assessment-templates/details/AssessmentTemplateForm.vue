@@ -21,7 +21,7 @@
                 </span>
               </div>
 
-              <div v-else :class="['status', isStatusActive ? 'status_success' : 'grey']">
+              <div v-else :class="['status', isStatusActive ? 'status_success' : 'rc-grey-background']">
                 <div class="pl-5 white--text">
                   {{ $t('common.status') }}
                   <span class="rc-body14 fw-bold white--text text-uppercase" :data-test="`assessment-status`">
@@ -170,7 +170,9 @@
                       <th width="100px">
                         {{ $t('assessmentTemplate.restrictFinancial') }}
                       </th>
-                      <th>&nbsp;</th>
+                      <th class="rc-transparent-text">
+                        {{ $t('common.delete') }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -495,7 +497,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
  .border-bottom {
    border-bottom: 1px solid var(--v-grey-lighten2);
  }

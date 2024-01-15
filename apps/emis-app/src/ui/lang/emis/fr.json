@@ -3,6 +3,8 @@
     "DuplicateStatus.Removed": "L'indicateur de doublon potentiel a été supprimé du dossier",
     "a11y.caseFileActivity.triage_select": "Sélection du triage",
     "a11y.left_menu": "Menu de gauche",
+    "a11y.empty_table_header_cell": "Cellule d'en-tête de tableau vide",
+    "a11y.dialog": "Dialogue",
     "account_settings.preferredLanguage.notSet": "Pas de langue définie",
     "account_settings.preferredLanguage.tooltip": "Détermine la langue dans laquelle l'utilisateur recevra les communications du système",
     "app.checkingAccount": "Vérification de l'authentification",

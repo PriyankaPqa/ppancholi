@@ -43,11 +43,11 @@ export default {
     }
   },
 
-  setElementA11yAttribute(selector: string, attribute: string, value: string) {
-    const elements = document.querySelectorAll(selector);
+  setElementA11yAttribute(selector: string, attribute: string, value: string, parent: Element = null) {
+    const elements = parent ? parent.querySelectorAll(selector) : document.querySelectorAll(selector);
     if (elements?.length > 0) {
       elements.forEach((el) => {
-        if (el.getAttribute(attribute) !== value) {
+        if (el.getAttribute(attribute) !== value || !(el.getAttribute(attribute))) {
           el.setAttribute(attribute, value);
         }
       });
