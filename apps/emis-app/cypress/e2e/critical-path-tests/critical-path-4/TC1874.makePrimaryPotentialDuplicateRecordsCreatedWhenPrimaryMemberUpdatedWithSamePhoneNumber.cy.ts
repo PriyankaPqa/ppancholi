@@ -28,7 +28,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1873# - Make Primary - Potential duplicate records created when Primary Member Name and DOB are updated to match that of another EMIS member', { tags: ['@household'] }, () => {
+describe('#TC1874# - Make Primary - Potential duplicate records created when Primary Member Phone number is updated to match that of another EMIS member', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -62,41 +62,40 @@ describe('#TC1873# - Make Primary - Potential duplicate records created when Pri
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should create potential duplicate records when crc user makes a member primary with name and dob matching another household', function () {
+        it('should create potential duplicate records when crc user makes a member primary with phone number matching another household', function () {
           const potentialDuplicateMemberData: IPersonalInfoFields = {
-            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
-            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
-            dateOfBirth: this.originalHouseholdPrimaryBeneficiary.identitySet.dateOfBirth,
+            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
           };
 
           makeMemberPrimarySteps({
             roleName,
             potentialDuplicateMemberData,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
             makePrimaryMemberFirstName: this.comparisonHouseholdNewPrimaryMember.firstName,
             makePrimaryMemberLastName: this.comparisonHouseholdNewPrimaryMember.lastName,
           });
 
-          // asserts value of original household in duplicate household's Manage Duplicate pop up where we create a new primary member with name and dob of that of original household
+          // asserts value of original household in duplicate household's Manage Duplicate pop up where we create a new primary member with phone number same as original household
           potentialDuplicateCreatedSteps({
             firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
             lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
             registrationNumber: this.originalHouseholdRegistrationNumber,
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
             roleName,
-            caseFileLogIndex: 1,
           });
 
           // asserts value of duplicate household primary member in original household's Manage Duplicate pop up
           potentialDuplicateCreatedSteps({
-            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
-            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
+            firstName: this.comparisonHouseholdNewPrimaryMember.firstName,
+            lastName: this.comparisonHouseholdNewPrimaryMember.lastName,
             registrationNumber: this.comparisonHouseholdRegistrationNumber,
             caseFileNumber: this.comparisonHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
             roleName,
           });
         });
@@ -111,7 +110,7 @@ describe('#TC1873# - Make Primary - Potential duplicate records created when Pri
           cy.login(roleName);
           cy.goTo('casefile');
         });
-        it('should not be able to create potential duplicates records with crc user not able to make a member primary with name and dob matching another household', () => {
+        it('should not be able to create potential duplicates records with crc user not able to make a member primary with phone number matching another household', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
           const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();

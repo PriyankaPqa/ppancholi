@@ -1,11 +1,12 @@
 import { getToday } from '@libs/cypress-lib/helpers';
 import { IAddressData } from '@libs/entities-lib/household-create';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { CrcRegistrationPage } from 'cypress/pages/registration/crcRegistration.page';
-import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { IPersonalInfoFields, PersonalInformationPage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
-import { ConfirmBeneficiaryRegistrationPage } from 'cypress/pages/registration/confirmBeneficiaryRegistration.page';
+import { ConfirmBeneficiaryRegistrationPage } from '../../../pages/registration/confirmBeneficiaryRegistration.page';
+import { CRCPrivacyStatementPage } from '../../../pages/registration/crcPrivacyStatement.page';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
+import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
 
 export interface PotentialDuplicateCreatedStepsParams {
   firstName: string,
@@ -32,6 +33,14 @@ export interface CrcRegisterPotentialDuplicateStepsParams {
   potentialDuplicateMemberData: IPersonalInfoFields,
   potentialDuplicateAddressData: IAddressPageFields,
   potentialDuplicateBasis?: string,
+}
+
+export interface MakePrimaryPotentialDuplicateStepsParams {
+  roleName: UserRoles,
+  potentialDuplicateMemberData: IPersonalInfoFields,
+  makePrimaryMemberFirstName: string,
+  makePrimaryMemberLastName: string,
+  potentialDuplicateBasis: string,
 }
 
 export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreatedStepsParams) => {
@@ -117,4 +126,32 @@ export const crcRegisterPotentialDuplicateSteps = (params: CrcRegisterPotentialD
   const caseFilesHomePage = confirmBeneficiaryRegistrationPage.goToCaseFiles();
   caseFilesHomePage.refreshUntilCaseFilesUpdated(`${params.potentialDuplicateMemberData.firstName} ${params.potentialDuplicateMemberData.lastName}`);
   caseFilesHomePage.goToFirstHouseholdProfile(params.potentialDuplicateMemberData.firstName, params.potentialDuplicateMemberData.lastName);
+};
+
+export const makeMemberPrimarySteps = (params: MakePrimaryPotentialDuplicateStepsParams) => {
+  const householdProfilePage = new HouseholdProfilePage();
+  householdProfilePage.makeHouseholdPrimaryByIndex(0);
+  cy.contains('Make new primary member').should('be.visible');
+  // eslint-disable-next-line
+  cy.contains(`Are you sure you want to make ${params.makePrimaryMemberFirstName} ${params.makePrimaryMemberLastName} a primary member of this household?`).should('be.visible');
+  householdProfilePage.getDialogConfirmSubmitButton().should('be.visible');
+  householdProfilePage.getDialogConfirmCancelButton().should('be.visible');
+  householdProfilePage.getDialogConfirmSubmitButton().click();
+
+  const cRCPrivacyStatementPage = new CRCPrivacyStatementPage();
+  cRCPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
+  cRCPrivacyStatementPage.fillUserNameIfEmpty(params.roleName);
+  cRCPrivacyStatementPage.fillPrivacyRegistrationMethod('Phone');
+
+  const personalInformationPage = new PersonalInformationPage();
+  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
+    personalInformationPage.fill(params.potentialDuplicateMemberData, '');
+    cy.contains('This individual appears to already exist in the system. Please confirm this individual is not a duplicate before proceeding.')
+      .scrollIntoView()
+      .should('be.visible');
+  } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
+  personalInformationPage.fillPhoneNumber(params.potentialDuplicateMemberData.phoneNumber);
+  }
+  personalInformationPage.selectPreferredLanguage('English');
+  householdProfilePage.getDialogApplyButton().click({ force: true });
 };
