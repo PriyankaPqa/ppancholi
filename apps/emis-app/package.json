@@ -35,7 +35,7 @@
     "@libs/services-lib": "*",
     "@libs/shared-lib": "*",
     "@libs/stores-lib": "*",
-    "@microsoft/signalr": "5.0.16",
+    "@microsoft/signalr": "6.0.0",
     "@types/uuid": "8.3.4",
     "@types/vue2-editor": "^2.6.1",
     "@vitejs/plugin-vue2": "^2.1.0",
