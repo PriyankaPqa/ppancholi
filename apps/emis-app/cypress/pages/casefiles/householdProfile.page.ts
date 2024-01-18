@@ -40,6 +40,8 @@ export enum DataTest {
   buttonManageDuplicate = 'household-profile-manageDuplicatesBtn',
   duplicateIcon = 'household-profile-duplicatesIcon',
   duplicateCount = 'household-profile-duplicateCount',
+  dialogConfirmationCancel = 'cancel-action-dialog-confirmation',
+  dialogConfirmationSubmit = 'submit-action-dialog-confirmation',
 }
 
 export class HouseholdProfilePage {
@@ -110,6 +112,10 @@ export class HouseholdProfilePage {
   private duplicateIcon = { selector: DataTest.duplicateIcon };
 
   private duplicateCount = { selector: DataTest.duplicateCount };
+
+  private dialogConfirmationCancel = { selector: DataTest.dialogConfirmationCancel };
+
+  private dialogConfirmationSubmit = { selector: DataTest.dialogConfirmationSubmit };
 
   public getCaseFileNumber() {
     return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
@@ -232,11 +238,11 @@ export class HouseholdProfilePage {
   }
 
   public getDialogCancelDeleteButton() {
-    return cy.getByDataTest(this.dialogCancel);
+    return cy.getByDataTest(this.dialogConfirmationCancel);
   }
 
   public getDialogConfirmDeleteButton() {
-    return cy.getByDataTest(this.dialogSubmit);
+    return cy.getByDataTest(this.dialogConfirmationSubmit);
   }
 
   public getHouseholdStatus() {
@@ -343,5 +349,21 @@ export class HouseholdProfilePage {
 
   public getDuplicatesCount() {
     return cy.getByDataTest(this.duplicateCount).getAndTrimText();
+  }
+
+  public makeHouseholdPrimaryByIndex(index = 0) {
+    cy.getByDataTest(this.memberMakePrimary).eq(index).click();
+  }
+
+  public getDialogConfirmCancelButton() {
+    return cy.getByDataTest(this.dialogConfirmationCancel);
+  }
+
+  public getDialogConfirmSubmitButton() {
+    return cy.getByDataTest(this.dialogConfirmationSubmit);
+  }
+
+  public getMakeHouseholdPrimaryButtons() {
+    return cy.getByDataTest(this.memberMakePrimary);
   }
 }

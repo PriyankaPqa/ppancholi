@@ -80,8 +80,8 @@ describe('#TC929# - Pre-process a Financial Assistance upload file', { tags: ['@
           newMassFinancialAssistancePage.clickNext();
           newMassFinancialAssistancePage.getDialogTitle().should('eq', 'Confirm pre-processing');
           newMassFinancialAssistancePage.getDialogText().should('eq', 'Are you sure you want to start pre-processing this mass action?');
-          newMassFinancialAssistancePage.getDialogSubmitButton().should('be.visible');
-          newMassFinancialAssistancePage.getDialogCancelButton().should('be.visible');
+          newMassFinancialAssistancePage.getDialogConfirmSubmitButton().should('be.visible');
+          newMassFinancialAssistancePage.getDialogConfirmCancelButton().should('be.visible');
 
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');

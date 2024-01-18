@@ -2,8 +2,11 @@
   <rc-dialog
     :title="title"
     :cancel-action-label="$t(cancelButtonKey)"
+    :cancel-data-test="cancelDataTest"
     :submit-action-label="$t(submitButtonKey)"
+    :submit-data-test="submitDataTest"
     :submit-button-disabled="submitButtonDisabled"
+    :apply-data-test="applyDataTest"
     :show-cancel="showCancel"
     :show-close="showClose"
     :show.sync="show"
@@ -100,6 +103,19 @@ export default Vue.extend({
     minHeight: {
       type: String,
       default: '100',
+    },
+    submitDataTest: {
+      type: String,
+      default: 'dialog-submit-action',
+    },
+
+    applyDataTest: {
+      type: String,
+      default: 'dialog-apply-action',
+    },
+    cancelDataTest: {
+      type: String,
+      default: 'dialog-cancel-action',
     },
   },
   data() {

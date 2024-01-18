@@ -90,8 +90,8 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           newMassFinancialAssistancePage.clickNext();
           newMassFinancialAssistancePage.getDialogTitle().should('eq', 'Confirm pre-processing');
           newMassFinancialAssistancePage.getDialogText().should('eq', 'Are you sure you want to start pre-processing this mass action?');
-          newMassFinancialAssistancePage.getDialogSubmitButton().should('be.visible');
-          newMassFinancialAssistancePage.getDialogCancelButton().should('be.visible');
+          newMassFinancialAssistancePage.getDialogConfirmSubmitButton().should('be.visible');
+          newMassFinancialAssistancePage.getDialogConfirmCancelButton().should('be.visible');
 
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);

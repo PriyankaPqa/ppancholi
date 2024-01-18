@@ -44,8 +44,8 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   newDataCorrectionPage.clickNext();
   newDataCorrectionPage.getDialogTitle().should('eq', 'Confirm pre-processing');
   newDataCorrectionPage.getDialogText().should('eq', 'Are you sure you want to start pre-processing this mass action?');
-  newDataCorrectionPage.getDialogSubmitButton().should('be.visible');
-  newDataCorrectionPage.getDialogCancelButton().should('be.visible');
+  newDataCorrectionPage.getDialogConfirmSubmitButton().should('be.visible');
+  newDataCorrectionPage.getDialogConfirmCancelButton().should('be.visible');
 
   const baseDetailsMassActionPage = newDataCorrectionPage.confirmPreprocessing();
   baseDetailsMassActionPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
@@ -74,8 +74,8 @@ export const processDataCorrectionFileSteps = (householdQuantity: number, proces
   baseDetailsMassActionPage.getMassActionProcessButton().should('be.visible');
   baseDetailsMassActionPage.getMassActionProcessButton().click();
   baseDetailsMassActionPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
-  baseDetailsMassActionPage.getDialogCancelButton().should('be.visible');
-  baseDetailsMassActionPage.getDialogSubmitButton().should('be.visible');
+  baseDetailsMassActionPage.getDialogConfirmCancelButton().should('be.visible');
+  baseDetailsMassActionPage.getDialogConfirmSubmitButton().should('be.visible');
   baseDetailsMassActionPage.confirmProcessing();
   baseDetailsMassActionPage.getPreProcessingLabelOne().should('eq', `Please wait while the ${processedItems} are being processed.`);
   baseDetailsMassActionPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed records.');

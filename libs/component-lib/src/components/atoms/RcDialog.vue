@@ -65,7 +65,7 @@
             <v-btn
               v-if="showCancel"
               :small="isDense"
-              data-test="dialog-cancel-action"
+              :data-test="cancelDataTest"
               :disabled="cancelButtonDisabled || loading"
               @click.native="$emit('cancel')">
               {{ cancelActionLabel }}
@@ -73,7 +73,7 @@
             <v-btn
               v-if="showApply"
               :small="isDense"
-              data-test="dialog-apply-action"
+              :data-test="applyDataTest"
               :disabled="applyButtonDisabled || loading"
               @click.native="$emit('apply')">
               {{ applyActionLabel }}
@@ -83,7 +83,7 @@
               class="ml-3"
               :small="isDense"
               color="primary"
-              data-test="dialog-submit-action"
+              :data-test="submitDataTest"
               :loading="loading"
               :disabled="submitButtonDisabled"
               @click.native="$emit('submit')">
@@ -266,6 +266,20 @@ export default Vue.extend({
     initLoading: {
       type: Boolean,
       default: false,
+    },
+
+    submitDataTest: {
+      type: String,
+      default: 'dialog-submit-action',
+    },
+
+    applyDataTest: {
+      type: String,
+      default: 'dialog-apply-action',
+    },
+    cancelDataTest: {
+      type: String,
+      default: 'dialog-cancel-action',
     },
   },
   data() {

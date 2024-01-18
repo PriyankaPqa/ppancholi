@@ -25,6 +25,9 @@
       :messages="dialogMessages"
       :show-cancel="showCancelButton"
       :show-close="false"
+      apply-data-test="apply-action-dialog-confirmation"
+      cancel-data-test="cancel-action-dialog-confirmation"
+      submit-data-test="submit-action-dialog-confirmation"
       :cancel-button-key="cancelActionLabel"
       :submit-button-key="submitActionLabel">
       <template>

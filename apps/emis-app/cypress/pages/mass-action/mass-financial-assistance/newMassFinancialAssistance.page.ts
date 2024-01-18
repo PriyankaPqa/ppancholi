@@ -11,9 +11,9 @@ amountPayment = 'payment_amount',
 next = 'next',
 dialogTitle = 'dialog-title',
 dialogText = 'message__line_0',
-dialogSubmit = 'dialog-submit-action',
-dialogCancel = 'dialog-cancel-action',
 fileUpload = 'upload-file',
+dialogConfirmCancel = 'cancel-action-dialog-confirmation',
+dialogConfirmSubmit = 'submit-action-dialog-confirmation',
 }
 
 export interface INewMassFinancialAssistanceFields {
@@ -44,9 +44,9 @@ export class NewMassFinancialAssistancePage extends BaseCreateMassAction {
 
   private dialogText = { selector: DataTest.dialogText };
 
-  private dialogSubmit = { selector: DataTest.dialogSubmit };
+  private dialogConfirmSubmit = { selector: DataTest.dialogConfirmSubmit };
 
-  private dialogCancel = { selector: DataTest.dialogCancel };
+  private dialogConfirmCancel = { selector: DataTest.dialogConfirmCancel };
 
   public fillEvent(eventName: string) {
     cy.searchAndSelect(DataTest.eventName, eventName);
@@ -89,16 +89,16 @@ export class NewMassFinancialAssistancePage extends BaseCreateMassAction {
     return cy.getByDataTest(this.dialogText).getAndTrimText();
   }
 
-  public getDialogSubmitButton() {
-    return cy.getByDataTest(this.dialogSubmit);
+  public getDialogConfirmSubmitButton() {
+    return cy.getByDataTest(this.dialogConfirmSubmit);
   }
 
   public confirmPreprocessing() {
-    cy.getByDataTest(this.dialogSubmit).click();
+    cy.getByDataTest(this.dialogConfirmSubmit).click();
     return new MassFinancialAssistanceDetailsPage();
   }
 
-  public getDialogCancelButton() {
-    return cy.getByDataTest(this.dialogCancel);
+  public getDialogConfirmCancelButton() {
+    return cy.getByDataTest(this.dialogConfirmCancel);
   }
 }

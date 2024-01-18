@@ -1,0 +1,141 @@
+import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { IPersonalInfoFields, PersonalInformationPage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { CRCPrivacyStatementPage } from '../../../pages/registration/crcPrivacyStatement.page';
+import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
+import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+
+const canRoles = [
+  UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
+  UserRoles.level2,
+];
+
+const cannotRoles = [
+  UserRoles.level1,
+  UserRoles.level0,
+  UserRoles.contributor1,
+  UserRoles.contributor2,
+  UserRoles.contributor3,
+  UserRoles.readonly,
+];
+
+const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
+
+let accessTokenL6 = '';
+
+// eslint-disable-next-line
+describe('#TC1873# - Make Primary - Potential duplicate records created when Primary Member Name and DOB are updated to match that of another EMIS member', { tags: ['@household'] }, () => {
+  before(() => {
+    cy.getToken().then(async (tokenResponse) => {
+      accessTokenL6 = tokenResponse.access_token;
+      const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
+      cy.wrap(resultCreatedEvent.provider).as('provider');
+      cy.wrap(resultCreatedEvent.team).as('teamCreated');
+      cy.wrap(resultCreatedEvent.event).as('eventCreated');
+    });
+  });
+
+  after(function () {
+    if (this.provider && this.teamCreated?.id) {
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
+    }
+  });
+
+  describe('Can Roles', () => {
+    for (const roleName of filteredCanRoles) {
+      describe(`${roleName}`, () => {
+        beforeEach(() => {
+          cy.then(async function () {
+            const resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+            const resultComparisonHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
+            cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
+            cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
+            cy.wrap(resultComparisonHousehold.mockCreateHousehold.additionalMembers[0].identitySet).as('comparisonHouseholdNewPrimaryMember');
+            cy.wrap(resultComparisonHousehold.registrationResponse.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
+            cy.wrap(resultComparisonHousehold.registrationResponse.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            cy.login(roleName);
+            cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
+          });
+        });
+        it('should create potential duplicate records when crc user makes a member primary with name and dob matching another household', function () {
+          const potentialDuplicateMemberData: IPersonalInfoFields = {
+            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
+            dateOfBirth: this.originalHouseholdPrimaryBeneficiary.identitySet.dateOfBirth,
+          };
+
+          const householdProfilePage = new HouseholdProfilePage();
+          householdProfilePage.makeHouseholdPrimaryByIndex(0);
+          cy.contains('Make new primary member').should('be.visible');
+          // eslint-disable-next-line
+          cy.contains(`Are you sure you want to make ${this.comparisonHouseholdNewPrimaryMember.firstName} ${this.comparisonHouseholdNewPrimaryMember.lastName} a primary member of this household?`).should('be.visible');
+          householdProfilePage.getDialogConfirmSubmitButton().should('be.visible');
+          householdProfilePage.getDialogConfirmCancelButton().should('be.visible');
+          householdProfilePage.getDialogConfirmSubmitButton().click();
+
+          const cRCPrivacyStatementPage = new CRCPrivacyStatementPage();
+          cRCPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
+          cRCPrivacyStatementPage.fillUserNameIfEmpty(roleName);
+          cRCPrivacyStatementPage.fillPrivacyRegistrationMethod('Phone');
+
+          const personalInformationPage = new PersonalInformationPage();
+          personalInformationPage.fill(potentialDuplicateMemberData, '');
+
+          cy.contains('This individual appears to already exist in the system. Please confirm this individual is not a duplicate before proceeding.')
+            .scrollIntoView()
+            .should('be.visible');
+          personalInformationPage.selectPreferredLanguage('English');
+          householdProfilePage.getDialogApplyButton().click({ force: true });
+
+          // asserts value of original household in duplicate household's Manage Duplicate pop up where we create a new primary member with name and dob of that of original household
+          potentialDuplicateCreatedSteps({
+            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.originalHouseholdRegistrationNumber,
+            caseFileNumber: this.originalHouseholdCaseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            roleName,
+            caseFileLogIndex: 1,
+          });
+
+          // asserts value of duplicate household primary member in original household's Manage Duplicate pop up
+          potentialDuplicateCreatedSteps({
+            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.comparisonHouseholdRegistrationNumber,
+            caseFileNumber: this.comparisonHouseholdCaseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            roleName,
+          });
+        });
+      });
+    }
+  });
+
+  describe('Cannot roles', () => {
+    for (const roleName of filteredCannotRoles) {
+      describe(`${roleName}`, () => {
+        beforeEach(() => {
+          cy.login(roleName);
+          cy.goTo('casefile');
+        });
+        it('should not be able to create potential duplicates records with crc user not able to make a member primary with name and dob matching another household', () => {
+          const caseFileHomePage = new CaseFilesHomePage();
+
+          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
+          householdProfilePage.getHouseholdSize().should('be.visible');
+          householdProfilePage.getMakeHouseholdPrimaryButtons().should('not.exist');
+        });
+      });
+    }
+  });
+});

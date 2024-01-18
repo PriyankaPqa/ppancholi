@@ -81,8 +81,8 @@ describe(
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().click();
-          massFinancialAssistanceDetailsPage.getDialogSubmitButton().should('be.visible');
-          massFinancialAssistanceDetailsPage.getDialogCancelButton().should('be.visible');
+          massFinancialAssistanceDetailsPage.getDialogConfirmSubmitButton().should('be.visible');
+          massFinancialAssistanceDetailsPage.getDialogConfirmCancelButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
           massFinancialAssistanceDetailsPage.confirmProcessing();
           cy.waitForMassActionToBe(MassActionRunStatus.Processed);

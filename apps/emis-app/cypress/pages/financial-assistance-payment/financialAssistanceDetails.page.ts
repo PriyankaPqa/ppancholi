@@ -3,6 +3,8 @@ import { CaseFileDetailsPage } from '../casefiles/caseFileDetails.page';
 export enum DataTest {
   addPaymentLineBtn = 'financial-addPaymentLineBtn',
   submitAssistanceButton = 'submit',
+  dialogConfirmCancel = 'cancel-action-dialog-confirmation',
+  dialogConfirmSubmit = 'submit-action-dialog-confirmation',
   dialogCancel = 'dialog-cancel-action',
   dialogSubmit = 'dialog-submit-action',
   dialogCancellationReasonETransfer = 'paymentGroup__cancellationReason',
@@ -39,6 +41,10 @@ export class FinancialAssistanceDetailsPage {
   private dialogCancel = { selector: DataTest.dialogCancel };
 
   private dialogSubmit = { selector: DataTest.dialogSubmit };
+
+  private dialogConfirmCancel = { selector: DataTest.dialogConfirmCancel };
+
+  private dialogConfirmSubmit = { selector: DataTest.dialogConfirmSubmit };
 
   private dialogCancellationReasonETransfer = { selector: DataTest.dialogCancellationReasonETransfer };
 
@@ -171,6 +177,14 @@ export class FinancialAssistanceDetailsPage {
     return cy.getByDataTest(this.dialogCancel);
   }
 
+  public getDialogConfirmSubmitButton() {
+    return cy.getByDataTest(this.dialogConfirmSubmit);
+  }
+
+  public getDialogConfirmCancelButton() {
+    return cy.getByDataTest(this.dialogConfirmCancel);
+  }
+
   public getDialogSelectSupervisorDropdown() {
     return cy.getByDataTest(this.selectSupervisor);
   }
@@ -237,7 +251,7 @@ export class FinancialAssistanceDetailsPage {
 
   public closeConfirmationMessageAndGoToCaseFileDetailsPage() {
     cy.getByDataTest(this.caseFileActivityTab).click();
-    cy.getByDataTest(this.dialogSubmit).click();
+    cy.getByDataTest(this.dialogConfirmSubmit).click();
     return new CaseFileDetailsPage();
   }
 

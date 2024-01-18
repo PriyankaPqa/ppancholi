@@ -94,8 +94,8 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().click();
           massFinancialAssistanceDetailsPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
-          massFinancialAssistanceDetailsPage.getDialogCancelButton().should('be.visible');
-          massFinancialAssistanceDetailsPage.getDialogSubmitButton().should('be.visible');
+          massFinancialAssistanceDetailsPage.getDialogConfirmCancelButton().should('be.visible');
+          massFinancialAssistanceDetailsPage.getDialogConfirmSubmitButton().should('be.visible');
           massFinancialAssistanceDetailsPage.confirmProcessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the case files are being processed.');
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed case files.');
