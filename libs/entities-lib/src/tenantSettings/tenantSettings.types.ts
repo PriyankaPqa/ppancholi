@@ -11,7 +11,6 @@ export enum FeatureKeys {
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   InSystemQuerying = 'InSystemQuerying',
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
-  DataCorrectionAuthentication = 'DataCorrectionAuthentication',
   RecoveryPlan = 'RecoveryPlan',
   MassActionCommunications = 'MassActionCommunications',
   FeatureDashboard = 'FeatureDashboard',

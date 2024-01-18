@@ -191,12 +191,6 @@ describe('massActions', () => {
           .toHaveBeenCalledWith('HomeAddressTemplate.csv', 'HouseholdId,StreetAddress,UnitSuite,City,ProvinceEn,PostalCode,SpecifiedOtherProvince,Country,ETag');
       });
 
-      it('should call downloadTemplate with proper data for AuthenticationSpecifiedOther', () => {
-        wrapper.vm.downloadTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.AuthenticationSpecifiedOther);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('AuthenticationSpecifiedOtherTemplate.csv', 'CaseFileId,AuthenticationSpecifiedOther,ETag');
-      });
-
       it('should call downloadTemplate with proper data for Labels', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.Labels);

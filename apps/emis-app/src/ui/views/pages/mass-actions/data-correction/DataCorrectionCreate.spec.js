@@ -98,7 +98,7 @@ describe('DataCorrectionCreate.vue', () => {
       MassActionDataCorrectionType.HomeAddress,
       MassActionDataCorrectionType.Labels,
       MassActionDataCorrectionType.TemporaryAddress,
-      MassActionDataCorrectionType.AuthenticationSpecifiedOther,
+      MassActionDataCorrectionType.DataCorrectionAuthentication,
       MassActionDataCorrectionType.IdentitySet,
       MassActionDataCorrectionType.ContactInformation,
       MassActionDataCorrectionType.FinancialAssistance,
@@ -112,15 +112,12 @@ describe('DataCorrectionCreate.vue', () => {
         });
       });
 
-      it('should return DataCorrectionAuthentication according to flag', () => {
-        let maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthentication);
-        expect(maType).toBeFalsy();
+      it('should not return AuthenticationSpecifiedOther', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.DataCorrectionAuthentication],
         });
-        maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthentication);
-        expect(maType).toBeTruthy();
+        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.AuthenticationSpecifiedOther);
+        expect(maType).toBeFalsy();
       });
     });
 
