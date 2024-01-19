@@ -39,7 +39,7 @@ export default Vue.extend({
 
     setValueForExpandRowIconTableHeader() {
       const headerSpan = (this.$refs.vDataTableA11y as Vue)?.$el.querySelectorAll('.text-start > span');
-      headerSpan.forEach((span) => {
+      headerSpan?.forEach((span) => {
         if (!span.innerHTML) {
           span.textContent = this.$t('a11y.empty_table_header_cell') as string;
           span.setAttribute('class', 'rc-transparent-text');

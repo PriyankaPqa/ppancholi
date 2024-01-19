@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockItems, mockCategories, EFinancialAmountModes, EFinancialFrequency,
@@ -6,6 +7,7 @@ import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assist
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../FinancialAssistanceItems.vue';
 
+Vue.config.silent = true;
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 const localVue = createLocalVue();

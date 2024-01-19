@@ -10,9 +10,9 @@
     "awesome-phonenumber": "2.68.0",
     "date-fns": "2.30.0",
     "date-fns-tz": "^2.0.0",
-    "vue-i18n": "8.27.0",
-    "vue": "2.7.14",
+    "deepmerge": "^4.2.2",
     "lodash": "^4.17.21",
-    "deepmerge": "^4.2.2"
+    "vue": "2.7.14",
+    "vue-i18n": "8.27.0"
   }
 }

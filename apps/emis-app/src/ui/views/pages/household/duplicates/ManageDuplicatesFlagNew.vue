@@ -78,6 +78,7 @@ import Vue from 'vue';
 import { VForm, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
+import { VAutocompleteWithValidation, VTextAreaWithValidation, VSelectWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { HouseholdStatus, IHouseholdCombined, IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
@@ -89,6 +90,9 @@ const VISUAL_DELAY = 500;
 export default Vue.extend({
   name: 'ManageDuplicatesFlagNew',
   components: {
+    VAutocompleteWithValidation,
+    VTextAreaWithValidation,
+    VSelectWithValidation,
   },
 
   props: {

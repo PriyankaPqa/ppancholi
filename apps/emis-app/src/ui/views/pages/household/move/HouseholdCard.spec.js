@@ -36,7 +36,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
         });
 
         expect(wrapper.vm.members).toEqual(
@@ -56,7 +60,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: false,
             moveSubmitted: false,
           },
-
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
         });
 
         expect(wrapper.vm.showMoveButton(1)).toEqual(false);
@@ -71,7 +79,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
         });
 
         expect(wrapper.vm.showMoveButton(1)).toEqual(true);
@@ -86,6 +98,11 @@ describe('HouseholdCard.vue', () => {
             shelterLocations,
             enabledMove: true,
             moveSubmitted: false,
+          },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
           },
           computed: {
             members() {
@@ -108,6 +125,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
           computed: {
             members() {
               return [mockMember({ id: '1' }), mockMember({ id: '2' })];
@@ -128,6 +150,11 @@ describe('HouseholdCard.vue', () => {
             shelterLocations,
             enabledMove: true,
             moveSubmitted: false,
+          },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
           },
           computed: {
             members() {
@@ -152,6 +179,11 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: false,
+          },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
           },
           computed: {
             members() {
@@ -179,6 +211,11 @@ describe('HouseholdCard.vue', () => {
             shelterLocations,
             enabledMove: true,
           },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
           computed: {
             members() {
               return members;
@@ -204,6 +241,11 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+          },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
           },
           computed: {
             members() {
@@ -232,7 +274,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
         });
       });
       it('returns true if the member was moved, and no selection was made for temporary address', async () => {
@@ -260,7 +306,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
         });
         expect(wrapper.vm.canadianProvincesItems).toEqual([{ id: '1' }]);
       });
@@ -277,7 +327,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
         });
         const expectList = [
           { value: ECurrentAddressTypes.Campground, text: 'Campground' },
@@ -296,7 +350,11 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
         });
 
         expect(wrapper.vm.currentAddressTypeItems).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
@@ -316,7 +374,10 @@ describe('HouseholdCard.vue', () => {
           moveSubmitted: false,
         },
         data() {
-          return { expand: ['id-1'] };
+          return {
+            expand: ['id-1'],
+            apiKey: 'mock-api-key',
+          };
         },
 
       });
@@ -338,7 +399,11 @@ describe('HouseholdCard.vue', () => {
           enabledMove: true,
           moveSubmitted: false,
         },
-
+        data() {
+          return {
+            apiKey: 'mock-api-key',
+          };
+        },
       });
     });
 
@@ -417,6 +482,7 @@ describe('HouseholdCard.vue', () => {
               return {
                 selectedMember: member,
                 newAddress: address,
+                apiKey: 'mock-api-key',
               };
             },
             computed: {
@@ -463,6 +529,7 @@ describe('HouseholdCard.vue', () => {
             return {
               selectedMember: member,
               newAddress: address,
+              apiKey: 'mock-api-key',
             };
           },
           computed: {

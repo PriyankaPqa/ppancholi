@@ -110,6 +110,7 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 
 import { DataTableHeader } from 'vuetify';
 import { UserRoles } from '@libs/entities-lib/user';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 
 export default mixins(massActionCaseFileFiltering).extend({
 
@@ -119,6 +120,7 @@ export default mixins(massActionCaseFileFiltering).extend({
     RcDialog,
     RcDataTable,
     StatusChip,
+    FilterToolbar,
   },
 
   data() {

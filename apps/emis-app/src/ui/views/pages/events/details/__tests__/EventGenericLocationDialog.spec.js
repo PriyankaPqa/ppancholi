@@ -54,6 +54,9 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return true;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -72,6 +75,9 @@ describe('EventGenericLocationDialog.vue', () => {
           computed: {
             isCanada() {
               return false;
+            },
+            apiKey() {
+              return 'mock-apiKey';
             },
           },
         });
@@ -94,6 +100,9 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return false;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -113,6 +122,9 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return true;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -131,6 +143,11 @@ describe('EventGenericLocationDialog.vue', () => {
           isEditMode: false,
           isRegistrationLocation: true,
         },
+        computed: {
+          apiKey() {
+            return 'mock-apiKey';
+          },
+        },
       });
     });
 
@@ -141,6 +158,11 @@ describe('EventGenericLocationDialog.vue', () => {
           event: mockEvent,
           isEditMode: false,
           isRegistrationLocation: true,
+        },
+        computed: {
+          apiKey() {
+            return 'mock-apiKey';
+          },
         },
       });
 
@@ -154,6 +176,11 @@ describe('EventGenericLocationDialog.vue', () => {
             event: mockEvent,
             isEditMode: false,
             isRegistrationLocation: true,
+          },
+          computed: {
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -283,6 +310,9 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return true;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
         expect(wrapper.vm.rules.province).toEqual({
@@ -301,6 +331,9 @@ describe('EventGenericLocationDialog.vue', () => {
           computed: {
             isCanada() {
               return false;
+            },
+            apiKey() {
+              return 'mock-apiKey';
             },
           },
         });
@@ -321,6 +354,9 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return true;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
         expect(wrapper.vm.rules.specifiedOtherProvince).toEqual({
@@ -340,6 +376,9 @@ describe('EventGenericLocationDialog.vue', () => {
           computed: {
             isCanada() {
               return false;
+            },
+            apiKey() {
+              return 'mock-apiKey';
             },
           },
         });
@@ -370,6 +409,11 @@ describe('EventGenericLocationDialog.vue', () => {
             id: mockEvent.registrationLocations[0].name.translation.en,
             isRegistrationLocation: true,
           },
+          computed: {
+            apiKey() {
+              return 'mock-apiKey';
+            },
+          },
         });
 
         expect(wrapper.vm.enableAutocomplete).toBe(true);
@@ -383,6 +427,11 @@ describe('EventGenericLocationDialog.vue', () => {
             isEditMode: false,
             id: mockEvent.registrationLocations[0].name.translation.en,
             isRegistrationLocation: true,
+          },
+          computed: {
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -399,6 +448,11 @@ describe('EventGenericLocationDialog.vue', () => {
           event: mockEvent,
           isEditMode: false,
           isRegistrationLocation: true,
+        },
+        computed: {
+          apiKey() {
+            return 'mock-apiKey';
+          },
         },
       });
     });
@@ -444,6 +498,9 @@ describe('EventGenericLocationDialog.vue', () => {
             isCanada() {
               return true;
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
         const element = wrapper.findDataTest('location-province');
@@ -463,6 +520,9 @@ describe('EventGenericLocationDialog.vue', () => {
           computed: {
             isCanada() {
               return false;
+            },
+            apiKey() {
+              return 'mock-apiKey';
             },
           },
         });
@@ -490,6 +550,11 @@ describe('EventGenericLocationDialog.vue', () => {
             id: mockEvent.registrationLocations[0].name.translation.en,
             isRegistrationLocation: true,
           },
+          computed: {
+            apiKey() {
+              return 'mock-apiKey';
+            },
+          },
         });
         wrapper.vm.initEditMode = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -506,6 +571,11 @@ describe('EventGenericLocationDialog.vue', () => {
             isEditMode: false,
             id: mockEvent.registrationLocations[0].name.translation.en,
             isRegistrationLocation: true,
+          },
+          computed: {
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
         wrapper.vm.initCreateMode = jest.fn();
@@ -529,7 +599,11 @@ describe('EventGenericLocationDialog.vue', () => {
           id: mockEvent.registrationLocations[0].name.translation.en,
           isRegistrationLocation: true,
         },
-
+        computed: {
+          apiKey() {
+            return 'mock-apiKey';
+          },
+        },
       });
 
       jest.clearAllMocks();
@@ -582,6 +656,9 @@ describe('EventGenericLocationDialog.vue', () => {
                 },
               }];
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -631,6 +708,9 @@ describe('EventGenericLocationDialog.vue', () => {
                 },
               }];
             },
+            apiKey() {
+              return 'mock-apiKey';
+            },
           },
         });
 
@@ -664,6 +744,9 @@ describe('EventGenericLocationDialog.vue', () => {
                   postalCode: null,
                 },
               }];
+            },
+            apiKey() {
+              return 'mock-apiKey';
             },
           },
         });

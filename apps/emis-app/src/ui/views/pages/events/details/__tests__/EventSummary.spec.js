@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import {
@@ -20,6 +21,7 @@ import flushPromises from 'flush-promises';
 import Component from '../EventSummary.vue';
 import { EDialogComponent } from '../components/DialogComponents';
 
+Vue.config.silent = true;
 const localVue = createLocalVue();
 
 const mockEvent = mockEventEntities()[0];
@@ -104,7 +106,7 @@ describe('EventSummary.vue', () => {
 
     describe('exceptional-authentication-section', () => {
       it('renders', async () => {
-        doMount(getPiniaForUser(UserRoles.level5), {}, [], false);
+        await doMount(getPiniaForUser(UserRoles.level5), {}, [], false);
         const element = wrapper.findDataTest('exceptional-authentication-section');
         expect(element.exists()).toBeTruthy();
       });

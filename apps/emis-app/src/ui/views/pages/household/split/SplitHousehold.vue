@@ -12,7 +12,7 @@
       <validation-observer ref="form" v-slot="{ failed }" slim>
         <rc-page-content
           :show-back-button="false"
-          :title="title"
+          :title="title || ''"
           :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"
           outer-scroll>
           <template slot="default">
