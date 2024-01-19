@@ -163,3 +163,8 @@ export const mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest = (eventId:
     ...force,
   };
 };
+
+export const mockUpdateHouseholdMemberFirstNameAndLastNameRequest = (firstName: string, lastName: string) => ({
+  contactInformation: mockContactInformationCreateRequest(),
+  identitySet: mockIdentitySetCreateRequest({ firstName, lastName, gender: { id: Genders.Female, isOther: false } }),
+});
