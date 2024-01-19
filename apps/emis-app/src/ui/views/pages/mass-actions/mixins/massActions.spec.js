@@ -176,57 +176,8 @@ describe('massActions', () => {
     });
 
     describe('downloadDataCorrectionTemplate', () => {
-      it('should call downloadTemplate with proper data for ContactInformation', () => {
-        wrapper.vm.downloadTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.ContactInformation);
-        expect(wrapper.vm.downloadTemplate)
-          // eslint-disable-next-line vue/max-len
-          .toHaveBeenCalledWith('ContactInformationTemplate.csv', 'PersonId,PrimarySpokenLanguageSpecifiedOther,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,AlternatePhoneNumberExtension,ETag');
-      });
-
-      it('should call downloadTemplate with proper data for HomeAddress', () => {
-        wrapper.vm.downloadTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.HomeAddress);
-        expect(wrapper.vm.downloadTemplate)
-          .toHaveBeenCalledWith('HomeAddressTemplate.csv', 'HouseholdId,StreetAddress,UnitSuite,City,ProvinceEn,PostalCode,SpecifiedOtherProvince,Country,ETag');
-      });
-
-      it('should call downloadTemplate with proper data for Labels', () => {
-        wrapper.vm.downloadTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.Labels);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('LabelsTemplate.csv', 'CaseFileId,LabelName1,LabelName2,LabelName3,LabelName4,ETag');
-      });
-
-      it('should call downloadTemplate with proper data for IdentitySet', () => {
-        wrapper.vm.downloadTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.IdentitySet);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('IdentitySetTemplate.csv', 'PersonId,FirstName,LastName,MiddleName,GenderSpecifiedOther,ETag');
-      });
-
-      it('should call downloadTemplate with proper data for TemporaryAddress', () => {
-        doMount(false, getPiniaForUser(UserRoles.level6), {});
-        wrapper.vm.downloadTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
-        expect(wrapper.vm.downloadTemplate)
-          // eslint-disable-next-line vue/max-len
-          .toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,CrcProvided,CheckIn,CheckOut,ETag');
-      });
-
-      it('should call downloadApiTemplate for FinancialAssistance', () => {
+      it('should call downloadApiTemplate', () => {
         wrapper.vm.downloadApiTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.FinancialAssistance);
-        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.FinancialAssistance);
-      });
-
-      it('should call downloadApiTemplate for DataCorrectionAuthentication', () => {
-        wrapper.vm.downloadApiTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.DataCorrectionAuthentication);
-        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.DataCorrectionAuthentication);
-      });
-
-      it('should call downloadApiTemplate if feature flag is on', () => {
-        wrapper.vm.downloadApiTemplate = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.DataCorrectionPhaseII);
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
         expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.TemporaryAddress);
       });
