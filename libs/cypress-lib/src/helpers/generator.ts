@@ -27,8 +27,8 @@ export function generateRandomText(length = 5) {
   let text = '';
   const possible = 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnpqrstuvwyz123456789';
   for (let i = 0; i < length; i += 1) {
-text += possible.charAt(Math.floor(Math.random() * possible.length));
-}
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
   return text;
 }
 
@@ -85,4 +85,16 @@ export async function generateXlsxFile(columns: IXlsxTableColumnProperties[], ro
 
 export function removeSpecialCharacters(inputString: string) {
   return inputString.replace(/[^a-zA-Z0-9]/g, '');
+}
+
+/**
+ * Pads digits with zeroes to create a string of given length
+ * @param numLength - Length of final string to be generated
+ * @param digits - Digits to be padded with
+ * @returns {string} String with zeroes padded to digits
+ */
+export function padNumberWithZeroes(numLength: number, digits: number | string) {
+  const precedingZeros = '0'.repeat(numLength - digits.toString().length);
+  const result = precedingZeros + digits;
+  return result;
 }

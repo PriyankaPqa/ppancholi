@@ -16,6 +16,10 @@ export class SplitHouseholdMemberPage {
     });
   }
 
+  public transferHouseholdMembersByIndex(index = 0) {
+    cy.getByDataTestLike(this.checkboxes).eq(index).check({ force: true });
+  }
+
   public goToBeneficiarySearchPage() {
     cy.getByDataTest(this.saveButton).click();
     return new BeneficiarySearchPage();

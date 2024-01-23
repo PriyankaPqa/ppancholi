@@ -1,18 +1,18 @@
 import { faker } from '@faker-js/faker';
 import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
-import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { IPersonalInfoFields, PreferredLanguage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { IHouseholdMemberFields } from 'cypress/pages/casefiles/addHouseholdMember.page';
 import { format } from 'date-fns';
 import { removeSpecialCharacters } from '@libs/cypress-lib/helpers';
-import { ICRCPrivacyStatementPageFields } from '../pages/registration/crcPrivacyStatement.page';
+import { ICRCPrivacyStatementPageFields, PrivacyRegistrationMethod } from '../pages/registration/crcPrivacyStatement.page';
 
 export const fixturePrivacy = (): ICRCPrivacyStatementPageFields => ({
-  privacyRegistrationMethod: 'Phone',
+  privacyRegistrationMethod: PrivacyRegistrationMethod.Phone,
   userName: removeSpecialCharacters(faker.name.fullName()),
 });
 
 export const fixturePrimaryBeneficiary = (): IPersonalInfoFields => ({
-  preferredLanguage: 'French',
+  preferredLanguage: PreferredLanguage.French,
   indigenousIdentity: faker.helpers.arrayElement(['First Nation', 'Metis', 'Inuit', 'Other']),
 });
 

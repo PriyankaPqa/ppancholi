@@ -11,6 +11,10 @@ export interface ICRCPrivacyStatementPageFields {
   userName?:string;
 }
 
+export enum PrivacyRegistrationMethod {
+  'Phone' = 'Phone',
+}
+
 export class CRCPrivacyStatementPage extends PrivacyStatementPage {
   private displayedUserName = { selector: DataTest.displayedUserName, type: 'input' };
 

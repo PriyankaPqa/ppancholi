@@ -1,11 +1,13 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { capitalize } from '@libs/cypress-lib/helpers';
+import { PreferredLanguage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
 import { fixturePrimaryMember, fixtureAddressData, fixtureAdditionalMemberPersonalData } from '../../../fixtures/registration';
 import { ConfirmBeneficiaryRegistrationPage } from '../../../pages/registration/confirmBeneficiaryRegistration.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createEventAndTeam } from '../../helpers/prepareState';
+import { PrivacyRegistrationMethod } from '../../../pages/registration/crcPrivacyStatement.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -66,7 +68,7 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
           const crcPrivacyStatementPage = beneficiarySearchPage.goToCrcPrivacyStatementPage();
           crcPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
           crcPrivacyStatementPage.fillUserNameIfEmpty(roleName);
-          crcPrivacyStatementPage.fillPrivacyRegistrationMethod('Phone');
+          crcPrivacyStatementPage.fillPrivacyRegistrationMethod(PrivacyRegistrationMethod.Phone);
 
           const personalInformationPage = crcPrivacyStatementPage.goToPersonalInfoPage();
           personalInformationPage.fill(primaryMemberData, roleName);
@@ -96,10 +98,10 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
           reviewRegistrationPage.getAdditionalMemberGender(0).should('eq', additionalMemberPersonalData.gender);
           reviewRegistrationPage.editPersonalInformation();
 
-          personalInformationPage.selectPreferredLanguage('English');
+          personalInformationPage.selectPreferredLanguage(PreferredLanguage.English);
 
           reviewRegistrationPage.submitRegistration();
-          reviewRegistrationPage.getPreferredLanguage().should('string', 'English');
+          reviewRegistrationPage.getPreferredLanguage().should('string', PreferredLanguage.English);
           reviewRegistrationPage.goToConfirmationPage();
 
           const confirmBeneficiaryRegistrationPage = new ConfirmBeneficiaryRegistrationPage();

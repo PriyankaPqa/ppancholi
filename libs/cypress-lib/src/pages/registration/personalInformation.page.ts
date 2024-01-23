@@ -26,6 +26,11 @@ export interface IPersonalInfoFields {
   phoneNumber?: string;
 }
 
+export enum PreferredLanguage {
+  'English' = 'English',
+  'French' = 'French',
+}
+
 export class PersonalInformationPage {
   private firstName = { selector: DataTest.firstName, type: 'input' };
 

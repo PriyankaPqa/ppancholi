@@ -3,7 +3,7 @@ import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { ReviewRegistrationPage } from '@libs/cypress-lib/pages/registration/reviewRegistration.page';
 import { PrivacyStatementPage } from '@libs/cypress-lib/pages/registration/privacyStatement.page';
 import { HouseholdMembersPage } from '@libs/cypress-lib/pages/registration/householdMembers.page';
-import { PersonalInformationPage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { PersonalInformationPage, PreferredLanguage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { AddressPage } from '@libs/cypress-lib/pages/registration/address.page';
 import { AddHouseholdMembersPage } from '@libs/cypress-lib/pages/registration/addHouseholdMembers.page';
 import { ConfirmationPage } from '@libs/cypress-lib/pages/registration/confirmation.page';
@@ -82,7 +82,7 @@ describe('#TC1108# : SELF REG - Complete self registration..', { tags: ['@regist
       reviewRegistration.getAdditionalMemberBirthdate(0).should('string', reviewRegistration.getDateOfBirthString(additionalMemberPersonalData.dateOfBirth));
       reviewRegistration.getAdditionalMemberGender(0).should('string', additionalMemberPersonalData.gender);
       reviewRegistration.editPersonalInformation();
-      personalInformation.selectPreferredLanguage('English');
+      personalInformation.selectPreferredLanguage(PreferredLanguage.English);
 
       reviewRegistration.submitRegistration();
 

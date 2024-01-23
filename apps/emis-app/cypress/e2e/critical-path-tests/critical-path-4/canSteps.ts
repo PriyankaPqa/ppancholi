@@ -1,10 +1,10 @@
 import { getToday } from '@libs/cypress-lib/helpers';
-import { IAddressData } from '@libs/entities-lib/household-create';
+import { IAddressData, IIdentitySetCreateRequest, MemberCreateRequest } from '@libs/entities-lib/household-create';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { IPersonalInfoFields, PersonalInformationPage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { IPersonalInfoFields, PersonalInformationPage, PreferredLanguage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
 import { ConfirmBeneficiaryRegistrationPage } from '../../../pages/registration/confirmBeneficiaryRegistration.page';
-import { CRCPrivacyStatementPage } from '../../../pages/registration/crcPrivacyStatement.page';
+import { CRCPrivacyStatementPage, PrivacyRegistrationMethod } from '../../../pages/registration/crcPrivacyStatement.page';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
 
@@ -41,6 +41,16 @@ export interface MakePrimaryPotentialDuplicateStepsParams {
   makePrimaryMemberFirstName: string,
   makePrimaryMemberLastName: string,
   potentialDuplicateBasis: string,
+}
+
+export interface SplitHouseholdDuplicateHouseholdStepsParams {
+  roleName: UserRoles,
+  eventName: string
+  originalHouseholdPrimaryBeneficiary: MemberCreateRequest,
+  splitMemberHouesholdAddress: IAddressPageFields,
+  originalHouseholdPrimaryBeneficiaryPhoneNumber: string,
+  potentialDuplicateBasis: string,
+  comparisonHouseholdNewPrimaryMember?: IIdentitySetCreateRequest,
 }
 
 export const potentialDuplicateCreatedSteps = (params: PotentialDuplicateCreatedStepsParams) => {
@@ -97,7 +107,7 @@ export const crcRegisterPotentialDuplicateSteps = (params: CrcRegisterPotentialD
   const crcPrivacyStatementPage = beneficiarySearchPage.goToCrcPrivacyStatementPage();
   crcPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
   crcPrivacyStatementPage.fillUserNameIfEmpty(params.roleName);
-  crcPrivacyStatementPage.fillPrivacyRegistrationMethod('Phone');
+  crcPrivacyStatementPage.fillPrivacyRegistrationMethod(PrivacyRegistrationMethod.Phone);
 
   const personalInformationPage = crcPrivacyStatementPage.goToPersonalInfoPage();
 
@@ -141,7 +151,7 @@ export const makeMemberPrimarySteps = (params: MakePrimaryPotentialDuplicateStep
   const cRCPrivacyStatementPage = new CRCPrivacyStatementPage();
   cRCPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
   cRCPrivacyStatementPage.fillUserNameIfEmpty(params.roleName);
-  cRCPrivacyStatementPage.fillPrivacyRegistrationMethod('Phone');
+  cRCPrivacyStatementPage.fillPrivacyRegistrationMethod(PrivacyRegistrationMethod.Phone);
 
   const personalInformationPage = new PersonalInformationPage();
   if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
@@ -150,8 +160,57 @@ export const makeMemberPrimarySteps = (params: MakePrimaryPotentialDuplicateStep
       .scrollIntoView()
       .should('be.visible');
   } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
-  personalInformationPage.fillPhoneNumber(params.potentialDuplicateMemberData.phoneNumber);
+    personalInformationPage.fillPhoneNumber(params.potentialDuplicateMemberData.phoneNumber);
   }
-  personalInformationPage.selectPreferredLanguage('English');
+  personalInformationPage.selectPreferredLanguage(PreferredLanguage.English);
   householdProfilePage.getDialogApplyButton().click({ force: true });
+};
+
+// eslint-disable-next-line
+export const splitHouseholdDuplicateHouseholdSteps = (params: SplitHouseholdDuplicateHouseholdStepsParams) => {
+  const householdProfilePage = new HouseholdProfilePage();
+
+  const splitHouseholdMemberPage = householdProfilePage.selectMemberToSplit();
+  splitHouseholdMemberPage.transferHouseholdMembersByIndex();
+  const beneficiarySearchPage = splitHouseholdMemberPage.goToBeneficiarySearchPage();
+
+  const splitHouseholdPrivacyStatementPage = beneficiarySearchPage.goToSelectEventPage();
+
+  const crcPrivacyStatementPage = splitHouseholdPrivacyStatementPage.fillEvent(params.eventName);
+  crcPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
+  crcPrivacyStatementPage.fillPrivacyRegistrationMethod(PrivacyRegistrationMethod.Phone);
+  crcPrivacyStatementPage.fillUserNameIfEmpty(params.roleName);
+
+  const personalInfoSplitMemberPage = crcPrivacyStatementPage.goToPersonalInfoSplitMemberPage();
+  personalInfoSplitMemberPage.fillPhoneNumber(params.originalHouseholdPrimaryBeneficiaryPhoneNumber);
+  personalInfoSplitMemberPage.selectPreferredLanguage(PreferredLanguage.English);
+
+  const addressSplitHouseholdPage = personalInfoSplitMemberPage.goToAddressSplitHouseholdPage();
+  addressSplitHouseholdPage.fill(params.splitMemberHouesholdAddress);
+
+  const householdMembersAfterSplitPage = addressSplitHouseholdPage.goToHouseholdMembersAfterSplitPage();
+
+  const reviewSplitInformationPage = householdMembersAfterSplitPage.goToReviewSplitInformationPage();
+
+  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
+    const splitConfirmationPage = reviewSplitInformationPage.goToConfirmationPage();
+    splitConfirmationPage.getMessage()
+      .should('string', params.comparisonHouseholdNewPrimaryMember.firstName)
+      .should('string', params.comparisonHouseholdNewPrimaryMember.lastName)
+      .should('string', 'is now registered!');
+    splitConfirmationPage.getEventName().should('string', params.eventName);
+    splitConfirmationPage.getRegistrationNumber().as('registrationNumberDuplicateHousehold');
+    cy.contains('A copy of this page has been sent to the primary household member by email.').should('be.visible');
+    splitConfirmationPage.getCancelButton().should('be.visible');
+    splitConfirmationPage.getPrintButton().should('be.visible');
+    splitConfirmationPage.closeRegistration();
+  } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
+    const errorConfirmRegistrationPage = reviewSplitInformationPage.goToConfirmationPage();
+    cy.contains('Unable to complete registration').should('be.visible');
+    errorConfirmRegistrationPage.getErrorTitleDuplicateRegistration().should('eq', 'This individual already exists in the system');
+    cy.contains('Please use the household search page to associate the household with this event.').should('be.visible');
+    errorConfirmRegistrationPage.getSearchHouseholdButton().should('be.visible');
+    errorConfirmRegistrationPage.getCancelButton().should('be.visible');
+    errorConfirmRegistrationPage.getPrintButton().should('be.visible');
+  }
 };
