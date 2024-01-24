@@ -4,12 +4,12 @@ import {
   mockCaseFinancialAssistancePaymentGroups, PaymentStatus, ApprovalStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
-import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 import flushPromises from 'flush-promises';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -51,20 +51,6 @@ describe('PaymentLineGroup.vue', () => {
     describe('paymentLineGroup__title', () => {
       it('is rendered', () => {
         expect(wrapper.findDataTest('paymentLineGroup__title').exists()).toBeTruthy();
-      });
-    });
-
-    describe('cancel_confirmation_reason_dialog', () => {
-      it('shows when showCancelConfirmationReason', async () => {
-        expect(wrapper.findDataTest('cancel_confirmation_reason_dialog').props('show')).toBeFalsy();
-        await wrapper.setData({ showCancelConfirmationReason: true });
-        expect(wrapper.findDataTest('cancel_confirmation_reason_dialog').props('show')).toBeTruthy();
-      });
-
-      it('lists cancellationReasons', async () => {
-        await mountWrapper(true);
-        await wrapper.setData({ showCancelConfirmationReason: true });
-        expect(wrapper.findDataTest('paymentGroup__cancellationReason').props('items')).toEqual(wrapper.vm.cancellationReasons);
       });
     });
 
@@ -158,7 +144,7 @@ describe('PaymentLineGroup.vue', () => {
         await hook.call(wrapper.vm);
         await flushPromises();
         expect(userAccountStore.fetch).toHaveBeenCalledWith('mock-user-id');
-        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id', false);
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id', GlobalHandler.Partial);
       });
     });
   });
@@ -189,29 +175,6 @@ describe('PaymentLineGroup.vue', () => {
           payeeName: 'abc',
         };
         expect(wrapper.vm.title).toBe('enums.PaymentModality.ETransfer');
-      });
-    });
-
-    describe('cancellationByText', () => {
-      it('should return the name and date of cancellation', () => {
-        wrapper.vm.paymentGroup.cancellationDate = '2021-10-13T14:42:03.6568718Z';
-        wrapper.vm.paymentGroup.cancellationBy = '0d22f50a-e1ab-435d-a9f0-cfda502866f4';
-        const c = wrapper.vm.cancellationByText;
-        expect(c).toEqual({ key: 'caseFile.financialAssistance.cancellationReason.byOn', params: [{ by: 'Jane Smith', on: 'Oct 13, 2021' }] });
-        expect(wrapper.vm.$t).toHaveBeenCalledWith(
-          'caseFile.financialAssistance.cancellationReason.byOn',
-          { by: 'Jane Smith', on: helpers.getLocalStringDate(wrapper.vm.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'PP') },
-        );
-      });
-    });
-
-    describe('cancellationReasonText', () => {
-      it('should return the reason of cancellation if one was provided', () => {
-        let c = wrapper.vm.cancellationReasonText;
-        expect(c).toBeNull();
-        wrapper.vm.paymentGroup.cancellationReason = 0;
-        c = wrapper.vm.cancellationReasonText;
-        expect(c).toEqual('caseFile.financialAssistance.cancellationReason.reason 0 - Admin cancellation');
       });
     });
 
@@ -258,6 +221,36 @@ describe('PaymentLineGroup.vue', () => {
     describe('modality', () => {
       it('should return name of the selected modality in lowercase', () => {
         expect(wrapper.vm.modality).toEqual('enums.paymentmodality.cheque');
+      });
+    });
+
+    describe('isCancelled', () => {
+      it('returns true if payment group status is cancelled', async () => {
+        paymentGroup = mockCaseFinancialAssistancePaymentGroups({ paymentStatus: PaymentStatus.Cancelled })[0];
+        await mountWrapper();
+
+        expect(wrapper.vm.isCancelled).toBeTruthy();
+      });
+      it('returns false if payment group status is not cancelled', async () => {
+        paymentGroup = mockCaseFinancialAssistancePaymentGroups({ paymentStatus: PaymentStatus.New })[0];
+        await mountWrapper();
+
+        expect(wrapper.vm.isCancelled).toBeFalsy();
+      });
+    });
+
+    describe('isCompleted', () => {
+      it('returns true if payment group status is completed', async () => {
+        paymentGroup = mockCaseFinancialAssistancePaymentGroups({ paymentStatus: PaymentStatus.Completed })[0];
+        await mountWrapper();
+
+        expect(wrapper.vm.isCompleted).toBeTruthy();
+      });
+      it('returns false if payment group status is not completed', async () => {
+        paymentGroup = mockCaseFinancialAssistancePaymentGroups({ paymentStatus: PaymentStatus.New })[0];
+        await mountWrapper();
+
+        expect(wrapper.vm.isCompleted).toBeFalsy();
       });
     });
 
@@ -620,7 +613,7 @@ describe('PaymentLineGroup.vue', () => {
       it('should emit update-payment-status with confirmation', async () => {
         await mountWrapper();
         await wrapper.setData({ cancellationReason: 5 });
-        wrapper.vm.onConfirmCancel();
+        wrapper.vm.onConfirmCancel(5);
         expect(wrapper.emitted('update-payment-status')[0][0]).toEqual({ status: PaymentStatus.Cancelled, group: wrapper.vm.paymentGroup, cancellationReason: 5 });
         expect(wrapper.vm.showCancelConfirmationReason).toBeFalsy();
       });

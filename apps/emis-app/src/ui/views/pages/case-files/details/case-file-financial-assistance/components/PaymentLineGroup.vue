@@ -38,17 +38,12 @@
         </span>
       </span>
     </div>
-    <div v-if="isCancelled" class="cancellationReason rc-body12">
-      <v-icon small color="red" class="mr-4">
-        mdi-alert
-      </v-icon>
-      <div class="mr-4">
-        {{ cancellationByText }}
-      </div>
-      <div v-if="cancellationReasonText">
-        {{ cancellationReasonText }}
-      </div>
-    </div>
+
+    <payment-cancelled-by
+      v-if="isCancelled"
+      :by="paymentGroup.cancellationBy"
+      :date="paymentGroup.cancellationDate"
+      :reason="paymentGroup.cancellationReason" />
 
     <payment-line-item
       v-for="(line, $index) in activeLines"
@@ -57,55 +52,41 @@
       :readonly="readonly"
       :transaction-approval-status="transactionApprovalStatus"
       :payment-group="paymentGroup"
-      :is-cancelled="isCancelled"
+      :is-group-cancelled="isCancelled"
+      :is-completed="isCompleted"
       :disable-delete-button="disableDeleteButton"
+      :disable-cancel-button="disableCancelButton"
       :items="items"
       @edit-payment-line="$emit('edit-payment-line', $event)"
+      @cancel-payment-line="$emit('cancel-payment-line', $event)"
       @delete-payment-line="$emit('delete-payment-line', $event)" />
 
     <div v-if="!isCancelled" class="paymentGroup__total rc-body14 fw-bold" data-test="paymentLineGroup__total">
       {{ $t('caseFile.financialAssistance.groupTotal', { total: $formatCurrency(total), modality }) }}
     </div>
 
-    <rc-confirmation-dialog
-      data-test="cancel_confirmation_reason_dialog"
-      :show.sync="showCancelConfirmationReason"
-      :title="$t('caseFile.financialAssistance.changeStatusDialog.title')"
-      :submit-button-disabled="cancellationReason == null"
-      submit-button-key="caseFile.financialAssistance.cancelPaymentDialog.button"
-      @submit="onConfirmCancel">
-      <template #default>
-        <div>
-          <div class="rc-body16 fw-bold mb-4">
-            {{ $t('caseFile.financialAssistance.cancelPaymentDialog.message') }}
-          </div>
-          <v-select-with-validation
-            v-model="cancellationReason"
-            data-test="paymentGroup__cancellationReason"
-            :items="cancellationReasons"
-            rules="required"
-            :label="`${$t('caseFile.financialAssistance.cancelPaymentDialog.chooseReason')} *`" />
-        </div>
-      </template>
-    </rc-confirmation-dialog>
-
     <payment-status-history-dialog
       v-if="showPaymentStatusHistory"
       :payment-group="paymentGroup"
       :show.sync="showPaymentStatusHistory" />
+
+    <payment-cancellation-reason
+      v-if="showCancelConfirmationReason"
+      @cancel-with-reason="onConfirmCancel"
+      @close="showCancelConfirmationReason = false" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcConfirmationDialog, VSelectWithValidation } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import {
   ApprovalStatus,
   EPaymentCancellationReason,
   FinancialAssistancePaymentGroup,
+  FinancialAssistancePaymentLine,
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
   PayeeType,
@@ -117,7 +98,10 @@ import { Status } from '@libs/entities-lib/base';
 import { UserRoles } from '@libs/entities-lib/user';
 import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import PaymentLineItem from './PaymentLineItem.vue';
+import PaymentCancellationReason from './PaymentCancellationReason.vue';
+import PaymentCancelledBy from './PaymentCancelledBy.vue';
 
 export default Vue.extend({
   name: 'PaymentLineGroup',
@@ -125,9 +109,9 @@ export default Vue.extend({
   components: {
     StatusSelect,
     PaymentLineItem,
-    RcConfirmationDialog,
-    VSelectWithValidation,
     PaymentStatusHistoryDialog,
+    PaymentCancelledBy,
+    PaymentCancellationReason,
   },
 
   props: {
@@ -169,6 +153,7 @@ export default Vue.extend({
       ApprovalStatus,
       showCancelConfirmationReason: false,
       showPaymentStatusHistory: false,
+      FinancialAssistancePaymentLine,
       cancellationReasons: helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'),
     };
   },
@@ -207,6 +192,10 @@ export default Vue.extend({
       return this.paymentGroup.paymentStatus === PaymentStatus.Cancelled;
     },
 
+    isCompleted(): boolean {
+      return this.paymentGroup.paymentStatus === PaymentStatus.Completed;
+    },
+
     cancellationByText(): TranslateResult {
       return this.$t(
         'caseFile.financialAssistance.cancellationReason.byOn',
@@ -241,6 +230,10 @@ export default Vue.extend({
         default:
           return '-';
       }
+    },
+
+    disableCancelButton(): boolean {
+      return this.paymentGroup.lines.filter((l) => !l.isCancelled).length < 2;
     },
 
     // eslint-disable-next-line complexity
@@ -349,7 +342,7 @@ export default Vue.extend({
 
     if (this.paymentGroup.cancellationBy) {
       await useUserAccountStore().fetch(this.paymentGroup.cancellationBy);
-      await useUserAccountMetadataStore().fetch(this.paymentGroup.cancellationBy, false);
+      await useUserAccountMetadataStore().fetch(this.paymentGroup.cancellationBy, GlobalHandler.Partial);
     }
   },
 
@@ -375,9 +368,9 @@ export default Vue.extend({
       }
     },
 
-    onConfirmCancel() {
+    onConfirmCancel(cancellationReason: EPaymentCancellationReason) {
       this.showCancelConfirmationReason = false;
-      this.$emit('update-payment-status', { status: PaymentStatus.Cancelled, group: this.paymentGroup, cancellationReason: this.cancellationReason });
+      this.$emit('update-payment-status', { status: PaymentStatus.Cancelled, group: this.paymentGroup, cancellationReason });
     },
 
     showPaymentStatusHistoryDialog() {

@@ -1,72 +1,107 @@
 <template>
-  <div class="pa-4 paymentLine__container">
-    <div class="flex-row">
-      <span
-        v-if="paymentLine.id"
-        data-test="paymentLineItem__title"
-        class="rc-link16 fw-bold"
-        :class="{ 'error--text': isInactive }"
-        @keypress.enter="linkToPaymentLineDetails"
-        @click="linkToPaymentLineDetails">
-        {{ title }}
-      </span>
-
-      <span v-else class="rc-body16 fw-bold" data-test="paymentLineItem__title">
-        {{ title }}
-      </span>
-
-      <div class="flex-grow-1" />
-
-      <v-tooltip v-if="showTooltip" v-bind="$attrs" bottom>
-        <template #activator="{ on, attrs }">
-          <v-icon v-bind="attrs" class="mr-2" color="secondary" small data-test="paymentLineItem__tooltip" v-on="on">
-            mdi-alert-circle-outline
-          </v-icon>
-        </template>
-
-        <span data-test="paymentLineItem__amount-exceeded">
-          {{ $t('caseFile.financialAssistance.amountExceeded', { maximumAmount: subItem.maximumAmount }) }}
+  <div class="paymentLine__container flex-column">
+    <div class="flex-column px-4 py-4">
+      <div class="flex-row ">
+        <span
+          v-if="paymentLine.id"
+          data-test="paymentLineItem__title"
+          class="rc-link16 fw-bold"
+          :class="{ 'error--text': isInactive }"
+          @keypress.enter="linkToPaymentLineDetails"
+          @click="linkToPaymentLineDetails">
+          {{ title }}
         </span>
-      </v-tooltip>
 
-      <div data-test="paymentLineItem__amount" :class="{ 'rc-body14': true, 'text-decoration-line-through': isCancelled }">
-        {{ amounts }}
+        <span v-else class="rc-body16 fw-bold" data-test="paymentLineItem__title">
+          {{ title }}
+        </span>
+
+        <div class="flex-grow-1" />
+
+        <v-tooltip v-if="showTooltip" v-bind="$attrs" bottom>
+          <template #activator="{ on, attrs }">
+            <v-icon v-bind="attrs" class="mr-2" color="secondary" small data-test="paymentLineItem__tooltip" v-on="on">
+              mdi-alert-circle-outline
+            </v-icon>
+          </template>
+
+          <span data-test="paymentLineItem__amount-exceeded">
+            {{ $t('caseFile.financialAssistance.amountExceeded', { maximumAmount: subItem.maximumAmount }) }}
+          </span>
+        </v-tooltip>
+
+        <v-btn
+          v-if="showCancelButton"
+          class="mr-3"
+          small
+          :aria-label="$t('caseFile.financialAssistance.cancelPaymentDialog.button')"
+          data-test="paymentLineItem__cancelBtn"
+          @click="onClickCancel">
+          {{ $t('common.cancel') }}
+        </v-btn>
+
+        <span v-if="paymentLine.isCancelled" class="cancelled-text rc-body14 mr-1">{{ $t("caseFile.financialAssistance.cancelled") }}</span>
+
+        <div data-test="paymentLineItem__amount" class="amount rc-body14" :class="{ 'text-decoration-line-through': isGroupCancelled || paymentLine.isCancelled }">
+          {{ amounts }}
+        </div>
+
+        <v-btn v-visible="showEditButton" class="ml-2" icon small data-test="paymentLineItem__editBtn" @click="onClickEdit">
+          <v-icon small>
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+
+        <v-btn v-visible="showDeleteButton" icon small data-test="paymentLineItem__deleteBtn" @click="onClickDelete">
+          <v-icon small>
+            mdi-delete
+          </v-icon>
+        </v-btn>
       </div>
 
-      <v-btn v-visible="showEditButton" class="ml-2" icon small data-test="paymentLineItem__editBtn" @click="onClickEdit">
-        <v-icon small>
-          mdi-pencil
-        </v-icon>
-      </v-btn>
+      <div v-if="showRelatedNumber(paymentGroup)" class="flex-row">
+        <span :class="{ 'rc-body14': true }" data-test="paymentLineItem__related-number">
+          {{ $t('caseFile.financialAssistance.relatedNumber') + ': ' + (paymentLine.relatedNumber || '—') }}
+        </span>
+      </div>
+    </div>
 
-      <v-btn v-visible="showDeleteButton" icon small data-test="paymentLineItem__deleteBtn" @click="onClickDelete">
-        <v-icon small>
-          mdi-delete
-        </v-icon>
-      </v-btn>
-    </div>
-    <div v-if="showRelatedNumber(paymentGroup)" class="flex-row">
-      <span :class="{ 'rc-body14': true }" data-test="paymentLineItem__related-number">
-        {{ $t('caseFile.financialAssistance.relatedNumber') + ': ' + (paymentLine.relatedNumber || '—') }}
-      </span>
-    </div>
+    <payment-cancelled-by
+      v-if="paymentLine.isCancelled"
+      is-line-level
+      :by="paymentLine.cancellationBy"
+      :date="paymentLine.cancellationDate"
+      :reason="paymentLine.cancellationReason" />
+
+    <payment-cancellation-reason
+      v-if="showCancellationReasonSelect"
+      @cancel-with-reason="onCancelWithReason"
+      @close="showCancellationReasonSelect = false" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {
-  ApprovalStatus, FinancialAssistancePaymentGroup, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentLine, PayeeType,
+  ApprovalStatus, EPaymentCancellationReason, FinancialAssistancePaymentGroup, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentLine, PayeeType,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import routes from '@/constants/routes';
 import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/entities-lib/base';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { GlobalHandler } from '@libs/services-lib/http-client';
+import { EPaymentModalities } from '@libs/entities-lib/program';
+import PaymentCancelledBy from './PaymentCancelledBy.vue';
+import PaymentCancellationReason from './PaymentCancellationReason.vue';
 
 export default Vue.extend({
   name: 'PaymentLineItem',
 
   components: {
+    PaymentCancelledBy,
+    PaymentCancellationReason,
   },
 
   props: {
@@ -97,12 +132,22 @@ export default Vue.extend({
       required: true,
     },
 
-    isCancelled: {
+    isGroupCancelled: {
+      type: Boolean,
+      default: false,
+    },
+
+    isCompleted: {
       type: Boolean,
       default: false,
     },
 
     disableDeleteButton: {
+      type: Boolean,
+      default: false,
+    },
+
+    disableCancelButton: {
       type: Boolean,
       default: false,
     },
@@ -119,6 +164,7 @@ export default Vue.extend({
       showRelatedNumber: FinancialAssistancePaymentGroup.showRelatedNumber,
       showIssuedActualAmounts: FinancialAssistancePaymentGroup.showIssuedActualAmounts,
       PayeeType,
+      showCancellationReasonSelect: false,
     };
   },
 
@@ -184,14 +230,24 @@ export default Vue.extend({
     showDeleteButton(): boolean {
       return !this.readonly && this.$hasLevel(UserRoles.level1) && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
     },
+
+    showCancelButton(): boolean {
+      return this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine)
+      && this.$hasLevel(UserRoles.level6)
+      && this.isCompleted && !this.paymentLine.isCancelled;
+    },
   },
 
-  created() {
+  async created() {
     if (this.isInactive) {
       this.$message({
         title: this.$t('caseFile.financialAssistance.inactiveDetails.title'),
         message: this.$t('caseFile.financialAssistance.inactiveDetails.message'),
       });
+    }
+    if (this.paymentLine.cancellationBy) {
+      await useUserAccountStore().fetch(this.paymentLine.cancellationBy);
+      await useUserAccountMetadataStore().fetch(this.paymentLine.cancellationBy, GlobalHandler.Partial);
     }
   },
 
@@ -203,13 +259,30 @@ export default Vue.extend({
     async onClickDelete() {
       if (this.disableDeleteButton) {
         this.$toasted.global.warning(this.$t('caseFile.financialAssistance.deleteTooltip'));
-      } else {
-        const doDelete = await this.$confirm({
-          title: this.$t('caseFile.financialAssistance.deletePaymentLine.title'),
-          messages: this.$t('caseFile.financialAssistance.deletePaymentLine.message'),
+        } else {
+          const doDelete = await this.$confirm({
+            title: this.$t('caseFile.financialAssistance.deletePaymentLine.title'),
+            messages: this.$t('caseFile.financialAssistance.deletePaymentLine.message'),
+          });
+          if (doDelete) {
+            this.$emit('delete-payment-line', { line: this.paymentLine, group: this.paymentGroup });
+          }
+        }
+    },
+
+    async onClickCancel() {
+      if (this.disableCancelButton) {
+        this.$toasted.global.warning(this.$t('caseFile.financialAssistance.cancelTooltip'));
+      } else if (this.paymentGroup.groupingInformation?.modality === EPaymentModalities.ETransfer) {
+          this.showCancellationReasonSelect = true;
+        } else {
+        const doCancel = await this.$confirm({
+          title: this.$t('caseFile.financialAssistance.cancelPaymentLine.title'),
+          messages: null,
+          htmlContent: this.$t('caseFile.financialAssistance.cancelPaymentLine.message') as string,
         });
-        if (doDelete) {
-          this.$emit('delete-payment-line', { line: this.paymentLine, group: this.paymentGroup });
+        if (doCancel) {
+          this.$emit('cancel-payment-line', { lineId: this.paymentLine.id });
         }
       }
     },
@@ -222,6 +295,13 @@ export default Vue.extend({
         },
       });
     },
+
+    onCancelWithReason(reason: EPaymentCancellationReason) {
+      this.showCancellationReasonSelect = false;
+      this.paymentLine.cancellationReason = reason;
+      this.$emit('cancel-payment-line', { lineId: this.paymentLine.id, reason });
+    },
+
   },
 });
 </script>
@@ -235,5 +315,15 @@ export default Vue.extend({
   padding-right: 24px;
   margin-right: 24px;
   border-right: 1px solid var(--v-grey-lighten2);
+}
+
+.amount {
+  min-width: 55px;
+  text-align: end;
+}
+
+.cancelled-text {
+  color:  var(--v-status_error-base);
+  text-transform: uppercase;
 }
 </style>

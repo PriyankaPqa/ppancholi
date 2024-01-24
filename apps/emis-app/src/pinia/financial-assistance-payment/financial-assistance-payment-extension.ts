@@ -3,6 +3,7 @@ import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/
 import { ref, Ref } from 'vue';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import {
+  EPaymentCancellationReason,
   IApprovalActionPayload,
   IdParams,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup,
@@ -112,6 +113,14 @@ export function getExtensionComponents(
     return result;
   }
 
+  async function cancelFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid, reason: EPaymentCancellationReason = null) {
+    const result = await entityService.cancelFinancialAssistancePaymentLine(financialAssistanceId, paymentId, reason);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
   return {
     financialAssistanceCategories,
     financialAssistanceCategoriesFetched,
@@ -126,5 +135,6 @@ export function getExtensionComponents(
     addFinancialAssistancePaymentLine,
     editFinancialAssistancePaymentLine,
     deleteFinancialAssistancePaymentLine,
+    cancelFinancialAssistancePaymentLine,
   };
 }

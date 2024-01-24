@@ -19,5 +19,6 @@ export function getMockFinancialAssistancePaymentExtensionComponents(entity: IFi
     addFinancialAssistancePaymentLine: jest.fn(() => entity),
     editFinancialAssistancePaymentLine: jest.fn(() => entity),
     deleteFinancialAssistancePaymentLine: jest.fn(() => entity),
+    cancelFinancialAssistancePaymentLine: jest.fn(() => entity),
   };
 }

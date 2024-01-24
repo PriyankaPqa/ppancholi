@@ -1,6 +1,7 @@
 import { BaseEntity, Status } from '../base';
 import { IAddress } from '../value-objects/address';
 import {
+  EPaymentCancellationReason,
   IFinancialAssistancePaymentLine,
 } from './financial-assistance-payment.types';
 
@@ -21,6 +22,14 @@ export class FinancialAssistancePaymentLine extends BaseEntity implements IFinan
 
   address: IAddress;
 
+  isCancelled: boolean;
+
+  cancellationDate: string | Date;
+
+  cancellationBy: uuid;
+
+  cancellationReason: EPaymentCancellationReason;
+
   constructor(data?: IFinancialAssistancePaymentLine) {
     if (data) {
       super(data);
@@ -32,6 +41,10 @@ export class FinancialAssistancePaymentLine extends BaseEntity implements IFinan
       this.relatedNumber = data.relatedNumber;
       this.careOf = data.careOf;
       this.address = data.address;
+      this.isCancelled = data.isCancelled;
+      this.cancellationDate = data.cancellationDate;
+      this.cancellationBy = data.cancellationBy;
+      this.cancellationReason = data.cancellationReason;
     } else {
       super();
       this.mainCategoryId = null;
@@ -43,6 +56,10 @@ export class FinancialAssistancePaymentLine extends BaseEntity implements IFinan
       this.careOf = null;
       this.address = null;
       this.status = Status.Active;
+      this.isCancelled = false;
+      this.cancellationDate = null;
+      this.cancellationBy = null;
+      this.cancellationReason = null;
     }
   }
 }

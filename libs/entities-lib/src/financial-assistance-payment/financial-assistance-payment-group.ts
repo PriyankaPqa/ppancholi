@@ -66,7 +66,7 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
     paymentGroups.forEach((group: IFinancialAssistancePaymentGroup) => {
       if (group.paymentStatus !== PaymentStatus.Cancelled && group.status === Status.Active) {
         group.lines?.forEach((line: IFinancialAssistancePaymentLine) => {
-          if (line.status === Status.Active) {
+          if (line.status === Status.Active && !line.isCancelled) {
             total += Number(line.actualAmount != null ? line.actualAmount : line.amount);
           }
         });

@@ -14,6 +14,7 @@ export enum FeatureKeys {
   RecoveryPlan = 'RecoveryPlan',
   MassActionCommunications = 'MassActionCommunications',
   FeatureDashboard = 'FeatureDashboard',
+  FinancialAssistanceRemovePaymentLine = 'FinancialAssistanceRemovePaymentLine',
 }
 
 export enum FeatureType {

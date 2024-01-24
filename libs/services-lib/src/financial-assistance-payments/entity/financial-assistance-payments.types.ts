@@ -27,6 +27,8 @@ export interface IFinancialAssistancePaymentsService extends IDomainBaseService<
   Promise<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid):
   Promise<IFinancialAssistancePaymentEntity>;
+  cancelFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid, reason: EPaymentCancellationReason):
+  Promise<IFinancialAssistancePaymentEntity>;
   getHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
   getMetadataHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
   getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary>;
@@ -43,6 +45,7 @@ export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServ
   addFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
+  cancelFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   getHistory: jest.Mock<IVersionedEntity[]>;
   getMetadataHistory: jest.Mock<IVersionedEntity[]>;
   getPaymentSummary: jest.Mock<PaymentsSummary>;

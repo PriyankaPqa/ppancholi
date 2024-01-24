@@ -10,7 +10,7 @@ import
   mockCaseFinancialAssistanceEntity,
   mockCaseFinancialAssistancePaymentGroups,
   ApprovalStatus, mockCaseFinancialAssistanceEntities,
-} from '@libs/entities-lib/financial-assistance-payment';
+  EPaymentCancellationReason } from '@libs/entities-lib/financial-assistance-payment';
 import {
   IdentityAuthenticationStatus,
   ValidationOfImpactStatus,
@@ -1149,6 +1149,19 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         wrapper.vm.submitPaymentNameUpdate = jest.fn();
         await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
         expect(wrapper.vm.submitPaymentNameUpdate).toBeCalledTimes(1);
+      });
+    });
+
+    describe('cancelPaymentLine', () => {
+      it('should call the cancel service when existing line is received', async () => {
+        wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.submitPaymentNameUpdate = jest.fn();
+        const newGroup = mockCaseFinancialAssistancePaymentGroups();
+        wrapper.vm.financialAssistance.groups = [newGroup[0]];
+        await wrapper.vm.cancelPaymentLine({ lineId: 'id-1', reason: EPaymentCancellationReason.AdminCancellation0 });
+        expect(financialAssistancePaymentStore.cancelFinancialAssistancePaymentLine)
+          .toHaveBeenCalledWith(financialAssistance.id, 'id-1', EPaymentCancellationReason.AdminCancellation0);
+        expect(wrapper.vm.financialAssistance.groups).toEqual(financialAssistancePaymentStore.cancelFinancialAssistancePaymentLine().groups);
       });
     });
 

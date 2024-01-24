@@ -164,4 +164,13 @@ describe('Financial assistance payment store', () => {
       expect(res).toEqual(entity);
     });
   });
+
+  describe('cancelFinancialAssistancePaymentLine', () => {
+    it('calls the right service and returns the result', async () => {
+      const id = 'mock-id';
+      const res = await store.cancelFinancialAssistancePaymentLine(id, 'myId', 1);
+      expect(entityService.cancelFinancialAssistancePaymentLine).toBeCalledWith(id, 'myId', 1);
+      expect(res).toEqual(entity);
+    });
+  });
 });

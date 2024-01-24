@@ -117,6 +117,13 @@ describe('>>> Financial assistance payment Service', () => {
     });
   });
 
+  describe('cancelFinancialAssistancePaymentLine', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.cancelFinancialAssistancePaymentLine('myParent', 'myId', 1);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myParent/lines/myId/cancel', { reason: 1 });
+    });
+  });
+
   describe('getHistory', () => {
     it('is linked to the correct URL and params', async () => {
       await service.getHistory('myId');

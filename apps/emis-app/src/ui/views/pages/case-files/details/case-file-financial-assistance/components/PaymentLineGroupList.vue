@@ -12,6 +12,7 @@
       :items="items"
       @edit-payment-line="$emit('edit-payment-line', $event)"
       @delete-payment-line="$emit('delete-payment-line', $event)"
+      @cancel-payment-line="$emit('cancel-payment-line', $event)"
       @update-payment-status="$emit('update-payment-status', $event)" />
 
     <div class="row paymentGroups__total rc-heading-5">

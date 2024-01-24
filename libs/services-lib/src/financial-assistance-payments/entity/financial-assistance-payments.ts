@@ -5,7 +5,7 @@ import {
   IFinancialAssistancePaymentGroup,
   PaymentsSummary,
 } from '@libs/entities-lib/financial-assistance-payment';
-import { IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
+import { EPaymentCancellationReason, IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { IFinancialAssistancePaymentsService, IUpdatePaymentStatusParams } from './financial-assistance-payments.types';
@@ -78,6 +78,11 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
   async deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid):
     Promise<IFinancialAssistancePaymentEntity> {
     return this.http.delete(`${this.baseUrl}/${financialAssistanceId}/lines/${paymentId}`);
+  }
+
+  async cancelFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid, reason: EPaymentCancellationReason):
+    Promise<IFinancialAssistancePaymentEntity> {
+    return this.http.patch(`${this.baseUrl}/${financialAssistanceId}/lines/${paymentId}/cancel`, { reason });
   }
 
   async getHistory(id: uuid): Promise<IVersionedEntity[]> {

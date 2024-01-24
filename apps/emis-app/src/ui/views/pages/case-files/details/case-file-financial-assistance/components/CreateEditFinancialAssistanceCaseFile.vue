@@ -78,6 +78,7 @@
                   @submit-payment="onClickSubmitPayment"
                   @edit-payment-line="editPaymentLine"
                   @delete-payment-line="deletePaymentLine"
+                  @cancel-payment-line="cancelPaymentLine"
                   @update-payment-status="updatePaymentStatus" />
                 <div v-else class="rc-body14">
                   {{ $t('caseFile.financialAssistance.noPaymentLines') }}
@@ -186,7 +187,7 @@ import CreateEditPaymentLineDialog from './CreateEditPaymentLineDialog.vue';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
-  name: 'CreateEditFinancialAssistance',
+  name: 'CreateEditFinancialAssistanceCaseFile',
 
   components: {
     SubmitFinancialAssistancePaymentDialog,
@@ -541,6 +542,13 @@ export default mixins(caseFileDetail).extend({
         }
       }
       await this.submitPaymentNameUpdate();
+    },
+
+    async cancelPaymentLine(event : { lineId: string, reason: EPaymentCancellationReason }) {
+      const updatedFinancialAssistance = await useFinancialAssistancePaymentStore().cancelFinancialAssistancePaymentLine(this.financialAssistance.id, event.lineId, event.reason);
+      if (updatedFinancialAssistance) {
+        this.financialAssistance.groups = updatedFinancialAssistance.groups;
+      }
     },
 
     async updatePaymentStatus(event : {

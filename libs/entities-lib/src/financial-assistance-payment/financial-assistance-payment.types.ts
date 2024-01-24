@@ -58,6 +58,10 @@ export interface IFinancialAssistancePaymentLine extends IEntity {
   relatedNumber: string;
   careOf: string;
   address: IAddress;
+  isCancelled: boolean;
+  cancellationDate: string | Date;
+  cancellationBy: uuid;
+  cancellationReason: EPaymentCancellationReason;
 }
 
 export interface IGroupingInformation {
