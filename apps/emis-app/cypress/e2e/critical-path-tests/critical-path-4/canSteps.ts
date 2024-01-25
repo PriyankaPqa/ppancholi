@@ -48,7 +48,7 @@ export interface SplitHouseholdDuplicateHouseholdStepsParams {
   eventName: string
   originalHouseholdPrimaryBeneficiary: MemberCreateRequest,
   splitMemberHouesholdAddress: IAddressPageFields,
-  originalHouseholdPrimaryBeneficiaryPhoneNumber: string,
+  splitMemberPhoneNumber: string,
   potentialDuplicateBasis: string,
   comparisonHouseholdNewPrimaryMember?: IIdentitySetCreateRequest,
 }
@@ -182,7 +182,7 @@ export const splitHouseholdDuplicateHouseholdSteps = (params: SplitHouseholdDupl
   crcPrivacyStatementPage.fillUserNameIfEmpty(params.roleName);
 
   const personalInfoSplitMemberPage = crcPrivacyStatementPage.goToPersonalInfoSplitMemberPage();
-  personalInfoSplitMemberPage.fillPhoneNumber(params.originalHouseholdPrimaryBeneficiaryPhoneNumber);
+  personalInfoSplitMemberPage.fillPhoneNumber(params.splitMemberPhoneNumber);
   personalInfoSplitMemberPage.selectPreferredLanguage(PreferredLanguage.English);
 
   const addressSplitHouseholdPage = personalInfoSplitMemberPage.goToAddressSplitHouseholdPage();
@@ -192,7 +192,7 @@ export const splitHouseholdDuplicateHouseholdSteps = (params: SplitHouseholdDupl
 
   const reviewSplitInformationPage = householdMembersAfterSplitPage.goToReviewSplitInformationPage();
 
-  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber) {
+  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber || params.potentialDuplicateBasis === PotentialDuplicateBasis.HomeAddress) {
     const splitConfirmationPage = reviewSplitInformationPage.goToConfirmationPage();
     splitConfirmationPage.getMessage()
       .should('string', params.comparisonHouseholdNewPrimaryMember.firstName)

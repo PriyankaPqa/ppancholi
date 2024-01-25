@@ -73,7 +73,7 @@ describe('#TC1875# - Split Household - User cannot split household when Primary 
             eventName: this.eventCreated.name.translation.en,
             originalHouseholdPrimaryBeneficiary: this.originalHouseholdPrimaryBeneficiary,
             splitMemberHouesholdAddress: fixtureCreateAddress(),
-            originalHouseholdPrimaryBeneficiaryPhoneNumber: this.originalHouseholdPrimaryBeneficiaryPhoneNumber,
+            splitMemberPhoneNumber: this.originalHouseholdPrimaryBeneficiaryPhoneNumber,
             potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
             comparisonHouseholdNewPrimaryMember: this.comparisonHouseholdNewPrimaryMember,
           });

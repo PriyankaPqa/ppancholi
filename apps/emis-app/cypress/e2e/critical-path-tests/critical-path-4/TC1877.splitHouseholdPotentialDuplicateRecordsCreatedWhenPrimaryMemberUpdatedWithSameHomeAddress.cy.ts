@@ -1,9 +1,10 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { padNumberWithZeroes } from '@libs/cypress-lib/helpers';
+import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
+import { faker } from '@faker-js/faker';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureCreateAddress } from '../../../fixtures/household';
 import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps, splitHouseholdDuplicateHouseholdSteps } from './canSteps';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
@@ -29,7 +30,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1876# - Split Household - Potential duplicate records created when Primary Member Phone number updated to be the same as another EMIS member', { tags: ['@household'] }, () => {
+describe('#TC1877# - Split Household - Potential duplicate records created when Home Address updated to match that of another household', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -56,20 +57,29 @@ describe('#TC1876# - Split Household - Potential duplicate records created when 
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
             cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
             cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
-            cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number).as('originalHouseholdPrimaryBeneficiaryPhoneNumber');
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.homeAddress).as('originalHouseholdHomeAddress');
             cy.wrap(resultComparisonHousehold.mockCreateHousehold.additionalMembers[0].identitySet).as('comparisonHouseholdNewPrimaryMember');
             cy.login(roleName);
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should create potential duplicate records when crc user splits houeshold with primary member having phone number matching another household', function () {
+        it('should create potential duplicate records when crc user splits household with primary member having home address matching another household', function () {
+          const potentialDuplicateAddressData: IAddressPageFields = {
+            unitNumber: this.originalHouseholdHomeAddress.unitSuite,
+            streetAddress: this.originalHouseholdHomeAddress.streetAddress,
+            municipality: this.originalHouseholdHomeAddress.city,
+            province: 'AB',
+            postalCode: this.originalHouseholdHomeAddress.postalCode,
+            tempAddress: 'Remaining in home',
+          };
+
           splitHouseholdDuplicateHouseholdSteps({
             eventName: this.eventCreated.name.translation.en,
             originalHouseholdPrimaryBeneficiary: this.originalHouseholdPrimaryBeneficiary,
-            splitMemberHouesholdAddress: fixtureCreateAddress(),
-            splitMemberPhoneNumber: this.originalHouseholdPrimaryBeneficiaryPhoneNumber,
+            splitMemberHouesholdAddress: potentialDuplicateAddressData,
+            splitMemberPhoneNumber: faker.phone.number('5143######'),
             comparisonHouseholdNewPrimaryMember: this.comparisonHouseholdNewPrimaryMember,
-            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
             roleName,
           });
 
@@ -79,8 +89,8 @@ describe('#TC1876# - Split Household - Potential duplicate records created when 
             registrationNumber: this.originalHouseholdRegistrationNumber,
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            phoneNumber: this.originalHouseholdPrimaryBeneficiaryPhoneNumber,
-            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
             roleName,
           });
 
@@ -91,8 +101,8 @@ describe('#TC1876# - Split Household - Potential duplicate records created when 
               registrationNumber: `${registrationNumberDuplicateHousehold}`,
               caseFileNumber: `${registrationNumberDuplicateHousehold}-${padNumberWithZeroes(6, this.eventCreated.number)}`,
               eventName: this.eventCreated.name.translation.en,
-              phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
-              potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+              potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+              duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
               roleName,
             });
           });
