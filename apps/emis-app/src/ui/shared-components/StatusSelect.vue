@@ -1,5 +1,5 @@
 <template>
-  <v-menu data-test="menu_status" :disabled="disabled">
+  <v-menu data-test="menu_status" :attach="true" :disabled="disabled">
     <template #activator="{ on }">
       <span v-on="setMenuAriaLabel(on)">
         <status-chip

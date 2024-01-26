@@ -53,7 +53,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-menu offset-y data-test="assessment__editmenu">
+        <v-menu offset-y left :attach="true" data-test="assessment__editmenu">
           <template #activator="{ on, attrs }">
             <v-btn data-test="menu-edit-btn" color="primary" small v-on="on">
               {{ $t('common.edit') }}
@@ -74,7 +74,7 @@
           </v-list>
         </v-menu>
 
-        <v-menu offset-y data-test="assessment__menu">
+        <v-menu offset-y left :attach="true" data-test="assessment__menu">
           <template #activator="{ on }">
             <v-btn icon data-test="menu-link" :aria-label="$t('task.action')" class="ml-4" v-on="on">
               <v-icon>
@@ -97,6 +97,7 @@
     </rc-data-table>
 
     <copy-assessment
+      v-if="showCopyAssessmentDialog"
       data-test="add-team-members"
       :show.sync="showCopyAssessmentDialog"
       @selected="duplicateSurvey" />
@@ -212,12 +213,14 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
         {
           text: this.$t('common.status') as string,
+          align: 'center',
           value: this.customColumns.status,
           width: '100px',
           sortable: true,
         },
         {
           text: this.$t('common.edit') as string,
+          align: 'end',
           class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.edit,

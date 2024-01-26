@@ -268,9 +268,14 @@ describe('CaseFileTagsList.vue', () => {
         expect(wrapper.vm.getCheckboxColor(tag)).toEqual('grey lighten-3');
       });
 
-      it('returns the right value when the argument has a property of existing equal to false', () => {
-        const tag = { existing: false };
+      it('returns the right value when the argument has a property of existing equal to false, and selected is true', () => {
+        const tag = { existing: false, selected: true };
         expect(wrapper.vm.getCheckboxColor(tag)).toEqual('primary');
+      });
+
+      it('returns the right value when the argument has a property of existing equal to false, and selected is false', () => {
+        const tag = { existing: false, selected: false };
+        expect(wrapper.vm.getCheckboxColor(tag)).toEqual('grey darken-1');
       });
     });
 

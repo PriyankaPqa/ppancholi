@@ -1,5 +1,6 @@
 <template>
   <v-toolbar
+    tag="div"
     class="grey lighten-5"
     height="56"
     elevation="0">

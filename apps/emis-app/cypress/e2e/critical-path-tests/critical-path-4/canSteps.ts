@@ -156,6 +156,7 @@ export const makeMemberPrimarySteps = (params: MakePrimaryPotentialDuplicateStep
   const personalInformationPage = new PersonalInformationPage();
   if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
     personalInformationPage.fill(params.potentialDuplicateMemberData, '');
+    // eslint-disable-next-line
     cy.contains('This individual appears to already exist in the system. Please confirm this individual is not a duplicate before proceeding.')
       .scrollIntoView()
       .should('be.visible');

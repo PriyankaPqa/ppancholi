@@ -37,7 +37,7 @@
                   <div>
                     <rc-tooltip bottom>
                       <template #activator="{ on }">
-                        <v-btn class="copy-btn" icon bottom v-on="on" @click="copyErrorData">
+                        <v-btn class="copy-btn" icon bottom :aria-label="$t('common.copy')" v-on="on" @click="copyErrorData">
                           <v-icon size="24" color="grey darken-2">
                             mdi-content-copy
                           </v-icon>
@@ -259,6 +259,7 @@ export default Vue.extend({
       close.className = 'close-btn action';
       const icon = document.createElement('i');
       icon.className = 'mdi mdi-close';
+      close.ariaLabel = this.$t('common.close') as string;
       close.appendChild(icon);
 
       close.addEventListener('click', () => {
@@ -365,7 +366,7 @@ export default Vue.extend({
   .error-data {
     border-style: solid;
     border-color: var(--v-grey-lighten5);
-    background-color:  rgb(255 230 230);
+    background-color: #FFEDE5;
 
     .error-data-cell{
       vertical-align: top;

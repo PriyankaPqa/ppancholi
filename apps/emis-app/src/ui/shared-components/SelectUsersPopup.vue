@@ -313,7 +313,6 @@ export default Vue.extend({
     debounceSearch: _debounce(function func(this:any, value) {
       this.fetchFilteredUsers(value);
     }, 500),
-
   },
 });
 </script>

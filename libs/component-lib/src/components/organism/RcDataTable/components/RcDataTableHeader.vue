@@ -1,14 +1,20 @@
 <template>
   <v-toolbar
+    tag="div"
     v-bind="$attrs"
-    class="border-radius-top">
-    <slot name="headerLeft" />
+    class="dataTableHeader__container border-radius-top">
+    <div class="d-flex flex-column">
+      <div class="d-flex align-center">
+        <slot name="headerLeft" />
+        <h1
+          v-if="labels.title"
+          class="rc-title-3 white--text">
+          {{ labels.title }}
+        </h1>
+      </div>
 
-    <h1
-      v-if="labels.title"
-      class="rc-title-3 white--text">
-      {{ labels.title }}
-    </h1>
+      <div id="dataTableHeader__left_anchor" />
+    </div>
 
     <v-spacer />
 
@@ -99,7 +105,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped  lang="scss">
 .v-toolbar__items {
   align-items: center;
 }
@@ -107,6 +113,17 @@ export default Vue.extend({
 .dataTableHeader__search {
   & ::v-deep .v-input__slot::before {
     display: none;
+  }
+}
+
+.dataTableHeader__container {
+  z-index: 3;
+}
+
+#dataTableHeader__left_anchor {
+  min-width: 100%;
+  & ::v-deep .v-menu__content {
+    top: 50px !important;
   }
 }
 

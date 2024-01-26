@@ -13,9 +13,9 @@
     @submit="onNext">
     <v-row class="justify-center">
       <v-col cols="12" md="6">
-        <h3 class="pt-4 pb-2">
+        <div class="details-page-title pt-4 pb-2">
           {{ $t('household.profile.split.title.new_household_profile') }}
-        </h3>
+        </div>
         <v-sheet rounded outlined class="pb-2">
           <table width="100%">
             <thead>
@@ -62,9 +62,9 @@
           </table>
         </v-sheet>
 
-        <h3 v-if="additionalMembers.length" class="pt-10 pb-2">
+        <div v-if="additionalMembers.length" class="details-page-title pt-10 pb-2">
           {{ $t('household.profile.split.title.transfer_household_member') }}
-        </h3>
+        </div>
 
         <v-sheet v-for="member in additionalMembers" :key="member.id" rounded outlined class="mb-2 pb-2">
           <table width="100%">
@@ -74,6 +74,7 @@
                   <v-checkbox
                     v-model="selectedMembers"
                     :data-test="`checkbox_member_${member.identitySet.firstName}_${member.identitySet.lastName}`"
+                    :aria-label="$t('common.select')"
                     :value="member" />
                 </th>
                 <th class="py-4" style="text-align: left" width="35%">

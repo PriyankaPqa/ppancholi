@@ -355,4 +355,9 @@ export default Vue.extend({
 .height100 {
   height: 100%;
 }
+
+::v-deep .v-text-field__slot > .theme--dark.v-label {
+  color: white !important;
+  font-size: 14px;
+}
 </style>

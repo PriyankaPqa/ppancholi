@@ -116,6 +116,9 @@
               v-model="initialSelect"
               data-test="householdDetails-manageDuplicates-actionDropdown"
               :items="statuses"
+              :attach="true"
+              style="min-width: 125px"
+              class="pl-1"
               :disabled="!canAction"
               :aria-label="$t('householdDetails.manageDuplicates.table.action')"
               hide-details

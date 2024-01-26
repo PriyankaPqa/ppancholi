@@ -58,11 +58,13 @@ export class PersonalInformationPage {
 
   async fill(data: IPersonalInfoFields, roleName: string) {
     if (data.firstName) {
-      cy.getByDataTest(this.firstName).clear().type(`${roleName}${data.firstName}`);
+      cy.getByDataTest(this.firstName).clear();
+      cy.getByDataTest(this.firstName).type(`${roleName}${data.firstName}`);
     }
 
     if (data.lastName) {
-      cy.getByDataTest(this.lastName).clear().type(data.lastName);
+      cy.getByDataTest(this.lastName).clear();
+      cy.getByDataTest(this.lastName).type(data.lastName);
     }
 
     if (data.gender) {
@@ -74,8 +76,10 @@ export class PersonalInformationPage {
       const dayOfMonth = date.getUTCDate();
       const year = date.getUTCFullYear();
       cy.selectListElementByIndex(DataTest.month, date.getUTCMonth());
-      cy.getByDataTest(this.day).clear().type(`${dayOfMonth}`);
-      cy.getByDataTest(this.year).clear().type(`${year}`);
+      cy.getByDataTest(this.day).clear();
+      cy.getByDataTest(this.day).type(`${dayOfMonth}`);
+      cy.getByDataTest(this.year).clear();
+      cy.getByDataTest(this.year).type(`${year}`);
     }
 
     if (data.preferredLanguage) {
@@ -104,7 +108,8 @@ export class PersonalInformationPage {
   }
 
   public fillPhoneNumber(phone: string) {
-    cy.getByDataTest(this.phoneNumber).clear().type(phone);
+    cy.getByDataTest(this.phoneNumber).clear();
+    cy.getByDataTest(this.phoneNumber).type(phone);
   }
 
   public getPersonalInfoDuplicateErrorElement() {

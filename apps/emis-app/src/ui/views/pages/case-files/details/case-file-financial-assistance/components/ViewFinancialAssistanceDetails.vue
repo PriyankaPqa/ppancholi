@@ -16,12 +16,12 @@
               mdi-history
             </v-icon>
             <status-chip class="mt-1" data-test="approval_status" status-name="ApprovalStatus" :status="financialAssistance.approvalStatus" />
-            <v-btn v-if="canEdit" icon :to="editRoute" data-test="edit-link">
+            <v-btn v-if="canEdit" icon :to="editRoute" :aria-label="$t('common.edit')" data-test="edit-link">
               <v-icon>
                 mdi-pencil
               </v-icon>
             </v-btn>
-            <v-btn v-if="canDelete" icon data-test="delete-link" @click="deletePayment()">
+            <v-btn v-if="canDelete" icon data-test="delete-link" :aria-label="$t('common.delete')" @click="deletePayment()">
               <v-icon>
                 mdi-delete
               </v-icon>

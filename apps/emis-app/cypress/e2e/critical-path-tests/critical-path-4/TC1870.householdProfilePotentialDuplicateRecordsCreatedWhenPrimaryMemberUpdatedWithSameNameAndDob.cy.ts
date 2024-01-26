@@ -85,7 +85,7 @@ describe('#TC1870# - Household Profile - Potential duplicate records created whe
             eventName: this.eventCreated.name.translation.en,
             potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
             roleName,
-            caseFileLogIndex: 1, // change in primary member Name and Dob resets Authentication to failed thereby pushing potential duplicate log on casefile details page to Index = 1
+            caseFileLogIndex: 1, // changes in primary member Name and Dob resets Authentication to failed thereby pushing potential duplicate log on casefile details page to Index = 1
           });
 
           // checks if Manage Duplicate info is updated for original household

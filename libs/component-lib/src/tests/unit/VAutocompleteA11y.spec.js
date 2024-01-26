@@ -32,4 +32,19 @@ describe('VAutocompleteA11y.spec.vue', () => {
       expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-input__slot', 'aria-controls', 'id-123', wrapper.vm.$refs.vAutocomplete.$el);
     });
   });
+
+  describe('watch', () => {
+    test('selectedItem should be updated properly when props value changed', async () => {
+      await wrapper.setProps({
+        value: 1,
+      });
+      await wrapper.setData({
+        selectedItem: 1,
+      });
+      await wrapper.setProps({
+        value: null,
+      });
+      expect(wrapper.vm.selectedItem).toEqual(null);
+    });
+  });
 });

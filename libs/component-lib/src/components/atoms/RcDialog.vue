@@ -100,6 +100,7 @@
 import Vue from 'vue';
 import helpers from '@libs/component-lib/helpers';
 import RcTooltip from '@libs/component-lib/components/atoms/RcTooltip.vue';
+import _debounce from 'lodash/debounce';
 
 export default Vue.extend({
   name: 'RcDialog',
@@ -323,6 +324,10 @@ export default Vue.extend({
       helpers.setElementA11yAttribute('.v-dialog__content.v-dialog__content--active', 'aria-label', this.$t('a11y.dialog') as string);
   },
 
+  updated() {
+    this.setDialogA11y();
+  },
+
   /**
      * Will open a new window containing an contextual help
      * @public
@@ -340,6 +345,10 @@ export default Vue.extend({
     close() {
       this.$emit('close', false);
     },
+
+    setDialogA11y: _debounce(function func(this:any) {
+      helpers.setElementA11yAttribute('.v-dialog__content.v-dialog__content--active', 'aria-label', this.$t('a11y.dialog') as string);
+    }, 500),
   },
 });
 </script>

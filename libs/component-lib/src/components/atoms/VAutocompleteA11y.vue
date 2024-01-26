@@ -13,7 +13,7 @@
     :attach="attach"
     :menu-props="{ contentClass: 'v-autocomplete-with-validation-dropdown' }"
     v-bind="$attrs"
-    onfocus="this.setAttribute('autocomplete','on');"
+    onfocus="this.setAttribute('autocomplete','off');"
     v-on="setA11yAttribute($listeners)">
     <!-- Pass on all named slots -->
     <slot v-for="slot in Object.keys($slots)" :slot="slot" :name="slot" />
@@ -95,6 +95,12 @@ export default {
     return {
       selectedItem: this.value,
     };
+  },
+
+  watch: {
+    value(newVal) {
+      this.selectedItem = newVal;
+    },
   },
 
   methods: {

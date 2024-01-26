@@ -64,7 +64,7 @@
       </template>
 
       <template #[`item.edit`]="{ item }">
-        <v-btn v-if="isModifiable(item)" icon data-test="edit-link" :to="getFapEditRoute(item.entity.id)">
+        <v-btn v-if="isModifiable(item)" icon data-test="edit-link" :aria-label="$t('common.edit')" :to="getFapEditRoute(item.entity.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -72,7 +72,7 @@
       </template>
 
       <template #[`item.delete`]="{ item }">
-        <v-btn v-if="isModifiable(item)" icon data-test="delete-link" @click="deletePayment(item)">
+        <v-btn v-if="isModifiable(item)" icon data-test="delete-link" :aria-label="$t('common.delete')" @click="deletePayment(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>

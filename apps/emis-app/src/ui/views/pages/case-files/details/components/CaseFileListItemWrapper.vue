@@ -26,7 +26,7 @@
           mdi-pin
         </v-icon>
 
-        <v-menu v-if="showMenu" offset-y data-test="caseFileItem__menu">
+        <v-menu v-if="showMenu" :attach="true" offset-y data-test="caseFileItem__menu">
           <template #activator="{ on }">
             <v-btn icon x-small class="ml-1" data-test="items__menuButton" :aria-label="$t('aria.label.menu')" v-on="on">
               <v-icon size="medium">

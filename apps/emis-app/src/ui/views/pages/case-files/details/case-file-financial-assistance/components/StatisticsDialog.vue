@@ -14,9 +14,9 @@
     @cancel="close">
     <div v-if="summary" class="stats-dg">
       <div class="pb-6">
-        <h3 class="pb-2">
+        <div class="details-page-title pb-2">
           {{ $t('caseFile.financialAssistance.statistics.modalities') }}
-        </h3>
+        </div>
         <v-row data-test="paymentModalityCounts_section">
           <v-col v-for="item in summary.paymentModalityCounts" :key="item.modality" cols="6">
             <v-sheet rounded outlined class="pa-3">
@@ -34,9 +34,9 @@
       </div>
 
       <div>
-        <h3 class="pb-2">
+        <div class="details-page-title pb-2">
           {{ $t('caseFile.financialAssistance.statistics.totals') }}
-        </h3>
+        </div>
         <v-row data-test="totals_section">
           <v-col cols="4">
             <v-sheet rounded outlined class="pa-3">

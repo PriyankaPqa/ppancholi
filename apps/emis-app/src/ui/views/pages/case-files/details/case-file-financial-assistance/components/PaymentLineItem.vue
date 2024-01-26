@@ -46,13 +46,13 @@
           {{ amounts }}
         </div>
 
-        <v-btn v-visible="showEditButton" class="ml-2" icon small data-test="paymentLineItem__editBtn" @click="onClickEdit">
+        <v-btn v-visible="showEditButton" class="ml-2" icon small :aria-label="$t('common.edit')" data-test="paymentLineItem__editBtn" @click="onClickEdit">
           <v-icon small>
             mdi-pencil
           </v-icon>
         </v-btn>
 
-        <v-btn v-visible="showDeleteButton" icon small data-test="paymentLineItem__deleteBtn" @click="onClickDelete">
+        <v-btn v-visible="showDeleteButton" icon small :aria-label="$t('common.delete')" data-test="paymentLineItem__deleteBtn" @click="onClickDelete">
           <v-icon small>
             mdi-delete
           </v-icon>

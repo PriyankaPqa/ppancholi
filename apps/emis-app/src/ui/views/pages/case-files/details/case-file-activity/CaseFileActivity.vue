@@ -25,6 +25,7 @@
           <v-select-a11y
             :value="caseFile.triage"
             class="triage-select"
+            :attach="true"
             data-test="caseFileActivity-triage-select"
             :aria-label="$t('a11y.caseFileActivity.triage_select')"
             :readonly="!canEdit || saving"
@@ -68,6 +69,7 @@
                 <v-select-a11y
                   class="case-file-activity-sort-select"
                   :placeholder="$t('caseFileActivity.date')"
+                  :attach="true"
                   data-test="caseFileActivity-case-file-activity-sort-select"
                   :menu-props="{
                     bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content',

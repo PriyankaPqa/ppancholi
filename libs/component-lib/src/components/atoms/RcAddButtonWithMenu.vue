@@ -1,5 +1,5 @@
 <template>
-  <v-menu absolute nudge-right="20">
+  <v-menu attach="#dataTableHeader__left_anchor">
     <template #activator="{ on: menu, attrs, value }">
       <rc-tooltip bottom>
         <template #activator="{ on: tooltip }">

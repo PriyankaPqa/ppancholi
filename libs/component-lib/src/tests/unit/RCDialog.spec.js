@@ -127,5 +127,27 @@ describe('RcDialog.vue', () => {
         expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-dialog__content.v-dialog__content--active', 'aria-label', 'a11y.dialog');
       });
     });
+
+    describe('updated', () => {
+      test('calls setDialogA11y', () => {
+        wrapper.vm.setDialogA11y = jest.fn();
+        wrapper.vm.$options.updated.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.setDialogA11y).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('methods', () => {
+    describe('setDialogA11y', () => {
+      test('should call helper setElementA11yAttribute after debounce', async () => {
+        helpers.setElementA11yAttribute = jest.fn();
+        wrapper.vm.setDialogA11y();
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-dialog__content.v-dialog__content--active', 'aria-label', 'a11y.dialog');
+      });
+    });
   });
 });

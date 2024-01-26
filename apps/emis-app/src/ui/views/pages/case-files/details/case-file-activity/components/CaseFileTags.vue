@@ -57,10 +57,12 @@
         <p class="rc-body14 my-2">
           {{ $t('caseFile.tags.Instruction') }}
         </p>
-        <v-list flat>
+        <v-list flat aria-busy="true">
           <v-list-item-group
             :value="listTags.filter(t=> t.selected || t.existing)"
             multiple
+            :aria-label="$t('caseFile.tags.AddTag')"
+            aria-busy="true"
             @change="onSelectTag($event)">
             <template v-for="(tag, i) in listTags.filter(t => t.active || t.existing)">
               <v-list-item
@@ -72,7 +74,9 @@
                 :disabled="tag.existing">
                 <template #default="{ active }">
                   <v-list-item-action>
-                    <v-checkbox :input-value="active" :true-value="tag" :color="getCheckboxColor(tag)" />
+                    <v-icon :color="getCheckboxColor(tag)">
+                      {{ (tag.selected || active) ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline' }}
+                    </v-icon>
                   </v-list-item-action>
 
                   <v-list-item-content>
@@ -192,7 +196,10 @@ export default Vue.extend({
     },
 
     getCheckboxColor(tag: IListTag): string {
-      return tag.existing ? 'grey lighten-3' : 'primary';
+      if (tag.existing) {
+        return 'grey lighten-3';
+      }
+        return tag.selected ? 'primary' : 'grey darken-1';
     },
 
     async initAddTag() {
