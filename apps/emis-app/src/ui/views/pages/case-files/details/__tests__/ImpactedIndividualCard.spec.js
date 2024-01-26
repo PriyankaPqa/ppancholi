@@ -142,7 +142,28 @@ describe('ImpactedIndividualCard.vue', () => {
           impactedIndividualActivities: [mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
             mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)[0]],
         });
+        expect(wrapper.vm.isReceivingAssistance).toEqual(true);
         expect(wrapper.vm.pinnedActivity).toEqual(mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0]);
+      });
+
+      it('data needs to match with receiving assistance', async () => {
+        await doMount({}, {
+          impactedIndividualActivities: [mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)[0]],
+        });
+        expect(wrapper.vm.isReceivingAssistance).toEqual(true);
+        expect(wrapper.vm.pinnedActivity).toEqual(null);
+
+        await wrapper.setData({ isReceivingAssistance: false });
+        expect(wrapper.vm.pinnedActivity).toEqual(mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)[0]);
+
+        await doMount({}, {
+          impactedIndividualActivities: [mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0]],
+        });
+        expect(wrapper.vm.isReceivingAssistance).toEqual(true);
+        expect(wrapper.vm.pinnedActivity).toEqual(mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0]);
+
+        await wrapper.setData({ isReceivingAssistance: false });
+        expect(wrapper.vm.pinnedActivity).toEqual(null);
       });
     });
 
