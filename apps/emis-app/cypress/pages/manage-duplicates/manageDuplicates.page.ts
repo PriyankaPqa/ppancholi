@@ -9,7 +9,14 @@ export enum DataTest {
   duplicateHistoryName = 'householdDetails-duplicate-name',
   duplicateActionDropdown = 'householdDetails-manageDuplicates-actionDropdown_input',
   duplicatePhoneNumber = 'duplicate-home-phone-number',
+  duplicateFlagNew = 'householdDetails-manageDuplicates--FlagNew',
+  flagNewHouseholdRegistrationNumber = 'flag-new-household-registration-number',
+  duplicateReason = 'duplicate-reasons',
+  flagNewHouseholdRationale = 'householdDetails-manageDuplicates-actionDialog-rationale',
+  memberName = 'payment_modalities',
   closeButton = 'dialog-cancel-action',
+  buttonSubmit = 'dialog-submit-action',
+  tabLabelPotentialDuplicates = 'rctab-label-badge',
 }
 
 export class ManageDuplicatesPage {
@@ -33,7 +40,17 @@ export class ManageDuplicatesPage {
 
   private duplicateActionDropdown = { selector: DataTest.duplicateActionDropdown, type: 'input' };
 
+  private duplicateFlagNew = { selector: DataTest.duplicateFlagNew };
+
   private closeButton = { selector: DataTest.closeButton };
+
+  private memberName = { selector: DataTest.memberName };
+
+  private flagNewHouseholdRationale = { selector: DataTest.flagNewHouseholdRationale, type: 'textarea' };
+
+  private buttonSubmit = { selector: DataTest.buttonSubmit };
+
+  private tabLabelPotentialDuplicates = { selector: DataTest.tabLabelPotentialDuplicates };
 
   public getDuplicateHouseholdPrimaryMemberName() {
     return cy.getByDataTestLike(this.duplicateHouseholdPrimaryMember).getAndTrimText();
@@ -78,5 +95,33 @@ export class ManageDuplicatesPage {
 
   public goToHouseholdProfilePage() {
     cy.getByDataTest(this.closeButton).click();
+  }
+
+  public getFlagNewDuplicateButton() {
+    return cy.getByDataTest(this.duplicateFlagNew);
+  }
+
+  public getFlagNewHouseholdRegistrationNumberField(registrationNumber: string) {
+    return cy.searchAndSelect(DataTest.flagNewHouseholdRegistrationNumber, registrationNumber);
+  }
+
+  public getDuplicatedByField(duplicateReason: string) {
+    return cy.searchAndSelect(DataTest.duplicateReason, duplicateReason);
+  }
+
+  public provideFlagNewDuplicateRationale(rationale: string) {
+    return cy.getByDataTest(this.flagNewHouseholdRationale).focus().type(rationale);
+  }
+
+  public selectHouseholdMemberByIndex(index = 0) {
+    return cy.selectListElementByIndex(DataTest.memberName, index);
+  }
+
+  public submitFlagNewDuplicate() {
+    cy.getByDataTest(this.buttonSubmit).click();
+  }
+
+  public getTabPotentialDuplicates() {
+    return cy.getByDataTest(this.tabLabelPotentialDuplicates);
   }
 }

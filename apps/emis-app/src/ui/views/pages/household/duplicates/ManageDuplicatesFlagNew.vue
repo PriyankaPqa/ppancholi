@@ -50,7 +50,7 @@
       <v-text-area-with-validation
         v-model="rationale"
         rows="3"
-        data-test="householdDetails.manageDuplicates.actionDialog.rationale"
+        data-test="householdDetails-manageDuplicates-actionDialog-rationale"
         :label=" `${$t('householdDetails.manageDuplicates.rationale')} *`"
         class="full-width"
         :rules="rules.rationale" />
@@ -64,6 +64,7 @@
         <v-btn
           :loading="submitting"
           color="primary"
+          data-test="dialog-submit-action"
           :disabled="failed || submitting"
           @click="submit">
           {{ $t('common.submit') }}
