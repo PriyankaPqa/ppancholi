@@ -32,7 +32,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1815# - User can manually create potential duplicate records based on a Name match', { tags: ['@household'] }, () => {
+describe('#TC1879# - User can manually create potential duplicate records based on a Home Phone number match', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -66,12 +66,11 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should manually create potential duplicate records based on name match', function () {
+        it('should manually create potential duplicate records based on home phone number match', function () {
           manualDuplicateCreatedSteps({
             comparisonHouseholdPrimaryBeneficiary: this.comparisonHouseholdPrimaryBeneficiary,
             originalHouseholdRegistrationNumber: this.originalHouseholdRegistrationNumber,
-            duplicatedBy: DuplicatedBy.FullName,
-            potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
+            duplicatedBy: DuplicatedBy.HomePhoneNumber,
           });
 
           potentialDuplicateCreatedSteps({
@@ -80,11 +79,11 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             registrationNumber: this.originalHouseholdRegistrationNumber,
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
             flaggedByUserName: `${getUserName(roleName)}`,
-            manuallyCreatedDuplicateName: this.originalHouseholdPrimaryBeneficiary,
             roleName,
           });
 
@@ -94,11 +93,11 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             registrationNumber: this.comparisonHouseholdRegistrationNumber,
             caseFileNumber: this.comparisonHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            phoneNumber: this.comparisonHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
             flaggedByUserName: `${getUserName(roleName)}`,
-            manuallyCreatedDuplicateName: this.originalHouseholdPrimaryBeneficiary,
             roleName,
           });
         });

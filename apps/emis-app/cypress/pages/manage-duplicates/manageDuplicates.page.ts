@@ -105,7 +105,7 @@ export class ManageDuplicatesPage {
     return cy.searchAndSelect(DataTest.flagNewHouseholdRegistrationNumber, registrationNumber);
   }
 
-  public getDuplicatedByField(duplicateReason: string) {
+  public selectDuplicatedBy(duplicateReason: string) {
     return cy.searchAndSelect(DataTest.duplicateReason, duplicateReason);
   }
 

@@ -58,6 +58,18 @@ export interface SplitHouseholdDuplicateHouseholdStepsParams {
   comparisonHouseholdNewPrimaryMember?: IIdentitySetCreateRequest,
 }
 
+export interface ManualDuplicateCreatedStepsParams {
+  comparisonHouseholdPrimaryBeneficiary: MemberCreateRequest,
+  originalHouseholdRegistrationNumber: string,
+  duplicatedBy: string,
+  potentialDuplicateBasis?: string,
+}
+
+export enum DuplicatedBy {
+  'FullName' = 'Full Name',
+  'HomePhoneNumber' = 'Home Phone Number',
+}
+
 // eslint-disable-next-line
 export const potentialDuplicateCreatedSteps = ({ roleName, firstName, lastName, registrationNumber, caseFileNumber, eventName, potentialDuplicateBasis, duplicateHouseholdAddress, phoneNumber, caseFileLogIndex, rationale = 'Flagged by the system', flaggedBy = 'System', flaggedByUserName = 'System', manuallyCreatedDuplicateName }: Partial<PotentialDuplicateCreatedStepsParams>) => {
   const householdProfilePage = new HouseholdProfilePage();
@@ -222,4 +234,23 @@ export const splitHouseholdDuplicateHouseholdSteps = (params: SplitHouseholdDupl
     errorConfirmRegistrationPage.getCancelButton().should('be.visible');
     errorConfirmRegistrationPage.getPrintButton().should('be.visible');
   }
+};
+
+export const manualDuplicateCreatedSteps = (params: Partial<ManualDuplicateCreatedStepsParams>) => {
+  const householdProfilePage = new HouseholdProfilePage();
+  const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
+  manageDuplicatesPage.getFlagNewDuplicateButton().click();
+  cy.contains('Flag a new household as a potential duplicate with '
+    + `${params.comparisonHouseholdPrimaryBeneficiary.identitySet.firstName} ${params.comparisonHouseholdPrimaryBeneficiary.identitySet.lastName}`)
+    .should('be.visible');
+  manageDuplicatesPage.getFlagNewHouseholdRegistrationNumberField(params.originalHouseholdRegistrationNumber);
+  manageDuplicatesPage.provideFlagNewDuplicateRationale('This is a potential duplicate');
+  manageDuplicatesPage.selectDuplicatedBy(params.duplicatedBy);
+  if (params.potentialDuplicateBasis === PotentialDuplicateBasis.ManualDuplicateName) {
+    manageDuplicatesPage.selectHouseholdMemberByIndex();
+  }
+  manageDuplicatesPage.submitFlagNewDuplicate();
+  cy.contains('Household was successfully flagged as potential duplicate').should('be.visible');
+  manageDuplicatesPage.getTabPotentialDuplicates().contains('Potential duplicates (1)').should('be.visible');
+  manageDuplicatesPage.goToHouseholdProfilePage();
 };
