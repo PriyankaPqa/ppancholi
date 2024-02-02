@@ -61,6 +61,16 @@ const routes = {
       name: 'assessmenttemplates.runner',
     },
   },
+  appointments: {
+    layout: {
+      path: 'appointments',
+      name: 'appointments.layout',
+    },
+    home: {
+      path: '',
+      name: 'appointments.home',
+    },
+  },
   approvals: {
     layout: {
       path: 'approvals',

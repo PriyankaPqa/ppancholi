@@ -273,7 +273,7 @@ describe('LeftMenu.vue', () => {
       });
 
       test('systemManagement', () => {
-        const item = wrapper.vm.items[10];
+        const item = wrapper.vm.items[11];
         expect(item.to).toBe(routes.systemManagement.home.name);
         expect(item.icon).toBe('dvr');
         expect(item.text).toBe('system_management.leftMenu.title');

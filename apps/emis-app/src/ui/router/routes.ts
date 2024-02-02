@@ -12,6 +12,7 @@ import { financialAssistance } from '@/ui/router/route/financialAssistance';
 import { registration } from '@/ui/router/route/registration';
 import { teams } from '@/ui/router/route/teams';
 import { assessmentTemplates } from '@/ui/router/route/assessmentTemplates';
+import { appointments } from '@/ui/router/route/appointments';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -147,6 +148,7 @@ export const routes: Array<RouteConfig> = [
           massActions,
           systemManagement,
           teams,
+          appointments,
           {
             path: Routes.accountSettings.home.path,
             name: Routes.accountSettings.home.name,

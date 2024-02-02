@@ -15,6 +15,7 @@ export enum FeatureKeys {
   MassActionCommunications = 'MassActionCommunications',
   FeatureDashboard = 'FeatureDashboard',
   FinancialAssistanceRemovePaymentLine = 'FinancialAssistanceRemovePaymentLine',
+  AppointmentBooking = 'AppointmentBooking',
 }
 
 export enum FeatureType {
