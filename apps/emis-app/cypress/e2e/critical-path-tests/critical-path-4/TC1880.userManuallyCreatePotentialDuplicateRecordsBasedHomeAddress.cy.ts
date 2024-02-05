@@ -4,8 +4,8 @@ import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/u
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+import { DuplicatedBy } from '../../../pages/manage-duplicates/manageDuplicates.page';
 import {
-  DuplicatedBy,
   PotentialDuplicateBasis,
   manualDuplicateCreatedSteps,
   potentialDuplicateCreatedSteps,
@@ -32,7 +32,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1815# - User can manually create potential duplicate records based on a Name match', { tags: ['@household'] }, () => {
+describe('#TC1880# - User can manually create potential duplicate records based on Home Address', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -59,19 +59,20 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
             cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
             cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.homeAddress).as('originalHouseholdHomeAddress');
             cy.wrap(resultComparisonHousehold.mockCreateHousehold.primaryBeneficiary).as('comparisonHouseholdPrimaryBeneficiary');
             cy.wrap(resultComparisonHousehold.registrationResponse.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
             cy.wrap(resultComparisonHousehold.registrationResponse.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            cy.wrap(resultComparisonHousehold.mockCreateHousehold.homeAddress).as('comparisonHouseholdHomeAddress');
             cy.login(roleName);
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should manually create potential duplicate records based on name match', function () {
+        it('should manually create potential duplicate records based on home address', function () {
           manualDuplicateCreatedSteps({
             comparisonHouseholdPrimaryBeneficiary: this.comparisonHouseholdPrimaryBeneficiary,
             originalHouseholdRegistrationNumber: this.originalHouseholdRegistrationNumber,
-            duplicatedBy: DuplicatedBy.FullName,
-            potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
+            duplicatedBy: DuplicatedBy.HomeAddress,
           });
 
           potentialDuplicateCreatedSteps({
@@ -80,11 +81,11 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             registrationNumber: this.originalHouseholdRegistrationNumber,
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
             flaggedByUserName: `${getUserName(roleName)}`,
-            manuallyCreatedDuplicateName: this.originalHouseholdPrimaryBeneficiary,
             roleName,
           });
 
@@ -94,11 +95,11 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             registrationNumber: this.comparisonHouseholdRegistrationNumber,
             caseFileNumber: this.comparisonHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.comparisonHouseholdHomeAddress,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
             flaggedByUserName: `${getUserName(roleName)}`,
-            manuallyCreatedDuplicateName: this.originalHouseholdPrimaryBeneficiary,
             roleName,
           });
         });

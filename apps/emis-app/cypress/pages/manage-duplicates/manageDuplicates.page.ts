@@ -19,6 +19,13 @@ export enum DataTest {
   tabLabelPotentialDuplicates = 'rctab-label-badge',
 }
 
+// values are search text for duplicated by field
+export enum DuplicatedBy {
+  'FullName' = 'Full Name',
+  'HomePhoneNumber' = 'Home Phone Number',
+  'HomeAddress' = 'Home Address',
+}
+
 export class ManageDuplicatesPage {
   private duplicateHouseholdPrimaryMember = { selector: DataTest.duplicateHouseholdPrimaryMember };
 

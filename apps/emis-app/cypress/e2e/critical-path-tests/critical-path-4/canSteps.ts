@@ -65,11 +65,6 @@ export interface ManualDuplicateCreatedStepsParams {
   potentialDuplicateBasis?: string,
 }
 
-export enum DuplicatedBy {
-  'FullName' = 'Full Name',
-  'HomePhoneNumber' = 'Home Phone Number',
-}
-
 // eslint-disable-next-line
 export const potentialDuplicateCreatedSteps = ({ roleName, firstName, lastName, registrationNumber, caseFileNumber, eventName, potentialDuplicateBasis, duplicateHouseholdAddress, phoneNumber, caseFileLogIndex, rationale = 'Flagged by the system', flaggedBy = 'System', flaggedByUserName = 'System', manuallyCreatedDuplicateName }: Partial<PotentialDuplicateCreatedStepsParams>) => {
   const householdProfilePage = new HouseholdProfilePage();

@@ -4,8 +4,8 @@ import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/u
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+import { DuplicatedBy } from '../../../pages/manage-duplicates/manageDuplicates.page';
 import {
-  DuplicatedBy,
   PotentialDuplicateBasis,
   manualDuplicateCreatedSteps,
   potentialDuplicateCreatedSteps,
@@ -32,7 +32,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1879# - User can manually create potential duplicate records based on a Home Phone number match', { tags: ['@household'] }, () => {
+describe('#TC1879# - User can manually create potential duplicate records based on Home Phone number', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -66,7 +66,7 @@ describe('#TC1879# - User can manually create potential duplicate records based 
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should manually create potential duplicate records based on home phone number match', function () {
+        it('should manually create potential duplicate records based on home phone number', function () {
           manualDuplicateCreatedSteps({
             comparisonHouseholdPrimaryBeneficiary: this.comparisonHouseholdPrimaryBeneficiary,
             originalHouseholdRegistrationNumber: this.originalHouseholdRegistrationNumber,
