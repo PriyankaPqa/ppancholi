@@ -185,15 +185,43 @@ div.status {
 }
 
 .rc-green-background {
-  background: #E6F5E6;
+  background-color: var(--v-status_success_light-base);
 }
 
 .rc-red-background {
-  background: #FFEDE5;
+  background-color: var(--v-status_error_light-base);
+}
+
+.rc-yellow-background {
+  background-color: var(--v-status_warning_light-base);
+}
+
+.rc-error-background {
+  background-color: var(--v-status_error-base);
+}
+
+.rc-success-background {
+  background-color: var(--v-status_success-base);
+}
+
+.rc-warning-background {
+  background-color: var(--v-status_warning-base);
 }
 
 .rc-grey-background {
   background: var(--v-grey-darken2);
+}
+
+.default-icon-color {
+  fill: white;
+}
+
+.error-icon-color {
+  fill: var(--v-status_error-base);
+}
+
+.warning-icon-color {
+  fill: var(--v-status_warning-base);
 }
 /* knockout surveyjs bug - wont be required in a future version - start */
 .sv-list__item--selected {

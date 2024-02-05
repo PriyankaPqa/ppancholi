@@ -6,6 +6,9 @@ export default {
     yellow_pale: '#FFF4C7',
     success: '#097C03',
     warning: '#E3A53B',
+    error_light: '#FFEDE5',
+    success_light: '#E6F5E6',
+    warning_light: '#FFF4C7',
   },
 
   chips: {

@@ -17,11 +17,12 @@
       <span class="rc-body14 fw-medium">
         {{ $t(colour.labelKey) }}
       </span>
-      <div class="border-radius-all colour-container px-1 rc-body14 " :style="{ backgroundColor: colour.value }">
-        <input v-if="isEditing" v-model="colour.value" class="border-radius-all mb-1 colour-input bottom-element">
-        <span v-else :class="`bottom-element ${ colour.value === '#A7D0E1' ? 'primary-darken1-text' : 'white--text' }`">
-          {{ colour.value }}
-        </span>
+      <div class="border-radius-all colour-container px-1 rc-body14 " :style="{ backgroundColor: colour.value }" />
+      <div v-if="isEditing" class="mt-1">
+        <input v-model="colour.value" :aria-label="$t('common.edit')" class="border-radius-all mb-1 colour-input bottom-element">
+      </div>
+      <div v-else class="bottom-element grey-darken4-text mt-0">
+        {{ colour.value }}
       </div>
       <div class="error-box error--text v-messages">
         {{ $t(colour.errorMsgKey) }}
@@ -173,12 +174,11 @@ export default Vue.extend({
 }
 .colour-input {
   width: 100%;
+  height: 30px;
   display: block;
   padding: 0px;
-  border-style: inherit;
-  border-color: var(--v-grey-lighten2);
+  border: 1px solid var(--v-grey-lighten2);
   outline: none;
-  background-color: var(--v-white-lighten1);
 }
 .bottom-element {
   align-self: flex-end;

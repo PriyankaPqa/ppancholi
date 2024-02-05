@@ -36,7 +36,7 @@
             v-if="hasDefault && item.isDefault"
             class="otherDefaultChip ml-2"
             small
-            color="primary lighten-1"
+            color="primary lighten-2"
             text-color="grey darken-4"
             close
             @click:close="setIsDefault">
@@ -47,7 +47,7 @@
             v-if="hasOther && item.isOther"
             class="otherDefaultChip ml-2"
             small
-            color="primary lighten-1"
+            color="primary lighten-2"
             text-color="grey darken-4"
             close
             @click:close="setIsOther">

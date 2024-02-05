@@ -25,103 +25,120 @@
       <div class="mb-4">
         <rc-tooltip bottom>
           <template #activator="{ on }">
-            <v-btn
-              v-if="canEdit"
-              class="mr-2 status"
-              text
-              :color="colorVerifyIdentity"
-              data-test="caseFileDetails-verify-identity-icon"
-              :aria-label="$t('caseFileDetail.verifyIdentityDialog.title')"
-              v-on="on"
-              @click="openVerifyIdentity">
-              <v-icon>mdi-shield-check</v-icon>
+            <v-btn v-if="canEdit" text tile class="pa-0 mb-2 validation-button" data-test="caseFileDetails-verify-identity-icon" v-on="on" @click="openVerifyIdentity">
+              <div class="d-flex align-center" :class="colorVerifyIdentity">
+                <div class="py-1 px-1" :class="colorVerifyIdentityIcon">
+                  <v-icon dense color="white" class="default-icon-color">
+                    {{ verifyIdentityIcon }}
+                  </v-icon>
+                </div>
+                <div class="ml-2">
+                  <span class="rc-body12"> {{ `${$t('caseFileDetail.verifyIdentity')} ${verifyIdentityStatus}` }} </span>
+                </div>
+              </div>
             </v-btn>
-            <v-icon v-else :color="colorVerifyIdentity" class="mr-2 status" v-on="on">
-              mdi-shield-check
-            </v-icon>
+            <div v-else class="d-flex align-center mb-2 validation-button" :class="colorVerifyIdentity" v-on="on">
+              <div class="py-1 px-1" :class="colorVerifyIdentityIcon">
+                <v-icon dense color="white" class="default-icon-color">
+                  {{ verifyIdentityIcon }}
+                </v-icon>
+              </div>
+              <div class="ml-2">
+                <span class="rc-body12"> {{ `${$t('caseFileDetail.verifyIdentity')} ${verifyIdentityStatus}` }} </span>
+              </div>
+            </div>
           </template>
           {{ $t('caseFileDetail.verifyIdentityDialog.title') }}
         </rc-tooltip>
 
-        <rc-tooltip bottom>
-          <template #activator="{ on }">
-            <v-btn
-              v-if="canEdit"
-              class="mr-2 status"
-              text
-              :color="colorValidationImpact"
-              data-test="caseFileDetails-verify-impact-icon"
-              :aria-label="$t('caseFileDetail.impactValidationDialog.title')"
-              v-on="on"
-              @click="openImpactValidation">
-              <v-icon>mdi-map-check</v-icon>
-            </v-btn>
-            <v-icon v-else :color="colorValidationImpact" class="mr-2 status" v-on="on">
-              mdi-map-check
-            </v-icon>
-          </template>
-          {{ $t('caseFileDetail.impactValidationDialog.title') }}
-        </rc-tooltip>
+        <div class="mb-4">
+          <rc-tooltip bottom>
+            <template #activator="{ on }">
+              <v-btn v-if="canEdit" text tile class="pa-0 validation-button" data-test="caseFileDetails-verify-impact-icon" v-on="on" @click="openImpactValidation">
+                <div class="d-flex align-center" :class="colorValidationImpact">
+                  <div class="py-1 px-1" :class="colorValidationImpactIcon">
+                    <v-icon dense color="white" class="default-icon-color">
+                      {{ validationImpactIcon }}
+                    </v-icon>
+                  </div>
+                  <div class="ml-2">
+                    <span class="rc-body12"> {{ `${$t('caseFileDetail.verifyImpact')} ${validationImpactStatus}` }} </span>
+                  </div>
+                </div>
+              </v-btn>
+              <div v-else class="validation-button d-flex align-center" :class="colorValidationImpact" v-on="on">
+                <div class="py-1 px-1" :class="colorValidationImpactIcon">
+                  <v-icon dense color="white" class="default-icon-color">
+                    {{ validationImpactIcon }}
+                  </v-icon>
+                </div>
+                <div class="ml-2">
+                  <span class="rc-body12"> {{ `${$t('caseFileDetail.verifyImpact')} ${validationImpactStatus}` }} </span>
+                </div>
+              </div>
+            </template>
+            {{ $t('caseFileDetail.impactValidationDialog.title') }}
+          </rc-tooltip>
+        </div>
+        <div
+          v-if="getPrimaryMember() && getPrimaryMember().email"
+          class="d-flex flex-row align-start mb-2 rc-body14 break-word">
+          <v-icon small class="mr-2 mt-1" color="gray darken-2">
+            mdi-email
+          </v-icon>
+          <span data-test="caseFileDetails-email">{{ getPrimaryMember().email }}</span>
+        </div>
+
+        <household-details-list
+          v-if="household && getPrimaryMember()"
+          :primary-beneficiary="getPrimaryMember()"
+          :address-first-line="getAddressFirstLine()"
+          :address-second-line="getAddressSecondLine()"
+          :has-phone-numbers="hasPhoneNumbers()"
+          :country="getCountry()" />
+
+        <div
+          class="d-flex flex-row rc-body14">
+          <v-icon small class="mr-2">
+            mdi-account-multiple
+          </v-icon>
+          <span data-test="caseFileDetails-household-member-count">
+            {{ household && household.members
+              ? `${$t('caseFileDetail.fullHouseHold')} ${household.members.length}`
+              : "-" }}
+          </span>
+        </div>
+
+        <div class="d-flex flex-row rc-body14 mt-2" data-test="caseFileDetails-receiving-assistance-member-count">
+          <v-icon small class="mr-2">
+            mdi-account-multiple
+          </v-icon>
+          <span>
+            {{
+              `${$t('caseFileDetail.totalImpacted')}  ${receivingAssistanceMembersCount}`
+            }}
+          </span>
+        </div>
+
+        <v-btn
+          v-if="household"
+          small
+          color="primary"
+          class="my-4"
+          data-test="household-profile-btn"
+          @click="goToHouseholdProfile()">
+          {{ $t('caseFileDetail.household_profile.button') }}
+        </v-btn>
+
+        <case-file-verify-identity-dialog
+          v-if="showVerifyIdentityDialog"
+          :case-file="caseFile"
+          :show.sync="showVerifyIdentityDialog" />
+        <impact-validation
+          v-if="showImpact"
+          :case-file="caseFile"
+          :show.sync="showImpact" />
       </div>
-
-      <div
-        v-if="getPrimaryMember() && getPrimaryMember().email"
-        class="d-flex flex-row align-start mb-2 rc-body14 break-word">
-        <v-icon small class="mr-2 mt-1" color="gray darken-2">
-          mdi-email
-        </v-icon>
-        <span data-test="caseFileDetails-email">{{ getPrimaryMember().email }}</span>
-      </div>
-
-      <household-details-list
-        v-if="household && getPrimaryMember()"
-        :primary-beneficiary="getPrimaryMember()"
-        :address-first-line="getAddressFirstLine()"
-        :address-second-line="getAddressSecondLine()"
-        :has-phone-numbers="hasPhoneNumbers()"
-        :country="getCountry()" />
-
-      <div
-        class="d-flex flex-row rc-body14">
-        <v-icon small class="mr-2">
-          mdi-account-multiple
-        </v-icon>
-        <span data-test="caseFileDetails-household-member-count">
-          {{ household && household.members
-            ? `${$t('caseFileDetail.fullHouseHold')} ${household.members.length}`
-            : "-" }}
-        </span>
-      </div>
-
-      <div class="d-flex flex-row rc-body14 mt-2" data-test="caseFileDetails-receiving-assistance-member-count">
-        <v-icon small class="mr-2">
-          mdi-account-multiple
-        </v-icon>
-        <span>
-          {{
-            `${$t('caseFileDetail.totalImpacted')}  ${receivingAssistanceMembersCount}`
-          }}
-        </span>
-      </div>
-
-      <v-btn
-        v-if="household"
-        small
-        color="primary"
-        class="my-4"
-        data-test="household-profile-btn"
-        @click="goToHouseholdProfile()">
-        {{ $t('caseFileDetail.household_profile.button') }}
-      </v-btn>
-
-      <case-file-verify-identity-dialog
-        v-if="showVerifyIdentityDialog"
-        :case-file="caseFile"
-        :show.sync="showVerifyIdentityDialog" />
-      <impact-validation
-        v-if="showImpact"
-        :case-file="caseFile"
-        :show.sync="showImpact" />
     </template>
 
     <template slot="default">
@@ -193,17 +210,65 @@ export default mixins(caseFileDetail).extend({
 
     colorValidationImpact() {
       switch (this.caseFile?.impactStatusValidation?.status) {
-        case ValidationOfImpactStatus.Impacted: return 'status_success';
-        case ValidationOfImpactStatus.NotImpacted: return 'status_error';
-        default: return 'status_warning';
+        case ValidationOfImpactStatus.Impacted: return 'validation-button-success';
+        case ValidationOfImpactStatus.NotImpacted: return 'validation-button-error';
+        default: return 'validation-button-warning';
+      }
+    },
+
+    colorValidationImpactIcon() {
+      switch (this.caseFile?.impactStatusValidation?.status) {
+        case ValidationOfImpactStatus.Impacted: return 'rc-success-background';
+        case ValidationOfImpactStatus.NotImpacted: return 'rc-error-background';
+        default: return 'rc-warning-background';
+      }
+    },
+
+    validationImpactStatus() {
+      switch (this.caseFile?.impactStatusValidation?.status) {
+        case ValidationOfImpactStatus.Impacted: return this.$t('caseFile.beneficiaryImpactValidationStatus.Impacted');
+        case ValidationOfImpactStatus.NotImpacted: return this.$t('caseFile.beneficiaryImpactValidationStatus.NotImpacted');
+        default: return this.$t('caseFile.beneficiaryImpactValidationStatus.Undetermined');
+      }
+    },
+
+    validationImpactIcon() {
+      switch (this.caseFile?.impactStatusValidation?.status) {
+        case ValidationOfImpactStatus.Impacted: return 'mdi-map-check';
+        case ValidationOfImpactStatus.NotImpacted: return '$rctech-validation-impact-no';
+        default: return '$rctech-validation-impact-undetermined';
       }
     },
 
     colorVerifyIdentity() {
       switch (this.caseFile?.identityAuthentication?.status) {
-        case IdentityAuthenticationStatus.Passed: return 'status_success';
-        case IdentityAuthenticationStatus.Failed: return 'status_error';
-        default: return 'status_warning';
+        case IdentityAuthenticationStatus.Passed: return 'validation-button-success';
+        case IdentityAuthenticationStatus.Failed: return 'validation-button-error';
+        default: return 'validation-button-warning';
+      }
+    },
+
+    colorVerifyIdentityIcon() {
+      switch (this.caseFile?.identityAuthentication?.status) {
+        case IdentityAuthenticationStatus.Passed: return 'rc-success-background';
+        case IdentityAuthenticationStatus.Failed: return 'rc-error-background';
+        default: return 'rc-warning-background';
+      }
+    },
+
+    verifyIdentityStatus() {
+      switch (this.caseFile?.identityAuthentication?.status) {
+        case IdentityAuthenticationStatus.Passed: return this.$t('caseFile.beneficiaryIdentityVerificationStatus.Passed');
+        case IdentityAuthenticationStatus.Failed: return this.$t('caseFile.beneficiaryIdentityVerificationStatus.Failed');
+        default: return this.$t('caseFile.beneficiaryIdentityVerificationStatus.NotVerified');
+      }
+    },
+
+    verifyIdentityIcon() {
+      switch (this.caseFile?.identityAuthentication?.status) {
+        case IdentityAuthenticationStatus.Passed: return 'mdi-shield-check';
+        case IdentityAuthenticationStatus.Failed: return '$rctech-identity-failed';
+        default: return '$rctech-identity-not-verified';
       }
     },
 
@@ -359,6 +424,33 @@ export default mixins(caseFileDetail).extend({
     background: white;
     min-width: 0 !important;
     padding: 0 5px !important;
+  }
+
+  .validation-button-success {
+    background-color: var(--v-status_success_light-base);
+    width: 176px;
+    border-radius: 6px;
+    border: 1px solid var(--v-status_success-base);
+  }
+
+  .validation-button-error {
+    background-color: var(--v-status_error_light-base);
+    width: 176px;
+    border-radius: 6px;
+    border: 1px solid var(--v-status_error-base);
+  }
+
+  .validation-button-warning {
+    background-color: var(--v-status_warning_light-base);
+    width: 176px;
+    border-radius: 6px;
+    border: 1px solid var(--v-status_warning-base);
+  }
+
+  .validation-button {
+    font-size: 12px !important;
+    font-weight: normal !important;
+    text-transform: none !important;
   }
 
 </style>

@@ -31,30 +31,36 @@
                       row
                       :disabled="readonly"
                       @change="onStatusChange">
-                      <v-icon left color="status_success">
-                        mdi-shield-check
-                      </v-icon>
-                      <v-radio
-                        class="mr-8"
-                        data-test="status-passed"
-                        :label="$t('caseFile.beneficiaryIdentityVerificationStatus.Passed')"
-                        :value="status.Passed" />
-                      <v-icon left color="status_error">
-                        mdi-shield-check
-                      </v-icon>
-                      <v-radio
-                        class="mr-8"
-                        data-test="status-failed"
-                        :label="$t('caseFile.beneficiaryIdentityVerificationStatus.Failed')"
-                        :value="status.Failed" />
-                      <v-icon left color="status_warning">
-                        mdi-shield-check
-                      </v-icon>
-                      <v-radio
-                        class="mr-8"
-                        data-test="status-notVerified"
-                        :label="$t('caseFile.beneficiaryIdentityVerificationStatus.NotVerified')"
-                        :value="status.NotVerified" />
+                      <div class="status-radio-option status-radio-option-border-radius-left" :class="{ 'active-background': form.status === status.Passed }">
+                        <v-icon left color="status_success">
+                          mdi-shield-check
+                        </v-icon>
+                        <v-radio
+                          class="mr-8"
+                          data-test="status-passed"
+                          :label="$t('caseFile.beneficiaryIdentityVerificationStatus.Passed')"
+                          :value="status.Passed" />
+                      </div>
+                      <div class="status-radio-option status-radio-option-border" :class="{ 'active-background': form.status === status.Failed }">
+                        <v-icon left class="error-icon-color">
+                          $rctech-identity-failed
+                        </v-icon>
+                        <v-radio
+                          class="mr-8"
+                          data-test="status-failed"
+                          :label="$t('caseFile.beneficiaryIdentityVerificationStatus.Failed')"
+                          :value="status.Failed" />
+                      </div>
+                      <div class="status-radio-option status-radio-option-border-radius-right" :class="{ 'active-background': form.status === status.NotVerified }">
+                        <v-icon left class="warning-icon-color">
+                          $rctech-identity-not-verified
+                        </v-icon>
+                        <v-radio
+                          class="mr-8"
+                          data-test="status-notVerified"
+                          :label="$t('caseFile.beneficiaryIdentityVerificationStatus.NotVerified')"
+                          :value="status.NotVerified" />
+                      </div>
                     </v-radio-group>
                   </validation-provider>
                 </div>
@@ -348,14 +354,48 @@ export default Vue.extend({
 <style scoped lang="scss">
   .status-container {
     display: flex;
-    background: var(--v-grey-lighten5);
     flex-direction: column;
     width: 100%;
-    padding: 24px;
-    border-radius: 4px;
+    margin-bottom: 16px;
     & .status-radio-container {
       display: flex;
       justify-content: center;
+      width: 672px !important;
     }
+  }
+
+  .status-radio-option {
+    display: flex;
+    background: var(--v-grey-lighten5);
+    padding: 16px;
+    width: 224px;
+    height: 48px;
+  }
+
+  .status-radio-option-border {
+    border-left: 1px solid var(--v-grey-lighten2);
+    border-right: 1px solid var(--v-grey-lighten2);
+  }
+
+  .status-radio-option-border-radius-left {
+    border-radius: 6px 0px 0px 6px;
+  }
+
+  .status-radio-option-border-radius-right {
+    border-radius: 0px 6px 6px 0px;
+  }
+
+  .active-background {
+    background-color: var(--v-primary-lighten2);
+  }
+
+  ::v-deep .status-container label.v-label{
+    font-size: 14px !important;
+    padding-top: 2px;
+    color: var(--v-grey-darken2);
+  }
+
+  ::v-deep .status-container .v-radio--is-disabled label{
+    color: rgba(0,0,0,0.38) !important;
   }
 </style>

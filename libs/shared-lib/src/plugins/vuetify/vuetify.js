@@ -3,6 +3,7 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css';
 
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
+import IdentityFailed from './customIcons/IdentityFailed.vue';
 import { DEFAULT_LANGUAGE } from '../../constants/trans';
 import fr from './locales/fr';
 import DuplicateIcon from './customIcons/DuplicateIcon.vue';
@@ -11,6 +12,9 @@ import ActionsIcon from './customIcons/ActionsIcon.vue';
 import SearchPersonIcon from './customIcons/SearchPersonIcon.vue';
 import light from './light-theme';
 import dark from './dark-theme';
+import IdentityNotVerified from './customIcons/IdentityNotVerified.vue';
+import ValidationImpactNo from './customIcons/ValidationImpactNo.vue';
+import ValidationImpactUndetermined from './customIcons/ValidationImpactUndetermined.vue';
 
 Vue.use(Vuetify);
 
@@ -38,6 +42,18 @@ export const options = {
       },
       'rctech-search-person': {
         component: SearchPersonIcon,
+      },
+      'rctech-identity-failed': {
+        component: IdentityFailed,
+      },
+      'rctech-identity-not-verified': {
+        component: IdentityNotVerified,
+      },
+      'rctech-validation-impact-no': {
+        component: ValidationImpactNo,
+      },
+      'rctech-validation-impact-undetermined': {
+        component: ValidationImpactUndetermined,
       },
     },
   },

@@ -19,39 +19,51 @@
         <v-form class="full-width">
           <v-row>
             <v-col cols="12" xl="12" lg="12">
-              <div class="rc-body16 fw-bold mb-4">
-                {{ $t('caseFileDetail.impactValidationDialog.method') }}
+              <div class="status-container">
+                <div class="rc-body16 fw-bold">
+                  {{ $t('caseFileDetail.impactValidationDialog.method') }}
+                </div>
+                <div class="status-radio-container">
+                  <validation-provider v-slot="{ errors }" :rules="rules.method">
+                    <v-radio-group
+                      v-model="form.method"
+                      :error-messages="errors"
+                      data-test="impactValidation_method"
+                      row>
+                      <div class="method-radio-option status-radio-option-border-radius-left" :class="{ 'active-background': form.method === method.Manual }">
+                        <v-radio
+                          class="mr-8"
+                          data-test="impact-method-manual"
+                          :label="$t('caseFile.beneficiaryImpactValidationMethod.Manual')"
+                          :value="method.Manual" />
+                      </div>
+                      <div class="method-radio-option status-radio-option-border" :class="{ 'active-background': form.method === method.Exception }">
+                        <v-radio
+                          class="mr-8"
+                          data-test="impact-method-exception"
+                          :label="$t('caseFile.beneficiaryImpactValidationMethod.Exception')"
+                          :value="method.Exception" />
+                      </div>
+                      <div class="method-radio-option status-radio-option-border-right" :class="{ 'active-background': form.method === method.Batch }">
+                        <v-radio
+                          class="mr-8"
+                          data-test="impact-method-batch"
+                          :disabled="true"
+                          :label="$t('caseFile.beneficiaryImpactValidationMethod.Batch')"
+                          :value="method.Batch" />
+                      </div>
+                      <div class="method-radio-option status-radio-option-border-radius-right" :class="{ 'active-background': form.method === method.NotApplicable }">
+                        <v-radio
+                          class="mr-8"
+                          data-test="impact-method-not-applicable"
+                          :disabled="true"
+                          :label="$t('common.N/A')"
+                          :value="method.NotApplicable" />
+                      </div>
+                    </v-radio-group>
+                  </validation-provider>
+                </div>
               </div>
-              <validation-provider v-slot="{ errors }" :rules="rules.method">
-                <v-radio-group
-                  v-model="form.method"
-                  :error-messages="errors"
-                  data-test="impactValidation_method"
-                  row>
-                  <v-radio
-                    class="mr-8"
-                    data-test="impact-method-manual"
-                    :label="$t('caseFile.beneficiaryImpactValidationMethod.Manual')"
-                    :value="method.Manual" />
-                  <v-radio
-                    class="mr-8"
-                    data-test="impact-method-exception"
-                    :label="$t('caseFile.beneficiaryImpactValidationMethod.Exception')"
-                    :value="method.Exception" />
-                  <v-radio
-                    class="mr-8"
-                    data-test="impact-method-batch"
-                    :disabled="true"
-                    :label="$t('caseFile.beneficiaryImpactValidationMethod.Batch')"
-                    :value="method.Batch" />
-                  <v-radio
-                    class="mr-8"
-                    data-test="impact-method-not-applicable"
-                    :disabled="true"
-                    :label="$t('caseFile.beneficiaryImpactValidationMethod.NotApplicable')"
-                    :value="method.NotApplicable" />
-                </v-radio-group>
-              </validation-provider>
             </v-col>
           </v-row>
           <v-row>
@@ -67,30 +79,36 @@
                       :error-messages="errors"
                       data-test="impactValidation_status"
                       row>
-                      <v-icon left color="status_success">
-                        mdi-map-check
-                      </v-icon>
-                      <v-radio
-                        class="mr-8"
-                        data-test="impact-status-impacted"
-                        :label="$t('caseFile.beneficiaryImpactValidationStatus.Impacted')"
-                        :value="status.Impacted" />
-                      <v-icon left color="status_error">
-                        mdi-map-check
-                      </v-icon>
-                      <v-radio
-                        class="mr-8"
-                        data-test="impact-status-not-impacted"
-                        :label="$t('caseFile.beneficiaryImpactValidationStatus.NotImpacted')"
-                        :value="status.NotImpacted" />
-                      <v-icon left color="status_warning">
-                        mdi-map-check
-                      </v-icon>
-                      <v-radio
-                        class="mr-8"
-                        data-test="impact-status-undetermined"
-                        :label="$t('caseFile.beneficiaryImpactValidationStatus.Undetermined')"
-                        :value="status.Undetermined" />
+                      <div class="status-radio-option status-radio-option-border-radius-left" :class="{ 'active-background': form.status === status.Impacted }">
+                        <v-icon left color="status_success">
+                          mdi-map-check
+                        </v-icon>
+                        <v-radio
+                          class="mr-8"
+                          data-test="impact-status-impacted"
+                          :label="$t('caseFile.beneficiaryImpactValidationStatus.Impacted')"
+                          :value="status.Impacted" />
+                      </div>
+                      <div class="status-radio-option status-radio-option-border" :class="{ 'active-background': form.status === status.NotImpacted }">
+                        <v-icon left class="error-icon-color">
+                          $rctech-validation-impact-no
+                        </v-icon>
+                        <v-radio
+                          class="mr-8 rc-body14"
+                          data-test="impact-status-not-impacted"
+                          :label="$t('caseFile.beneficiaryImpactValidationStatus.NotImpacted')"
+                          :value="status.NotImpacted" />
+                      </div>
+                      <div class="status-radio-option status-radio-option-border-radius-right" :class="{ 'active-background': form.status === status.Undetermined }">
+                        <v-icon left class="warning-icon-color">
+                          $rctech-validation-impact-undetermined
+                        </v-icon>
+                        <v-radio
+                          class="mr-8"
+                          data-test="impact-status-undetermined"
+                          :label="$t('caseFile.beneficiaryImpactValidationStatus.Undetermined')"
+                          :value="status.Undetermined" />
+                      </div>
                     </v-radio-group>
                   </validation-provider>
                 </div>
@@ -189,14 +207,61 @@ export default Vue.extend({
 <style scoped lang="scss">
   .status-container {
     display: flex;
-    background: var(--v-grey-lighten5);
     flex-direction: column;
     width: 100%;
-    padding: 24px;
-    border-radius: 4px;
     & .status-radio-container {
       display: flex;
       justify-content: center;
+      width: 672px !important;
     }
+  }
+
+  .method-radio-option {
+    display: flex;
+    align-items: center;
+    background: var(--v-grey-lighten5);
+    padding: 16px;
+    width: 168px;
+    height: 48px;
+  }
+
+  .status-radio-option {
+    display: flex;
+    align-items: center;
+    background: var(--v-grey-lighten5);
+    padding: 16px;
+    width: 224px;
+    height: 48px;
+  }
+
+  .status-radio-option-border {
+    border-left: 1px solid var(--v-grey-lighten2);
+    border-right: 1px solid var(--v-grey-lighten2);
+  }
+
+  .status-radio-option-border-right {
+    border-right: 1px solid var(--v-grey-lighten2);
+  }
+
+  .status-radio-option-border-radius-left {
+    border-radius: 6px 0px 0px 6px;
+  }
+
+  .status-radio-option-border-radius-right {
+    border-radius: 0px 6px 6px 0px;
+  }
+
+  .active-background {
+    background-color: var(--v-primary-lighten2);
+  }
+
+  ::v-deep .status-container label.v-label{
+    font-size: 14px !important;
+    padding-top: 2px;
+    color: var(--v-grey-darken2);
+  }
+
+  ::v-deep .status-container .v-radio--is-disabled label{
+    color: rgba(0,0,0,0.38) !important;
   }
 </style>

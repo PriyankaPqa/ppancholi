@@ -47,7 +47,6 @@ export function getExtensionComponents(
 
   function updateTheme(branding: IBrandingEntity) {
     const { colours } = branding;
-
     const lightTheme = vuetify.framework.theme.themes.light;
 
     const { primary }: any = lightTheme;
