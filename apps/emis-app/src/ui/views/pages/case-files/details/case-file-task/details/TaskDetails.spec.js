@@ -385,7 +385,7 @@ describe('TaskDetails.vue', () => {
           + '                    case worker 2 description');
       });
 
-      it('should display N/A if there is no selectedCategory', async () => {
+      it('should not display if there is no selectedCategory', async () => {
         await doMount(true, {
           computed: {
             isTeamTask: () => true,
@@ -394,8 +394,7 @@ describe('TaskDetails.vue', () => {
         });
         await flushPromises();
         const element = wrapper.findDataTest('task-details-category-section');
-        expect(element.text()).toEqual('task.create_edit.task_category\n'
-        + '                common.N/A');
+        expect(element.exists()).toBeFalsy();
       });
     });
 
@@ -440,14 +439,19 @@ describe('TaskDetails.vue', () => {
       it('should display N/A if there is no selectedCategory', async () => {
         await doMount(true, {
           computed: {
+            displayWorkingOnIt: () => true,
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
             isTeamTask: () => true,
-            selectedCategory: () => null,
           },
         });
+        await wrapper.setData({
+          isWorkingOn: false,
+        });
         await flushPromises();
-        const element = wrapper.findDataTest('task-details-category-section');
-        expect(element.text()).toEqual('task.create_edit.task_category\n'
-        + '                common.N/A');
+        const element = wrapper.findDataTest('task-details-working-on-it');
+        expect(element.text()).toEqual('task.task_details.working_on_it\n'
+          + '           \n'
+          + '            common.N/A');
       });
     });
 

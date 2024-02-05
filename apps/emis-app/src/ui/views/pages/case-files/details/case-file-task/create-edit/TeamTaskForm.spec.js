@@ -62,24 +62,24 @@ describe('TeamTaskForm.vue', () => {
     });
 
     describe('task-category', () => {
-      it('should be disabled when shouldDisableCategorySelect is true', async () => {
+      it('should be rendered when shouldDisplayCategorySelect is true', async () => {
         await doMount(true, {
           computed: {
-            shouldDisableCategorySelect: () => true,
+            shouldDisplayCategorySelect: () => true,
           },
         });
         const element = wrapper.findDataTest('task-category');
-        expect(element.attributes('disabled')).toBeTruthy();
+        expect(element.exists()).toBeTruthy();
       });
 
-      it('should be disabled when shouldDisableCategorySelect is false', async () => {
+      it('should not be rendered when shouldDisplayCategorySelect is false', async () => {
         await doMount(true, {
           computed: {
-            shouldDisableCategorySelect: () => false,
+            shouldDisplayCategorySelect: () => false,
           },
         });
         const element = wrapper.findDataTest('task-category');
-        expect(element.attributes('disabled')).toBeFalsy();
+        expect(element.exists()).toBeFalsy();
       });
 
       it('should set selectedCategoryId when change', async () => {
@@ -184,8 +184,8 @@ describe('TeamTaskForm.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('shouldDisableCategorySelect', () => {
-      it('should be true if there is no selected task name', async () => {
+    describe('shouldDisplayCategorySelect', () => {
+      it('should be false if there is no selected task name', async () => {
         await doMount(true, {
           computed: {
             taskCategories: () => [],
@@ -199,8 +199,7 @@ describe('TeamTaskForm.vue', () => {
           }),
         });
         taskStore.getTaskCategory = jest.fn(() => []);
-        const element = wrapper.findDataTest('task-category');
-        expect(element.attributes('disabled')).toBeTruthy();
+        expect(wrapper.vm.shouldDisplayCategorySelect).toEqual(false);
       });
 
       it('should be true if there is selected task name but no taskCategories', async () => {
@@ -218,11 +217,10 @@ describe('TeamTaskForm.vue', () => {
         });
         await wrapper.vm.$nextTick();
         taskStore.getTaskName = jest.fn(() => mockOptionItems());
-        const element = wrapper.findDataTest('task-category');
-        expect(element.attributes('disabled')).toBeTruthy();
+        expect(wrapper.vm.shouldDisplayCategorySelect).toEqual(false);
       });
 
-      it('should be false if there is selected task name and taskCategories', async () => {
+      it('should be true if there is selected task name and taskCategories', async () => {
         await doMount(true, {
           computed: {
             taskCategories: () => [mockOptionSubItem()],
@@ -237,8 +235,7 @@ describe('TeamTaskForm.vue', () => {
         });
         await wrapper.vm.$nextTick();
         taskStore.getTaskName = jest.fn(() => mockOptionItems());
-        const element = wrapper.findDataTest('task-category');
-        expect(element.attributes('disabled')).toBeFalsy();
+        expect(wrapper.vm.shouldDisplayCategorySelect).toEqual(true);
       });
     });
 
@@ -246,7 +243,7 @@ describe('TeamTaskForm.vue', () => {
       it('should return proper data', async () => {
         await doMount(true, {
           computed: {
-            shouldDisableCategorySelect: () => true,
+            shouldDisplayCategorySelect: () => true,
           },
         });
         expect(wrapper.vm.rules).toEqual({
@@ -254,7 +251,7 @@ describe('TeamTaskForm.vue', () => {
             required: true,
           },
           teamTaskCategory: {
-            required: false,
+            required: true,
           },
           description: {
             required: true,

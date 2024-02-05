@@ -44,7 +44,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row v-if="shouldDisplayCategorySelect">
         <v-col cols="6" class="py-1">
           <v-select-with-validation
             v-model="localTeamTaskForm.category.optionItemId"
@@ -52,7 +52,7 @@
             :item-text="(item) => item ? $m(item.name) : ''"
             :item-value="(item) => item ? item.id : ''"
             :rules="rules.teamTaskCategory"
-            :disabled="shouldDisableCategorySelect || formDisabled"
+            :disabled="formDisabled"
             :label="$t('task.create_edit.task_category') + ' *'"
             data-test="task-category"
             @change="setCategoryIdAndResetSpecifiedOther($event)" />
@@ -148,8 +148,8 @@ export default mixins(caseFileTask).extend({
   },
 
   computed: {
-    shouldDisableCategorySelect(): boolean {
-      return !this.localTeamTaskForm.name.optionItemId || this.taskCategories?.length === 0;
+    shouldDisplayCategorySelect(): boolean {
+      return !!this.localTeamTaskForm.name.optionItemId && this.taskCategories?.length !== 0;
     },
 
     rules(): Record<string, unknown> {
@@ -158,7 +158,7 @@ export default mixins(caseFileTask).extend({
           required: true,
         },
         teamTaskCategory: {
-          required: !this.shouldDisableCategorySelect,
+          required: this.shouldDisplayCategorySelect,
         },
         description: {
           required: true,

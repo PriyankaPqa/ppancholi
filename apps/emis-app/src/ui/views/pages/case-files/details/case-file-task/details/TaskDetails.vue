@@ -91,11 +91,11 @@
 
           <div class="task-details-container mt-4 mx-13 py-2 rc-body14">
             <template v-if="isTeamTask">
-              <v-row class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-category-section">
+              <v-row v-if="selectedCategory" class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-category-section">
                 <v-col cols="4" class="font-weight-bold">
                   {{ $t('task.create_edit.task_category') }}
                 </v-col>
-                <v-col v-if="selectedCategory">
+                <v-col>
                   <div data-test="task-details-category">
                     {{ selectedCategory.isOther ? task.category.specifiedOther : $m(selectedCategory.name) }}
                   </div>
@@ -105,9 +105,6 @@
                     </v-icon>
                     <span data-test="task-details-category-description"> {{ $m(selectedCategory.description) }}</span>
                   </div>
-                </v-col>
-                <v-col v-else>
-                  <span> {{ $t('common.N/A') }} </span>
                 </v-col>
               </v-row>
             </template>
