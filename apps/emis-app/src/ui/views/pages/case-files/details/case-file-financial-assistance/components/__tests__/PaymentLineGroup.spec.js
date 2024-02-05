@@ -10,6 +10,7 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { UserRoles } from '@libs/entities-lib/user';
 import flushPromises from 'flush-promises';
 import { GlobalHandler } from '@libs/services-lib/http-client';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -56,6 +57,9 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('paymentLineGroup__total', () => {
       it('renders when not cancelled', async () => {
+        await wrapper.setProps({
+          paymentGroup: mockCaseFinancialAssistancePaymentGroups({ cancellationBy: 'mock-user-id', cancellationDate: '2021-01-01' })[0],
+        });
         expect(wrapper.findDataTest('paymentLineGroup__total').exists()).toBeTruthy();
         wrapper.vm.paymentGroup.paymentStatus = 6;
         await wrapper.vm.$nextTick();
@@ -106,6 +110,18 @@ describe('PaymentLineGroup.vue', () => {
         const props = 'paymentGroup';
         expect(component.exists()).toBeTruthy();
         expect(component.props(props)).toBe(wrapper.vm.paymentGroup);
+      });
+    });
+
+    describe('StatusSelect', () => {
+      it('should pass props attach false to StatusSelect', async () => {
+        await wrapper.setProps({
+          transactionApprovalStatus: ApprovalStatus.Approved,
+          paymentGroup: mockCaseFinancialAssistancePaymentGroups({ cancellationBy: 'mock-user-id' })[0],
+        });
+        const component = wrapper.findComponent(StatusSelect);
+        const props = 'attach';
+        expect(component.props(props)).toEqual(false);
       });
     });
   });
@@ -226,7 +242,7 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('isCancelled', () => {
       it('returns true if payment group status is cancelled', async () => {
-        paymentGroup = mockCaseFinancialAssistancePaymentGroups({ paymentStatus: PaymentStatus.Cancelled })[0];
+        paymentGroup = mockCaseFinancialAssistancePaymentGroups({ paymentStatus: PaymentStatus.Cancelled, cancellationBy: 'mock-user-id', cancellationDate: '2021-01-01' })[0];
         await mountWrapper();
 
         expect(wrapper.vm.isCancelled).toBeTruthy();
@@ -522,6 +538,8 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
 
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        paymentGroup.cancellationBy = 'mock-user-id';
+        paymentGroup.cancellationDate = '2021-01-01';
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
 
@@ -542,6 +560,8 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
 
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        paymentGroup.cancellationBy = 'mock-user-id';
+        paymentGroup.cancellationDate = '2021-01-01';
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
       });
 
@@ -552,6 +572,8 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
 
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        paymentGroup.cancellationBy = 'mock-user-id';
+        paymentGroup.cancellationDate = '2021-01-01';
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
       });
 
@@ -562,6 +584,8 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued]);
 
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        paymentGroup.cancellationBy = 'mock-user-id';
+        paymentGroup.cancellationDate = '2021-01-01';
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
 
@@ -572,6 +596,8 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
 
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        paymentGroup.cancellationBy = 'mock-user-id';
+        paymentGroup.cancellationDate = '2021-01-01';
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
     });

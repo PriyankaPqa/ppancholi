@@ -96,6 +96,7 @@
           :statuses="itemStatuses"
           status-name="Status"
           data-test="optionsListItem__statusSelect"
+          :attach="false"
           @input="onChangeStatus" />
       </v-col>
 

@@ -26,6 +26,7 @@
             :statuses="paymentStatusesByModality"
             :disabled="readonly || paymentStatusesByModality.length < 2"
             status-name="FinancialAssistancePaymentStatus"
+            :attach="false"
             @input="onPaymentStatusChange($event)" />
         </span>
         <span
