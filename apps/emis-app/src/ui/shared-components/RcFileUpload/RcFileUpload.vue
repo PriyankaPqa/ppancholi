@@ -2,7 +2,7 @@
   <div>
     <validation-provider ref="fileUpload" :rules="rules.fileUpload" mode="aggressive">
       <v-file-input
-        id="inputUpload"
+        :id="inputId"
         ref="input"
         v-model="localFiles"
         data-test="upload-file"
@@ -14,6 +14,8 @@
         :error-count="2"
         :label="$t(labelFileInput)"
         :placeholder="$t(placeHolderFileInput)"
+        :background-color="backgroundColor"
+        :clear-icon="clearIcon"
         prepend-icon=""
         outlined
         @change="onChange($event)"
@@ -22,6 +24,11 @@
           <v-btn color="primary" class="uploadButton" @click="openSelection()">
             {{ $t('common.button.browse') }}
           </v-btn>
+        </template>
+        <template v-if="multiple" #selection="{ text, index }">
+          <v-chip small close @click:close="removeFile(index)">
+            {{ text }}
+          </v-chip>
         </template>
       </v-file-input>
     </validation-provider>
@@ -123,18 +130,31 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    inputId: {
+      type: String,
+      default: 'inputUpload',
+    },
+
+    clearIcon: {
+      type: String,
+      default: '$clear',
+    },
+
+    backgroundColor: {
+      type: String,
+      default: undefined,
+    },
   },
   data() {
     return {
       errorMessages: [] as Array<string>,
       localFiles: [],
       helpers,
+      previousFiles: [],
     };
   },
   computed: {
-    currentFile(): File {
-      return Array.isArray(this.localFiles) ? this.localFiles[0] : this.localFiles;
-    },
     /**
      * Filter the selection of files based on extensions
      * Example '.csv, .jpg'
@@ -158,32 +178,39 @@ export default Vue.extend({
       };
     },
   },
+  watch: {
+    localFiles(files) {
+        this.previousFiles = files;
+    },
+  },
   methods: {
     checkRules() {
-      const file = this.currentFile;
       this.errorMessages = [];
 
       // File names should not have special characters, because the file name is part of the blob index tag:
       // https://docs.microsoft.com/en-us/azure/storage/blobs/storage-manage-find-blobs?tabs=azure-portal#setting-blob-index-tags
 
       const allowedFileNameRegex = /^[a-zA-Z0-9+._\-\s]*$/;
+      if (Array.isArray(this.localFiles)) {
+        this.localFiles.forEach((file) => {
+          if (file?.name && !allowedFileNameRegex.test(file.name)) {
+            this.errorMessages.push(this.$t('error.file.upload.fileName') as string);
+          }
 
-      if (file?.name && !allowedFileNameRegex.test(file.name)) {
-        this.errorMessages.push(this.$t('error.file.upload.fileName') as string);
-      }
-
-      if (!file?.size) {
-        this.errorMessages = [];
-      } else {
-        // We check if the size of the file does not exceed the limit
-        if (!this.isFileSizeOK(file.size)) {
-          const formatBytes = helpers.formatBytes(this.maxSize as number, 2);
-          this.errorMessages.push(this.errorSize ? `${this.errorSize} ${formatBytes}` : this.$t('common.upload.max_file.size', { x: formatBytes }) as string);
-        }
-        // We check if extension of the file is authorized
-        if (!this.isFileExtensionAuthorized(this.getFileExtension(file))) {
-          this.errorMessages.push(`${this.allowedExtensions.join(', ')} ${this.$t('common.upload.file.extension')}`);
-        }
+          if (!file?.size) {
+            this.errorMessages = [];
+          } else {
+            // We check if the size of the file does not exceed the limit
+            if (!this.isFileSizeOK(file.size)) {
+              const formatBytes = helpers.formatBytes(this.maxSize as number, 2);
+              this.errorMessages.push(this.errorSize ? `${this.errorSize} ${formatBytes}` : this.$t('common.upload.max_file.size', { x: formatBytes }) as string);
+            }
+            // We check if extension of the file is authorized
+            if (!this.isFileExtensionAuthorized(this.getFileExtension(file))) {
+              this.errorMessages.push(`${this.allowedExtensions.join(', ')} ${this.$t('common.upload.file.extension')}`);
+            }
+          }
+        });
       }
     },
     /**
@@ -230,16 +257,39 @@ export default Vue.extend({
       if (file && this.sanitizeFileName) {
         file = this.sanitizeFile(file);
       }
-     this.localFiles = file ? [file] : null;
+
+      if (this.multiple) {
+        if (this.previousFiles.length > 0) {
+          this.localFiles.push(...this.previousFiles);
+        }
+      } else {
+        this.localFiles = file ? [file] : null;
+      }
+
       this.checkRules();
 
       const isValid = await (this.$refs.fileUpload as VForm).validate();
 
-      this.$emit('update:file', file || {}, isValid);
+      this.multiple ? this.$emit('update:files', this.getUniqueFiles()) : this.$emit('update:file', file || {}, isValid);
+    },
+
+    getUniqueFiles() {
+      return Object.values(this.localFiles.reduce((uniqueFiles, file) => {
+        if (!uniqueFiles[file.name]) {
+          uniqueFiles[file.name] = file;
+        }
+        return uniqueFiles;
+      }, {}));
+    },
+
+    removeFile(index: number) {
+      this.localFiles.splice(index, 1);
+      this.checkRules();
+      this.$emit('update:files', this.getUniqueFiles());
     },
 
     openSelection() {
-      document.getElementById('inputUpload').click();
+      document.getElementById(this.inputId).click();
     },
   },
 });

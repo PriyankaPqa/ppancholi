@@ -3,7 +3,7 @@
     <div class="rc-body16 fw-bold mb-6">
       {{ $t('massActions.communication.details.title') }}
     </div>
-    <div class="pa-6">
+    <div class="grey-container pa-6">
       <v-row>
         <v-col cols="12">
           <span>{{ $t('massActions.communication.create.communicationMethod.label') }} *</span>
@@ -42,6 +42,7 @@
           <v-text-field-with-validation
             v-model="formCopy.messageSubject.translation[languageMode]"
             data-test="communication-message-subject"
+            background-color="white"
             :label="`${$t('massActions.communication.create.messageSubject.label')} *`"
             :rules="rules.messageSubject" />
 
@@ -52,6 +53,7 @@
             <v-text-area-with-validation
               v-model="formCopy.smsMessage.translation[languageMode]"
               data-test="communication-sms-description"
+              background-color="white"
               persistent-hint
               :rules="rules.smsMessage" />
           </template>
@@ -60,7 +62,25 @@
             <v-btn class="ma-2" small @click="clearEmailText">
               {{ $t('common.clear') }}
             </v-btn>
-            <vue-editor id="editor1" v-model="formCopy.emailMessage.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+            <div class="mb-4 white">
+              <vue-editor id="editor1" v-model="formCopy.emailMessage.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+            </div>
+
+            <div class="mb-1">
+              {{ $t('massActions.communication.create.attachments') }}
+            </div>
+            <validation-provider ref="fileUpload" :rules="rules.fileUpload" mode="aggressive">
+              <rc-file-upload
+                ref="fileUpload"
+                input-id="mass-communication"
+                multiple
+                background-color="white"
+                clear-icon=""
+                :allowed-extensions="allowedExtensions"
+                :sanitize-file-name="true"
+                :max-size="30000000"
+                @update:files="fileAdded" />
+            </validation-provider>
           </template>
         </v-col>
       </v-row>
@@ -84,6 +104,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import {
 VTextFieldWithValidation, VTextAreaWithValidation,
 } from '@libs/component-lib/components';
+import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { CommunicationDetailsForm } from './CommunicationCreate.vue';
 
 export default Vue.extend({
@@ -95,6 +116,7 @@ export default Vue.extend({
     LanguageTabs,
     VTextFieldWithValidation,
     VTextAreaWithValidation,
+    RcFileUpload,
   },
 
   props: {
@@ -184,6 +206,16 @@ export default Vue.extend({
       this.languageMode = lang;
       this.fillEmptyMultilingualFields();
     },
+
+    fileAdded(files: []) {
+      this.$emit('addfile', files);
+    },
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.optionsList__tabContainer {
+  background:none;
+}
+</style>

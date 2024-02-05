@@ -44,13 +44,13 @@ describe('CommunicationDetailsCreate.vue', () => {
 
   describe('Template', () => {
     describe('Communication_SMS', () => {
-      it('should be not rendered when method is null', async () => {
+      it('should not be rendered when method is null', async () => {
         doMount(null);
         const element = wrapper.findDataTest('communication-sms-description');
         expect(element.exists()).toBeFalsy();
       });
 
-      it('should be not rendered when method is email', async () => {
+      it('should not be rendered when method is email', async () => {
         doMount(MassActionCommunicationMethod.Email);
         const element = wrapper.findDataTest('communication-sms-description');
         expect(element.exists()).toBeFalsy();
@@ -168,6 +168,15 @@ describe('CommunicationDetailsCreate.vue', () => {
         wrapper.vm.setLanguageMode('fr');
         expect(spy).toHaveBeenCalledTimes(3);
         spy.mockRestore();
+      });
+    });
+
+    describe('fileAdded', () => {
+      it('calls emit with the right payload', async () => {
+        const mockFile = [new File(['foo'], 'mock-name')];
+        wrapper.vm.$emit = jest.fn();
+        await wrapper.vm.fileAdded(mockFile);
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('addfile', mockFile);
       });
     });
   });

@@ -10,10 +10,26 @@ describe('RcFileUpload.spec', () => {
   const doMount = (mockFile, options = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
-      computed: { currentFile: () => mockFile },
+      // computed: { currentFile: () => mockFile },
+      data() {
+        return {
+          localFiles: [mockFile],
+        };
+      },
       ...options,
     });
   };
+  describe('Watch', () => {
+    describe('localFiles', () => {
+      it('localFiles and previousFiles should be same', async () => {
+        const mockFile = new File(['foo'], 'mockname');
+        doMount(mockFile);
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
+        await wrapper.vm.onChange([new File(['bar'], 'mockbarname,')]);
+        expect(wrapper.vm.localFiles).toEqual(wrapper.vm.previousFiles);
+      });
+    });
+  });
 
   describe('Methods', () => {
     describe('checkRules', () => {
@@ -186,6 +202,67 @@ describe('RcFileUpload.spec', () => {
         const res = wrapper.vm.addMissingTypeMsg(file);
 
         expect(res.type).toEqual('application/vnd.ms-outlook');
+      });
+    });
+
+    describe('onChange', () => {
+      it('localfiles should be previous file and getUniqueFiles is called when multiple', async () => {
+        doMount(new File(['foo'], 'file0'), {
+          propsData: {
+            multiple: true,
+          },
+        });
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
+        wrapper.vm.getUniqueFiles = jest.fn();
+        wrapper.vm.previousFiles = [new File(['foo'], 'file1'), new File(['foo'], 'file2')];
+        const files = [new File(['foo'], 'file4')];
+        await wrapper.vm.onChange(files);
+        expect(wrapper.vm.localFiles.length).toEqual(3);
+        expect(wrapper.vm.getUniqueFiles).toBeCalledTimes(1);
+      });
+
+      it('localfiles should be one and getUniqueFiles is not called when single file', async () => {
+        doMount(new File(['foo'], 'file0'), {
+          propsData: {
+            multiple: false,
+          },
+        });
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
+        wrapper.vm.getUniqueFiles = jest.fn();
+        const files = [new File(['foo'], 'file1'), new File(['foo'], 'file2')];
+        await wrapper.vm.onChange(files);
+        expect(wrapper.vm.localFiles.length).toEqual(1);
+        expect(wrapper.vm.getUniqueFiles).toBeCalledTimes(0);
+      });
+    });
+
+    describe('getUniqueFiles', () => {
+      it('should return unique files', () => {
+        doMount();
+        wrapper.vm.localFiles = [new File(['foo'], 'file1'), new File(['foo'], 'file1'), new File(['foo'], 'file2')];
+        const res = wrapper.vm.getUniqueFiles();
+        expect(res.length).toEqual(2);
+      });
+    });
+
+    describe('removeFile', () => {
+      it('calls checkRules and getUniqueFiles', () => {
+        doMount();
+        wrapper.vm.getUniqueFiles = jest.fn();
+        wrapper.vm.checkRules = jest.fn();
+        wrapper.vm.removeFile(1);
+        expect(wrapper.vm.getUniqueFiles).toBeCalledTimes(1);
+        expect(wrapper.vm.checkRules).toBeCalledTimes(1);
+      });
+
+      it('calls emit with the right payload', () => {
+        const mockFile = new File(['foo'], 'mockname');
+        doMount(mockFile);
+        wrapper.vm.checkRules = jest.fn();
+        wrapper.vm.$emit = jest.fn();
+        const res = wrapper.vm.getUniqueFiles();
+        wrapper.vm.removeFile(1);
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('update:files', res);
       });
     });
   });

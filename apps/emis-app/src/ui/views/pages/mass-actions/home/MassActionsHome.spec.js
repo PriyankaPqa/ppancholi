@@ -5,6 +5,7 @@ import {
 import routes from '@/constants/routes';
 import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -51,6 +52,7 @@ describe('MassActionsHome.vue', () => {
             level: UserRoles.level6,
             roles: null,
             group: MassActionGroup.Group1,
+            feature: FeatureKeys.MassActionCommunications,
           },
           {
             title: 'mass_action.card.caseFileStatus',

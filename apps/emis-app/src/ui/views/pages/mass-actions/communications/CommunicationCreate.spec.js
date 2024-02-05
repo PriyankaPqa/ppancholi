@@ -7,7 +7,7 @@ import {
 
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import routes from '@/constants/routes';
-import { MassActionMode, MassActionType, mockMassActionEntity, MassActionCommunicationMethod } from '@libs/entities-lib/mass-action';
+import { MassActionMode, mockMassActionEntity, MassActionCommunicationMethod } from '@libs/entities-lib/mass-action';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import utils from '@libs/entities-lib/utils';
 import Component from './CommunicationCreate.vue';
@@ -153,6 +153,14 @@ describe('CommunicationCreate.vue', () => {
       });
     });
 
+    describe('onAddfile', () => {
+      it('should update files', () => {
+        const file = [new File(['foo'], 'mockname.png')];
+        wrapper.vm.onAddfile(file);
+        expect(wrapper.vm.files).toEqual(file);
+      });
+    });
+
     describe('onUploadStart', () => {
       it('should add the communication details to the details data', () => {
         wrapper.vm.formData.set = jest.fn();
@@ -194,15 +202,54 @@ describe('CommunicationCreate.vue', () => {
     });
 
     describe('onPost', () => {
-      it('should call create action with proper parameters', async () => {
+      it('should add the communication details to the details data', async () => {
+        const name = 'Mass action';
+        const description = '';
+        wrapper.vm.formData.set = jest.fn();
+        wrapper.vm.$refs.base.uploadForm = jest.fn();
+
+        const formCopy = {
+          event: mockEvent(),
+          method: MassActionCommunicationMethod.Email,
+          messageSubject: { translation: { en: 'en', fr: 'fr' } },
+          emailMessage: { translation: { en: 'en', fr: 'fr' } },
+          smsMessage: { translation: { en: 'en', fr: 'fr' } },
+        };
+
+        wrapper.vm.onUpdate(formCopy);
+
+        await wrapper.vm.onPost({ name, description });
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('eventId', wrapper.vm.details.event.id);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('method', wrapper.vm.details.method.toString());
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('messageSubject', JSON.stringify(wrapper.vm.details.messageSubject.translation));
+      });
+
+      it('should call upload method of the child', async () => {
+        const formCopy = {
+          event: mockEvent(),
+          method: MassActionCommunicationMethod.Email,
+          messageSubject: { translation: { en: 'en', fr: 'fr' } },
+          emailMessage: { translation: { en: 'en', fr: 'fr' } },
+          smsMessage: { translation: { en: 'en', fr: 'fr' } },
+        };
+
+        wrapper.vm.onUpdate(formCopy);
+        const name = 'Mass action';
+        const description = '';
+        wrapper.vm.$refs.base.uploadForm = jest.fn();
+
+        await wrapper.vm.onPost({ name, description });
+
+        expect(wrapper.vm.$refs.base.uploadForm).toBeCalled();
+      });
+
+      it('should call upload form with proper parameters', async () => {
         doMount(true);
         wrapper.vm.formData.append = jest.fn();
         massActionStore.create = jest.fn();
-
+        wrapper.vm.$refs.base.uploadForm = jest.fn();
         const name = 'Mass action';
         const description = '';
-
-        const azureSearchParams = JSON.parse(filtersString);
 
         await wrapper.setData({
           details: {
@@ -213,49 +260,29 @@ describe('CommunicationCreate.vue', () => {
             smsMessage: { translation: { en: 'en', fr: 'fr' } },
           },
         });
-
-        const payload = {
-          name,
-          description,
-          eventId: wrapper.vm.details.event.id,
-          method: wrapper.vm.details.method,
-          messageSubject: wrapper.vm.details.messageSubject,
-          message: wrapper.vm.details.emailMessage,
-          search: azureSearchParams.search,
-          filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
-        };
         await wrapper.vm.onPost({ name, description });
 
-        expect(massActionStore.create).toHaveBeenCalledWith(MassActionType.Communications, payload);
+        expect(wrapper.vm.$refs.base.uploadForm).toHaveBeenCalledWith(wrapper.vm.formData, 'case-file/mass-actions/communication-from-list');
       });
 
       it('should call onSuccess method with proper parameters', async () => {
         const name = 'Mass action';
         const description = '';
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          data() {
-            return {
-              details: {
-                event: mockEvent(),
-                messageSubject: { translation: { en: 'en', fr: 'fr' } },
-                emailMessage: { translation: { en: 'en', fr: 'fr' } },
-              },
-            };
-          },
-          mocks: {
-
-            $route: {
-              query: {
-                azureSearchParams: filtersString,
-                mode: MassActionMode.List,
-              },
-            },
+        doMount(true);
+        wrapper.vm.$refs.base.uploadForm = jest.fn();
+        await wrapper.setData({
+          details: {
+            event: mockEvent(),
+            method: MassActionCommunicationMethod.Email,
+            messageSubject: { translation: { en: 'en', fr: 'fr' } },
+            emailMessage: { translation: { en: 'en', fr: 'fr' } },
+            smsMessage: { translation: { en: 'en', fr: 'fr' } },
           },
         });
         wrapper.vm.onSuccess = jest.fn();
-        massActionStore.create = jest.fn(() => mockMassActionEntity());
+        wrapper.vm.$refs.base.uploadSuccess = jest.fn(() => true);
+
+        wrapper.vm.$refs.base.response = { data: mockMassActionEntity() };
         await wrapper.vm.onPost({ name, description });
 
         expect(wrapper.vm.onSuccess).toHaveBeenLastCalledWith(mockMassActionEntity());
