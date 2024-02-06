@@ -186,6 +186,7 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'address_AddressTypeNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'CurrentAddressType' },
     { dataField: 'address_PlaceName', dataType: 'string', visible: false },
     { dataField: 'address_PlaceNumber', dataType: 'string', visible: false },
+    { dataField: 'shelterLocationId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'shelterLocationsNameEn', dataType: 'string', visible: false },
     { dataField: 'shelterLocationsNameFr', dataType: 'string', visible: false },
 
@@ -398,6 +399,7 @@ export const financialAssistanceSummaryByPaymentGroupViewDS : IDatasourceBase = 
     { dataField: 'totalAmountCommitted', dataType: 'number', visible: false },
     { dataField: 'totalAmountCompleted', dataType: 'number', visible: false },
     { dataField: 'grandTotal', dataType: 'number', visible: false },
+    { dataField: 'relatedNumberCsv', dataType: 'string', visible: false },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.financialAssistanceSummaryByPaymentGroupViewDS.${x.dataField}` })),
 };
 
@@ -459,6 +461,8 @@ export const teamDetailViewDS : IDatasourceBase = {
     { dataField: 'primaryContactId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'primaryContact', dataType: 'string', visible: false },
     { dataField: 'isActive', dataType: 'boolean', visible: false },
+    { dataField: 'csvEventNameEn', dataType: 'string', visible: false },
+    { dataField: 'csvEventNameFr', dataType: 'string', visible: false },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.teamDetail.${x.dataField}` })),
 };
 
@@ -597,6 +601,8 @@ export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
           .map((x) => ({ ...x, dataField: `paymentGroup.${x.dataField}` }))),
     ...(financialAssistanceSummaryByPaymentGroupViewDS.columns.filter((c) => c.dataField !== 'financialAssistancePaymentGroupId')
           .map((x) => ({ ...x, dataField: `groupSummary.${x.dataField}` }))),
+    ...(financialAssistancePaymentSummaryViewDS.columns.filter((c) => c.dataField !== 'caseFileId')
+              .map((x) => ({ ...x, dataField: `financialAssistancePaymentSummary.${x.dataField}` }))),
     ...(caseFileLifetimeActivitiesViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileLifetimeActivities.${x.dataField}` }))),
   ],
 };

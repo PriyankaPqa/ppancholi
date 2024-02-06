@@ -235,35 +235,39 @@ describe('QueryView.vue', () => {
           'caseFileId',
           'memberId',
         ]);
-        expect(wrapper.vm.columns.slice(0, 3)).toEqual([
-          {
-            allowSearch: false,
-            caption: 'ds.caseFileAuthenticationIdsCsv.csvAuthenticationIdNameEn',
+        expect(wrapper.vm.columns.slice(0, 3)).toEqual(
+          [{
+            allowSearch: true,
+            caption: 'ds.casefile.caseFileNumber',
             cssClass: 'grid-column ',
-            dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameEn',
+            dataField: 'casefile.caseFileNumber',
             dataType: 'string',
-            visible: false,
             filterOperations: ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'],
           },
           {
             allowSearch: false,
-            caption: 'ds.caseFileAuthenticationIdsCsv.csvAuthenticationIdNameFr',
+            caption: 'ds.casefile.caseFileStatusEn',
             cssClass: 'grid-column ',
-            dataField: 'caseFileAuthenticationIdsCsv.csvAuthenticationIdNameFr',
+            dataField: 'casefile.caseFileStatusEn',
             dataType: 'string',
+            lookup: { dataSource: [] },
+            lookupKey: 'CaseFileStatus',
+            lookupType: 0,
             visible: false,
-            filterOperations: ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'],
           },
           {
             allowSearch: false,
-            caption: 'ds.caseFileTagsCsv.csvTagNameEn',
+            caption: 'ds.casefile.caseFileStatusFr',
             cssClass: 'grid-column ',
-            dataField: 'caseFileTagsCsv.csvTagNameEn',
+            dataField: 'casefile.caseFileStatusFr',
             dataType: 'string',
+            lookup: { dataSource: [] },
+            lookupKey: 'CaseFileStatus',
+            lookupType: 1,
             visible: false,
-            filterOperations: ['contains', 'notcontains', 'startswith', 'endswith', '=', '<>', 'isblank', 'isnotblank'],
           },
-        ]);
+          ],
+        );
       });
     });
 

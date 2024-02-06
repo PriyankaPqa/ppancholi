@@ -350,10 +350,10 @@ export default Vue.extend({
       const ds = datasources.find((d) => d.reportingTopic === this.query.topic);
       const columns = sortBy(ds.columns.map((c) => ({
         ...c,
-        caption: this.$t(c.caption),
+        caption: this.$t(c.caption) as string,
         cssClass: `grid-column ${c.cssClass || ''}`,
         allowSearch: c.allowSearch !== false && c.visible !== false,
-      })), 'caption') as ExtendedColumn[];
+      })), (x) => x.caption.toLowerCase()) as ExtendedColumn[];
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
       Object.keys(ds.key).forEach((k) => {
           if (select.indexOf(k) === -1) {

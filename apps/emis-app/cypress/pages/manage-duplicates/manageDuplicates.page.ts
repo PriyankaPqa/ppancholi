@@ -117,7 +117,8 @@ export class ManageDuplicatesPage {
   }
 
   public provideFlagNewDuplicateRationale(rationale: string) {
-    return cy.getByDataTest(this.flagNewHouseholdRationale).focus().type(rationale);
+    cy.getByDataTest(this.flagNewHouseholdRationale).focus();
+    cy.getByDataTest(this.flagNewHouseholdRationale).type(rationale);
   }
 
   public selectHouseholdMemberByIndex(index = 0) {

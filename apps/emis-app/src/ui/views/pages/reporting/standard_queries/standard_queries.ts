@@ -22,31 +22,28 @@ import { ReferralsL5En, ReferralsL5Fr } from './ReferralsL5';
 import { CaseNotesL5En, CaseNotesL5Fr } from './CaseNotesL5';
 import { PaymentLinesL5En, PaymentLinesL5Fr } from './PaymentLinesL5';
 import { PaymentsL5En, PaymentsL5Fr } from './PaymentsL5';
-import { UsersL5En, UsersL5Fr } from './UsersL5';
+import { PaymentsL6En, PaymentsL6Fr } from './PaymentsL6';
 import { CaseFileStatusAndActionL6En, CaseFileStatusAndActionL6Fr } from './CaseFileStatusAndActionL6';
 import { UserListL6En, UserListL6Fr } from './UserListL6';
 import { UserAccessListEMISL6En, UserAccessListEMISL6Fr } from './UserAccessListEMISL6';
-
-import { DataCorrectionAuthenticationOtherL6En, DataCorrectionAuthenticationOtherL6Fr } from './DataCorrectionAuthenticationOtherL6';
+import { CaseNotesL6En, CaseNotesL6Fr } from './CaseNotesL6';
+import { DataCorrectionAuthenticationL6En, DataCorrectionAuthenticationL6Fr } from './DataCorrectionAuthenticationL6';
 import { DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr } from './DataCorrectionContactInformationL6';
 import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDuplicatesL6';
 
-
 import { AllPbiReports } from './PowerBiEmbedded';
-import { CaseNotesL6En, CaseNotesL6Fr } from './CaseNotesL6';
 
 /* clones of other queries available for different levels */
-
-export const PaymentsL6En = {
-  ...PaymentsL5En,
-  id: 'PaymentsL6',
-  queryType: QueryType.StandardL6en,
+export const UsersL5En = {
+  ...UserListL6En,
+  id: 'UserListL5',
+  queryType: QueryType.StandardL5en,
 } as IQuery;
 
-export const PaymentsL6Fr = {
-  ...PaymentsL5Fr,
-  id: 'PaymentsL6',
-  queryType: QueryType.StandardL6fr,
+export const UsersL5Fr = {
+  ...UserListL6Fr,
+  id: 'UserListL5',
+  queryType: QueryType.StandardL5fr,
 } as IQuery;
 
 export const IDAuthenticationL5En = {
@@ -209,7 +206,7 @@ export const AllReports : IQuery[] = [
   CaseFileStatusAndActionL6En, CaseFileStatusAndActionL6Fr,
   UserListL6En, UserListL6Fr,
   UserAccessListEMISL6En, UserAccessListEMISL6Fr,
-  DataCorrectionAuthenticationOtherL6En, DataCorrectionAuthenticationOtherL6Fr,
+  DataCorrectionAuthenticationL6En, DataCorrectionAuthenticationL6Fr,
   DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr,
   PotentialDuplicatesL6En, PotentialDuplicatesL6Fr,
 ];

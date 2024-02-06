@@ -12,9 +12,7 @@ export const DataCorrectionLabelL6En = {
 } as IQuery;
 
 export const DataCorrectionLabelL6Fr = {
-  id: 'DataCorrectionLabelL6',
+  ...DataCorrectionLabelL6En,
   queryType: QueryType.StandardL6fr,
-  topic: ReportingTopic.HouseholdPrimary,
-  state: DataCorrectionLabelL6En.state,
   name: 'Correction de données - Étiquettes',
 } as IQuery;

@@ -12,9 +12,7 @@ export const DataCorrectionIdentitySetL6En = {
 } as IQuery;
 
 export const DataCorrectionIdentitySetL6Fr = {
-  id: 'DataCorrectionIdentitySetL6',
+  ...DataCorrectionIdentitySetL6En,
   queryType: QueryType.StandardL6fr,
-  topic: ReportingTopic.HouseholdMembers,
-  state: DataCorrectionIdentitySetL6En.state,
   name: 'Correction de données - Renseignements personnels',
 } as IQuery;
