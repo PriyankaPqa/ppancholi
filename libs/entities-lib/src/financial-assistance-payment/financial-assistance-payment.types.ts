@@ -20,6 +20,10 @@ export enum PaymentStatus {
   Cancelled = 6,
 }
 
+export enum PaymentLineStatus {
+  Cancelled = 1,
+}
+
 export enum ApprovalStatus {
   New = 1,
   Pending = 2,
@@ -58,7 +62,7 @@ export interface IFinancialAssistancePaymentLine extends IEntity {
   relatedNumber: string;
   careOf: string;
   address: IAddress;
-  isCancelled: boolean;
+  paymentStatus: PaymentLineStatus;
   cancellationDate: string | Date;
   cancellationBy: uuid;
   cancellationReason: EPaymentCancellationReason;

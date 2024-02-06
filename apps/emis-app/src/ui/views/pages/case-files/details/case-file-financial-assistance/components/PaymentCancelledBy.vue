@@ -17,6 +17,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import helpers from '@/ui/helpers/helpers';
+import { system } from '@/constants/system';
 import { EPaymentCancellationReason } from '@libs/entities-lib/financial-assistance-payment';
 
 export default Vue.extend({
@@ -56,7 +57,7 @@ export default Vue.extend({
       return this.$t(
         this.isLineLevel ? 'caseFile.financialAssistance.cancellationReason.lineByOn' : 'caseFile.financialAssistance.cancellationReason.byOn',
         {
-          by: useUserAccountMetadataStore().getById(this.by)?.displayName,
+          by: this.by === system.system_user_id ? this.$t('system.system_user_id') : useUserAccountMetadataStore().getById(this.by)?.displayName || '',
           on: helpers.getLocalStringDate(this.date, 'IFinancialAssistancePaymentGroup.cancellationDate', 'PP'),
         },
       );

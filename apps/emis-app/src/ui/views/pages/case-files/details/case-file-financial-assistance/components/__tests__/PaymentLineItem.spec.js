@@ -1,27 +1,31 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { UserRoles } from '@libs/entities-lib/user';
-
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
-import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
+import { ApprovalStatus, PaymentLineStatus, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
+import flushPromises from 'flush-promises';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import Component from '../PaymentLineItem.vue';
 
 const localVue = createLocalVue();
 
 const items = mockItems();
 const paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+const paymentLine = paymentGroup.lines[0];
 const approvalStatus = ApprovalStatus.New;
+const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
 
 describe('CaseFilePaymentLineItem.vue', () => {
   let wrapper;
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
-    const paymentLine = paymentGroup.lines[0];
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         paymentLine,
         paymentGroup,
@@ -101,6 +105,18 @@ describe('CaseFilePaymentLineItem.vue', () => {
         jest.clearAllMocks();
         await hook.call(wrapper.vm);
         expect(wrapper.vm.$message).not.toHaveBeenCalled();
+      });
+
+      it('should fetch userAccount entity and metadata if payment group was canceled by', async () => {
+        paymentLine.cancellationBy = 'mock-user-id';
+
+        await mountWrapper(false, 6, null);
+        const hook = wrapper.vm.$options.created[0];
+        jest.clearAllMocks();
+        await hook.call(wrapper.vm);
+        await flushPromises();
+        expect(userAccountStore.fetch).toHaveBeenCalledWith('mock-user-id');
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id', GlobalHandler.Partial);
       });
     });
   });
@@ -276,7 +292,7 @@ describe('CaseFilePaymentLineItem.vue', () => {
 
     describe('showCancelButton', () => {
       it('returns true when user is level 6,feature flag is on and status is isCompleted', async () => {
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine },
+        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine, $hasLevel: () => true },
         });
         await wrapper.setProps({ isCompleted: true });
         expect(wrapper.vm.showCancelButton).toBeTruthy();
@@ -297,6 +313,16 @@ describe('CaseFilePaymentLineItem.vue', () => {
       });
 
       it('returns false if status is not isCompleted', async () => {
+        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine },
+        });
+        await wrapper.setProps({ isCompleted: false });
+        expect(wrapper.vm.showCancelButton).toBeFalsy();
+      });
+
+      it('returns false if line paymentstatus is cancelled', async () => {
+        paymentLine.paymentStatus = PaymentLineStatus.Cancelled;
+        paymentLine.cancellationBy = 'id';
+        paymentLine.cancellationDate = 'today';
         await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine },
         });
         await wrapper.setProps({ isCompleted: false });
@@ -352,16 +378,23 @@ describe('CaseFilePaymentLineItem.vue', () => {
     });
 
     describe('onClickCancel', () => {
-      it('should emit an delete-payment-line if confirmed', async () => {
+      it('should emit an cancel-payment-line if confirmed', async () => {
         const paymentLine = paymentGroup.lines[0];
         await wrapper.vm.onClickCancel();
         expect(wrapper.emitted('cancel-payment-line')[0][0]).toEqual({ lineId: paymentLine.id });
       });
 
-      it('should not emit an delete-payment-line if not confirmed', async () => {
+      it('should not emit an cancel-payment-line if not confirmed', async () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.onClickCancel();
         expect(wrapper.emitted('cancel-payment-line')).toBeUndefined();
+      });
+
+      it('should set showCancellationReasonSelect to true if payment modality is ETransfer', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
+        await mountWrapper(false);
+        await wrapper.vm.onClickCancel();
+        expect(wrapper.vm.showCancellationReasonSelect).toBeTruthy();
       });
     });
 
@@ -375,6 +408,20 @@ describe('CaseFilePaymentLineItem.vue', () => {
             financialAssistancePaymentLineId: wrapper.vm.paymentLine.id,
           },
         });
+      });
+    });
+
+    describe('onCancelWithReason', () => {
+      it('sets showCancellationReasonSelect to false', async () => {
+        wrapper.setData({ showCancellationReasonSelect: true });
+        await wrapper.vm.onCancelWithReason(1);
+        expect(wrapper.vm.showCancellationReasonSelect).toBeFalsy();
+      });
+
+      it('emits cancel-payment-line', async () => {
+        wrapper.vm.$emit = jest.fn();
+        await wrapper.vm.onCancelWithReason(1);
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('cancel-payment-line', { lineId: wrapper.vm.paymentLine.id, reason: 1 });
       });
     });
   });

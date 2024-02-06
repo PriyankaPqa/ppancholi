@@ -3,6 +3,7 @@ import {
   IFinancialAssistancePaymentGroup,
   IGroupingInformation,
   PaymentStatus,
+  PaymentLineStatus,
   IFinancialAssistancePaymentLine,
   EPaymentCancellationReason, IPaymentStatusHistory,
 } from './financial-assistance-payment.types';
@@ -66,7 +67,7 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
     paymentGroups.forEach((group: IFinancialAssistancePaymentGroup) => {
       if (group.paymentStatus !== PaymentStatus.Cancelled && group.status === Status.Active) {
         group.lines?.forEach((line: IFinancialAssistancePaymentLine) => {
-          if (line.status === Status.Active && !line.isCancelled) {
+          if (line.status === Status.Active && line.paymentStatus !== PaymentLineStatus.Cancelled) {
             total += Number(line.actualAmount != null ? line.actualAmount : line.amount);
           }
         });

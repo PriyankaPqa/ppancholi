@@ -82,7 +82,7 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
 
   async cancelFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid, reason: EPaymentCancellationReason):
     Promise<IFinancialAssistancePaymentEntity> {
-    return this.http.patch(`${this.baseUrl}/${financialAssistanceId}/lines/${paymentId}/cancel`, { reason });
+    return this.http.patch(`${this.baseUrl}/${financialAssistanceId}/cancel-payment-line/${paymentId}`, { cancellationReason: reason });
   }
 
   async getHistory(id: uuid): Promise<IVersionedEntity[]> {

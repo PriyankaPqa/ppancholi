@@ -40,9 +40,12 @@
           {{ $t('common.cancel') }}
         </v-btn>
 
-        <span v-if="paymentLine.isCancelled" class="cancelled-text rc-body14 mr-1">{{ $t("caseFile.financialAssistance.cancelled") }}</span>
+        <span v-if="paymentLine.paymentStatus === PaymentLineStatus.Cancelled" class="cancelled-text rc-body14 mr-1">{{ $t("caseFile.financialAssistance.cancelled") }}</span>
 
-        <div data-test="paymentLineItem__amount" class="amount rc-body14" :class="{ 'text-decoration-line-through': isGroupCancelled || paymentLine.isCancelled }">
+        <div
+          data-test="paymentLineItem__amount"
+          class="amount rc-body14"
+          :class="{ 'text-decoration-line-through': isGroupCancelled || paymentLine.paymentStatus === PaymentLineStatus.Cancelled }">
           {{ amounts }}
         </div>
 
@@ -67,7 +70,7 @@
     </div>
 
     <payment-cancelled-by
-      v-if="paymentLine.isCancelled"
+      v-if="paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
       is-line-level
       :by="paymentLine.cancellationBy"
       :date="paymentLine.cancellationDate"
@@ -84,6 +87,7 @@
 import Vue from 'vue';
 import {
   ApprovalStatus, EPaymentCancellationReason, FinancialAssistancePaymentGroup, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentLine, PayeeType,
+ PaymentLineStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
@@ -165,6 +169,7 @@ export default Vue.extend({
       showIssuedActualAmounts: FinancialAssistancePaymentGroup.showIssuedActualAmounts,
       PayeeType,
       showCancellationReasonSelect: false,
+      PaymentLineStatus,
     };
   },
 
@@ -234,7 +239,7 @@ export default Vue.extend({
     showCancelButton(): boolean {
       return this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine)
       && this.$hasLevel(UserRoles.level6)
-      && this.isCompleted && !this.paymentLine.isCancelled;
+      && this.isCompleted && this.paymentLine.paymentStatus !== PaymentLineStatus.Cancelled;
     },
   },
 
@@ -271,9 +276,7 @@ export default Vue.extend({
     },
 
     async onClickCancel() {
-      if (this.disableCancelButton) {
-        this.$toasted.global.warning(this.$t('caseFile.financialAssistance.cancelTooltip'));
-      } else if (this.paymentGroup.groupingInformation?.modality === EPaymentModalities.ETransfer) {
+      if (this.paymentGroup.groupingInformation?.modality === EPaymentModalities.ETransfer) {
           this.showCancellationReasonSelect = true;
         } else {
         const doCancel = await this.$confirm({
@@ -298,7 +301,6 @@ export default Vue.extend({
 
     onCancelWithReason(reason: EPaymentCancellationReason) {
       this.showCancellationReasonSelect = false;
-      this.paymentLine.cancellationReason = reason;
       this.$emit('cancel-payment-line', { lineId: this.paymentLine.id, reason });
     },
 

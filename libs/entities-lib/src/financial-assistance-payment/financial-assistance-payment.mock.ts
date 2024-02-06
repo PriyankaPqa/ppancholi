@@ -37,7 +37,7 @@ export const mockCaseFinancialAssistancePaymentGroups = (force?: Partial<IFinanc
         relatedNumber: '',
         careOf: '',
         address: null,
-        isCancelled: false,
+        paymentStatus: null,
         cancellationReason: null,
         cancellationDate: null,
         cancellationBy: null,

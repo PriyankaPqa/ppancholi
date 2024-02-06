@@ -3,6 +3,7 @@ import { IAddress } from '../value-objects/address';
 import {
   EPaymentCancellationReason,
   IFinancialAssistancePaymentLine,
+  PaymentLineStatus,
 } from './financial-assistance-payment.types';
 
 export class FinancialAssistancePaymentLine extends BaseEntity implements IFinancialAssistancePaymentLine {
@@ -22,7 +23,7 @@ export class FinancialAssistancePaymentLine extends BaseEntity implements IFinan
 
   address: IAddress;
 
-  isCancelled: boolean;
+  paymentStatus: PaymentLineStatus;
 
   cancellationDate: string | Date;
 
@@ -41,7 +42,7 @@ export class FinancialAssistancePaymentLine extends BaseEntity implements IFinan
       this.relatedNumber = data.relatedNumber;
       this.careOf = data.careOf;
       this.address = data.address;
-      this.isCancelled = data.isCancelled;
+      this.paymentStatus = data.paymentStatus;
       this.cancellationDate = data.cancellationDate;
       this.cancellationBy = data.cancellationBy;
       this.cancellationReason = data.cancellationReason;
@@ -56,7 +57,7 @@ export class FinancialAssistancePaymentLine extends BaseEntity implements IFinan
       this.careOf = null;
       this.address = null;
       this.status = Status.Active;
-      this.isCancelled = false;
+      this.paymentStatus = null;
       this.cancellationDate = null;
       this.cancellationBy = null;
       this.cancellationReason = null;

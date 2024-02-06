@@ -439,7 +439,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
               careOf: null,
               documentReceived: false,
               id: '',
-              isCancelled: false,
+              paymentStatus: null,
               mainCategoryId: null,
               relatedNumber: null,
               subCategoryId: null,

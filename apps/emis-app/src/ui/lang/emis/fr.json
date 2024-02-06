@@ -1816,7 +1816,7 @@
     "errors.the-country-iso-2-code-of-the-phone-number-must-have-a-value": "Le code ISO alpha-2 du numéro de téléphone ne peut être vide.",
     "errors.the-country-length-is-invalid": "La longueur du nom du pays n'est pas valide",
     "errors.the-country-should-have-a-value": "Le nom du pays doit avoir une valeur",
-    "errors.the-current-address-type-must-have-a-value": "",
+    "errors.the-current-address-type-must-have-a-value": "Le type d'adresse courante doit avoir une valeur",
     "errors.the-document-name-must-have-a-value": "Le nom du document ne peut être vide.",
     "errors.the-e-164-number-part-of-the-phone-number-must-have-a-value": "La partie numérique du numéro de téléphone correspondant à la norme e.164 ne peut être vide.",
     "errors.the-email-address-format-is-not-valid": "Le format de l'adresse électronique n'est pas valide",
