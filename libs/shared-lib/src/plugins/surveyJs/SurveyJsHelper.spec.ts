@@ -2721,7 +2721,7 @@ describe('SurveyJsHelper', () => {
               {
                 displayValue: '124.34',
                 textValue: '124.34',
-                numericValue: 124.34,
+                numericValue: null,
               },
             ],
           },

@@ -415,7 +415,9 @@ export class SurveyJsHelper {
               textValue: typeof c === 'string' ? c : c.value?.toString(),
               score: typeof c === 'string' ? null : c.score || null,
             } as IAssessmentAnswerChoice;
-            if (+choice.textValue as any === choice.textValue || (choice.textValue.trim() !== '' && !Number.isNaN(+choice.textValue))) {
+            if ((+choice.textValue as any === choice.textValue || (choice.textValue.trim() !== '' && !Number.isNaN(+choice.textValue))
+                // field is int in BE - cannot send decimals - we ignore
+                && Math.round(+choice.textValue) === +choice.textValue)) {
               choice.numericValue = +choice.textValue;
             }
 
@@ -671,7 +673,9 @@ export class SurveyJsHelper {
       }
 
       response.responses.forEach((userResponse) => {
-        userResponse.numericValue = `${userResponse.textValue}`.trim() !== '' && !Number.isNaN(+userResponse.textValue) ? +userResponse.textValue : null;
+        userResponse.numericValue = `${userResponse.textValue}`.trim() !== '' && !Number.isNaN(+userResponse.textValue)
+          // field is int in BE - cannot send decimals - we ignore
+          && Math.round(+userResponse.textValue) === +userResponse.textValue ? +userResponse.textValue : null;
       });
       assessmentResponse.answeredQuestions.push(response);
 
