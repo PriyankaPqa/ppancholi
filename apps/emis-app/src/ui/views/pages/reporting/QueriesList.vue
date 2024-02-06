@@ -105,6 +105,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 
 import routes from '@/constants/routes';
 
+import { UserRoles } from '@libs/entities-lib/user';
 import { AllReports } from './standard_queries/standard_queries';
 import { ReportingPages } from './reportingPages';
 
@@ -155,7 +156,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     canAdd(): boolean {
-      return this.queryType === QueryType.Custom;
+      return this.queryType === QueryType.Custom && (this.$hasLevel(UserRoles.level5) || this.$hasRole(UserRoles.contributorIM));
     },
 
     canDelete(): boolean {

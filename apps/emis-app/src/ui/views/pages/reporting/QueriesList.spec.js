@@ -43,7 +43,7 @@ jest.mock('./standard_queries/standard_queries', () => ({ AllReports: [{
 describe('QueriesList.vue', () => {
   let wrapper;
 
-  const doMount = async (queryTypeName = 'Custom', level = 5, otherComputed = {}) => {
+  const doMount = async (queryTypeName = 'Custom', level = 5, role = '', otherComputed = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -53,6 +53,7 @@ describe('QueriesList.vue', () => {
       propsData: { queryTypeName },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
+        $hasRole: (lvl) => lvl === role,
         $services: services,
       },
     });
@@ -89,6 +90,20 @@ describe('QueriesList.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('canAdd', () => {
+      it('returns true for L5+ or IM and in custom queries', async () => {
+        await doMount('Custom', 5);
+        expect(wrapper.vm.canAdd).toBeTruthy();
+        await doMount('Custom', 4);
+        expect(wrapper.vm.canAdd).toBeFalsy();
+        await doMount('L5', 5);
+        expect(wrapper.vm.canAdd).toBeFalsy();
+        await doMount('Custom', null, 'contributorIM');
+        expect(wrapper.vm.canAdd).toBeTruthy();
+        await doMount('Custom', null, 'readonly');
+        expect(wrapper.vm.canAdd).toBeTruthy();
+      });
+    });
     describe('queryType', () => {
       it('returns the correct QueryType', async () => {
         expect(wrapper.vm.queryType).toEqual(QueryType.Custom);

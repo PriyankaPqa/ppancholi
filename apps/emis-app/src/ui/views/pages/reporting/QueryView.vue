@@ -23,7 +23,7 @@
         </template>
         <template #headerRight>
           <v-divider vertical class="mx-4" />
-          <div class="px-2">
+          <div v-if="canShare" class="px-2">
             <v-btn
               data-test="share-button"
               color="primary"
@@ -189,7 +189,7 @@ import helpers from '@/ui/helpers/helpers';
 import libHelpers from '@libs/component-lib/helpers';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { UserTeamMember } from '@libs/entities-lib/user-account';
-import { UserRolesNames } from '@libs/entities-lib/user';
+import { UserRoles, UserRolesNames } from '@libs/entities-lib/user';
 import config from 'devextreme/core/config';
 import { ExtendedColumn, IDatasourceSettings, LookupType, datasources } from './datasources';
 import { AllReports } from './standard_queries/standard_queries';
@@ -288,6 +288,9 @@ export default Vue.extend({
     },
     canSave(): boolean {
       return this.query.queryType === QueryType.Custom;
+    },
+    canShare(): boolean {
+      return this.$hasLevel(UserRoles.level5) || this.$hasRole(UserRoles.contributorIM);
     },
   },
   watch: {

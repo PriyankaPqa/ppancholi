@@ -56,7 +56,8 @@ jest.mock('./standard_queries/standard_queries', () => ({ AllReports }));
 describe('QueryView.vue', () => {
   let wrapper;
 
-  const doMount = async (queryId = null, theme = '1', level = 5, otherComputed = {}) => {
+  // eslint-disable-next-line max-params
+  const doMount = async (queryId = null, theme = '1', level = 5, role = '', otherComputed = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -66,6 +67,7 @@ describe('QueryView.vue', () => {
       propsData: { queryId, theme },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
+        $hasRole: (lvl) => lvl === role,
         $services: services,
       },
     });
@@ -101,6 +103,17 @@ describe('QueryView.vue', () => {
         expect(wrapper.vm.canSave).toBeTruthy();
         await wrapper.setData({ query: { name: 'some name', queryType: QueryType.StandardL6en, topic: 1 } });
         expect(wrapper.vm.canSave).toBeFalsy();
+      });
+    });
+
+    describe('canShare', () => {
+      it('returns true for L5+ or contributorIM', async () => {
+        await doMount(null, '1', 5);
+        expect(wrapper.vm.canShare).toBeTruthy();
+        await doMount(null, '1', 4);
+        expect(wrapper.vm.canShare).toBeFalsy();
+        await doMount(null, '1', null, 'contributorIM');
+        expect(wrapper.vm.canShare).toBeTruthy();
       });
     });
   });
