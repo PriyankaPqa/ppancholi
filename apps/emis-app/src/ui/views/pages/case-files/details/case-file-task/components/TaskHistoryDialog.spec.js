@@ -112,12 +112,12 @@ describe('TaskHistoryDialog.vue', () => {
         wrapper.vm.parseTaskHistory();
         expect(wrapper.vm.parsedTaskActionHistoryData).toEqual([
           {
-            actionTaken: 4,
+            actionTaken: 1,
             actionTakenString: 'task.history.action_taken.created',
             currentTeamId: 'mock-team-id-1',
             previousTeamId: '',
             rationale: 'create task',
-            taskStatus: 1,
+            taskStatus: 2,
             timestamp: '2023-01-01',
             userInformation: {
               roleId: 'mock-role-id-1',
@@ -132,7 +132,7 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 1,
+            actionTaken: 2,
             actionTakenString: {
               key: 'task.history.action_taken.assigned',
               params: [
@@ -144,56 +144,8 @@ describe('TaskHistoryDialog.vue', () => {
             currentTeamId: 'mock-team-id-2',
             previousTeamId: 'mock-team-id-1',
             rationale: 'assign task to team 2',
-            taskStatus: 1,
-            timestamp: '2023-01-01',
-            userInformation: {
-              roleId: 'mock-role-id-1',
-              roleName: {
-                translation: {
-                  en: 'mock-role-name en',
-                  fr: 'mock-role-name fr',
-                },
-              },
-              userId: 'mock-user-id-1',
-              userName: 'mock-user-name',
-            },
-          },
-          {
-            actionTaken: 2,
-            actionTakenString: {
-              key: 'task.history.action_taken.action_completed',
-              params: [
-                {
-                  x: 'team-3',
-                  y: 'team-2',
-                },
-              ],
-            },
-            currentTeamId: 'mock-team-id-3',
-            previousTeamId: 'mock-team-id-2',
-            rationale: 'team 2 finish action, assign to team 3',
-            taskStatus: 1,
-            timestamp: '2023-01-02',
-            userInformation: {
-              roleId: 'mock-role-id-1',
-              roleName: {
-                translation: {
-                  en: 'mock-role-name en',
-                  fr: 'mock-role-name fr',
-                },
-              },
-              userId: 'mock-user-id-1',
-              userName: 'mock-user-name',
-            },
-          },
-          {
-            actionTaken: 2,
-            actionTakenString: 'task.history.action_taken.completed',
-            currentTeamId: 'mock-team-id-3',
-            previousTeamId: 'mock-team-id-3',
-            rationale: 'team 3 complete task',
             taskStatus: 2,
-            timestamp: '2023-01-03',
+            timestamp: '2023-01-01',
             userInformation: {
               roleId: 'mock-role-id-1',
               roleName: {
@@ -208,11 +160,59 @@ describe('TaskHistoryDialog.vue', () => {
           },
           {
             actionTaken: 3,
+            actionTakenString: {
+              key: 'task.history.action_taken.action_completed',
+              params: [
+                {
+                  x: 'team-3',
+                  y: 'team-2',
+                },
+              ],
+            },
+            currentTeamId: 'mock-team-id-3',
+            previousTeamId: 'mock-team-id-2',
+            rationale: 'team 2 finish action, assign to team 3',
+            taskStatus: 2,
+            timestamp: '2023-01-02',
+            userInformation: {
+              roleId: 'mock-role-id-1',
+              roleName: {
+                translation: {
+                  en: 'mock-role-name en',
+                  fr: 'mock-role-name fr',
+                },
+              },
+              userId: 'mock-user-id-1',
+              userName: 'mock-user-name',
+            },
+          },
+          {
+            actionTaken: 3,
+            actionTakenString: 'task.history.action_taken.completed',
+            currentTeamId: 'mock-team-id-3',
+            previousTeamId: 'mock-team-id-3',
+            rationale: 'team 3 complete task',
+            taskStatus: 3,
+            timestamp: '2023-01-03',
+            userInformation: {
+              roleId: 'mock-role-id-1',
+              roleName: {
+                translation: {
+                  en: 'mock-role-name en',
+                  fr: 'mock-role-name fr',
+                },
+              },
+              userId: 'mock-user-id-1',
+              userName: 'mock-user-name',
+            },
+          },
+          {
+            actionTaken: 4,
             actionTakenString: 'task.history.action_taken.reopen',
             currentTeamId: 'mock-team-id-3',
             previousTeamId: 'mock-team-id-3',
             rationale: 'team 3 re-open task',
-            taskStatus: 1,
+            taskStatus: 2,
             timestamp: '2023-01-03',
             userInformation: {
               roleId: 'mock-role-id-1',
@@ -232,7 +232,7 @@ describe('TaskHistoryDialog.vue', () => {
             currentTeamId: '',
             previousTeamId: '',
             rationale: 'Personal task completed',
-            taskStatus: 2,
+            taskStatus: 3,
             timestamp: '2023-01-03',
             userInformation: {
               roleId: 'mock-role-id-1',

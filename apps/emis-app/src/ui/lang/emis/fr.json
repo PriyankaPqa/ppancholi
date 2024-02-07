@@ -3122,6 +3122,7 @@
     "task.task_details.title.team_task_details": "Détails de la tâche de l'équipe",
     "task.task_details.working_on_it": "Travailler sur le sujet",
     "task.task_edited": "La tâche a été modifiée avec succès.",
+    "task.task_status.New": "Nouveau",
     "task.task_status.Completed": "Complété",
     "task.task_status.InProgress": "En cours",
     "task.task_table.my_personal_tasks": "Mes tâches personnelles",

@@ -208,6 +208,16 @@ describe('CreateEditTask.vue', () => {
         expect(wrapper.vm.displayWorkingOnIt).toEqual(true);
       });
 
+      it('should be true when task is new and is edit mode', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.New }),
+            isEditMode: () => true,
+          },
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(true);
+      });
+
       it('should be false when task is completed', async () => {
         await wrapper.setProps({
           task: mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),

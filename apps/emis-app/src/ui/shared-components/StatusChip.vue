@@ -336,6 +336,9 @@ export default Vue.extend({
 
     getTaskStatusColor(): string {
       switch (this.status) {
+        case TaskStatus.New:
+          return colors.chips.green_pale;
+
         case TaskStatus.InProgress:
           return colors.chips.orange;
 

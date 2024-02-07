@@ -714,6 +714,15 @@ describe('TaskDetails.vue', () => {
         expect(wrapper.vm.displayWorkingOnIt).toEqual(true);
       });
 
+      it('should return true when is team task and new', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.New }),
+          },
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(true);
+      });
+
       it('should return false when is team task but Completed', async () => {
         await doMount(true, {
           computed: {

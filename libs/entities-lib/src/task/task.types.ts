@@ -7,8 +7,9 @@ export enum TaskType {
 }
 
 export enum TaskStatus {
-  InProgress = 1,
-  Completed = 2,
+  New = 1,
+  InProgress = 2,
+  Completed = 3,
 }
 
 // used in the FE
@@ -20,10 +21,10 @@ export enum TaskActionTaken {
 }
 
 export enum ActionTaken {
-  Assign = 1,
-  Completed = 2,
-  Reopen = 3,
-  Create = 4,
+  Create = 1,
+  Assign = 2,
+  Completed = 3,
+  Reopen = 4,
 }
 
 export interface ITaskEntityData extends IEntity {

@@ -222,7 +222,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     displayWorkingOnIt(): boolean {
-      return this.task.taskType === TaskType.Team && this.isEditMode && this.task.taskStatus === TaskStatus.InProgress;
+      return this.task.taskType === TaskType.Team && this.isEditMode && (this.task.taskStatus === TaskStatus.InProgress || this.task.taskStatus === TaskStatus.New);
     },
 
     assignedToPerson(): string | TranslateResult {

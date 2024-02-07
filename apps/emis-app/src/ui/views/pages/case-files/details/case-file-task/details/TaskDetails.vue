@@ -270,7 +270,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     },
 
     displayWorkingOnIt(): boolean {
-      return this.isTeamTask && this.task.taskStatus === TaskStatus.InProgress;
+      return this.isTeamTask && (this.task.taskStatus === TaskStatus.InProgress || this.task.taskStatus === TaskStatus.New);
     },
   },
 
