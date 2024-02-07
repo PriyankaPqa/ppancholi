@@ -19,9 +19,7 @@ import { RegistrationByCaseFileL6En, RegistrationByCaseFileL6Fr } from './Regist
 import { RegistrationByBeneficiaryL5En, RegistrationByBeneficiaryL5Fr } from './RegistrationByBeneficiaryL5';
 import { RegistrationByCaseFileL5En, RegistrationByCaseFileL5Fr } from './RegistrationByCaseFileL5';
 import { ReferralsL5En, ReferralsL5Fr } from './ReferralsL5';
-import { CaseNotesL5En, CaseNotesL5Fr } from './CaseNotesL5';
 import { PaymentLinesL5En, PaymentLinesL5Fr } from './PaymentLinesL5';
-import { PaymentsL5En, PaymentsL5Fr } from './PaymentsL5';
 import { PaymentsL6En, PaymentsL6Fr } from './PaymentsL6';
 import { CaseFileStatusAndActionL6En, CaseFileStatusAndActionL6Fr } from './CaseFileStatusAndActionL6';
 import { UserListL6En, UserListL6Fr } from './UserListL6';
@@ -34,6 +32,18 @@ import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDup
 import { AllPbiReports } from './PowerBiEmbedded';
 
 /* clones of other queries available for different levels */
+export const PaymentsL5En = {
+  ...PaymentsL6En,
+  id: 'PaymentsL5',
+  queryType: QueryType.StandardL5en,
+} as IQuery;
+
+export const PaymentsL5Fr = {
+  ...PaymentsL6Fr,
+  id: 'PaymentsL5',
+  queryType: QueryType.StandardL5fr,
+} as IQuery;
+
 export const UsersL5En = {
   ...UserListL6En,
   id: 'UserListL5',
@@ -70,14 +80,26 @@ export const ReferralsL4Fr = {
   queryType: QueryType.StandardL4fr,
 } as IQuery;
 
+export const CaseNotesL5En = {
+  ...CaseNotesL6En,
+  id: 'CaseNotesL5',
+  queryType: QueryType.StandardL5en,
+} as IQuery;
+
+export const CaseNotesL5Fr = {
+  ...CaseNotesL6Fr,
+  id: 'CaseNotesL5',
+  queryType: QueryType.StandardL5fr,
+} as IQuery;
+
 export const CaseNotesL4En = {
-  ...CaseNotesL5En,
+  ...CaseNotesL6En,
   id: 'CaseNotesL4',
   queryType: QueryType.StandardL4en,
 } as IQuery;
 
 export const CaseNotesL4Fr = {
-  ...CaseNotesL5Fr,
+  ...CaseNotesL6Fr,
   id: 'CaseNotesL4',
   queryType: QueryType.StandardL4fr,
 } as IQuery;

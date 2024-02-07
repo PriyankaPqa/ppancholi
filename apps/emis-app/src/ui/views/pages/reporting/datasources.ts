@@ -282,6 +282,7 @@ export const financialAssistancePaymentGroupViewDs : IDatasourceBase = {
     { dataField: 'payeeName', dataType: 'string', visible: false },
     { dataField: 'paymentStatusNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'PaymentStatus' },
     { dataField: 'paymentStatusNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'PaymentStatus' },
+    { dataField: 'dateCompleted', dataType: 'datetime', visible: false },
     { dataField: 'cancellationReasonNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'CancellationReason' },
     { dataField: 'cancellationReasonNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'CancellationReason' },
     { dataField: 'cancellationDate', dataType: 'datetime', visible: false },
