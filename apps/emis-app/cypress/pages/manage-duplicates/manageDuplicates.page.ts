@@ -7,16 +7,20 @@ export enum DataTest {
   duplicateHistoryUser = 'householdDetails-duplicate-history-user',
   duplicateHistoryRationale = 'householdDetails-duplicate-history-rationale',
   duplicateHistoryName = 'householdDetails-duplicate-name',
-  duplicateActionDropdown = 'householdDetails-manageDuplicates-actionDropdown_input',
+  duplicateActionDropdownInput = 'householdDetails-manageDuplicates-actionDropdown_input',
   duplicatePhoneNumber = 'duplicate-home-phone-number',
   duplicateFlagNew = 'householdDetails-manageDuplicates--FlagNew',
   flagNewHouseholdRegistrationNumber = 'flag-new-household-registration-number',
   duplicateReason = 'duplicate-reasons',
   flagNewHouseholdRationale = 'householdDetails-manageDuplicates-actionDialog-rationale',
+  actionMenuResolved = 'householdDetails-manageDuplicates-action-menu-Resolved',
   memberName = 'payment_modalities',
   closeButton = 'dialog-cancel-action',
   buttonSubmit = 'dialog-submit-action',
-  tabLabelPotentialDuplicates = 'rctab-label-badge',
+  tabPotentialDuplicates = 'householdDetails-manageDuplicates--Potential',
+  tabLabelResolved = 'householdDetails-manageDuplicates--Resolved',
+  flagAsActionDialog = 'householdDetails-manageDuplicates-actionDialog-flagAs',
+  duplicateActionDropdown = 'householdDetails-manageDuplicates-actionDropdown',
 }
 
 // values are search text for duplicated by field
@@ -45,7 +49,7 @@ export class ManageDuplicatesPage {
 
   private duplicateHistoryName = { selector: DataTest.duplicateHistoryName };
 
-  private duplicateActionDropdown = { selector: DataTest.duplicateActionDropdown, type: 'input' };
+  private duplicateActionDropdownInput = { selector: DataTest.duplicateActionDropdownInput, type: 'input' };
 
   private duplicateFlagNew = { selector: DataTest.duplicateFlagNew };
 
@@ -57,7 +61,17 @@ export class ManageDuplicatesPage {
 
   private buttonSubmit = { selector: DataTest.buttonSubmit };
 
-  private tabLabelPotentialDuplicates = { selector: DataTest.tabLabelPotentialDuplicates };
+  private tabPotentialDuplicates = { selector: DataTest.tabPotentialDuplicates };
+
+  private tabLabelResolved = { selector: DataTest.tabLabelResolved };
+
+  private actionMenuResolved = { selector: DataTest.actionMenuResolved };
+
+  private flagAsActionDialog = { selector: DataTest.flagAsActionDialog };
+
+  private actionDialogRationale = { selector: DataTest.flagNewHouseholdRationale };
+
+  private duplicateActionDropdown = { selector: DataTest.duplicateActionDropdown };
 
   public getDuplicateHouseholdPrimaryMemberName() {
     return cy.getByDataTestLike(this.duplicateHouseholdPrimaryMember).getAndTrimText();
@@ -75,16 +89,16 @@ export class ManageDuplicatesPage {
     return cy.getByDataTest(this.duplicateHouseholdDetails).getAndTrimText();
   }
 
-  public getDuplicateHistoryStatus() {
-    return cy.getByDataTest(this.duplicateHistoryStatus).getAndTrimText();
+  public getDuplicateHistoryStatusByIndex(index = 0) {
+    return cy.getByDataTest(this.duplicateHistoryStatus).eq(index).getAndTrimText();
   }
 
-  public getDuplicateHistoryUser() {
-    return cy.getByDataTest(this.duplicateHistoryUser).getAndTrimText();
+  public getDuplicateHistoryUserByIndex(index = 0) {
+    return cy.getByDataTest(this.duplicateHistoryUser).eq(index).getAndTrimText();
   }
 
-  public getDuplicateHistoryRationale() {
-    return cy.getByDataTest(this.duplicateHistoryRationale).getAndTrimText();
+  public getDuplicateHistoryRationaleByIndex(index = 0) {
+    return cy.getByDataTest(this.duplicateHistoryRationale).eq(index).getAndTrimText();
   }
 
   public getDuplicatePhoneNumber() {
@@ -97,7 +111,7 @@ export class ManageDuplicatesPage {
   }
 
   public getActionDropdown() {
-    return cy.getByDataTest(this.duplicateActionDropdown);
+    return cy.getByDataTest(this.duplicateActionDropdownInput);
   }
 
   public goToHouseholdProfilePage() {
@@ -130,6 +144,39 @@ export class ManageDuplicatesPage {
   }
 
   public getTabPotentialDuplicates() {
-    return cy.getByDataTest(this.tabLabelPotentialDuplicates);
+    return cy.getByDataTest(this.tabPotentialDuplicates);
+  }
+
+  public selectActionMenuResolved() {
+    return cy.getByDataTest(this.actionMenuResolved).click();
+  }
+
+  public getFlagAsText() {
+    return cy.getByDataTest(this.flagAsActionDialog).getAndTrimText();
+  }
+
+  public actionDialogRationaleElement() {
+    return cy.getByDataTest(this.actionDialogRationale);
+  }
+
+  public getDialogSaveButton() {
+    return cy.getByDataTest(this.buttonSubmit);
+  }
+
+  public getDialogCancelButton() {
+    return cy.getByDataTest(this.closeButton);
+  }
+
+  public provideActionDialogRationale(rationale: string) {
+    cy.getByDataTest(this.flagNewHouseholdRationale).focus();
+    cy.getByDataTest(this.flagNewHouseholdRationale).type(rationale);
+  }
+
+  public getTabResolved() {
+    return cy.getByDataTest(this.tabLabelResolved);
+  }
+
+  public getDuplicateActionDropdownText() {
+    return cy.getByDataTest(this.duplicateActionDropdown).getAndTrimText();
   }
 }

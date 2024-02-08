@@ -83,7 +83,7 @@ describe('#TC1879# - User can manually create potential duplicate records based 
             phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
-            flaggedByUserName: `${getUserName(roleName)}`,
+            flaggedByUserName: getUserName(roleName),
             roleName,
           });
 
@@ -97,7 +97,7 @@ describe('#TC1879# - User can manually create potential duplicate records based 
             phoneNumber: this.comparisonHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
-            flaggedByUserName: `${getUserName(roleName)}`,
+            flaggedByUserName: getUserName(roleName),
             roleName,
           });
         });

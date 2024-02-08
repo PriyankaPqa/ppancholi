@@ -83,7 +83,7 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
-            flaggedByUserName: `${getUserName(roleName)}`,
+            flaggedByUserName: getUserName(roleName),
             manuallyCreatedDuplicateName: this.originalHouseholdPrimaryBeneficiary,
             roleName,
           });
@@ -97,7 +97,7 @@ describe('#TC1815# - User can manually create potential duplicate records based 
             potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
             rationale: 'This is a potential duplicate',
             flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
-            flaggedByUserName: `${getUserName(roleName)}`,
+            flaggedByUserName: getUserName(roleName),
             manuallyCreatedDuplicateName: this.originalHouseholdPrimaryBeneficiary,
             roleName,
           });

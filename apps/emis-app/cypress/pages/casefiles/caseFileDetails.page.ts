@@ -109,7 +109,7 @@ export class CaseFileDetailsPage {
     );
   }
 
-  public goToDuplicateHouseholdProfile() {
-    cy.getByDataTest(this.registrationNumber).click();
+  public goToDuplicateHouseholdProfilebyIndex(index = 0) {
+    cy.getByDataTest(this.registrationNumber).eq(index).click();
   }
 }

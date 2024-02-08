@@ -19,7 +19,7 @@
           :color="newStatus === DuplicateStatus.Potential ? 'secondary' : 'green'">
           {{ newStatus === DuplicateStatus.Potential ? '$rctech-duplicate' : '$rctech-resolved' }}
         </v-icon>
-        <div class="d-flex align-center" data-test="householdDetails.manageDuplicates.actionDialog.flagAs">
+        <div class="d-flex align-center" data-test="householdDetails-manageDuplicates-actionDialog-flagAs">
           <span class="fw-bold mr-1">{{ $t('householdDetails.manageDuplicates.flagAs') }}:</span>
           {{ newStatus === DuplicateStatus.Potential ? $t('householdDetails.manageDuplicates.potentialDuplicate')
             : $t('householdDetails.manageDuplicates.resolvedDuplicate') }}
@@ -29,7 +29,7 @@
       <v-text-area-with-validation
         v-model="rationale"
         rows="3"
-        data-test="householdDetails.manageDuplicates.actionDialog.rationale"
+        data-test="householdDetails-manageDuplicates-actionDialog-rationale"
         :label="`${newStatus === DuplicateStatus.Potential
           ? $t('householdDetails.manageDuplicates.rationale') : $t('householdDetails.manageDuplicates.actionTakenToResolve')}*`"
         class="full-width"

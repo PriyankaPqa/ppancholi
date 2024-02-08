@@ -155,7 +155,8 @@ export class CreateFinancialAssistanceTablePage {
         cy.selectListElementByValue(DataTest.subItemSelect, subItem.type);
       }
       if (subItem.maxAmount) {
-        cy.getByDataTest(this.subItemMax).clear().type(subItem.maxAmount);
+        cy.getByDataTest(this.subItemMax).clear();
+        cy.getByDataTest(this.subItemMax).type(subItem.maxAmount);
       }
 
       if (subItem.frequency) {
@@ -176,7 +177,8 @@ export class CreateFinancialAssistanceTablePage {
   }
 
   public fillFrenchTableName(tableName: string) {
-    cy.getByDataTest(this.tableName).clear().type(tableName);
+    cy.getByDataTest(this.tableName).clear();
+    cy.getByDataTest(this.tableName).type(tableName);
   }
 
   public addFinancialAssistanceTable() {

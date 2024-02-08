@@ -119,9 +119,12 @@ Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeou
       throw new Error(`${searchString} was not found and could not be selected. Try another query or increase timeout`);
     }
 
-    cy.getByDataTest({ selector: `${dataTest}_inner_input`, type: 'input' }).clear({ force: true }).type(searchString, { force: true }).wait(interval);
+    cy.getByDataTest({ selector: `${dataTest}_inner_input`, type: 'input' }).clear({ force: true });
+    cy.getByDataTest({ selector: `${dataTest}_inner_input`, type: 'input' }).type(searchString, { force: true });
+    cy.wait(interval);
 
-    cy.getByDataTest({ selector: `${dataTest}_inner`, type: 'div' }).click().then(() => {
+    cy.getByDataTest({ selector: `${dataTest}_inner`, type: 'div' }).click();
+    cy.then(() => {
       if (Cypress.$(optionSelector).length) {
         cy.get(optionSelector).click();
       } else {
@@ -165,7 +168,8 @@ Cypress.Commands.add('typeAndWaitUntilSearchResultsVisible', (searchString, data
       throw new Error(`${searchString} was not found after ${opts.timeout}ms`);
     }
 
-    cy.getByDataTest({ selector: dataTestSearchField, type: 'input' }).clear({ force: true }).type(searchString, { force: true });
+    cy.getByDataTest({ selector: dataTestSearchField, type: 'input' }).clear({ force: true });
+    cy.getByDataTest({ selector: dataTestSearchField, type: 'input' }).type(searchString, { force: true });
 
     cy.wait(opts.interval)
       .then(() => {
