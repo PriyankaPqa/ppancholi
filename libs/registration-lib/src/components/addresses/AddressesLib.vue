@@ -53,22 +53,18 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
-
 import VueI18n from 'vue-i18n';
 import helpers from '@libs/entities-lib/helpers';
 import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
-import {
-  ICurrentAddress,
-  ECurrentAddressTypes,
-  IShelterLocationData,
-} from '@libs/entities-lib/value-objects/current-address';
+import { ICurrentAddress, IShelterLocationData } from '@libs/entities-lib/value-objects/current-address';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { localStorageKeys } from '../../constants/localStorage';
 
 export default Vue.extend({
-  name: 'Addresses',
+  name: 'AddressesLib',
 
   components: {
     VCheckboxWithValidation,
@@ -91,6 +87,11 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const { getCurrentAddressTypeItems } = useAddresses();
+    return { getCurrentAddressTypeItems };
   },
 
   data() {
@@ -138,23 +139,7 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n)
-        .filter((item) => (item.value !== ECurrentAddressTypes.RemainingInHome));
-
-      if (this.shelterLocations.length === 0) {
-        list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
-      }
-
-      if (this.noFixedHome) {
-        return list;
-      }
-      return [
-        {
-          value: ECurrentAddressTypes.RemainingInHome,
-          text: this.i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString(),
-        },
-        ...list,
-      ];
+      return this.getCurrentAddressTypeItems(this.i18n, this.noFixedHome, !!this.shelterLocations.length, false);
     },
 
     shelterLocations(): IShelterLocationData[] {

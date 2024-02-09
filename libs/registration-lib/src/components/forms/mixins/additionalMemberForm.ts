@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
+import VueI18n, { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import _debounce from 'lodash/debounce';
@@ -8,8 +8,10 @@ import {
   IShelterLocationData, IHouseholdCreate, IIdentitySet, IdentitySet,
 } from '@libs/entities-lib/household-create';
 import { IMember } from '@libs/entities-lib/value-objects/member/index';
-import { ECurrentAddressTypes, ICurrentAddress } from '@libs/entities-lib/value-objects/current-address/index';
+import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address/index';
 import { IOptionItemData, EOptionItemStatus } from '@libs/shared-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { localStorageKeys } from '../../../constants/localStorage';
 
 /**
@@ -17,6 +19,18 @@ import { localStorageKeys } from '../../../constants/localStorage';
  */
 
 export default Vue.extend({
+  props: {
+    i18n: {
+      type: Object as () => VueI18n,
+      required: true,
+    },
+  },
+
+  setup() {
+    const { getCurrentAddressTypeItems } = useAddresses();
+    return { getCurrentAddressTypeItems };
+  },
+
   data() {
     return {
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
@@ -261,13 +275,8 @@ export default Vue.extend({
     },
 
     makeCurrentAddressTypeItems(m: IMember): Record<string, unknown>[] {
-      // eslint-disable-next-line
-      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', (this as any).i18n);
-      list = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
-      if (this.makeShelterLocationsListForMember(m).length === 0) {
-        list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
-      }
-      return list;
+      const hasShelterLocations = !!this.makeShelterLocationsListForMember(m)?.length;
+      return this.getCurrentAddressTypeItems(this.i18n, this.householdCreate?.noFixedHome, hasShelterLocations, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
     },
   },
 });

@@ -3,12 +3,20 @@ import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/src/household-create';
 import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import { ECurrentAddressTypes, mockCampGround } from '@libs/entities-lib/src/value-objects/current-address';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { i18n } from '../../ui/plugins/i18n';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddressesLib.vue';
 
+jest.mock('@libs/registration-lib/components/forms/mixins/useAddresses');
+const mockAddressTypes = [
+  { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+  { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+  { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
+];
+useAddresses.mockImplementation(() => ({ getCurrentAddressTypeItems: jest.fn(() => mockAddressTypes) }));
 const localVue = createLocalVue();
 const household = mockHouseholdCreate();
 
@@ -61,7 +69,7 @@ describe('AddressesLib.vue', () => {
     });
 
     describe('currentAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types if noFixedHome is false. Remaining home being first', async () => {
+      it('calls the useAddresses method with the right params ', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           data() {
@@ -77,53 +85,16 @@ describe('AddressesLib.vue', () => {
             noFixedHome() {
               return false;
             },
+            shelterLocation() {
+              return [{ id: 1 }];
+            },
           },
         });
-        const fullList = [
-          {
-            text: 'Remaining in home',
-            value: 1,
-          },
-          {
-            dataTest: 'Campground',
-            text: 'Campground',
-            value: 2,
-          },
-          {
-            dataTest: 'FriendsFamily',
-            text: 'Friends / Family',
-            value: 3,
-          },
-          {
-            dataTest: 'HotelMotel',
-            text: 'Hotel/Motel',
-            value: 4,
-          },
-          {
-            dataTest: 'MedicalFacility',
-            text: 'Medical facility',
-            value: 5,
-          },
-          {
-            dataTest: 'Other',
-            text: 'Other',
-            value: 6,
-          },
-          {
-            dataTest: 'Shelter',
-            text: 'Shelter',
-            value: 7,
-          },
-          {
-            dataTest: 'Unknown',
-            text: 'Unknown',
-            value: 0,
-          },
-        ];
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(fullList);
+
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.i18n, false, true, false);
       });
 
-      it('returns the full list of temporary addresses types without remaining home if noFixedHome is true', async () => {
+      it('returns the right value', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           data() {
@@ -141,102 +112,8 @@ describe('AddressesLib.vue', () => {
             disableAutocomplete: false,
           },
         });
-        const listNoRemainingHome = [
-          {
-            dataTest: 'Campground',
-            text: 'Campground',
-            value: 2,
-          },
-          {
-            dataTest: 'FriendsFamily',
-            text: 'Friends / Family',
-            value: 3,
-          },
-          {
-            dataTest: 'HotelMotel',
-            text: 'Hotel/Motel',
-            value: 4,
-          },
-          {
-            dataTest: 'MedicalFacility',
-            text: 'Medical facility',
-            value: 5,
-          },
-          {
-            dataTest: 'Other',
-            text: 'Other',
-            value: 6,
-          },
-          {
-            dataTest: 'Shelter',
-            text: 'Shelter',
-            value: 7,
-          },
-          {
-            dataTest: 'Unknown',
-            text: 'Unknown',
-            value: 0,
-          },
-        ];
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(listNoRemainingHome);
-      });
 
-      it('is hiding shelter from the list if no shelter options are available', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          data() {
-            return {
-              apiKey: 'google-api-key',
-            };
-          },
-          computed: {
-            noFixedHome() {
-              return false;
-            },
-            shelterLocations: () => [],
-          },
-          propsData: {
-            i18n,
-            disableAutocomplete: false,
-          },
-        });
-        const listNoShelter = [
-          {
-            text: 'Remaining in home',
-            value: 1,
-          },
-          {
-            dataTest: 'Campground',
-            text: 'Campground',
-            value: 2,
-          },
-          {
-            dataTest: 'FriendsFamily',
-            text: 'Friends / Family',
-            value: 3,
-          },
-          {
-            dataTest: 'HotelMotel',
-            text: 'Hotel/Motel',
-            value: 4,
-          },
-          {
-            dataTest: 'MedicalFacility',
-            text: 'Medical facility',
-            value: 5,
-          },
-          {
-            dataTest: 'Other',
-            text: 'Other',
-            value: 6,
-          },
-          {
-            dataTest: 'Unknown',
-            text: 'Unknown',
-            value: 0,
-          },
-        ];
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(listNoShelter);
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
       });
     });
 

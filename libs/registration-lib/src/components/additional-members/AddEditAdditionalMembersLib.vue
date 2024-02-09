@@ -52,10 +52,10 @@ import {
   IOptionItemData,
   VForm,
 } from '@libs/shared-lib/types';
-import {
-  ECurrentAddressTypes, ICurrentAddress, IShelterLocationData,
-} from '@libs/entities-lib/value-objects/current-address';
+import { ICurrentAddress, IShelterLocationData } from '@libs/entities-lib/value-objects/current-address';
 import { IMember } from '@libs/entities-lib/value-objects/member';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { localStorageKeys } from '../../constants/localStorage';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
@@ -112,6 +112,11 @@ const vueComponent: VueConstructor = Vue.extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const { getCurrentAddressTypeItems } = useAddresses();
+    return { getCurrentAddressTypeItems };
   },
 
   data() {
@@ -176,13 +181,8 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n);
-
-      if (this.shelterLocations.length === 0) {
-        list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
-      }
-
-      return list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+      const noFixedHome = this.$registrationStore.householdCreate?.noFixedHome;
+      return this.getCurrentAddressTypeItems(this.i18n, noFixedHome, !!this.shelterLocations?.length, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
     },
 
     shelterLocations(): IShelterLocationData[] {

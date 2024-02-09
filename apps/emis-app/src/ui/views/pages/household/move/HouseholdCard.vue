@@ -243,8 +243,9 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
-  ECurrentAddressTypes, IMember, CurrentAddress, ICurrentAddress,
+  IMember, CurrentAddress, ICurrentAddress,
 } from '@libs/entities-lib/household-create';
+import { i18n } from '@/ui/plugins';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import libHelpers from '@libs/entities-lib/helpers';
@@ -257,6 +258,7 @@ import { VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 
 export default Vue.extend({
@@ -306,6 +308,11 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const { getCurrentAddressTypeItems } = useAddresses();
+    return { getCurrentAddressTypeItems };
   },
 
   data() {
@@ -367,15 +374,8 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      let items = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
-
-      if (this.shelterLocations.every((s) => s.status === EEventLocationStatus.Inactive)) {
-        items = items.filter((i) => i.value !== ECurrentAddressTypes.Shelter);
-      }
-
-      items = items.filter((i) => i.value !== ECurrentAddressTypes.RemainingInHome);
-
-      return items;
+      const hasShelters = this.shelterLocations.some((s) => s.status !== EEventLocationStatus.Inactive);
+      return this.getCurrentAddressTypeItems(i18n, this.household.noFixedHome, hasShelters, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
     },
 
     movingAdditionalMembers():IMovingMember[] {

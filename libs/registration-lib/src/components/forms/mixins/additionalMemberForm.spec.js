@@ -1,11 +1,20 @@
-import helpers from '@libs/entities-lib/src/helpers';
 import { mockMember } from '@libs/entities-lib/src/household-create';
 import { ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address/index';
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
+import { i18n } from '@/ui/plugins/i18n';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { createLocalVue, shallowMount } from '../../../test/testSetup';
 import additionalMemberForm from './additionalMemberForm';
 
+jest.mock('@libs/registration-lib/components/forms/mixins/useAddresses');
+const mockAddressTypes = [
+  { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+  { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+  { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
+];
+useAddresses.mockImplementation(() => ({ getCurrentAddressTypeItems: jest.fn(() => mockAddressTypes) }));
 const member = mockMember();
 
 const Component = {
@@ -62,29 +71,14 @@ describe('additionalMemberForm.spec', () => {
     });
 
     describe('makeCurrentAddressTypeItems', () => {
-      it('calls enumToTranslatedCollection helper and filters out RemainingInHome', async () => {
-        doMount();
+      it('calls getCurrentAddressTypeItems with the right params and returns the right value', async () => {
+        doMount({ i18n, mocks: { $hasFeature: (f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers } });
         const member = { currentAddress: { shelterLocation: { id: 'sl-2' } } };
-        helpers.enumToTranslatedCollection = jest.fn(() => [
-          { value: ECurrentAddressTypes.RemainingInHome, text: 'Remaining at home' },
-          { value: ECurrentAddressTypes.Campground, text: 'Campground' },
-        ]);
-        const result = await wrapper.vm.makeCurrentAddressTypeItems(member);
-        expect(helpers.enumToTranslatedCollection).toHaveBeenCalledTimes(1);
-        expect(result).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
-      });
 
-      it('filters out filters out shelters if the user has no potential shelters to live in', async () => {
-        doMount();
-        const member = { currentAddress: { shelterLocation: { id: 'sl-2' } } };
-        helpers.enumToTranslatedCollection = jest.fn(() => [
-          { value: ECurrentAddressTypes.RemainingInHome, text: 'Remaining at home' },
-          { value: ECurrentAddressTypes.Campground, text: 'Campground' },
-          { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
-        ]);
-        wrapper.vm.makeShelterLocationsListForMember = jest.fn(() => []);
         const result = await wrapper.vm.makeCurrentAddressTypeItems(member);
-        expect(result).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.i18n, wrapper.vm.householdCreate.noFixedHome, true, false);
+
+        expect(result).toEqual(mockAddressTypes);
       });
     });
 

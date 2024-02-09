@@ -62,9 +62,7 @@ import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentA
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 import { RcDialog } from '@libs/component-lib/components';
 import {
-  ContactInformation,
-  CurrentAddress,
-  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IIdentitySet, IMember,
+  ContactInformation, CurrentAddress, IContactInformation, ICurrentAddress, IIdentitySet, IMember,
 } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
 import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
@@ -77,7 +75,10 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
+import { i18n } from '@/ui/plugins';
+
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',
@@ -116,9 +117,14 @@ export default Vue.extend({
     },
   },
 
+  setup() {
+    const { getCurrentAddressTypeItems } = useAddresses();
+    return { getCurrentAddressTypeItems };
+  },
+
   data() {
     return {
-      i18n: this.$i18n,
+      i18n,
       backupIdentitySet: null as IIdentitySet,
       backupContactInfo: null as IContactInformation,
       backupAddress: null as ICurrentAddress,
@@ -136,7 +142,7 @@ export default Vue.extend({
 
   computed: {
     canadianProvincesItems(): Record<string, unknown>[] {
-      return libHelpers.getCanadianProvincesWithoutOther(this.i18n);
+      return libHelpers.getCanadianProvincesWithoutOther(i18n);
     },
 
     changedAddress():boolean {
@@ -156,19 +162,10 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      let items = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
-
       const shelterLocationAvailable = this.shelterLocations?.some((s) => s.status === EEventLocationStatus.Active)
-                                     || this.member.currentAddress.shelterLocation;
-      if (!shelterLocationAvailable) {
-        items = items.filter((i) => i.value !== ECurrentAddressTypes.Shelter);
-      }
+                                     || this.member?.currentAddress?.shelterLocation;
 
-      if (this.noFixedHome) {
-        items = items.filter((i) => i.value !== ECurrentAddressTypes.RemainingInHome);
-      }
-
-      return items;
+      return this.getCurrentAddressTypeItems(i18n, this.noFixedHome, !!shelterLocationAvailable, false);
     },
 
     memberName(): string {

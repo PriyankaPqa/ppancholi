@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { CurrentAddress, ECurrentAddressTypes, ICurrentAddress, IShelterLocationData } from '@libs/entities-lib/value-objects/current-address';
+import { CurrentAddress, ICurrentAddress, IShelterLocationData } from '@libs/entities-lib/value-objects/current-address';
 import { EOptionItemStatus, VForm } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
 import uiHelpers from '@/ui/helpers/helpers';
@@ -77,6 +77,8 @@ import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { RcDialog } from '@libs/component-lib/components';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 
 export default Vue.extend({
   name: 'ImpactedIndividualsEditAddressDialog',
@@ -113,6 +115,11 @@ export default Vue.extend({
     },
   },
 
+  setup() {
+    const { getCurrentAddressTypeItems } = useAddresses();
+    return { getCurrentAddressTypeItems };
+  },
+
   data() {
     return {
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
@@ -146,16 +153,8 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
-
-      if (this.shelterLocations.length === 0) {
-        list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
-      }
-
-      // Remaining In Home is only an option for primary beneficiaries with home addresses
-      return this.isPrimaryMember && !this.noFixedHome
-        ? list
-        : list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+      const mustRemoveRemainingInHome = !this.isPrimaryMember && !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers);
+      return this.getCurrentAddressTypeItems(i18n, this.noFixedHome, !!this.shelterLocations.length, mustRemoveRemainingInHome);
     },
 
     title(): TranslateResult {

@@ -2,16 +2,25 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { mockHouseholdCreate, mockIdentitySetData, ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import helpers from '@/ui/helpers/helpers';
 
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
+import { i18n } from '@/ui/plugins';
 import { mockProvider } from '@/services/provider';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import Component from '../PrimaryMemberDialog.vue';
+
+jest.mock('@libs/registration-lib/components/forms/mixins/useAddresses');
+const mockAddressTypes = [
+  { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+  { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+  { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
+];
+useAddresses.mockImplementation(() => ({ getCurrentAddressTypeItems: jest.fn(() => mockAddressTypes) }));
 
 const localVue = createLocalVue();
 const services = mockProvider();
@@ -39,13 +48,6 @@ describe('PrimaryMemberDialog', () => {
   registrationStore.householdCreate.primaryBeneficiary.personalInformation = mockIdentitySetData();
 
   libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
-
-  const mockAddressTypes = [
-    { value: ECurrentAddressTypes.Campground, text: 'Campground' },
-    { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
-    { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
-  ];
-  helpers.enumToTranslatedCollection = jest.fn(() => mockAddressTypes);
 
   describe('Lifecycle', () => {
     describe('created', () => {
@@ -216,6 +218,7 @@ describe('PrimaryMemberDialog', () => {
           propsData: {
             show: true,
             shelterLocations: [{ status: EEventLocationStatus.Active }],
+            makePrimaryMode: true,
           },
           data() {
             return {
@@ -223,47 +226,27 @@ describe('PrimaryMemberDialog', () => {
             };
           },
         });
-
         expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
       });
 
-      it('excludes shelter', async () => {
+      it('calls getCurrentAddressTypeItems with the right params ', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
           propsData: {
             show: true,
-            shelterLocations: [],
+            shelterLocations: [{ status: EEventLocationStatus.Active }],
+            makePrimaryMode: true,
           },
           data() {
             return {
               apiKey: '123',
             };
           },
+
         });
 
-        expect(wrapper.vm.currentAddressTypeItems).toEqual([
-          { value: ECurrentAddressTypes.Campground, text: 'Campground' },
-          { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
-        ]);
-      });
-
-      it('excludes "remaining in home" when no fixed address', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            show: true,
-            shelterLocations: [],
-          },
-          data() {
-            return {
-              apiKey: '123',
-            };
-          },
-        });
-
-        await wrapper.setData({ noFixedHome: true });
-        expect(wrapper.vm.currentAddressTypeItems).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(i18n, wrapper.vm.noFixedHome, true, false);
       });
     });
 

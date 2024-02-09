@@ -2,11 +2,20 @@ import { mockHouseholdCreate, CurrentAddress, ECurrentAddressTypes } from '@libs
 import { mockMember } from '@libs/entities-lib/value-objects/member/index';
 import { mockShelterLocations } from '@libs/entities-lib/registration-event/registrationEvent.mock';
 import libHelpers from '@libs/entities-lib/helpers';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import routes from '@/constants/routes';
-
+import { i18n } from '@/ui/plugins';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import Component from './HouseholdCard.vue';
+
+jest.mock('@libs/registration-lib/components/forms/mixins/useAddresses');
+useAddresses.mockImplementation(() => ({ getCurrentAddressTypeItems: jest.fn(() => [
+  { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+  { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+  { value: ECurrentAddressTypes.RemainingInHome, text: 'Remaining in home' },
+]) }));
 
 const localVue = createLocalVue();
 
@@ -20,7 +29,7 @@ describe('HouseholdCard.vue', () => {
   const mockAddressTypes = [
     { value: ECurrentAddressTypes.Campground, text: 'Campground' },
     { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
-    { value: ECurrentAddressTypes.RemainingInHome, text: 'Ramining in home' },
+    { value: ECurrentAddressTypes.RemainingInHome, text: 'Remaining in home' },
   ];
   helpers.enumToTranslatedCollection = jest.fn(() => mockAddressTypes);
 
@@ -317,8 +326,8 @@ describe('HouseholdCard.vue', () => {
     });
 
     describe('currentAddressTypeItems', () => {
-      it('returns the list of temporary addresses types excludes Remaining in home', async () => {
-        wrapper = shallowMount(Component, {
+      it('calls the useAddresses method with the right params', async () => {
+        wrapper = mount(Component, {
           localVue,
           propsData: {
             household: mockMovingHouseholdCreate(),
@@ -332,32 +341,14 @@ describe('HouseholdCard.vue', () => {
               apiKey: 'mock-api-key',
             };
           },
-        });
-        const expectList = [
-          { value: ECurrentAddressTypes.Campground, text: 'Campground' },
-          { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
-        ];
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(expectList);
-      });
-
-      it('excludes shelter', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            household: mockMovingHouseholdCreate(),
-            position: 'left',
-            shelterLocations: [],
-            enabledMove: true,
-            moveSubmitted: false,
-          },
-          data() {
-            return {
-              apiKey: 'mock-api-key',
-            };
+          mocks: {
+            $hasFeature: (f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers,
           },
         });
-
-        expect(wrapper.vm.currentAddressTypeItems).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
+        await wrapper.setData({ showNewAddressDialog: true });
+        const mustRemoveRemainingInHome = !wrapper.vm.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers);
+        expect(wrapper.vm.getCurrentAddressTypeItems)
+          .toHaveBeenCalledWith(i18n, wrapper.vm.household.noFixedHome, !!shelterLocations.length, mustRemoveRemainingInHome);
       });
     });
   });

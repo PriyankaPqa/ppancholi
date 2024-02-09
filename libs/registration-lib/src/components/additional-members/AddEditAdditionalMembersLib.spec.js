@@ -1,8 +1,8 @@
 import { RcDialog } from '@libs/component-lib/src/components';
 import { i18n } from '@/ui/plugins/i18n';
-import helpers from '@libs/entities-lib/helpers';
 import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { mockEvent } from '@libs/entities-lib/src/registration-event';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
   ECurrentAddressTypes,
   mockCampGround,
@@ -11,10 +11,18 @@ import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-create';
 import { MemberDuplicateStatus } from '@libs/entities-lib/src/household-create';
+import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditAdditionalMembersLib.vue';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
+jest.mock('@libs/registration-lib/components/forms/mixins/useAddresses');
+const mockAddressTypes = [
+  { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+  { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+  { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
+];
+useAddresses.mockImplementation(() => ({ getCurrentAddressTypeItems: jest.fn(() => mockAddressTypes) }));
 const localVue = createLocalVue();
 const householdId = '4113a553-13ed-41da-a692-f39c934bee05';
 
@@ -86,15 +94,7 @@ describe('AddEditAdditionalMembersLib.vue', () => {
     });
 
     describe('currentAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types without remaining home', async () => {
-        const event = mockEvent();
-        wrapper.vm.$registrationStore.getEvent = jest.fn(() => event);
-        const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
-        const filtered = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(filtered);
-      });
-
-      it('returns the full list of temporary addresses types without remaining home and without shelter if no shelter available', async () => {
+      it('calls the useAddresses method with the right params', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -110,14 +110,16 @@ describe('AddEditAdditionalMembersLib.vue', () => {
               apiKey: 'google-key',
             };
           },
-          computed: {
-            shelterLocations: () => [],
+          mocks: {
+            $hasFeature: (f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers,
           },
         });
-        const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
-        let filtered = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
-        filtered = filtered.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(filtered);
+        expect(wrapper.vm.getCurrentAddressTypeItems)
+          .toHaveBeenCalledWith(i18n, wrapper.vm.$registrationStore.householdCreate.noFixedHome, !!wrapper.vm.shelterLocations.length, false);
+      });
+      it('returns the right value', async () => {
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers);
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
       });
     });
 
