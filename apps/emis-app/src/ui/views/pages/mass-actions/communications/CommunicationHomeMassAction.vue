@@ -84,8 +84,7 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       detailsRouteNameData: routes.massActions.communications.details.name,
       tableTitleData: 'massAction.communicationTable.title',
       showProcessByList: false,
-      // searchEndpointData: 'communication-mass-actions', // 2do, we are using this when backend is available
-      searchEndpointData: 'assessment-mass-actions',
+      searchEndpointData: 'communication-mass-actions',
       UserRoles,
     };
   },

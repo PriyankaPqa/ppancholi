@@ -31,7 +31,7 @@ describe('CommunicationHomeMassAction.vue', () => {
     });
 
     it('should have proper search end point', () => {
-      expect(wrapper.vm.searchEndpointData).toEqual('assessment-mass-actions'); // 2do
+      expect(wrapper.vm.searchEndpointData).toEqual('communication-mass-actions');
     });
   });
 
