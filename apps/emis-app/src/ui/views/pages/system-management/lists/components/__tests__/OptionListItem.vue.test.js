@@ -9,7 +9,6 @@ import { mockOptionItemData, EOptionLists, mockOptionItem } from '@libs/entities
 import entityUtils from '@libs/entities-lib/utils';
 import { Status } from '@libs/entities-lib/base';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
-import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import Component from '../OptionListItem.vue';
 
 const localVue = createLocalVue();
@@ -35,17 +34,6 @@ describe('OptionListItem.vue', () => {
       },
     });
   });
-
-  describe('Template', () => {
-    describe('StatusSelect', () => {
-      it('should pass props attach false to StatusSelect', () => {
-        const component = wrapper.findComponent(StatusSelect);
-        const props = 'attach';
-        expect(component.props(props)).toEqual(false);
-      });
-    });
-  });
-
   describe('Computed', () => {
     let wrapper;
 

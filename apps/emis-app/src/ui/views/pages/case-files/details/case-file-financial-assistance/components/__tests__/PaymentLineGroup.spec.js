@@ -10,7 +10,6 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { UserRoles } from '@libs/entities-lib/user';
 import flushPromises from 'flush-promises';
 import { GlobalHandler } from '@libs/services-lib/http-client';
-import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -110,18 +109,6 @@ describe('PaymentLineGroup.vue', () => {
         const props = 'paymentGroup';
         expect(component.exists()).toBeTruthy();
         expect(component.props(props)).toBe(wrapper.vm.paymentGroup);
-      });
-    });
-
-    describe('StatusSelect', () => {
-      it('should pass props attach false to StatusSelect', async () => {
-        await wrapper.setProps({
-          transactionApprovalStatus: ApprovalStatus.Approved,
-          paymentGroup: mockCaseFinancialAssistancePaymentGroups({ cancellationBy: 'mock-user-id' })[0],
-        });
-        const component = wrapper.findComponent(StatusSelect);
-        const props = 'attach';
-        expect(component.props(props)).toEqual(false);
       });
     });
   });

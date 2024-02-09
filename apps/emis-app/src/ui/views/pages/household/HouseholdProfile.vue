@@ -5,6 +5,7 @@
     show-back-button
     :show-edit-button="false"
     content-padding="0"
+    outer-scroll
     @back="navigateBack">
     <rc-page-loading v-if="loading" />
     <template v-else slot="default">

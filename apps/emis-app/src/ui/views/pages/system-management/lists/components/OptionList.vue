@@ -6,6 +6,7 @@
     :add-button-label="$t(addButtonLabel)"
     :show-help="false && !embedded"
     show-search
+    outer-scroll
     :fullscreen="embedded"
     @search="search = $event"
     @add-button="addItem">
@@ -40,7 +41,7 @@
               @click="setLanguageMode(lang.key)" />
           </rc-tabs>
 
-          <v-container :class="{ scroller: !embedded }" fluid>
+          <v-container fluid>
             <v-row class="optionsList__header">
               <template v-if="isCascading">
                 <v-col cols="3">
@@ -619,10 +620,5 @@ export default Vue.extend({
 .flex-parent {
   display: flex;
   flex-direction: column;
-}
-
-.scroller {
-  flex: 1;
-  overflow-y: auto;
 }
 </style>

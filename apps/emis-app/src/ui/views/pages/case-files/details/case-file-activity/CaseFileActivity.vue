@@ -38,7 +38,7 @@
             @change="setCaseFileTriage($event)">
             <template #item="{ item }">
               <div
-                class="caseFileActivity-triage-select__item rc-body14"
+                class="caseFileActivity-triage-select__item rc-body14 text-no-wrap"
                 :data-test="`caseFileActivity-triage-select__item--${item.text}`">
                 {{ item.text }}
               </div>

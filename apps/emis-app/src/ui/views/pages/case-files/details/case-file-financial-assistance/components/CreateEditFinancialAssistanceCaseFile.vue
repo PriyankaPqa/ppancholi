@@ -4,6 +4,7 @@
     <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
       <rc-page-content
         v-if="!loading"
+        outer-scroll
         :title="isAddMode ? $t('caseFile.financialAssistance.create.title') : $t('caseFile.financialAssistance.details.title')"
         data-test="page-title">
         <v-row justify="center">

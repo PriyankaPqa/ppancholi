@@ -1,5 +1,5 @@
 <template>
-  <v-menu data-test="menu_status" :attach="attach" :disabled="disabled">
+  <v-menu data-test="menu_status" :attach="true" :disabled="disabled">
     <template #activator="{ on }">
       <span v-on="setMenuAriaLabel(on)">
         <status-chip
@@ -62,11 +62,6 @@ export default Vue.extend({
     disabled: {
       type: Boolean,
       default: false,
-    },
-
-    attach: {
-      type: Boolean,
-      default: true,
     },
   },
 
