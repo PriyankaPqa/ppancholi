@@ -17,12 +17,14 @@ export class EditHouseholdAddressPage extends AddressPage {
     this.fill(data);
 
     if (data.unitNumber) {
-      cy.getByDataTest(this.unitAddress).clear().type(`${data.unitNumber} ${roleName}`);
+      cy.getByDataTest(this.unitAddress).clear();
+      cy.getByDataTest(this.unitAddress).type(`${data.unitNumber} ${roleName}`);
     }
   }
 
   public fillUnitNumber(data: IAddressPageFields) {
-    cy.getByDataTest(this.unitAddress).clear().type(data.unitNumber);
+    cy.getByDataTest(this.unitAddress).clear();
+    cy.getByDataTest(this.unitAddress).type(data.unitNumber);
   }
 
   public getNoFixedHomeAddressCheckbox() {

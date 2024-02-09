@@ -145,11 +145,13 @@ export class CreateEventPage {
 
   async fillFrenchData(data: ICreateEventFields) {
     if (data.name.translation.fr) {
-      cy.getByDataTest(this.name).clear().type(data.name.translation.fr);
+      cy.getByDataTest(this.name).clear();
+      cy.getByDataTest(this.name).type(data.name.translation.fr);
     }
 
     if (data.description.translation.fr) {
-      cy.getByDataTest(this.description).clear().type(data.description.translation.fr);
+      cy.getByDataTest(this.description).clear();
+      cy.getByDataTest(this.description).type(data.description.translation.fr);
     }
   }
 

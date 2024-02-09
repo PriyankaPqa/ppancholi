@@ -40,7 +40,8 @@ export class AddRegistrationLocationPage {
 
   async fill(data: IEventGenericLocation, roleName: string) {
     if (data.name.translation.en) {
-      cy.getByDataTest(this.registrationLocationName).type(data.name.translation.en).type(roleName);
+      cy.getByDataTest(this.registrationLocationName).type(data.name.translation.en);
+      cy.getByDataTest(this.registrationLocationName).type(roleName);
     }
 
     if (data.address.city) {
@@ -65,7 +66,9 @@ export class AddRegistrationLocationPage {
   }
 
   public fillFrenchRegistrationLocationName(locationName: string, roleName: string) {
-    cy.getByDataTest(this.registrationLocationName).clear().type(locationName).type(roleName);
+    cy.getByDataTest(this.registrationLocationName).clear();
+    cy.getByDataTest(this.registrationLocationName).type(locationName);
+    cy.getByDataTest(this.registrationLocationName).type(roleName);
   }
 
   public addNewRegistrationLocation() {

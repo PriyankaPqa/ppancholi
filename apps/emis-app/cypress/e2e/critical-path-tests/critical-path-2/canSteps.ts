@@ -53,7 +53,7 @@ export const verifyFullyCompletedCaseFileAssessment = (roleName:string, assessme
   assessmentsListPage.getCompletedAssessmentTable().contains(`${assessmentName}`).should('be.visible');
   assessmentsListPage.getAssessmentDateAssigned().should('eq', getToday());
   assessmentsListPage.getAssessmentDateModified().should('eq', getToday());
-  assessmentsListPage.getAssessmentDateCompletedElement().contains(`${getToday()}`).should('be.visible');
+  assessmentsListPage.getAssessmentDateCompletedElement().contains(getToday()).should('be.visible');
   assessmentsListPage.getAssessmentStatusTag().should('eq', 'Completed');
   if (roleName === UserRoles.level6 || roleName === UserRoles.level5 || roleName === UserRoles.level4 || roleName === UserRoles.level3) {
     assessmentsListPage.getEditCompletedAssessmentButton().should('be.visible');

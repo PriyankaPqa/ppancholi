@@ -8,6 +8,7 @@ import { ConfirmBeneficiaryRegistrationPage } from '../../../pages/registration/
 import { CRCPrivacyStatementPage, PrivacyRegistrationMethod } from '../../../pages/registration/crcPrivacyStatement.page';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
+import { ManuallyUpdateTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
 
 export interface PotentialDuplicateCreatedStepsParams {
   firstName: string,
@@ -70,6 +71,7 @@ export interface CaseFileDetailsPageAssertionStepsParams {
   roleName: string,
   registrationNumber: string,
   rationale: string
+  manuallyUpdateTo: string
 }
 
 export enum DuplicatedBy {
@@ -85,7 +87,11 @@ export interface ManuallyUpdatePotentialDuplicateRecordStatusStepsParams {
   caseFileNumber: string,
   eventName: string,
   phoneNumber: string,
-  roleName: string
+  roleName: string,
+  manuallyUpdateTo: string,
+  dialogUpdateRecordStatusTitle: string,
+  dialogFlagAsText: string,
+  dialogLabelMandatoryText: string
 }
 
 // eslint-disable-next-line
@@ -118,15 +124,15 @@ export const potentialDuplicateCreatedSteps = ({ roleName, firstName, lastName, 
     manageDuplicatesPage.getDuplicateHistoryStatusByIndex().should('eq', 'Flagged as potential');
     manageDuplicatesPage.getDuplicateHistoryUserByIndex().should('string', `By: ${flaggedBy}`).and('string', getToday());
     manageDuplicatesPage.getDuplicateHistoryRationaleByIndex().should('eq', `Rationale: ${rationale}`);
-    manageDuplicatesPage.getActionDropdown().should('exist');
+    manageDuplicatesPage.getActionDropdownInput().should('exist');
     manageDuplicatesPage.goToHouseholdProfilePage();
   }
 
   const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
   caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('potential duplicate');
-  caseFileDetailsPage.getUserName(caseFileLogIndex).should('eq', flaggedByUserName);
-  caseFileDetailsPage.getCaseFileActivityTitle(caseFileLogIndex).should('string', 'Potential duplicate flagged');
-  caseFileDetailsPage.getCaseFileActivityBody(caseFileLogIndex)
+  caseFileDetailsPage.getAllUserName().should('string', flaggedByUserName);
+  caseFileDetailsPage.getAllCaseFileActivityTitle().should('string', 'Potential duplicate flagged');
+  caseFileDetailsPage.getAllCaseFileActivityBody()
     .should('string', `This household has been identified as a potential duplicate with  #${registrationNumber}`)
     .and('string', `Rationale: ${rationale}`);
   caseFileDetailsPage.goToDuplicateHouseholdProfilebyIndex();
@@ -273,57 +279,98 @@ export const manualDuplicateCreatedSteps = (params: Partial<ManualDuplicateCreat
   manageDuplicatesPage.goToHouseholdProfilePage();
 };
 
-export const manuallyUpdatePotentialDuplicateRecordStatusSteps = ({ rationale }: Partial<ManuallyUpdatePotentialDuplicateRecordStatusStepsParams>) => {
+// eslint-disable-next-line
+export const manuallyUpdatePotentialDuplicateRecordStatusSteps = ({ rationale, manuallyUpdateTo, dialogUpdateRecordStatusTitle, dialogFlagAsText, dialogLabelMandatoryText }: Partial<ManuallyUpdatePotentialDuplicateRecordStatusStepsParams>) => {
   const householdProfilePage = new HouseholdProfilePage();
   const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
-  manageDuplicatesPage.getActionDropdown().click();
-  manageDuplicatesPage.selectActionMenuResolved();
-  cy.contains('Flag household duplicate as resolved').should('be.visible');
-  manageDuplicatesPage.getFlagAsText().should('eq', 'Flag as: Resolved duplicate');
-  manageDuplicatesPage.actionDialogRationaleElement().should('have.attr', 'label').and('contains', 'Action taken to resolve*');
+  if (manuallyUpdateTo === ManuallyUpdateTo.Potential) {
+    manageDuplicatesPage.getTabResolved().click();
+  }
+  manageDuplicatesPage.getActionDropdownInput().click();
+  if (manuallyUpdateTo === ManuallyUpdateTo.Resolved) {
+    manageDuplicatesPage.selectActionMenuResolved();
+  } else if (manuallyUpdateTo === ManuallyUpdateTo.Potential) {
+    manageDuplicatesPage.selectActionMenuPotential();
+  }
+  cy.contains(dialogUpdateRecordStatusTitle).should('be.visible');
+  manageDuplicatesPage.getFlagAsText().should('eq', `Flag as: ${dialogFlagAsText}`);
+  manageDuplicatesPage.actionDialogRationaleElement().should('have.attr', 'label').and('contains', dialogLabelMandatoryText);
   manageDuplicatesPage.getDialogCancelButton().should('be.visible');
   manageDuplicatesPage.getDialogSaveButton().should('be.visible');
   manageDuplicatesPage.provideActionDialogRationale(rationale);
   manageDuplicatesPage.getDialogSaveButton().click();
-  manageDuplicatesPage.getTabPotentialDuplicates().contains('Potential duplicates (0)').should('be.visible');
+  if (manuallyUpdateTo === ManuallyUpdateTo.Resolved) {
+    manageDuplicatesPage.getTabPotentialDuplicates().contains('Potential duplicates (0)').should('be.visible');
+  } else if (manuallyUpdateTo === ManuallyUpdateTo.Potential) {
+    manageDuplicatesPage.getTabPotentialDuplicates().contains('Potential duplicates (1)').should('be.visible');
+  }
   manageDuplicatesPage.goToHouseholdProfilePage();
 };
 
 // eslint-disable-next-line
-export const assertUpdatedPotentialDuplicateRecordTabSteps = ({ rationale, firstName, lastName, registrationNumber, caseFileNumber, eventName, phoneNumber, roleName }: Partial<ManuallyUpdatePotentialDuplicateRecordStatusStepsParams>) => {
+export const assertUpdatedPotentialDuplicateRecordTabSteps = ({ rationale, firstName, lastName, registrationNumber, caseFileNumber, eventName, phoneNumber, roleName, manuallyUpdateTo }: Partial<ManuallyUpdatePotentialDuplicateRecordStatusStepsParams>) => {
   const householdProfilePage = new HouseholdProfilePage();
 
   const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
-  manageDuplicatesPage.getTabResolved().contains('Resolved (1)').should('be.visible');
-  manageDuplicatesPage.getTabResolved().click();
+
+  if (manuallyUpdateTo === ManuallyUpdateTo.Resolved) {
+    manageDuplicatesPage.getTabResolved().contains('Resolved (1)').should('be.visible');
+  } else if (manuallyUpdateTo === ManuallyUpdateTo.Potential) {
+    manageDuplicatesPage.getTabResolved().contains('Resolved (0)').should('be.visible');
+  }
+
+  if (manuallyUpdateTo === ManuallyUpdateTo.Resolved) {
+    manageDuplicatesPage.getTabResolved().click();
+  }
+
   manageDuplicatesPage.getDuplicateHouseholdPrimaryMemberName().should('eq', `${firstName} ${lastName}`);
   manageDuplicatesPage.getDuplicateHouseholdRegistrationNumber().should('eq', `Registration number: ${registrationNumber}`);
   manageDuplicatesPage.getDuplicateHouseholdCaseFileData()
     .should('string', `Case file number: ${caseFileNumber}`)
     .and('string', `Event: ${eventName}`);
   manageDuplicatesPage.getDuplicatePhoneNumber().should('eq', phoneNumber);
-  manageDuplicatesPage.getDuplicateHistoryStatusByIndex().should('eq', 'Flagged as potential');
-  manageDuplicatesPage.getDuplicateHistoryUserByIndex().should('string', 'By: System').and('string', getToday());
-  manageDuplicatesPage.getDuplicateHistoryRationaleByIndex().should('eq', 'Rationale: Flagged by the system');
-  manageDuplicatesPage.getDuplicateHistoryStatusByIndex(1).should('eq', 'Flagged as resolved');
-  manageDuplicatesPage.getDuplicateHistoryUserByIndex(1).should('string', `By: ${getUserName(roleName)} (${getUserRoleDescription(roleName)})`).and('string', getToday());
-  manageDuplicatesPage.getDuplicateHistoryRationaleByIndex(1).should('eq', `Action taken: ${rationale}`);
-  manageDuplicatesPage.getDuplicateActionDropdownText().should('string', 'Resolved');
+
+  if (manuallyUpdateTo === ManuallyUpdateTo.Resolved) {
+    manageDuplicatesPage.getDuplicateHistoryStatusByIndex().should('eq', 'Flagged as potential');
+    manageDuplicatesPage.getDuplicateHistoryUserByIndex().should('string', 'By: System').and('string', getToday());
+    manageDuplicatesPage.getDuplicateHistoryRationaleByIndex().should('eq', 'Rationale: Flagged by the system');
+    manageDuplicatesPage.getDuplicateHistoryStatusByIndex(1).should('eq', 'Flagged as resolved');
+    manageDuplicatesPage.getDuplicateHistoryUserByIndex(1).should('string', `By: ${getUserName(roleName)} (${getUserRoleDescription(roleName)})`).and('string', getToday());
+    manageDuplicatesPage.getDuplicateHistoryRationaleByIndex(1).should('eq', `Action taken: ${rationale}`);
+    manageDuplicatesPage.getDuplicateActionDropdownText().should('string', 'Resolved');
+  } else if (manuallyUpdateTo === ManuallyUpdateTo.Potential) {
+    manageDuplicatesPage.getDuplicateHistoryStatusByIndex(2).should('eq', 'Flagged as potential');
+    manageDuplicatesPage.getDuplicateHistoryUserByIndex(2).should('string', `By: ${getUserName(roleName)} (${getUserRoleDescription(roleName)})`).and('string', getToday());
+    manageDuplicatesPage.getDuplicateHistoryRationaleByIndex(2).should('eq', `Rationale: ${rationale}`);
+    manageDuplicatesPage.getDuplicateActionDropdownText().should('string', 'Potential');
+  }
+
   manageDuplicatesPage.goToHouseholdProfilePage();
 };
 
-export const caseFileDetailsPageAssertionSteps = ({ roleName, registrationNumber, rationale }: Partial<CaseFileDetailsPageAssertionStepsParams>) => {
+export const caseFileDetailsPageAssertionSteps = ({ roleName, registrationNumber, rationale, manuallyUpdateTo }: Partial<CaseFileDetailsPageAssertionStepsParams>) => {
   const householdProfilePage = new HouseholdProfilePage();
-
   const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
-  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('resolved');
+  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(rationale);
   caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+
+if (manuallyUpdateTo === ManuallyUpdateTo.Potential) {
+  caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Potential duplicate flagged');
+  caseFileDetailsPage.getCaseFileActivityBody()
+    .should('string', `This household has been identified as a potential duplicate with  #${registrationNumber}`)
+    .and('string', `Rationale: ${rationale}`);
+} else if (manuallyUpdateTo === ManuallyUpdateTo.Resolved) {
   caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Resolved potential duplicate');
   caseFileDetailsPage.getCaseFileActivityBody()
     .should('string', `The potential duplicate with  #${registrationNumber}  has been resolved`)
     .and('string', `Action taken to resolve: ${rationale}`);
+}
   caseFileDetailsPage.goToDuplicateHouseholdProfilebyIndex(0);
 
   householdProfilePage.getDuplicatesIcon().should('be.visible');
-  householdProfilePage.getDuplicatesCount().should('eq', '0 potential duplicate(s)');
+  if (manuallyUpdateTo === ManuallyUpdateTo.Potential) {
+    householdProfilePage.getDuplicatesCount().should('eq', '1 potential duplicate(s)');
+  } else if (manuallyUpdateTo === ManuallyUpdateTo.Resolved) {
+    householdProfilePage.getDuplicatesCount().should('eq', '0 potential duplicate(s)');
+  }
 };

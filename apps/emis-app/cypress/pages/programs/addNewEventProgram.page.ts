@@ -64,10 +64,12 @@ export class AddNewEventProgramPage {
 
   public fillFrenchData(data: IAddNewProgramFields) {
     if (data.name.translation.fr) {
-      cy.getByDataTest(this.programName).clear().type(data.name.translation.fr);
+      cy.getByDataTest(this.programName).clear();
+      cy.getByDataTest(this.programName).type(data.name.translation.fr);
     }
     if (data.description.translation.fr) {
-      cy.getByDataTest(this.programDescription).clear().type(data.description.translation.fr);
+      cy.getByDataTest(this.programDescription).clear();
+      cy.getByDataTest(this.programDescription).type(data.description.translation.fr);
     }
   }
 

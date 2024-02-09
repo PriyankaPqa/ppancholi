@@ -1,26 +1,26 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
-import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
+import { createEventAndTeam, prepareStateHousehold, resolvePotenialDuplicateRecord } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 import { ManuallyUpdateTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
 import {
   assertUpdatedPotentialDuplicateRecordTabSteps,
   caseFileDetailsPageAssertionSteps,
   manuallyUpdatePotentialDuplicateRecordStatusSteps,
 } from './canSteps';
+import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 const canRoles = [
   UserRoles.level6,
+];
+
+const cannotRoles = [
   UserRoles.level5,
   UserRoles.level4,
   UserRoles.level3,
   UserRoles.level2,
   UserRoles.level1,
-];
-
-const cannotRoles = [
   UserRoles.level0,
   UserRoles.contributor1,
   UserRoles.contributor2,
@@ -31,9 +31,9 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const rationale = 'I am resolving this duplicate';
+const rationale = 'I am re-opening this duplicate';
 
-describe('#TC1881# - User can manually update the status of a potential duplicate record to Resolved', { tags: ['@household'] }, () => {
+describe('#TC1882# - User can manually re-open a resolved potential duplicate record', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -61,6 +61,7 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
               resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
             );
             const resultComparisonHousehold = await this.provider.households.postCrcRegistration(createDuplicateHousehold);
+            resolvePotenialDuplicateRecord(this.provider, resultComparisonHousehold.caseFile.householdId);
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.firstName).as('originalHouseholdPrimaryBeneficiaryFirstName');
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.lastName).as('originalHouseholdPrimaryBeneficiaryLastName');
             cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
@@ -73,53 +74,49 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
             cy.goTo(`casefile/household/${resultComparisonHousehold.caseFile.householdId}`);
           });
         });
-        it('should manually update potential duplicate records status to resolved', function () {
+        it('should manually re-open a resolved potential duplicate record', function () {
           manuallyUpdatePotentialDuplicateRecordStatusSteps({
             rationale,
-            manuallyUpdateTo: ManuallyUpdateTo.Resolved,
-            dialogUpdateRecordStatusTitle: 'Flag household duplicate as resolved',
-            dialogFlagAsText: 'Resolved duplicate',
-            dialogLabelMandatoryText: 'Action taken to resolve*',
+            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            dialogUpdateRecordStatusTitle: 'Flag household as potential duplicate',
+            dialogFlagAsText: 'Potential duplicate',
+            dialogLabelMandatoryText: 'Rationale*',
           });
 
-          if (roleName === UserRoles.level6 && UserRoles.level5) {
-            assertUpdatedPotentialDuplicateRecordTabSteps({
-              firstName: this.originalHouseholdPrimaryBeneficiaryFirstName,
-              lastName: this.originalHouseholdPrimaryBeneficiaryLastName,
-              registrationNumber: this.originalHouseholdRegistrationNumber,
-              caseFileNumber: this.originalHouseholdCaseFileNumber,
-              eventName: this.eventCreated.name.translation.en,
-              phoneNumber: this.phoneNumber,
-              manuallyUpdateTo: ManuallyUpdateTo.Resolved,
-              rationale,
-              roleName,
-            });
-          }
-
-          caseFileDetailsPageAssertionSteps({
+          assertUpdatedPotentialDuplicateRecordTabSteps({
+            firstName: this.originalHouseholdPrimaryBeneficiaryFirstName,
+            lastName: this.originalHouseholdPrimaryBeneficiaryLastName,
             registrationNumber: this.originalHouseholdRegistrationNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Resolved,
+            caseFileNumber: this.originalHouseholdCaseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            phoneNumber: this.phoneNumber,
+            manuallyUpdateTo: ManuallyUpdateTo.Potential,
             rationale,
             roleName,
           });
 
-          if (roleName === UserRoles.level6 && UserRoles.level5) {
-            assertUpdatedPotentialDuplicateRecordTabSteps({
-              firstName: this.comparisonHouseholdPrimaryBeneficiary.firstName,
-              lastName: this.comparisonHouseholdPrimaryBeneficiary.lastName,
-              registrationNumber: this.comparisonHouseholdRegistrationNumber,
-              caseFileNumber: this.comparisonHouseholdCaseFileNumber,
-              eventName: this.eventCreated.name.translation.en,
-              phoneNumber: this.phoneNumber,
-              manuallyUpdateTo: ManuallyUpdateTo.Resolved,
-              rationale,
-              roleName,
-            });
-          }
+          caseFileDetailsPageAssertionSteps({
+            registrationNumber: this.originalHouseholdRegistrationNumber,
+            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            rationale,
+            roleName,
+          });
+
+          assertUpdatedPotentialDuplicateRecordTabSteps({
+            firstName: this.comparisonHouseholdPrimaryBeneficiary.firstName,
+            lastName: this.comparisonHouseholdPrimaryBeneficiary.lastName,
+            registrationNumber: this.comparisonHouseholdRegistrationNumber,
+            caseFileNumber: this.comparisonHouseholdCaseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            phoneNumber: this.phoneNumber,
+            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            rationale,
+            roleName,
+          });
 
           caseFileDetailsPageAssertionSteps({
             registrationNumber: this.comparisonHouseholdRegistrationNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Resolved,
+            manuallyUpdateTo: ManuallyUpdateTo.Potential,
             rationale,
             roleName,
           });
@@ -129,18 +126,39 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
   });
 
   describe('Cannot roles', () => {
+    before(() => {
+      cy.then(async function () {
+        const resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+        const createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
+          this.eventCreated.id,
+          resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
+        );
+        const resultComparisonHousehold = await this.provider.households.postCrcRegistration(createDuplicateHousehold);
+        resolvePotenialDuplicateRecord(this.provider, resultComparisonHousehold.caseFile.householdId);
+        cy.wrap(resultComparisonHousehold.caseFile.householdId).as('householdId');
+      });
+    });
     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
-        beforeEach(() => {
+        beforeEach(function () {
           cy.login(roleName);
-          cy.goTo('casefile');
+          cy.goTo(`casefile/household/${this.householdId}`);
         });
-        it('should not be able to manually update potential duplicate records', () => {
-          const caseFileHomePage = new CaseFilesHomePage();
+        it('should not be able to manually re-open a resolved potential duplicate record', () => {
+          const householdProfilePage = new HouseholdProfilePage();
 
-          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
-          householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
-          householdProfilePage.getManageDuplicatesButton().should('not.exist');
+          if (roleName === UserRoles.level5) {
+            const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
+            manageDuplicatesPage.getTabResolved().click();
+            manageDuplicatesPage.getDuplicateActionDropdown().should('have.attr', 'disabled').and('contains', 'disabled');
+          } else if (roleName === UserRoles.level4 || roleName === UserRoles.level3 || roleName === UserRoles.level2 || roleName === UserRoles.level1) {
+            householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
+            const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
+            manageDuplicatesPage.getTabResolved().should('not.exist');
+          } else {
+            householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
+            householdProfilePage.getManageDuplicatesButton().should('not.exist');
+          }
         });
       });
     }

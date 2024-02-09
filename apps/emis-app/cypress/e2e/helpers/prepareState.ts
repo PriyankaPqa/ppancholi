@@ -695,3 +695,14 @@ export const updatePersonsGender = async (provider: IProvider, personIds: string
   const getUpdatedPersonGenderPromises = personIds.map((personId) => provider.households.updatePersonIdentity(personId, false, mockUpdatePersonIdentityRequest()));
   await Promise.all(getUpdatedPersonGenderPromises);
 };
+
+/**
+ * Resolves Potential Duplicate Record
+ * @param provider
+ * @param householdId
+*/
+export const resolvePotenialDuplicateRecord = async (provider: IProvider, householdId: string) => {
+  const householdDuplicate = await provider.potentialDuplicates.getDuplicates(householdId);
+  const resolvedDuplicate = await provider.potentialDuplicates.resolveDuplicate(householdDuplicate[0].id, 'I am resolving this duplicate');
+  return { householdDuplicate, resolvedDuplicate };
+};

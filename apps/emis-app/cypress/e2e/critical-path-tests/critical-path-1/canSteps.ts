@@ -120,9 +120,9 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: P
 
   if (paymentStatus === 'Cancelled') {
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
-    financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00');
+    financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00').should('be.visible');
   } else {
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('not.have.string', 'line-through');
-    financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00');
+    financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
   }
 };

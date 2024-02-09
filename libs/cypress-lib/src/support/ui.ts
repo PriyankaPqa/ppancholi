@@ -7,14 +7,10 @@ Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => c
     cy.get('body').type('{esc}');
   });
   Cypress.Commands.add('selectListElementByIndex', (dataTest:string, index: number, parentSelectorType = 'div') => {
-    cy.getByDataTest({ selector: dataTest, type: parentSelectorType })
-      .click()
-      .then(() => {
-        cy.get(`.${dataTest}__item`)
-          .eq(index)
-          .click()
-          .invoke('text')
-          .then((listOptionText) => listOptionText);
+    cy.getByDataTest({ selector: dataTest, type: parentSelectorType }).click();
+    cy.then(() => {
+        cy.get(`.${dataTest}__item`).eq(index).click();
+        cy.get(`.${dataTest}__item`).eq(index).invoke('text').then((listOptionText) => listOptionText);
       });
   });
 
@@ -29,11 +25,9 @@ Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => c
   Cypress.Commands.add('selectListElementByValue', (dataTest: string, value: string) => {
     const valueWithoutSpace = value.replace(/\s/g, '');
 
-    cy.getByDataTest({ selector: dataTest, type: 'div' })
-      .click()
-      .then(() => {
-        cy.getByDataTest({ selector: `${dataTest}__item--${valueWithoutSpace}`, type: 'div' })
-          .click();
+    cy.getByDataTest({ selector: dataTest, type: 'div' }).click();
+    cy.then(() => {
+        cy.getByDataTest({ selector: `${dataTest}__item--${valueWithoutSpace}`, type: 'div' }).click();
       });
   });
 
@@ -46,9 +40,8 @@ Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => c
   });
 
   Cypress.Commands.add('writeInputSelect', (dataTest: string, value: string) => {
-    cy.getByDataTest({ selector: dataTest, type: 'input' })
-      .click()
-      .type(value);
+    cy.getByDataTest({ selector: dataTest, type: 'input' }).click();
+    cy.getByDataTest({ selector: dataTest, type: 'input' }).type(value);
   });
 
   Cypress.Commands.add('selectCountry', (dataTest: string, { countryCode, search }: { countryCode: string; search: string }) => {
@@ -58,7 +51,8 @@ Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => c
   });
 
   Cypress.Commands.add('setDatePicker', (dataTest: string, { year, month, day }: { year: number; month: number; day: number }) => {
-    cy.getByDataTest({ selector: dataTest, type: 'input' }).click().then(() => {
+    cy.getByDataTest({ selector: dataTest, type: 'input' }).click();
+    cy.then(() => {
       cy.get(`div[data-test="${dataTest}-date-picker"] .v-date-picker-header__value button`).as('header').click();
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(500);

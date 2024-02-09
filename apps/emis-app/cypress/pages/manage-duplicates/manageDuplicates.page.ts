@@ -14,6 +14,7 @@ export enum DataTest {
   duplicateReason = 'duplicate-reasons',
   flagNewHouseholdRationale = 'householdDetails-manageDuplicates-actionDialog-rationale',
   actionMenuResolved = 'householdDetails-manageDuplicates-action-menu-Resolved',
+  actionMenuPotential = 'householdDetails-manageDuplicates-action-menu-Potential',
   memberName = 'payment_modalities',
   closeButton = 'dialog-cancel-action',
   buttonSubmit = 'dialog-submit-action',
@@ -28,6 +29,11 @@ export enum DuplicatedBy {
   'FullName' = 'Full Name',
   'HomePhoneNumber' = 'Home Phone Number',
   'HomeAddress' = 'Home Address',
+}
+
+export enum ManuallyUpdateTo {
+  'Resolved' = 'Resolved',
+  'Potential' = 'Potential',
 }
 
 export class ManageDuplicatesPage {
@@ -66,6 +72,8 @@ export class ManageDuplicatesPage {
   private tabLabelResolved = { selector: DataTest.tabLabelResolved };
 
   private actionMenuResolved = { selector: DataTest.actionMenuResolved };
+
+  private actionMenuPotential = { selector: DataTest.actionMenuPotential };
 
   private flagAsActionDialog = { selector: DataTest.flagAsActionDialog };
 
@@ -110,7 +118,7 @@ export class ManageDuplicatesPage {
     return cy.getByDataTest(this.duplicateHistoryName).getAndTrimText();
   }
 
-  public getActionDropdown() {
+  public getActionDropdownInput() {
     return cy.getByDataTest(this.duplicateActionDropdownInput);
   }
 
@@ -178,5 +186,13 @@ export class ManageDuplicatesPage {
 
   public getDuplicateActionDropdownText() {
     return cy.getByDataTest(this.duplicateActionDropdown).getAndTrimText();
+  }
+
+  public getDuplicateActionDropdown() {
+    return cy.getByDataTest(this.duplicateActionDropdown);
+  }
+
+  public selectActionMenuPotential() {
+    return cy.getByDataTest(this.actionMenuPotential).click();
   }
 }

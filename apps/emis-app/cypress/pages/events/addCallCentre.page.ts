@@ -32,12 +32,14 @@ export class AddCallCentrePage {
   }
 
   public fillCallCentreName(name: string) {
-    return cy.getByDataTest(this.callCentreName).clear().type(name);
+    cy.getByDataTest(this.callCentreName).clear();
+    cy.getByDataTest(this.callCentreName).type(name);
   }
 
   public fill(data: IEventCallCentre, roleName: string) {
     if (data.name.translation.en) {
-      cy.getByDataTest(this.callCentreName).type(data.name.translation.en).type(roleName);
+      cy.getByDataTest(this.callCentreName).type(data.name.translation.en);
+      cy.getByDataTest(this.callCentreName).type(roleName);
     }
     if (data.details.translation.en) {
       cy.getByDataTest(this.callCentreDetails).type(data.details.translation.en);
@@ -54,10 +56,13 @@ export class AddCallCentrePage {
 
   public fillFrenchData(data: IEventCallCentre, roleName: string) {
     if (data.name.translation.fr) {
-      cy.getByDataTest(this.callCentreName).clear().type(data.name.translation.fr).type(roleName);
+      cy.getByDataTest(this.callCentreName).clear();
+      cy.getByDataTest(this.callCentreName).type(data.name.translation.fr);
+      cy.getByDataTest(this.callCentreName).type(roleName);
     }
     if (data.details.translation.fr) {
-      cy.getByDataTest(this.callCentreDetails).clear().type(data.details.translation.fr);
+      cy.getByDataTest(this.callCentreDetails).clear();
+      cy.getByDataTest(this.callCentreDetails).type(data.details.translation.fr);
     }
   }
 

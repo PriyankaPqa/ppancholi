@@ -39,7 +39,8 @@ export class CreateNewTeamPage {
   }
 
   public fillPrimaryContactName(primaryContactName: string) {
-    cy.getByDataTest(this.primaryContact).type(primaryContactName).selectListElementByValue(DataTest.primaryContact, primaryContactName);
+    cy.getByDataTest(this.primaryContact).type(primaryContactName);
+    cy.getByDataTest(this.primaryContact).selectListElementByValue(DataTest.primaryContact, primaryContactName);
   }
 
   public createTeam() {

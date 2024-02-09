@@ -40,7 +40,8 @@ export class AddShelterLocationPage {
 
   async fill(data: IEventGenericLocation, roleName:string) {
     if (data.name.translation.en) {
-      cy.getByDataTest(this.shelterLocationName).type(data.name.translation.en).type(roleName);
+      cy.getByDataTest(this.shelterLocationName).type(data.name.translation.en);
+      cy.getByDataTest(this.shelterLocationName).type(roleName);
     }
 
     if (data.address.city) {
@@ -65,7 +66,9 @@ export class AddShelterLocationPage {
   }
 
   public fillFrenchShelterLocationName(locationName: string, roleName:string) {
-    cy.getByDataTest(this.shelterLocationName).clear().type(locationName).type(roleName);
+    cy.getByDataTest(this.shelterLocationName).clear();
+    cy.getByDataTest(this.shelterLocationName).type(locationName);
+    cy.getByDataTest(this.shelterLocationName).type(roleName);
   }
 
   public addNewShelterLocation() {

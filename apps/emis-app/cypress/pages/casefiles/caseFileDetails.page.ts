@@ -70,6 +70,18 @@ export class CaseFileDetailsPage {
     return cy.getByDataTest(this.caseFileActivityBody).eq(index).getAndTrimText();
   }
 
+  public getAllUserName() {
+    return cy.getByDataTest(this.userName).getAndTrimText();
+  }
+
+  public getAllCaseFileActivityTitle() {
+    return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
+  }
+
+  public getAllCaseFileActivityBody() {
+    return cy.getByDataTest(this.caseFileActivityBody).getAndTrimText();
+  }
+
   public goBackToHouseholdProfilePage() {
     cy.getByDataTest(this.backButton).click();
   }
