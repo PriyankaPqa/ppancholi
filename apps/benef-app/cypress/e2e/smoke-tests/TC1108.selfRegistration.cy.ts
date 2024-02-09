@@ -66,7 +66,7 @@ describe('#TC1108# : SELF REG - Complete self registration..', { tags: ['@regist
       addHouseholdMembers = householdMembers.addMember();
       addHouseholdMembers.fill(additionalMemberPersonalData);
       addHouseholdMembers.addHouseholdMember();
-      // verify that new member added
+      // verify that new member is added
       householdMembers.getAdditionalMemberDetails(0).should('string', `${additionalMemberPersonalData.firstName} ${additionalMemberPersonalData.lastName}`);
       reviewRegistration = householdMembers.goToReviewPage();
     })

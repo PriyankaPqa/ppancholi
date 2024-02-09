@@ -22,7 +22,7 @@ export const fixtureCreateAddress = (): IAddressPageFields => ({
   municipality: faker.address.cityName(),
   province: faker.helpers.arrayElement(['ON', 'QC', 'MB', 'NU']),
   postalCode: faker.helpers.replaceSymbols('?#?#?#'),
-  tempAddress: 'Remaining in home',
+  tempAddress: 'Remaining In Home',
 });
 
 export const fixtureHouseholdMember = (retries: number) : IHouseholdMemberFields => ({

@@ -24,7 +24,7 @@ export const fixtureAddressData = (force?: IAddressPageFields) : IAddressPageFie
   municipality: faker.address.cityName(),
   province: 'ON',
   postalCode: faker.helpers.replaceSymbols('?#?#?#'),
-  tempAddress: 'Remaining in home',
+  tempAddress: 'Remaining In Home',
   ...force,
 });
 

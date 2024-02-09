@@ -97,7 +97,7 @@ describe('#TC498# - Split Household', { tags: ['@household'] }, () => {
           crcPrivacyStatementPage.getPrivacyCheckbox().should('not.be.checked');
           crcPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
           crcPrivacyStatementPage.fillPrivacyRegistrationMethod(privacyData.privacyRegistrationMethod);
-          crcPrivacyStatementPage.fillUserNameIfEmpty(privacyData.userName); // checks if CRC User Name field is empty and fills with a name if application is run using localhost.
+          crcPrivacyStatementPage.fillUserNameIfEmpty(privacyData.userName); // checks if CRC User Name field is empty and fills with a name if application is run using localhost
           const personalInfoSplitMemberPage = crcPrivacyStatementPage.goToPersonalInfoSplitMemberPage();
           personalInfoSplitMemberPage.fill(primaryBeneficiaryData, roleName);
 
