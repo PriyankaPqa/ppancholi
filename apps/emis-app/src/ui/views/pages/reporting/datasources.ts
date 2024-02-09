@@ -322,6 +322,12 @@ export const financialAssistancePaymentLineViewDs : IDatasourceBase = {
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
+    { dataField: 'paymentStatusNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'PaymentLineStatus' },
+    { dataField: 'paymentStatusNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'PaymentLineStatus' },
+    { dataField: 'cancellationDate', dataType: 'datetime', visible: false },
+    { dataField: 'cancelledBy', dataType: 'string', visible: false },
+    { dataField: 'cancellationReasonNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'CancellationReason' },
+    { dataField: 'cancellationReasonNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'CancellationReason' },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.financialassistancepaymentline.${x.dataField}` })),
 };
 
