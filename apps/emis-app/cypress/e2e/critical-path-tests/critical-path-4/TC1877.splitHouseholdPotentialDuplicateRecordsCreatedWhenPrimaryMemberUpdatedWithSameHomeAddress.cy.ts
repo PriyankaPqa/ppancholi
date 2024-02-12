@@ -70,7 +70,7 @@ describe('#TC1877# - Split Household - Potential duplicate records created when 
             municipality: this.originalHouseholdHomeAddress.city,
             province: 'AB',
             postalCode: this.originalHouseholdHomeAddress.postalCode,
-            tempAddress: 'Remaining in home',
+            tempAddress: 'Remaining In Home',
           };
 
           splitHouseholdDuplicateHouseholdSteps({
