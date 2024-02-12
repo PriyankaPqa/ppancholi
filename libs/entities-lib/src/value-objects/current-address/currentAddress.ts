@@ -29,7 +29,7 @@ export class CurrentAddress implements ICurrentAddress {
       this.placeName = data.placeName;
       this.placeNumber = data.placeNumber;
       this.address = _cloneDeep(data.address);
-      this.shelterLocation = _cloneDeep(data.shelterLocation);
+      this.shelterLocation = _cloneDeep(data.shelterLocation) || null;
       this.crcProvided = this.hasCrcProvided() ? data.crcProvided === true : null;
       this.checkIn = data.checkIn ? new Date(data.checkIn) : null;
       this.checkOut = data.checkOut ? new Date(data.checkOut) : null;

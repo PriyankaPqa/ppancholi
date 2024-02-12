@@ -85,6 +85,7 @@ export function storeFactory({
     const tier2State = ref({ mustDoTier2: null, completed: false }) as
       Ref<{ mustDoTier2: boolean, completed: boolean, basicDocumentsOnly?: boolean, status: IdentityAuthenticationStatus }>;
     const basicInformationWhenTier2FromEmail = ref(null) as Ref<ITier2Details>;
+    const storeShelterLocations = ref([]);
 
     function isDuplicateError(): boolean {
       if (duplicateResult.value?.duplicateFound && (duplicateResult.value.registeredToEvent || (!duplicateResult.value.maskedAlternatePhoneNumber
@@ -154,9 +155,8 @@ export function storeFactory({
       async getShelterLocationDatafromId(
         shelterLocationId: string,
         shelterLocations: IEventGenericLocation[],
-        otherShelterLocations: IEventGenericLocation[],
       ): Promise<IEventGenericLocation> {
-        const locationFromParameters = [...shelterLocations, ...otherShelterLocations].find((l) => l.id === shelterLocationId);
+        const locationFromParameters = [...shelterLocations, ...storeShelterLocations.value].find((l) => l.id === shelterLocationId);
         if (locationFromParameters) {
           return locationFromParameters;
         }
@@ -176,15 +176,14 @@ export function storeFactory({
           const event = events?.value[0].entity as IEventData;
           const location = event.shelterLocations.find((l) => l.id === shelterLocationId);
           // cache the shelter location data, so that the next member that has the same shelter location id doesn't need to refetch the data
-          otherShelterLocations.push(location);
+          storeShelterLocations.value.push(location);
           return location;
         }
 
         return null;
       },
 
-      async addShelterLocationData(members: IMemberEntity[], shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
-        const otherShelterLocations = [] as IEventGenericLocation[];
+      async addShelterLocationData(members: IMemberEntity[], shelterLocations: IEventGenericLocation[] = []): Promise<IMemberEntity[]> {
         const parsedMembers = [] as unknown as IMemberEntity[];
 
         for (const m of members) {
@@ -192,7 +191,7 @@ export function storeFactory({
             // eslint-disable-next-line no-await-in-loop
             const newAddressHistory = await Promise.all(m.addressHistory.map(async (a) => {
               if (a.shelterLocationId) {
-                const shelterLocation = await this.getShelterLocationDatafromId(a.shelterLocationId, shelterLocations, otherShelterLocations);
+                const shelterLocation = await this.getShelterLocationDatafromId(a.shelterLocationId, shelterLocations);
                 return {
                   ...a,
                   shelterLocation,
@@ -212,7 +211,7 @@ export function storeFactory({
 
             if (parsedHistoryMember.currentAddress?.shelterLocationId) {
               // eslint-disable-next-line no-await-in-loop
-              const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId, shelterLocations, otherShelterLocations);
+              const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId, shelterLocations);
 
               parsedHistoryMember = {
                 ...parsedHistoryMember,
@@ -671,7 +670,9 @@ export function storeFactory({
       if (isPrimaryMember) {
         result = await householdApi.updatePersonAddress(member.id, mode === ERegistrationMode.Self, member.currentAddress);
         if (result) {
-          householdCreate.value.setPrimaryBeneficiary(new Member(result));
+          const addShelterLocationData = await internalMethods.addShelterLocationData([result]);
+          const memberWithUpdatedShelterLocation = addShelterLocationData?.[0];
+          householdCreate.value.setPrimaryBeneficiary(new Member(memberWithUpdatedShelterLocation));
         }
       } else if (index >= 0) {
         let address = { ...member.currentAddress };
@@ -680,7 +681,9 @@ export function storeFactory({
         }
         result = await householdApi.updatePersonAddress(member.id, mode === ERegistrationMode.Self, address);
         if (result) {
-          householdCreate.value.editAdditionalMember(new Member(result), index, sameAddress);
+          const addShelterLocationData = await internalMethods.addShelterLocationData([result]);
+          const memberWithUpdatedShelterLocation = addShelterLocationData?.[0];
+          householdCreate.value.editAdditionalMember(new Member(memberWithUpdatedShelterLocation), index, sameAddress);
         }
       }
       return result || null;
@@ -903,6 +906,7 @@ export function storeFactory({
       loadHousehold,
       buildHouseholdCreateData,
       internalMethods: testMode ? internalMethods : null,
+      storeShelterLocations,
     };
   })();
 }

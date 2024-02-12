@@ -205,6 +205,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
             longitude: 0,
             postalCode: 'K1W 1G7',
             province: 9,
+            specifiedOtherProvince: undefined,
             streetAddress: '247 Some Street',
             unitSuite: '123',
           },
@@ -214,6 +215,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
           crcProvided: false,
           placeName: 'test',
           placeNumber: '',
+          shelterLocation: null,
         };
         wrapper.vm.memberClone.currentAddress = mockCampGround();
         expect(wrapper.vm.currentAddressWithFormattedDate).toEqual(expectResult);

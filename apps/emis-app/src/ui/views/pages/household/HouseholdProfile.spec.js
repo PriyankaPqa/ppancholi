@@ -863,7 +863,7 @@ describe('HouseholdProfile.vue', () => {
               crcProvided: false,
               placeName: 'test',
               placeNumber: '',
-              shelterLocation: undefined,
+              shelterLocation: null,
             },
             genderName: {
               translation: {
