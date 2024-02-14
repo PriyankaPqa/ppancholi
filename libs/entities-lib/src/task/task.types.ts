@@ -64,6 +64,10 @@ export interface ITaskMetadata extends IEntity {
   nameId: uuid;
   taskStatusName: IMultilingual;
   eventId: uuid;
+  assignedTeamId: string;
+  assignedTeamName: string;
+  userWorkingOnId: string;
+  userWorkingOnName: string;
 }
 
 export type ITaskCombined = IEntityCombined<ITaskEntity, ITaskMetadata>;

@@ -14,7 +14,7 @@ import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
-import { mockTeamEntities, mockTeamEntity } from '@libs/entities-lib/team';
+import { mockTeamEntities } from '@libs/entities-lib/team';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { EFilterType } from '@libs/component-lib/types';
@@ -153,7 +153,7 @@ describe('TasksTable.vue', () => {
       it('should not be rendered for in progress personal task', async () => {
         await doMount({
           computed: {
-            parsedTableData: () => [
+            tableData: () => [
               {
                 entity: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
                 metadata: mockTaskMetadata(),
@@ -267,6 +267,7 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.customColumns).toEqual({
           taskName: 'Metadata/Name/Translation/en',
           taskCategory: 'Metadata/TaskCategoryName/Translation/en',
+          assignTo: 'Metadata/AssignedTeamName',
           caseFileNumber: 'Metadata/CaseFileNumber',
           isUrgent: 'Entity/IsUrgent',
           dateAdded: 'Entity/DateAdded',
@@ -287,12 +288,18 @@ describe('TasksTable.vue', () => {
             text: 'task.task_table_header.task',
             sortable: true,
             value: wrapper.vm.customColumns.taskName,
-            width: '50%',
+            width: '25%',
           },
           {
             sortable: true,
             text: 'task.task_table_header.category',
             value: 'Metadata/TaskCategoryName/Translation/en',
+            width: '15%',
+          },
+          {
+            sortable: true,
+            text: 'task.task_table_header.assigned_to',
+            value: 'Metadata/AssignedTeamName',
             width: '15%',
           },
           {
@@ -320,14 +327,14 @@ describe('TasksTable.vue', () => {
             class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.action,
-            width: '5%',
+            width: '2%',
           },
           {
             text: 'common.edit',
             class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.edit,
-            width: '5%',
+            width: '2%',
           },
         ]);
       });
@@ -341,12 +348,19 @@ describe('TasksTable.vue', () => {
             text: 'task.task_table_header.task',
             sortable: true,
             value: wrapper.vm.customColumns.taskName,
-            width: '30%',
+            width: '20%',
           },
           {
             sortable: true,
             text: 'task.task_table_header.category',
             value: 'Metadata/TaskCategoryName/Translation/en',
+            width: '15%',
+          },
+
+          {
+            sortable: true,
+            text: 'task.task_table_header.assigned_to',
+            value: 'Metadata/AssignedTeamName',
             width: '15%',
           },
           {
@@ -379,14 +393,14 @@ describe('TasksTable.vue', () => {
             class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.action,
-            width: '5%',
+            width: '2%',
           },
           {
             text: 'common.edit',
             class: 'rc-transparent-text',
             sortable: false,
             value: wrapper.vm.customColumns.edit,
-            width: '5%',
+            width: '2%',
           },
         ]);
       });
@@ -511,47 +525,6 @@ describe('TasksTable.vue', () => {
           text: 'task.create.new_team_task',
           value: 'team',
           dataTest: 'create-team-task-link',
-        }]);
-      });
-    });
-
-    describe('parsedTableData', () => {
-      it('should return parsed data properly', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: 'mock-case-file-id-1',
-          },
-          data() {
-            return {
-              personalTaskOnly: false,
-            };
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-        wrapper.vm.combinedTaskStore.getByIds = jest.fn(() => [{
-          entity: mockTeamTaskEntity({ id: '1', assignedTeamId: 'mock-team-id-1' }),
-          metadata: mockTaskMetadata({ id: '1' }),
-          pinned: false,
-        }]);
-
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [mockTeamEntity(({ id: 'mock-team-id-1', name: 'mock-team-name' }))]);
-
-        await wrapper.setData({
-          teamsByEvent: [mockTeamEntity(({ id: 'mock-team-id-1', name: 'mock-team-name' }))],
-        });
-
-        expect(wrapper.vm.parsedTableData).toEqual([{
-          entity: mockTeamTaskEntity({
-            id: '1',
-            assignedTeamId: 'mock-team-id-1',
-            assignedTeamName: 'mock-team-name',
-          }),
-          metadata: mockTaskMetadata({ id: '1' }),
-          pinned: false,
         }]);
       });
     });

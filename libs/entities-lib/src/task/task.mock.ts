@@ -179,6 +179,10 @@ export const mockTaskMetadata = (force? : Partial<IEntity>): ITaskMetadata => ({
   ...mockBaseMetadata(),
   caseFileNumber: 'mock-case-file-number-1',
   eventId: 'mock-event-id-1',
+  assignedTeamId: 'mock-team-id-1',
+  assignedTeamName: 'mock-team-name-1',
+  userWorkingOnId: 'mock-user-id-1',
+  userWorkingOnName: 'mock-user-name-1',
   ...force,
 });
 

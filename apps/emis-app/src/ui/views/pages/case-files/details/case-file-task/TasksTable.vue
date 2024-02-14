@@ -2,7 +2,7 @@
   <div class="pa-4">
     <rc-data-table
       ref="tasksTable"
-      :items="parsedTableData"
+      :items="tableData"
       :count="itemsCount"
       :show-help="false"
       :labels="labels"
@@ -53,14 +53,14 @@
 
       <template v-if="isInCaseFile" #expanded-item="{ item }">
         <!-- Custom content to show when a row is expanded -->
-        <td :colspan="headers.length ">
+        <td :colspan="headers.length + 1 ">
           <v-row class="pl-8 mb-1" data-test="task-table-expanded-row">
             <template v-if="item.entity.taskType === TaskType.Team">
               <v-col cols="2">
                 <div class="fw-bold">
-                  {{ $t("task.create_edit.assigned_to") }}
+                  {{ $t("task.task_details.working_on_it") }}
                 </div>
-                <div> {{ item.entity.assignedTeamName }} </div>
+                <div> {{ item.metadata.userWorkingOnName || $t('common.N/A') }} </div>
               </v-col>
             </template>
 
@@ -91,6 +91,9 @@
       </template>
       <template #[`item.${customColumns.taskCategory}`]="{ item }">
         <span data-test="task-table-task-category"> {{ item.entity.taskType === TaskType.Personal ? '' : ($m(item.metadata.taskCategoryName) || $t('common.N/A')) }}</span>
+      </template>
+      <template #[`item.${customColumns.assignTo}`]="{ item }">
+        <span data-test="task-table-task-assign-to"> {{ item.metadata.assignedTeamName }}</span>
       </template>
       <template v-if="!isInCaseFile" #[`item.${customColumns.caseFileNumber}`]="{ item }">
         <router-link
@@ -147,7 +150,7 @@ import { DataTableHeader } from 'vuetify';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { IdParams, ITaskCombined, ITaskEntity, ITaskEntityData, ITaskMetadata, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { IdParams, ITaskCombined, ITaskEntity, ITaskMetadata, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { TranslateResult } from 'vue-i18n';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -165,16 +168,9 @@ import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import { ITeamEntity } from '@libs/entities-lib/team';
-import { IEntityCombined } from '@libs/entities-lib/base';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
-
-interface IParsedTaskEntity extends ITaskEntityData {
-  assignedTeamName: string;
-}
-
-type IParsedTaskCombined = IEntityCombined<IParsedTaskEntity, ITaskMetadata>;
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'TasksTable',
@@ -266,6 +262,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       return {
         taskName: `Metadata/Name/Translation/${this.$i18n.locale}`,
         taskCategory: `Metadata/TaskCategoryName/Translation/${this.$i18n.locale}`,
+        assignTo: 'Metadata/AssignedTeamName',
         caseFileNumber: 'Metadata/CaseFileNumber',
         isUrgent: 'Entity/IsUrgent',
         dateAdded: 'Entity/DateAdded',
@@ -281,12 +278,18 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           text: this.$t('task.task_table_header.task') as string,
           sortable: true,
           value: this.customColumns.taskName,
-          width: this.isInCaseFile ? '50%' : '30%',
+          width: this.isInCaseFile ? '25%' : '20%',
         },
         {
           text: this.$t('task.task_table_header.category') as string,
           sortable: true,
           value: this.customColumns.taskCategory,
+          width: '15%',
+        },
+        {
+          text: this.$t('task.task_table_header.assigned_to') as string,
+          sortable: true,
+          value: this.customColumns.assignTo,
           width: '15%',
         },
         {
@@ -313,14 +316,14 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.action,
-          width: '5%',
+          width: '2%',
         },
         {
           text: this.$t('common.edit') as string,
           class: 'rc-transparent-text',
           sortable: false,
           value: this.customColumns.edit,
-          width: '5%',
+          width: '2%',
         },
       ];
 
@@ -332,7 +335,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       };
 
       if (!this.isInCaseFile) {
-        headersList.splice(2, 0, caseFileNumberHeader);
+        headersList.splice(3, 0, caseFileNumberHeader);
       }
       return headersList;
     },
@@ -402,23 +405,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       }];
     },
 
-    parsedTableData(): IParsedTaskCombined[] {
-      const rawTableData: ITaskCombined[] = this.combinedTaskStore.getByIds(
+    tableData(): ITaskCombined[] {
+      return this.combinedTaskStore.getByIds(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.isInCaseFile ? this.id : null } },
       );
-      return rawTableData.map((d: any) => {
-        const assignedTeamName = this.teamsByEvent?.filter((t) => t.id === d?.entity?.assignedTeamId)[0];
-        const parsedEntity = {
-          ...d.entity,
-          assignedTeamName: assignedTeamName ? assignedTeamName.name : '',
-        };
-        return {
-          ...d,
-          entity: parsedEntity,
-          metadata: d.metadata,
-        };
-      });
     },
   },
 
