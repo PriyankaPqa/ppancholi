@@ -55,6 +55,7 @@ export enum EFilterToolbarEvents {
 
 export enum EFilterKeyType {
   Array = 'array',
+  Guid = 'guid',
 }
 
 export enum EDateMode {

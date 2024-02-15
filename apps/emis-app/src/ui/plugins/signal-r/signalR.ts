@@ -453,7 +453,7 @@ export class SignalR implements ISignalR {
       action: useCaseFileReferralStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
+    this.listenForChangesMetadataSql({
       domain: 'case-file',
       entityName: 'ReferralMetadata',
       action: useCaseFileReferralMetadataStore().setItemFromOutsideNotification,
@@ -586,6 +586,16 @@ export class SignalR implements ISignalR {
         action(entity, this.initiatedByCurrentUser(entity));
       }
       this.log(`${domain}.${entityName}Created`, entity);
+    });
+  }
+
+  private listenForChangesMetadataSql<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T, byUser: boolean)=> void }) {
+    this.connection.on(`${domain}.${entityName}`, (entity) => {
+      if (action) {
+        // metadata has no owner, we will always cache
+        action(entity, true);
+      }
+      this.log(`${domain}.${entityName}`, entity);
     });
   }
 

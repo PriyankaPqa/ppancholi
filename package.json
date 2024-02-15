@@ -55,6 +55,7 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna clean",
     "clean:all": "rm -rf node_modules && lerna clean",
+    "clean:all:windows": "del node_modules -force && lerna clean",
     "lerna:list": "lerna list --all",
     "test": "jest  --runInBand --logHeapUsage",
     "lint": "yarn workspaces run lint",

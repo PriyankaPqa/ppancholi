@@ -115,6 +115,20 @@ describe('helpers', () => {
     });
   });
 
+  describe('getEnumKeyText', () => {
+    it('should return the string name of the enum that fits the value', () => {
+      const test = {
+        A: 0,
+        B: 1,
+        SomeMoreValue: 3,
+      };
+      let res = helpers.getEnumKeyText(test, 3);
+      expect(res).toEqual('SomeMoreValue');
+      res = helpers.getEnumKeyText(test, 1);
+      expect(res).toEqual('B');
+    });
+  });
+
   describe('capitalize', () => {
     it('should format string correctle', () => {
       const str = 'abc abc';

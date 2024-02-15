@@ -22,13 +22,15 @@ export const mockCaseFileReferralEntity = (force? : Partial<ICaseFileReferralEnt
 
 export const mockCaseFileReferralMetadata = (force? : Partial<ICaseFileReferralMetadata>) : ICaseFileReferralMetadata => ({
   ...mockBaseData(),
-  referralOutcomeStatusName: {
+  referralOutcomeStatus: {
+    id: 'someId',
     translation: {
       en: 'referralOutcomeStatusNameEn',
       fr: 'referralOutcomeStatusNameFr',
     },
   },
-  referralTypeName: {
+  referralType: {
+    id: 'someId',
     translation: {
       en: 'referralTypeNameEn',
       fr: 'referralTypeNameFr',

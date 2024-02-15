@@ -23,6 +23,7 @@
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filters"
+          :sql-mode="true"
           @update:appliedFilter="onApplyFilter" />
       </template>
       <template #[`item.${customColumns.name}`]="{ item }">
@@ -35,11 +36,11 @@
       </template>
 
       <template #[`item.${customColumns.refType}`]="{ item }">
-        {{ (item.metadata && $m(item.metadata.referralTypeName)) || '-' }}
+        {{ getReferralType(item.entity) }}
       </template>
 
       <template #[`item.${customColumns.outcomeStatus}`]="{ item }">
-        {{ (item.metadata && $m(item.metadata.referralOutcomeStatusName) || '-') }}
+        {{ getOutcome(item.entity) }}
       </template>
 
       <template v-if="canEdit" #[`item.${customColumns.edit}`]="{ item }">
@@ -58,7 +59,7 @@ import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
 } from '@libs/component-lib/components';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
+import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
@@ -93,6 +94,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         useCaseFileReferralStore(),
         useCaseFileReferralMetadataStore(),
       ),
+      sqlSearchMode: true,
     };
   },
 
@@ -104,8 +106,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     customColumns(): Record<string, string> {
       return {
         name: 'Entity/Name',
-        refType: `Metadata/ReferralTypeName/Translation/${this.$i18n.locale}`,
-        outcomeStatus: `Metadata/ReferralOutcomeStatusName/Translation/${this.$i18n.locale}`,
+        refType: `Metadata/ReferralType/Translation/${this.$i18n.locale}`,
+        outcomeStatus: `Metadata/ReferralOutcomeStatus/Translation/${this.$i18n.locale}`,
         edit: 'edit',
       };
     },
@@ -160,8 +162,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           items: this.referralTypes.map((t) => ({ text: this.$m(t.name), value: this.$m(t.name) })),
         },
         {
-          key: 'Metadata/ReferralOutcomeStatusId',
+          key: 'Metadata/ReferralOutcomeStatus/Id',
           type: EFilterType.MultiSelect,
+          keyType: EFilterKeyType.Guid,
           label: this.$t('caseFile.referral.outcomeStatus') as string,
           items: this.outcomeStatuses.map((s) => ({ text: this.$m(s.name), value: s.id })).concat([{ text: '-', value: null }]),
         },
@@ -200,6 +203,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   methods: {
+    getReferralType(item: ICaseFileReferralEntity) {
+      return this.$m(this.referralTypes.find((x) => x.id === item.type?.optionItemId)?.name) || '-';
+    },
+
+    getOutcome(item: ICaseFileReferralEntity) {
+      return this.$m(this.outcomeStatuses.find((x) => x.id === item.outcomeStatus?.optionItemId)?.name) || '-';
+    },
+
     addCaseReferral() {
       this.$router.push({
         name: routes.caseFile.referrals.add.name,
@@ -228,14 +239,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.combinedCaseFileReferralStore.search({
         search: params.search,
-        filter: { 'Entity/CaseFileId': this.$route.params.id, ...filterParams },
+        filter: { 'Entity/CaseFileId': { value: this.$route.params.id, type: EFilterKeyType.Guid }, ...filterParams },
         top: 1000,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, false, true);
       return res;
     },
   },

@@ -56,8 +56,8 @@ describe('CaseFileReferral.vue', () => {
     test('customColumns', () => {
       expect(wrapper.vm.customColumns).toEqual({
         name: 'Entity/Name',
-        refType: 'Metadata/ReferralTypeName/Translation/en',
-        outcomeStatus: 'Metadata/ReferralOutcomeStatusName/Translation/en',
+        refType: 'Metadata/ReferralType/Translation/en',
+        outcomeStatus: 'Metadata/ReferralOutcomeStatus/Translation/en',
         edit: 'edit',
       });
     });
@@ -119,8 +119,9 @@ describe('CaseFileReferral.vue', () => {
             items: wrapper.vm.referralTypes.map((t) => ({ text: wrapper.vm.$m(t.name), value: wrapper.vm.$m(t.name) })),
           },
           {
-            key: 'Metadata/ReferralOutcomeStatusId',
+            key: 'Metadata/ReferralOutcomeStatus/Id',
             type: 'multiselect',
+            keyType: 'guid',
             label: 'caseFile.referral.outcomeStatus',
             items: wrapper.vm.outcomeStatuses
               .map((s) => ({ text: wrapper.vm.$m(s.name), value: s.id }))
@@ -155,6 +156,20 @@ describe('CaseFileReferral.vue', () => {
   });
 
   describe('Methods', () => {
+    describe('getReferralType', () => {
+      it('should return the right type', () => {
+        mountWrapper();
+        expect(wrapper.vm.getReferralType({ type: { optionItemId: wrapper.vm.referralTypes[1].id } })).toBe(wrapper.vm.referralTypes[1].name.translation.en);
+        expect(wrapper.vm.getReferralType({ })).toBe('-');
+      });
+    });
+    describe('getOutcome', () => {
+      it('should return the right type', () => {
+        mountWrapper();
+        expect(wrapper.vm.getOutcome({ outcomeStatus: { optionItemId: wrapper.vm.outcomeStatuses[1].id } })).toBe(wrapper.vm.outcomeStatuses[1].name.translation.en);
+        expect(wrapper.vm.getOutcome({ })).toBe('-');
+      });
+    });
     describe('addCaseReferral', () => {
       it('should redirect to the case referral add page', async () => {
         mountWrapper();
@@ -224,7 +239,7 @@ describe('CaseFileReferral.vue', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-        });
+        }, null, false, true);
       });
 
       it('returns the search results', async () => {

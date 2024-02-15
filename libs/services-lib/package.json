@@ -9,8 +9,9 @@
     "@libs/entities-lib": "*",
     "@libs/shared-lib": "*",
     "axios": "1.6.4",
-    "js-convert-case": "^4.1.1",
     "date-fns-tz": "^2.0.0",
+    "js-convert-case": "^4.1.1",
+    "odata-query": "^7.0.4",
     "uuid": "^8.3.2",
     "vue": "2.7.14",
     "vue-toasted": "1.1.28"

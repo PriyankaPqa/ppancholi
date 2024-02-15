@@ -1,4 +1,4 @@
-import { IListOption, IMultilingual } from '@libs/shared-lib/types';
+import { IListOption, IMultilingualWithId } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export enum ReferralMethod {
@@ -25,8 +25,8 @@ export interface ICaseFileReferralEntity extends IEntity {
 }
 
 export interface ICaseFileReferralMetadata extends IEntity {
-  referralTypeName: IMultilingual;
-  referralOutcomeStatusName: IMultilingual;
+  referralType: IMultilingualWithId;
+  referralOutcomeStatus: IMultilingualWithId;
 }
 
 export type ICaseFileReferralCombined = IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>;

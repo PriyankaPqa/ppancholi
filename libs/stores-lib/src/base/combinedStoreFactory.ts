@@ -4,6 +4,7 @@ import _isEmpty from 'lodash/isEmpty';
 import {
  IAzureSearchParams, IAzureTableSearchResults, ICombinedIndex,
 } from '@libs/shared-lib/types';
+import helper from '@libs/shared-lib/helpers/helpers';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import { BaseEntityStoreComponents, BaseStoreComponents } from './base.types';
 
@@ -85,17 +86,17 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     return this.combinedCollections(entities, metadata, pinnedIds);
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean): Promise<IAzureTableSearchResults> {
+  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean): Promise<IAzureTableSearchResults> {
     this.storeEntity.setSearchLoading(true);
     const newParams = { ...params };
     if (includeInactiveItems !== true) {
       newParams.filter = newParams.filter || {};
       if (typeof (newParams.filter) === 'string') {
-        newParams.filter = `${newParams.filter} and Entity/Status eq 1`;
+        newParams.filter = `${newParams.filter} and Entity/Status eq ${sqlMode ? `'${helper.getEnumKeyText(Status, Status.Active)}'` : Status.Active}`;
       } else {
         newParams.filter = {
           ...newParams.filter as Record<string, unknown>,
-          'Entity/Status': Status.Active,
+          'Entity/Status': sqlMode ? helper.getEnumKeyText(Status, Status.Active) : Status.Active,
         };
       }
     }

@@ -30,8 +30,8 @@ export class CaseFileReferralsService extends DomainBaseService<ICaseFileReferra
     };
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null):
+  async search(params: IAzureSearchParams):
     Promise<IAzureCombinedSearchResult<ICaseFileReferralEntity, ICaseFileReferralMetadata>> {
-    return this.http.get(`case-file/search/${searchEndpoint ?? 'referrals'}`, { params, isOData: true });
+    return this.http.get('case-file/search/referralsV2', { params, isODataSql: true });
   }
 }

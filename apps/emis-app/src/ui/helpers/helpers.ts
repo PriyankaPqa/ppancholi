@@ -275,6 +275,23 @@ export default {
     return '';
   },
 
+  toQuickSearchSql(query: string, propName = 'metadata/searchableText') {
+    if (query?.trim()) {
+      // any quick search will be treated as a Contains on all searchable fields
+      // this splits the search by space and verifies contains on metadata field
+      const items = query.split(' ').filter((x) => x !== '');
+      const quickSearch = {
+        and: items.map((i) => {
+          const f = {} as Record<any, any>;
+          f[propName] = { contains: i };
+          return f;
+        }),
+      };
+      return quickSearch;
+    }
+    return null;
+  },
+
   decodeJwt(token: string) {
     try {
       const base64Url = token.split('.')[1];

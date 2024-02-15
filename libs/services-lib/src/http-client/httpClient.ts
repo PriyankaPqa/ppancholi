@@ -9,10 +9,13 @@ import { camelKeys } from 'js-convert-case';
 import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { localStorageKeys } from '@libs/shared-lib/constants/localStorage';
+// for sql search we use the original package
+import buildQuerySql from 'odata-query';
 import { GlobalHandler,
   IHttpClient, IError, IRestResponse, RequestConfig, IHttpClientOptions,
 } from './httpClient.types';
 import { sanitize932115 } from '../utils/owasp';
+// for azure search
 import { buildQuery } from '../odata-query';
 
 export class HttpClient implements IHttpClient {
@@ -198,9 +201,9 @@ export class HttpClient implements IHttpClient {
 
     sanitize932115(request.data);
 
-    if (request.isOData) {
+    if (request.isOData || request.isODataSql) {
       request.paramsSerializer = {
-        serialize: this.serializeParams,
+        serialize: request.isODataSql ? this.serializeParamsSql : this.serializeParams,
       };
     }
     return request;
@@ -208,6 +211,10 @@ export class HttpClient implements IHttpClient {
 
   private serializeParams(params: IAzureSearchParams) {
     return buildQuery(params).slice(1).replace('$search', 'search');
+  }
+
+  private serializeParamsSql(params: IAzureSearchParams) {
+    return buildQuerySql(params as any).slice(1);
   }
 
   public async get<T>(url: string, config?: RequestConfig): Promise<T> {

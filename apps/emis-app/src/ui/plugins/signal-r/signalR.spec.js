@@ -25,6 +25,7 @@ const listenForChangesFct = SignalR.prototype.listenForChanges;
 const listenForOptionItemChangesFct = SignalR.prototype.listenForOptionItemChanges;
 SignalR.prototype.buildHubConnection = jest.fn();
 SignalR.prototype.listenForChanges = jest.fn();
+SignalR.prototype.listenForChangesMetadataSql = jest.fn();
 SignalR.prototype.listenForOptionItemChanges = jest.fn();
 
 let conn = new SignalR({ service, showConsole: true });
@@ -412,7 +413,7 @@ describe('signalR', () => {
           entityName: 'Referral',
           action: useCaseFileReferralStore().setItemFromOutsideNotification,
         });
-      expect(conn.listenForChanges)
+      expect(conn.listenForChangesMetadataSql)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'ReferralMetadata',

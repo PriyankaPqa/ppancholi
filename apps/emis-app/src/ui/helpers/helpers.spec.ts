@@ -86,6 +86,17 @@ describe('>>>> helpers', () => {
     });
   });
 
+  describe('toQuickSearchSql', () => {
+    it('sets text from quickSearch split by space', () => {
+      expect(helpers.toQuickSearchSql('search test')).toEqual(
+        { and: [{ 'metadata/searchableText': { contains: 'search' } }, { 'metadata/searchableText': { contains: 'test' } }] },
+      );
+      expect(helpers.toQuickSearchSql('search test', 'field')).toEqual(
+        { and: [{ field: { contains: 'search' } }, { field: { contains: 'test' } }] },
+      );
+    });
+  });
+
   describe('availableItems', () => {
     it('returns items with no level', () => {
       const items = [

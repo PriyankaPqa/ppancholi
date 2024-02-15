@@ -9,6 +9,7 @@ import { useUiStateStore } from '@/pinia/ui-state/uiState';
 export default Vue.extend({
   data() {
     return {
+      sqlSearchMode: false,
       saveState: false,
       route: this.$route.path,
       azureSearchParams: {
@@ -119,13 +120,26 @@ export default Vue.extend({
     },
 
     setSearchParams() {
-      const quickSearch = helpers.toQuickSearch(this.params.search || this.searchTerm);
-      if (this.userSearchFilters && quickSearch) {
-        this.azureSearchParams.search = `${this.userSearchFilters} AND ${quickSearch}`;
-      } else if (this.userSearchFilters) {
-        this.azureSearchParams.search = `${this.userSearchFilters}`;
+      if (!this.sqlSearchMode) {
+        const quickSearch = helpers.toQuickSearch(this.params.search || this.searchTerm);
+        if (this.userSearchFilters && quickSearch) {
+          this.azureSearchParams.search = `${this.userSearchFilters} AND ${quickSearch}`;
+        } else if (this.userSearchFilters) {
+          this.azureSearchParams.search = `${this.userSearchFilters}`;
+        } else {
+          this.azureSearchParams.search = quickSearch;
+        }
       } else {
-        this.azureSearchParams.search = quickSearch;
+        const quickSearch = helpers.toQuickSearchSql(`${this.params.search || this.searchTerm || ''} ${this.userSearchFilters || ''}`);
+        if (!quickSearch) {
+          return;
+        }
+        this.azureSearchParams.filter = this.azureSearchParams.filter || {};
+        this.azureSearchParams.filter = { and: [
+            this.azureSearchParams.filter,
+            quickSearch,
+          ],
+        };
       }
     },
 

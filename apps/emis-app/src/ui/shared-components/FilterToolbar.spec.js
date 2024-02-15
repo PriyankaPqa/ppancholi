@@ -214,7 +214,7 @@ describe('Filter Toolbar', () => {
     });
 
     describe('onApplyFilter', () => {
-      it('calls prepareFiltersForOdataQuery to prepare userFilters', () => {
+      it('calls prepareFiltersForOdataQuery to prepare userFilters', async () => {
         jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery')
           .mockImplementation(() => {
           });
@@ -233,9 +233,14 @@ describe('Filter Toolbar', () => {
         wrapper.vm.onApplyFilter(filters);
         expect(wrapper.vm.prepareFiltersForOdataQuery)
           .toHaveBeenCalledWith([filters[1]]);
+
+        await wrapper.setProps({ sqlMode: true });
+        wrapper.vm.onApplyFilter(filters);
+        expect(wrapper.vm.prepareFiltersForOdataQuery)
+          .toHaveBeenCalledWith(filters);
       });
 
-      it('calls translateSearchFilter to prepare userFilters of type "search" (all text)', () => {
+      it('calls translateSearchFilter to prepare userFilters of type "search" (all text) - for non sql mode only', async () => {
         jest.spyOn(wrapper.vm, 'prepareSearchFilters')
           .mockImplementation(() => {
           });
@@ -269,9 +274,15 @@ describe('Filter Toolbar', () => {
         wrapper.vm.onApplyFilter(filters);
         expect(wrapper.vm.prepareSearchFilters)
           .toHaveBeenCalledWith([filters[0], filters[1], filters[2], filters[3]]);
+
+        jest.clearAllMocks();
+
+        await wrapper.setProps({ sqlMode: true });
+        wrapper.vm.onApplyFilter(filters);
+        expect(wrapper.vm.prepareSearchFilters).not.toHaveBeenCalled();
       });
 
-      it('emits update:appliedFilter with proper parameter', () => {
+      it('emits update:appliedFilter with proper parameter', async () => {
         jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery')
           .mockImplementation(() => 'preparedFilters');
         jest.spyOn(wrapper.vm, 'translateSearchFilter')
@@ -295,6 +306,16 @@ describe('Filter Toolbar', () => {
             searchFilters: 'translateSearchFilter',
           });
         expect(wrapper.emitted('update:appliedFilter')[0][1])
+          .toEqual({ name: 'filterState' });
+
+        await wrapper.setProps({ sqlMode: true });
+        wrapper.vm.onApplyFilter(filters, { name: 'filterState' });
+        expect(wrapper.emitted('update:appliedFilter')[1][0])
+          .toEqual({
+            preparedFilters: 'preparedFilters',
+            searchFilters: '',
+          });
+        expect(wrapper.emitted('update:appliedFilter')[1][1])
           .toEqual({ name: 'filterState' });
       });
     });
@@ -483,6 +504,193 @@ describe('Filter Toolbar', () => {
         expect(newFilter)
           .toEqual(_set({}, `not.${filter.key}`, { contains_az: filter.value }));
       });
+    });
+
+    describe('translateFilterSql', () => {
+      // uncomment and make the right test as you've verified operators in sql
+      // it('builds the proper structure for between operator', () => {
+      //   const filter = {
+      //     key: 'Prop.Sub',
+      //     operator: EFilterOperator.Between,
+      //     type: EFilterType.Date,
+      //     value: ['today', 'tomorrow'],
+      //   };
+      //   const newFilter = wrapper.vm.translateFilterSql(filter);
+      //   expect(newFilter)
+      //     .toEqual(_set({}, filter.key, {
+      //       ge: 'today',
+      //       le: 'tomorrow',
+      //     }));
+      // });
+
+      describe('Equal operator', () => {
+        it('should set newFilter with the result of translateEqualFilter', () => {
+          const filter = {
+            key: 'Prop.Sub',
+            operator: EFilterOperator.Equal,
+            type: EFilterType.Select,
+            value: 'arrayNotEmpty',
+          };
+          wrapper.vm.translateEqualOperator = jest.fn(() => ({}));
+          const newFilter = wrapper.vm.translateFilterSql(filter);
+          expect(newFilter)
+            .toEqual({});
+        });
+      });
+
+      // describe('Not equal operator', () => {
+      //   it('should build proper filter if the target property is an array', () => {
+      //     const filter = {
+      //       key: 'Prop.Sub',
+      //       keyType: EFilterKeyType.Array,
+      //       operator: EFilterOperator.NotEqual,
+      //       type: EFilterType.Text,
+      //       value: 'today',
+      //     };
+      //     const newFilter = wrapper.vm.translateFilterSql(filter);
+      //     expect(newFilter)
+      //       .toEqual(_set(newFilter, filter.key, { notEqualOnArray_az: filter.value }));
+      //   });
+
+      //   it('should build proper filter if the target property otherwise', () => {
+      //     const filter = {
+      //       key: 'Prop.Sub',
+      //       keyType: EFilterKeyType.Array,
+      //       operator: EFilterOperator.NotEqual,
+      //       type: EFilterType.Text,
+      //       value: 'today',
+      //     };
+      //     const newFilter = wrapper.vm.translateFilterSql(filter);
+      //     expect(newFilter)
+      //       .toEqual(_set(newFilter, `not.${filter.key}`, filter.value));
+      //   });
+      // });
+
+      // describe('Not In operator', () => {
+      //   it('should build proper filter if the target property is an array', () => {
+      //     const filter = {
+      //       key: 'Prop.Sub',
+      //       keyType: EFilterKeyType.Array,
+      //       operator: EFilterOperator.NotIn,
+      //       type: EFilterType.Text,
+      //       value: 'today',
+      //     };
+      //     const newFilter = wrapper.vm.translateFilterSql(filter);
+      //     expect(newFilter)
+      //       .toEqual(_set(newFilter, filter.key, { notSearchInOnArray_az: filter.value }));
+      //   });
+
+      //   it('should build proper filter if the target property otherwise', () => {
+      //     const filter = {
+      //       key: 'Prop.Sub',
+      //       operator: EFilterOperator.NotIn,
+      //       type: EFilterType.Text,
+      //       value: 'today',
+      //     };
+      //     const newFilter = wrapper.vm.translateFilterSql(filter);
+      //     expect(newFilter)
+      //       .toEqual(_set(newFilter, filter.key, { notSearchIn_az: filter.value }));
+      //   });
+      // });
+
+      // it('builds the proper structure for GreaterEqual operator', () => {
+      //   const filter = {
+      //     key: 'Prop.Sub',
+      //     operator: EFilterOperator.GreaterEqual,
+      //     type: EFilterType.Date,
+      //     value: 'today',
+      //   };
+      //   const newFilter = wrapper.vm.translateFilterSql(filter);
+      //   expect(newFilter)
+      //     .toEqual(_set({}, filter.key, { ge: filter.value }));
+      // });
+
+      // it('builds the proper structure for GreaterThan operator', () => {
+      //   const filter = {
+      //     key: 'Prop.Sub',
+      //     operator: EFilterOperator.GreaterThan,
+      //     type: EFilterType.Date,
+      //     value: 'today',
+      //   };
+      //   const newFilter = wrapper.vm.translateFilterSql(filter);
+      //   expect(newFilter)
+      //     .toEqual(_set({}, filter.key, { gt: filter.value }));
+      // });
+
+      // it('builds the proper structure for LessThan operator', () => {
+      //   const filter = {
+      //     key: 'Prop.Sub',
+      //     operator: EFilterOperator.LessThan,
+      //     type: EFilterType.Date,
+      //     value: 'today',
+      //   };
+      //   const newFilter = wrapper.vm.translateFilterSql(filter);
+      //   expect(newFilter)
+      //     .toEqual(_set({}, filter.key, { lt: filter.value }));
+      // });
+
+      // it('builds the proper structure for LessEqual operator', () => {
+      //   const filter = {
+      //     key: 'Prop.Sub',
+      //     operator: EFilterOperator.LessEqual,
+      //     type: EFilterType.Date,
+      //     value: 'today',
+      //   };
+      //   const newFilter = wrapper.vm.translateFilterSql(filter);
+      //   expect(newFilter)
+      //     .toEqual(_set({}, filter.key, { le: filter.value }));
+      // });
+
+      it('builds the proper structure for In operator (calling translateInOperator)', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.In,
+          type: EFilterType.Number,
+          value: ['1', '2'],
+        };
+        wrapper.vm.translateInOperator = jest.fn();
+
+        wrapper.vm.translateFilterSql(filter);
+
+        expect(wrapper.vm.translateInOperator)
+          .toHaveBeenCalledWith(filter);
+      });
+
+      it('builds the proper structure for BeginsWith operator', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.BeginsWith,
+          type: EFilterType.Text,
+          value: 'start',
+        };
+        const newFilter = wrapper.vm.translateFilterSql(filter);
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { startswith: filter.value }));
+      });
+
+      it('builds the proper structure for Contains operator', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.Contains,
+          type: EFilterType.Text,
+          value: 'start',
+        };
+        const newFilter = wrapper.vm.translateFilterSql(filter);
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { contains: filter.value }));
+      });
+
+      // it('builds the proper structure for DoesNotContain operator', () => {
+      //   const filter = {
+      //     key: 'Prop.Sub',
+      //     operator: EFilterOperator.DoesNotContain,
+      //     type: EFilterType.Text,
+      //     value: 'start',
+      //   };
+      //   const newFilter = wrapper.vm.translateFilterSql(filter);
+      //   expect(newFilter)
+      //     .toEqual(_set({}, `not.${filter.key}`, { contains_az: filter.value }));
+      // });
     });
 
     describe('translateSearchFilter', () => {

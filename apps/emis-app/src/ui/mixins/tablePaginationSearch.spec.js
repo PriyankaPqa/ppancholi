@@ -266,6 +266,50 @@ describe('tablePaginationSearch.vue', () => {
 
         expect(wrapper.vm.azureSearchParams.search).toEqual('((/.*search.*/ OR "\\"search\\"") AND (/.*test.*/ OR "\\"test\\""))');
       });
+
+      it('if sql mode, the search is applied to metadata/searchabletext', () => {
+        wrapper.vm.sqlSearchMode = true;
+        wrapper.vm.userSearchFilters = '';
+        wrapper.vm.params.search = 'search test';
+
+        wrapper.vm.setSearchParams();
+
+        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
+        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+          { and: [{}, { and: [{ 'metadata/searchableText': { contains: 'search' } }, { 'metadata/searchableText': { contains: 'test' } }] }] },
+        );
+
+        wrapper.vm.azureSearchParams.filter = '';
+        wrapper.vm.userSearchFilters = 'filter';
+
+        wrapper.vm.setSearchParams();
+
+        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
+        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+          {
+            and: [{}, {
+              and: [{ 'metadata/searchableText': { contains: 'search' } },
+                { 'metadata/searchableText': { contains: 'test' } },
+                { 'metadata/searchableText': { contains: 'filter' } }],
+            }],
+          },
+        );
+        wrapper.vm.azureSearchParams.filter = { someField: 'value' };
+        wrapper.vm.userSearchFilters = 'filter';
+
+        wrapper.vm.setSearchParams();
+
+        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
+        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+          {
+            and: [{ someField: 'value' }, {
+              and: [{ 'metadata/searchableText': { contains: 'search' } },
+                { 'metadata/searchableText': { contains: 'test' } },
+                { 'metadata/searchableText': { contains: 'filter' } }],
+            }],
+          },
+        );
+      });
     });
 
     describe('search', () => {

@@ -17,6 +17,11 @@ export default {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
 
+  getEnumKeyText(myEnum: Record<string, unknown>, value: number) {
+    // eslint-disable-next-line radix
+    return Object.keys(myEnum).find((x) => !(parseInt(x, 0) >= 0) && myEnum[x] === value);
+  },
+
   flattenObj(obj: Record<string, unknown>, parent?: string, res: Record<string, unknown> = {}): Record<string, unknown> {
     Object.keys(obj).forEach((key) => {
       // eslint-disable-next-line

@@ -29,6 +29,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _set from 'lodash/set';
+import _isArray from 'lodash/isArray';
 import _difference from 'lodash/difference';
 import { RcFilterToolbar } from '@libs/component-lib/components';
 import {
@@ -77,6 +78,11 @@ export default Vue.extend({
     initialFilter: {
       type: Object as () => IFilter,
       default: () => ({}),
+    },
+
+    sqlMode: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -255,18 +261,24 @@ export default Vue.extend({
      * Emits the event when a filter is applied or removed from the table
      */
     async onApplyFilter(filters: IFilterData[], filterState: IFilter) {
-      const searchFilters = filters.filter((f) => f.type === 'text');
+      if (!this.sqlMode) {
+        const searchFilters = filters.filter((f) => f.type === 'text');
 
-      const translatedSearchFilters = this.prepareSearchFilters(searchFilters);
-      const preparedFilters = this.prepareFiltersForOdataQuery(_difference(filters, searchFilters));
+        const translatedSearchFilters = this.prepareSearchFilters(searchFilters);
+        const preparedFilters = this.prepareFiltersForOdataQuery(_difference(filters, searchFilters));
 
-      this.$emit('update:appliedFilter', { preparedFilters, searchFilters: translatedSearchFilters }, filterState);
+        this.$emit('update:appliedFilter', { preparedFilters, searchFilters: translatedSearchFilters }, filterState);
+      } else {
+        const preparedFilters = this.prepareFiltersForOdataQuery(filters);
+
+        this.$emit('update:appliedFilter', { preparedFilters, searchFilters: '' }, filterState);
+      }
     },
 
     /**
-     * Build object to be used by odata-query
+     * Build object to be used by odata-query - Azure search version
      */
-    translateFilter(filter: IFilterData) {
+     translateFilter(filter: IFilterData) {
       const { key, operator } = filter;
       const { value } = filter;
       let newFilter = {} as Record<string, unknown>;
@@ -316,6 +328,78 @@ export default Vue.extend({
         case EFilterOperator.DoesNotContain:
           newFilter.not = {};
           _set(newFilter, `not.${key}`, { contains_az: value });
+          break;
+        default:
+      }
+
+      return newFilter;
+    },
+
+    /**
+     * Build object to be used by odata-query - Sql version
+     * only some have been tested - as more switch to sql are made, more will be verified
+     */
+    // eslint-disable-next-line complexity
+    translateFilterSql(filter: IFilterData) {
+      const { key, operator } = filter;
+      let value = filter.value;
+      let arrayValue: Array<any> = value as Array<string | number>;
+
+      if (filter.keyType === EFilterKeyType.Guid) {
+        if (_isArray(value)) {
+          arrayValue = arrayValue.map(((v) => ({ value: v, type: filter.keyType })));
+        } else {
+          value = { value, type: filter.keyType };
+        }
+      }
+
+      let newFilter = {} as Record<string, unknown>;
+
+      switch (operator) {
+        case EFilterOperator.Between:
+          _set(newFilter, key, { ge: arrayValue[0], le: arrayValue[1] });
+          break;
+        case EFilterOperator.Equal: // tested
+          newFilter = this.translateEqualOperator(filter);
+          break;
+        case EFilterOperator.NotEqual:
+          if (filter.keyType === EFilterKeyType.Array) {
+            _set(newFilter, key, { notEqualOnArray: value });
+          } else {
+            _set(newFilter, `not.${key}`, value);
+          }
+          break;
+        case EFilterOperator.GreaterEqual:
+          _set(newFilter, key, { ge: value });
+          break;
+        case EFilterOperator.GreaterThan:
+          _set(newFilter, key, { gt: value });
+          break;
+        case EFilterOperator.LessThan:
+          _set(newFilter, key, { lt: value });
+          break;
+        case EFilterOperator.LessEqual:
+          _set(newFilter, key, { le: value });
+          break;
+        case EFilterOperator.In: // tested
+          newFilter = this.translateInOperator({ ...filter, value: arrayValue });
+          break;
+        case EFilterOperator.NotIn:
+          if (filter.keyType === EFilterKeyType.Array) {
+            _set(newFilter, key, { notSearchInOnArray: value });
+          } else {
+            _set(newFilter, key, { notSearchIn: value });
+          }
+          break;
+        case EFilterOperator.BeginsWith: // tested
+          _set(newFilter, key, { startswith: value });
+          break;
+        case EFilterOperator.Contains: // tested
+          _set(newFilter, key, { contains: value });
+          break;
+        case EFilterOperator.DoesNotContain:
+          newFilter.not = {};
+          _set(newFilter, `not.${key}`, { contains: value });
           break;
         default:
       }
@@ -394,7 +478,7 @@ export default Vue.extend({
       filters.forEach((filter: IFilterData) => {
         this.convertToInteger(filter);
 
-        const translatedFilter = this.translateFilter(filter);
+        const translatedFilter = this.sqlMode ? this.translateFilterSql(filter) : this.translateFilter(filter);
         // If filters are linked with a OR they need to be merged with a AND
         // Check the test to understand
 

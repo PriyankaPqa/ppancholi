@@ -35,7 +35,8 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
 
   function getByIds(ids: uuid[], onlyActive?: boolean) {
     if (onlyActive) {
-      return ids.map((id) => _cloneDeep(items.value.find((e) => e.id === id && e.status === Status.Active)) || {});
+      // metadata doesnt always have status
+      return ids.map((id) => _cloneDeep(items.value.find((e) => e.id === id && (e.status === Status.Active || e.status == null))) || {});
     }
     return ids.map((id) => _cloneDeep(items.value.find((e) => e.id === id)) || {});
   }
