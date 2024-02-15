@@ -168,3 +168,14 @@ export const mockUpdateHouseholdMemberFirstNameAndLastNameRequest = (firstName: 
   contactInformation: mockContactInformationCreateRequest(),
   identitySet: mockIdentitySetCreateRequest({ firstName, lastName, gender: { id: Genders.Female, isOther: false } }),
 });
+
+export const mockUpdateHouseholdMemberPhoneNumberRequest = (phoneNumber: string) => ({
+  contactInformation: mockContactInformationCreateRequest({
+    homePhoneNumber: {
+      number: phoneNumber,
+      countryCode: 'CA',
+      e164Number: `+1${phoneNumber}`,
+    },
+  }),
+  identitySet: mockIdentitySetCreateRequest(),
+});

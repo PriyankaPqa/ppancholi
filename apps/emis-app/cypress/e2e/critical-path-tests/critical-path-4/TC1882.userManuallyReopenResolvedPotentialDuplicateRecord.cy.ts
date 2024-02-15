@@ -3,7 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
 import { createEventAndTeam, prepareStateHousehold, resolvePotenialDuplicateRecord } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { ManuallyUpdateTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
+import { UpdateDuplicateRecordTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
 import {
   assertUpdatedPotentialDuplicateRecordTabSteps,
   caseFileDetailsPageAssertionSteps,
@@ -77,7 +77,7 @@ describe('#TC1882# - User can manually re-open a resolved potential duplicate re
         it('should manually re-open a resolved potential duplicate record', function () {
           manuallyUpdatePotentialDuplicateRecordStatusSteps({
             rationale,
-            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Potential,
             dialogUpdateRecordStatusTitle: 'Flag household as potential duplicate',
             dialogFlagAsText: 'Potential duplicate',
             dialogLabelMandatoryText: 'Rationale*',
@@ -90,14 +90,14 @@ describe('#TC1882# - User can manually re-open a resolved potential duplicate re
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
             phoneNumber: this.phoneNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Potential,
             rationale,
             roleName,
           });
 
           caseFileDetailsPageAssertionSteps({
             registrationNumber: this.originalHouseholdRegistrationNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Potential,
             rationale,
             roleName,
           });
@@ -109,14 +109,14 @@ describe('#TC1882# - User can manually re-open a resolved potential duplicate re
             caseFileNumber: this.comparisonHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
             phoneNumber: this.phoneNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Potential,
             rationale,
             roleName,
           });
 
           caseFileDetailsPageAssertionSteps({
             registrationNumber: this.comparisonHouseholdRegistrationNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Potential,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Potential,
             rationale,
             roleName,
           });

@@ -31,9 +31,14 @@ export enum DuplicatedBy {
   'HomeAddress' = 'Home Address',
 }
 
-export enum ManuallyUpdateTo {
+export enum UpdateDuplicateRecordTo {
   'Resolved' = 'Resolved',
   'Potential' = 'Potential',
+}
+
+export enum ResolvedBy {
+  'System' = 'System',
+  'Manually' = 'Manually',
 }
 
 export class ManageDuplicatesPage {

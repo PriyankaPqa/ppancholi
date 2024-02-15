@@ -4,7 +4,7 @@ import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/c
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-import { ManuallyUpdateTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
+import { ResolvedBy, UpdateDuplicateRecordTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
 import {
   assertUpdatedPotentialDuplicateRecordTabSteps,
   caseFileDetailsPageAssertionSteps,
@@ -76,7 +76,7 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
         it('should manually update potential duplicate records status to resolved', function () {
           manuallyUpdatePotentialDuplicateRecordStatusSteps({
             rationale,
-            manuallyUpdateTo: ManuallyUpdateTo.Resolved,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Resolved,
             dialogUpdateRecordStatusTitle: 'Flag household duplicate as resolved',
             dialogFlagAsText: 'Resolved duplicate',
             dialogLabelMandatoryText: 'Action taken to resolve*',
@@ -90,7 +90,8 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
               caseFileNumber: this.originalHouseholdCaseFileNumber,
               eventName: this.eventCreated.name.translation.en,
               phoneNumber: this.phoneNumber,
-              manuallyUpdateTo: ManuallyUpdateTo.Resolved,
+              updateDuplicateRecordTo: UpdateDuplicateRecordTo.Resolved,
+              resolvedBy: ResolvedBy.System,
               rationale,
               roleName,
             });
@@ -98,7 +99,8 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
 
           caseFileDetailsPageAssertionSteps({
             registrationNumber: this.originalHouseholdRegistrationNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Resolved,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Resolved,
+            resolvedBy: ResolvedBy.System,
             rationale,
             roleName,
           });
@@ -111,7 +113,8 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
               caseFileNumber: this.comparisonHouseholdCaseFileNumber,
               eventName: this.eventCreated.name.translation.en,
               phoneNumber: this.phoneNumber,
-              manuallyUpdateTo: ManuallyUpdateTo.Resolved,
+              updateDuplicateRecordTo: UpdateDuplicateRecordTo.Resolved,
+              resolvedBy: ResolvedBy.System,
               rationale,
               roleName,
             });
@@ -119,7 +122,8 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
 
           caseFileDetailsPageAssertionSteps({
             registrationNumber: this.comparisonHouseholdRegistrationNumber,
-            manuallyUpdateTo: ManuallyUpdateTo.Resolved,
+            updateDuplicateRecordTo: UpdateDuplicateRecordTo.Resolved,
+            resolvedBy: ResolvedBy.System,
             rationale,
             roleName,
           });
