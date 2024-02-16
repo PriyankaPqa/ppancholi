@@ -3,7 +3,7 @@
 import {
   ValidationProvider, extend, ValidationObserver, configure,
 } from 'vee-validate';
-import PhoneNumber from 'awesome-phonenumber';
+import { parsePhoneNumber } from 'awesome-phonenumber';
 import { isValid as isValidDate, isSameDay, isAfter, startOfDay, endOfDay, subYears, isBefore } from 'date-fns';
 import {
   required, min, max, email, regex, min_value, max_value, numeric, oneOf,
@@ -69,9 +69,9 @@ extend('phone', {
       return true;
     }
 
-    const pn = new PhoneNumber(number, countryCode);
+    const pn = parsePhoneNumber(number, { regionCode: countryCode });
 
-    return pn.isValid();
+    return pn?.valid;
   },
   params: ['phone'],
   message: (_, values) => i18n.t('validations.phone', values),

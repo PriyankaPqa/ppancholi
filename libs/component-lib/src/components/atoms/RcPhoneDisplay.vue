@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import PhoneNumber from 'awesome-phonenumber';
+import { parsePhoneNumber, ParsedPhoneNumber } from 'awesome-phonenumber';
 
 /**
    * A phone number label with automatic formatting.
@@ -42,20 +42,20 @@ export default Vue.extend({
   },
 
   computed: {
-    phoneObject(): PhoneNumber {
+    phoneObject(): ParsedPhoneNumber {
       if (!this.value) {
         return null;
       }
-      return new PhoneNumber(this.value);
+      return parsePhoneNumber(this.value);
     },
 
     formattedPhoneNumber(): string {
-      if (this.phoneObject && this.phoneObject.isValid()) {
+      if (this.phoneObject?.valid) {
         if (this.showCountryCode) {
-          return `${this.phoneObject.getCountryCode()} ${this.phoneObject.getNumber('national')}`;
+          return `${this.phoneObject.countryCode} ${this.phoneObject.number.national}`;
         }
 
-        return this.phoneObject.getNumber('national');
+        return this.phoneObject.number.national;
       }
       return this.value;
     },

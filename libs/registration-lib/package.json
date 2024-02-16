@@ -12,7 +12,7 @@
     "@libs/shared-lib": "*",
     "@libs/stores-lib": "*",
     "@mdi/font": "^6.5.95",
-    "awesome-phonenumber": "2.68.0",
+    "awesome-phonenumber": "6.4.0",
     "axios": "1.6.4",
     "date-fns": "2.30.0",
     "date-fns-tz": "^2.0.0",

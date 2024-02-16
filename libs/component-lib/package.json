@@ -9,7 +9,7 @@
     "@googlemaps/js-api-loader": "^1.11.0",
     "@libs/shared-lib": "*",
     "@mdi/font": "^6.5.95",
-    "awesome-phonenumber": "2.68.0",
+    "awesome-phonenumber": "6.4.0",
     "date-fns": "2.30.0",
     "deepmerge": "^4.2.2",
     "lodash": "^4.17.21",

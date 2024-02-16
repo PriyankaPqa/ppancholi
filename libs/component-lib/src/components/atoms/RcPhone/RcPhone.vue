@@ -62,7 +62,7 @@
 import Vue from 'vue';
 import en from '@libs/shared-lib/constants/countries/en';
 import fr from '@libs/shared-lib/constants/countries/fr';
-import PhoneNumber from 'awesome-phonenumber';
+import { parsePhoneNumber, ParsedPhoneNumber, getExample } from 'awesome-phonenumber';
 import { ICountry, countries } from '@libs/component-lib/components/atoms/RcPhone/all-countries';
 import CountryListItem from './components/CountryListItem.vue';
 
@@ -125,19 +125,21 @@ export default Vue.extend({
   computed: {
     countries(): Array<ICountry> {
       const countryNames = this.$i18n?.locale === 'fr' ? fr : en;
-      return countries.map((c) => ({ ...c, name: countryNames[c.iso2.toUpperCase()] || c.name }))
+      return countries.map((c) => ({ ...c, name: (countryNames as any)[c.iso2.toUpperCase()] || c.name }))
         .sort((a, b) => a.name.localeCompare(b.name));
     },
 
     placeholder(): string {
-      return PhoneNumber.getExample(this.selectedCountry.iso2, 'mobile').getNumber('national');
+      const example = getExample(this.selectedCountry.iso2, 'mobile');
+      return example?.number?.national;
     },
 
-    phoneObject(): PhoneNumber {
-      return new PhoneNumber(this.innerValue, this.selectedCountry.iso2);
+    phoneObject(): ParsedPhoneNumber {
+      return parsePhoneNumber(this.innerValue, { regionCode: this.selectedCountry.iso2 });
     },
+
     e164Number(): string {
-      return this.phoneObject.getNumber('e164');
+      return this.phoneObject?.number?.e164;
     },
   },
 
@@ -185,10 +187,9 @@ export default Vue.extend({
   methods: {
 
     getInitialNumber(number: string, defaultCountry: string): string {
-      const pn: PhoneNumber = new PhoneNumber(number, defaultCountry);
-
-      if (pn.isValid()) {
-        return pn.getNumber('national');
+      const pn = parsePhoneNumber(number, { regionCode: defaultCountry });
+      if (pn?.valid) {
+        return pn.number.national;
       }
 
       return number;
@@ -196,16 +197,12 @@ export default Vue.extend({
 
     getInitialCountry(value: IValue, defaultCountry: string): ICountry {
       const countryCode = value.countryCode ? value.countryCode.toUpperCase() : defaultCountry.toUpperCase();
+      const pn = parsePhoneNumber(value.number, { regionCode: countryCode });
 
-      const pn: PhoneNumber = new PhoneNumber(
-        value.number,
-        countryCode,
-      );
-
-      const regionCode = pn.getRegionCode();
+      const regionCode = pn.regionCode;
 
       if (regionCode) {
-        if (regionCode === 'US' && pn.getType() === 'toll-free') {
+        if (regionCode === 'US' && pn.type === 'toll-free') {
           return {
             name: 'Canada',
             iso2: 'CA',
@@ -238,7 +235,7 @@ export default Vue.extend({
      */
     selectCountry(country: ICountry) {
       this.selectedCountry = country;
-      this.innerValue = this.phoneObject.getNumber('national') || '';
+      this.innerValue = this.phoneObject?.number?.national || '';
     },
 
     /**
@@ -335,13 +332,14 @@ export default Vue.extend({
     },
 
     emitPhoneObject(emitEventName: string) {
-      const isValid = this.phoneObject.isValid();
+      const isValid = this.phoneObject?.valid;
+
       if (isValid) {
-        this.innerValue = this.phoneObject.getNumber('national') || '';
+        this.innerValue = this.phoneObject.number.national || '';
       }
 
       this.$emit(emitEventName, {
-        number: this.phoneObject.getNumber('national'),
+        number: this.phoneObject?.number?.national,
         countryCode: this.selectedCountry.iso2,
         e164Number: this.e164Number,
       });

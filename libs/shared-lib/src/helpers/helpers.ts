@@ -1,4 +1,4 @@
-import PhoneNumber from 'awesome-phonenumber';
+import { parsePhoneNumber } from 'awesome-phonenumber';
 import _chunk from 'lodash/chunk';
 import isEmpty from 'lodash/isEmpty';
 import { IAzureCombinedSearchResult, IAzureSearchResult, IAzureTableSearchResults } from '../types/interfaces/IAzureSearchParams';
@@ -164,12 +164,12 @@ export default {
     if (!value) {
       return '';
     }
-    const phoneObject = value ? new PhoneNumber(value) : null;
-    if (phoneObject && phoneObject.isValid()) {
+    const phoneObject = parsePhoneNumber(value);
+    if (phoneObject?.valid) {
       if (showCountryCode) {
-        return `${phoneObject.getCountryCode()} ${phoneObject.getNumber('national')}`;
+        return `${phoneObject.countryCode} ${phoneObject.number.national}`;
       }
-      return phoneObject.getNumber('national');
+      return phoneObject.number.national;
     }
     return value;
   },

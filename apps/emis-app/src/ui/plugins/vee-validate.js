@@ -3,7 +3,8 @@
 import {
   ValidationProvider, extend, ValidationObserver, configure,
 } from 'vee-validate';
-import PhoneNumber from 'awesome-phonenumber';
+import { parsePhoneNumber } from 'awesome-phonenumber';
+
 import {
   // eslint-disable-next-line camelcase
   required, min, max, email, oneOf, regex, min_value, max_value, numeric,
@@ -90,9 +91,9 @@ extend('phone', {
       return true;
     }
 
-    const pn = new PhoneNumber(number, countryCode);
+    const pn = parsePhoneNumber(number, { regionCode: countryCode });
 
-    return pn.isValid();
+    return pn?.valid;
   },
   params: ['phone'],
   message: (_, values) => i18n.t('validations.phone', values),

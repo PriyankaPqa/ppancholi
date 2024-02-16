@@ -1,4 +1,4 @@
-import PhoneNumber from 'awesome-phonenumber';
+import { parsePhoneNumber } from 'awesome-phonenumber';
 import { IOptionItemData } from '@libs/shared-lib/types';
 import { isValid, isSameDay, isAfter, isBefore, startOfDay, endOfDay, subYears } from 'date-fns';
 import { MIN_AGE_REGISTRATION } from '@libs/shared-lib/constants/validations';
@@ -34,9 +34,9 @@ export const isPhone = (value: IPhoneNumber, errorMsg: string, errors: string[])
     return;
   }
 
-  const pn = new PhoneNumber(number, countryCode);
+  const pn = parsePhoneNumber(number, { regionCode: countryCode });
 
-  if (!pn.isValid()) {
+  if (!pn?.valid) {
     errors.push(errorMsg);
   }
 };
