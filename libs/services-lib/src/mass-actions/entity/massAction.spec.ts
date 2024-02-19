@@ -88,6 +88,15 @@ describe('>>> Mass Action Service', () => {
 
       expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
     });
+
+    it('should be linked to correct URL for communication mass action', async () => {
+      const urlSuffix = 'export-communication-records';
+      const payload = { filter: 'filter', search: 'search', language: 'en' };
+
+      await service.exportList(MassActionType.Communications, payload);
+
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
+    });
   });
 
   test('getValidFile is linked to the correct URL', async () => {

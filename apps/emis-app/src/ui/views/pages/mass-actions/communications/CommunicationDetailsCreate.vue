@@ -16,7 +16,8 @@
               <v-radio
                 :label="$t('enums.communicationMethod.SMS')"
                 data-test="communication-form-method-sms"
-                :value="CommunicationMethod.SMS" />
+                :value="CommunicationMethod.SMS"
+                disabled="true" />
             </v-radio-group>
           </validation-provider>
         </v-col>
@@ -78,7 +79,7 @@
                 clear-icon=""
                 :allowed-extensions="allowedExtensions"
                 :sanitize-file-name="true"
-                :max-size="30000000"
+                :max-size="10000000"
                 @update:files="fileAdded" />
             </validation-provider>
           </template>

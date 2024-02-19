@@ -51,7 +51,7 @@ export default Vue.extend({
       uploadUrl: 'case-file/mass-actions/communication',
       details: {
         event: null,
-        method: null,
+        method: MassActionCommunicationMethod.Email,
         messageSubject: utils.initMultilingualAttributes(),
         emailMessage: utils.initMultilingualAttributes(),
         smsMessage: utils.initMultilingualAttributes(),

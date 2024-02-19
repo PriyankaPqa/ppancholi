@@ -192,6 +192,8 @@ export default Vue.extend({
 
       const allowedFileNameRegex = /^[a-zA-Z0-9+._\-\s]*$/;
       if (Array.isArray(this.localFiles)) {
+        const formatBytes = helpers.formatBytes(this.maxSize as number, 2);
+        let totalSize = 0;
         this.localFiles.forEach((file) => {
           if (file?.name && !allowedFileNameRegex.test(file.name)) {
             this.errorMessages.push(this.$t('error.file.upload.fileName') as string);
@@ -200,9 +202,9 @@ export default Vue.extend({
           if (!file?.size) {
             this.errorMessages = [];
           } else {
+            totalSize += file.size;
             // We check if the size of the file does not exceed the limit
             if (!this.isFileSizeOK(file.size)) {
-              const formatBytes = helpers.formatBytes(this.maxSize as number, 2);
               this.errorMessages.push(this.errorSize ? `${this.errorSize} ${formatBytes}` : this.$t('common.upload.max_file.size', { x: formatBytes }) as string);
             }
             // We check if extension of the file is authorized
@@ -211,6 +213,9 @@ export default Vue.extend({
             }
           }
         });
+        if (!this.isFileSizeOK(totalSize) && this.errorMessages.length === 0) {
+          this.errorMessages.push(this.$t('common.upload.max_file.size', { x: formatBytes }) as string);
+        }
       }
     },
     /**
