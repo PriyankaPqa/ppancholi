@@ -2,11 +2,8 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   CaseFileDocumentEntity, DocumentStatus, mockCaseFileDocumentEntity,
 } from '@libs/entities-lib/case-file-document';
-import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './CaseFileDocumentForm.vue';
 import DownloadComponent from './DownloadViewDocument.vue';
 
@@ -263,49 +260,12 @@ describe('CaseFileDocumentForm.vue', () => {
         expect(wrapper.findComponent(DownloadComponent).props('document')).toEqual(wrapper.vm.localDocument);
       });
     });
-
-    describe('document-name', () => {
-      it('should be rendered when feature RecoveryPlan is off', async () => {
-        await (mountWrapper(false, true));
-        await wrapper.setFeature(FeatureKeys.RecoveryPlan, false);
-        const element = wrapper.findDataTest('document-name');
-        expect(element.exists()).toBeTruthy();
-      });
-
-      it('should not be rendered when feature RecoveryPlan is on', async () => {
-        await (mountWrapper(false, true));
-        await wrapper.setFeature(FeatureKeys.RecoveryPlan, true);
-        const element = wrapper.findDataTest('document-name');
-        expect(element.exists()).toBeFalsy();
-      });
-    });
   });
 
   describe('Validation', () => {
     let el;
     beforeEach(async () => {
       await mountWrapper(false, true);
-    });
-
-    test('document name is required', async () => {
-      await wrapper.vm.$refs.form.validate();
-      el = wrapper.findTextFieldWithValidation('document-name');
-      expect(el.classes('invalid')).toBe(true);
-      await wrapper.setData({ localDocument: { name: 'abc' } });
-      await wrapper.vm.$refs.form.validate();
-      el = wrapper.findTextFieldWithValidation('document-name');
-      expect(el.classes('invalid')).toBe(false);
-    });
-
-    test('the document name has a max length of MAX_LENGTH_MD', async () => {
-      await wrapper.setData({ localDocument: { name: 'x'.repeat(MAX_LENGTH_MD + 1) } });
-      await wrapper.vm.$refs.form.validate();
-      el = wrapper.findTextFieldWithValidation('document-name');
-      expect(el.classes('invalid')).toBe(true);
-      await wrapper.setData({ localDocument: { name: 'x'.repeat(MAX_LENGTH_MD - 1) } });
-      await wrapper.vm.$refs.form.validate();
-      el = wrapper.findTextFieldWithValidation('document-name');
-      expect(el.classes('invalid')).toBe(false);
     });
 
     test('document category is required', async () => {

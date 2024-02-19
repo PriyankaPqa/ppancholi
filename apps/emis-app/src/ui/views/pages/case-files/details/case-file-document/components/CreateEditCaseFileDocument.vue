@@ -30,7 +30,6 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { format } from 'date-fns';
 import DocumentForm from './CaseFileDocumentForm.vue';
 
@@ -159,7 +158,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     async uploadNewDocument(): Promise<ICaseFileDocumentEntity> {
       const formData = new FormData();
       const autoNaming = `${this.category} - ${format(new Date(), 'yyyyMMdd-HHmmss')}`;
-      formData.set('name', this.$hasFeature(FeatureKeys.RecoveryPlan) ? autoNaming : this.document.name);
+      formData.set('name', autoNaming);
       formData.set('note', this.document.note || '');
       formData.set('categoryId', this.document.category.optionItemId.toString());
       if (this.document.category.specifiedOther) {

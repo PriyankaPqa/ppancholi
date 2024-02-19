@@ -5,7 +5,6 @@ import {
 } from '@libs/entities-lib/case-file-document';
 
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { format } from 'date-fns';
 import Component from './CreateEditCaseFileDocument.vue';
 
@@ -172,30 +171,12 @@ describe('CreateEditDocument', () => {
     });
 
     describe('uploadNewDocument', () => {
-      it('calls upload with the formData when feature is off', async () => {
-        await mountWrapper(false);
-        await wrapper.setFeature(FeatureKeys.RecoveryPlan, false);
-        await wrapper.setData({ file: {} });
-        await wrapper.setData({ document: mockDocument });
-
-        const formData = new FormData();
-        formData.set('name', mockDocument.name);
-        formData.set('note', mockDocument.note || '');
-        formData.set('categoryId', mockDocument.category.optionItemId.toString());
-        formData.set('documentStatus', mockDocument.documentStatus.toString());
-        formData.set('file', {});
-
-        await wrapper.vm.uploadNewDocument();
-        expect(wrapper.vm.$refs.documentForm.upload).toHaveBeenCalledWith(formData, 'case-file/case-files/CASEFILE_ID/documents');
-      });
-
-      it('calls upload with the formData with auto-naming when feature is on', async () => {
+      it('calls upload with the formData with auto-naming', async () => {
         await mountWrapper(false, false, 5, {
           computed: {
             category: () => 'mock-catgory-name',
           },
         });
-        await wrapper.setFeature(FeatureKeys.RecoveryPlan, true);
         await wrapper.setData({ file: {} });
         await wrapper.setData({ document: mockDocument });
 

@@ -330,7 +330,6 @@ export default mixins(caseFileDetail).extend({
             text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
             test: 'recovery-plan',
             to: this.caseFile.recoveryPlan === null ? routes.caseFile.recoveryPlan.create.name : routes.caseFile.recoveryPlan.details.name,
-            disabled: !this.$hasFeature(FeatureKeys.RecoveryPlan),
           },
           !this.isL0 && {
             text: this.$t('caseFileDetail.menu_documents') as string,

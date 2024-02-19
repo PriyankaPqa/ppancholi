@@ -4,15 +4,7 @@
       <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11">
           <v-row class="mt-4">
-            <v-col v-if="!$hasFeature(FeatureKeys.RecoveryPlan)" sm="12" md="9">
-              <v-text-field-with-validation
-                v-model="localDocument.name"
-                :rules="rules.name"
-                :label="$t('caseFile.document.name') + ' *'"
-                data-test="document-name" />
-            </v-col>
-
-            <v-col sm="12" :md="$hasFeature(FeatureKeys.RecoveryPlan) ? 4 : 3">
+            <v-col sm="12" :md="4">
               <div :class="['status', isStatusActive ? 'status_success' : 'rc-grey-background']">
                 <div class="pl-4 white--text">
                   {{ $t('caseFile.document.status') }}
@@ -177,10 +169,6 @@ export default mixins(fileUpload).extend({
 
     rules(): Record<string, unknown> {
       return {
-        name: {
-          required: true,
-          max: MAX_LENGTH_MD,
-        },
         documentCategories: {
           required: true,
         },
