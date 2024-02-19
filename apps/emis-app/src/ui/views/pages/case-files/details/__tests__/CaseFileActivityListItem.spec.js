@@ -1088,6 +1088,21 @@ describe('CaseFileActivityListItem.vue', () => {
           });
         });
       });
+
+      describe('makeContentForCommunicationSent', () => {
+        it('returns the correct data when activity type is CommunicationSent', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.CommunicationSent)[0],
+          });
+
+          const body = wrapper.vm.$t('caseFileActivity.activityList.body.communicationSent', { x: 'mock-MA-name', y: 'John Doe' });
+
+          expect(wrapper.vm.makeContentForCommunicationSent()).toEqual({
+            title: 'caseFileActivity.activityList.title.CommunicationSent',
+            body,
+          });
+        });
+      });
     });
 
     describe('makeContentForHouseholdSplit', () => {

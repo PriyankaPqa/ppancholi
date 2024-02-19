@@ -179,6 +179,9 @@ export default Vue.extend({
         case CaseFileActivityType.RecoveryPlanUpdate:
           return this.makeContentForRecoveryPlanUpdate();
 
+        case CaseFileActivityType.CommunicationSent:
+          return this.makeContentForCommunicationSent();
+
         default:
           return null;
       }
@@ -722,6 +725,16 @@ export default Vue.extend({
           body += helpers.getLocalStringDate(recoveryPlan.startDate as string, '', 'PP');
         }
       }
+
+      return { title, body };
+    },
+
+    makeContentForCommunicationSent(): { title: TranslateResult, body: TranslateResult } {
+      const title = this.$t('caseFileActivity.activityList.title.CommunicationSent');
+      const body = this.$t('caseFileActivity.activityList.body.communicationSent', {
+        x: this.item.details.massCommunicationName,
+        y: this.item.details.personFullName,
+      });
 
       return { title, body };
     },

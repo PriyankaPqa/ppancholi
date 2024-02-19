@@ -69,6 +69,7 @@ export enum CaseFileActivityType {
   TaskManagementTaskCreated = 41,
   TaskManagementTaskCompleted = 42,
   RecoveryPlanUpdate = 43,
+  CommunicationSent = 44,
 }
 
 export enum HouseholdCaseFileActivityType {
