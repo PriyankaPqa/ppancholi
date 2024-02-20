@@ -54,6 +54,7 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
       primaryContact: team.teamMembers.find((m) => m.isPrimaryContact),
       status: team.status,
       isEscalation: team.isEscalation,
+      isAssignable: team.isAssignable,
     };
   }
 }

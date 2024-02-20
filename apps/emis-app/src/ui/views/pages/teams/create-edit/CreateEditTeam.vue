@@ -39,12 +39,20 @@
                   </validation-provider>
                 </div>
 
-                <div v-if="$hasFeature(FeatureKeys.TaskManagement) && teamType === 'adhoc'" class="mb-4">
+                <div v-if="$hasFeature(FeatureKeys.TaskManagement)" class="mb-4">
                   <v-checkbox-with-validation
+                    v-if="teamType === 'adhoc'"
                     v-model="team.isEscalation"
                     :label="$t('teams.set_escalation_team')"
                     data-test="team-isEscalation-checkbox"
                     :disabled="!$hasLevel(UserRoles.level5)" />
+
+                  <v-checkbox-with-validation
+                    v-model="team.isAssignable"
+                    :disabled="team.isEscalation"
+                    :label="$t('teams.set_assignable_team')"
+                    data-test="team-isAssignable-checkbox"
+                    class="is-assignable-checkbox" />
                 </div>
 
                 <v-row>
@@ -274,6 +282,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         events: null as string | string[],
         primaryContact: null as string,
         isEscalation: null as boolean,
+        isAssignable: null as boolean,
       },
       showErrorDialog: false,
       errorMessage: '' as TranslateResult,
@@ -341,6 +350,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
         primaryContact: (this.currentPrimaryContact || {}).email,
         isEscalation: this.team.isEscalation,
+        isAssignable: this.team.isAssignable,
       });
     },
 
@@ -350,6 +360,16 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
     canBeEmpty(): boolean {
       return this.isEditMode && this.team.status === Status.Inactive && !this.original.primaryContact;
+    },
+  },
+
+  watch: {
+    'team.isEscalation': {
+      handler(newValue, oldValue) {
+        if (newValue && newValue !== oldValue && oldValue !== undefined) {
+          this.team.isAssignable = true;
+        }
+      },
     },
   },
 
@@ -373,6 +393,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
         primaryContact: (this.currentPrimaryContact || {}).email,
         isEscalation: this.team.isEscalation,
+        isAssignable: this.team.isAssignable,
       });
     },
 
@@ -603,6 +624,10 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       margin: 0 0 0 16px;
     }
   }
+}
+
+::v-deep .is-assignable-checkbox > .v-input.theme--light.v-input--selection-controls.v-input--checkbox {
+  margin-top: 0px !important;
 }
 
 </style>

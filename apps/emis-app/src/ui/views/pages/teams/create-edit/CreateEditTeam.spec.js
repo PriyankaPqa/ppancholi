@@ -353,6 +353,36 @@ describe('CreateEditTeam.vue', () => {
         expect(element.attributes('disabled')).toBeFalsy();
       });
     });
+
+    describe('team-isAssignable-checkbox', () => {
+      it('should be disabled when isEscalation is true', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [FeatureKeys.TaskManagement],
+          propsData: {
+            teamType: 'adhoc',
+          },
+          data() {
+            return {
+              team: {
+                isEscalation: false,
+                isAssignable: false,
+              },
+            };
+          },
+        });
+        await wrapper.setProps({
+          teamType: 'adhoc',
+        });
+        const element = wrapper.findDataTest('team-isAssignable-checkbox');
+        await wrapper.setData({
+          team: {
+            isEscalation: true,
+          },
+        });
+        expect(element.attributes('disabled')).toEqual('true');
+        expect(wrapper.vm.team.isAssignable).toEqual(true);
+      });
+    });
   });
 
   describe('Template continued... shallowMount', () => {
@@ -1521,6 +1551,79 @@ describe('CreateEditTeam.vue', () => {
         await wrapper.vm.setPrimaryContactTeam();
         expect(wrapper.vm.combinedUserAccountStore.getById).toHaveBeenCalledWith('abcde');
         expect(wrapper.vm.submittedPrimaryContactUser).toEqual(mockCombinedUserAccount());
+      });
+    });
+  });
+
+  describe('watch', () => {
+    describe('team.isEscalation', () => {
+      it('should only update isAssignable to true when isEscalation is updated to true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            teamType: 'adhoc',
+          },
+
+          data() {
+            return {
+              team: {
+                isEscalation: false,
+                isAssignable: false,
+              },
+            };
+          },
+
+          computed: {
+            isEditMode() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setData({
+          team: {
+            isEscalation: true,
+          },
+        });
+        expect(wrapper.vm.team.isAssignable).toEqual(true);
+
+        await wrapper.setData({
+          team: {
+            isEscalation: false,
+          },
+        });
+        expect(wrapper.vm.team.isAssignable).toEqual(true);
+      });
+
+      it('should not update isAssignable when isEscalation is undefined by default', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            teamType: 'adhoc',
+          },
+
+          data() {
+            return {
+              team: {
+                isEscalation: undefined,
+                isAssignable: false,
+              },
+            };
+          },
+
+          computed: {
+            isEditMode() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setData({
+          team: {
+            isEscalation: true,
+          },
+        });
+        expect(wrapper.vm.team.isAssignable).toEqual(false);
       });
     });
   });

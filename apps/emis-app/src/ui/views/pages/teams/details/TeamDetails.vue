@@ -60,8 +60,16 @@
                   <span class="rc-body14" data-test="team_events">{{ buildEventsString(teamMetadata.events) }}</span>
                 </v-col>
                 <v-col
+                  v-if="$hasFeature(FeatureKeys.TaskManagement)"
+                  :cols="displayEscalationLabel ? 4 : 8"
+                  class="team_data"
+                  data-test="team_isAssignable">
+                  <span class="rc-body14 fw-bold">{{ $t('teams.set_assignable_team') }}</span>
+                  <span class="rc-body14">{{ team.isAssignable ? $t('common.yes') : $t('common.no') }}</span>
+                </v-col>
+                <v-col
                   v-if="displayEscalationLabel"
-                  cols="8"
+                  cols="4"
                   class="team_data"
                   data-test="team_escalation">
                   <span class="rc-body14 fw-bold">{{ $t('teams.set_as') }}</span>

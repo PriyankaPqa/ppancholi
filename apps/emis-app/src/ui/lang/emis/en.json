@@ -3198,6 +3198,7 @@
     "teams.set_as": "Set as",
     "teams.set_assignable_team": "Assignable to tasks",
     "teams.set_escalation_team": "Set as escalation team",
+    "teams.set_assignable_team": "Assignable to tasks",
     "teams.standard_team_created": "The standard team has been successfully created.",
     "teams.status": "Status",
     "teams.table.related_events": "Events",

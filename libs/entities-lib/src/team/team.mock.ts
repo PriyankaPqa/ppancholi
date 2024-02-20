@@ -47,6 +47,7 @@ export const mockTeamsDataStandard = (force? : Partial<IEntity>): ITeamEntity =>
   teamMembers: [mockTeamMembersData()[0]],
   eventIds: ['id-1'],
   isEscalation: false,
+  isAssignable: false,
   ...force,
 });
 
@@ -84,6 +85,7 @@ export const mockTeamsDataAddHoc = (force? : Partial<IEntity>): ITeamEntity => (
   teamMembers: mockTeamMembersData(),
   eventIds: ['id-1'],
   isEscalation: false,
+  isAssignable: false,
   ...force,
 });
 

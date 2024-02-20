@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockPersonalTaskEntity, mockTeamTaskEntity, TaskActionTaken, TaskStatus } from '@libs/entities-lib/task';
 import { mockProvider } from '@/services/provider';
-import { mockTeamEntity, mockTeamEvents } from '@libs/entities-lib/team';
+import { mockTeamEntity, mockTeamEvents, mockTeamsDataStandard } from '@libs/entities-lib/team';
 import flushPromises from 'flush-promises';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import Component from './TaskActionDialog.vue';
@@ -199,14 +199,17 @@ describe('TaskActionDialog.vue', () => {
     });
 
     describe('fetchTeamsOfEvent', () => {
-      it('should call service getTeamsByEvent event id and set data properly', async () => {
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => mockTeamEvents());
+      it('should call service getTeamsByEvent event id, filter out unassigned teams and set data properly', async () => {
+        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => ([
+          mockTeamsDataStandard({ id: '1', isAssignable: true }),
+          mockTeamsDataStandard({ id: '2', isAssignable: false }),
+        ]));
         await wrapper.setProps({
           eventId: mockTeamEvents()[0].id,
         });
         await wrapper.vm.fetchTeamsOfEvent();
         expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith(wrapper.vm.eventId);
-        expect(wrapper.vm.teamsOfEvent).toEqual(mockTeamEvents());
+        expect(wrapper.vm.teamsOfEvent).toEqual([mockTeamsDataStandard({ id: '1', isAssignable: true })]);
       });
     });
 

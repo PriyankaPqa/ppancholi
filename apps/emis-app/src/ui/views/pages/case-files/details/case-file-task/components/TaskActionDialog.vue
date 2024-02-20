@@ -216,7 +216,7 @@ export default Vue.extend({
     async fetchTeamsOfEvent() {
       const res = await this.$services.teams.getTeamsByEvent(this.eventId);
       if (res) {
-        this.teamsOfEvent = res;
+        this.teamsOfEvent = res.filter((t) => t.isAssignable);
       }
     },
 

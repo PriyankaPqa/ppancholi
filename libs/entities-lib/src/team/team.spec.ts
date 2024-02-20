@@ -46,6 +46,14 @@ describe('>>> Team', () => {
       const teamEntity = new TeamEntity();
       expect(teamEntity.isEscalation).toEqual(false);
     });
+
+    it('should instantiate isAssignable', () => {
+      const team = new TeamEntity({ ...mockTeamData, isAssignable: true });
+      expect(team.isAssignable).toEqual(true);
+
+      const teamEntity = new TeamEntity();
+      expect(teamEntity.isAssignable).toEqual(false);
+    });
   });
 
   describe('Methods', () => {

@@ -3198,6 +3198,7 @@
     "teams.set_as": "Définir comme",
     "teams.set_assignable_team": "Affectable aux tâches",
     "teams.set_escalation_team": "Constituer l'équipe d'escalade",
+    "teams.set_assignable_team": "Affectable aux tâches",
     "teams.standard_team_created": "L’équipe régulière a été créée.",
     "teams.status": "Statut",
     "teams.table.related_events": "Événements",
