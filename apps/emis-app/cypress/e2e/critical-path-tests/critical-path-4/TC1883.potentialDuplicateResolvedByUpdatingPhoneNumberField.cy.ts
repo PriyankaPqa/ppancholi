@@ -84,7 +84,7 @@ describe('#TC1833# - Potential duplicate can be resolved by updating any of the 
             const mockUpdateHouseholdMemberPhoneNumber = mockUpdateHouseholdMemberPhoneNumberRequest(updatedPhoneNumber);
             this.provider.households.updatePersonContactInformation(this.duplicateHouseholdPrimaryBeneficiaryId, false, mockUpdateHouseholdMemberPhoneNumber);
 
-            if (roleName === UserRoles.level6 && UserRoles.level5) {
+            if (roleName === UserRoles.level6 || roleName === UserRoles.level5) {
               assertUpdatedPotentialDuplicateRecordTabSteps({
                 firstName: this.originalHouseholdPrimaryBeneficiaryFirstName,
                 lastName: this.originalHouseholdPrimaryBeneficiaryLastName,
@@ -105,7 +105,7 @@ describe('#TC1833# - Potential duplicate can be resolved by updating any of the 
               rationale,
             });
 
-            if (roleName === UserRoles.level6 && UserRoles.level5) {
+            if (roleName === UserRoles.level6 || roleName === UserRoles.level5) {
               assertUpdatedPotentialDuplicateRecordTabSteps({
                 firstName: this.comparisonHouseholdPrimaryBeneficiaryFirstName,
                 lastName: this.comparisonHouseholdPrimaryBeneficiaryLastName,
