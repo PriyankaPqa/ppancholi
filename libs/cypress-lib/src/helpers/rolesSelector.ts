@@ -55,6 +55,10 @@ export const getBoundaryRoles = (roles: UserRoles[]) => {
   const highestRole = getHighestRole(roles)[0];
   const lowestRole = getLowestRole(roles)[0];
 
+  if (!highestRole && !lowestRole) {
+    return roles;
+  }
+
   if (highestRole === lowestRole) {
     return [highestRole];
   }

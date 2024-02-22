@@ -83,6 +83,7 @@ describe('#TC1833# - Potential duplicate can be resolved by updating any of the 
             const updatedPhoneNumber = faker.phone.number('5143######');
             const mockUpdateHouseholdMemberPhoneNumber = mockUpdateHouseholdMemberPhoneNumberRequest(updatedPhoneNumber);
             this.provider.households.updatePersonContactInformation(this.duplicateHouseholdPrimaryBeneficiaryId, false, mockUpdateHouseholdMemberPhoneNumber);
+            householdProfilePage.refreshUntilHouseholdContactInformationUpdated(updatedPhoneNumber);
 
             if (roleName === UserRoles.level6 || roleName === UserRoles.level5) {
               assertUpdatedPotentialDuplicateRecordTabSteps({

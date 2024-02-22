@@ -158,6 +158,7 @@ export class HouseholdProfilePage {
 
   public getDateOfBirth() {
     const dateOfBirthArray: string[] = [];
+    // eslint-disable-next-line
     return cy.getByDataTest(this.dateOfBirth).each(($el) => {
       const dateOfBirth = $el.text().trim();
       dateOfBirthArray.push(dateOfBirth);
@@ -166,6 +167,7 @@ export class HouseholdProfilePage {
 
   public getGender() {
     const genderArray: string[] = [];
+    // eslint-disable-next-line
     return cy.getByDataTest(this.gender).should('be.visible').each(($el) => {
       const genderText = $el.text().trim();
       genderArray.push(genderText);
@@ -365,5 +367,19 @@ export class HouseholdProfilePage {
 
   public getMakeHouseholdPrimaryButtons() {
     return cy.getByDataTest(this.memberMakePrimary);
+  }
+
+  public refreshUntilHouseholdContactInformationUpdated(phoneNumber: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => cy.contains('Household members').should('be.visible'),
+        checkCondition: () => Cypress.$('[data-test=\'household_profile_member_info_data_phone_numbers\']').text().includes(phoneNumber),
+      },
+      {
+        timeoutInSec: 45,
+        errorMsg: 'Failed to update Household contact info',
+        foundMsg: 'Household contact information updated',
+      },
+    );
   }
 }
