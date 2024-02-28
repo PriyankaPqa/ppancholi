@@ -13,6 +13,7 @@ import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import Component from './TaskDetails.vue';
 
 const localVue = createLocalVue();
@@ -830,7 +831,7 @@ describe('TaskDetails.vue', () => {
         await hook.call(wrapper.vm);
         await flushPromises();
 
-        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-10', false);
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-10', GlobalHandler.Partial);
       });
 
       it('should not call userAccountMetadataStore fetch when is personal task and user doesnt have L5 ', async () => {
@@ -857,7 +858,7 @@ describe('TaskDetails.vue', () => {
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
         expect(wrapper.vm.getTeamsByEventAndStoreAssignedTeam).toHaveBeenCalled();
-        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', GlobalHandler.Partial);
       });
 
       it('should set data properly if is team task', async () => {

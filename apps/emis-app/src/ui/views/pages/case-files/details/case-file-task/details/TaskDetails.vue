@@ -178,6 +178,7 @@ import { ITeamEntity } from '@libs/entities-lib/team';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 import TaskHistoryDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskHistoryDialog.vue';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileTask, caseFileDetail).extend({
@@ -290,17 +291,17 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     await useTaskStore().fetchTaskCategories();
     if (this.isTeamTask) {
       await Promise.all([
-        useUserAccountMetadataStore().fetch(this.task.createdBy, false),
+        useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
         this.getTeamsByEventAndStoreAssignedTeam(),
       ]);
       this.selectedTaskNameId = this.task.name?.optionItemId;
       this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
       this.isWorkingOn = !!this.task.userWorkingOn;
       if (this.isWorkingOn) {
-        await useUserAccountMetadataStore().fetch(this.task.userWorkingOn, false);
+        await useUserAccountMetadataStore().fetch(this.task.userWorkingOn, GlobalHandler.Partial);
       }
     } else if (this.$hasLevel(UserRoles.level5)) {
-      await useUserAccountMetadataStore().fetch(this.task.createdBy, false);
+      await useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial);
     }
     this.loading = false;
   },

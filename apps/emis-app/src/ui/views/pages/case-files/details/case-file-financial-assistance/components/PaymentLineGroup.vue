@@ -55,7 +55,6 @@
       :is-group-cancelled="isCancelled"
       :is-completed="isCompleted"
       :disable-delete-button="disableDeleteButton"
-      :disable-cancel-button="disableCancelButton"
       :items="items"
       @edit-payment-line="$emit('edit-payment-line', $event)"
       @cancel-payment-line="$emit('cancel-payment-line', $event)"
@@ -99,6 +98,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { GlobalHandler } from '@libs/services-lib/http-client';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import PaymentLineItem from './PaymentLineItem.vue';
 import PaymentCancellationReason from './PaymentCancellationReason.vue';
 import PaymentCancelledBy from './PaymentCancelledBy.vue';
@@ -176,7 +176,7 @@ export default Vue.extend({
     },
 
     total(): number {
-      return FinancialAssistancePaymentGroup.total([this.paymentGroup]);
+      return FinancialAssistancePaymentGroup.total([this.paymentGroup], this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine));
     },
 
     modality(): string {
@@ -232,10 +232,6 @@ export default Vue.extend({
       }
     },
 
-    disableCancelButton(): boolean {
-      return this.paymentGroup.lines.filter((l) => !l.isCancelled).length < 2;
-    },
-
     // eslint-disable-next-line complexity
     paymentStatusesByModality(): Array<PaymentStatus> {
       /*
@@ -250,7 +246,7 @@ export default Vue.extend({
       const isLevel3Plus = this.$hasLevel(UserRoles.level3);
       const isLevel6 = this.$hasLevel(UserRoles.level6);
 
-      if (!isFinance && !isLevel1Plus) {
+      if ((!isFinance && !isLevel1Plus) || (this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) && this.isCancelled)) {
         return [currentStatus];
       }
 
@@ -354,9 +350,13 @@ export default Vue.extend({
       }
 
       if (this.paymentGroup.groupingInformation.modality !== EPaymentModalities.ETransfer) {
+        const mainMessage = this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.message', { modality: this.modality.toLowerCase() });
+        const irreversibleMessage = this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.message.irreversible');
+        const message = `${mainMessage} ${this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) ? irreversibleMessage : ''}`;
         const userChoice = await this.$confirm({
           title: this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.title'),
-          messages: this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.message', { modality: this.modality.toLowerCase() }),
+          messages: null,
+          htmlContent: message,
         });
 
         if (userChoice) {

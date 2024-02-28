@@ -11,6 +11,16 @@
     @close="$emit('close')">
     <template #default>
       <div>
+        <div
+          v-if="$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine)"
+          class=" d-flex pb-5 warning-text"
+          data-test="paymentGroup__cancellationWarning">
+          <v-icon size="20" color="red" class="pr-1">
+            mdi-alert-outline
+          </v-icon>
+          {{ $t(isLineLevel ? 'caseFile.financialAssistance.cancelPaymentGroup.confirm.message.cancellationReason'
+            : 'caseFile.financialAssistance.cancelPaymentGroup.confirm.message.cancellationReason.lines') }}
+        </div>
         <div class="rc-body16 fw-bold mb-4">
           {{ $t('caseFile.financialAssistance.cancelPaymentDialog.message') }}
         </div>
@@ -31,6 +41,7 @@ import { RcConfirmationDialog, VSelectWithValidation } from '@libs/component-lib
 import {
   EPaymentCancellationReason,
 } from '@libs/entities-lib/financial-assistance-payment';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
@@ -41,8 +52,16 @@ export default Vue.extend({
     VSelectWithValidation,
   },
 
+  props: {
+    isLineLevel: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
+      FeatureKeys,
       cancellationReason: null as EPaymentCancellationReason,
       cancellationReasons: helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'),
     };
@@ -55,3 +74,10 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped lang="scss">
+  .warning-text {
+    color: red
+  }
+
+</style>

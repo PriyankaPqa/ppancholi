@@ -316,6 +316,7 @@ export default mixins(caseFileDetail).extend({
       if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer) {
         let total = FinancialAssistancePaymentGroup.total(
           this.financialAssistance.groups.filter((g) => g.groupingInformation.modality === EPaymentModalities.ETransfer),
+          this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine),
         );
         // we remove the currentLine if it was also an etransfer - we are editing it
         if (this.currentGroup?.groupingInformation?.modality === EPaymentModalities.ETransfer) {

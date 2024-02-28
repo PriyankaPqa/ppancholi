@@ -10,6 +10,7 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { UserRoles } from '@libs/entities-lib/user';
 import flushPromises from 'flush-promises';
 import { GlobalHandler } from '@libs/services-lib/http-client';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -587,6 +588,15 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.cancellationDate = '2021-01-01';
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
+
+      it('returns current status if status is cancelled and feature flag is on', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
+        paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        paymentGroup.cancellationBy = 'id';
+        paymentGroup.cancellationDate = 'date';
+        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (fb) => fb === FeatureKeys.FinancialAssistanceRemovePaymentLine } });
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
+      });
     });
   });
 
@@ -619,6 +629,36 @@ describe('PaymentLineGroup.vue', () => {
         await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
         expect(wrapper.vm.showCancelConfirmationReason).toBeTruthy();
         expect(wrapper.emitted('update-payment-status')).toBeUndefined();
+      });
+
+      it('for not etransfer, opens the confirmation dialog with the right text if feature flag is off', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
+        await mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.$t = jest.fn((k) => k);
+        wrapper.vm.$hasFeature = jest.fn((fb) => fb !== FeatureKeys.FinancialAssistanceRemovePaymentLine);
+
+        await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.financialAssistance.cancelPaymentGroup.confirm.title',
+          messages: null,
+          htmlContent: ('caseFile.financialAssistance.cancelPaymentGroup.confirm.message '),
+        });
+      });
+
+      it('for not etransfer, opens the confirmation dialog with the right text if feature flag is on', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
+        await mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.$t = jest.fn((k) => k);
+        wrapper.vm.$hasFeature = jest.fn((fb) => fb === FeatureKeys.FinancialAssistanceRemovePaymentLine);
+
+        await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.financialAssistance.cancelPaymentGroup.confirm.title',
+          messages: null,
+          htmlContent: ('caseFile.financialAssistance.cancelPaymentGroup.confirm.message caseFile.financialAssistance.cancelPaymentGroup.confirm.message.irreversible'),
+        });
       });
     });
 

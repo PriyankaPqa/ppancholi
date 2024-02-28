@@ -91,7 +91,7 @@
                     {{ getGroupTitle(group) }}
                   </td>
                   <td class="text-right" data-test="caseFile-financialAssistance-expand-groupTotal">
-                    {{ $formatCurrency(groupTotal([group])) }}
+                    {{ $formatCurrency(groupTotal([group], $hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine))) }}
                   </td>
                   <td>
                     <v-icon size="12" color="grey darken-2">
@@ -180,6 +180,7 @@ import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
   ApprovalAction,
   ApprovalStatus,
@@ -217,6 +218,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   data() {
     return {
       FilterKey,
+      FeatureKeys,
       allItemsIds: [] as string[],
       searchResultIds: [] as string[],
       count: 0,

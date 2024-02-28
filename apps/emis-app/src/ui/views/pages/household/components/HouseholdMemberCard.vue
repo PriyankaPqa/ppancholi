@@ -173,6 +173,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
+import { MIN_AGE_REGISTRATION } from '@libs/registration-lib/constants/validations';
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 import SplitHouseholdDialog from '../split/SplitHouseholdDialog.vue';
 
@@ -282,7 +283,7 @@ export default Vue.extend({
 
     underageWarning(): string {
       return `<div class='underage-warning-text d-flex pb-2'><i class='v-icon mdi mdi-alert-outline underage-alert-icon pr-2'></i>
-      ${this.$t('household.profile.member.warning.member-under-16')}</div>`;
+      ${this.$t('household.profile.member.warning.member-underage', { age: MIN_AGE_REGISTRATION })}</div>`;
     },
 
     canChangePrimary():boolean {

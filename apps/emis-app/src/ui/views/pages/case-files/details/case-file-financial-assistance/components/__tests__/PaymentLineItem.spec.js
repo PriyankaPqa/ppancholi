@@ -48,6 +48,15 @@ describe('CaseFilePaymentLineItem.vue', () => {
       await mountWrapper();
     });
 
+    describe('cancelled-text', () => {
+      it('displays if the feature is on and the line is cancelled', async () => {
+        paymentLine.paymentStatus = PaymentLineStatus.Cancelled;
+        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (fn) => fn === FeatureKeys.FinancialAssistanceRemovePaymentLine } });
+        wrapper.vm.$hasFeature = jest.fn((fn) => fn === FeatureKeys.FinancialAssistanceRemovePaymentLine);
+        expect(wrapper.findDataTest('paymentLineItem__cancelled_label').exists()).toBeTruthy();
+      });
+    });
+
     describe('paymentLineItem__editBtn', () => {
       it('is rendered', () => {
         expect(wrapper.findDataTest('paymentLineItem__editBtn').exists()).toBeTruthy();
@@ -291,11 +300,20 @@ describe('CaseFilePaymentLineItem.vue', () => {
     });
 
     describe('showCancelButton', () => {
-      it('returns true when user is level 6,feature flag is on and status is isCompleted', async () => {
+      it('returns true when user is level 6,feature flag is on and status is isCompleted and payment line status is not cancelled', async () => {
+        paymentLine.paymentStatus = null;
         await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine, $hasLevel: () => true },
         });
         await wrapper.setProps({ isCompleted: true });
         expect(wrapper.vm.showCancelButton).toBeTruthy();
+      });
+
+      it('returns false when user is level 6,feature flag is on and status is isCompleted and payment line status is cancelled', async () => {
+        paymentLine.paymentStatus = PaymentLineStatus.Cancelled;
+        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine, $hasLevel: () => true },
+        });
+        await wrapper.setProps({ isCompleted: true });
+        expect(wrapper.vm.showCancelButton).toBeFalsy();
       });
 
       it('returns false if user is not level 6 ', async () => {

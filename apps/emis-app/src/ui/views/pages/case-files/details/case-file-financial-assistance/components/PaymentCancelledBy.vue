@@ -3,10 +3,10 @@
     <v-icon small color="red" class="mr-4">
       mdi-alert
     </v-icon>
-    <div class="mr-4">
+    <div class="mr-4" data-test="financialPayment_cancellation_by_text">
       {{ cancellationByText }}
     </div>
-    <div v-if="cancellationReasonText">
+    <div v-if="reason !== null && cancellationReasonText" data-test="financialPayment_cancellation_reason">
       {{ cancellationReasonText }}
     </div>
   </div>
@@ -14,11 +14,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import helpers from '@/ui/helpers/helpers';
 import { system } from '@/constants/system';
 import { EPaymentCancellationReason } from '@libs/entities-lib/financial-assistance-payment';
+import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
   name: 'PaymentCancelledBy',

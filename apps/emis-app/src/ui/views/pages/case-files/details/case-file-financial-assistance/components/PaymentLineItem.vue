@@ -40,12 +40,20 @@
           {{ $t('common.cancel') }}
         </v-btn>
 
-        <span v-if="paymentLine.paymentStatus === PaymentLineStatus.Cancelled" class="cancelled-text rc-body14 mr-1">{{ $t("caseFile.financialAssistance.cancelled") }}</span>
+        <span
+          v-if="$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) && paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
+          class="cancelled-text rc-body14 mr-1"
+          data-test="paymentLineItem__cancelled_label">
+          {{ $t("caseFile.financialAssistance.cancelled") }}
+        </span>
 
         <div
           data-test="paymentLineItem__amount"
           class="amount rc-body14"
-          :class="{ 'text-decoration-line-through': isGroupCancelled || paymentLine.paymentStatus === PaymentLineStatus.Cancelled }">
+          :class="{
+            'text-decoration-line-through': isGroupCancelled
+              || ($hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) && paymentLine.paymentStatus === PaymentLineStatus.Cancelled),
+          }">
           {{ amounts }}
         </div>
 
@@ -70,7 +78,7 @@
     </div>
 
     <payment-cancelled-by
-      v-if="paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
+      v-if="$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) && paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
       is-line-level
       :by="paymentLine.cancellationBy"
       :date="paymentLine.cancellationDate"
@@ -78,6 +86,7 @@
 
     <payment-cancellation-reason
       v-if="showCancellationReasonSelect"
+      is-line-level
       @cancel-with-reason="onCancelWithReason"
       @close="showCancellationReasonSelect = false" />
   </div>
@@ -151,12 +160,7 @@ export default Vue.extend({
       default: false,
     },
 
-    disableCancelButton: {
-      type: Boolean,
-      default: false,
-    },
-
-    items: {
+   items: {
       type: Array as () => IFinancialAssistanceTableItem[],
       required: true,
     },
@@ -170,6 +174,7 @@ export default Vue.extend({
       PayeeType,
       showCancellationReasonSelect: false,
       PaymentLineStatus,
+      FeatureKeys,
     };
   },
 

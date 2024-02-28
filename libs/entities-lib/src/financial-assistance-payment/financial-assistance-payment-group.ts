@@ -61,13 +61,13 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
     return modality === EPaymentModalities.Cheque;
   }
 
-  static total(paymentGroups: IFinancialAssistancePaymentGroup[]): number {
+  static total(paymentGroups: IFinancialAssistancePaymentGroup[], hasFeature:boolean): number {
     let total = 0;
 
     paymentGroups.forEach((group: IFinancialAssistancePaymentGroup) => {
       if (group.paymentStatus !== PaymentStatus.Cancelled && group.status === Status.Active) {
         group.lines?.forEach((line: IFinancialAssistancePaymentLine) => {
-          if (line.status === Status.Active && line.paymentStatus !== PaymentLineStatus.Cancelled) {
+          if (line.status === Status.Active && (!hasFeature || line.paymentStatus !== PaymentLineStatus.Cancelled)) {
             total += Number(line.actualAmount != null ? line.actualAmount : line.amount);
           }
         });
