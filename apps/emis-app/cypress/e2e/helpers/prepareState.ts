@@ -37,8 +37,8 @@ import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
-import { HouseholdStatus } from '@libs/entities-lib/household';
-import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
+import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
+import { ECurrentAddressTypes, ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { linkEventToTeamForManyRoles } from './teams';
 
@@ -109,6 +109,12 @@ export interface MassActionDataCorrectionFileParams {
   dataCorrectionType: MassActionDataCorrectionType,
   generatedCsvFile: string,
   correctionType: string
+}
+
+export interface IPrepareStateHousehold {
+  provider: IProvider,
+  registrationResponse: IDetailedRegistrationResponse,
+  mockCreateHousehold: ICreateHouseholdRequest,
 }
 
 /**
