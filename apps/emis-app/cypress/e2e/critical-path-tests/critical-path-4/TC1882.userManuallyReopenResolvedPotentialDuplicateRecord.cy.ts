@@ -31,7 +31,9 @@ const cannotRoles = [
 ];
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
-
+let resultOriginalHousehold: IPrepareStateHousehold;
+let resultComparisonHousehold: IDetailedRegistrationResponse;
+let createDuplicateHousehold: ICreateHouseholdRequest;
 let accessTokenL6 = '';
 const rationale = 'I am re-opening this duplicate';
 
@@ -56,9 +58,6 @@ describe('#TC1882# - User can manually re-open a resolved potential duplicate re
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          let resultOriginalHousehold: IPrepareStateHousehold;
-          let resultComparisonHousehold: IDetailedRegistrationResponse;
-          let createDuplicateHousehold: ICreateHouseholdRequest;
           cy.then(async function () {
             resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
             createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
@@ -137,13 +136,17 @@ describe('#TC1882# - User can manually re-open a resolved potential duplicate re
   describe('Cannot roles', () => {
     before(() => {
       cy.then(async function () {
-        const resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
-        const createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
+        resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+        createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
           this.eventCreated.id,
           resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
         );
-        const resultComparisonHousehold = await this.provider.households.postCrcRegistration(createDuplicateHousehold);
-        resolvePotenialDuplicateRecord(this.provider, resultComparisonHousehold.caseFile.householdId);
+        resultComparisonHousehold = await this.provider.households.postCrcRegistration(createDuplicateHousehold);
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000);
+      cy.then(async function () {
+        await resolvePotenialDuplicateRecord(this.provider, resultComparisonHousehold.caseFile.householdId);
         cy.wrap(resultComparisonHousehold.caseFile.householdId).as('householdId');
       });
     });
