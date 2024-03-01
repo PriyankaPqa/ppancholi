@@ -95,18 +95,18 @@ export default Vue.extend({
      * Build pagination parameters to sent for azure
      */
     setPaginationParams() {
-      const {
-        orderBy,
-        pageIndex,
-      } = this.params;
+        const {
+          orderBy,
+          pageIndex,
+        } = this.params;
 
-      this.azureSearchParams.skip = this.getSkip;
-      this.azureSearchParams.top = this.getTop;
-      this.previousPageIndex = pageIndex;
+        this.azureSearchParams.skip = this.getSkip;
+        this.azureSearchParams.top = this.getTop;
+        this.previousPageIndex = pageIndex;
 
-      if (orderBy) {
-        this.azureSearchParams.orderBy = this.getOrderBy;
-      }
+        if (orderBy) {
+          this.azureSearchParams.orderBy = this.getOrderBy;
+        }
     },
 
     setFilterParams() {

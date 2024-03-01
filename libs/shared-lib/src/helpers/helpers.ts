@@ -81,7 +81,7 @@ export default {
   async callSearchInInBatches<TEntity, TMetadata>(
     { service, ids, searchInFilter, otherFilter = '', otherOptions = {}, batchSize = 40, api = 'search' }
     : { service: any, ids: string[], searchInFilter: Record<string, unknown> | string,
-      otherOptions?: Record<string, unknown>, otherFilter?: string, batchSize?: number, api?:string },
+      otherOptions?: Record<string, unknown>, otherFilter?: string | Record<string, unknown>, batchSize?: number, api?:string },
   ) {
     if (!ids?.length || !searchInFilter || !service) {
       return null;
@@ -100,6 +100,9 @@ export default {
       } else if (typeof searchInFilter === 'object' && !isEmpty(searchInFilter)) {
         try {
           filter = JSON.parse(JSON.stringify(searchInFilter).replace('"{ids}"', JSON.stringify(b)));
+          if (typeof otherFilter === 'object' && !isEmpty(otherFilter)) {
+            filter = { ...(filter as Record<string, unknown>), ...otherFilter };
+          }
         } catch {
           throw new Error('There was an error in parsing the filter in callSearchInInBatches');
         }

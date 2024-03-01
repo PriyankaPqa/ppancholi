@@ -1,7 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import {
-  mockCombinedTaskData,
   mockPersonalTaskEntity,
   mockTaskMetadata,
   mockTeamTaskEntity,
@@ -10,25 +9,27 @@ import {
 } from '@libs/entities-lib/task';
 import { mockOptionItem, mockOptionItems } from '@libs/entities-lib/optionItem';
 import { mockProvider } from '@/services/provider';
-import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
-import { mockTeamEntities } from '@libs/entities-lib/team';
-import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { Status } from '@libs/entities-lib/base';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import Component from './TasksTable.vue';
 
 const localVue = createLocalVue();
 const { pinia, taskStore } = useMockTaskStore();
 const { userStore } = useMockUserStore(pinia);
+const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 const services = mockProvider();
 taskStore.getTaskName = jest.fn(() => mockOptionItems());
+userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
+userStore.getUserId = jest.fn(() => 'user-1');
 
 describe('TasksTable.vue', () => {
   let wrapper;
@@ -42,6 +43,14 @@ describe('TasksTable.vue', () => {
       data() {
         return {
           personalTaskOnly: false,
+          teamTaskOnly: false,
+          hasActiveToggle: false,
+          options: {
+            page: 1,
+            sortBy: ['Entity/DateAdded'],
+            sortDesc: [true],
+          },
+          params: { orderBy: 'asc' },
         };
       },
       computed: {
@@ -64,6 +73,31 @@ describe('TasksTable.vue', () => {
           metadata: mockTaskMetadata({ id: '1' }),
           pinned: false,
         }],
+
+        personalTaskOnlyFilter() {
+          return {
+            or: {
+              Entity: {
+                TaskType: {
+                  [ITEM_ROOT]: TaskType.Personal,
+                },
+                CreatedBy: {
+                  [ITEM_ROOT]: 'mock-user-id',
+                },
+              },
+            },
+          };
+        },
+
+        teamTaskOnlyFilter() {
+          return {
+            or: [
+              { Entity: {
+                AssignedTeamId: 'id',
+              },
+              }],
+          };
+        },
       },
       mocks: {
         $services: services,
@@ -129,7 +163,6 @@ describe('TasksTable.vue', () => {
             isInCaseFile: true,
           },
         }, false);
-        await flushPromises();
         const element = wrapper.findComponent(RcAddButtonWithMenu);
         expect(element.exists()).toBeTruthy();
       });
@@ -137,9 +170,35 @@ describe('TasksTable.vue', () => {
 
     describe('task-table-personal-task-switch', () => {
       it('should be rendered', async () => {
-        await doMount({}, false);
+        await doMount();
         const element = wrapper.findDataTest('task-table-personal-task-switch');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('should call onPersonalTaskToggleChange', async () => {
+        wrapper.vm.onPersonalTaskToggleChange = jest.fn();
+        const element = wrapper.findDataTest('task-table-personal-task-switch');
+        await element.vm.$emit('change', true);
+        expect(wrapper.vm.onPersonalTaskToggleChange).toHaveBeenCalledWith(true);
+        await element.vm.$emit('change', false);
+        expect(wrapper.vm.onPersonalTaskToggleChange).toHaveBeenCalledWith(false);
+      });
+    });
+
+    describe('task-table-team-task-switch', () => {
+      it('should be rendered', async () => {
+        await doMount({}, false);
+        const element = wrapper.findDataTest('task-table-team-task-switch');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should call onTeamTaskToggleChange', async () => {
+        wrapper.vm.onTeamTaskToggleChange = jest.fn();
+        const element = wrapper.findDataTest('task-table-team-task-switch');
+        await element.vm.$emit('change', true);
+        expect(wrapper.vm.onTeamTaskToggleChange).toHaveBeenCalledWith(true);
+        await element.vm.$emit('change', false);
+        expect(wrapper.vm.onTeamTaskToggleChange).toHaveBeenCalledWith(false);
       });
     });
 
@@ -528,6 +587,43 @@ describe('TasksTable.vue', () => {
         }]);
       });
     });
+
+    describe('personalTaskOnlyFilter', () => {
+      it('should return correct filter object', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+        });
+        expect(wrapper.vm.personalTaskOnlyFilter).toEqual({
+          or: {
+            Entity: {
+              TaskType: {
+                [ITEM_ROOT]: TaskType.Personal,
+              },
+              CreatedBy: {
+                [ITEM_ROOT]: wrapper.vm.userId,
+              },
+            },
+          },
+        });
+      });
+    });
+
+    describe('teamTaskOnlyFilter', () => {
+      it('should return correct filter object based on userAccountMetadata', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+        });
+        expect(wrapper.vm.teamTaskOnlyFilter).toEqual({
+          or: {
+            Entity: {
+              AssignedTeamId: { searchIn_az: ['team-mock-id'] },
+            },
+          },
+        });
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -539,6 +635,35 @@ describe('TasksTable.vue', () => {
 
           await wrapper.vm.applyCustomFilter(true, wrapper.vm.personalTaskOnlyFilter);
 
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenCalledWith(expected, null);
+        });
+
+        it('should should clean up existing toggle filter value before generation a new filter object', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            userFilters: {
+              and: {
+                Entity: {
+                  MockKey: 'MockValue',
+                },
+              },
+              or: {
+                Entity: {
+                  MockKeyToBeRemove: 'MockValueToBeRemove',
+                },
+              },
+            },
+          });
+          const userFiltersAfterCleanUp = {
+            and: {
+              Entity: {
+                MockKey: 'MockValue',
+              },
+            },
+          };
+          const expected = { preparedFilters: { ...userFiltersAfterCleanUp, ...wrapper.vm.personalTaskOnlyFilter }, searchFilters: wrapper.vm.userSearchFilters };
+          await wrapper.vm.applyCustomFilter(true, wrapper.vm.personalTaskOnlyFilter);
           expect(wrapper.vm.onApplyFilter)
             .toHaveBeenCalledWith(expected, null);
         });
@@ -608,13 +733,11 @@ describe('TasksTable.vue', () => {
       });
 
       it('should be true when task type is personal and user is the creator', async () => {
-        userStore.getUserId = jest.fn(() => 'user-1');
         const taskEntity = mockPersonalTaskEntity({ createdBy: 'user-1' });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be true when task type is team, status is InProgress and user has no L1 but is creator', async () => {
-        userStore.getUserId = jest.fn(() => 'user-1');
         await doMount({
           pinia: getPiniaForUser(UserRoles.level0),
         });
@@ -631,36 +754,17 @@ describe('TasksTable.vue', () => {
       });
 
       it('should be true when task type is team, status is InProgress and user has L1', async () => {
-        userStore.getUserId = jest.fn(() => 'user-1');
         await doMount({}, true, 1);
         const taskEntity = mockTeamTaskEntity({ createdBy: 'user-2' });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be false if task is Completed and user has no L6 and user is the creator', async () => {
-        userStore.getUserId = jest.fn(() => 'user-1');
         await doMount({
           pinia: getPiniaForUser(UserRoles.level1),
         });
         const taskEntity = mockTeamTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'user-1' });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(false);
-      });
-    });
-
-    describe('getTeamsByEvent', () => {
-      it('should call service getTeamsByEvent and set data properly', async () => {
-        await doMount({
-          propsData: {
-            caseFile: mockCaseFileEntity({ eventId: 'event-1' }),
-          },
-          computed: {
-            parsedTableData: () => mockCombinedTaskData(),
-          },
-        });
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => mockTeamEntities());
-        await wrapper.vm.getTeamsByEvent();
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-1');
-        expect(wrapper.vm.teamsByEvent).toEqual(mockTeamEntities());
       });
     });
 
@@ -759,6 +863,50 @@ describe('TasksTable.vue', () => {
             }, { name: 'filterState' });
         });
       });
+
+      describe('when user is using my team task filter', () => {
+        it('should call onApplyFilter with proper filters if filters panel also', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            teamTaskOnly: true,
+          });
+
+          const preparedFilters = { test: {} };
+
+          await wrapper.vm.onApplyFilterLocal({
+            preparedFilters,
+            searchFilters: null,
+          }, { name: 'filterState' });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters: { ...preparedFilters, ...wrapper.vm.teamTaskOnlyFilter },
+              searchFilters: null,
+            }, { name: 'filterState' });
+        });
+      });
+
+      describe('when user is not using my team task filter', () => {
+        it('should call onApplyFilter with proper filters if filters panel also', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            teamTaskOnly: false,
+          });
+
+          const preparedFilters = { test: {} };
+
+          await wrapper.vm.onApplyFilterLocal({
+            preparedFilters,
+            searchFilters: null,
+          }, { name: 'filterState' });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters: { ...preparedFilters },
+              searchFilters: null,
+            }, { name: 'filterState' });
+        });
+      });
     });
 
     describe('getEditTaskRoute', () => {
@@ -790,62 +938,67 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.actioningEventId).toEqual('mock-event-id-1');
       });
     });
-  });
 
-  describe('watcher', () => {
-    describe('personalTaskOnly', () => {
-      it('should call applyCustomFilter when is true', async () => {
-        wrapper.vm.applyCustomFilter = jest.fn();
-        userStore.getUserId = jest.fn(() => 'mock-user-id-1');
-        await wrapper.setData({
-          personalTaskOnly: true,
-          personalTaskOnlyFilter: {
-            Entity: {
-              TaskType: {
-                [ITEM_ROOT]: TaskType.Personal,
-              },
-              CreatedBy: {
-                [ITEM_ROOT]: 'mock-user-id-1',
-              },
-            },
+    describe('onTeamTaskToggleChange', () => {
+      it('should call applyCustomFilter with correct params and set personalTaskOnly to false', async () => {
+        await doMount({
+          data() {
+            return {
+              personalTaskOnly: true,
+              params: { orderBy: 'asc' },
+            };
           },
         });
-        await flushPromises();
+        wrapper.vm.applyCustomFilter = jest.fn();
+        wrapper.vm.onTeamTaskToggleChange(true);
+        expect(wrapper.vm.personalTaskOnly).toEqual(false);
+        expect(wrapper.vm.applyCustomFilter).toHaveBeenCalledWith(true, wrapper.vm.teamTaskOnlyFilter);
+      });
+    });
+
+    describe('onPersonalTaskToggleChange', () => {
+      it('should call applyCustomFilter with correct params and set teamTaskOnly to false', async () => {
+        await doMount({
+          data() {
+            return {
+              teamTaskOnly: true,
+              params: { orderBy: 'asc' },
+            };
+          },
+        });
+        wrapper.vm.applyCustomFilter = jest.fn();
+        wrapper.vm.onPersonalTaskToggleChange(true);
+        expect(wrapper.vm.teamTaskOnly).toEqual(false);
         expect(wrapper.vm.applyCustomFilter).toHaveBeenCalledWith(true, wrapper.vm.personalTaskOnlyFilter);
       });
     });
   });
 
   describe('lifecycle', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
     describe('created', () => {
       it('should call services fetch data when is in case file', async () => {
         await doMount({
           propsData: {
             isInCaseFile: true,
           },
+          data() {
+            return {
+              options: {
+                page: 1,
+                sortBy: ['Entity/DateAdded'],
+                sortDesc: [true],
+              },
+            };
+          },
         });
-        await flushPromises();
-        wrapper.vm.getTeamsByEvent = jest.fn();
         wrapper.vm.search = jest.fn();
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
         const options = mockOptionItems();
         taskStore.getTaskName = jest.fn(() => options);
-        expect(wrapper.vm.getTeamsByEvent).toHaveBeenCalled();
-      });
-
-      it('should call getTeamsByEvent when is not in case file', async () => {
-        await doMount({
-          propsData: {
-            isInCaseFile: false,
-          },
-        });
-        await flushPromises();
-        wrapper.vm.getTeamsByEvent = jest.fn();
-        wrapper.vm.search = jest.fn();
-        const hook = wrapper.vm.$options.created[0];
-        await hook.call(wrapper.vm);
-        expect(wrapper.vm.getTeamsByEvent).not.toHaveBeenCalled();
       });
 
       it('should set saveState to ture and call loadState', async () => {

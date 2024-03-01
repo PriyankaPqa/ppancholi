@@ -35,10 +35,28 @@
             <div class="d-flex">
               <div class="d-flex">
                 <v-switch
+                  v-model="teamTaskOnly"
+                  data-test="task-table-team-task-switch"
+                  :aria-label="$t('task.task_table.my_team_tasks')"
+                  hide-details
+                  @change="onTeamTaskToggleChange($event)" />
+                <v-icon class="mx-2" small>
+                  mdi-account-multiple
+                </v-icon>
+                <span class="rc-body14">
+                  {{ $t('task.task_table.my_team_tasks') }}
+                </span>
+              </div>
+            </div>
+            <v-divider vertical class="mx-4" />
+            <div class="d-flex">
+              <div class="d-flex">
+                <v-switch
                   v-model="personalTaskOnly"
                   data-test="task-table-personal-task-switch"
                   :aria-label="$t('task.task_table.my_personal_tasks')"
-                  hide-details />
+                  hide-details
+                  @change="onPersonalTaskToggleChange($event)" />
                 <v-icon class="mx-2" small>
                   mdi-account-check
                 </v-icon>
@@ -167,10 +185,10 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
-import { ITeamEntity } from '@libs/entities-lib/team';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'TasksTable',
@@ -203,6 +221,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   data() {
     return {
       personalTaskOnly: false,
+      teamTaskOnly: false,
       options: {
         page: 1,
         sortBy: ['Entity/DateAdded'],
@@ -213,7 +232,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       UserRoles,
       FilterKey,
       TaskStatus,
-      teamsByEvent: [] as ITeamEntity[],
       showTaskActionDialog: false,
       actioningTask: null as ITaskEntity,
       actioningEventId: '',
@@ -222,15 +240,31 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   },
 
   computed: {
+    userId(): string {
+      return useUserStore().getUserId();
+    },
+
     personalTaskOnlyFilter(): Record<string, unknown> {
-      const userId = useUserStore().getUserId();
       return {
-        Entity: {
-          TaskType: {
+        or: {
+          Entity: {
+            TaskType: {
               [ITEM_ROOT]: TaskType.Personal,
+            },
+            CreatedBy: {
+              [ITEM_ROOT]: this.userId,
+            },
           },
-          CreatedBy: {
-            [ITEM_ROOT]: userId,
+        },
+      };
+    },
+
+    teamTaskOnlyFilter(): Record<string, unknown> {
+      const myTeamsIds = useUserAccountMetadataStore().getById(this.userId).teams.map((t) => (t.teamId));
+      return {
+        or: {
+          Entity: {
+            AssignedTeamId: { searchIn_az: myTeamsIds },
           },
         },
       };
@@ -413,23 +447,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
   },
 
-  watch: {
-    personalTaskOnly(newValue, oldValue) {
-      if (oldValue == null || newValue === oldValue) {
-        return;
-      }
-      this.applyCustomFilter(newValue, this.personalTaskOnlyFilter);
-    },
-  },
-
   async created() {
     this.saveState = true;
     this.loadState();
-    if (this.isInCaseFile) {
-      await this.getTeamsByEvent();
-    }
-     await useTaskStore().fetchTaskCategories();
-     },
+    await useTaskStore().fetchTaskCategories();
+  },
 
   methods: {
     applyCustomFilter(value: boolean, filter: Record<string, unknown>) {
@@ -437,6 +459,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
       if (value) {
         // We apply filters from the switch + the ones from the filters panel
+        if (this.userFilters?.or) {
+          // when apply second toggle, clean up the value of the first toggle
+          this.userFilters.or = [];
+        }
         preparedFilters = { ...this.userFilters, ...filter };
       } else if (isEqual(filter, this.userFilters)) {
         preparedFilters = null;
@@ -451,9 +477,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     async onApplyFilterLocal({ preparedFilters, searchFilters }
                                : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
       let finalFilters = preparedFilters;
-
       if (this.personalTaskOnly) {
         finalFilters = { ...finalFilters, ...this.personalTaskOnlyFilter };
+      }
+
+      if (this.teamTaskOnly) {
+        finalFilters = { ...finalFilters, ...this.teamTaskOnlyFilter };
       }
 
       await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
@@ -502,23 +531,15 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       if (this.$hasLevel(UserRoles.level6)) {
         return true;
       }
-      const userId = useUserStore().getUserId();
       if (taskEntity.taskType === TaskType.Team) {
         if (taskEntity.taskStatus === TaskStatus.InProgress) {
-          return this.$hasLevel(UserRoles.level1) || taskEntity.createdBy === userId;
+          return this.$hasLevel(UserRoles.level1) || taskEntity.createdBy === this.userId;
         }
       } else {
-        return taskEntity.createdBy === userId;
+        return taskEntity.createdBy === this.userId;
       }
       return false;
       },
-
-    async getTeamsByEvent() {
-      const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);
-      if (teams) {
-        this.teamsByEvent = teams;
-      }
-    },
 
     setActioningTask(item: ITaskCombined) {
       this.actioningTask = item.entity;
@@ -529,12 +550,24 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     additionalFilters() {
       return {
         personalTaskOnlyFilter: this.personalTaskOnly,
+        teamTaskOnlyFilter: this.teamTaskOnly,
       };
     },
 
     setAdditionalFilters(state: unknown) {
       // eslint-disable-next-line
       this.personalTaskOnly = (state as any)?.personalTaskOnlyFilter || false;
+      this.teamTaskOnly = (state as any)?.teamTaskOnlyFilter || false;
+    },
+
+    onTeamTaskToggleChange(value: boolean) {
+      this.personalTaskOnly = false;
+      this.applyCustomFilter(value, this.teamTaskOnlyFilter);
+    },
+
+    onPersonalTaskToggleChange(value: boolean) {
+      this.teamTaskOnly = false;
+      this.applyCustomFilter(value, this.personalTaskOnlyFilter);
     },
 
     async fetchData(params: IAzureSearchParams) {
