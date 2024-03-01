@@ -58,6 +58,7 @@
                 v-if="task.taskType === TaskType.Team || task.taskStatus === TaskStatus.InProgress"
                 color="primary"
                 small
+                :disabled="task.taskType === TaskType.Team && !$hasLevel(UserRoles.level1)"
                 data-test="task-details-action-button"
                 @click="showTaskActionDialog = true">
                 {{ $t('task.action') }}
@@ -84,7 +85,7 @@
                 :aria-label="$t('task.task_details.working_on_it')"
                 class="ma-0"
                 :loading="toggleLoading"
-                :disabled="toggleLoading"
+                :disabled="!$hasLevel(UserRoles.level1) || toggleLoading"
                 @change="onToggleChange($event)" />
             </div>
           </v-row>
@@ -261,7 +262,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       }
       const userId = useUserStore().getUserId();
       if (this.isTeamTask) {
-        if (this.task.taskStatus === TaskStatus.InProgress) {
+        if (this.task.taskStatus === TaskStatus.InProgress || this.task.taskStatus === TaskStatus.New) {
           return this.$hasLevel(UserRoles.level1) || this.task.createdBy === userId;
         }
       } else {

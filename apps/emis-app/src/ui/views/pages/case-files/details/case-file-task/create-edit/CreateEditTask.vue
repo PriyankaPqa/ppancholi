@@ -25,6 +25,7 @@
                       <v-btn
                         color="primary"
                         small
+                        :disabled="task.taskType === TaskType.Team && !$hasLevel(UserRoles.level1)"
                         @click="showTaskActionDialog = true">
                         {{ $t('task.action') }}
                       </v-btn>
@@ -50,7 +51,7 @@
                         :aria-label="$t('task.task_details.working_on_it')"
                         class="ma-0"
                         :loading="toggleLoading"
-                        :disabled="toggleLoading"
+                        :disabled="!$hasLevel(UserRoles.level1) || toggleLoading"
                         @change="onToggleChange($event)" />
                     </div>
                   </v-row>
@@ -191,6 +192,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       assignedTeamName: '',
       TaskType,
       TaskStatus,
+      UserRoles,
       localTask: new TaskEntity(),
       originalForm: {
         name: null as IListOption,

@@ -137,7 +137,7 @@
       </template>
       <template #[`item.${customColumns.action}`]="{ item }">
         <v-btn
-          v-if="item.entity.taskType === TaskType.Team || item.entity.taskStatus === TaskStatus.InProgress"
+          v-if="canAction(item.entity)"
           color="primary"
           small
           :aria-label="$t('task.action')"
@@ -532,7 +532,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         return true;
       }
       if (taskEntity.taskType === TaskType.Team) {
-        if (taskEntity.taskStatus === TaskStatus.InProgress) {
+        if (taskEntity.taskStatus === TaskStatus.InProgress || taskEntity.taskStatus === TaskStatus.New) {
           return this.$hasLevel(UserRoles.level1) || taskEntity.createdBy === this.userId;
         }
       } else {
@@ -540,6 +540,21 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       }
       return false;
       },
+
+    canAction(taskEntity: ITaskEntity): boolean {
+      if (taskEntity.taskType === TaskType.Team) {
+        return this.$hasLevel(UserRoles.level1);
+      }
+
+      return taskEntity.taskStatus !== TaskStatus.Completed;
+    },
+
+    async getTeamsByEvent() {
+      const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);
+      if (teams) {
+        this.teamsByEvent = teams;
+      }
+    },
 
     setActioningTask(item: ITaskCombined) {
       this.actioningTask = item.entity;

@@ -643,12 +643,37 @@ describe('TaskDetails.vue', () => {
         expect(wrapper.vm.canEdit).toEqual(true);
       });
 
+      it('should be true when task type is team, status is New and user has L1', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount(true, {
+          pinia: getPiniaForUser(UserRoles.level1),
+          computed: {
+            task: () => mockTeamTaskEntity({ createdBy: 'user-2', taskStatus: TaskStatus.New }),
+            isTeamTask: () => true,
+          },
+        });
+        await flushPromises();
+        expect(wrapper.vm.canEdit).toEqual(true);
+      });
+
       it('should be true when task type is team, status is InProgress and user has no L1 but is creator', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
           pinia: getPiniaForUser(UserRoles.level0),
           computed: {
             task: () => mockTeamTaskEntity({ createdBy: 'user-1' }),
+            isTeamTask: () => true,
+          },
+        });
+        expect(wrapper.vm.canEdit).toEqual(true);
+      });
+
+      it('should be true when task type is team, status is New and user has no L1 but is creator', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount(true, {
+          pinia: getPiniaForUser(UserRoles.level0),
+          computed: {
+            task: () => mockTeamTaskEntity({ createdBy: 'user-1', taskStatus: TaskStatus.New }),
             isTeamTask: () => true,
           },
         });

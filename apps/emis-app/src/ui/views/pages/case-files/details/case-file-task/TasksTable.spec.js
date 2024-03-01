@@ -1,6 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import {
+  mockCombinedTaskData,
   mockPersonalTaskEntity,
   mockTaskMetadata,
   mockTeamTaskEntity,
@@ -12,6 +13,8 @@ import { mockProvider } from '@/services/provider';
 import routes from '@/constants/routes';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
+import { mockTeamEntities } from '@libs/entities-lib/team';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
@@ -745,6 +748,15 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
+      it('should be true when task type is team, status is New and user has no L1 but is creator', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount({
+          pinia: getPiniaForUser(UserRoles.level0),
+        });
+        const taskEntity = mockTeamTaskEntity({ createdBy: 'user-1', taskStatus: TaskStatus.New });
+        expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
+      });
+
       it('should be false if task is Completed and user has no L6', async () => {
         await doMount({
           pinia: getPiniaForUser(UserRoles.level1),
@@ -759,12 +771,72 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
+      it('should be true when task type is team, status is New and user has L1', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount({}, true, 1);
+        const taskEntity = mockTeamTaskEntity({ createdBy: 'user-2', taskStatus: TaskStatus.New });
+        expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
+      });
+
       it('should be false if task is Completed and user has no L6 and user is the creator', async () => {
         await doMount({
           pinia: getPiniaForUser(UserRoles.level1),
         });
         const taskEntity = mockTeamTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'user-1' });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(false);
+      });
+    });
+
+    describe('canAction', () => {
+      it('should be true when task is not completed', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount({
+          pinia: getPiniaForUser(UserRoles.level5),
+        }, true, 5);
+        const taskEntity = mockPersonalTaskEntity({ createdBy: 'user-1', taskStatus: TaskStatus.New });
+        expect(wrapper.vm.canAction(taskEntity)).toEqual(true);
+      });
+
+      it('should be false when task is completed', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount({
+          pinia: getPiniaForUser(UserRoles.level5),
+        }, true, 5);
+        const taskEntity = mockPersonalTaskEntity({ createdBy: 'user-1', taskStatus: TaskStatus.Completed });
+        expect(wrapper.vm.canAction(taskEntity)).toEqual(false);
+      });
+
+      it('should be false when is Team task and user is L0', async () => {
+        await doMount({
+          pinia: getPiniaForUser(UserRoles.level0),
+        }, true, 0);
+        const taskEntity = mockTeamTaskEntity();
+        expect(wrapper.vm.canAction(taskEntity)).toEqual(false);
+      });
+
+      it('should be true when is Team task and user is L1', async () => {
+        await doMount({
+          pinia: getPiniaForUser(UserRoles.level1),
+        }, true, 1);
+        const taskEntity = mockTeamTaskEntity();
+        expect(wrapper.vm.canAction(taskEntity)).toEqual(true);
+      });
+    });
+
+    describe('getTeamsByEvent', () => {
+      it('should call service getTeamsByEvent and set data properly', async () => {
+        await doMount({
+          propsData: {
+            caseFile: mockCaseFileEntity({ eventId: 'event-1' }),
+          },
+          computed: {
+            parsedTableData: () => mockCombinedTaskData(),
+          },
+        });
+        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => mockTeamEntities());
+        await wrapper.vm.getTeamsByEvent();
+        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-1');
+        expect(wrapper.vm.teamsByEvent).toEqual(mockTeamEntities());
       });
     });
 

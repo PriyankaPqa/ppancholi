@@ -3118,6 +3118,7 @@
     "task.personal_task_created": "La tâche personnelle a été créée avec succès.",
     "task.set_working_on.error": "Échec de la définition de l'utilisateur travaillant sur cet élément.",
     "task.table_title": "Tâches",
+    "task.task_table_header.assigned_to": "Assigné à",
     "task.task_action_dialog.ActionCompleted": "Action terminée",
     "task.task_action_dialog.ActionCompleted.description": "Mon action terminée, confier la tâche à une autre équipe",
     "task.task_action_dialog.Assign": "Assigner",
