@@ -1816,6 +1816,7 @@
     "errors.team-should-have-only-one-member": "Team should have only one member",
     "errors.team.has-activefile": "Cannot perform action",
     "errors.teams-must-have-a-primary-contact": "Teams must have a primary contact",
+    "errors.team-has-new-or-in-progress-tasks": "Team cannot be set to inactive because it has new or in progress tasks",
     "errors.tenant-id-not-valid": "Tenant Id not valid with Id: {TenantId}",
     "errors.text-does-not-match-supplied-pattern": "Text does not match supplied pattern",
     "errors.text-max-length-invalid": "The length must be {MaxLength} or less",

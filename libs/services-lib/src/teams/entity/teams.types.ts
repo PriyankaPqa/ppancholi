@@ -11,7 +11,7 @@ export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid> {
   removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamEntity>;
   emptyTeam(teamId: uuid) : Promise<ITeamEntity>;
   getTeamsAssigned(caseFileId: uuid): Promise<ITeamEntity[]>;
-  getTeamsByEvent(eventId: uuid, teamIds?: string): Promise<ITeamEntity[]>;
+  getTeamsByEvent(eventId: uuid, teamIds?: string, includeInactive?: boolean): Promise<ITeamEntity[]>;
 }
 
 export interface ITeamsServiceMock extends IDomainBaseServiceMock<ITeamEntity> {

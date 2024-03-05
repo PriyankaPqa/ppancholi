@@ -76,12 +76,17 @@ describe('>>> Teams Service', () => {
   describe('getTeamsByEvent', () => {
     it('should link to correct URL with empty string when there is no params', async () => {
       await service.getTeamsByEvent('1234');
-      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: '' } });
+      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: '', includeInactive: false } });
+    });
+
+    it('should link to correct URL with empty string when include inactive', async () => {
+      await service.getTeamsByEvent('1234', '', true);
+      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: '', includeInactive: true } });
     });
 
     it('should link to correct URL with string or teamIds when there is params', async () => {
       await service.getTeamsByEvent('1234', 'mock-team-id-1, mock-team-id-2');
-      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: 'mock-team-id-1, mock-team-id-2' } });
+      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: 'mock-team-id-1, mock-team-id-2', includeInactive: false } });
     });
   });
 

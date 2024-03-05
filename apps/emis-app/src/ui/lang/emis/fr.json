@@ -1817,6 +1817,7 @@
     "errors.team.has-activefile": "Impossible d'effectuer l'action",
     "errors.teams-must-have-a-primary-contact": "L’équipe doit comprendre une personne-ressource.",
     "errors.tenant-id-not-valid": "L'identifiant de l'organisation n'est pas valide avec l'identifiant : {TenantId}",
+    "errors.team-has-new-or-in-progress-tasks": "L'équipe ne peut pas être définie comme inactive car elle a des tâches nouvelles ou en cours",
     "errors.text-does-not-match-supplied-pattern": "Le domaine saisi n’est pas valide.",
     "errors.text-max-length-invalid": "La longueur ne doit pas dépasser {MaxLength} caractères.",
     "errors.text-min-length-invalid": "La longueur doit être de {MinLength} ou plus",

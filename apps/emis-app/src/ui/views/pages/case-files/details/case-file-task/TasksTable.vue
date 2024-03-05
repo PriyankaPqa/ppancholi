@@ -2,7 +2,7 @@
   <div class="pa-4">
     <rc-data-table
       ref="tasksTable"
-      :items="tableData"
+      :items="parsedTableData"
       :count="itemsCount"
       :show-help="false"
       :labels="labels"
@@ -78,7 +78,7 @@
                 <div class="fw-bold">
                   {{ $t("task.task_details.working_on_it") }}
                 </div>
-                <div> {{ item.metadata.userWorkingOnName || $t('common.N/A') }} </div>
+                <div> {{ item.metadata.userWorkingOnNameWithRole }} </div>
               </v-col>
             </template>
 
@@ -189,6 +189,13 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
+import { IEntityCombined } from '@libs/entities-lib/base';
+
+interface IParsedTaskMetadata extends ITaskMetadata {
+  userWorkingOnNameWithRole: string
+}
+
+type IParsedTaskCombined = IEntityCombined<ITaskEntity, IParsedTaskMetadata>;
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'TasksTable',
@@ -439,11 +446,45 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       }];
     },
 
-    tableData(): ITaskCombined[] {
+    rawTableData(): ITaskCombined[] {
       return this.combinedTaskStore.getByIds(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.isInCaseFile ? this.id : null } },
       );
+    },
+
+    parsedTableData(): IParsedTaskCombined[] {
+      return this.rawTableData?.map((d) => {
+        let parsedTaskMetadata: IParsedTaskMetadata;
+        if (d.entity.userWorkingOn) {
+          const userAccountMetadata = useUserAccountMetadataStore().getById(d.entity.userWorkingOn);
+          parsedTaskMetadata = {
+            ...d.metadata,
+            userWorkingOnNameWithRole: `${userAccountMetadata?.displayName} (${this.$m(userAccountMetadata?.roleName) as string})`,
+          };
+        } else {
+          parsedTaskMetadata = {
+            ...d.metadata,
+            userWorkingOnNameWithRole: this.$t('common.N/A') as string,
+          };
+        }
+        return {
+          entity: d.entity,
+          metadata: parsedTaskMetadata,
+          pinned: d.pinned,
+        };
+      });
+    },
+  },
+
+  watch: {
+    rawTableData: {
+      async handler(nextValue, prevValue) {
+        if (prevValue && nextValue !== prevValue) {
+          await useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true);
+        }
+      },
+      deep: true,
     },
   },
 
@@ -451,6 +492,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     this.saveState = true;
     this.loadState();
     await useTaskStore().fetchTaskCategories();
+    await useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true);
   },
 
   methods: {

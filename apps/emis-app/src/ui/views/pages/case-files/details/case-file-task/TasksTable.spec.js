@@ -23,6 +23,7 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { Status } from '@libs/entities-lib/base';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import flushPromises from 'flush-promises';
 import Component from './TasksTable.vue';
 
 const localVue = createLocalVue();
@@ -215,7 +216,7 @@ describe('TasksTable.vue', () => {
       it('should not be rendered for in progress personal task', async () => {
         await doMount({
           computed: {
-            tableData: () => [
+            parsedTableData: () => [
               {
                 entity: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
                 metadata: mockTaskMetadata(),
@@ -286,6 +287,77 @@ describe('TasksTable.vue', () => {
     beforeEach(async () => {
       await doMount();
     });
+
+    describe('parsedTableData', () => {
+      it('should return correct data when there is user working on', async () => {
+        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+          },
+          computed: {
+            rawTableData: () => ([{
+              entity: mockTeamTaskEntity({ id: '1', userWorkingOn: 'mock-user-id-1' }),
+              metadata: mockTaskMetadata({ id: '1', userWorkingOnId: 'mock-user-id-1' }),
+              pinned: false,
+            }]),
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata({
+          displayName: 'mock-user-name-1',
+          roleName: {
+            translation: {
+              en: 'Mock role',
+              fr: 'Mock role fr',
+            },
+          },
+        }));
+        expect(wrapper.vm.parsedTableData).toEqual([{
+          entity: mockTeamTaskEntity({ id: '1', userWorkingOn: 'mock-user-id-1' }),
+          metadata: {
+            ...mockTaskMetadata({ id: '1', userWorkingOnId: 'mock-user-id-1' }),
+            userWorkingOnNameWithRole: 'mock-user-name-1 (Mock role)',
+          },
+          pinned: false,
+        }]);
+      });
+
+      it('should return correct data there is no user working on', async () => {
+        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+          },
+          computed: {
+            rawTableData: () => ([{
+              entity: mockTeamTaskEntity({ id: '1', userWorkingOn: null }),
+              metadata: mockTaskMetadata({ id: '1', userWorkingOnId: null }),
+              pinned: false,
+            }]),
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+        userAccountMetadataStore.getById = jest.fn(() => null);
+        expect(wrapper.vm.parsedTableData).toEqual([{
+          entity: mockTeamTaskEntity({ id: '1', userWorkingOn: null }),
+          metadata: {
+            ...mockTaskMetadata({ id: '1', userWorkingOnId: null }),
+            userWorkingOnNameWithRole: 'common.N/A',
+          },
+          pinned: false,
+        }]);
+      });
+    });
+
     describe('labels', () => {
       it('should return proper data if is in case file', async () => {
         await wrapper.setProps({
@@ -614,6 +686,7 @@ describe('TasksTable.vue', () => {
 
     describe('teamTaskOnlyFilter', () => {
       it('should return correct filter object based on userAccountMetadata', async () => {
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -1080,6 +1153,51 @@ describe('TasksTable.vue', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.saveState).toEqual(true);
         expect(wrapper.vm.loadState).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('watcher', () => {
+    describe('rawTableData', () => {
+      it('should fetch userAccountMetadata when rawTableData updated', async () => {
+        userAccountMetadataStore.fetchByIds = jest.fn();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+          },
+          data() {
+            return {
+              mockRawTableData: [{
+                entity: mockTeamTaskEntity({ id: '1', userWorkingOn: null }),
+                metadata: mockTaskMetadata({ id: '1', userWorkingOnId: null }),
+                pinned: false,
+              }],
+            };
+          },
+          computed: {
+            rawTableData: {
+              get() {
+                return this.mockRawTableData;
+              },
+              set(val) {
+                this.mockRawTableData = val;
+              },
+            },
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+
+        wrapper.vm.rawTableData = [{
+          entity: mockTeamTaskEntity({ id: '1', userWorkingOn: 'mock-user-id-1' }),
+          metadata: mockTaskMetadata({ id: '1', userWorkingOnId: 'mock-user-id-1' }),
+          pinned: false,
+        }];
+        await flushPromises();
+        expect(userAccountMetadataStore.fetchByIds).toHaveBeenCalledWith(['mock-user-id-1'], true);
       });
     });
   });

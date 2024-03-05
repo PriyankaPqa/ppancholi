@@ -43,8 +43,8 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     return this.http.patch(`/team/teams/${teamId}/empty-team`);
   }
 
-  async getTeamsByEvent(eventId: uuid, teamIds = ''): Promise<ITeamEntity[]> {
-    return this.http.get(`team/teams/teams-by-event/${eventId}/`, { params: { teamIds } });
+  async getTeamsByEvent(eventId: uuid, teamIds = '', includeInactive = false): Promise<ITeamEntity[]> {
+    return this.http.get(`team/teams/teams-by-event/${eventId}/`, { params: { teamIds, includeInactive } });
   }
 
   private teamToEditTeamRequestPayload(team: ITeamEntity) {
