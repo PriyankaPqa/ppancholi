@@ -16,6 +16,7 @@ import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useTaskMetadataStore, useTaskStore } from '@/pinia/task/task';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { SignalR } from './signalR';
 
@@ -133,6 +134,13 @@ describe('signalR', () => {
       conn.listenForMassActionsModuleChanges = jest.fn();
       conn.createBindings();
       expect(conn.listenForMassActionsModuleChanges)
+        .toHaveBeenCalled();
+    });
+
+    it('calls listenForTaskModuleChanges', () => {
+      conn.listenForTaskModuleChanges = jest.fn();
+      conn.createBindings();
+      expect(conn.listenForTaskModuleChanges)
         .toHaveBeenCalled();
     });
 
@@ -512,6 +520,35 @@ describe('signalR', () => {
           optionItemName: 'DocumentCategory',
           store: useCaseFileDocumentStore(),
           prop: 'categoriesFetched',
+        });
+    });
+  });
+
+  describe('listenForTaskModuleChanges', () => {
+    it('calls listenForChanges', () => {
+      conn.listenForTaskModuleChanges();
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'case-file',
+          entityName: 'Task',
+          action: useTaskStore().setItemFromOutsideNotification,
+        });
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'case-file',
+          entityName: 'TaskMetadata',
+          action: useTaskMetadataStore().setItemFromOutsideNotification,
+        });
+    });
+
+    it('calls listenForOptionItemChanges', () => {
+      conn.listenForTaskModuleChanges();
+      expect(conn.listenForOptionItemChanges)
+        .toHaveBeenCalledWith({
+          domain: 'case-file',
+          optionItemName: 'TaskCategory',
+          store: useTaskStore(),
+          prop: 'taskCategoriesFetched',
         });
     });
   });

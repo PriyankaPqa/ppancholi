@@ -33,6 +33,7 @@ import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useNotificationStore } from '@/pinia/notification/notification';
+import { useTaskStore, useTaskMetadataStore } from '@/pinia/task/task';
 import { INotificationEntity } from '@libs/entities-lib/notification';
 
 export interface IOptions {
@@ -155,6 +156,7 @@ export class SignalR implements ISignalR {
     this.listenForCaseReferralModuleChanges();
     this.listenForCaseDocumentModuleChanges();
     this.listenForFinancialAssistancePaymentModuleChanges();
+    this.listenForTaskModuleChanges();
 
     // Assessments
     this.listenForAssessmentResponseModuleChanges();
@@ -571,6 +573,30 @@ export class SignalR implements ISignalR {
 
     this.watchedPiniaStores.push(useApprovalTableStore());
     this.watchedPiniaStores.push(useApprovalTableMetadataStore());
+  }
+
+  private listenForTaskModuleChanges() {
+    this.listenForChanges({
+      domain: 'case-file',
+      entityName: 'Task',
+      action: useTaskStore().setItemFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'case-file',
+      entityName: 'TaskMetadata',
+      action: useTaskMetadataStore().setItemFromOutsideNotification,
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'TaskCategory',
+      store: useTaskStore(),
+      prop: 'taskCategoriesFetched',
+    });
+
+    this.watchedPiniaStores.push(useTaskStore());
+    this.watchedPiniaStores.push(useTaskMetadataStore());
   }
 
   private listenForChanges<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T, byUser: boolean)=> void }) {
