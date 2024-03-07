@@ -342,12 +342,14 @@ export default mixins(individual).extend({
         ],
       }));
       if (userChoice) {
+        useRegistrationStore().submitLoading = true;
         const success = await this.createNewCaseFile();
         if (!success) {
           this.handleErrors(this.createNewCaseFile);
         } else {
           await this.jump(this.currentTabIndex + 1);
         }
+        useRegistrationStore().submitLoading = false;
       }
     },
 
