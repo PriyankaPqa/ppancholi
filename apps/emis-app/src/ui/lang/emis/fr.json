@@ -1313,6 +1313,7 @@
     "errorReport.errorDialog.showPayload": "Afficher le contenu de la requête",
     "errorReport.errorDialog.title": "Signaler un problème",
     "errorReport.reportProblem": "Signaler un problème",
+    "errors.team-has-new-or-in-progress-tasks-for-these-events": "Impossible de supprimer l'événement de cette équipe, car elle comporte des tâches nouvelles ou en cours",
     "errors.a-filter-with-this-name-already-exists": "Un filtre existant porte déjà ce nom.",
     "errors.a-financial-assistance-payment-with-this-name-already-exists": "Un paiement d’aide financière porte déjà ce nom.",
     "errors.a-financial-assistance-table-with-this-name-already-exists": "Un tableau d’aide financière porte déjà ce nom.",

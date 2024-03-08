@@ -52,7 +52,6 @@ import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { ActionTaken, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
-import { ITeamEntity } from '@libs/entities-lib/team';
 import { TranslateResult } from 'vue-i18n';
 
 interface IParsedTaskHistory extends ITaskActionHistory {
@@ -75,11 +74,6 @@ export default Vue.extend({
 
     taskActionHistories: {
       type: Array as () => ITaskActionHistory[],
-      required: true,
-    },
-
-    teamsByEvent: {
-      type: Array as () => ITeamEntity[],
       required: true,
     },
   },
@@ -164,16 +158,7 @@ export default Vue.extend({
 
     parseTaskHistory() {
       this.parsedTaskActionHistoryData = this.taskActionHistories.reverse().map((historyItem: ITaskActionHistory) => {
-        let assignedTeamName = '';
-        let actionTeamName = '';
-        if (historyItem.actionTaken === ActionTaken.Assign) {
-          assignedTeamName = this.teamsByEvent.find((t) => t.id === historyItem.currentTeamId)?.name;
-        }
-        if (historyItem.actionTaken === ActionTaken.Completed && historyItem.taskStatus === TaskStatus.InProgress) {
-          actionTeamName = this.teamsByEvent.find((t) => t.id === historyItem.previousTeamId)?.name;
-          assignedTeamName = this.teamsByEvent.find((t) => t.id === historyItem.currentTeamId)?.name;
-        }
-        const actionTakenString = this.generateTaskActionString(historyItem, assignedTeamName, actionTeamName);
+        const actionTakenString = this.generateTaskActionString(historyItem, historyItem.currentTeamName, historyItem.previousTeamName);
         return {
           ...historyItem,
           actionTakenString,

@@ -19,13 +19,13 @@
                       {{ $t('task.create_edit.assigned_to') }}
                     </v-col>
                     <v-col class=" pa-0 pl-4" data-test="task-assigned-to">
-                      {{ assignedTeamName }}
+                      {{ assignedTeam ? assignedTeam.name : '' }}
                     </v-col>
                     <div v-if="isEditMode" class="pl-0 py-2">
                       <v-btn
                         color="primary"
                         small
-                        :disabled="task.taskType === TaskType.Team && !$hasLevel(UserRoles.level1)"
+                        :disabled="!canAction"
                         @click="showTaskActionDialog = true">
                         {{ $t('task.action') }}
                       </v-btn>
@@ -51,7 +51,7 @@
                         :aria-label="$t('task.task_details.working_on_it')"
                         class="ma-0"
                         :loading="toggleLoading"
-                        :disabled="!$hasLevel(UserRoles.level1) || toggleLoading"
+                        :disabled="toggleLoading || !canAction"
                         @change="onToggleChange($event)" />
                     </div>
                   </v-row>
@@ -127,7 +127,6 @@ import PersonalTaskForm from '@/ui/views/pages/case-files/details/case-file-task
 import _cloneDeep from 'lodash/cloneDeep';
 import helpers from '@/ui/helpers/helpers';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
-import { useUserStore } from '@/pinia/user/user';
 import { UserRoles } from '@libs/entities-lib/user';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 
@@ -189,7 +188,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       loading: false,
       isSubmitting: false,
       showTaskActionDialog: false,
-      assignedTeamName: '',
       TaskType,
       TaskStatus,
       UserRoles,
@@ -228,8 +226,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     assignedToPerson(): string | TranslateResult {
-      const userId = useUserStore().getUserId();
-      if (userId === this.task.createdBy) {
+      if (this.userId === this.task.createdBy) {
         return this.$t('task.create_edit.assigned_to.me');
       }
       if (this.$hasLevel(UserRoles.level6)) {
@@ -363,15 +360,13 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       if (!this.isEditMode) {
         const teamsOfEvent = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
         if (teamsOfEvent) {
-          const escalationTeam = teamsOfEvent.filter((t) => t.isEscalation)[0];
-          this.assignedTeamName = escalationTeam?.name;
-          this.localTask.assignedTeamId = escalationTeam?.id;
+          this.assignedTeam = teamsOfEvent.filter((t) => t.isEscalation)[0];
+          this.localTask.assignedTeamId = this.assignedTeam?.id;
         }
       } else {
         const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, this.task.assignedTeamId);
         if (res.length > 0) {
-          const assignedTeam = res[0];
-          this.assignedTeamName = assignedTeam.name;
+          this.assignedTeam = res[0];
           this.localTask.assignedTeamId = this.task.assignedTeamId;
         }
       }
@@ -386,12 +381,9 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
             if (this.isWorkingOn) {
               useUserAccountMetadataStore().fetch(this.task.userWorkingOn, false);
             }
-          } else {
-            const userId = useUserStore().getUserId();
-            if (userId !== this.task.createdBy) {
+          } else if (this.userId !== this.task.createdBy) {
               await useUserAccountMetadataStore().fetch(this.task.createdBy, false);
             }
-          }
         }
     },
   },

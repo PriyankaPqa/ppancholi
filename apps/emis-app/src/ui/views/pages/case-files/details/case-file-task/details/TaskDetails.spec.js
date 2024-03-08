@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockPersonalTaskEntity, mockTeamTaskEntity, TaskStatus } from '@libs/entities-lib/task';
+import { ActionTaken, mockPersonalTaskEntity, mockTeamTaskEntity, TaskStatus } from '@libs/entities-lib/task';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import routes from '@/constants/routes';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
@@ -44,14 +44,14 @@ describe('TaskDetails.vue', () => {
   };
 
   beforeEach(async () => {
-    await doMount();
+    await doMount(false);
   });
 
   describe('Template', () => {
     describe('task-details-is-urgent', () => {
       it('should be rendered when task isUrgent is true', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ isUrgent: true }));
-        await doMount(true, {
+        await doMount(false, {
           data() {
             return {
               loading: false,
@@ -94,7 +94,7 @@ describe('TaskDetails.vue', () => {
 
     describe('task-details-edit-button', () => {
       it('should be render when user has level 1 and is team task', async () => {
-        await doMount(true, {
+        await doMount(false, {
           pinia: getPiniaForUser(UserRoles.level1),
           data() {
             return {
@@ -234,54 +234,6 @@ describe('TaskDetails.vue', () => {
         });
         const element = wrapper.findDataTest('task-details-team-task-name-description');
         expect(element.exists()).toBeFalsy();
-      });
-    });
-
-    describe('task-details-assigned-to', () => {
-      it('should render assigned to me when personal task and user is creator', async () => {
-        jest.clearAllMocks();
-        userStore.getUserId = jest.fn(() => 'mock-user-1');
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
-            isTeamTask: () => false,
-          },
-        });
-        await flushPromises();
-        const element = wrapper.findDataTest('task-details-assigned-to');
-        expect(element.text()).toEqual('task.create_edit.assigned_to.me');
-      });
-
-      it('should render the name of creator when personal task but user not creator', async () => {
-        jest.clearAllMocks();
-        userStore.getUserId = jest.fn(() => 'mock-user-2');
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
-            isTeamTask: () => false,
-          },
-        });
-        await flushPromises();
-        const element = wrapper.findDataTest('task-details-assigned-to');
-        expect(element.text()).toEqual('Jane Smith');
-      });
-
-      it('should render assigned team name when team task', async () => {
-        jest.clearAllMocks();
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [mockTeamEntity({ id: 'mock-team-id-1' }), mockTeamEntity({ id: 'mock-team-id-2' })]);
-        await doMount(true, {
-          computed: {
-            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-id-1' }),
-            isTeamTask: () => true,
-          },
-        });
-        await wrapper.setData({
-          assignedTeam: mockTeamEntity({ id: 'mock-team-id-1' }),
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-id-1' }), mockTeamEntity({ id: 'mock-team-id-2' })],
-        });
-        await flushPromises();
-        const element = wrapper.findDataTest('task-details-assigned-to');
-        expect(element.text()).toEqual('Standard Active Team 1');
       });
     });
 
@@ -505,6 +457,55 @@ describe('TaskDetails.vue', () => {
         });
         await flushPromises();
         const element = wrapper.findComponent(StatusChip);
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('task-details-action-button', () => {
+      it('should be rendered when it is team task', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-action-button');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should be rendered when it is in progress personal task and user is creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-id-1' }),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-action-button');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should be not rendered when it is completed personal task and user is creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.Completed }),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-action-button');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('should be rendered when it is in progress personal task and user is not creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-2');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-id-1' }),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-action-button');
         expect(element.exists()).toBeFalsy();
       });
     });
@@ -765,6 +766,108 @@ describe('TaskDetails.vue', () => {
           },
         });
         expect(wrapper.vm.displayWorkingOnIt).toEqual(false);
+      });
+    });
+
+    describe('taskAssignedTo', () => {
+      it('should return assigned to me when personal task and user is creator', async () => {
+        jest.clearAllMocks();
+        userStore.getUserId = jest.fn(() => 'mock-user-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        expect(wrapper.vm.taskAssignedTo).toEqual('task.create_edit.assigned_to.me');
+      });
+
+      it('return the name of creator when personal task but user not creator', async () => {
+        jest.clearAllMocks();
+        userStore.getUserId = jest.fn(() => 'mock-user-2');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        expect(wrapper.vm.taskAssignedTo).toEqual('Jane Smith');
+      });
+
+      it('return assigned team name when is not completed team task', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [mockTeamEntity({ id: 'mock-team-id-1' }), mockTeamEntity({ id: 'mock-team-id-2' })]);
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-id-1' }),
+            isTeamTask: () => true,
+          },
+        });
+        await wrapper.setData({
+          assignedTeam: mockTeamEntity({ id: 'mock-team-id-1' }),
+          teamsByEvent: [mockTeamEntity({ id: 'mock-team-id-1' }), mockTeamEntity({ id: 'mock-team-id-2' })],
+        });
+        await flushPromises();
+        expect(wrapper.vm.taskAssignedTo).toEqual('Standard Active Team 1');
+      });
+
+      it('return current team name from the last history object when is completed team task', async () => {
+        jest.clearAllMocks();
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({
+              assignedTeamId: 'mock-team-id-1',
+              taskStatus: TaskStatus.Completed,
+              taskActionHistories: [
+                {
+                  actionTaken: ActionTaken.Create,
+                  taskStatus: TaskStatus.InProgress,
+                  currentTeamId: 'mock-team-id-1',
+                  currentTeamName: 'mock-team-1',
+                  previousTeamId: '',
+                  previousTeamName: '',
+                  rationale: 'create task',
+                  timestamp: '2023-01-01',
+                  userInformation: {
+                    userId: 'mock-user-id-1',
+                    userName: 'mock-user-name',
+                    roleId: 'mock-role-id-1',
+                    roleName: {
+                      translation: {
+                        en: 'mock-role-name en',
+                        fr: 'mock-role-name fr',
+                      },
+                    } },
+                },
+                {
+                  actionTaken: ActionTaken.Completed,
+                  taskStatus: TaskStatus.Completed,
+                  currentTeamId: 'mock-team-id-3',
+                  previousTeamId: 'mock-team-id-3',
+                  currentTeamName: 'mock-team-3',
+                  previousTeamName: 'mock-team-3',
+                  rationale: 'team 3 complete task',
+                  timestamp: '2023-01-03',
+                  userInformation: {
+                    userId: 'mock-user-id-1',
+                    userName: 'mock-user-name',
+                    roleId: 'mock-role-id-1',
+                    roleName: {
+                      translation: {
+                        en: 'mock-role-name en',
+                        fr: 'mock-role-name fr',
+                      },
+                    },
+                  },
+                },
+              ] }),
+            isTeamTask: () => true,
+          },
+        });
+        await flushPromises();
+        expect(wrapper.vm.taskAssignedTo).toEqual('mock-team-3');
       });
     });
   });

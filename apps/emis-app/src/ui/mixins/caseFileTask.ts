@@ -4,7 +4,10 @@ import { useTaskStore } from '@/pinia/task/task';
 import { TranslateResult } from 'vue-i18n';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useUserStore } from '@/pinia/user/user';
-import { ITaskEntity } from '@libs/entities-lib/task';
+import { ITaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { ITeamEntity } from '@libs/entities-lib/team';
+import { UserRoles } from '@libs/entities-lib/user';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   props: {
@@ -22,6 +25,7 @@ export default Vue.extend({
       isWorkingOn: false,
       filterOutHiddenTaskName: true,
       filterOutInactiveTaskNameAndCategory: true,
+      assignedTeam: null as ITeamEntity,
     };
   },
 
@@ -55,6 +59,30 @@ export default Vue.extend({
         return personInfo;
       }
       return this.$t('common.N/A');
+    },
+
+    userId(): string {
+      return useUserStore().getUserId();
+    },
+
+    canAction(): boolean {
+      if (this.task.taskType === TaskType.Personal) {
+        return this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.InProgress;
+      }
+
+      if (this.$hasLevel(UserRoles.level6)) {
+        return true;
+      }
+      // Team task
+        if (this.$hasLevel(UserRoles.level1)
+          || this.$hasRole(UserRoles.readonly)
+          || this.$hasRole(UserRoles.contributor3)
+          || this.$hasRole(UserRoles.contributorIM)
+          || this.$hasRole(UserRoles.contributorFinance)) {
+          return this.assignedTeam?.teamMembers.some((m) => m.id === this.userId) && this.assignedTeam.status === Status.Active;
+        }
+        // L0, no-role --> false
+        return false;
     },
   },
 

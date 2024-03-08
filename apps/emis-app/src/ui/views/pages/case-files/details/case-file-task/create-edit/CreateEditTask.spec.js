@@ -36,6 +36,7 @@ describe('CreateEditTask.vue', () => {
       data() {
         return {
           localTask: mockTeamTaskEntity(),
+          assignedTeam: mockTeamEntity(),
         };
       },
       computed: {
@@ -249,7 +250,7 @@ describe('CreateEditTask.vue', () => {
   describe('Method', () => {
     describe('prepareCreateTask', () => {
       it('should set proper data if create team task', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-case-file-id-1',
             taskType: 'team',
@@ -277,7 +278,7 @@ describe('CreateEditTask.vue', () => {
       });
 
       it('should set proper data if create personal task', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-case-file-id-1',
             taskType: 'personal',
@@ -307,7 +308,7 @@ describe('CreateEditTask.vue', () => {
 
     describe('fetchAssignedTeamAndSetTeamId', () => {
       it('should call teams service getTeamsByEvent and assign team id and name properly when it is not edit mode', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-case-file-id-1',
             taskType: 'team',
@@ -326,11 +327,11 @@ describe('CreateEditTask.vue', () => {
         await wrapper.vm.fetchAssignedTeamAndSetTeamId();
         expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id');
         expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-id-1');
-        expect(wrapper.vm.assignedTeamName).toEqual('mock-team-name-1');
+        expect(wrapper.vm.assignedTeam).toEqual(mockTeamEntity({ id: 'mock-id-1', name: 'mock-team-name-1', isEscalation: true }));
       });
 
       it('should call teams service getTeamsByEvent and assign team id and name properly when it is edit mode', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-case-file-id-1',
             taskType: 'team',
@@ -349,7 +350,7 @@ describe('CreateEditTask.vue', () => {
         await wrapper.vm.fetchAssignedTeamAndSetTeamId();
         expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id', 'mock-team-id-2');
         expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-team-id-2');
-        expect(wrapper.vm.assignedTeamName).toEqual('mock-team-name-2');
+        expect(wrapper.vm.assignedTeam).toEqual(mockTeamEntity({ id: 'mock-team-id-2', name: 'mock-team-name-2', isEscalation: false }));
       });
     });
 
@@ -437,7 +438,7 @@ describe('CreateEditTask.vue', () => {
 
     describe('submit', () => {
       it('should call submitCreateTask if isnt edit mode', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-id-1',
             taskType: 'team',
@@ -457,7 +458,7 @@ describe('CreateEditTask.vue', () => {
       });
 
       it('should call submitEditTask if is edit mode', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-id-1',
             taskType: 'team',
@@ -581,7 +582,7 @@ describe('CreateEditTask.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('should call prepareCreateTask when isnt edit mode', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-id-1',
             taskType: 'team',
@@ -603,7 +604,7 @@ describe('CreateEditTask.vue', () => {
       });
 
       it('should call fetchAssignedTeamAndSetTeamId when task type is team', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-id-1',
             taskType: 'team',
@@ -629,7 +630,7 @@ describe('CreateEditTask.vue', () => {
       });
 
       it('should call loadTask and setOriginalData when is edit mode', async () => {
-        await doMount(false, {
+        await doMount(true, {
           propsData: {
             id: 'mock-id-1',
             taskType: 'team',

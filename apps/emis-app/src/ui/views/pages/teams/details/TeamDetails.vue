@@ -32,48 +32,72 @@
 
               <v-row no-gutters class="mt-6">
                 <v-col class="team_data">
-                  <span class="rc-body14 fw-bold">{{ $t('teams.teamtype') }}</span>
-                  <span class="rc-body14" data-test="team_type">{{ $m(teamMetadata.teamTypeName) }}</span>
+                  <div class="rc-body14 fw-bold">
+                    {{ $t('teams.teamtype') }}
+                  </div>
+                  <div class="rc-body14" data-test="team_type">
+                    {{ $m(teamMetadata.teamTypeName) }}
+                  </div>
                 </v-col>
 
                 <v-col class="team_data">
-                  <span class="rc-body14 fw-bold">{{ $t('teams.team_members') }}</span>
-                  <span class="rc-body14" data-test="team_members_count">{{ teamMemberAmount }}</span>
+                  <div class="rc-body14 fw-bold">
+                    {{ $t('teams.team_members') }}
+                  </div>
+                  <div class="rc-body14" data-test="team_members_count">
+                    {{ teamMemberAmount }}
+                  </div>
                 </v-col>
 
                 <v-col class="team_data">
-                  <span class="rc-body14 fw-bold">
-                    <v-icon size="24" color="red">mdi-account</v-icon>
+                  <div class="rc-body14 fw-bold">
+                    <v-icon size="24" color="red">
+                      mdi-account
+                    </v-icon>
                     {{ $t('teams.primary_contact') }}
-                  </span>
-                  <span
+                  </div>
+                  <div
                     v-if="primaryContact"
                     class="rc-body14"
                     style="padding-left: 28px"
-                    data-test="team_primary_contact">{{ primaryContact }}</span>
+                    data-test="team_primary_contact">
+                    {{ primaryContact }}
+                  </div>
                 </v-col>
               </v-row>
 
               <v-row no-gutters class="mt-6 flex justify-space-between">
                 <v-col class="team_data">
-                  <span class="rc-body14 fw-bold">{{ $tc('teams.related_events', eventAmount) }}</span>
-                  <span class="rc-body14" data-test="team_events">{{ buildEventsString(teamMetadata.events) }}</span>
+                  <div class="rc-body14 fw-bold">
+                    {{ $tc('teams.related_events', eventAmount) }}
+                  </div>
+                  <div class="rc-body14" data-test="team_events">
+                    {{ buildEventsString(teamMetadata.events) }}
+                  </div>
                 </v-col>
                 <v-col
                   v-if="$hasFeature(FeatureKeys.TaskManagement)"
                   :cols="displayEscalationLabel ? 4 : 8"
                   class="team_data"
                   data-test="team_isAssignable">
-                  <span class="rc-body14 fw-bold">{{ $t('teams.set_assignable_team') }}</span>
-                  <span class="rc-body14">{{ team.isAssignable ? $t('common.yes') : $t('common.no') }}</span>
+                  <div class="rc-body14 fw-bold">
+                    {{ $t('teams.set_assignable_team') }}
+                  </div>
+                  <div class="rc-body14">
+                    {{ team.isAssignable ? $t('common.yes') : $t('common.no') }}
+                  </div>
                 </v-col>
                 <v-col
                   v-if="displayEscalationLabel"
                   cols="4"
                   class="team_data"
                   data-test="team_escalation">
-                  <span class="rc-body14 fw-bold">{{ $t('teams.set_as') }}</span>
-                  <span class="rc-body14">{{ $t('teams.escalation') }}</span>
+                  <div class="rc-body14 fw-bold">
+                    {{ $t('teams.set_as') }}
+                  </div>
+                  <div class="rc-body14">
+                    {{ $t('teams.escalation') }}
+                  </div>
                 </v-col>
               </v-row>
             </v-col>
@@ -202,7 +226,8 @@ export default Vue.extend({
 <style scoped lang="scss">
 
 .team_data {
-  display: grid;
+  display: flex;
+  flex-direction: column;
 }
 
 .firstSection {

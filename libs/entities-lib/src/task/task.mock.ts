@@ -4,12 +4,34 @@ import { ActionTaken, ITaskActionHistory, ITaskCombined, ITaskEntity, ITaskEntit
 
 export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
   {
-  actionTaken: null,
-  taskStatus: TaskStatus.Completed,
-  currentTeamId: '',
-  previousTeamId: '',
-  rationale: 'Personal task completed',
-  timestamp: '2023-01-03',
+    actionTaken: ActionTaken.Create,
+    taskStatus: TaskStatus.InProgress,
+    currentTeamId: 'mock-team-id-1',
+    currentTeamName: 'mock-team-1',
+    previousTeamId: '',
+    previousTeamName: '',
+    rationale: 'create task',
+    timestamp: '2023-01-01',
+        userInformation: {
+      userId: 'mock-user-id-1',
+      userName: 'mock-user-name',
+      roleId: 'mock-role-id-1',
+          roleName: {
+            translation: {
+              en: 'mock-role-name en',
+              fr: 'mock-role-name fr',
+            },
+          } },
+  },
+  {
+    actionTaken: ActionTaken.Assign,
+    taskStatus: TaskStatus.InProgress,
+    currentTeamId: 'mock-team-id-2',
+    currentTeamName: 'mock-team-2',
+    previousTeamId: 'mock-team-id-1',
+    previousTeamName: 'mock-team-1',
+    rationale: 'assign task to team 2',
+    timestamp: '2023-01-01',
     userInformation: {
       userId: 'mock-user-id-1',
       userName: 'mock-user-name',
@@ -20,14 +42,16 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
           fr: 'mock-role-name fr',
         },
       } },
-},
+  },
   {
-    actionTaken: ActionTaken.Reopen,
+    actionTaken: ActionTaken.Completed,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-3',
-    previousTeamId: 'mock-team-id-3',
-    rationale: 'team 3 re-open task',
-    timestamp: '2023-01-03',
+    previousTeamId: 'mock-team-id-2',
+    currentTeamName: 'mock-team-3',
+    previousTeamName: 'mock-team-2',
+    rationale: 'team 2 finish action, assign to team 3',
+    timestamp: '2023-01-02',
     userInformation: {
       userId: 'mock-user-id-1',
       userName: 'mock-user-name',
@@ -44,9 +68,11 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     taskStatus: TaskStatus.Completed,
     currentTeamId: 'mock-team-id-3',
     previousTeamId: 'mock-team-id-3',
+    currentTeamName: 'mock-team-3',
+    previousTeamName: 'mock-team-3',
     rationale: 'team 3 complete task',
     timestamp: '2023-01-03',
-        userInformation: {
+    userInformation: {
       userId: 'mock-user-id-1',
       userName: 'mock-user-name',
       roleId: 'mock-role-id-1',
@@ -59,58 +85,44 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     },
   },
   {
-    actionTaken: ActionTaken.Completed,
+    actionTaken: ActionTaken.Reopen,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-3',
-    previousTeamId: 'mock-team-id-2',
-    rationale: 'team 2 finish action, assign to team 3',
-    timestamp: '2023-01-02',
-        userInformation: {
+    previousTeamId: 'mock-team-id-3',
+    currentTeamName: 'mock-team-3',
+    previousTeamName: 'mock-team-3',
+    rationale: 'team 3 re-open task',
+    timestamp: '2023-01-03',
+    userInformation: {
       userId: 'mock-user-id-1',
       userName: 'mock-user-name',
       roleId: 'mock-role-id-1',
-          roleName: {
-            translation: {
-              en: 'mock-role-name en',
-              fr: 'mock-role-name fr',
-            },
-          } },
+      roleName: {
+        translation: {
+          en: 'mock-role-name en',
+          fr: 'mock-role-name fr',
+        },
+      } },
   },
   {
-    actionTaken: ActionTaken.Assign,
-    taskStatus: TaskStatus.InProgress,
-    currentTeamId: 'mock-team-id-2',
-    previousTeamId: 'mock-team-id-1',
-    rationale: 'assign task to team 2',
-    timestamp: '2023-01-01',
-        userInformation: {
-      userId: 'mock-user-id-1',
-      userName: 'mock-user-name',
-      roleId: 'mock-role-id-1',
-          roleName: {
-            translation: {
-              en: 'mock-role-name en',
-              fr: 'mock-role-name fr',
-            },
-          } },
-  },
-  {
-    actionTaken: ActionTaken.Create,
-    taskStatus: TaskStatus.InProgress,
-    currentTeamId: 'mock-team-id-1',
+    actionTaken: null,
+    taskStatus: TaskStatus.Completed,
+    currentTeamId: '',
     previousTeamId: '',
-    rationale: 'create task',
-    timestamp: '2023-01-01',
-        userInformation: {
+    currentTeamName: '',
+    previousTeamName: '',
+    rationale: 'Personal task completed',
+    timestamp: '2023-01-03',
+    userInformation: {
       userId: 'mock-user-id-1',
       userName: 'mock-user-name',
       roleId: 'mock-role-id-1',
-          roleName: {
-            translation: {
-              en: 'mock-role-name en',
-              fr: 'mock-role-name fr',
-            },
-          } },
+      roleName: {
+        translation: {
+          en: 'mock-role-name en',
+          fr: 'mock-role-name fr',
+        },
+      } },
   },
 ]);
 
@@ -175,7 +187,7 @@ export const mockTaskEntities = (): ITaskEntity[] => [
   mockPersonalTaskEntity({ id: '2' }),
 ];
 
-export const mockTaskMetadata = (force? : Partial<IEntity>): ITaskMetadata => ({
+export const mockTaskMetadata = (force? : Partial<ITaskMetadata>): ITaskMetadata => ({
   ...mockBaseMetadata(),
   caseFileNumber: 'mock-case-file-number-1',
   eventId: 'mock-event-id-1',
@@ -193,12 +205,12 @@ export const mockTaskMetadatum = (force? : Partial<IEntity>): ITaskMetadata[] =>
 export const mockCombinedTaskData = (): ITaskCombined[] => ([
   {
     entity: mockTeamTaskEntity({ id: '1' }),
-    metadata: mockTaskMetadata({ id: '1' }),
+    metadata: mockTaskMetadata({ id: '1', eventId: 'mock-event-id-1' }),
     pinned: false,
   },
   {
     entity: mockTeamTaskEntity({ id: '2' }),
-    metadata: mockTaskMetadata({ id: '2' }),
+    metadata: mockTaskMetadata({ id: '2', eventId: 'mock-event-id-2' }),
     pinned: false,
   },
 ]);

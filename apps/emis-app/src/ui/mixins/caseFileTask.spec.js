@@ -1,12 +1,14 @@
 import caseFileTask from '@/ui/mixins/caseFileTask';
 import { mockOptionItem, mockOptionItems, mockOptionSubItem } from '@libs/entities-lib/optionItem';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import { useMockUserStore } from '@/pinia/user/user.mock';
-import { mockTeamTaskEntity } from '@libs/entities-lib/task';
+import { mockPersonalTaskEntity, mockTeamTaskEntity, TaskStatus } from '@libs/entities-lib/task';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
+import { UserRoles } from '@libs/entities-lib/user';
+import { mockTeamEntity } from '@libs/entities-lib/team';
 
 const Component = {
   render() {},
@@ -20,12 +22,23 @@ const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 let wrapper;
 
 describe('caseFileTask', () => {
+  const doMount = async (shallow = true, otherOptions = {}, level = 5, hasRole = 'role') => {
+    const options = {
+      localVue,
+      pinia,
+      mocks: {
+        $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
+        $hasRole: (r) => r === hasRole,
+      },
+      ...otherOptions,
+    };
+    wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
+    await wrapper.vm.$nextTick();
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
-    wrapper = shallowMount(Component, {
-      pinia,
-      localVue,
-    });
+    await doMount();
   });
 
   describe('Computed', () => {
@@ -84,9 +97,7 @@ describe('caseFileTask', () => {
 
     describe('selectedCategory', () => {
       it('should return proper selected task category', async () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
+        await doMount(true, {
           computed: {
             taskNames: () => mockOptionItems(),
             taskCategories: () => [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }), mockOptionSubItem({ id: '2' })],
@@ -101,11 +112,9 @@ describe('caseFileTask', () => {
     });
 
     describe('personIsWorkingOn', () => {
-      it('should return assigned user name when there is', () => {
-        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata({ id: 'mock-user-id-1', displayName: 'mock-name' }));
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
+      it('should return assigned user name when there is', async () => {
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata({ displayName: 'mock-name' }));
+        await doMount(true, {
           computed: {
             task: () => mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }),
           },
@@ -113,15 +122,126 @@ describe('caseFileTask', () => {
         expect(wrapper.vm.personIsWorkingOn).toEqual('mock-name (System Admin)');
       });
 
-      it('should return N/A when there is not user working on', () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
+      it('should return N/A when there is not user working on', async () => {
+        await doMount(true, {
           computed: {
             task: () => mockTeamTaskEntity({ userWorkingOn: null }),
           },
         });
         expect(wrapper.vm.personIsWorkingOn).toEqual('common.N/A');
+      });
+    });
+
+    describe('canAction', () => {
+      it('should be true for L6 user if it is completed personal task', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
+          },
+        }, 6);
+        expect(wrapper.vm.canAction).toEqual(false);
+      });
+
+      it('should be true for L6 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+          },
+        }, 6);
+        expect(wrapper.vm.canAction).toEqual(true);
+      });
+
+      it('should be true for personal task if he is the creator and task is in progress', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'mock-id-1' }),
+          },
+        }, 5);
+        expect(wrapper.vm.canAction).toEqual(true);
+      });
+
+      it('should be false for personal task if he is the creator and task is completed', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'mock-id-1' }),
+          },
+        }, 5);
+        expect(wrapper.vm.canAction).toEqual(false);
+      });
+
+      it('should be false for personal task if he is not the creator and task is in progress', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'mock-id-2' }),
+          },
+        }, 5);
+        expect(wrapper.vm.canAction).toEqual(false);
+      });
+
+      it('should be false for team task with L0 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+          },
+        }, 0);
+        expect(wrapper.vm.canAction).toEqual(false);
+      });
+
+      it('should be false for team task with no-role user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+          },
+        }, null, UserRoles.no_role);
+        expect(wrapper.vm.canAction).toEqual(false);
+      });
+
+      it('should be true for team task with L1-L5 user if he is assigned team member', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount(true, {
+          data() {
+            return {
+              assignedTeam: mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
+            };
+          },
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+          },
+        }, 1);
+        expect(wrapper.vm.canAction).toEqual(true);
+      });
+
+      it('should be false for team task with L1-L5 user if he is assigned team member, but task is inactive', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount(true, {
+          data() {
+            return {
+              assignedTeam: mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }], status: Status.Inactive }),
+            };
+          },
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+          },
+        }, 1);
+        expect(wrapper.vm.canAction).toEqual(false);
+      });
+
+      it('should be false for team task with L1-L5 user if he is not assigned team member', async () => {
+        userStore.getUserId = jest.fn(() => 'user-2');
+        await doMount(true, {
+          data() {
+            return {
+              assignedTeam: mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
+            };
+          },
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+          },
+        }, 1);
+        expect(wrapper.vm.canAction).toEqual(false);
       });
     });
   });
@@ -131,9 +251,7 @@ describe('caseFileTask', () => {
       it('should call store setWorkingOn with proper params', async () => {
         userStore.getUserId = jest.fn(() => 'mock-user-id-1');
         taskStore.setWorkingOn = jest.fn();
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
+        await doMount(true, {
           computed: {
             task: () => mockTeamTaskEntity({ id: 'mock-task-id-1', caseFileId: 'mock-case-file-id-1' }),
           },
@@ -145,9 +263,7 @@ describe('caseFileTask', () => {
 
     describe('onToggleChange', () => {
       it('should call setWorkingOn when params is true', async () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
+        await doMount(true, {
           computed: {
             task: () => mockTeamTaskEntity(),
           },
@@ -158,9 +274,7 @@ describe('caseFileTask', () => {
       });
 
       it('should call $confirm when params is false', async () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
+        await doMount(true, {
           computed: {
             task: () => mockTeamTaskEntity(),
           },
@@ -173,13 +287,6 @@ describe('caseFileTask', () => {
       });
 
       it('should call setWorkingOn with false when $confirm is true', async () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
-          computed: {
-            task: () => mockTeamTaskEntity(),
-          },
-        });
         wrapper.vm.$confirm = jest.fn(() => true);
         wrapper.vm.setWorkingOn = jest.fn();
         await wrapper.vm.onToggleChange(false);
@@ -187,9 +294,7 @@ describe('caseFileTask', () => {
       });
 
       it('should call reset isWorkingOn when $confirm is false', async () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
+        await doMount(true, {
           data() {
             return {
               isWorkingOn: false,
@@ -209,9 +314,7 @@ describe('caseFileTask', () => {
   describe('watch', () => {
     describe('task.userWorkingOn', () => {
       it('should set isWorkingOn to false when task is assigned to the same team and userWorkingOn is falsy', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
+        await doMount(true, {
           propsData: {
             id: 'mock-id-1',
             taskId: 'mock-case-file-id-1',

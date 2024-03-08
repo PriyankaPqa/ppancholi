@@ -1313,6 +1313,7 @@
     "errorReport.errorDialog.showPayload": "Show payload data",
     "errorReport.errorDialog.title": "Report a problem",
     "errorReport.reportProblem": "Report problem",
+    "errors.team-has-new-or-in-progress-tasks-for-these-events": "Cannot remove event from this team, because it has new or in progress tasks",
     "errors.a-filter-with-this-name-already-exists": "A filter with this name already exists",
     "errors.a-financial-assistance-payment-with-this-name-already-exists": "A financial assistance payment with this name already exists",
     "errors.a-financial-assistance-table-with-this-name-already-exists": "A financial assistance table with this name already exists",

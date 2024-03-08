@@ -51,14 +51,14 @@
               {{ $t('task.create_edit.assigned_to') }}
             </v-col>
             <v-col class="pa-0 pl-2" data-test="task-details-assigned-to">
-              {{ (isTeamTask && assignedTeam) ? assignedTeam.name : assignedToPerson }}
+              {{ taskAssignedTo }}
             </v-col>
             <div>
               <v-btn
-                v-if="task.taskType === TaskType.Team || task.taskStatus === TaskStatus.InProgress"
+                v-if="task.taskType === TaskType.Team || (task.taskStatus === TaskStatus.InProgress && task.createdBy === userId)"
                 color="primary"
                 small
-                :disabled="task.taskType === TaskType.Team && !$hasLevel(UserRoles.level1)"
+                :disabled="!canAction"
                 data-test="task-details-action-button"
                 @click="showTaskActionDialog = true">
                 {{ $t('task.action') }}
@@ -85,7 +85,7 @@
                 :aria-label="$t('task.task_details.working_on_it')"
                 class="ma-0"
                 :loading="toggleLoading"
-                :disabled="!$hasLevel(UserRoles.level1) || toggleLoading"
+                :disabled="toggleLoading || !canAction"
                 @change="onToggleChange($event)" />
             </div>
           </v-row>
@@ -158,7 +158,7 @@
       </v-btn>
     </template>
     <task-action-dialog v-if="showTaskActionDialog" :task="task" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
-    <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" :teams-by-event="teamsByEvent" />
+    <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
   </rc-page-content>
 </template>
 
@@ -174,7 +174,6 @@ import caseFileTask from '@/ui/mixins/caseFileTask';
 import mixins from 'vue-typed-mixins';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useUserStore } from '@/pinia/user/user';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
@@ -209,7 +208,6 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       showTaskActionDialog: false,
       showTaskHistoryDialog: false,
       loading: false,
-      assignedTeam: null as ITeamEntity,
       teamsByEvent: [] as ITeamEntity[],
     };
   },
@@ -237,8 +235,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     },
 
     assignedToPerson(): string | TranslateResult {
-      const userId = useUserStore().getUserId();
-      if (userId === this.task.createdBy) {
+      if (this.userId === this.task.createdBy) {
         return this.$t('task.create_edit.assigned_to.me');
       }
       if (this.$hasLevel(UserRoles.level5)) {
@@ -260,19 +257,27 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       if (this.$hasLevel(UserRoles.level6)) {
         return true;
       }
-      const userId = useUserStore().getUserId();
       if (this.isTeamTask) {
         if (this.task.taskStatus === TaskStatus.InProgress || this.task.taskStatus === TaskStatus.New) {
-          return this.$hasLevel(UserRoles.level1) || this.task.createdBy === userId;
+          return this.$hasLevel(UserRoles.level1) || this.task.createdBy === this.userId;
         }
       } else {
-        return this.task.createdBy === userId;
+        return this.task.createdBy === this.userId;
       }
       return false;
     },
 
     displayWorkingOnIt(): boolean {
       return this.isTeamTask && (this.task.taskStatus === TaskStatus.InProgress || this.task.taskStatus === TaskStatus.New);
+    },
+
+    taskAssignedTo(): string {
+      if (this.isTeamTask) {
+        return this.task.taskStatus === TaskStatus.Completed
+          ? this.task.taskActionHistories[this.task.taskActionHistories.length - 1].currentTeamName
+          : this.assignedTeam?.name;
+      }
+      return this.assignedToPerson as string;
     },
   },
 

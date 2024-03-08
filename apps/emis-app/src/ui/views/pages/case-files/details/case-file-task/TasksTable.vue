@@ -165,7 +165,7 @@
 
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
-import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
+import { RcAddButtonWithMenu, RcDataTable, RcPageLoading } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { IdParams, ITaskCombined, ITaskEntity, ITaskMetadata, TaskStatus, TaskType } from '@libs/entities-lib/task';
@@ -189,6 +189,7 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
+import { ITeamEntity } from '@libs/entities-lib/team';
 import { IEntityCombined } from '@libs/entities-lib/base';
 
 interface IParsedTaskMetadata extends ITaskMetadata {
@@ -206,6 +207,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     RcAddButtonWithMenu,
     StatusChip,
     TaskActionDialog,
+    RcPageLoading,
   },
 
   props: {
@@ -239,6 +241,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       UserRoles,
       FilterKey,
       TaskStatus,
+      teamsByEvent: [] as ITeamEntity[],
       showTaskActionDialog: false,
       actioningTask: null as ITaskEntity,
       actioningEventId: '',
@@ -480,6 +483,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   watch: {
     rawTableData: {
       async handler(nextValue, prevValue) {
+        if (!this.isInCaseFile && prevValue.length === 0 && nextValue.length > 0) {
+          await this.getTeamsByEvent();
+        }
+
         if (prevValue && nextValue !== prevValue) {
           await useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true);
         }
@@ -492,6 +499,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     this.saveState = true;
     this.loadState();
     await useTaskStore().fetchTaskCategories();
+    if (this.isInCaseFile) {
+      await this.getTeamsByEvent();
+    }
     await useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true);
   },
 
@@ -583,18 +593,44 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       return false;
       },
 
-    canAction(taskEntity: ITaskEntity): boolean {
-      if (taskEntity.taskType === TaskType.Team) {
-        return this.$hasLevel(UserRoles.level1);
+    canAction(task: ITaskEntity): boolean {
+      const userId = useUserStore().getUserId();
+      if (task.taskType === TaskType.Personal) {
+        return task.createdBy === userId && task.taskStatus === TaskStatus.InProgress;
       }
 
-      return taskEntity.taskStatus !== TaskStatus.Completed;
+      if (this.$hasLevel(UserRoles.level6)) {
+        return true;
+      }
+        // Team task --> condition
+        if (this.$hasLevel(UserRoles.level1)
+          || this.$hasRole(UserRoles.readonly)
+          || this.$hasRole(UserRoles.contributor3)
+          || this.$hasRole(UserRoles.contributorIM)
+          || this.$hasRole(UserRoles.contributorFinance)) {
+          const assignedTeam = this.teamsByEvent?.filter((t) => t.id === task.assignedTeamId)[0];
+          return assignedTeam?.teamMembers.some((m) => m.id === userId);
+        }
+        // L0, no-role --> false
+        return false;
     },
 
     async getTeamsByEvent() {
-      const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);
-      if (teams) {
-        this.teamsByEvent = teams;
+      if (this.isInCaseFile) {
+        const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);
+        if (teams) {
+          this.teamsByEvent = teams;
+        }
+      } else {
+        const eventIds = [...new Set(this.rawTableData?.map((d) => (d.metadata.eventId)))];
+        const teams = [] as ITeamEntity[];
+        await Promise.all(eventIds.map(async (e) => {
+          const res = await this.$services.teams.getTeamsByEvent(e);
+          if (res) {
+            teams.push(...res);
+          }
+        }));
+        this.teamsByEvent = [...new Set(teams)];
       }
     },
 
