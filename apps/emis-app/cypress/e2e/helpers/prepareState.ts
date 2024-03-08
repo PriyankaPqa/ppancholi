@@ -398,19 +398,19 @@ export const createAndUpdateAssessmentWithAllPossibleComponents = async (provide
 
 // verifies if casefile created is indexed through search and wait
 const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 20, throttle = 2000): Promise<number> => {
-  let searchResult = 0;
+  let searchResult = [] as any;
   let attempt = 0;
   const waitForCaseFileIndexToBeUpdated = async (): Promise<number> => {
-    if (searchResult === 1) {
+    if (searchResult?.length > 0) {
       cy.log('Casefile index successfully updated');
     } else if (attempt < maxAttempt) {
       const search = await provider.caseFiles.search({
         filter: { Entity: { Id: { value: caseFileId, type: EFilterKeyType.Guid } } },
         top: 1,
       });
-      searchResult = search.odataCount;
+      searchResult = search?.value;
       attempt += 1;
-      if (searchResult === 0) {
+      if (searchResult?.length === 0) {
         // eslint-disable-next-line
         await helpers.timeout(throttle)
         cy.log(`Casefile index search attempt ${attempt}`);
@@ -448,7 +448,8 @@ export const prepareStateHouseholdMassFinancialAssistance = async (params: Creat
   const programId = params.programId;
   await searchCasefileAndWait(provider, responseCreateHousehold.registrationResponse.caseFile.id);
   const mockCreateMassFinancialAssistance = mockCreateMassFinancialAssistanceRequest(params.event, { eventId, tableId, programId });
-  const responseMassFinancialAssistance = await provider.massActions.create('financial-assistance-from-list', mockCreateMassFinancialAssistance);
+  const responseMassFinancialAssistance = await provider.massActions
+  .create(`financial-assistance-from-listV2?$filter=Entity/EventId eq ${eventId} and Entity/Status eq 'Active'`, mockCreateMassFinancialAssistance);
   return { responseMassFinancialAssistance, responseCreateHousehold };
 };
 

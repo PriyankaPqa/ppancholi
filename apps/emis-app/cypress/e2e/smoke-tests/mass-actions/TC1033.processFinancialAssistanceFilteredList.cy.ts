@@ -37,7 +37,7 @@ let accessTokenL6 = '';
 
 // There is a chance for this test to be flaky because of indexes and search. If that's the case, it's better to use test it with a CSV instead of filtered list
 describe(
-  '#TC1033# - Process a Financial Assistance filtered list',
+  '#TC1033# - Process a Financial Assistance filtered list.',
   {
     tags: ['@financial-assistance', '@mass-actions'],
     retries: {

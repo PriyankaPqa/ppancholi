@@ -14,7 +14,7 @@ export const mockCreateMassFinancialAssistanceRequest = (event: IEventEntity, fo
   paymentModality: EPaymentModalities.Cheque,
   amount: 80.00,
   search: '',
-  filter: `Entity/EventId eq '${event.id}' and Entity/Status eq 1`,
+  filter: `?$filter=Entity/EventId eq ${event.id} and Entity/Status eq 'Active'`,
   ...force,
 });
 
