@@ -142,13 +142,31 @@ describe('caseFileTask', () => {
         expect(wrapper.vm.canAction).toEqual(false);
       });
 
-      it('should be true for L6 user', async () => {
+      it('should be true for team task L6 user', async () => {
         await doMount(true, {
           computed: {
             task: () => mockTeamTaskEntity(),
           },
         }, 6);
         expect(wrapper.vm.canAction).toEqual(true);
+      });
+
+      it('should be true for in progress personal task L6 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity(),
+          },
+        }, 6);
+        expect(wrapper.vm.canAction).toEqual(true);
+      });
+
+      it('should be false for completed personal task L6 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
+          },
+        }, 6);
+        expect(wrapper.vm.canAction).toEqual(false);
       });
 
       it('should be true for personal task if he is the creator and task is in progress', async () => {

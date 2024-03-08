@@ -55,7 +55,7 @@
             </v-col>
             <div>
               <v-btn
-                v-if="task.taskType === TaskType.Team || (task.taskStatus === TaskStatus.InProgress && task.createdBy === userId)"
+                v-if="shouldShowActionButton"
                 color="primary"
                 small
                 :disabled="!canAction"
@@ -278,6 +278,13 @@ export default mixins(caseFileTask, caseFileDetail).extend({
           : this.assignedTeam?.name;
       }
       return this.assignedToPerson as string;
+    },
+
+    shouldShowActionButton(): boolean {
+      if (this.task.taskType === TaskType.Personal) {
+        return this.task.taskStatus === TaskStatus.InProgress && (this.$hasLevel(UserRoles.level6) || this.task.createdBy === this.userId);
+      }
+        return true;
     },
   },
 

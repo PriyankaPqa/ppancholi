@@ -351,17 +351,6 @@ describe('TaskDetails.vue', () => {
       });
     });
 
-    describe('task_details_back_btn', () => {
-      it('should router back to case file tasks', async () => {
-        await doMount(false);
-        const element = wrapper.findDataTest('task_details_back_btn');
-        await element.vm.$emit('click');
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-          name: routes.caseFile.task.home.name,
-        });
-      });
-    });
-
     describe('task-details-working-on-it', () => {
       it('should be rendered when displayWorkingOnIt is true', async () => {
         await doMount(true, {
@@ -480,6 +469,18 @@ describe('TaskDetails.vue', () => {
             task: () => mockPersonalTaskEntity({ createdBy: 'mock-id-1' }),
           },
         });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-action-button');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should be rendered when it is in progress personal task and user is L6', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-id-2' }),
+          },
+        }, 6);
         await flushPromises();
         const element = wrapper.findDataTest('task-details-action-button');
         expect(element.exists()).toBeTruthy();
@@ -868,6 +869,50 @@ describe('TaskDetails.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.taskAssignedTo).toEqual('mock-team-3');
+      });
+    });
+
+    describe('shouldShowActionButton', () => {
+      it('should return true for team task', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+            isTeamTask: () => true,
+          },
+        });
+        expect(wrapper.vm.shouldShowActionButton).toEqual(true);
+      });
+
+      it('should return false for completed personal task', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
+            isTeamTask: () => false,
+          },
+        });
+        expect(wrapper.vm.shouldShowActionButton).toEqual(false);
+      });
+
+      it('should return true for in progress personal task as L6 but not creator', async () => {
+        userStore.getUserId = jest.fn(() => 'user-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'user-id-2' }),
+            isTeamTask: () => false,
+          },
+        }, 6);
+        expect(wrapper.vm.shouldShowActionButton).toEqual(true);
+      });
+
+      it('should return true for in progress personal task as creator but not L6', async () => {
+        userStore.getUserId = jest.fn(() => 'user-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'user-id-1' }),
+            isTeamTask: () => false,
+          },
+        }, 5);
+        expect(wrapper.vm.shouldShowActionButton).toEqual(true);
       });
     });
   });

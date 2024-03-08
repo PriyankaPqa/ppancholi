@@ -66,13 +66,14 @@ export default Vue.extend({
     },
 
     canAction(): boolean {
+      if (this.$hasLevel(UserRoles.level6)) {
+        return !(this.task.taskType === TaskType.Personal && this.task.taskStatus === TaskStatus.Completed);
+      }
+
       if (this.task.taskType === TaskType.Personal) {
         return this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.InProgress;
       }
 
-      if (this.$hasLevel(UserRoles.level6)) {
-        return true;
-      }
       // Team task
         if (this.$hasLevel(UserRoles.level1)
           || this.$hasRole(UserRoles.readonly)

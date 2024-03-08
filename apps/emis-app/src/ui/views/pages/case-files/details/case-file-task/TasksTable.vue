@@ -595,13 +595,14 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     canAction(task: ITaskEntity): boolean {
       const userId = useUserStore().getUserId();
+      if (this.$hasLevel(UserRoles.level6)) {
+        return !(task.taskType === TaskType.Personal && task.taskStatus === TaskStatus.Completed);
+      }
+
       if (task.taskType === TaskType.Personal) {
         return task.createdBy === userId && task.taskStatus === TaskStatus.InProgress;
       }
 
-      if (this.$hasLevel(UserRoles.level6)) {
-        return true;
-      }
         // Team task --> condition
         if (this.$hasLevel(UserRoles.level1)
           || this.$hasRole(UserRoles.readonly)

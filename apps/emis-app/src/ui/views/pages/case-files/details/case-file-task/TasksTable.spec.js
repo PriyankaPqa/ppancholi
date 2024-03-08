@@ -1080,9 +1080,19 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.canAction(mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }))).toEqual(false);
       });
 
-      it('should be true for L6 user', async () => {
+      it('should be true for team task as L6 user', async () => {
         await doMount(null, true, 6);
         expect(wrapper.vm.canAction(mockTeamTaskEntity())).toEqual(true);
+      });
+
+      it('should be true for in progress personal task as L6 user', async () => {
+        await doMount(null, true, 6);
+        expect(wrapper.vm.canAction(mockPersonalTaskEntity())).toEqual(true);
+      });
+
+      it('should be false for completed personal task as L6 user', async () => {
+        await doMount(null, true, 6);
+        expect(wrapper.vm.canAction(mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }))).toEqual(false);
       });
 
       it('should be true for personal task when he is the creator and task is in progress', async () => {
