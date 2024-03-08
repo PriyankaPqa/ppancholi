@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
@@ -17,12 +17,11 @@ const localVue = createLocalVue();
 const services = mockProvider();
 
 const mockCaseFile = mockCaseFileEntity({ id: '1' });
-const mockCaseFileMeta = mockCaseFileMetadata();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const pinia = getPiniaForUser(UserRoles.level1);
-const { caseFileStore, caseFileMetadataStore } = useMockCaseFileStore(pinia);
+const { caseFileStore } = useMockCaseFileStore(pinia);
 const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 const { userStore } = useMockUserStore(pinia);
 describe('CaseFileDetails.vue', () => {
@@ -106,7 +105,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(mockCaseFileMeta.event.name.translation.en);
+        expect(element.text()).toEqual(mockEvent.name.translation.en);
       });
     });
 
@@ -608,7 +607,6 @@ describe('CaseFileDetails.vue', () => {
 
     it('should call fetch', () => {
       expect(caseFileStore.fetch).toHaveBeenCalledWith(wrapper.vm.id);
-      expect(caseFileMetadataStore.fetch).toHaveBeenCalledWith(wrapper.vm.id, false);
     });
 
     it('should call getHouseholdInfo', async () => {

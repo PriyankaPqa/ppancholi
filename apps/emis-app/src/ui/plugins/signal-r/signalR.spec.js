@@ -15,6 +15,7 @@ import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetada
 import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useTaskMetadataStore, useTaskStore } from '@/pinia/task/task';
 import { useRegistrationStore } from '@/pinia/registration/registration';
@@ -171,7 +172,7 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'household',
           entityName: 'Person',
-          action: conn.noAction,
+          action: usePersonStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
@@ -343,7 +344,7 @@ describe('signalR', () => {
           entityName: 'CaseFile',
           action: useCaseFileStore().setItemFromOutsideNotification,
         });
-      expect(conn.listenForChanges)
+      expect(conn.listenForChangesMetadataSql)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'CaseFileMetadata',

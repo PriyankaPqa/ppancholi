@@ -25,9 +25,10 @@ import { IMassActionEntity, MassActionType } from '@libs/entities-lib/mass-actio
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IListOption } from '@libs/shared-lib/types';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
-import { buildQuery } from '@libs/services-lib/odata-query';
+import buildQuerySql from 'odata-query';
 import { IMassActionCaseFileStatusCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import CaseFileStatusMassActionCreateDetails from './CaseFileStatusMassActionCreateDetails.vue';
 
 export interface MassActionCaseFileStatusForm {
@@ -74,7 +75,7 @@ export default Vue.extend({
     async onPost({ name, description }: { name: string, description: string }) {
       const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
 
-      const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
+      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
       const { reason, rationale, status } = this.form;
 
       const payload = {
@@ -84,8 +85,8 @@ export default Vue.extend({
         reason: reason.optionItemId ? reason : null,
         rationale,
         status,
-        search: azureSearchParams.search,
-        filter: `${filter} and Entity/Status eq 1`,
+        search: null,
+        filter,
       } as IMassActionCaseFileStatusCreatePayload;
 
       this.loading = true;

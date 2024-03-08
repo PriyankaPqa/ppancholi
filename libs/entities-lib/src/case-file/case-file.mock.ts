@@ -8,6 +8,7 @@ import {
   IAssignedTeamMembers,
   ITier2Response,
   ITier2Details,
+  ICaseFileSummary,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 import { EPaymentModalities } from '../program';
@@ -99,9 +100,38 @@ export const mockCaseFileEntity = (force? : Partial<ICaseFileEntity>): ICaseFile
   },
 });
 
+export const mockCaseFileSummary = (force? : Partial<ICaseFileSummary>): ICaseFileSummary => ({
+  id: 'abcd',
+  assignedTeamMembers: mockAssignedTeamMembers(),
+  assignedTeamIds: ['mock-assigned-team-id-1'],
+  caseFileNumber: '000000111-000001',
+  caseFileStatus: 2,
+  eventId: 'e70da37e-67cd-4afb-9c36-530c7d8b191f',
+  householdId: 'mock-household-id-1',
+  impactStatusValidation: {
+    status: ValidationOfImpactStatus.Impacted,
+    method: ImpactValidationMethod.Manual,
+  },
+  tags: [
+    {
+      optionItemId: 'mock-tag-restrict-financial-id-1',
+      specifiedOther: null,
+    },
+  ],
+  triage: 1,
+  identityAuthentication: {
+    identificationIds: [{ optionItemId: '1', specifiedOther: null }, { optionItemId: '2', specifiedOther: null }],
+    method: IdentityAuthenticationMethod.InPerson,
+    status: IdentityAuthenticationStatus.Passed,
+  },
+  hasAccess: true,
+  ...force,
+});
+
 export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICaseFileMetadata => ({
   ...mockBaseData(),
   caseFileStatusName: {
+    id: 123,
     translation: {
       en: 'Archived',
       fr: 'Archive',
@@ -109,31 +139,19 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
   },
   event: {
     id: 'e70da37e-67cd-4afb-9c36-530c7d8b191f',
-    name: {
-      translation: {
-        en: 'Event 1 EN',
-        fr: 'Event 1 FR',
-      },
+    translation: {
+      en: 'Event 1 EN',
+      fr: 'Event 1 FR',
     },
   },
   lastActionDate: '2021-04-30',
   triageName: {
+    id: 123,
     translation: {
       en: 'Level 1',
       fr: 'Sans objet',
     },
   },
-  tags: [
-    {
-      id: 'mock-tag-id-1',
-      name: {
-        translation: {
-          en: 'Do not communicate',
-          fr: 'Ne pas contacter',
-        },
-      },
-    },
-  ],
   primaryBeneficiary: {
     id: '011a62da-0e21-478a-bb56-00b0b4845167',
     identitySet: {
@@ -146,32 +164,32 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
     },
   },
   household: {
-    address: {
-      address: {
-        streetAddress: '312 Trudeau Drive',
-        city: 'Milton',
-        postalCode: 'L9T 6J1',
-        country: 'CA',
-        unitSuite: '',
-        longitude: '45546',
-        latitude: '54646',
-        provinceCode: {
-          translation: {
-            en: 'ON',
-            fr: 'ON',
-          },
-        },
+    id: '011a62da-0e21-478a-bb56-00b0b4845167',
+    streetAddress: '312 Trudeau Drive',
+    city: 'Milton',
+    postalCode: 'L9T 6J1',
+    country: 'CA',
+    unitSuite: '',
+    longitude: '45546',
+    latitude: '54646',
+    provinceCode: {
+      id: 123,
+      translation: {
+        en: 'ON',
+        fr: 'ON',
       },
     },
   },
   appliedProgramIds: ['program-id-1'],
   identityAuthenticationStatusName: {
+    id: 123,
     translation: {
       en: 'Passed',
       fr: 'Passe',
     },
   },
   impactStatusValidationName: {
+    id: 123,
     translation: {
       en: 'Impacted',
       fr: 'Impacte',

@@ -21,6 +21,7 @@
         :count="itemsCount"
         :filter-options="filters"
         :initial-filter="filterState"
+        :sql-mode="true"
         add-filter-label="caseFileTable.filter"
         @open="fetchEventsFilter()"
         @update:appliedFilter="onApplyFilterLocal"
@@ -95,9 +96,9 @@
       <router-link
         v-if="caseFile.metadata"
         class="rc-link14"
-        :data-test="`beneficiaryName-link_${getBeneficiaryName(caseFile)}`"
+        :data-test="`beneficiaryName-link_${caseFile.primaryMemberName}`"
         :to="getHouseholdProfileRoute(caseFile)">
-        {{ getBeneficiaryName(caseFile) }}
+        {{ caseFile.primaryMemberName }}
         <v-icon
           v-if="caseFile.metadata.hasPotentialDuplicates"
           :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
@@ -110,11 +111,11 @@
     </template>
 
     <template #[`item.${customColumns.event}`]="{ item: caseFile }">
-      {{ caseFile.metadata && caseFile.metadata.event ? $m(caseFile.metadata.event.name) : "" }}
+      {{ caseFile.eventName }}
     </template>
 
     <template #[`item.${customColumns.triage}`]="{ item: caseFile }">
-      {{ caseFile.metadata ? $m(caseFile.metadata.triageName) : "" }}
+      {{ $t(`enums.Triage.${CaseFileTriage[caseFile.entity.triage || CaseFileTriage.None]}`) }}
     </template>
 
     <template #[`item.${customColumns.status}`]="{ item: caseFile }">
@@ -137,9 +138,9 @@
 import mixins from 'vue-typed-mixins';
 import { DataTableHeader } from 'vuetify';
 import { RcDataTable } from '@libs/component-lib/components';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
-import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
+import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import isEqual from 'lodash/isEqual';
+import _throttle from 'lodash/throttle';
 import pickBy from 'lodash/pickBy';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
@@ -154,10 +155,17 @@ import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import { useUserStore } from '@/pinia/user/user';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useCaseFileStore, useCaseFileMetadataStore } from '@/pinia/case-file/case-file';
+import { useHouseholdStore } from '@/pinia/household/household';
 import { TranslateResult } from 'vue-i18n';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IMemberEntity } from '@libs/entities-lib/src/value-objects/member';
+import { usePersonStore } from '@/pinia/person/person';
+import { useEventStore } from '@/pinia/event/event';
 
 interface IParsedCaseFileCombined extends ICaseFileCombined {
   recentlyViewed: boolean;
+  primaryMemberName: string;
+  eventName: string;
 }
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
@@ -183,6 +191,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   data() {
     return {
       CaseFileStatus,
+      CaseFileTriage,
       FilterKey,
       myCaseFiles: false,
       duplicatesOnly: false,
@@ -198,6 +207,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
       combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
+      sqlSearchMode: true,
     };
   },
 
@@ -215,14 +225,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     myCaseFilesFilter(): Record<string, unknown> {
       return {
         Entity: {
-          AssignedTeamMembers: {
-            any: {
-              TeamMembersIds: {
-                any: {
-                  [ITEM_ROOT]: this.userId,
-                },
-              },
-            },
+          AssignedTeamMembersAsString: {
+            contains: this.userId,
           },
         },
       };
@@ -238,13 +242,13 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       if (useCaseFileStore().recentlyViewedCaseFileIds.length === 0) {
         return {
           Entity: {
-            Id: '',
+            Id: { value: null, type: EFilterKeyType.Guid },
           },
         };
       }
       const recentlyViewedObjectList = useCaseFileStore().recentlyViewedCaseFileIds.map((id) => ({
           Entity: {
-            Id: id,
+            Id: { value: id, type: EFilterKeyType.Guid },
           },
         }));
       return {
@@ -252,13 +256,26 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       };
     },
 
+    caseFiles() : ICaseFileCombined[] {
+      return this.combinedCaseFileStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+    },
+
+    households(): IHouseholdEntity[] {
+      return useHouseholdStore().getByIds(this.caseFiles.map((x) => x.entity.householdId));
+    },
+
+    persons(): IMemberEntity[] {
+      return usePersonStore().getByIds(this.households.map((x) => x.primaryBeneficiary));
+    },
+
     tableData(): IParsedCaseFileCombined[] {
-      const rawData = this.combinedCaseFileStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
-      const parsedData: IParsedCaseFileCombined[] = rawData.map((d) => {
+      const parsedData = this.caseFiles.map((d) => {
         const recentlyViewed = useCaseFileStore().recentlyViewedCaseFileIds.indexOf(d.entity.id) > -1;
         return {
           ...d,
           recentlyViewed,
+          primaryMemberName: this.getBeneficiaryName(d) as string,
+          eventName: this.$m(useEventStore().getById(d.entity.eventId)?.name),
         };
       });
       return parsedData;
@@ -268,7 +285,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       return {
         caseFileNumber: 'Entity/CaseFileNumber',
         name: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
-        event: `Metadata/Event/Name/Translation/${this.$i18n.locale}`,
+        event: `Metadata/Event/Translation/${this.$i18n.locale}`,
         triage: `Metadata/TriageName/Translation/${this.$i18n.locale}`,
         status: `Metadata/CaseFileStatusName/Translation/${this.$i18n.locale}`,
         created: 'Entity/Created',
@@ -332,6 +349,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         },
         {
           key: 'Entity/EventId',
+          keyType: EFilterKeyType.Guid,
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
           items: this.sortedEventsFilter,
@@ -375,15 +393,15 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           }],
         },
         {
-          key: 'Entity/AssignedTeamMembers',
+          key: 'Entity/AssignedTeamMembersAsString',
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.isAssigned') as string,
           items: [{
             text: this.$t('common.yes') as string,
-            value: 'arrayNotEmpty',
+            value: 'stringArrayNotEmpty',
           }, {
             text: this.$t('common.no') as string,
-            value: 'arrayEmpty',
+            value: 'stringArrayEmpty',
           }],
         },
         {
@@ -421,6 +439,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       this.applyCustomFilter(newValue, this.myCaseFilesFilter);
     },
 
+    households() {
+      this.fetchPersonsAndEvents();
+    },
+
     duplicatesOnly(newValue, oldValue) {
       if (oldValue == null || newValue === oldValue) {
         return;
@@ -437,6 +459,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   },
 
   methods: {
+    fetchPersonsAndEvents: _throttle(async function func(this: { households: IHouseholdEntity[], caseFiles: ICaseFileCombined[] }) {
+      await useEventStore().fetchByIds(this.caseFiles.map((x) => x.entity.eventId), true);
+      await usePersonStore().fetchByIds(this.households.map((x) => x.primaryBeneficiary), true);
+    }, 100),
+
     applyCustomFilter(value: boolean, filter: Record<string, unknown>) {
       let preparedFilters = {} as Record<string, unknown>;
 
@@ -478,18 +505,28 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, false, true);
+
+      const casefiles = this.combinedCaseFileStore.getByIds(res.ids, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      await useEventStore().fetchByIds(casefiles.map((x) => x.entity.eventId), true);
+      const households = await useHouseholdStore().fetchByIds(casefiles.map((x) => x.entity.householdId), true);
+      await usePersonStore().fetchByIds(households.map((x) => x.primaryBeneficiary), true);
       return res;
     },
 
     getBeneficiaryName(caseFile: ICaseFileCombined): string | TranslateResult {
-      if (!caseFile?.metadata?.primaryBeneficiary?.identitySet) {
+      const household = this.households.find((h) => h.id === caseFile?.entity?.householdId);
+      if (!household) {
+        return '';
+      }
+      if (!household.primaryBeneficiary) {
         return this.$t('caseFilesTable.tableContent.empty_household');
       }
-
-      const { firstName, lastName } = caseFile.metadata.primaryBeneficiary.identitySet;
-
-      return `${firstName} ${lastName}`;
+      const identitySet = this.persons.find((p) => household.primaryBeneficiary === p.id)?.identitySet;
+      if (!identitySet) {
+        return '';
+      }
+      return `${identitySet?.firstName} ${identitySet?.lastName}`;
     },
 
     getHouseholdProfileRoute(caseFile: ICaseFileCombined) {

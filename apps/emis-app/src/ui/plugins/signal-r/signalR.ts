@@ -30,6 +30,7 @@ import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePayme
 import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useNotificationStore } from '@/pinia/notification/notification';
@@ -234,7 +235,7 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'household',
       entityName: 'Person',
-      action: this.noAction,
+      action: usePersonStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
@@ -387,7 +388,7 @@ export class SignalR implements ISignalR {
       action: useCaseFileStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
+    this.listenForChangesMetadataSql({
       domain: 'case-file',
       entityName: 'CaseFileMetadata',
       action: useCaseFileMetadataStore().setItemFromOutsideNotification,

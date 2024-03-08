@@ -4,8 +4,8 @@ import {
   ICaseFileCount,
   ICaseFileDetailedCount, IAssignedTeamMembers, IRecoveryPlan,
 } from '@libs/entities-lib/case-file';
-import { IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
-import { ICaseFileMetadata, ITier2Details, ITier2Request, ITier2Response } from '@libs/entities-lib/src/case-file/case-file.types';
+import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult, IListOption } from '@libs/shared-lib/types';
+import { ICaseFileMetadata, ICaseFileSummary, ITier2Details, ITier2Request, ITier2Response } from '@libs/entities-lib/src/case-file/case-file.types';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -93,12 +93,18 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign-case-file-teams-and-team-members`, payload);
   }
 
-  async getSummary(id: uuid): Promise<ICaseFileEntity> {
-    return this.http.get<ICaseFileEntity>(`${this.baseUrl}/${id}/summary`);
+  async search(params: IAzureSearchParams):
+    Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>> {
+    return this.http.get(`${this.apiUrlSuffix}/search/case-filesV2`, { params, isODataSql: true });
   }
 
-  async getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>> {
-    return this.http.get('/case-file/case-files/get-assigned-case-files', { params: { teamMemberId } });
+  // summaries are available even if you dont have access to the full case file
+  async searchSummaries(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFileSummary>> {
+    return this.http.get(`${this.apiUrlSuffix}/search/casefile-summaries`, { params, isODataSql: true });
+  }
+
+  async getSummary(id: uuid): Promise<ICaseFileSummary> {
+    return ((await this.searchSummaries({ filter: { id: { value: id, type: 'guid' } } })).value || [])[0];
   }
 
   async getAllCaseFilesRelatedToHouseholdId(householdId: uuid): Promise<ICaseFileEntity[]> {

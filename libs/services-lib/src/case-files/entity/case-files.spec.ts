@@ -185,17 +185,10 @@ describe('>>> Case File Service', () => {
   });
 
   describe('search', () => {
-    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`case-file/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+    it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/case-files', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/case-filesV2', { params, isODataSql: true });
     });
   });
 
@@ -217,15 +210,15 @@ describe('>>> Case File Service', () => {
 
       await service.getSummary(id);
 
-      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/summary`);
+      expect(http.get).toHaveBeenCalledWith('case-file/search/casefile-summaries', { params: { filter: { id: { value: id, type: 'guid' } } }, isODataSql: true });
     });
   });
 
-  describe('getAssignedCaseFiles', () => {
+  describe('searchSummaries', () => {
     it('is linked to the correct URL and params', async () => {
-      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
-      await service.getAssignedCaseFiles(id);
-      expect(http.get).toHaveBeenCalledWith('/case-file/case-files/get-assigned-case-files', { params: { teamMemberId: id } });
+      const params = { filter: { Foo: 'foo' } };
+      await service.searchSummaries(params);
+      expect(http.get).toHaveBeenCalledWith('case-file/search/casefile-summaries', { params, isODataSql: true });
     });
   });
 

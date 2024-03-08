@@ -180,7 +180,7 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     },
 
     tags(): IIdMultilingualName[] {
-      const existingIds = this.caseFile.tags.map((t) => t.optionItemId);
+      const existingIds = (this.caseFile.tags || []).map((t) => t.optionItemId);
       const tags = useCaseFileStore().getTagsOptions(false);
       return existingIds.map((id) => {
         const name = tags.find((t) => t.id === id)?.name || entityUtils.initMultilingualAttributes();

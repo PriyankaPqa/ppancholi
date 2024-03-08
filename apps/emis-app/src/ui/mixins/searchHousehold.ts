@@ -78,8 +78,7 @@ export default Vue.extend({
     async search(criteria: IHouseholdSearchCriteria) {
       this.searchLoading = true;
       this.criteria = criteria;
-      useHouseholdStore().$reset();
-      useHouseholdMetadataStore().$reset();
+      useHouseholdStore().lastSearchResults = [];
 
       const res = await this.combinedHouseholdStore.search({
         search: this.searchCriteria,
@@ -90,6 +89,7 @@ export default Vue.extend({
 
       if (res?.ids) {
         this.searchResults = this.combinedHouseholdStore.getByIds(res.ids);
+        useHouseholdStore().lastSearchResults = res.ids;
       }
 
       this.searchLoading = false;

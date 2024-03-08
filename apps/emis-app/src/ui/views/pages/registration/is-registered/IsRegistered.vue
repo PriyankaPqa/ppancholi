@@ -70,7 +70,7 @@ export default mixins(searchHousehold).extend({
 
   created() {
     // We get back results
-    this.searchResults = this.combinedHouseholdStore.getAll();
+    this.searchResults = this.combinedHouseholdStore.getByIds(useHouseholdStore().lastSearchResults);
     if (this.isSplitMode) {
       this.filterOutSplitHousehold();
     }

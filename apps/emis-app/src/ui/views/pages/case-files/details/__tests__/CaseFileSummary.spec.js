@@ -61,7 +61,6 @@ describe('CaseFileSummary.vue', () => {
 
         const services = wrapper.vm.$services;
         expect(services.caseFiles.getSummary).toHaveBeenCalledWith('abcd');
-        expect(services.caseFilesMetadata.getSummary).toHaveBeenCalledWith('abcd');
         expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith('abcd');
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           filter: {
@@ -193,11 +192,11 @@ describe('CaseFileSummary.vue', () => {
             name: 'Jane Doe',
             reason: 'End of CRC support',
           },
-          triage: 'Level 1',
+          triage: 'enums.Triage.Tier1',
           caseFileNumber: '000000111-000001',
-          validationOfImpact: 'Impacted',
+          validationOfImpact: 'enums.ValidationOfImpactStatus.Impacted',
           tags: [{
-            id: 'mock-tag-id-1',
+            id: 'mock-tag-restrict-financial-id-1',
             name: {
               translation: {
                 en: 'Do not communicate',
@@ -225,11 +224,11 @@ describe('CaseFileSummary.vue', () => {
             name: 'Jane Doe',
             reason: null,
           },
-          triage: 'Level 1',
+          triage: 'enums.Triage.Tier1',
           caseFileNumber: '000000111-000001',
-          validationOfImpact: 'Impacted',
+          validationOfImpact: 'enums.ValidationOfImpactStatus.Impacted',
           tags: [{
-            id: 'mock-tag-id-1',
+            id: 'mock-tag-restrict-financial-id-1',
             name: {
               translation: {
                 en: 'Do not communicate',

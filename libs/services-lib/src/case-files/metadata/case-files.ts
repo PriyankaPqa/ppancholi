@@ -10,8 +10,4 @@ export class CaseFilesMetadataService extends DomainBaseService<ICaseFileMetadat
   constructor(http: IHttpClient) {
     super(http, apiUrlSuffix, controller);
   }
-
-  async getSummary(id: uuid): Promise<ICaseFileMetadata> {
-    return this.http.get<ICaseFileMetadata>(`${this.baseUrl}/${id}/summary`);
-  }
 }

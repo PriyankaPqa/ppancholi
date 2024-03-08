@@ -23,12 +23,13 @@ import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import { IMassActionEntity, MassActionType } from '@libs/entities-lib/mass-action';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { buildQuery } from '@libs/services-lib/odata-query';
+import buildQuerySql from 'odata-query';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { IMassActionAssessmentCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { IMultilingual } from '@libs/shared-lib/types';
 import utils from '@libs/entities-lib/utils';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import AssessmentDetailsCreate from './AssessmentDetailsCreate.vue';
 
 export interface AssessmentDetailsForm {
@@ -92,7 +93,7 @@ export default Vue.extend({
     async onPost({ name, description }: { name: string; description: string }) {
       const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
 
-      const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
+      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
 
       this.fillEmptyMultilingualFields();
 
@@ -104,8 +105,8 @@ export default Vue.extend({
         emailSubject: this.details.emailSubject,
         emailTopCustomContent: this.details.emailTopCustomContent,
         emailAdditionalDescription: this.details.emailAdditionalDescription,
-        search: azureSearchParams.search,
-        filter: `${filter} and Entity/Status eq 1`,
+        search: null,
+        filter,
       };
 
       this.loading = true;

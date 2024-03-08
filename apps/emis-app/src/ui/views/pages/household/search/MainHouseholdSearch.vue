@@ -62,7 +62,7 @@ export default mixins(searchHousehold).extend({
 
   mounted() {
     // We get back results
-    this.searchResults = this.combinedHouseholdStore.getAll();
+    this.searchResults = this.combinedHouseholdStore.getByIds(useHouseholdStore().lastSearchResults);
   },
 
   methods: {

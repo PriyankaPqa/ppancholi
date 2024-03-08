@@ -28,6 +28,7 @@
           :filter-key="FilterKey.MassActionImpactStatuses"
           :count="itemsCount"
           :filter-options="filters"
+          :sql-mode="true"
           add-filter-label="caseFileTable.filter"
           @update:appliedFilter="onApplyFilter"
           @update:autocomplete="onAutoCompleteUpdate($event)"
@@ -59,57 +60,42 @@
       </template>
 
       <template #[`item.${customColumns.street}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.streetAddress || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.streetAddress || '-' }}
       </template>
 
       <template #[`item.${customColumns.unitSuite}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.unitSuite || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.unitSuite || '-' }}
       </template>
 
       <template #[`item.${customColumns.country}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.country || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.country || '-' }}
       </template>
 
       <template #[`item.${customColumns.province}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && $m(caseFile.metadata.household.address.address.provinceCode)
+        {{ caseFile.metadata.household
+          && $m(caseFile.metadata.household.provinceCode)
           || '-'
         }}
       </template>
 
       <template #[`item.${customColumns.city}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.city || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.city || '-' }}
       </template>
 
       <template #[`item.${customColumns.postalCode}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.postalCode
+        {{ caseFile.metadata.household && caseFile.metadata.household.postalCode
           || '-'
         }}
       </template>
 
       <template #[`item.${customColumns.longitude}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.longitude
+        {{ caseFile.metadata.household && caseFile.metadata.household.longitude
           || '-'
         }}
       </template>
 
       <template #[`item.${customColumns.latitude}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.latitude
+        {{ caseFile.metadata.household && caseFile.metadata.household.latitude
           || '-'
         }}
       </template>
@@ -128,7 +114,7 @@
 import { RcDataTable, RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import mixins from 'vue-typed-mixins';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
+import { EFilterType, IFilterSettings, EFilterKeyType } from '@libs/component-lib/types/FilterTypes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
@@ -164,14 +150,14 @@ export default mixins(massActionCaseFileFiltering).extend({
         caseFileNumber: 'Entity/CaseFileNumber',
         firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
         lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-        street: 'Metadata/Household/Address/Address/StreetAddress',
-        unitSuite: 'Metadata/Household/Address/Address/UnitSuite',
-        country: 'Metadata/Household/Address/Address/Country',
-        province: `Metadata/Household/Address/Address/ProvinceCode/Translation/${this.$i18n.locale}`,
-        city: 'Metadata/Household/Address/Address/City',
-        postalCode: 'Metadata/Household/Address/Address/PostalCode',
-        longitude: 'Metadata/Household/Address/Address/Longitude',
-        latitude: 'Metadata/Household/Address/Address/Latitude',
+        street: 'Metadata/Household/StreetAddress',
+        unitSuite: 'Metadata/Household/UnitSuite',
+        country: 'Metadata/Household/Country',
+        province: `Metadata/Household/ProvinceCode/Translation/${this.$i18n.locale}`,
+        city: 'Metadata/Household/City',
+        postalCode: 'Metadata/Household/PostalCode',
+        longitude: 'Metadata/Household/Longitude',
+        latitude: 'Metadata/Household/Latitude',
         validationOfImpact: `Metadata/ImpactStatusValidationName/Translation/${this.$i18n.locale}`,
       };
     },
@@ -246,6 +232,7 @@ export default mixins(massActionCaseFileFiltering).extend({
       return [
         {
           key: 'Entity/EventId',
+          keyType: EFilterKeyType.Guid,
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
           items: this.sortedEventsFilter,

@@ -1,4 +1,6 @@
-import { IMultilingual, IListOption, IIdMultilingualName, IdentityAuthenticationStatus, IdentityAuthenticationMethod, Tier2State } from '@libs/shared-lib/types';
+import { IMultilingualEnum, IMultilingualWithId, IListOption, IIdMultilingualName,
+    IdentityAuthenticationStatus, IdentityAuthenticationMethod, Tier2State,
+} from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 import { IEventData } from '../registration-event';
 
@@ -168,12 +170,26 @@ export interface ICaseFileEntity extends IEntity {
   validate(): Array<string> | boolean;
 }
 
+export interface ICaseFileSummary {
+  id: uuid,
+  eventId?: uuid;
+  householdId?: uuid;
+  caseFileNumber?: string;
+  caseFileStatus?: CaseFileStatus;
+  triage?: CaseFileTriage;
+  impactStatusValidation?: IImpactStatusValidation;
+  identityAuthentication?: IIdentityAuthentication;
+  tags?: IListOption[];
+  assignedTeamMembers?: IAssignedTeamMembers[],
+  assignedTeamIds?: uuid[];
+  hasAccess: boolean;
+}
+
 export interface ICaseFileMetadata extends IEntity {
-  caseFileStatusName?: IMultilingual;
-  event?: IIdMultilingualName;
+  caseFileStatusName?: IMultilingualEnum;
+  event?: IMultilingualWithId;
   lastActionDate?: Date | string;
-  triageName?: IMultilingual;
-  tags: IIdMultilingualName[];
+  triageName?: IMultilingualEnum;
   primaryBeneficiary: {
     id: uuid;
     identitySet: {
@@ -186,24 +202,21 @@ export interface ICaseFileMetadata extends IEntity {
     },
   },
   household: {
-    address: {
-      address: {
-        streetAddress: string;
-        city: string;
-        postalCode: string;
-        provinceCode: IMultilingual;
-        unitSuite: string;
-        longitude: string;
-        latitude: string;
-        country: string;
-      }
-    },
+    id: uuid;
+    streetAddress: string;
+    city: string;
+    postalCode: string;
+    provinceCode: IMultilingualEnum;
+    unitSuite: string;
+    longitude: string;
+    latitude: string;
+    country: string;
   },
-  identityAuthenticationStatusName: IMultilingual,
-  impactStatusValidationName: IMultilingual,
+  identityAuthenticationStatusName: IMultilingualEnum,
+  impactStatusValidationName: IMultilingualEnum,
+  hasPotentialDuplicates?: boolean,
   appliedProgramIds: uuid[]
   assessments?: { assessmentResponseId: uuid, assessmentFormId: uuid }[],
-  hasPotentialDuplicates?: boolean,
 }
 
 export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata>;

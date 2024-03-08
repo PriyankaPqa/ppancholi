@@ -158,7 +158,6 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
 
         const name = 'Mass action';
         const description = 'description';
-        const azureSearchParams = JSON.parse(filtersString);
         await wrapper.setData({
           form: {
             event: mockEvent(),
@@ -175,8 +174,8 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
           status: wrapper.vm.form.status,
           reason: wrapper.vm.form.reason,
           rationale: wrapper.vm.form.rationale,
-          search: azureSearchParams.search,
-          filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
+          search: null,
+          filter: "?$filter=Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 'Active'",
         };
         await wrapper.vm.onPost({ name, description });
 

@@ -144,12 +144,13 @@ import _orderBy from 'lodash/orderBy';
 import _flatten from 'lodash/flatten';
 import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import {
-  CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity, ICaseFileMetadata,
+  CaseFileActivityType, CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileSummary, ValidationOfImpactStatus,
 } from '@libs/entities-lib/case-file';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
+import entityUtils from '@libs/entities-lib/utils';
 
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';
@@ -193,8 +194,7 @@ export default Vue.extend({
     return {
       hasReferrals: null as boolean,
       activities: [] as ICaseFileActivity[],
-      caseFile: null as ICaseFileEntity,
-      caseFileMetadata: null as ICaseFileMetadata,
+      caseFile: null as ICaseFileSummary,
       closeActivity: null as ICaseFileActivity,
       faSummary: null as PaymentsSummary,
       primary: null as { name: string, birthDate: string },
@@ -217,15 +217,23 @@ export default Vue.extend({
     },
 
     summary(): CaseFileSummary {
-      if (!this.caseFile || !this.caseFileMetadata) {
+      if (!this.caseFile) {
         return null;
       }
       const s = {} as CaseFileSummary;
       s.caseFileStatus = this.caseFile.caseFileStatus;
-      s.triage = this.$m(this.caseFileMetadata.triageName);
+      s.triage = this.$t(`enums.Triage.${CaseFileTriage[this.caseFile.triage || CaseFileTriage.None]}`) as string;
       s.caseFileNumber = this.caseFile.caseFileNumber;
-      s.validationOfImpact = this.$m(this.caseFileMetadata.impactStatusValidationName);
-      s.tags = this.caseFileMetadata.tags || [];
+      s.validationOfImpact = this.$t(`enums.ValidationOfImpactStatus.${ValidationOfImpactStatus[this.caseFile.impactStatusValidation?.status
+          || ValidationOfImpactStatus.Undetermined]}`) as string;
+
+      const existingIds = (this.caseFile.tags || []).map((t) => t.optionItemId);
+      const tags = useCaseFileStore().getTagsOptions(false);
+      s.tags = existingIds.map((id) => {
+        const name = tags.find((t) => t.id === id)?.name || entityUtils.initMultilingualAttributes();
+        return { id, name };
+      });
+
       s.assignedToUsersAndTeams = [...this.assignedTeams, ...this.assignedUserAccounts].join(', ');
       s.financialTotal = this.faSummary?.grandTotalAmount;
       s.hasReferrals = this.hasReferrals;
@@ -248,14 +256,14 @@ export default Vue.extend({
 
   methods: {
     async loadData() {
+      await useCaseFileStore().fetchTagsOptions();
       this.caseFile = await this.$services.caseFiles.getSummary(this.caseFileId);
-      this.caseFileMetadata = await this.$services.caseFilesMetadata.getSummary(this.caseFileId);
       await Promise.all([
-        await useTeamStore().getTeamsAssigned(this.caseFileId),
-        await this.getAssignedIndividualsInfo(),
-        await this.getReferrals(),
-        await this.getActivities(),
-        await this.getFASummary(),
+        useTeamStore().getTeamsAssigned(this.caseFileId),
+        this.getAssignedIndividualsInfo(),
+        this.getReferrals(),
+        this.getActivities(),
+        this.getFASummary(),
       ]);
 
       await this.getHouseholdMembers();
