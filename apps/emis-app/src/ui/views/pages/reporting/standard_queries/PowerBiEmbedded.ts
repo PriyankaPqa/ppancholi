@@ -33,14 +33,14 @@ export const QuarterlyReportHHIDPbiL6Fr = {
 export const QuarterlyReportBeneficiariesPbiL6En = {
   id: 'QuarterlyReportBeneficiaries',
   queryType: QueryType.StandardL6en,
-  name: 'Quarterly Report - Beneficiaries',
+  name: 'Quarterly Report - Household members',
   topic: ReportingTopic.PowerBi,
 } as IQuery;
 
 export const QuarterlyReportBeneficiariesPbiL6Fr = {
   id: 'QuarterlyReportBeneficiaries',
   queryType: QueryType.StandardL6fr,
-  name: 'Rapport semestriel - Bénéficiaires',
+  name: 'Rapport semestriel - Membres des ménages',
   topic: ReportingTopic.PowerBi,
 } as IQuery;
 
