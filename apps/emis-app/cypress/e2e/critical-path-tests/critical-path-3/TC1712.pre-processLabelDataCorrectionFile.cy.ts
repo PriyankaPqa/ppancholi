@@ -1,7 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { fixtureGenerateLabelDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
-import { createEventAndTeam, getCaseFilesSummary, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
+import { createEventAndTeam, getCaseFiles, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
@@ -46,11 +46,11 @@ describe('#TC1712# - Pre-process a Label data correction file', { tags: ['@case-
               resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
               resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
             ];
-            const resultCaseFilesSummary = await getCaseFilesSummary(resultMultipleHousehold.provider, casefileIds);
+            const resultCaseFiles = await getCaseFiles(resultMultipleHousehold.provider, casefileIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultCaseFilesSummary).as('caseFilesSummary');
+            cy.wrap(resultCaseFiles).as('caseFiles');
             cy.login(roleName);
             cy.goTo('mass-actions/data-correction/create');
           });
@@ -64,9 +64,9 @@ describe('#TC1712# - Pre-process a Label data correction file', { tags: ['@case-
 
         it('should successfully pre-process a Label data correction file', function () {
           const casefiles: Record<string, string> = {
-            [this.caseFilesSummary[0].id]: this.caseFilesSummary[0].etag.replace(/"/g, ''),
-            [this.caseFilesSummary[1].id]: this.caseFilesSummary[1].etag.replace(/"/g, ''),
-            [this.caseFilesSummary[2].id]: this.caseFilesSummary[2].etag.replace(/"/g, ''),
+            [this.caseFiles[0].id]: this.caseFiles[0].etag.replace(/"/g, ''),
+            [this.caseFiles[1].id]: this.caseFiles[1].etag.replace(/"/g, ''),
+            [this.caseFiles[2].id]: this.caseFiles[2].etag.replace(/"/g, ''),
           };
 
           fixtureGenerateLabelDataCorrectionXlsxFile(casefiles, 'MassActionTable', fileName);

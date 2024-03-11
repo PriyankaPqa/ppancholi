@@ -659,6 +659,11 @@ export const getCaseFilesSummary = async (provider: IProvider, caseFileIds: stri
   return caseFilesSummary;
 };
 
+export const getCaseFiles = async (provider: IProvider, caseFileIds: string[]) => {
+  const caseFiles = await provider.caseFiles.getByIds(caseFileIds);
+  return caseFiles;
+};
+
 /**
  * Get Households summary
  * @param provider

@@ -4,7 +4,7 @@ import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import {
   createEventAndTeam,
-  getCaseFilesSummary,
+  getCaseFiles,
   prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
 } from '../../helpers/prepareState';
@@ -50,12 +50,13 @@ describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file
               resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
               resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
             ];
-            const resultCaseFilesSummary = await getCaseFilesSummary(resultMultipleHousehold.provider, casefileIds);
+
+            const resultCaseFiles = await getCaseFiles(resultMultipleHousehold.provider, casefileIds);
 
             const casefiles: Record<string, string> = {
-              [resultCaseFilesSummary[0].id]: resultCaseFilesSummary[0].etag.replace(/"/g, ''),
-              [resultCaseFilesSummary[1].id]: resultCaseFilesSummary[1].etag.replace(/"/g, ''),
-              [resultCaseFilesSummary[2].id]: resultCaseFilesSummary[2].etag.replace(/"/g, ''),
+              [resultCaseFiles[0].id]: resultCaseFiles[0].etag.replace(/"/g, ''),
+              [resultCaseFiles[1].id]: resultCaseFiles[1].etag.replace(/"/g, ''),
+              [resultCaseFiles[2].id]: resultCaseFiles[2].etag.replace(/"/g, ''),
             };
             const resultGeneratedXlsxFile = await fixtureGenerateLabelDataCorrectionXlsxFile(casefiles, 'MassActionTable', fileName);
 
@@ -69,7 +70,7 @@ describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultCaseFilesSummary).as('caseFilesSummary');
+            cy.wrap(resultCaseFiles).as('caseFiles');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });

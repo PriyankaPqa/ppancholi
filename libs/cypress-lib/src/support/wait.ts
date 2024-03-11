@@ -211,8 +211,8 @@ Cypress.Commands.add(
             if (elapsedTime >= timeout) {
               throw new Error(`${errorMsg} after ${timeoutInSec}s`);
             }
-            cy.reload().then(() => {
-              actionsAfterReload();
+            cy.reload().then(async () => {
+              await actionsAfterReload();
               waitForConditions();
             });
           });

@@ -45,6 +45,8 @@ export class CaseFilesHomePage {
       {
         visibilityCondition: () => this.getCaseFileTable().should('be.visible'),
         checkCondition: () => Cypress.$(`[data-test="beneficiaryName-link_${beneficiaryName}"]`).length > 0,
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        actionsAfterReload: () => cy.wait(4000),
       },
       {
         timeoutInSec: 45,
