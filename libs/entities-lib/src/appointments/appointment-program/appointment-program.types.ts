@@ -26,9 +26,9 @@ export interface IBookingWorkHours {
 
 export interface IStaffMember {
   MSBookingId: uuid;
-  EMISId: uuid;
+  EMISId: uuid; // User account Id
   emailAddress: string;
-  displayName: string;
+  displayName: string; // ???
   workingHours: IBookingWorkHours;
 }
 
@@ -37,13 +37,15 @@ export interface IService {
   defaultDuration: string;
   description: string;
   displayName: string;
+  schedule:IBookingWorkHours;
   isLocationOnline: Boolean;
   postBuffer: string;
   preBuffer: string;
   staffMemberIds: string[];
+  appointmentProgrammId: uuid;
 }
 
-export interface IAppointmentProgram {
+export interface IAppointmentProgram { // aka Booking business
   name: string;
   eventId: uuid;
   staffMembers: IStaffMember[];

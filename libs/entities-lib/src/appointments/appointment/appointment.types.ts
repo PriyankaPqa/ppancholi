@@ -70,9 +70,11 @@ export interface IAppointmentEntity extends IEntity {
   startDateTime: IDateTimeTimeZone;
 
   outcome: string; // AppointmentOutcome??
+  appointmentStatus: number // Scheduled/Cancelled/Rescheduled ??
   caseFileId: uuid;
   actualDuration: number;
   recurringGroupId: uuid; // for recurring appoitments??
+  appointmentProgramId: uuid;
 }
 
 // export interface IAppointmentMetadata extends IEntity {
