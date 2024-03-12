@@ -101,7 +101,7 @@ describe('massActionCaseFileFiltering.vue', () => {
             count: true,
             queryType: 'full',
             searchMode: 'all',
-          }, null, false, true);
+          });
       });
     });
 
@@ -109,7 +109,8 @@ describe('massActionCaseFileFiltering.vue', () => {
       it('should call exportList service with proper parameters', async () => {
         const massActionType = MassActionType.FinancialAssistance;
         await wrapper.setData({
-          lastFilter: {
+          azureSearchParams: {
+            search: 'search',
             filter: {
               Entity: { id: '1' },
             },
@@ -119,8 +120,8 @@ describe('massActionCaseFileFiltering.vue', () => {
         await wrapper.vm.onExport(massActionType);
 
         expect(wrapper.vm.$services.massActions.exportList).toHaveBeenLastCalledWith(massActionType, {
-          filter: "?$filter=Entity/id eq '1' and Entity/Status eq 'Active'",
-          search: null,
+          filter: "Entity/id eq '1' and Entity/Status eq 1",
+          search: 'search',
           language: 'en',
         });
       });

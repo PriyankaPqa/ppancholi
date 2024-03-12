@@ -44,16 +44,16 @@ export function getExtensionComponents(
     return null;
   }
 
-  async function create(massActionType: MassActionType, payload: { filter?: string }): Promise<IMassActionEntity> {
+  async function create(massActionType: MassActionType, payload: unknown): Promise<IMassActionEntity> {
     let data: IMassActionEntity = null;
 
     if (massActionType === MassActionType.FinancialAssistance) {
-      const urlSuffix = `financial-assistance-from-listV2${payload.filter}`;
+      const urlSuffix = 'financial-assistance-from-list';
       data = await entityService.create(urlSuffix, payload as IMassActionFinancialAssistanceCreatePayload);
     }
 
     if (massActionType === MassActionType.Assessments) {
-      const urlSuffix = `assessment-from-listV2${payload.filter}`;
+      const urlSuffix = 'assessment-from-list';
       data = await entityService.create(urlSuffix, payload as IMassActionAssessmentCreatePayload);
     }
 
@@ -63,7 +63,7 @@ export function getExtensionComponents(
     }
 
     if (massActionType === MassActionType.CaseFileStatus) {
-      const urlSuffix = `case-file-status-from-listV2${payload.filter}`;
+      const urlSuffix = 'case-file-status-from-list';
       data = await entityService.create(urlSuffix, payload as IMassActionCaseFileStatusCreatePayload);
     }
 

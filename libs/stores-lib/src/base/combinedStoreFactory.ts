@@ -86,25 +86,19 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     return this.combinedCollections(entities, metadata, pinnedIds);
   }
 
-  static RemoveInactiveItemsFilterOdata(params: IAzureSearchParams, sqlMode?: boolean): IAzureSearchParams {
-    const newParams = { ...params };
-    newParams.filter = newParams.filter || {};
-    if (typeof (newParams.filter) === 'string') {
-      newParams.filter = `${newParams.filter} and Entity/Status eq ${sqlMode ? `'${helper.getEnumKeyText(Status, Status.Active)}'` : Status.Active}`;
-    } else {
-      newParams.filter = {
-        ...newParams.filter as Record<string, unknown>,
-        'Entity/Status': sqlMode ? helper.getEnumKeyText(Status, Status.Active) : Status.Active,
-      };
-    }
-    return newParams;
-  }
-
   async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean): Promise<IAzureTableSearchResults> {
     this.storeEntity.setSearchLoading(true);
-    let newParams = { ...params };
+    const newParams = { ...params };
     if (includeInactiveItems !== true) {
-      newParams = CombinedStoreFactory.RemoveInactiveItemsFilterOdata(params, sqlMode);
+      newParams.filter = newParams.filter || {};
+      if (typeof (newParams.filter) === 'string') {
+        newParams.filter = `${newParams.filter} and Entity/Status eq ${sqlMode ? `'${helper.getEnumKeyText(Status, Status.Active)}'` : Status.Active}`;
+      } else {
+        newParams.filter = {
+          ...newParams.filter as Record<string, unknown>,
+          'Entity/Status': sqlMode ? helper.getEnumKeyText(Status, Status.Active) : Status.Active,
+        };
+      }
     }
 
     const res = await this.storeEntity.search({

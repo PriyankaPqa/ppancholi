@@ -29,7 +29,6 @@
           :filter-key="FilterKey.MassActionCaseFileStatus"
           :count="itemsCount"
           :filter-options="filters"
-          :sql-mode="true"
           @update:appliedFilter="onApplyFilter"
           @update:autocomplete="onAutoCompleteUpdate($event)"
           @load:filter="throttleOnLoadFilter($event)">
@@ -104,7 +103,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import helpers from '@/ui/helpers/helpers';
 import {
-  EFilterKeyType, EFilterType, IFilterSettings,
+  EFilterType, IFilterSettings,
 } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
@@ -191,7 +190,6 @@ export default mixins(massActionCaseFileFiltering).extend({
       return [
         {
           key: 'Entity/EventId',
-          keyType: EFilterKeyType.Guid,
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
           items: this.sortedEventsFilter,

@@ -121,7 +121,7 @@ describe('>>> Mass Action Store', () => {
     describe('Financial assistance', () => {
       it('should call the create service with proper parameters and commit the res', async () => {
         const store = createTestStore();
-        const urlSuffix = 'financial-assistance-from-listV2filter';
+        const urlSuffix = 'financial-assistance-from-list';
         const massActionType = MassActionType.FinancialAssistance;
         const payload = mockMassActionCreatePayload();
 
@@ -151,7 +151,7 @@ describe('>>> Mass Action Store', () => {
         const store = createTestStore(bComponents);
         const urlSuffix = 'generate-funding';
         const massActionType = MassActionType.GenerateFundingRequest;
-        const payload = { name: 'test', description: '', filter: '' };
+        const payload = { name: 'test', description: '' };
         const massAction = mockMassActionEntity();
 
         await store.create(massActionType, payload);
@@ -165,9 +165,9 @@ describe('>>> Mass Action Store', () => {
       it('should call the create service with proper parameters and commit the res', async () => {
         const bComponents = { ...baseComponents, set: jest.fn() };
         const store = createTestStore(bComponents);
-        const urlSuffix = 'assessment-from-listV2?somefilter=abc';
+        const urlSuffix = 'assessment-from-list';
         const massActionType = MassActionType.Assessments;
-        const payload = { name: 'test', description: '', filter: '?somefilter=abc' };
+        const payload = { name: 'test', description: '' };
         const massAction = mockMassActionEntity();
 
         await store.create(massActionType, payload);
@@ -181,9 +181,9 @@ describe('>>> Mass Action Store', () => {
       it('should call the create service with proper parameters and commit the res', async () => {
         const bComponents = { ...baseComponents, set: jest.fn() };
         const store = createTestStore(bComponents);
-        const urlSuffix = 'case-file-status-from-listV2?somefilter=abc';
+        const urlSuffix = 'case-file-status-from-list';
         const massActionType = MassActionType.CaseFileStatus;
-        const payload = { name: 'test', description: '', filter: '?somefilter=abc' };
+        const payload = { name: 'test', description: '' };
         const massAction = mockMassActionEntity();
 
         await store.create(massActionType, payload);

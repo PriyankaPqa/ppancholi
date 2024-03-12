@@ -118,11 +118,11 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
   async function fetchByIds(ids: uuid[], fetchMissingOnly: boolean = false, batchSize = 40): Promise<T[]> {
     // default batch size should keep the query string under 2,083 characters (max length for Edge)
 
-    let idsToGet = ids.filter((x) => x != null);
+    let idsToGet = ids;
     try {
       if (fetchMissingOnly) {
         const stored = getByIds(ids) as IEntity[];
-        idsToGet = idsToGet.filter((id) => !stored.find((s) => s.id === id));
+        idsToGet = ids.filter((id) => !stored.find((s) => s.id === id));
       }
 
       // only fetched values are returned

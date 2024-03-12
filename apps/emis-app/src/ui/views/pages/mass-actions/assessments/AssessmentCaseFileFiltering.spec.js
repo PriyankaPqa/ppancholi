@@ -1,4 +1,4 @@
-import { EDateMode, EFilterType, EFilterKeyType } from '@libs/component-lib/types/FilterTypes';
+import { EDateMode, EFilterType } from '@libs/component-lib/types/FilterTypes';
 import {
   createLocalVue,
   shallowMount,
@@ -45,11 +45,11 @@ describe('AssessmentCaseFileFiltering.vue', () => {
           caseFileNumber: 'Entity/CaseFileNumber',
           firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
           lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-          street: 'Metadata/Household/StreetAddress',
-          unit: 'Metadata/Household/Unit',
-          city: 'Metadata/Household/City',
-          province: 'Metadata/Household/ProvinceCode/Translation/en',
-          postalCode: 'Metadata/Household/PostalCode',
+          street: 'Metadata/Household/Address/Address/StreetAddress',
+          unit: 'Metadata/Household/Address/Address/Unit',
+          city: 'Metadata/Household/Address/Address/City',
+          province: 'Metadata/Household/Address/Address/ProvinceCode/Translation/en',
+          postalCode: 'Metadata/Household/Address/Address/PostalCode',
           email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
           phoneNumber: 'Metadata/Household/ContactInformation/Phone/',
           preferredLanguage: 'Metadata/PrimaryBeneficiary/ContactInformation/PreferredLanguage',
@@ -147,7 +147,6 @@ describe('AssessmentCaseFileFiltering.vue', () => {
         const expected = [
           {
             key: 'Entity/EventId',
-            keyType: EFilterKeyType.Guid,
             type: EFilterType.Select,
             label: 'caseFileTable.filters.eventName',
             items: wrapper.vm.eventsFilter,
@@ -245,7 +244,7 @@ describe('AssessmentCaseFileFiltering.vue', () => {
 
     describe('onApplyCaseFileFilter', () => {
       it('should assign assessmentsOnFile filter and remove original assessmentsOnFile filter', async () => {
-        const testFilter = { notSearchIn: ['filter', 'second'] };
+        const testFilter = { notSearchIn_az: 'filter' };
 
         const preparedFilters = {
           'Metadata/Assessments/AssessmentFormId': testFilter,
@@ -261,7 +260,11 @@ describe('AssessmentCaseFileFiltering.vue', () => {
             and: [
               {
                 not: {
-                  or: [{ 'Metadata/AssessmentsAsString': { contains: 'filter' } }, { 'Metadata/AssessmentsAsString': { contains: 'second' } }],
+                  'Metadata/Assessments': {
+                    any: {
+                      AssessmentFormId: { searchIn_az: 'filter' },
+                    },
+                  },
                 },
               },
             ],

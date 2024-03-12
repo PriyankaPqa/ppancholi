@@ -6,9 +6,9 @@ import libHelpers from '@libs/entities-lib/helpers';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
 import { mockAddressData, Address } from '@libs/entities-lib/value-objects/address';
 import { Status } from '@libs/entities-lib/base';
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-import { mockMember } from '@libs/entities-lib/value-objects/member';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../CreateEditPaymentLineDialog.vue';
@@ -20,15 +20,14 @@ const items = mockItemsWithBasicData();
 
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
-const { pinia } = useMockCaseFileStore();
+const { pinia, householdStore, householdMetadataStore } = useMockHouseholdStore();
+const { caseFileStore } = useMockCaseFileStore(pinia);
 
 describe('CreateEditPaymentLineDialog.vue', () => {
   let wrapper;
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     additionalOverwrites.computed = additionalOverwrites.computed || {};
-    additionalOverwrites.computed.primaryMember = additionalOverwrites.computed.primaryMember || jest.fn(() => mockMember());
-    additionalOverwrites.computed.household = additionalOverwrites.computed.household || jest.fn(() => mockHouseholdEntity());
     additionalOverwrites.computed.apiKey = additionalOverwrites.computed.apiKey || jest.fn(() => 'mock-apiKey');
 
     wrapper = (fullMount ? mount : shallowMount)(Component, {
@@ -422,7 +421,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           groupingInformation:
           {
             modality: null,
-            payeeName: 'Bob Smith',
+            payeeName: 'Ben 2 Test',
             payeeType: 1,
           },
           id: '',
@@ -492,10 +491,20 @@ describe('CreateEditPaymentLineDialog.vue', () => {
 
       it('sets the defaultBeneficiaryData from household and case file', async () => {
         jest.clearAllMocks();
+        householdMetadataStore.fetch = jest.fn(() => mockHouseholdMetadata());
+        householdStore.fetch = jest.fn(() => mockHouseholdEntity({ primaryBeneficiary: 'id-1' }));
         await wrapper.vm.initCreateMode();
-        expect(wrapper.vm.defaultBeneficiaryData.name).toEqual('Bob Smith');
+        expect(wrapper.vm.defaultBeneficiaryData.name).toEqual('Ben 2 Test');
         expect(wrapper.vm.defaultBeneficiaryData.address.streetAddress).not.toBeNull();
-        expect(wrapper.vm.defaultBeneficiaryData.email).toBe('test@test.ca');
+        expect(wrapper.vm.defaultBeneficiaryData.email).toBe('Test@mail.com');
+      });
+
+      it('sets the address from household when none already set', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.initCreateMode();
+        expect(householdStore.fetch).toHaveBeenCalledWith(caseFileStore.getById().householdId);
+        expect(wrapper.vm.address.streetAddress).not.toBeNull();
+        expect(wrapper.vm.address).toEqual(householdStore.fetch().address.address);
       });
 
       it('sets the predefined address when one already set', async () => {

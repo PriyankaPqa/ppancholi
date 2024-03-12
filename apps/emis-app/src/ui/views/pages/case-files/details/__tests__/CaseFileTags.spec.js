@@ -1,6 +1,6 @@
 import { RcDialog, RcConfirmationDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import {
   mockOptionItemData,
@@ -15,17 +15,7 @@ import Component from '../case-file-activity/components/CaseFileTags.vue';
 const localVue = createLocalVue();
 
 const mockCaseFile = mockCaseFileEntity();
-const tags = [
-  {
-    id: 'mock-tag-id-1',
-    name: {
-      translation: {
-        en: 'Do not communicate',
-        fr: 'Ne pas contacter',
-      },
-    },
-  },
-];
+const mockCaseFileMeta = mockCaseFileMetadata();
 
 const { pinia, caseFileStore } = useMockCaseFileStore();
 
@@ -36,7 +26,7 @@ describe('CaseFileTagsList.vue', () => {
       localVue,
       pinia,
       propsData: {
-        tags,
+        tags: mockCaseFileMeta.tags,
         caseFileId: mockCaseFile.id,
       },
       mocks: {
@@ -57,7 +47,7 @@ describe('CaseFileTagsList.vue', () => {
       wrapper = mount(Component, options);
     }
 
-    wrapper.vm.existingTags = tags;
+    wrapper.vm.existingTags = mockCaseFileMeta.tags;
   };
 
   describe('Template', () => {
@@ -141,7 +131,7 @@ describe('CaseFileTagsList.vue', () => {
     describe('add tag dialog list tags', () => {
       it('renders when the dialog is open, if the list tag is active', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...tags[0], active: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], active: true }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -150,7 +140,7 @@ describe('CaseFileTagsList.vue', () => {
 
       it('displays the tag name', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...tags[0], active: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], active: true }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -159,7 +149,7 @@ describe('CaseFileTagsList.vue', () => {
 
       it('does not render when the dialog is open, if list tag is not active', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...tags[0], active: false }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], active: false }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -200,13 +190,13 @@ describe('CaseFileTagsList.vue', () => {
 
     describe('addButtonDisabled', () => {
       it('returns false if some list tags are selected ', () => {
-        wrapper.vm.listTags = [{ ...tags[0], selected: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], selected: true }];
 
         expect(wrapper.vm.addButtonDisabled).toBeFalsy();
       });
 
       it('returns true if no list tags are selected ', () => {
-        wrapper.vm.listTags = [{ ...tags[0], selected: false }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], selected: false }];
 
         expect(wrapper.vm.addButtonDisabled).toBeTruthy();
       });
@@ -227,15 +217,15 @@ describe('CaseFileTagsList.vue', () => {
 
     describe('remainingTags', () => {
       it('returns the existing tags when there is no tagToRemove', () => {
-        wrapper.vm.existingTags = tags;
+        wrapper.vm.existingTags = mockCaseFileMeta.tags;
         wrapper.vm.tagToDelete = null;
 
         expect(wrapper.vm.remainingTags).toEqual(wrapper.vm.existingTags);
       });
 
       it('returns the existing tags without the tagToRemove when there is a tagToRemove', () => {
-        wrapper.vm.existingTags = [tags[0]];
-        wrapper.vm.tagToDelete = { id: tags[0].id, name: { translation: { en: 'foo' } } };
+        wrapper.vm.existingTags = [mockCaseFileMeta.tags[0]];
+        wrapper.vm.tagToDelete = { id: mockCaseFileMeta.tags[0].id, name: { translation: { en: 'foo' } } };
 
         expect(wrapper.vm.remainingTags).toEqual([]);
       });
@@ -251,7 +241,7 @@ describe('CaseFileTagsList.vue', () => {
   describe('lifecycle', () => {
     test('existing tags should be set to the value of the tag prop data', () => {
       doMount();
-      expect(wrapper.vm.existingTags).toEqual(tags);
+      expect(wrapper.vm.existingTags).toEqual(mockCaseFileMeta.tags);
     });
   });
 

@@ -50,7 +50,7 @@
                   {{ $t('caseFile.financialAssistance.ETransfer.email') }}
                 </td>
                 <td class="data" data-test="eTransfer-email-data">
-                  {{ primaryMember && primaryMember.contactInformation.email }}
+                  {{ caseFileMetadata.primaryBeneficiary.contactInformation.email }}
                 </td>
               </tr>
               <tr v-if="showRelatedNumber(paymentGroup)" data-test="related_number">

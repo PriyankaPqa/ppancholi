@@ -280,13 +280,11 @@ export default mixins(household, householdResults).extend({
       this.loading = true;
       try {
         const householdIds = this.items.map((h) => h.entity.id);
-
         const res = await helpers.callSearchInInBatches({
           ids: householdIds,
           service: this.combinedCaseFileStore,
-          searchInFilter: 'Entity/HouseholdId in ({ids})',
-          otherFilter: `Entity/EventId eq ${this.currentEventId}`,
-          otherApiParameters: [null, false, true],
+          searchInFilter: "search.in(Entity/HouseholdId, '{ids}')",
+          otherFilter: `Entity/EventId eq '${this.currentEventId}'`,
         });
 
         const ids = (res as IAzureTableSearchResults)?.ids;

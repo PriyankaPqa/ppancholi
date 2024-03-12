@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import flushPromises from 'flush-promises';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
-import { mockCaseFileSummary, CaseFileStatus } from '@libs/entities-lib/case-file';
+import { mockCaseFileEntity, mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { RcDialog } from '@libs/component-lib/components';
 
@@ -33,14 +33,14 @@ const usersTestData = mockCombinedUserAccount({
 
 });
 
-const mockCaseFile = mockCaseFileSummary();
+const mockCaseFile = mockCombinedCaseFile();
 
 const MOCK_CASEFILES = {
   '7d522743-90e8-4e01-91fc-edf88fd30c47': [
     {
       event: { id: '7d522743-90e8-4e01-91fc-edf88fd30c47', name: { translation: { en: 'Tammy test', fr: 'Tammy test' } } },
       teamName: 'Tammy team 2',
-      caseFile: mockCaseFileSummary({ id: '808b2762-7fd3-42e1-b354-ba9e1cf5d1bb', eventId: '7d522743-90e8-4e01-91fc-edf88fd30c47' }),
+      caseFile: mockCaseFileEntity({ id: '808b2762-7fd3-42e1-b354-ba9e1cf5d1bb', eventId: '7d522743-90e8-4e01-91fc-edf88fd30c47' }),
       canAssign: true,
       canAccessFile: true,
     },
@@ -63,6 +63,7 @@ describe('TeamMemberCaseFiles.vue', () => {
       ...otherOptions,
     });
 
+    wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: [mockCaseFile.entity.id] }));
     await flushPromises();
   };
 
@@ -78,28 +79,38 @@ describe('TeamMemberCaseFiles.vue', () => {
     });
 
     describe('fetchAllCaseFiles', () => {
-      it('calls the service searchSummaries and saves the data', async () => {
+      it('calls the service getAssignedCaseFiles and saves the data', async () => {
         const caseFiles = [mockCaseFile,
-          { ...mockCaseFile, ...{ id: 'mock-1', caseFileStatus: CaseFileStatus.Closed } },
-          { ...mockCaseFile, ...{ id: 'mock-2', caseFileStatus: CaseFileStatus.Archived } },
+          { ...mockCaseFile, entity: { id: 'mock-1', caseFileStatus: CaseFileStatus.Closed } },
+          { ...mockCaseFile, entity: { id: 'mock-2', caseFileStatus: CaseFileStatus.Archived } },
         ];
-        wrapper.vm.$services.caseFiles.searchSummaries = jest.fn(() => ({ value: caseFiles }));
+        wrapper.vm.$services.caseFiles.getAssignedCaseFiles = jest.fn(() => ({ value: caseFiles }));
         await wrapper.vm.fetchAllCaseFiles();
-        expect(wrapper.vm.$services.caseFiles.searchSummaries).toHaveBeenCalledWith({ filter: `(contains(AssignedTeamMembersAsString,'${wrapper.vm.member.entity.id}'))` });
+        expect(wrapper.vm.$services.caseFiles.getAssignedCaseFiles).toBeCalledTimes(1);
         expect(wrapper.vm.fetchedCaseFiles).toEqual([mockCaseFile]);
+      });
+    });
+
+    describe('fetchCaseFilesWithAllowedAccess', () => {
+      it('calls the storage action search with the right filter and saves the data', async () => {
+        // eslint-disable-next-line max-len
+        const filter = `Entity/AssignedTeamMembers/any(AssignedTeamMember:AssignedTeamMember/TeamMembersIds/any(teamMemberId:teamMemberId eq '${wrapper.vm.member.entity.id}'))`;
+        await wrapper.vm.fetchCaseFilesWithAllowedAccess();
+        expect(wrapper.vm.combinedCaseFileStore.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.caseFilesIdsWithAllowedAccess).toEqual([mockCaseFile.entity.id]);
       });
     });
 
     describe('openCaseFileAssignDialog', () => {
       it('sets selectedCaseFile to the method argument', async () => {
-        const cf = mockCaseFileSummary();
+        const cf = mockCaseFileEntity();
         wrapper.vm.openCaseFileAssignDialog(cf);
         expect(wrapper.vm.selectedCaseFile).toEqual(cf);
       });
 
       it('sets showAssignmentsDialog to true', async () => {
         await wrapper.setData({ showAssignmentsDialog: false });
-        await wrapper.vm.openCaseFileAssignDialog(mockCaseFileSummary());
+        await wrapper.vm.openCaseFileAssignDialog(mockCaseFileEntity());
         expect(wrapper.vm.showAssignmentsDialog).toEqual(true);
       });
     });
@@ -127,13 +138,15 @@ describe('TeamMemberCaseFiles.vue', () => {
         });
       });
 
-      it('calls fetchAllCaseFiles', async () => {
+      it('calls fetchAllCaseFiles and fetchCaseFilesWithAllowedAccess', async () => {
         jest.spyOn(wrapper.vm, 'fetchAllCaseFiles').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'fetchCaseFilesWithAllowedAccess').mockImplementation(() => {});
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
         expect(wrapper.vm.fetchAllCaseFiles).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.fetchCaseFilesWithAllowedAccess).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -145,7 +158,7 @@ describe('TeamMemberCaseFiles.vue', () => {
 
     describe('caseFileGroups', () => {
       it('maps the fetchedCaseFiles correctly', async () => {
-        const mockCaseFiles = [mockCaseFileSummary({
+        const mockCaseFiles = [mockCombinedCaseFile({
           id: '3d835ec4-8f94-48c4-865e-46fc55b0cb3c',
           eventId: '3bacda14-503d-49ab-b102-0c14763823cb',
           assignedTeamMembers: [
@@ -154,9 +167,8 @@ describe('TeamMemberCaseFiles.vue', () => {
               teamMembersIds: ['8f05945f-0093-447f-80b2-cee1b0826678'],
             },
           ],
-          hasAccess: true,
         }),
-        mockCaseFileSummary({
+        mockCombinedCaseFile({
           id: 'f4af3ea9-534b-4e41-b498-ed8e092e04e6',
           eventId: '3bacda14-503d-49ab-b102-0c14763823cb',
           assignedTeamMembers: [
@@ -165,9 +177,8 @@ describe('TeamMemberCaseFiles.vue', () => {
               teamMembersIds: ['8f05945f-0093-447f-80b2-cee1b0826678'],
             },
           ],
-          hasAccess: false,
         }),
-        mockCaseFileSummary({
+        mockCombinedCaseFile({
           id: 'b15d3362-e878-4824-b669-4e6dfeb4175d',
           eventId: 'e40493e1-6518-4f6f-9171-bf41f2646438',
           assignedTeamMembers: [
@@ -176,11 +187,11 @@ describe('TeamMemberCaseFiles.vue', () => {
               teamMembersIds: ['8f05945f-0093-447f-80b2-cee1b0826678'],
             },
           ],
-          hasAccess: false,
         })];
 
         await wrapper.setData({
           fetchedCaseFiles: mockCaseFiles,
+          caseFilesIdsWithAllowedAccess: ['3d835ec4-8f94-48c4-865e-46fc55b0cb3c'],
         });
 
         expect(wrapper.vm.caseFileGroups).toEqual({
@@ -196,7 +207,7 @@ describe('TeamMemberCaseFiles.vue', () => {
                 },
               },
               teamName: 'qc earth',
-              caseFile: mockCaseFiles[0],
+              caseFile: mockCaseFiles[0].entity,
               canAssign: true,
               canAccessFile: true,
             },
@@ -211,7 +222,7 @@ describe('TeamMemberCaseFiles.vue', () => {
                 },
               },
               teamName: 'qc earth',
-              caseFile: mockCaseFiles[1],
+              caseFile: mockCaseFiles[1].entity,
               canAssign: false,
               canAccessFile: false,
             },
@@ -228,7 +239,7 @@ describe('TeamMemberCaseFiles.vue', () => {
                 },
               },
               teamName: 'standard team 2',
-              caseFile: mockCaseFiles[2],
+              caseFile: mockCaseFiles[2].entity,
               canAssign: false,
               canAccessFile: false,
             },
@@ -237,7 +248,7 @@ describe('TeamMemberCaseFiles.vue', () => {
       });
 
       it('maps case file with canAccessFile set to false if the case file is inactive and the user is less than level 6', async () => {
-        const mockCaseFiles = [mockCaseFileSummary({
+        const mockCaseFiles = [mockCombinedCaseFile({
           id: '3d835ec4-8f94-48c4-865e-46fc55b0cb3c',
           eventId: '3bacda14-503d-49ab-b102-0c14763823cb',
           assignedTeamMembers: [
@@ -253,6 +264,7 @@ describe('TeamMemberCaseFiles.vue', () => {
 
         await wrapper.setData({
           fetchedCaseFiles: mockCaseFiles,
+          caseFilesIdsWithAllowedAccess: ['3d835ec4-8f94-48c4-865e-46fc55b0cb3c'],
         });
 
         expect(wrapper.vm.caseFileGroups).toEqual({
@@ -268,7 +280,7 @@ describe('TeamMemberCaseFiles.vue', () => {
                 },
               },
               teamName: 'qc earth',
-              caseFile: mockCaseFiles[0],
+              caseFile: mockCaseFiles[0].entity,
               canAssign: false,
               canAccessFile: true,
             },
@@ -401,7 +413,7 @@ describe('TeamMemberCaseFiles.vue', () => {
       doMount();
     });
     it('should call fetchAllCaseFiles if showAssignmentsDialog is being closed', async () => {
-      await wrapper.setData({ showAssignmentsDialog: true, selectedCaseFile: mockCaseFileSummary() });
+      await wrapper.setData({ showAssignmentsDialog: true, selectedCaseFile: mockCaseFileEntity() });
       wrapper.vm.fetchAllCaseFiles = jest.fn();
       await wrapper.setData({ showAssignmentsDialog: false });
       expect(wrapper.vm.fetchAllCaseFiles).toHaveBeenCalledTimes(1);

@@ -199,6 +199,8 @@ describe('FinancialAssistanceCreate.vue', () => {
         const name = 'Mass action';
         const description = '';
 
+        const azureSearchParams = JSON.parse(filtersString);
+
         await wrapper.setData({
           form: {
             event: mockEvent(),
@@ -220,8 +222,8 @@ describe('FinancialAssistanceCreate.vue', () => {
           subCategoryId: wrapper.vm.form.subItem.id,
           paymentModality: wrapper.vm.form.paymentModality,
           amount: wrapper.vm.form.amount,
-          search: null,
-          filter: "?$filter=Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 'Active'",
+          search: azureSearchParams.search,
+          filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
         };
         await wrapper.vm.onPost({ name, description });
 

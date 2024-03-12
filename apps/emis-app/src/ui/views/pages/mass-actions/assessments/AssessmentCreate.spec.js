@@ -212,6 +212,8 @@ describe('AssessmentCreate.vue', () => {
         const name = 'Mass action';
         const description = '';
 
+        const azureSearchParams = JSON.parse(filtersString);
+
         await wrapper.setData({
           details: {
             event: mockEvent(),
@@ -230,8 +232,8 @@ describe('AssessmentCreate.vue', () => {
           emailSubject: wrapper.vm.details.emailSubject,
           emailAdditionalDescription: wrapper.vm.details.emailAdditionalDescription,
           emailTopCustomContent: wrapper.vm.details.emailTopCustomContent,
-          search: null,
-          filter: "?$filter=Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 'Active'",
+          search: azureSearchParams.search,
+          filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
         };
         await wrapper.vm.onPost({ name, description });
 

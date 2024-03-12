@@ -1,10 +1,9 @@
-import { ERegistrationMethod, IAzureSearchParams, IAzureSearchResult, IListOption } from '@libs/shared-lib/types';
+import { ERegistrationMethod, IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount, IAssignedTeamMembers, ITier2Request, ITier2Response, ITier2Details, IRecoveryPlan,
-  ICaseFileSummary,
+  ICaseFileDetailedCount, IAssignedTeamMembers, ICaseFileMetadata, ITier2Request, ITier2Response, ITier2Details, IRecoveryPlan,
 } from '@libs/entities-lib/case-file';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
@@ -39,8 +38,8 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount>;
   fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount>;
   assignCaseFile(id: uuid, payload: { teamMembers: IAssignedTeamMembers[], teams: uuid[] }): Promise<ICaseFileEntity>
-  getSummary(id: uuid): Promise<ICaseFileSummary>;
-  searchSummaries(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFileSummary>>;
+  getSummary(id: uuid): Promise<ICaseFileEntity>;
+  getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
   getAllCaseFilesRelatedToHouseholdId(householdId: uuid): Promise<ICaseFileEntity[]>;
   setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity>;
   tier2ProcessStart(payload: ITier2Request): Promise<ITier2Response>;
@@ -65,8 +64,8 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   getCaseFileAssignedCounts: jest.Mock<ICaseFileCount>;
   fetchCaseFileDetailedCounts: jest.Mock<ICaseFileDetailedCount>;
   assignCaseFile: jest.Mock<ICaseFileEntity>;
-  getSummary: jest.Mock<ICaseFileSummary>;
-  searchSummaries: jest.Mock<IAzureSearchResult<ICaseFileSummary>>;
+  getSummary: jest.Mock<ICaseFileEntity>;
+  getAssignedCaseFiles: jest.Mock<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
   getAllCaseFilesRelatedToHouseholdId: jest.Mock<ICaseFileEntity[]>;
   setPersonReceiveAssistance: jest.Mock<ICaseFileEntity>;
   tier2ProcessStart: jest.Mock<ITier2Response>;

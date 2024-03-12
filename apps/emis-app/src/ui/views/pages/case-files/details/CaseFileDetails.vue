@@ -17,7 +17,7 @@
           mdi-calendar
         </v-icon>
         <span data-test="caseFileDetails-event">
-          {{ event ? $m(event.name) : '-' }}
+          {{ caseFileMetadata.event ? $m(caseFileMetadata.event.name) : '-' }}
         </span>
       </div>
       <div class="divider" />
@@ -159,7 +159,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
-import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserStore } from '@/pinia/user/user';
 import { useHouseholdDetails } from '@/ui/views/pages/household/useHouseholdDetails';
 import { IHouseholdMetadata } from '@libs/entities-lib/household';
@@ -401,6 +401,7 @@ export default mixins(caseFileDetail).extend({
       this.loading = true;
       try {
         await useCaseFileStore().fetch(this.caseFileId);
+        await useCaseFileMetadataStore().fetch(this.caseFileId, false);
         await useEventStore().fetch(this.caseFile.eventId);
         await this.getHouseholdInfo();
         await useCaseFileStore().addRecentlyViewed(this.caseFileId);

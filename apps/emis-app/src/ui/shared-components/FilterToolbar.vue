@@ -9,7 +9,6 @@
     :user-filters="userFilters"
     :initial-filter="initialFilter"
     :loading="loading"
-    :sql-mode="sqlMode"
     @save:filter="onSave"
     @load:all="onLoadAll"
     @delete:filter="onDelete"
@@ -503,22 +502,11 @@ export default Vue.extend({
         // To filter on a property which is empty
       } if (filter.value === 'arrayEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
         return _set({}, filter.key, { arrayEmpty: filter.value });
+        // WHen using autocomplete returning an object, we need to extract the real value
+      } if (Object.prototype.toString.call(filter.value) === '[object Object]' && Object.prototype.hasOwnProperty.call(filter.value, 'value')) {
+        return _set({}, filter.key, (filter.value as { text: string, value: string }).value);
       }
-
-      // To filter on a array that was stringified not empty
-      if (filter.value === 'stringArrayNotEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
-        return _set({}, `not.${filter.key}`, '[]');
-        // To filter on a property which is empty
-      } if (filter.value === 'stringArrayEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
-        return _set({}, filter.key, '[]');
-      }
-
-      // WHen using autocomplete returning an object, we need to extract the real value
-      if (Object.prototype.toString.call(filter.value) === '[object Object]' && Object.prototype.hasOwnProperty.call(filter.value, 'value')) {
-        const value = (filter.value as { text: string, value: string }).value;
-        return _set({}, filter.key, filter.keyType === EFilterKeyType.Guid ? { value, type: filter.keyType } : value);
-      }
-      return _set({}, filter.key, filter.keyType === EFilterKeyType.Guid ? { value: filter.value, type: filter.keyType } : filter.value);
+      return _set({}, filter.key, filter.value);
     },
 
     translateInOperator(filter: IFilterData) {

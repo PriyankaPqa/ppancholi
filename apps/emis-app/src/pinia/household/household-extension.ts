@@ -9,7 +9,6 @@ export function getExtensionComponents(
   entityService: IHouseholdsService | IHouseholdsServiceMock,
 ) {
   const searchResultsShown = ref(false);
-  const lastSearchResults = ref([] as uuid[]);
 
   async function updateNoFixedHomeAddress({ householdId, observation }: { householdId: string; observation: string }) {
     const res = await entityService.updateNoFixedHomeAddress(householdId, false, observation);
@@ -29,7 +28,6 @@ export function getExtensionComponents(
 
   return {
     searchResultsShown,
-    lastSearchResults,
     updateNoFixedHomeAddress,
     updateHomeAddress,
   };

@@ -95,19 +95,21 @@ import _groupBy from 'lodash/groupBy';
 import routes from '@/constants/routes';
 import { RcDialog } from '@libs/component-lib/components';
 import { IUserAccountCombined, IUserAccountTeamEvent } from '@libs/entities-lib/user-account';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IAzureTableSearchResults, IMultilingual } from '@libs/shared-lib/types';
 import {
-  CaseFileStatus, ICaseFileSummary,
+  CaseFileStatus, ICaseFileCombined, ICaseFileEntity, ICaseFileMetadata, IdParams,
 } from '@libs/entities-lib/case-file';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import AssignCaseFile from '@/ui/views/pages/case-files/details/case-file-activity/components/AssignCaseFile.vue';
 import { Dictionary } from 'lodash';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 
 interface IMemberCaseFile {
   event: { id: string, name: IMultilingual },
   teamName: string,
-  caseFile: ICaseFileSummary,
+  caseFile: ICaseFileEntity,
   canAssign: boolean,
   canAccessFile: boolean,
 }
@@ -137,9 +139,11 @@ export default Vue.extend({
       isEmpty: _isEmpty,
       CaseFileStatus,
       showAssignmentsDialog: false,
-      selectedCaseFile: null as ICaseFileSummary,
-      fetchedCaseFiles: [] as ICaseFileSummary[],
+      selectedCaseFile: null as ICaseFileEntity,
+      fetchedCaseFiles: [] as ICaseFileCombined[],
+      caseFilesIdsWithAllowedAccess: [] as string[],
       loading: false,
+      combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
     };
   },
 
@@ -150,30 +154,30 @@ export default Vue.extend({
       }
       const allCaseFiles = this.fetchedCaseFiles;
 
-      const caseFilesByEvent: Dictionary<ICaseFileSummary[]> = _groupBy(allCaseFiles, (cf) => cf?.eventId);
+      const caseFilesByEvent: Dictionary<ICaseFileCombined[]> = _groupBy(allCaseFiles, (cf) => cf.entity?.eventId);
       const mappedCaseFiles = {} as Record<string, IMemberCaseFile[]>;
 
       // Create the mappedCaseFiles object in the form of { <eventId>: List of case files that belong to that event, mapped to contain the relevant
       // information for the table in this modal (i.e. as IMemberCaseFile)}
       Object.keys(caseFilesByEvent).forEach((key) => {
         if (caseFilesByEvent[key].length) {
-          const mappedCaseFilesByEvent = caseFilesByEvent[key].map((cf: ICaseFileSummary): IMemberCaseFile => {
-            const memberDataInAssignedTeamMembersList = cf?.assignedTeamMembers.find((item) => item.teamMembersIds.includes(this.member.entity.id));
+          const mappedCaseFilesByEvent = caseFilesByEvent[key].map((cf: ICaseFileCombined): IMemberCaseFile => {
+            const memberDataInAssignedTeamMembersList = cf.entity?.assignedTeamMembers.find((item) => item.teamMembersIds.includes(this.member.entity.id));
             if (memberDataInAssignedTeamMembersList) {
               const teamId = memberDataInAssignedTeamMembersList.teamId;
               const team = this.member.metadata.teams.find((t) => t?.teamId === teamId);
               const teamName = team?.name || '';
-              const eventName = team?.events.find((e:IUserAccountTeamEvent) => e.id === cf.eventId).name || { translation: {} };
+              const eventName = team?.events.find((e:IUserAccountTeamEvent) => e.id === cf.entity.eventId).name || { translation: {} };
 
               return {
                 event: {
-                  id: cf.eventId,
+                  id: cf.entity.eventId,
                   name: eventName,
                 },
                 teamName,
-                caseFile: cf,
-                canAccessFile: cf.hasAccess,
-                canAssign: cf.hasAccess && (cf.caseFileStatus === CaseFileStatus.Open || this.$hasLevel(UserRoles.level6)),
+                caseFile: cf.entity,
+                canAccessFile: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id),
+                canAssign: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id) && (cf.entity.caseFileStatus === CaseFileStatus.Open || this.$hasLevel(UserRoles.level6)),
               };
             }
             return null;
@@ -199,18 +203,27 @@ export default Vue.extend({
 
   async created() {
     this.loading = true;
-    await this.fetchAllCaseFiles();
+    await Promise.all([
+      this.fetchAllCaseFiles(),
+      this.fetchCaseFilesWithAllowedAccess(),
+    ]);
     this.loading = false;
   },
 
   methods: {
     async fetchAllCaseFiles() {
-      const caseFiles = await this.$services.caseFiles.searchSummaries({ filter: `(contains(AssignedTeamMembersAsString,'${this.member.entity.id}'))` });
+      const caseFiles = await this.$services.caseFiles.getAssignedCaseFiles(this.member.entity.id);
 
       if (caseFiles?.value) {
         this.fetchedCaseFiles = caseFiles.value
-          .filter((f: ICaseFileSummary) => f.caseFileStatus === CaseFileStatus.Open || f.caseFileStatus === CaseFileStatus.Inactive);
+          .filter((f: ICaseFileCombined) => f.entity.caseFileStatus === CaseFileStatus.Open || f.entity.caseFileStatus === CaseFileStatus.Inactive);
       }
+    },
+
+    async fetchCaseFilesWithAllowedAccess() {
+      const filter = `Entity/AssignedTeamMembers/any(AssignedTeamMember:AssignedTeamMember/TeamMembersIds/any(teamMemberId:teamMemberId eq '${this.member.entity.id}'))`;
+      const caseFilesData: IAzureTableSearchResults = await this.combinedCaseFileStore.search({ filter });
+      this.caseFilesIdsWithAllowedAccess = caseFilesData ? caseFilesData.ids : [];
     },
 
     getCaseFileRoute(id: string) {
@@ -222,7 +235,7 @@ export default Vue.extend({
       };
     },
 
-    openCaseFileAssignDialog(caseFile: ICaseFileSummary) {
+    openCaseFileAssignDialog(caseFile: ICaseFileEntity) {
       this.selectedCaseFile = caseFile;
       this.showAssignmentsDialog = true;
     },

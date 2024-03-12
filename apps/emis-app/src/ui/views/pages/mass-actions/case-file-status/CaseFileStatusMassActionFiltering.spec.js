@@ -1,4 +1,4 @@
-import { EFilterType, EFilterKeyType } from '@libs/component-lib/types/FilterTypes';
+import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import {
   createLocalVue,
   shallowMount,
@@ -99,7 +99,6 @@ describe('CaseFileStatusMassActionFiltering.vue', () => {
         const expected = [
           {
             key: 'Entity/EventId',
-            keyType: EFilterKeyType.Guid,
             type: EFilterType.Select,
             label: 'caseFileTable.filters.eventName',
             items: wrapper.vm.eventsFilter,

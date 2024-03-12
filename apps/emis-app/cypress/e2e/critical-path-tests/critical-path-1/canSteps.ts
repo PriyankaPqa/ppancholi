@@ -79,11 +79,13 @@ const financialAssistanceCanSteps = (params: Partial<PaymentLineCanStepsParams>)
 };
 
 export const paymentLineGeneralCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
+  cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
   addPaymentLineCanSteps(params);
   financialAssistanceCanSteps(params);
 };
 
 export const paymentLineChequeCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
+  cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
   addPaymentLineChequeCanSteps(params);
   financialAssistanceCanSteps(params);
 };

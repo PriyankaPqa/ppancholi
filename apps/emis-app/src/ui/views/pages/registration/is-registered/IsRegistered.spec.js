@@ -206,12 +206,12 @@ describe('IsRegistered.vue', () => {
     describe('created', () => {
       it('sets results so we can come back on page with results', () => {
         jest.clearAllMocks();
-        wrapper.vm.combinedHouseholdStore.getByIds = jest.fn(() => []);
+        wrapper.vm.combinedHouseholdStore.getAll = jest.fn(() => []);
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.combinedHouseholdStore.getByIds).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.combinedHouseholdStore.getAll).toHaveBeenCalledTimes(1);
       });
 
       it('calls filterOutSplitHousehold if isSplitMode is true', () => {

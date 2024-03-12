@@ -190,48 +190,32 @@ describe('RcFilterToolbar.vue', () => {
   describe('Methods', () => {
     describe('getStartOfDay', () => {
       describe('ConvertLocalToUtc', () => {
-        it('returns a iso string of the start of the day including the time zone', async () => {
-          let res = wrapper.vm.getStartOfDay('2021-09-07', EDateMode.ConvertLocalToUtc);
+        it('returns a iso string of the start of the day including the time zone', () => {
+          const res = wrapper.vm.getStartOfDay('2021-09-07', EDateMode.ConvertLocalToUtc);
           expect(res).toBe(new Date(2021, 8, 7, 0, 0, 0, 0).toISOString());
-
-          await wrapper.setProps({ sqlMode: true });
-          res = wrapper.vm.getStartOfDay('2021-09-07', EDateMode.ConvertLocalToUtc);
-          expect(res).toEqual(new Date(2021, 8, 7, 0, 0, 0, 0));
         });
       });
 
       describe('Static', () => {
-        it('returns a iso string of the start of the day at midnight', async () => {
-          let res = wrapper.vm.getStartOfDay('2021-09-07', EDateMode.Static);
+        it('returns a iso string of the start of the day at midnight', () => {
+          const res = wrapper.vm.getStartOfDay('2021-09-07', EDateMode.Static);
           expect(res).toBe(new Date(Date.UTC(2021, 8, 7, 0, 0, 0)).toISOString());
-
-          await wrapper.setProps({ sqlMode: true });
-          res = wrapper.vm.getStartOfDay('2021-09-07', EDateMode.Static);
-          expect(res).toEqual(new Date(Date.UTC(2021, 8, 7, 0, 0, 0)));
         });
       });
     });
 
     describe('getEndOfDay', () => {
       describe('ConvertLocalToUtc', () => {
-        it('returns a iso string of the end of the day including the time zone', async () => {
-          let res = wrapper.vm.getEndOfDay('2021-09-07', EDateMode.ConvertLocalToUtc);
+        it('returns a iso string of the end of the day including the time zone', () => {
+          const res = wrapper.vm.getEndOfDay('2021-09-07', EDateMode.ConvertLocalToUtc);
           expect(res).toBe(new Date(2021, 8, 7, 23, 59, 59, 999).toISOString());
-
-          await wrapper.setProps({ sqlMode: true });
-          res = wrapper.vm.getEndOfDay('2021-09-07', EDateMode.ConvertLocalToUtc);
-          expect(res).toEqual(new Date(2021, 8, 7, 23, 59, 59, 999));
         });
       });
 
       describe('Static', () => {
-        it('returns a iso string of the end of the day at midnight', async () => {
-          let res = wrapper.vm.getEndOfDay('2021-09-07', EDateMode.Static);
+        it('returns a iso string of the end of the day at midnight', () => {
+          const res = wrapper.vm.getEndOfDay('2021-09-07', EDateMode.Static);
           expect(res).toBe(new Date(Date.UTC(2021, 8, 7, 23, 59, 59, 999)).toISOString());
-
-          await wrapper.setProps({ sqlMode: true });
-          res = wrapper.vm.getEndOfDay('2021-09-07', EDateMode.Static);
-          expect(res).toEqual(new Date(Date.UTC(2021, 8, 7, 23, 59, 59, 999)));
         });
       });
     });
