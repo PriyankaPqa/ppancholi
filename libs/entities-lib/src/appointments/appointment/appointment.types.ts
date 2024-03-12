@@ -68,6 +68,11 @@ export interface IAppointmentEntity extends IEntity {
   smsNotificationsEnabled?: Boolean; // ??
   staffMemberIds: string[];
   startDateTime: IDateTimeTimeZone;
+
+  outcome: string; // AppointmentOutcome??
+  caseFileId: uuid;
+  actualDuration: number;
+  recurringGroupId: uuid; // for recurring appoitments??
 }
 
 // export interface IAppointmentMetadata extends IEntity {
