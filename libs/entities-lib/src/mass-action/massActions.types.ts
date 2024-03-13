@@ -36,6 +36,7 @@ export enum MassActionDataCorrectionType {
   ContactInformation = 12,
   FinancialAssistance = 13,
   DataCorrectionAuthentication = 17,
+  DataCorrectionTriage = 19,
 }
 
 export enum MassActionMode {

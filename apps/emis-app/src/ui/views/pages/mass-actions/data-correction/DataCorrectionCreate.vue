@@ -42,6 +42,7 @@ import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import helpers from '@/ui/helpers/helpers';
 import { format } from 'date-fns';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({ name: 'DataCorrectionCreate',
 
@@ -66,6 +67,10 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
   computed: {
 
     massActionTypes() {
+      if (!this.$hasFeature(FeatureKeys.DataCorrectionTriage)) {
+        return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
+        .filter((m) => (m.value !== MassActionDataCorrectionType.AuthenticationSpecifiedOther && m.value !== MassActionDataCorrectionType.DataCorrectionTriage));
+      }
       return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
         .filter((m) => (m.value !== MassActionDataCorrectionType.AuthenticationSpecifiedOther));
     },

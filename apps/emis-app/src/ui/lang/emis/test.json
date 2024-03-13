@@ -1109,6 +1109,7 @@
     "enums.MassActionDataCorrectionType.AuthenticationSpecifiedOther": "enums.MassActionDataCorrectionType.AuthenticationSpecifiedOther",
     "enums.MassActionDataCorrectionType.ContactInformation": "enums.MassActionDataCorrectionType.ContactInformation",
     "enums.MassActionDataCorrectionType.DataCorrectionAuthentication": "enums.MassActionDataCorrectionType.DataCorrectionAuthentication",
+    "enums.MassActionDataCorrectionType.DataCorrectionTriage": "enums.MassActionDataCorrectionType.DataCorrectionTriage",
     "enums.MassActionDataCorrectionType.FinancialAssistance": "enums.MassActionDataCorrectionType.FinancialAssistance",
     "enums.MassActionDataCorrectionType.HomeAddress": "enums.MassActionDataCorrectionType.HomeAddress",
     "enums.MassActionDataCorrectionType.IdentitySet": "enums.MassActionDataCorrectionType.IdentitySet",
