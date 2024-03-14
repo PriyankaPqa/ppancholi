@@ -50,25 +50,19 @@ export interface IAppointmentSearchData {
  */
 export interface IAppointmentEntity extends IEntity {
   additionalInformation?: string;
-  customers: ICustomer[];
-  // duration: string; ??
-  endDateTime: IDateTimeTimeZone;
-  id: uuid;
   isLocationOnline: Boolean;
   joinWebUrl?: string;
   optOutOfCustomerEmail?: Boolean;
   postBuffer?: string | Date;
   preBuffer?: string | Date;
   reminders?: string[]; // TBD type
-  selfServiceAppointmentId?: string; // ??
   serviceId: string;
   serviceLocation?: string; // TBD type
   serviceName: string;
   serviceNotes?: string;
-  smsNotificationsEnabled?: Boolean; // ??
   staffMemberIds: string[];
   startDateTime: IDateTimeTimeZone;
-
+  endDateTime: IDateTimeTimeZone;
   outcome: string; // AppointmentOutcome??
   appointmentStatus: number // Scheduled/Cancelled/Rescheduled ??
   caseFileId: uuid;

@@ -1,3 +1,6 @@
+import { IEntity } from '@/base';
+import { IMultilingual } from '@libs/shared-lib/src/types';
+
 export enum DayOfWeek {
   Sunday = 'sunday',
   Monday = 'monday',
@@ -28,8 +31,9 @@ export interface IStaffMember {
   MSBookingId: uuid;
   EMISId: uuid; // User account Id
   emailAddress: string;
-  displayName: string; // ???
-  workingHours: IBookingWorkHours;
+  workingHours: IBookingWorkHours[];
+  displayName: string;
+  roleName: IMultilingual;
 }
 
 export interface IService {
@@ -45,9 +49,10 @@ export interface IService {
   appointmentProgrammId: uuid;
 }
 
-export interface IAppointmentProgram { // aka Booking business
-  name: string;
+export interface IAppointmentProgramEntity extends IEntity { // aka Booking business
+  name: IMultilingual;
   eventId: uuid;
   staffMembers: IStaffMember[];
   services: IService[];
+  businessHours: IBookingWorkHours[];
 }
