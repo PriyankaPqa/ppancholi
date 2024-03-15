@@ -69,6 +69,7 @@ export interface IAppointmentEntity extends IEntity {
   actualDuration: number;
   recurringGroupId: uuid; // for recurring appoitments??
   appointmentProgramId: uuid;
+  timeZone: string; // Stores the time zone of the user who scheduled the appointment
 }
 
 // export interface IAppointmentMetadata extends IEntity {
