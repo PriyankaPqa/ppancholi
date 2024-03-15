@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
+import { mockCaseNoteEntity, mockCaseNoteCategories } from '@libs/entities-lib/case-note';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
@@ -7,7 +7,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './CaseNotesListItem.vue';
 
 const localVue = createLocalVue();
-const caseNote = mockCombinedCaseNote();
+const caseNote = mockCaseNoteEntity();
 const { pinia, caseNoteStore } = useMockCaseNoteStore();
 
 describe('CaseNotesListItem.vue', () => {
@@ -30,19 +30,19 @@ describe('CaseNotesListItem.vue', () => {
   describe('Template', () => {
     describe('subject', () => {
       it('is rendered', async () => {
-        expect(wrapper.findDataTest('caseNotes__subject').text()).toBe(caseNote.entity.subject);
+        expect(wrapper.findDataTest('caseNotes__subject').text()).toBe(caseNote.subject);
       });
     });
 
     describe('categories', () => {
       it('is rendered', async () => {
-        expect(wrapper.findDataTest('caseNotes__category').text()).toBe(caseNote.metadata.caseNoteCategoryName.translation.en);
+        expect(wrapper.findDataTest('caseNotes__category').text()).toBe(mockCaseNoteCategories()[2].name.translation.en);
       });
     });
 
     describe('description', () => {
       it('is rendered', async () => {
-        expect(wrapper.findDataTest('caseNotes__description').text()).toBe(caseNote.entity.description);
+        expect(wrapper.findDataTest('caseNotes__description').text()).toBe(caseNote.description);
       });
     });
 
@@ -95,12 +95,8 @@ describe('CaseNotesListItem.vue', () => {
     });
 
     describe('categoryName', () => {
-      it('returns the categoryName if it is in the metadata', () => {
-        expect(wrapper.vm.categoryName).toEqual(wrapper.vm.item.metadata.caseNoteCategoryName.translation.en);
-      });
-
-      it('returns the category name from the entity if there is no metadata data', () => {
-        const altCaseNote = { entity: mockCaseNoteEntity({ category: { optionItemId: mockCaseNoteCategories()[1].id } }), metadata: {} };
+      it('returns the category name from the entity', () => {
+        const altCaseNote = { category: { optionItemId: mockCaseNoteCategories()[1].id } };
         wrapper = shallowMount(Component, {
           localVue,
           pinia,

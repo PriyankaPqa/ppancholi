@@ -15,7 +15,6 @@ import { CaseFileDocumentsService } from '@libs/services-lib/case-file-documents
 import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
 import { CaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
-import { CaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
 import { EventsMetadataService } from '@libs/services-lib/events/metadata';
 import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
@@ -36,7 +35,6 @@ export const provider = (httpClient = client): IProvider => ({
   caseFiles: new CaseFilesService(httpClient),
   caseFilesMetadata: new CaseFilesMetadataService(httpClient),
   caseFileNotes: new CaseNotesService(httpClient),
-  caseFileNotesMetadata: new CaseNotesMetadataService(httpClient),
   caseFileReferrals: new CaseFileReferralsService(httpClient),
   caseFileDocuments: new CaseFileDocumentsService(httpClient),
   events: new EventsService(httpClient),

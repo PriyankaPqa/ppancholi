@@ -5,7 +5,7 @@ import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-r
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
-import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/case-note';
+import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
@@ -391,12 +391,6 @@ describe('signalR', () => {
           domain: 'case-file',
           entityName: 'CaseNote',
           action: useCaseNoteStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'case-file',
-          entityName: 'CaseNoteMetadata',
-          action: useCaseNoteMetadataStore().setItemFromOutsideNotification,
         });
     });
 

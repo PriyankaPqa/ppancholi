@@ -1,13 +1,13 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { CaseFileActivityType, mockCaseFileActivities } from '@libs/entities-lib/case-file';
-import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
+import { mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { system } from '@/constants/system';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 
 import Component from '../components/CaseFileListItemWrapper.vue';
 
 const localVue = createLocalVue();
-const item = mockCombinedCaseNote();
+const item = mockCaseNoteEntity();
 const { pinia, userAccountStore } = useMockUserAccountStore();
 
 describe('CaseFileListItemWrapper.vue', () => {
@@ -28,11 +28,11 @@ describe('CaseFileListItemWrapper.vue', () => {
         computed: {
           listItem() {
             return ({
-              userName: item.entity.userCreatedBy.userName,
-              roleName: item.entity.userCreatedBy.roleName,
-              created: item.entity.created,
-              lastModifiedDate: item.entity.updatedDate,
-              lastModifiedByFullName: item.entity.userCreatedBy.userName,
+              userName: item.userCreatedBy.userName,
+              roleName: item.userCreatedBy.roleName,
+              created: item.created,
+              lastModifiedDate: item.updatedDate,
+              lastModifiedByFullName: item.userCreatedBy.userName,
             });
           },
         },
@@ -110,16 +110,16 @@ describe('CaseFileListItemWrapper.vue', () => {
         });
 
         expect(wrapper.vm.listItem).toEqual({
-          userName: item.entity.userCreatedBy.userName,
-          roleName: item.entity.userCreatedBy.roleName,
-          isPinned: item.entity.isPinned,
-          lastModifiedByFullName: item.entity.userUpdatedBy
-            ? item.entity.userUpdatedBy.userName
-            : item.entity.userCreatedBy.userName,
-          lastModifiedDate: item.entity.updatedDate
-            ? item.entity.updatedDate
-            : item.entity.created,
-          created: item.entity.created,
+          userName: item.userCreatedBy.userName,
+          roleName: item.userCreatedBy.roleName,
+          isPinned: item.isPinned,
+          lastModifiedByFullName: item.userUpdatedBy
+            ? item.userUpdatedBy.userName
+            : item.userCreatedBy.userName,
+          lastModifiedDate: item.updatedDate
+            ? item.updatedDate
+            : item.created,
+          created: item.created,
         });
       });
 

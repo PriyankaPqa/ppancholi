@@ -1,6 +1,6 @@
-import { mockBaseData, IEntity } from '../base';
+import { mockBaseData } from '../base';
 import { IOptionItem } from '../optionItem';
-import { ICaseNoteCombined, ICaseNoteEntity, ICaseNoteMetadata } from './case-note.types';
+import { ICaseNoteEntity } from './case-note.types';
 
 export const mockCaseNoteCategories = (): IOptionItem[] => [
   {
@@ -119,40 +119,7 @@ export const mockCaseNoteEntity = (force? : Partial<ICaseNoteEntity>) : ICaseNot
   validate: () => true,
 });
 
-export const mockCaseNoteMetadata = (force? : Partial<ICaseNoteMetadata>) : ICaseNoteMetadata => ({
-  ...mockBaseData(),
-  caseNoteStatusName: {
-    translation: {
-      en: 'Active',
-      fr: 'Actif',
-    },
-  },
-  caseNoteCategoryName: {
-    translation: {
-      en: 'Escalation',
-      fr: 'Processus d\\u2019escalade',
-    },
-  },
-  ...force,
-});
-
 export const mockCaseNoteEntities = () : ICaseNoteEntity[] => [
   mockCaseNoteEntity({ id: '1' }),
   mockCaseNoteEntity({ id: '2' }),
-];
-
-export const mockCaseNoteMetadatum = () : ICaseNoteMetadata[] => [
-  mockCaseNoteMetadata({ id: '1' }),
-  mockCaseNoteMetadata({ id: '2' }),
-];
-
-export const mockCombinedCaseNote = (force?: Partial<IEntity>): ICaseNoteCombined => ({
-  metadata: mockCaseNoteMetadata(force),
-  entity: mockCaseNoteEntity(force),
-});
-
-export const mockCombinedCaseNotes = (): ICaseNoteCombined[] => [
-  mockCombinedCaseNote({ id: '1' }),
-  mockCombinedCaseNote({ id: '2' }),
-  mockCombinedCaseNote({ id: '3' }),
 ];

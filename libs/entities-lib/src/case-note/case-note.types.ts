@@ -1,4 +1,4 @@
-import { IMultilingual, IListOption, IUserInformation } from '@libs/shared-lib/types';
+import { IListOption, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export interface ICaseNoteUser {
@@ -19,12 +19,7 @@ export interface ICaseNoteEntity extends IEntity {
   validate(): Array<string> | boolean;
 }
 
-export interface ICaseNoteMetadata extends IEntity {
-  caseNoteStatusName: IMultilingual,
-  caseNoteCategoryName: IMultilingual,
-}
-
-export type ICaseNoteCombined = IEntityCombined<ICaseNoteEntity, ICaseNoteMetadata>;
+export type ICaseNoteCombined = IEntityCombined<ICaseNoteEntity, IEntity>;
 
 export type IdParams = uuid;
 export type IdMetadataParams = { id: uuid, caseFileId: uuid };

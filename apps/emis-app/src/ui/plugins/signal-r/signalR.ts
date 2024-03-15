@@ -22,7 +22,7 @@ import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
-import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
+import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
@@ -431,12 +431,6 @@ export class SignalR implements ISignalR {
       action: useCaseNoteStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
-      domain: 'case-file',
-      entityName: 'CaseNoteMetadata',
-      action: useCaseNoteMetadataStore().setItemFromOutsideNotification,
-    });
-
     this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'CaseNoteCategory',
@@ -445,7 +439,6 @@ export class SignalR implements ISignalR {
     });
 
     this.watchedPiniaStores.push(useCaseNoteStore());
-    this.watchedPiniaStores.push(useCaseNoteMetadataStore());
   }
 
   private listenForCaseReferralModuleChanges() {

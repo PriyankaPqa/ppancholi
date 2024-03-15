@@ -2,7 +2,7 @@
   <div>
     <case-note-form
       v-if="isEdit"
-      :case-note="item.entity"
+      :case-note="item"
       :action-title="$t('caseNote.edit.rowTitle')"
       is-edit
       @close-case-note-form="closeCaseNoteEdit()" />
@@ -10,7 +10,7 @@
       <template slot="content">
         <div class="mb-2">
           <div class="rc-body16 fw-bold" data-test="caseNotes__subject">
-            {{ item.entity.subject }}
+            {{ item.subject }}
           </div>
         </div>
 
@@ -24,7 +24,7 @@
           ref="description"
           :class="[{ 'caseNote__description--more': true }, 'caseNote__description', 'rc-body14', 'pr-4']"
           data-test="caseNotes__description">
-            {{ item.entity.description }}
+            {{ item.description }}
           </pre>
       </template>
 
@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
+import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -67,7 +67,7 @@ export default Vue.extend({
   },
   props: {
     item: {
-      type: Object as () => ICaseNoteCombined,
+      type: Object as () => ICaseNoteEntity,
       required: true,
     },
     readonly: {
@@ -92,10 +92,7 @@ export default Vue.extend({
     },
 
     categoryName(): string {
-      if (this.item.metadata.caseNoteCategoryName) {
-        return this.$m(this.item.metadata.caseNoteCategoryName);
-      }
-      const category = this.caseNoteCategories.find((c) => c.id === this.item.entity.category.optionItemId);
+      const category = this.caseNoteCategories.find((c) => c.id === this.item.category?.optionItemId);
       if (category) {
         return this.$m(category.name);
       }

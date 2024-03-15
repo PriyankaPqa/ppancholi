@@ -1,11 +1,10 @@
-import { EFilterType } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
+import { mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { UserRoles } from '@libs/entities-lib/user';
 
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
-import * as searchEndpoints from '@/constants/searchEndpoints';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
@@ -14,7 +13,7 @@ import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 
 const localVue = createLocalVue();
-const caseNote = mockCombinedCaseNote();
+const caseNote = mockCaseNoteEntity();
 
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
@@ -211,9 +210,9 @@ describe('CaseNote.vue', () => {
         jest.clearAllMocks();
 
         caseFiles = [
-          mockCombinedCaseNote({ id: '1', isPinned: false, created: '2020-01-02' }),
-          mockCombinedCaseNote({ id: '2', isPinned: true, created: '2020-01-01' }),
-          mockCombinedCaseNote({ id: '3', isPinned: false, created: '2020-01-03' }),
+          mockCaseNoteEntity({ id: '1', isPinned: false, created: '2020-01-02' }),
+          mockCaseNoteEntity({ id: '2', isPinned: true, created: '2020-01-01' }),
+          mockCaseNoteEntity({ id: '3', isPinned: false, created: '2020-01-03' }),
         ];
 
         wrapper = shallowMount(Component, {
@@ -256,8 +255,8 @@ describe('CaseNote.vue', () => {
               return false;
             },
             caseNotes() {
-              return [mockCombinedCaseNote({ id: '1', isPinned: false, created: '2020-01-02' }),
-                mockCombinedCaseNote({ id: '2', isPinned: true, created: '2020-01-01' })];
+              return [{ entity: mockCaseNoteEntity({ id: '1', isPinned: false, created: '2020-01-02' }) },
+                { entity: mockCaseNoteEntity({ id: '2', isPinned: true, created: '2020-01-01' }) }];
             },
           },
         });
@@ -353,12 +352,12 @@ describe('CaseNote.vue', () => {
         expect(wrapper.vm.combinedCaseNoteStore.search).toHaveBeenLastCalledWith(
           {
             ...params,
-            filter: { 'Entity/CaseFileId': 'id' },
+            filter: { 'Entity/CaseFileId': { value: 'id', type: EFilterKeyType.Guid } },
             count: true,
             queryType: 'full',
             searchMode: 'all',
           },
-          searchEndpoints.CASE_NOTES,
+          null,
           true,
         );
       });
@@ -369,10 +368,10 @@ describe('CaseNote.vue', () => {
         caseNoteStore.pinCaseNote = jest.fn();
         const { isPinned } = caseNote;
 
-        await wrapper.vm.pinCaseNote(caseNote);
+        await wrapper.vm.pinCaseNote({ entity: caseNote });
 
         expect(caseNoteStore.pinCaseNote).toHaveBeenCalledWith(
-          { caseFileId: wrapper.vm.caseFileId, caseNoteId: caseNote.entity.id, isPinned: !isPinned },
+          { caseFileId: wrapper.vm.caseFileId, caseNoteId: caseNote.id, isPinned: !isPinned },
         );
       });
       it('should update isPinned in case note', async () => {

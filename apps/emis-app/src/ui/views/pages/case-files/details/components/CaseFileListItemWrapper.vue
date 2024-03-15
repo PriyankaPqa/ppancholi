@@ -68,7 +68,7 @@
 import Vue from 'vue';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { ICaseFileActivity } from '@libs/entities-lib/case-file';
-import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
+import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { UserRolesNames } from '@libs/entities-lib/user';
 import { system } from '@/constants/system';
 import { format } from 'date-fns';
@@ -81,7 +81,7 @@ export default Vue.extend({
 
   props: {
     item: {
-      type: Object as () => ICaseFileActivity | ICaseNoteCombined,
+      type: Object as () => ICaseFileActivity | ICaseNoteEntity,
       required: true,
     },
     /**
@@ -110,18 +110,18 @@ export default Vue.extend({
   computed: {
     listItem() {
       if (this.isCaseNote) {
-        const item = this.item as ICaseNoteCombined;
+        const item = this.item as ICaseNoteEntity;
         return {
-          userName: item.entity.userCreatedBy.userName,
-          roleName: item.entity.userCreatedBy.roleName,
-          isPinned: item.entity.isPinned,
-          lastModifiedByFullName: item.entity.userUpdatedBy
-            ? item.entity.userUpdatedBy.userName
-            : item.entity.userCreatedBy.userName,
-          lastModifiedDate: item.entity.userUpdatedBy
-            ? item.entity.updatedDate
-            : item.entity.created,
-          created: item.entity.created,
+          userName: item.userCreatedBy.userName,
+          roleName: item.userCreatedBy.roleName,
+          isPinned: item.isPinned,
+          lastModifiedByFullName: item.userUpdatedBy
+            ? item.userUpdatedBy.userName
+            : item.userCreatedBy.userName,
+          lastModifiedDate: item.userUpdatedBy
+            ? item.updatedDate
+            : item.created,
+          created: item.created,
         };
       }
 
