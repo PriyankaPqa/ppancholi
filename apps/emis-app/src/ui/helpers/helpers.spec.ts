@@ -4,7 +4,9 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { createLocalVue } from '@/test/testSetup';
+import { mockOptionItem } from '@libs/entities-lib/optionItem';
 import helpers from './helpers';
+import { i18n } from '../plugins';
 
 describe('>>>> helpers', () => {
   describe('getLocalStringDate', () => {
@@ -228,6 +230,35 @@ describe('>>>> helpers', () => {
       localVue.prototype.$hasRole = () => true;
       localVue.prototype.$hasFeature = () => true;
       expect(helpers.availableItems(localVue.prototype, items)).toEqual(items);
+    });
+  });
+
+  describe('getOptionItemNameFromListOption', () => {
+    it('returns the localized name  of the option item corresponding to the list option, if the list option has no specifiedOther', () => {
+      const listOption = { optionItemId: 'mock-id', specifiedOther: null as string };
+      const name1 = { translation: { en: 'name-1-en', fr: 'name-1-fr' } };
+      const name2 = { translation: { en: 'name-2-en', fr: 'name-2-fr' } };
+      const optionItemList = [mockOptionItem({ name: name1, id: 'mock-id' }), mockOptionItem({ name: name2, id: 'random-id' })];
+      i18n.locale = 'fr';
+      expect(helpers.getOptionItemNameFromListOption(optionItemList, listOption)).toEqual('name-1-fr');
+    });
+
+    it('returns the specify other name of the list option, if the list option has a specifiedOther', () => {
+      const listOption = { optionItemId: 'mock-id', specifiedOther: 'specified-name' };
+      const name1 = { translation: { en: 'name-1-en', fr: 'name-1-fr' } };
+      const name2 = { translation: { en: 'name-2-en', fr: 'name-2-fr' } };
+      const optionItemList = [mockOptionItem({ name: name1, id: 'mock-id' }), mockOptionItem({ name: name2, id: 'random-id' })];
+      i18n.locale = 'fr';
+      expect(helpers.getOptionItemNameFromListOption(optionItemList, listOption)).toEqual('specified-name');
+    });
+
+    it('return null if arguments are missing', () => {
+      const listOption = { optionItemId: 'mock-id', specifiedOther: 'specified-name' };
+      const name1 = { translation: { en: 'name-1-en', fr: 'name-1-fr' } };
+      const name2 = { translation: { en: 'name-2-en', fr: 'name-2-fr' } };
+      const optionItemList = [mockOptionItem({ name: name1, id: 'mock-id' }), mockOptionItem({ name: name2, id: 'random-id' })];
+      expect(helpers.getOptionItemNameFromListOption(null, listOption)).toEqual(null);
+      expect(helpers.getOptionItemNameFromListOption(optionItemList, null)).toEqual(null);
     });
   });
 });

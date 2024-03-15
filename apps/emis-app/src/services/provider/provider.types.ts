@@ -18,8 +18,6 @@ import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMoc
 import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '@libs/services-lib/financial-assistance-payments/entity';
 import { ICaseFilesMetadataService, ICaseFilesMetadataServiceMock } from '@libs/services-lib/case-files/metadata';
 import { ICaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
-import { ICaseFileReferralsMetadataService } from '@libs/services-lib/case-file-referrals/metadata';
-import { ICaseFileDocumentsMetadataService } from '@libs/services-lib/case-file-documents/metadata';
 import { IEventsMetadataService } from '@libs/services-lib/events/metadata';
 import { IFinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/services-lib/tenantSettings/entity';
@@ -41,9 +39,7 @@ export interface IProvider {
   caseFileNotes: ICaseNotesService,
   caseFileNotesMetadata: ICaseNotesMetadataService,
   caseFileReferrals: ICaseFileReferralsService
-  caseFileReferralsMetadata: ICaseFileReferralsMetadataService
   caseFileDocuments: ICaseFileDocumentsService
-  caseFileDocumentsMetadata: ICaseFileDocumentsMetadataService
   events: IEventsService;
   eventsMetadata: IEventsMetadataService;
   optionItems: IOptionItemsService;

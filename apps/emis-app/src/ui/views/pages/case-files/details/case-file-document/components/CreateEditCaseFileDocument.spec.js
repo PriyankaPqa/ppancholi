@@ -52,9 +52,9 @@ describe('CreateEditDocument', () => {
 
   describe('LifeCycle', () => {
     describe('created', () => {
-      it('calls and loads from the storage on edit and allows for no metadata', async () => {
+      it('calls and loads from the storage on edit', async () => {
         await mountWrapper(true);
-        expect(caseFileDocumentStore.fetch).toHaveBeenCalledWith({ id: 'DOC_ID', caseFileId: 'CASEFILE_ID' }, true);
+        expect(caseFileDocumentStore.fetch).toHaveBeenCalledWith({ id: 'DOC_ID', caseFileId: 'CASEFILE_ID' });
         expect(wrapper.vm.document).toEqual(new CaseFileDocumentEntity(mockCaseFileDocumentEntities()[0]));
       });
 

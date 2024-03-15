@@ -1,7 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedCaseFileDocuments } from '@libs/entities-lib/case-file-document';
-
-import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockCaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -45,7 +43,7 @@ describe('CaseFileDocumentDetails', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    mockDocument = mockCombinedCaseFileDocuments()[0].entity;
+    mockDocument = mockCaseFileDocumentEntity({ id: '1' });
   });
 
   describe('Computed', () => {
@@ -98,35 +96,6 @@ describe('CaseFileDocumentDetails', () => {
       });
     });
 
-    describe('category', () => {
-      it('calls the getter categories', async () => {
-        await mountWrapper();
-        await flushPromises();
-        expect(caseFileDocumentStore.getCategories).toHaveBeenCalledWith(false);
-      });
-
-      it('returns the right category', async () => {
-        await mountWrapper();
-        expect(wrapper.vm.category).toEqual(mockOptionItemData()[0].name.translation.en);
-      });
-
-      it('returns the right category if category is other', async () => {
-        caseFileDocumentStore.getCategories = jest.fn(() => ([{ ...mockOptionItemData()[0], isOther: true }]));
-        await mountWrapper(false, 6, null, {
-          computed:
-           {
-             document() {
-               return {
-                 ...mockDocument,
-                 category: { optionItemId: mockOptionItemData()[0].id, specifiedOther: 'foo' },
-               };
-             },
-           },
-        });
-        expect(wrapper.vm.category).toEqual('foo');
-      });
-    });
-
     describe('documentData', () => {
       it('returns the right data', async () => {
         await mountWrapper();
@@ -172,7 +141,7 @@ describe('CaseFileDocumentDetails', () => {
 
     it('should call fetch', async () => {
       await mountWrapper();
-      expect(caseFileDocumentStore.fetch).toHaveBeenCalledWith({ caseFileId: 'mock-caseFile-id', id: 'mock-document-id' }, true);
+      expect(caseFileDocumentStore.fetch).toHaveBeenCalledWith({ caseFileId: 'mock-caseFile-id', id: 'mock-document-id' });
     });
   });
 

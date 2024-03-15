@@ -14,9 +14,9 @@ import { IEntity } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
 import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { useUserStore } from '@/pinia/user/user';
-import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
+import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
-import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
@@ -455,13 +455,7 @@ export class SignalR implements ISignalR {
       action: useCaseFileReferralStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChangesMetadataSql({
-      domain: 'case-file',
-      entityName: 'ReferralMetadata',
-      action: useCaseFileReferralMetadataStore().setItemFromOutsideNotification,
-    });
     this.watchedPiniaStores.push(useCaseFileReferralStore());
-    this.watchedPiniaStores.push(useCaseFileReferralMetadataStore());
 
     this.listenForOptionItemChanges({
       domain: 'case-file',
@@ -508,12 +502,6 @@ export class SignalR implements ISignalR {
       action: useCaseFileDocumentStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
-      domain: 'case-file',
-      entityName: 'DocumentMetadata',
-      action: useCaseFileDocumentMetadataStore().setItemFromOutsideNotification,
-    });
-
     this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'DocumentCategory',
@@ -522,7 +510,6 @@ export class SignalR implements ISignalR {
     });
 
     this.watchedPiniaStores.push(useCaseFileDocumentStore());
-    this.watchedPiniaStores.push(useCaseFileDocumentMetadataStore());
   }
 
   private listenForAssessmentResponseModuleChanges() {

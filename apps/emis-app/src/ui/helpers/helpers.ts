@@ -2,13 +2,14 @@ import { NavigationGuardNext } from 'vue-router';
 import { format, parseISO } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IListOption, IMultilingual } from '@libs/shared-lib/types';
 import { i18n } from '@/ui/plugins/i18n';
 import { IRestResponse } from '@libs/services-lib/http-client';
 import { DateTypes, dateTypes } from '@/constants/dateTypes';
 import routes from '@/constants/routes';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { Trans } from '../plugins';
 import { VuePlugin } from '../plugins/features';
 
@@ -334,4 +335,19 @@ export default {
     });
   },
 
+  /**
+   * Returns the name of the option item corresponding to the list option id or the pleaseSpecify value
+   * @param optionItems List of all option items, containing the names
+   * @param listOption Specific list option, containing {optionItemId, specifiedOther}
+   * @returns Localized name of the option item
+   */
+  getOptionItemNameFromListOption(optionItems: IOptionItem[], listOption:IListOption): string {
+    if (!listOption || !optionItems?.length) {
+      return null;
+    }
+
+    const item = optionItems.find((item: { id: any; }) => item.id === listOption.optionItemId);
+    const specifiedOther = listOption?.specifiedOther;
+    return specifiedOther ?? this.getMultilingualValue(item?.name);
+  },
 };

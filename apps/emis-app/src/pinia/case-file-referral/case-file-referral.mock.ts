@@ -1,7 +1,7 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import { defineStore } from 'pinia';
-import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@libs/stores-lib/base';
-import { mockCaseFileReferralEntities, mockCaseFileReferralMetadatum } from '@libs/entities-lib/case-file-referral';
+import { getMockEntityStoreComponents } from '@libs/stores-lib/base';
+import { mockCaseFileReferralEntities } from '@libs/entities-lib/case-file-referral';
 import { getMockCaseFileReferralExtensionComponents } from '@/pinia/case-file-referral/case-file-referral-extension.mock';
 
 const storeId = 'case-file-referral';
@@ -14,12 +14,8 @@ export const useMockCaseFileReferralStore = (pinia?: TestingPinia) => {
     ...getMockCaseFileReferralExtensionComponents(),
   }));
 
-  const useCaseFileReferralMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-    ...getMockBaseStoreComponents(mockCaseFileReferralMetadatum()),
-  }));
   return {
     pinia: p,
     caseFileReferralStore: useCaseFileReferralStore(),
-    caseFileReferralMetadataStore: useCaseFileReferralMetadataStore(),
   };
 };

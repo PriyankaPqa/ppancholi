@@ -1,9 +1,9 @@
 import { mockSignalRService } from '@libs/services-lib/signal-r';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
-import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
+import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
-import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
@@ -421,12 +421,6 @@ describe('signalR', () => {
           entityName: 'Referral',
           action: useCaseFileReferralStore().setItemFromOutsideNotification,
         });
-      expect(conn.listenForChangesMetadataSql)
-        .toHaveBeenCalledWith({
-          domain: 'case-file',
-          entityName: 'ReferralMetadata',
-          action: useCaseFileReferralMetadataStore().setItemFromOutsideNotification,
-        });
     });
 
     it('calls listenForOptionItemChanges', () => {
@@ -503,12 +497,6 @@ describe('signalR', () => {
           domain: 'case-file',
           entityName: 'Document',
           action: useCaseFileDocumentStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'case-file',
-          entityName: 'DocumentMetadata',
-          action: useCaseFileDocumentMetadataStore().setItemFromOutsideNotification,
         });
     });
 

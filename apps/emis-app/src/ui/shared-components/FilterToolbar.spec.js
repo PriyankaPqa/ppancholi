@@ -954,6 +954,30 @@ describe('Filter Toolbar', () => {
           .toEqual(_set({}, filter.key, { arrayEmpty: filter.value }));
       });
 
+      it('builds the proper structure for stringArrayNotEmpty value', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.Equal,
+          type: EFilterType.MultiSelect,
+          value: 'stringArrayNotEmpty',
+        };
+        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter)
+          .toEqual(_set({}, `not.${filter.key}`, '[]'));
+      });
+
+      it('builds the proper structure for stringArrayEmpty value', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.Equal,
+          type: EFilterType.MultiSelect,
+          value: 'stringArrayEmpty',
+        };
+        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, '[]'));
+      });
+
       it('builds the proper structure when receiving a object as a value', () => {
         const filter = {
           key: 'Prop.Sub',
@@ -964,9 +988,14 @@ describe('Filter Toolbar', () => {
             value: 0,
           },
         };
-        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        let newFilter = wrapper.vm.translateEqualOperator(filter);
         expect(newFilter)
           .toEqual(_set({}, filter.key, filter.value.value));
+
+        filter.keyType = 'guid';
+        newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { value: filter.value.value, type: 'guid' }));
       });
 
       it('builds the proper structure for regular value', () => {
@@ -976,9 +1005,14 @@ describe('Filter Toolbar', () => {
           type: EFilterType.Date,
           value: 'today',
         };
-        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        let newFilter = wrapper.vm.translateEqualOperator(filter);
         expect(newFilter)
           .toEqual(_set({}, filter.key, filter.value));
+
+        filter.keyType = 'guid';
+        newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { value: filter.value, type: 'guid' }));
       });
     });
 

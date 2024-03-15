@@ -1,5 +1,6 @@
-import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
+import { ICaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { IEntity } from '@libs/entities-lib/base';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { ICaseFileReferralsService } from './case-file-referrals.types';
@@ -31,7 +32,7 @@ export class CaseFileReferralsService extends DomainBaseService<ICaseFileReferra
   }
 
   async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<ICaseFileReferralEntity, ICaseFileReferralMetadata>> {
+    Promise<IAzureCombinedSearchResult<ICaseFileReferralEntity, IEntity>> {
     return this.http.get('case-file/search/referralsV2', { params, isODataSql: true });
   }
 }

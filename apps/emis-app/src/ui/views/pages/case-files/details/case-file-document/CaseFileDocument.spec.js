@@ -1,9 +1,8 @@
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedCaseFileDocument, DocumentStatus } from '@libs/entities-lib/case-file-document';
+import { mockCaseFileDocumentEntity, DocumentStatus } from '@libs/entities-lib/case-file-document';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
-
 import helpers from '@/ui/helpers/helpers';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
@@ -15,7 +14,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
-const document = mockCombinedCaseFileDocument();
+const document = { entity: mockCaseFileDocumentEntity() };
 let mockDocumentMapped;
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
@@ -36,7 +35,7 @@ describe('CaseFileDocument.vue', () => {
       id: document.entity.id,
       category: options[0].name.translation.en,
       documentStatus: document.entity.documentStatus,
-      documentStatusName: document.metadata.documentStatusName.translation.en,
+      documentStatusName: 'Current',
       created: 'Jul 2, 2021',
       entity: document.entity,
     };
@@ -557,6 +556,8 @@ describe('CaseFileDocument.vue', () => {
           },
         });
         wrapper.vm.combinedCaseFileDocumentStore.getByIds = jest.fn(() => [document]);
+
+        helpers.getOptionItemNameFromListOption = jest.fn(() => 'category-name');
       });
 
       it('calls the getByIds and return correct data', async () => {
@@ -575,10 +576,10 @@ describe('CaseFileDocument.vue', () => {
           {
             name: document.entity.name,
             id: document.entity.id,
-            category: wrapper.vm.$m(document.metadata.documentCategoryName),
+            category: 'category-name',
             created: 'Apr 6, 2021',
             documentStatus: document.entity.documentStatus,
-            documentStatusName: wrapper.vm.$m(document.metadata.documentStatusName),
+            documentStatusName: 'enums.DocumentStatus.Past',
             entity: document.entity,
           },
         ]);
@@ -623,6 +624,7 @@ describe('CaseFileDocument.vue', () => {
           {
             key: 'Entity/Category/OptionItemId',
             type: EFilterType.MultiSelect,
+            keyType: 'guid',
             label: 'caseFile.document.category',
             items: caseFileDocumentStore
               .getCategories(false)
@@ -692,9 +694,12 @@ describe('CaseFileDocument.vue', () => {
           {
             search: params.search,
             filter: {
+              'Entity/CaseFileId': {
+                type: 'guid',
+                value: 'caseFileId',
+              },
               and: {
                 'Entity/Name': 'a',
-                'Entity/CaseFileId': 'caseFileId',
               },
             },
             top: 999,
@@ -705,6 +710,7 @@ describe('CaseFileDocument.vue', () => {
             searchMode: 'all',
           },
           null,
+          true,
           true,
         );
       });

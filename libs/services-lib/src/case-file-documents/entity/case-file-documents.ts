@@ -1,5 +1,6 @@
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
-import { ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@libs/entities-lib/case-file-document';
+import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
+import { IEntity } from '@libs/entities-lib/base';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { ICaseFileDocumentsService } from './case-file-documents.types';
@@ -24,8 +25,8 @@ export class CaseFileDocumentsService extends DomainBaseService<ICaseFileDocumen
     );
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null):
-    Promise<IAzureCombinedSearchResult<ICaseFileDocumentEntity, ICaseFileDocumentMetadata>> {
-    return this.http.get(`case-file/search/${searchEndpoint ?? 'documents'}`, { params, isOData: true });
+  async search(params: IAzureSearchParams):
+    Promise<IAzureCombinedSearchResult<ICaseFileDocumentEntity, IEntity>> {
+    return this.http.get('case-file/search/documentsV2', { params, isODataSql: true });
   }
 }

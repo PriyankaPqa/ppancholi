@@ -1,4 +1,4 @@
-import { IListOption, IMultilingual } from '@libs/shared-lib/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export enum DocumentStatus {
@@ -17,9 +17,4 @@ export interface ICaseFileDocumentEntity extends IEntity {
   validate(): Array<string> | boolean;
 }
 
-export interface ICaseFileDocumentMetadata extends IEntity {
-  documentCategoryName: IMultilingual;
-  documentStatusName: IMultilingual;
-}
-
-export type ICaseFileDocumentCombined = IEntityCombined<ICaseFileDocumentEntity, ICaseFileDocumentMetadata>;
+export type ICaseFileDocumentCombined = IEntityCombined<ICaseFileDocumentEntity, IEntity>;

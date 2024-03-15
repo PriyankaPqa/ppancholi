@@ -92,7 +92,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     if (this.isEditMode) {
       try {
-        const res = await useCaseFileDocumentStore().fetch({ id: this.documentId, caseFileId: this.id }, true) as ICaseFileDocumentEntity;
+        const res = await useCaseFileDocumentStore().fetch({ id: this.documentId, caseFileId: this.id }) as ICaseFileDocumentEntity;
         this.document = new CaseFileDocumentEntity(res);
       } finally {
         this.documentLoading = false;

@@ -1,5 +1,5 @@
 import { mockBaseData } from '../base';
-import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from './case-file-referral.types';
+import { ICaseFileReferralEntity } from './case-file-referral.types';
 
 export const mockCaseFileReferralEntity = (force? : Partial<ICaseFileReferralEntity>) : ICaseFileReferralEntity => ({
   ...mockBaseData(),
@@ -20,33 +20,9 @@ export const mockCaseFileReferralEntity = (force? : Partial<ICaseFileReferralEnt
   validate: () => true,
 });
 
-export const mockCaseFileReferralMetadata = (force? : Partial<ICaseFileReferralMetadata>) : ICaseFileReferralMetadata => ({
-  ...mockBaseData(),
-  referralOutcomeStatus: {
-    id: 'someId',
-    translation: {
-      en: 'referralOutcomeStatusNameEn',
-      fr: 'referralOutcomeStatusNameFr',
-    },
-  },
-  referralType: {
-    id: 'someId',
-    translation: {
-      en: 'referralTypeNameEn',
-      fr: 'referralTypeNameFr',
-    },
-  },
-  ...force,
-});
-
 export const mockCaseFileReferralEntities = () : ICaseFileReferralEntity[] => [
   mockCaseFileReferralEntity({ id: '1' }),
   mockCaseFileReferralEntity({ id: '2' }),
-];
-
-export const mockCaseFileReferralMetadatum = () : ICaseFileReferralMetadata[] => [
-  mockCaseFileReferralMetadata({ id: '1' }),
-  mockCaseFileReferralMetadata({ id: '2' }),
 ];
 
 export const mockSearchData = {
@@ -73,20 +49,7 @@ export const mockSearchData = {
         OutcomeStatus: null,
         ReferralConsentInformation: null,
       },
-      Metadata: {
-        Id: '1',
-        TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
-        Created: '2021-08-05T21:36:27.136215Z',
-        Timestamp: '2021-08-05T21:36:27.1897196Z',
-        Status: 1,
-        ReferralTypeName: {
-          Translation: {
-            en: 'This is item 1 description',
-            fr: 'This is item 1 description FR',
-          },
-        },
-        ReferralOutcomeStatusName: null,
-      },
+
     },
     {
       Id: '2',
@@ -108,20 +71,7 @@ export const mockSearchData = {
         OutcomeStatus: null,
         ReferralConsentInformation: null,
       },
-      Metadata: {
-        Id: '2',
-        TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
-        Created: '2021-08-05T21:36:27.1362186Z',
-        Timestamp: '2021-08-05T21:36:27.1897289Z',
-        Status: 1,
-        ReferralTypeName: {
-          Translation: {
-            en: 'Animal services',
-            fr: 'Services animaliers',
-          },
-        },
-        ReferralOutcomeStatusName: null,
-      },
+
     },
     {
       Id: '3',
@@ -146,25 +96,7 @@ export const mockSearchData = {
         },
         ReferralConsentInformation: '',
       },
-      Metadata: {
-        Id: '3',
-        TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
-        Created: '2021-08-05T21:36:27.1362085Z',
-        Timestamp: '2021-08-05T21:36:27.1897049Z',
-        Status: 1,
-        ReferralTypeName: {
-          Translation: {
-            en: 'Earthquake',
-            fr: 'Tremblement de terre',
-          },
-        },
-        ReferralOutcomeStatusName: {
-          Translation: {
-            en: 'Earthquake',
-            fr: 'Tremblement de terre',
-          },
-        },
-      },
+
     },
   ],
 };

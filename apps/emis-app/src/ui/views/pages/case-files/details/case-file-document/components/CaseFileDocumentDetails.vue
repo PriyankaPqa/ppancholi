@@ -60,6 +60,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
+import helpers from '@/ui/helpers/helpers';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 import caseFileDetail from '../../caseFileDetail';
 
@@ -101,23 +102,11 @@ export default mixins(caseFileDetail).extend({
       return document || new CaseFileDocumentEntity();
     },
 
-    category(): string {
-      if (!this.document?.category?.optionItemId) {
-        return null;
-      }
-      const types = useCaseFileDocumentStore().getCategories(false);
-      const type = types.find((t) => t.id === this.document.category.optionItemId);
-      if (type.isOther && this.document.category.specifiedOther) {
-        return this.document.category.specifiedOther;
-      }
-      return this.$m(type?.name);
-    },
-
     documentData(): Record<string, string>[] {
       return [
         {
           label: 'caseFile.document.category',
-          data: this.category,
+          data: helpers.getOptionItemNameFromListOption(useCaseFileDocumentStore().getCategories(false), this.document.category),
           test: 'category',
         },
         {
@@ -146,7 +135,7 @@ export default mixins(caseFileDetail).extend({
 
   async created() {
     await useCaseFileDocumentStore().fetchCategories();
-    await useCaseFileDocumentStore().fetch({ caseFileId: this.caseFileId, id: this.documentId }, true);
+    await useCaseFileDocumentStore().fetch({ caseFileId: this.caseFileId, id: this.documentId });
   },
 
   methods: {

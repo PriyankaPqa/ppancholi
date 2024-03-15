@@ -1,4 +1,4 @@
-import { IListOption, IMultilingualWithId } from '@libs/shared-lib/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export enum ReferralMethod {
@@ -24,11 +24,6 @@ export interface ICaseFileReferralEntity extends IEntity {
   validate(): Array<string> | boolean;
 }
 
-export interface ICaseFileReferralMetadata extends IEntity {
-  referralType: IMultilingualWithId;
-  referralOutcomeStatus: IMultilingualWithId;
-}
-
-export type ICaseFileReferralCombined = IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>;
+export type ICaseFileReferralCombined = IEntityCombined<ICaseFileReferralEntity, IEntity>;
 
 export type IdParams = { id: uuid, caseFileId: uuid };

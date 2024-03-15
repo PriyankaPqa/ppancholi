@@ -13,7 +13,7 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
 
   private readonly storeMetadata: BaseStoreComponents<TMetadata, IdParams>;
 
-  constructor(pStoreEntity: any, pStoreMetadata: any) {
+  constructor(pStoreEntity: any, pStoreMetadata?: any) {
     this.storeEntity = pStoreEntity;
     this.storeMetadata = pStoreMetadata;
   }
@@ -118,11 +118,11 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
       filteredData.forEach((r) => {
         ids.push(r.entity.id);
         entities.push({ ...r.entity });
-        metadata.push({ ...r.metadata });
+        r.metadata && metadata.push({ ...r.metadata });
       });
 
       this.storeEntity.setAll(entities);
-      this.storeMetadata.setAll(metadata);
+      this.storeMetadata?.setAll(metadata);
 
       this.storeEntity.setSearchLoading(false);
 
@@ -137,13 +137,13 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
 
   getAll(): IEntityCombined<TEntity, TMetadata>[] {
     const entities = this.storeEntity.getAll();
-    const metadata = this.storeMetadata.getAll();
+    const metadata = this.storeMetadata?.getAll();
     return this.combinedCollections(entities, metadata);
   }
 
   getById(id: uuid): IEntityCombined<TEntity, TMetadata> {
     const entity = this.storeEntity.getById(id);
-    const metadata = this.storeMetadata.getById(id);
+    const metadata = this.storeMetadata?.getById(id);
     // case file store has overwritten combinedCollections to add properties
     // thus if you need more properties you can also override combinedCollections
     return this.combinedCollections([entity], [metadata])[0] || { entity, metadata };
@@ -152,16 +152,16 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
   getByCriteria(query: string, searchAll: boolean, searchAmong: Array<string>) {
     // We get results from entities and metadata
     const entities = this.storeEntity.getByCriteria(query, searchAll, searchAmong);
-    const metadata = this.storeMetadata.getByCriteria(query, searchAll, searchAmong);
+    const metadata = this.storeMetadata?.getByCriteria(query, searchAll, searchAmong);
 
     const entityIds = entities.map((h) => h.id);
-    const metadataIds = metadata.map((m) => m.id);
+    const metadataIds = metadata?.map((m) => m.id) || [];
 
     const matchingIds = entityIds.concat(metadataIds);
 
     const foundEntities = this.storeEntity.getAll().filter((e) => matchingIds.indexOf(e.id) >= 0);
 
-    const foundMetadata = this.storeMetadata.getAll().filter((e) => matchingIds.indexOf(e.id) >= 0);
+    const foundMetadata = this.storeMetadata?.getAll().filter((e) => matchingIds.indexOf(e.id) >= 0);
 
     return this.combinedCollections(foundEntities, foundMetadata);
   }
@@ -175,7 +175,7 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
   }): Promise<IEntityCombined<TEntity, TMetadata>> {
     const requests = [
       this.storeEntity.fetch(idParams, useEntityGlobalHandler),
-      this.storeMetadata.fetch(idParams, useMetadataGlobalHandler),
+      this.storeMetadata?.fetch(idParams, useMetadataGlobalHandler),
     ];
 
     const results = await Promise.all(requests);
@@ -191,7 +191,7 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
   async fetchAll(parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> {
     const requests = [
       this.storeEntity.fetchAll(parentId),
-      this.storeMetadata.fetchAll(parentId),
+      this.storeMetadata?.fetchAll(parentId),
     ];
 
     const results = await Promise.all(requests);
@@ -204,12 +204,12 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
   async fetchAllIncludingInactive(parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> {
     const requests = [
       this.storeEntity.fetchAllIncludingInactive(parentId),
-      this.storeMetadata.fetchAllIncludingInactive(parentId),
+      this.storeMetadata?.fetchAllIncludingInactive(parentId),
     ];
 
     const results = await Promise.all(requests);
     const entities = results[0] as TEntity[];
-    const metadata = results[1] as TMetadata[] || [];
+    const metadata = results?.[1] as TMetadata[] || [];
 
     return this.combinedCollections(entities, metadata);
   }
