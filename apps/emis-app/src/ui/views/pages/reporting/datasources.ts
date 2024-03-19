@@ -601,7 +601,7 @@ export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
   reportingTopic: ReportingTopic.PaymentGroup,
   key: { paymentGroupId: 'Guid' },
   columns: [
-    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(caseFileViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
     ...(financialAssistancePaymentViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `payment.${x.dataField}` }))),
     ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
     ...(financialAssistancePaymentGroupViewDs.columns.filter((c) => c.dataField !== 'financialAssistancePaymentId')
@@ -610,6 +610,8 @@ export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
           .map((x) => ({ ...x, dataField: `groupSummary.${x.dataField}` }))),
     ...(financialAssistancePaymentSummaryViewDS.columns.filter((c) => c.dataField !== 'caseFileId')
               .map((x) => ({ ...x, dataField: `financialAssistancePaymentSummary.${x.dataField}` }))),
+    ...(householdViewDs.columns.filter((c) => c.dataField !== 'primaryBeneficiary' && c.dataField !== 'primaryBeneficiaryFirstName' && c.dataField !== 'primaryBeneficiaryLastName')
+          .map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
     ...(caseFileLifetimeActivitiesViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileLifetimeActivities.${x.dataField}` }))),
   ],
 };
