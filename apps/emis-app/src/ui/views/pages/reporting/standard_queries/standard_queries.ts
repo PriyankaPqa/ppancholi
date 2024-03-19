@@ -28,6 +28,7 @@ import { CaseNotesL6En, CaseNotesL6Fr } from './CaseNotesL6';
 import { DataCorrectionAuthenticationL6En, DataCorrectionAuthenticationL6Fr } from './DataCorrectionAuthenticationL6';
 import { DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr } from './DataCorrectionContactInformationL6';
 import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDuplicatesL6';
+import { DataCorrectionTriageL6En, DataCorrectionTriageL6Fr } from './DataCorrectionTriageL6';
 
 import { AllPbiReports } from './PowerBiEmbedded';
 
@@ -231,4 +232,5 @@ export const AllReports : IQuery[] = [
   DataCorrectionAuthenticationL6En, DataCorrectionAuthenticationL6Fr,
   DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr,
   PotentialDuplicatesL6En, PotentialDuplicatesL6Fr,
+  DataCorrectionTriageL6En, DataCorrectionTriageL6Fr,
 ];
