@@ -4,12 +4,12 @@ import { Status } from '@libs/entities-lib/base';
 import {
   mockAssessmentFormEntity, mockAssessmentTemplateEntity, PublishStatus, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
-import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
+import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import utils from '@libs/entities-lib/utils';
 import flushPromises from 'flush-promises';
-
+import { EFilterKeyType } from '@libs/component-lib/types';
 import Component from './AssessmentTemplateForm.vue';
 
 const localVue = createLocalVue();
@@ -41,8 +41,6 @@ describe('AssessmentTemplateForm.vue', () => {
       ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
       count: mockProgramEntities().length,
     }));
-    wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockCombinedPrograms());
-    wrapper.vm.searchResultIds = mockCombinedPrograms().map((e) => e.entity.id);
 
     await wrapper.vm.$nextTick();
     await flushPromises();
@@ -304,13 +302,21 @@ describe('AssessmentTemplateForm.vue', () => {
     describe('searchPrograms', () => {
       it('should call storage actions with proper parameters', async () => {
         await mountWrapper();
+        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => ([
+          {
+            entity: mockProgramEntity({ id: '1' }),
+          },
+          {
+            entity: mockProgramEntity({ id: '2' }),
+          },
+        ]));
         await wrapper.vm.searchPrograms();
 
         expect(wrapper.vm.combinedProgramStore.search).toHaveBeenCalledWith({
           filter: {
-            'Entity/EventId': assessmentForm.eventId,
+            'Entity/EventId': { value: assessmentForm.eventId, type: EFilterKeyType.Guid },
           },
-        }, null, true);
+        }, null, true, true);
 
         expect(wrapper.vm.combinedProgramStore.getByIds).toHaveBeenCalledWith(['1', '2']);
 

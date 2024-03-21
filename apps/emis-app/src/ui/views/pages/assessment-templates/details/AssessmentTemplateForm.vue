@@ -259,11 +259,12 @@ import {
 } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import { IProgramEntity, IProgramMetadata, IdParams } from '@libs/entities-lib/program';
+import { IProgramEntity, IdParams } from '@libs/entities-lib/program';
 import _sortBy from 'lodash/sortBy';
 import utils from '@libs/entities-lib/utils';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useProgramStore } from '@/pinia/program/program';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 export default Vue.extend({
   name: 'AssessmentTemplateForm',
@@ -309,7 +310,7 @@ export default Vue.extend({
       isSelectedAsProgramEligibilityCriteria: false,
       originalAssessmentFormProgramId: null as string,
       originalAssessmentFormStatus: Status.Active,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
     };
   },
 
@@ -449,9 +450,9 @@ export default Vue.extend({
       if (form.eventId) {
         const tableData = await this.combinedProgramStore.search({
           filter: {
-            'Entity/EventId': form.eventId,
+            'Entity/EventId': { value: form.eventId, type: EFilterKeyType.Guid },
           },
-        }, null, true);
+        }, null, true, true);
 
         if (!tableData) {
           return;

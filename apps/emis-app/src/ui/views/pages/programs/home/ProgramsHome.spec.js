@@ -3,7 +3,7 @@ import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
+import { mockProgramEntities } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 
@@ -196,10 +196,10 @@ describe('ProgramsHome.vue', () => {
           },
         });
 
-        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockCombinedPrograms());
-        wrapper.vm.searchResultIds = mockCombinedPrograms().map((e) => e.entity.id);
+        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockProgramEntities());
+        wrapper.vm.searchResultIds = mockProgramEntities().map((e) => e.id);
 
-        expect(wrapper.vm.tableData).toEqual(mockCombinedPrograms());
+        expect(wrapper.vm.tableData).toEqual(mockProgramEntities());
       });
     });
 
@@ -253,7 +253,7 @@ describe('ProgramsHome.vue', () => {
         expect(wrapper.vm.combinedProgramStore.search).toHaveBeenCalledWith({
           search: params.search,
           filter: {
-            'Entity/EventId': 'event-id',
+            'Entity/EventId': { value: 'event-id', type: 'guid' },
           },
           top: params.top,
           skip: params.skip,
@@ -261,7 +261,7 @@ describe('ProgramsHome.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        }, null, true);
+        }, null, true, true);
       });
     });
 

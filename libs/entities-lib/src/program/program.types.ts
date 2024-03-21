@@ -31,11 +31,6 @@ export interface IProgramEntity extends IProgramEntityData {
   fillEmptyMultilingualAttributes(): void;
 }
 
-export interface IProgramMetadata extends IEntity {
-  eventId: uuid;
-  programStatusName: IMultilingual;
-}
-
-export type IProgramCombined = IEntityCombined<IProgramEntity, IProgramMetadata>;
+export type IProgramCombined = IEntityCombined<IProgramEntity, IEntity>;
 
 export type IdParams = { id: string; eventId: string };

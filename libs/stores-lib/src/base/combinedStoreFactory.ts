@@ -86,10 +86,8 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     return this.combinedCollections(entities, metadata, pinnedIds);
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean): Promise<IAzureTableSearchResults> {
-    this.storeEntity.setSearchLoading(true);
+  static RemoveInactiveItemsFilterOdata(params: IAzureSearchParams, sqlMode?: boolean): IAzureSearchParams {
     const newParams = { ...params };
-    if (includeInactiveItems !== true) {
       newParams.filter = newParams.filter || {};
       if (typeof (newParams.filter) === 'string') {
         newParams.filter = `${newParams.filter} and Entity/Status eq ${sqlMode ? `'${helper.getEnumKeyText(Status, Status.Active)}'` : Status.Active}`;
@@ -99,6 +97,14 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
           'Entity/Status': sqlMode ? helper.getEnumKeyText(Status, Status.Active) : Status.Active,
         };
       }
+    return newParams;
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean): Promise<IAzureTableSearchResults> {
+    this.storeEntity.setSearchLoading(true);
+    let newParams = { ...params };
+    if (includeInactiveItems !== true) {
+      newParams = CombinedStoreFactory.RemoveInactiveItemsFilterOdata(params, sqlMode);
     }
 
     const res = await this.storeEntity.search({

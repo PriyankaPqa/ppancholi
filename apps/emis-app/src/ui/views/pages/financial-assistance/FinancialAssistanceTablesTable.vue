@@ -71,7 +71,7 @@ import mixins from 'vue-typed-mixins';
 import { RcDataTable, RcAddButtonWithMenu } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import _isEmpty from 'lodash/isEmpty';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -81,10 +81,10 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { IdParams, IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
-import { IEntityCombined, Status } from '@libs/entities-lib/base';
+import { IdParams, IProgramEntity } from '@libs/entities-lib/program';
+import { IEntity, IEntityCombined, Status } from '@libs/entities-lib/base';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useProgramStore } from '@/pinia/program/program';
 import
 {
   IFinancialAssistanceTableEntity,
@@ -112,7 +112,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       },
       programs: [],
       UserRoles,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
       combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
         useFinancialAssistanceStore(),
         useFinancialAssistanceMetadataStore(),
@@ -276,16 +276,16 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchPrograms() {
       const res = await this.combinedProgramStore.search({
-        filter: this.presetFilter,
+        filter: { 'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid } },
         count: true,
         queryType: 'full',
         searchMode: 'all',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      }, null, true);
+      }, null, true, true);
 
       if (res) {
         this.programs = this.combinedProgramStore.getByIds(res.ids)
-          .map((combined: IEntityCombined<IProgramEntity, IProgramMetadata>) => (combined.entity));
+          .map((combined: IEntityCombined<IProgramEntity, IEntity>) => (combined.entity));
       }
     },
   },

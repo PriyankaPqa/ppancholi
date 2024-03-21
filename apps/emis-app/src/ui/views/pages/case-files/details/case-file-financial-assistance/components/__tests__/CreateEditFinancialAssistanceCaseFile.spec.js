@@ -25,7 +25,7 @@ import {
 import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
 import { Status } from '@libs/entities-lib/base';
-import { mockProgramEntity, mockCombinedPrograms } from '@libs/entities-lib/program';
+import { mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
@@ -936,7 +936,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       it('should set selected program', async () => {
         await wrapper.vm.updateSelectedProgram(financialAssistance);
 
-        expect(wrapper.vm.selectedProgram?.id).toEqual(mockCombinedPrograms()[0].entity.id);
+        expect(wrapper.vm.selectedProgram?.id).toEqual(mockProgramEntities()[0].id);
       });
 
       it('calls makePaymentName if there was an initial program', async () => {

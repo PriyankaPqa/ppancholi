@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedMassAction, mockMassActionEntity } from '@libs/entities-lib/mass-action';
-import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
+import { EPaymentModalities, mockProgramEntity } from '@libs/entities-lib/program';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
 import { mockOptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
@@ -46,7 +46,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
       doMount(true, {
         event: mockEventEntity(),
         table: mockCombinedFinancialAssistance(),
-        program: mockCombinedProgram(),
+        program: mockProgramEntity(),
         item: mockOptionItem(),
       });
     });
@@ -67,7 +67,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
           },
           {
             label: 'massActions.financialAssistance.create.program.label',
-            value: mockCombinedProgram().entity.name.translation.en,
+            value: mockProgramEntity().name.translation.en,
             dataTest: 'program',
             loading: wrapper.vm.programLoading,
           },

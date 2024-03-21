@@ -21,6 +21,7 @@
           :filter-key="FilterKey.EventPrograms"
           :filter-options="filterOptions"
           :initial-filter="filterState"
+          :sql-mode="true"
           add-filter-label="programs.filter"
           :count="itemsCount"
           @update:appliedFilter="onApplyFilter" />
@@ -57,7 +58,7 @@ import {
 } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import _isEmpty from 'lodash/isEmpty';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import routes from '@/constants/routes';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
@@ -65,12 +66,12 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import {
- IdParams, IProgramCombined, IProgramEntity, IProgramMetadata,
+ IdParams, IProgramCombined, IProgramEntity,
 } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useProgramStore } from '@/pinia/program/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ProgramsHome',
@@ -96,7 +97,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [true],
       },
       FilterKey,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
+      sqlSearchMode: true,
     };
   },
 
@@ -180,19 +182,18 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      const filter = _isEmpty(params.filter) ? {} : params.filter;
+      const filter = _isEmpty(params.filter) ? {} : params.filter as Record<string, unknown>;
 
       const res = await this.combinedProgramStore.search({
         search: params.search,
-        filter: { ...filter as Record<string, unknown>, 'Entity/EventId': this.id },
+        filter: { 'Entity/EventId': { value: this.id, type: EFilterKeyType.Guid }, ...filter },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true);
-
+      }, null, true, true);
       return res;
     },
 

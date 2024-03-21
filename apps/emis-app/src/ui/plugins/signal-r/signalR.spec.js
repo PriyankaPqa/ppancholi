@@ -4,7 +4,7 @@ import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useProgramStore } from '@/pinia/program/program';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
@@ -215,12 +215,6 @@ describe('signalR', () => {
           domain: 'event',
           entityName: 'Program',
           action: useProgramStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'event',
-          entityName: 'ProgramMetadata',
-          action: useProgramMetadataStore().setItemFromOutsideNotification,
         });
     });
   });

@@ -1,6 +1,6 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { EFilterType } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
@@ -147,13 +147,13 @@ describe('ApprovalTablesHome.vue', () => {
 
         expect(wrapper.vm.combinedProgramStore.search).toHaveBeenLastCalledWith({
           filter: {
-            'Entity/EventId': wrapper.vm.eventId,
+            'Entity/EventId': { value: wrapper.vm.eventId, type: EFilterKeyType.Guid },
           },
           count: true,
           orderBy: 'Entity/Name/Translation/en',
           queryType: 'full',
           searchMode: 'all',
-        }, null, true);
+        }, null, true, true);
       });
     });
   });

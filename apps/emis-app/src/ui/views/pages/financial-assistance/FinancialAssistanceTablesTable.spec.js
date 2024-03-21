@@ -1,9 +1,9 @@
 import { RcDataTable } from '@libs/component-lib/components';
-import { EFilterType } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedFinancialAssistances, mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
-import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
+import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -363,19 +363,15 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
+          computed: {
+            eventId: () => 'EventId-1',
+          },
         });
 
         wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
           ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
           count: mockProgramEntities().length,
         }));
-        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockCombinedPrograms());
-
-        await wrapper.setData({
-          presetFilter: {
-            'Entity/EventId': 'EventId',
-          },
-        });
 
         jest.clearAllMocks();
 
@@ -383,13 +379,13 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
         expect(wrapper.vm.combinedProgramStore.search).toHaveBeenLastCalledWith({
           filter: {
-            'Entity/EventId': 'EventId',
+            'Entity/EventId': { value: 'EventId-1', type: EFilterKeyType.Guid },
           },
           count: true,
           orderBy: 'Entity/Name/Translation/en',
           queryType: 'full',
           searchMode: 'all',
-        }, null, true);
+        }, null, true, true);
       });
     });
   });

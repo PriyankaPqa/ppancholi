@@ -78,15 +78,15 @@ import {
 import { IApprovalTableCombined, IApprovalTableEntity, IApprovalTableMetadata } from '@libs/entities-lib/approvals/approvals-table';
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
-import { EFilterType, IFilterSettings, ITableAddButtonMenuItems } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, IFilterSettings, ITableAddButtonMenuItems } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { IEntityCombined, Status } from '@libs/entities-lib/base';
+import { IEntity, IEntityCombined, Status } from '@libs/entities-lib/base';
 import _isEmpty from 'lodash/isEmpty';
-import { IProgramEntity, IProgramMetadata, IdParams } from '@libs/entities-lib/program';
+import { IProgramEntity, IdParams } from '@libs/entities-lib/program';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useProgramStore } from '@/pinia/program/program';
 import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -109,7 +109,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: [`Metadata/ApprovalBaseStatusName/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
       combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, IApprovalTableMetadata, IdParams>(useApprovalTableStore(), useApprovalTableMetadataStore()),
     };
   },
@@ -184,18 +184,16 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchPrograms() {
       const res = await this.combinedProgramStore.search({
-        filter: {
-          'Entity/EventId': this.eventId,
-        },
+        filter: { 'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid } },
         count: true,
         queryType: 'full',
         searchMode: 'all',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      }, null, true);
+      }, null, true, true);
 
       if (res) {
         this.programs = this.combinedProgramStore.getByIds(res.ids)
-          .map((combined: IEntityCombined<IProgramEntity, IProgramMetadata>) => (combined.entity));
+          .map((combined: IEntityCombined<IProgramEntity, IEntity>) => (combined.entity));
       }
     },
   },

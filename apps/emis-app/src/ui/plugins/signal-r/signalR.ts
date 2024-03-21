@@ -17,7 +17,7 @@ import { useUserStore } from '@/pinia/user/user';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useRegistrationStore } from '@/pinia/registration/registration';
@@ -271,14 +271,7 @@ export class SignalR implements ISignalR {
       entityName: 'Program',
       action: useProgramStore().setItemFromOutsideNotification,
     });
-
-    this.listenForChanges({
-      domain: 'event',
-      entityName: 'ProgramMetadata',
-      action: useProgramMetadataStore().setItemFromOutsideNotification,
-    });
     this.watchedPiniaStores.push(useProgramStore());
-    this.watchedPiniaStores.push(useProgramMetadataStore());
   }
 
   private listenForUserAccountModuleChanges() {
