@@ -1,6 +1,6 @@
 import { IMultilingual } from '@libs/shared-lib/types';
-
 import { IAddress, IAddressData } from '../address/address.types';
+import { IEventGenericLocation } from '../../event';
 
 export enum ECurrentAddressTypes {
     Unknown = 0,
@@ -13,11 +13,8 @@ export enum ECurrentAddressTypes {
     Shelter = 7,
 }
 
-export interface IShelterLocationData {
-  id?: uuid;
-  name: IMultilingual;
-  status: number;
-  address: IAddressData;
+export interface IEventGenericLocationWithEventName extends IEventGenericLocation {
+    eventName?: IMultilingual;
 }
 
 export interface ICurrentAddressData {
@@ -29,7 +26,7 @@ export interface ICurrentAddressData {
 
     address?: IAddress;
 
-    shelterLocation?: IShelterLocationData;
+    shelterLocation?: IEventGenericLocation;
 
     shelterLocationId?: string;
 

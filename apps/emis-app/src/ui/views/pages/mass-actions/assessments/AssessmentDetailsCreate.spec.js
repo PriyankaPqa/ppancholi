@@ -1,5 +1,5 @@
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/event/event.mock';
 import {
   createLocalVue,
   shallowMount,
@@ -13,7 +13,7 @@ import { mockProvider } from '@/services/provider';
 import Component from './AssessmentDetailsCreate.vue';
 
 const formCopy = {
-  event: mockEvent(),
+  event: mockEventSummary(),
   assessment: mockAssessmentFormEntity(),
   emailSubject: { translation: { en: 'en', fr: 'fr' } },
   emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
@@ -81,14 +81,14 @@ describe('AssessmentDetailsCreate.vue', () => {
 
     describe('onSetEvent', () => {
       it('should set the event and reset other fields', async () => {
-        await wrapper.vm.onSetEvent(mockEvent());
+        await wrapper.vm.onSetEvent(mockEventSummary());
         expect(wrapper.vm.formCopy).toEqual({ ...formCopy, assessment: null });
       });
       it('should search for assessments', async () => {
         wrapper.vm.$services.assessmentForms.search = jest.fn(() => mockSearchDataForm);
-        await wrapper.vm.onSetEvent(mockEvent());
+        await wrapper.vm.onSetEvent(mockEventSummary());
         expect(wrapper.vm.$services.assessmentForms.search).toHaveBeenCalledWith({
-          filter: { 'Entity/EventId': mockEvent().id, 'Entity/Status': Status.Active, 'Entity/PublishStatus': PublishStatus.Published },
+          filter: { 'Entity/EventId': mockEventSummary().id, 'Entity/Status': Status.Active, 'Entity/PublishStatus': PublishStatus.Published },
           orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
         });
         expect(wrapper.vm.assessments).toEqual(mockSearchDataForm.value.map((x) => x.entity));

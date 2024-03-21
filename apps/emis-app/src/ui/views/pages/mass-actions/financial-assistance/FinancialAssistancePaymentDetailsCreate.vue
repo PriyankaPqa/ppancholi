@@ -122,11 +122,10 @@ import {
   IOptionItem, IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
-import { IEventEntity } from '@libs/entities-lib/event';
+import { IEventEntity, IEventSummary } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
-import { IEvent } from '@libs/entities-lib/registration-event';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { PaymentDetailsForm } from './FinancialAssistanceCreate.vue';
@@ -355,7 +354,7 @@ export default Vue.extend({
       this.formCopy.program = await useProgramStore().fetch({ id: fa.programId, eventId: fa.eventId }) as IProgramEntity;
     },
 
-    filterEvents(events: Array<IEvent>) {
+    filterEvents(events: Array<IEventSummary>) {
       this.filteredEvents = events
         .filter((e) => this.eventIdsWithFinancialAssistanceTable.includes(e.id))
         .map((e) => ({ id: e.id, name: e.name }));

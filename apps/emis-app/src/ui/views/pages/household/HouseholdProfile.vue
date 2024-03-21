@@ -255,19 +255,19 @@ import _isEmpty from 'lodash/isEmpty';
 
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
-import { CurrentAddress, EIndigenousTypes, ICurrentAddress, IHouseholdCreate, IIdentitySet, IMember, Member } from '@libs/entities-lib/household-create';
+import { CurrentAddress, EIndigenousTypes, ICurrentAddress, IEventGenericLocationWithEventName, IHouseholdCreate, IIdentitySet,
+    IMember, Member } from '@libs/entities-lib/household-create';
 import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
-import { EEventLocationStatus, IEventMetadata } from '@libs/entities-lib/event';
+import { EEventLocationStatus, IEventGenericLocation, IEventSummary } from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { IAzureSearchResult, ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { IEventData, IEventGenericLocation } from '@libs/entities-lib/registration-event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
@@ -326,7 +326,7 @@ export default mixins(household).extend({
       i18n: this.$i18n,
       format,
       loading: true,
-      allEvents: [] as ICombinedIndex<IEventData, IEventMetadata>[],
+      allEvents: [] as IEventSummary[],
       showAddAdditionalMember: false,
       newAdditionalMember: null,
       disabledAddMembers: false,
@@ -358,15 +358,15 @@ export default mixins(household).extend({
   },
 
   computed: {
-    registrationLocations(): IEventGenericLocation[] {
+    registrationLocations(): IEventGenericLocationWithEventName[] {
       // active registration locations from events associated with active case files
-      const locations: IEventGenericLocation[] = [];
+      const locations: IEventGenericLocationWithEventName[] = [];
       if (!this.allEvents) {
         return locations;
       }
 
       this.activeCaseFiles.forEach((cf) => {
-        const event = this.allEvents.find((e) => e.entity.id === cf.eventId)?.entity;
+        const event = this.allEvents.find((e) => e.id === cf.eventId);
         event?.registrationLocations?.forEach((rl) => {
           if (rl.status === EEventLocationStatus.Active) {
             locations.push({ ...rl, eventName: event.name });
@@ -448,7 +448,7 @@ export default mixins(household).extend({
     eventNames(): Record<string, IMultilingual> {
       const names: Record<string, IMultilingual> = {};
       this.allEvents?.forEach((e) => {
-        names[e.entity.id] = e.entity.name;
+        names[e.id] = e.name;
       });
       return names;
     },
@@ -457,7 +457,7 @@ export default mixins(household).extend({
       if (this.caseFiles && this.myEvents) {
         const eventsIdsInCasefiles = this.caseFiles.map((e) => e.eventId);
         for (const myEvent of this.myEvents) {
-          if (eventsIdsInCasefiles.includes(myEvent.entity.id)) {
+          if (eventsIdsInCasefiles.includes(myEvent.id)) {
             return true;
           }
         }
@@ -519,6 +519,9 @@ export default mixins(household).extend({
       // parse identitySet
       movedMembers.forEach((m) => {
         m.currentAddress = new CurrentAddress(m.currentAddress);
+        if (m.shelterLocationName?.translation?.en) {
+          m.currentAddress.shelterLocation = { name: m.shelterLocationName } as IEventGenericLocation;
+        }
         m.identitySet.gender.name = m.genderName;
         m.identitySet.birthDate = householdHelpers.convertBirthDateStringToObject(m.identitySet.dateOfBirth);
         m.identitySet.indigenousType = m.indigenousIdentityInfo?.communityType;
@@ -532,7 +535,7 @@ export default mixins(household).extend({
       return this.activityItemsData.filter((e) => e.activityType === HouseholdActivityType.StatusChanged)[0];
     },
 
-    duplicateCount(): Number {
+    duplicateCount(): number {
       return this.householdMetadata?.potentialDuplicatesCount || 0;
     },
 
@@ -573,7 +576,7 @@ export default mixins(household).extend({
     async fetchAllEvents() {
       if (this.caseFiles?.length) {
         const eventIds = this.caseFiles.map((cf) => cf.eventId);
-        const results = await this.$services.publicApi.searchEventsById(eventIds) as IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>;
+        const results = await this.$services.publicApi.searchEventsById(eventIds);
         this.allEvents = results?.value;
       }
     },

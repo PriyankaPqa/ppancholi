@@ -1,7 +1,7 @@
 import { RcDialog } from '@libs/component-lib/src/components';
 import { i18n } from '@/ui/plugins/i18n';
 import { EOptionItemStatus } from '@libs/shared-lib/types';
-import { mockEvent } from '@libs/entities-lib/src/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/src/event';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
   ECurrentAddressTypes,
@@ -125,7 +125,7 @@ describe('AddEditAdditionalMembersLib.vue', () => {
 
     describe('shelterLocations', () => {
       it('should return the active shelterLocations for the current Event', () => {
-        const event = mockEvent();
+        const event = mockEventSummary();
         wrapper.vm.$registrationStore.getEvent = jest.fn(() => event);
         const filtered = event.shelterLocations.filter((s) => s.status === EOptionItemStatus.Active);
         expect(wrapper.vm.shelterLocations).toEqual(filtered);

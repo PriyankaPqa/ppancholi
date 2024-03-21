@@ -40,13 +40,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
-import { IEvent } from '@libs/entities-lib/registration-event';
 import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { IEventSummary } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -71,7 +71,7 @@ export default Vue.extend({
       return useTenantSettingsStore().getBranding();
     },
 
-    event(): IEvent {
+    event(): IEventSummary {
       return useRegistrationStore().getEvent();
     },
 

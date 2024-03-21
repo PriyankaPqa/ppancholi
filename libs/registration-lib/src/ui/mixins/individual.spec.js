@@ -1,5 +1,5 @@
 import helpers from '@libs/entities-lib/src/helpers';
-import { mockEvent } from '@libs/entities-lib/src/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/src/event/event.mock';
 import { mockTabs } from '@libs/stores-lib/src/registration/tabs.mock';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
@@ -124,8 +124,8 @@ describe('Individual.vue', () => {
 
     describe('phoneAssistance', () => {
       it('returns the proper data', async () => {
-        wrapper.vm.$registrationStore.getEvent = jest.fn(() => mockEvent());
-        expect(wrapper.vm.phoneAssistance).toEqual(mockEvent().responseDetails.assistanceNumber);
+        wrapper.vm.$registrationStore.getEvent = jest.fn(() => mockEventSummary());
+        expect(wrapper.vm.phoneAssistance).toEqual(mockEventSummary().responseDetails.assistanceNumber);
       });
     });
   });

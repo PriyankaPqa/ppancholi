@@ -6,7 +6,7 @@ import {
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
+import { mockEventSummary, EEventLocationStatus } from '@libs/entities-lib/event';
 import { CaseFileStatus, mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import householdHelpers from '@/ui/helpers/household';
@@ -30,20 +30,20 @@ const { pinia, registrationStore } = useMockRegistrationStore();
 const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 
 const events = [
-  mockEventMainInfo({
+  mockEventSummary({
     id: '1',
     shelterLocations: [{ id: 'loc-1', status: EEventLocationStatus.Active }],
     registrationLocations: [{ id: ' loc-id-1-active', status: EEventLocationStatus.Active }, { id: ' loc-id-2-inactive', status: EEventLocationStatus.Inactive }],
     name: { translation: { en: 'event-name-1' } },
   }),
-  mockEventMainInfo({
+  mockEventSummary({
     id: '2',
     shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
     registrationLocations: [{ id: ' loc-id-3-active', status: EEventLocationStatus.Active }, { id: ' loc-id-4-inactive', status: EEventLocationStatus.Inactive }],
     name: { translation: { en: 'event-name-2' } },
   }),
 ];
-const otherEvent = mockEventMainInfo({
+const otherEvent = mockEventSummary({
   id: '3',
   registrationLocations: [{ id: ' loc-id-5-active', status: EEventLocationStatus.Active }, { id: ' loc-id-6-inactive', status: EEventLocationStatus.Inactive }],
 });
@@ -371,12 +371,12 @@ describe('HouseholdProfile.vue', () => {
             return caseFiles;
           },
         }, {
-          myEvents: [mockEventMainInfo()],
+          myEvents: [mockEventSummary()],
           allEvents: events,
         });
         expect(wrapper.vm.registrationLocations).toEqual([
-          { id: ' loc-id-1-active', status: EEventLocationStatus.Active, eventName: events[0].entity.name },
-          { id: ' loc-id-3-active', status: EEventLocationStatus.Active, eventName: events[1].entity.name },
+          { id: ' loc-id-1-active', status: EEventLocationStatus.Active, eventName: events[0].name },
+          { id: ' loc-id-3-active', status: EEventLocationStatus.Active, eventName: events[1].name },
         ]);
       });
     });
@@ -718,9 +718,9 @@ describe('HouseholdProfile.vue', () => {
         expect(Object.keys(wrapper.vm.eventNames).length).toBe(3);
       });
       it('includes expected values', () => {
-        expect(wrapper.vm.eventNames[events[0].entity.id]).toBeTruthy();
-        expect(wrapper.vm.eventNames[events[1].entity.id]).toBeTruthy();
-        expect(wrapper.vm.eventNames[otherEvent.entity.id]).toBeTruthy();
+        expect(wrapper.vm.eventNames[events[0].id]).toBeTruthy();
+        expect(wrapper.vm.eventNames[events[1].id]).toBeTruthy();
+        expect(wrapper.vm.eventNames[otherEvent.id]).toBeTruthy();
       });
     });
 
@@ -732,7 +732,7 @@ describe('HouseholdProfile.vue', () => {
           },
         }, {
           caseFiles: [mockCaseFileEntity({ eventId: 'test-event-id-123' })],
-          myEvents: [mockEventMainInfo({ id: 'test-event-id-123' })],
+          myEvents: [mockEventSummary({ id: 'test-event-id-123' })],
         });
         expect(wrapper.vm.hasLinkedCasefiles).toEqual(true);
       });
@@ -751,7 +751,7 @@ describe('HouseholdProfile.vue', () => {
           },
           {
             newStatus: HouseholdStatus.Open,
-            myEvents: [mockEventMainInfo()],
+            myEvents: [mockEventSummary()],
             caseFiles: mockCaseFileEntities(),
           },
           true,
@@ -774,7 +774,7 @@ describe('HouseholdProfile.vue', () => {
           },
           {
             newStatus: HouseholdStatus.Open,
-            myEvents: [mockEventMainInfo()],
+            myEvents: [mockEventSummary()],
             caseFiles: mockCaseFileEntities(),
           },
           true,
@@ -797,7 +797,7 @@ describe('HouseholdProfile.vue', () => {
           },
           {
             newStatus: HouseholdStatus.Open,
-            myEvents: [mockEventMainInfo()],
+            myEvents: [mockEventSummary()],
             caseFiles: mockCaseFileEntities(),
           },
           true,

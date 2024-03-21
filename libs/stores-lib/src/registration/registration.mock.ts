@@ -10,9 +10,9 @@ import {
   mockPrimarySpokenLanguages,
 } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
-import { mockEvent } from '@libs/entities-lib/registration-event';
-import { mockRegistrationAssessment } from '@libs/entities-lib/event';
+import { mockEventSummary, mockRegistrationAssessment } from '@libs/entities-lib/event';
 import { mockCaseFilesService } from '@libs/services-lib/case-files/entity';
+import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 import { mockTabs } from './tabs.mock';
 import { storeFactory } from './registration';
 
@@ -37,8 +37,8 @@ export const useMockRegistrationStore = (pinia?: TestingPinia) => {
   registrationStore.getPreferredLanguages = jest.fn(() => mockPreferredLanguages());
   registrationStore.getPrimarySpokenLanguages = jest.fn(() => mockPrimarySpokenLanguages());
   registrationStore.getGenders = jest.fn(() => mockGenders());
-  registrationStore.getEvent = jest.fn(() => mockEvent());
-  registrationStore.event = mockEvent();
+  registrationStore.getEvent = jest.fn(() => new RegistrationEvent(mockEventSummary()));
+  registrationStore.event = mockEventSummary();
   registrationStore.getIndigenousTypesItems = jest.fn(() => mockIndigenousTypesItems() as Record<string, TranslateResult>[]);
   registrationStore.getIndigenousCommunitiesItems = jest.fn(() => mockIndigenousCommunitiesItems() as Record<string, string>[]);
   registrationStore.tabs = mockTabs();

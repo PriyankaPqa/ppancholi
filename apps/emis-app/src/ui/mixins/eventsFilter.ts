@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
+import helper from '@libs/shared-lib/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import _throttle from 'lodash/throttle';
-import { IAzureCombinedSearchResult, IDropdownItem } from '@libs/shared-lib/types';
+import { IDropdownItem } from '@libs/shared-lib/types';
 import { FilterFormData } from '@libs/component-lib/types';
 import _sortBy from 'lodash/sortBy';
 import {
-  EEventStatus, IEventEntity, IEventMetadata,
+  EEventStatus,
 } from '@libs/entities-lib/event';
 
 const INITIAL_NUMBER_ITEMS = 6;
@@ -20,7 +21,6 @@ export default Vue.extend({
       eventsFilterLoading: false,
       eventsFilterDisabled: false,
       isInitialLoad: true,
-      searchEventMethod: '', // Defined in component using the mixin
       selectedEvent: [],
       openEventsOnly: false,
     };
@@ -45,27 +45,26 @@ export default Vue.extend({
       if (this.isInitialLoad) {
         this.eventsFilterDisabled = true;
       }
-      const searchParam = helpers.toQuickSearch(query);
+      const searchParam = helpers.toQuickSearchSql(query, `Entity/Name/Translation/${this.$i18n.locale}`);
       const params = {
-        search: searchParam,
-        searchFields: `Entity/Name/Translation/${this.$i18n.locale}`,
         filter: {
           or: [
             {
               Entity: {
                 Schedule: {
-                  Status: EEventStatus.Open,
+                  Status: helper.getEnumKeyText(EEventStatus, EEventStatus.Open),
                 },
               },
             }, this.openEventsOnly ? null
-             : {
-              Entity: {
-                Schedule: {
-                  Status: EEventStatus.OnHold,
+              : {
+                Entity: {
+                  Schedule: {
+                    Status: helper.getEnumKeyText(EEventStatus, EEventStatus.OnHold),
+                  },
                 },
-              },
             },
           ],
+          ...searchParam,
         },
         top,
         orderBy: 'Entity/Schedule/OpenDate desc',
@@ -73,7 +72,7 @@ export default Vue.extend({
         searchMode: 'all',
       };
 
-      const res = await this.$services.events.search(params) as IAzureCombinedSearchResult<IEventEntity, IEventMetadata>;
+      const res = await this.$services.events.search(params);
       await helpers.timeout(VISUAL_DELAY);
       this.eventsFilterLoading = false;
       if (this.isInitialLoad) {
@@ -118,7 +117,7 @@ export default Vue.extend({
     async fetchEventsByIds(ids: Array<string>) {
       this.eventsFilterLoading = true;
       const res = await this.$services.events.search({
-        filter: { Entity: { Id: { searchIn_az: ids } } },
+        filter: `Entity/Id in(${ids.join(',')})`,
         top: 999,
       });
       await helpers.timeout(VISUAL_DELAY);

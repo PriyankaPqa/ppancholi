@@ -29,6 +29,7 @@
         :filter-options="filters"
         :initial-filter="filterState"
         :count="itemsCount"
+        :sql-mode="true"
         add-filter-label="eventsTable.filter.title"
         @update:appliedFilter="onApplyFilter" />
     </template>
@@ -43,7 +44,7 @@
     </template>
 
     <template #[`item.${customColumns.responseLevel}`]="{ item: event }">
-      {{ $m(event.metadata.responseLevelName) }}
+      {{ $t(`enums.ResponseLevel.Level${event.entity.responseDetails.responseLevel}`) }}
     </template>
 
     <template #[`item.${customColumns.openDate}`]="{ item: event }">
@@ -74,7 +75,7 @@ import {
   RcDataTable,
 } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { EFilterType, IFilterSettings, ISearchData } from '@libs/component-lib/types';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
@@ -82,7 +83,6 @@ import {
   EResponseLevel,
   EEventStatus,
   IEventEntity,
-  IEventMetadata,
   IEventCombined,
   IEventSchedule, IdParams,
 } from '@libs/entities-lib/event';
@@ -92,7 +92,7 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
+import { useEventStore } from '@/pinia/event/event';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { differenceInDays, format, startOfDay } from 'date-fns';
 
@@ -127,7 +127,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: ['Entity/Schedule/OpenDate'],
         sortDesc: [true],
       },
-      combinedEventStore: new CombinedStoreFactory<IEventEntity, IEventMetadata, IdParams>(useEventStore(), useEventMetadataStore()),
+      combinedEventStore: new CombinedStoreFactory<IEventEntity, null, IdParams>(useEventStore(), null),
+      sqlSearchMode: true,
     };
   },
 
@@ -139,10 +140,10 @@ export default mixins(TablePaginationSearchMixin).extend({
     customColumns(): Record<string, string> {
       return {
         name: `Entity/Name/Translation/${this.$i18n.locale}`,
-        responseLevel: `Metadata/ResponseLevelName/Translation/${this.$i18n.locale}`,
+        responseLevel: `Metadata/ResponseLevel/Translation/${this.$i18n.locale}`,
         openDate: 'Entity/Schedule/OpenDate',
         daysOpen: 'DaysOpen',
-        eventStatus: `Metadata/ScheduleEventStatusName/Translation/${this.$i18n.locale}`,
+        eventStatus: `Metadata/EventStatus/Translation/${this.$i18n.locale}`,
       };
     },
 
@@ -235,7 +236,6 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchData(params: IAzureSearchParams) {
       const res = await this.combinedEventStore.search({
-        search: params.search,
         filter: params.filter,
         top: params.top,
         skip: params.skip,
@@ -243,24 +243,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, false, true);
       return res;
-    },
-
-    getFilterParams(params: ISearchData) {
-      return {
-        or: [
-          {
-            [this.customColumns.name]: {
-              or: [
-                { contains_az: params.search },
-                { startsWith_az: params.search },
-              ],
-            },
-            // add more props to search on if needed
-          },
-        ],
-      };
     },
 
     getEventRoute(event: IEventCombined) {

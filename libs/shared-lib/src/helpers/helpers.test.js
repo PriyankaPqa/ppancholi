@@ -1,4 +1,4 @@
-import { mockEventEntity, mockEventMetadata } from '@libs/entities-lib/event';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import helpers from './helpers';
 
 describe('helpers', () => {
@@ -54,8 +54,8 @@ describe('helpers', () => {
       const otherOptions = { top: 999 };
       const batchSize = 3;
       const api = 'mockSearch';
-      const event1 = { entity: mockEventEntity('id1'), metadata: mockEventMetadata('id1') };
-      const event2 = { entity: mockEventEntity('id2'), metadata: mockEventMetadata('id2') };
+      const event1 = { entity: mockEventEntity('id1'), metadata: mockEventEntity('id1') };
+      const event2 = { entity: mockEventEntity('id2'), metadata: mockEventEntity('id2') };
       const service = { mockSearch: jest.fn() };
 
       jest.spyOn(service, 'mockSearch')
@@ -90,7 +90,7 @@ describe('helpers', () => {
     it('does not return returns a key if it is null', async () => {
       const ids = ['id1', 'id2', 'id3', 'id4', 'id5'];
       const searchInFilter = { Entity: { Id: { searchIn_az: '{ids}' } } };
-      const event1 = { entity: mockEventEntity('id1'), metadata: mockEventMetadata('id1') };
+      const event1 = { entity: mockEventEntity('id1'), metadata: mockEventEntity('id1') };
       const service = { mockSearch: jest.fn(() => ({
         ids: ['r-id-1', 'r-id-2'],
         value: [event1],

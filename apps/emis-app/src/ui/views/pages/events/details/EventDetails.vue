@@ -322,7 +322,7 @@ export default Vue.extend({
       const searchResults = await this.$services.publicApi.searchEventsById(relatedEventIds);
       const events: Record<string, IMultilingual> = {};
       searchResults?.value.forEach((e) => {
-        events[e.entity.id] = e.entity.name;
+        events[e.id] = e.name;
       });
       this.relatedEvents = events;
     },

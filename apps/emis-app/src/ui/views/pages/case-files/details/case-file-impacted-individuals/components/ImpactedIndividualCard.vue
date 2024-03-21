@@ -86,7 +86,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { ICurrentAddress, IMember, IShelterLocationData } from '@libs/entities-lib/household-create';
+import { ICurrentAddress, IMember } from '@libs/entities-lib/household-create';
 import ImpactedIndividualAddressTemplate from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualAddressTemplate.vue';
 import ImpactedIndividualsEditAddressDialog from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsEditAddressDialog.vue';
 import { CaseFileActivityType, ICaseFileActivity, IImpactedIndividual } from '@libs/entities-lib/case-file';
@@ -95,6 +95,7 @@ import ImpactedIndividualsCardPinnedActivity
   from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsCardPinnedActivity.vue';
 import ImpactedIndividualsRequireRationaleDialog
   from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsRequireRationaleDialog.vue';
+import { IEventGenericLocation } from '@libs/entities-lib/src/event';
 
 interface IndividualActivityDetailMember {
     id: string,
@@ -123,7 +124,7 @@ export default Vue.extend({
     },
 
     shelterLocationsList: {
-      type: Array as () => IShelterLocationData[],
+      type: Array as () => IEventGenericLocation[],
       default: null,
     },
 

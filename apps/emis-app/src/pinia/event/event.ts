@@ -1,19 +1,16 @@
 import { httpClient } from '@/services/httpClient';
 import { EventsService } from '@libs/services-lib/events/entity';
-import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
-import { EventsMetadataService } from '@libs/services-lib/events/metadata';
+import { getEntityStoreComponents } from '@libs/stores-lib/base';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
 
-import { IEventEntity, IEventMetadata, IdParams } from '@libs/entities-lib/event';
+import { IEventEntity, IdParams } from '@libs/entities-lib/event';
 import { defineStore } from 'pinia';
 import { getExtensionComponents } from './event-extension';
 
 export type Entity = IEventEntity;
-export type Metadata = IEventMetadata;
 
 const storeId = 'event';
 const entityService = new EventsService(httpClient);
-const metadataService = new EventsMetadataService(httpClient);
 const optionsService = new OptionItemsService(httpClient);
 
 // baseComponents is used as a reference for the extension
@@ -23,8 +20,4 @@ const extensionComponents = getExtensionComponents(baseEntityComponents, entityS
 export const useEventStore = defineStore(`${storeId}-entities`, () => ({
   ...baseEntityComponents,
   ...extensionComponents,
-}));
-
-export const useEventMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-  ...getBaseStoreComponents<Metadata, IdParams>(metadataService),
 }));

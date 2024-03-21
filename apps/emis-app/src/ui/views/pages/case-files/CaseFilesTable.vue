@@ -189,8 +189,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       recentlyViewedOnly: false,
       getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
-      searchEventsResultIds: [] as string[],
-      searchEventMethod: 'searchMyEvents',
       options: {
         page: 1,
         sortBy: ['Entity/Created'],

@@ -1,41 +1,41 @@
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { IAzureSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 /* eslint-disable no-empty */
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
-import { IEventData } from '@libs/entities-lib/registration-event';
-import { IEventMetadata } from '@libs/entities-lib/event';
+
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { IFeatureEntity } from '@libs/entities-lib/src/tenantSettings';
+import { IEventSummary } from '@libs/entities-lib/event';
 import { GlobalHandler, IHttpClient } from '../http-client';
 import { IPublicService } from './public.types';
 
 export class PublicService implements IPublicService {
   constructor(private readonly http: IHttpClient) {}
 
-  async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureCombinedSearchResult<IEventData, IEventMetadata>> {
-    return this.http.get('/event/public/search/events', {
+  async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventSummary>> {
+    return this.http.get('/event/search/event-summaries', {
       params: {
-        language: lang,
-        registrationLink,
+        filter: lang === 'fr' ? { 'RegistrationLink/Translation/fr': registrationLink } : { 'RegistrationLink/Translation/en': registrationLink },
       },
       containsEncodedURL: true,
+      isODataSql: true,
     });
   }
 
-  async searchEvents(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<IEventData, IEventMetadata>> {
-    return this.http.get('/event/public/search/events', {
+  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSummary>> {
+    return this.http.get('/event/search/event-summaries', {
       params,
       containsEncodedURL: true,
-      isOData: true,
+      isODataSql: true,
     });
   }
 
-  async searchEventsById(ids: string[]): Promise<IAzureCombinedSearchResult<IEventData, IEventMetadata>> {
+  async searchEventsById(ids: string[]): Promise<IAzureSearchResult<IEventSummary>> {
     return helpers.callSearchInInBatches({
-      searchInFilter: "search.in(Entity/Id, '{ids}')",
+      searchInFilter: 'Id in({ids})',
       service: this,
       ids,
       api: 'searchEvents',
-    }) as Promise<IAzureCombinedSearchResult<IEventData, IEventMetadata>>;
+    }) as Promise<IAzureSearchResult<IEventSummary>>;
   }
 
   async getTenantByEmisDomain(domain: string): Promise<string> {

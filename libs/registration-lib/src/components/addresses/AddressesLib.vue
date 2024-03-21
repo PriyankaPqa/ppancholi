@@ -55,10 +55,10 @@ import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
 import helpers from '@libs/entities-lib/helpers';
-import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
-import { ICurrentAddress, IShelterLocationData } from '@libs/entities-lib/value-objects/current-address';
+import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
+import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { localStorageKeys } from '../../constants/localStorage';
@@ -142,10 +142,10 @@ export default Vue.extend({
       return this.getCurrentAddressTypeItems(this.i18n, this.noFixedHome, !!this.shelterLocations.length, false);
     },
 
-    shelterLocations(): IShelterLocationData[] {
+    shelterLocations(): IEventGenericLocation[] {
       const event = this.$registrationStore.getEvent();
       if (event.shelterLocations) {
-        const locations = event.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active);
+        const locations = event.shelterLocations.filter((s) => s.status === EEventLocationStatus.Active);
         if (this.currentAddress.shelterLocation) {
           return [this.currentAddress.shelterLocation, ...locations];
         }

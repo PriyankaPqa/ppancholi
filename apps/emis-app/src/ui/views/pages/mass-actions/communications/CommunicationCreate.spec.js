@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/event/event.mock';
 import {
   createLocalVue,
   mount,
@@ -15,7 +15,7 @@ import Component from './CommunicationCreate.vue';
 const localVue = createLocalVue();
 
 // eslint-disable-next-line max-len,vue/max-len
-const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"and":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}}';
+const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}';
 
 const { pinia, massActionStore } = useMockMassActionStore();
 
@@ -140,7 +140,7 @@ describe('CommunicationCreate.vue', () => {
     describe('onUpdate', () => {
       it('should update the details', () => {
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           method: MassActionCommunicationMethod.Email,
           messageSubject: { translation: { en: 'en', fr: 'fr' } },
           emailMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -167,7 +167,7 @@ describe('CommunicationCreate.vue', () => {
         wrapper.vm.$refs.base.upload = jest.fn();
 
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           method: MassActionCommunicationMethod.Email,
           messageSubject: { translation: { en: 'en', fr: 'fr' } },
           emailMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -184,7 +184,7 @@ describe('CommunicationCreate.vue', () => {
 
       it('should call upload method of the child', () => {
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           method: MassActionCommunicationMethod.Email,
           messageSubject: { translation: { en: 'en', fr: 'fr' } },
           emailMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -209,7 +209,7 @@ describe('CommunicationCreate.vue', () => {
         wrapper.vm.$refs.base.uploadForm = jest.fn();
 
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           method: MassActionCommunicationMethod.Email,
           messageSubject: { translation: { en: 'en', fr: 'fr' } },
           emailMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -226,7 +226,7 @@ describe('CommunicationCreate.vue', () => {
 
       it('should call upload method of the child', async () => {
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           method: MassActionCommunicationMethod.Email,
           messageSubject: { translation: { en: 'en', fr: 'fr' } },
           emailMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -253,7 +253,7 @@ describe('CommunicationCreate.vue', () => {
 
         await wrapper.setData({
           details: {
-            event: mockEvent(),
+            event: mockEventSummary(),
             method: MassActionCommunicationMethod.Email,
             messageSubject: { translation: { en: 'en', fr: 'fr' } },
             emailMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -272,7 +272,7 @@ describe('CommunicationCreate.vue', () => {
         wrapper.vm.$refs.base.uploadForm = jest.fn();
         await wrapper.setData({
           details: {
-            event: mockEvent(),
+            event: mockEventSummary(),
             method: MassActionCommunicationMethod.Email,
             messageSubject: { translation: { en: 'en', fr: 'fr' } },
             emailMessage: { translation: { en: 'en', fr: 'fr' } },

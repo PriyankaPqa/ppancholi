@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { createTestingPinia } from '@pinia/testing';
-import { mockEvent } from '@libs/entities-lib/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/event';
 import { mockProvider } from '@/services/provider';
 import Component from './PrivacyStatement.vue';
 
@@ -17,7 +17,7 @@ describe('PrivacyStatement.vue', () => {
       localVue,
       pinia,
       propsData: {
-        event: mockEvent,
+        event: mockEventSummary(),
         id: '1',
       },
       mocks: { $t: (k) => k, $services: services },
@@ -38,7 +38,7 @@ describe('PrivacyStatement.vue', () => {
 
   describe('>> Methods', () => {
     beforeEach(() => {
-      const event = mockEvent();
+      const event = mockEventSummary();
       event.id = 'id-1';
       mountWrapper(
         false,

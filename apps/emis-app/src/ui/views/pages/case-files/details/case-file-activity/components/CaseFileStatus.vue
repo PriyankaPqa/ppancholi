@@ -36,10 +36,9 @@ import Vue from 'vue';
 import {
   RcConfirmationDialog,
 } from '@libs/component-lib/components';
-import { EEventStatus } from '@libs/entities-lib/registration-event';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { IEventEntity } from '@libs/entities-lib/event';
+import { IEventEntity, EEventStatus } from '@libs/entities-lib/event';
 import { IListOption } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';

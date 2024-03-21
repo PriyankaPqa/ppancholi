@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/src/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/src/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
@@ -25,7 +25,7 @@ describe('MainLayout.vue', () => {
 
     await wrapper.setData({ fetchingData: false });
     jest.clearAllMocks();
-    registrationStore.fetchEvent = jest.fn(() => mockEvent());
+    registrationStore.fetchEvent = jest.fn(() => mockEventSummary());
   });
 
   describe('Template', () => {
@@ -77,10 +77,10 @@ describe('MainLayout.vue', () => {
         it('sets registration assessment to complete', async () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
           await wrapper.vm.initializeEvent();
-          expect(wrapper.vm.$services.assessmentForms.getForBeneficiary).toHaveBeenCalledWith(mockEvent().registrationAssessments[0].assessmentId);
+          expect(wrapper.vm.$services.assessmentForms.getForBeneficiary).toHaveBeenCalledWith(mockEventSummary().registrationAssessments[0].assessmentId);
           expect(registrationStore.setAssessmentToComplete).toHaveBeenCalledWith({
             assessmentForm: wrapper.vm.$services.assessmentForms.getForBeneficiary(),
-            registrationAssessment: mockEvent().registrationAssessments[0],
+            registrationAssessment: mockEventSummary().registrationAssessments[0],
           });
         });
       });

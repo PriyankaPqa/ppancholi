@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/event/event.mock';
 import {
   createLocalVue,
   shallowMount,
@@ -10,7 +10,7 @@ import { mockListOption } from '@libs/entities-lib/user-account';
 import Component from './CaseFileStatusMassActionCreateDetails.vue';
 
 const formCopy = {
-  event: mockEvent(),
+  event: mockEventSummary(),
   status: 1,
   reason: mockListOption({ optionItemId: '9b275d2f-00a1-4345-94fe-c37b84beb400' }),
   rationale: 'rationale',

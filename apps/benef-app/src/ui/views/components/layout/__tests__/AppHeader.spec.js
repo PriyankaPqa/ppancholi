@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
@@ -15,7 +15,7 @@ const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 
 describe('AppHeader.vue', () => {
   let wrapper;
-  registrationStore.getEvent = jest.fn(() => mockEvent());
+  registrationStore.getEvent = jest.fn(() => mockEventSummary());
 
   describe('Template', () => {
     beforeEach(() => {
@@ -85,17 +85,17 @@ describe('AppHeader.vue', () => {
     });
     describe('event', () => {
       it('returns the right value', () => {
-        expect(wrapper.vm.event).toEqual(mockEvent());
+        expect(wrapper.vm.event).toEqual(mockEventSummary());
       });
     });
     describe('eventName', () => {
       it('returns the right value', () => {
-        expect(wrapper.vm.eventName).toEqual(mockEvent().name.translation.en);
+        expect(wrapper.vm.eventName).toEqual(mockEventSummary().name.translation.en);
       });
     });
     describe('eventPhoneNumber', () => {
       it('returns the right value', () => {
-        expect(wrapper.vm.eventPhoneNumber).toEqual(mockEvent().responseDetails?.assistanceNumber);
+        expect(wrapper.vm.eventPhoneNumber).toEqual(mockEventSummary().responseDetails?.assistanceNumber);
       });
     });
     describe('isLandingPage', () => {

@@ -1,6 +1,6 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
-import { mockEventEntities, mockEventMetadata } from '@libs/entities-lib/event';
-import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@libs/stores-lib/base';
+import { mockEventEntities } from '@libs/entities-lib/event';
+import { getMockEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
 import { getMockExtensionComponents } from '@/pinia/event/event-extension.mock';
 
@@ -15,13 +15,8 @@ export const useMockEventStore = (pinia?: TestingPinia) => {
     ...getMockExtensionComponents(),
   }));
 
-  const useEventMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-    ...getMockBaseStoreComponents(mockEventMetadata()),
-  }));
-
   return {
     pinia: p,
     eventStore: useEventStore(),
-    eventMetadataStore: useEventMetadataStore(),
   };
 };

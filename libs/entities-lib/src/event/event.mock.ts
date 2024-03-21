@@ -1,14 +1,15 @@
 import { ECanadaProvinces, IMultilingual, IAzureSearchResult } from '@libs/shared-lib/types';
-import { UserRoles } from '../user';
 import { IEntity, mockBaseData, Status } from '../base';
 import {
-  IEventMainInfo,
+  IEventSummary,
   EEventCallCentreStatus,
   EEventStatus,
   IEventCombined,
   IEventEntity,
-  IEventMetadata,
   IEventLocation,
+  IEventGenericLocation,
+  IConsentStatement,
+  IRegistrationAssessment,
 } from './event.types';
 
 /* eslint-disable max-lines-per-function */
@@ -20,45 +21,82 @@ export const mockRegistrationAssessment = () => ({
   details: { translation: { en: 'detail en', fr: 'detail fr' } },
   sectionTitle: { translation: { en: 'title en', fr: 'title fr' } },
 });
-export const mockEventMainInfo = (force?: Partial<IEventMainInfo>): IEventMainInfo => ({
-  entity: {
-    id: '1dea3c36-d6a5-4e6c-ac36-078677b7d111',
+
+export const mockRegistrationLocations = (): IEventGenericLocation[] => ([
+  {
+    id: '7c076603-580a-4400-bef2-5ddececb5555',
     name: {
       translation: {
-        en: 'Gatineau Floods 2021',
-        fr: 'Inondations Gatineau 2021',
+        en: 'YMCA Gym',
+        fr: 'Gymnase du YMCA',
       },
     },
-    responseDetails: {
-      responseLevel: 3,
-      eventType: {
-        optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
-        specifiedOther: '',
-      },
-      dateReported: '2021-01-01T00:00:00Z',
-      assistanceNumber: '+15144544545',
+    status: 1,
+    address: {
+      country: 'CA',
+      streetAddress: 'Pioneer Street',
+      unitSuite: null,
+      province: ECanadaProvinces.BC,
+      city: 'Pemberton',
+      postalCode: 'V0N 1L0',
     },
-    registrationLink: {
-      translation: {
-        en: 'https://www.redcross.ca/gatineau-floods-2021',
-        fr: 'https://www.redcross.ca/inondations-gatineau-2021',
-      },
-    },
-    tenantId: '1dea3c36-d6a5-4e6c-ac36-078677b7d112',
-    registrationLocations: [],
-    shelterLocations: [],
-    selfRegistrationEnabled: true,
-    schedule: {
-      status: EEventStatus.Open,
-      scheduledOpenDate: '2021-03-31T00:00:00Z',
-      scheduledCloseDate: '2021-05-31T00:00:00Z',
-      openDate: '2021-03-31T15:23:00.755Z',
-      closeDate: null,
-      updateReason: null,
-      timestamp: '2021-03-31T15:23:00.755Z',
-    },
-    ...force,
   },
+]);
+
+export const mockShelterLocations = mockRegistrationLocations;
+
+export const mockConsentStatments = (): IConsentStatement[] => ([
+  {
+    id: 'id-1',
+    name: {
+      translation: {
+        en: 'consent statement name-1 en',
+        fr: 'consent statement name-1 fr',
+      },
+    },
+
+    statement: {
+      translation: {
+        en: 'description-1 en',
+        fr: 'description-1 fr',
+      },
+    },
+  },
+]);
+
+export const mockEventSummary = (force?: Partial<IEventSummary>): IEventSummary => ({
+  id: '1dea3c36-d6a5-4e6c-ac36-078677b7d111',
+  name: {
+    translation: {
+      en: 'Gatineau Floods 2021',
+      fr: 'Inondations Gatineau 2021',
+    },
+  },
+  responseDetails: {
+    responseLevel: 3,
+    eventType: {
+      optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+      specifiedOther: '',
+    },
+    dateReported: '2021-01-01T00:00:00Z',
+    assistanceNumber: '+15144544545',
+  },
+  registrationLink: {
+    translation: {
+      en: 'https://www.redcross.ca/gatineau-floods-2021',
+      fr: 'https://www.redcross.ca/inondations-gatineau-2021',
+    },
+  },
+  tenantId: '1dea3c36-d6a5-4e6c-ac36-078677b7d112',
+  registrationLocations: [],
+  shelterLocations: [],
+  registrationAssessments: [{ assessmentId: 'assessmentId', id: 'id' } as IRegistrationAssessment],
+  selfRegistrationEnabled: true,
+  schedule: {
+    status: EEventStatus.Open,
+    openDate: '2021-01-01T00:00:00Z',
+  },
+  ...force,
 });
 
 // eslint-disable-next-line max-lines-per-function
@@ -495,129 +533,6 @@ export const mockEventEntityData = (): IEventEntity[] => [
   },
 ];
 
-export const mockEventMetadataData = (): IEventMetadata[] => [
-  {
-    ...mockBaseData(),
-    id: '1dea3c36-d6a5-4e6c-ac36-078677b7d111',
-    eventTypeId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
-    agreements: [{
-      name: {
-        translation: {
-          en: 'agreement 1',
-          fr: 'agreement 1 fr',
-        },
-      },
-      startDate: '2021-03-01T00:00:00Z',
-      endDate: null,
-      agreementType: {
-        optionItemId: '1',
-        specifiedOther: 'abc',
-      },
-      agreementTypeName: {
-        translation: {
-          en: 'agreement type 1',
-          fr: 'agreement type 1 fr',
-        },
-      },
-      details: {
-        translation: {
-          en: 'agreement 1 details',
-          fr: 'agreement 1  details fr',
-        },
-      },
-    }],
-    eventTypeName: {
-      translation: {
-        en: 'Flood',
-        fr: 'Inondation',
-      },
-    },
-    scheduleEventStatusName: {
-      translation: {
-        en: 'On hold',
-        fr: 'En attente',
-      },
-    },
-    provinceName: {
-      translation: {
-        en: 'Alberta',
-        fr: 'Alberta FR',
-      },
-    },
-    teamMemberIds: [
-      '1dea3c36-d6a5-4e6c-ac36-078677b7aaaa',
-      '1dea3c36-d6a5-4e6c-ac36-078677b7bbbb',
-      '1dea3c36-d6a5-4e6c-ac36-078677b7cccc',
-    ],
-    responseLevelName: {
-      translation: {
-        en: UserRoles.level1,
-        fr: 'Niveau1',
-      },
-    },
-  },
-  {
-    ...mockBaseData(),
-    id: '1dea3c36-d6a5-4e6c-ac36-078677b7d222',
-    eventTypeId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
-    agreements: [{
-      name: {
-        translation: {
-          en: 'agreement 2',
-          fr: 'agreement 2 fr',
-        },
-      },
-      startDate: '2021-03-01T00:00:00Z',
-      endDate: null,
-      agreementType: {
-        optionItemId: '1',
-        specifiedOther: 'abc',
-      },
-      agreementTypeName: {
-        translation: {
-          en: 'agreement type 2',
-          fr: 'agreement type 2 fr',
-        },
-      },
-      details: {
-        translation: {
-          en: 'agreement 2 details',
-          fr: 'agreement 2  details fr',
-        },
-      },
-    }],
-    eventTypeName: {
-      translation: {
-        en: 'Flood',
-        fr: 'Inondation',
-      },
-    },
-    scheduleEventStatusName: {
-      translation: {
-        en: 'On hold',
-        fr: 'En attente',
-      },
-    },
-    provinceName: {
-      translation: {
-        en: 'Alberta',
-        fr: 'Alberta FR',
-      },
-    },
-    teamMemberIds: [
-      '1dea3c36-d6a5-4e6c-ac36-078677b7aaaa',
-      '1dea3c36-d6a5-4e6c-ac36-078677b7bbbb',
-      '1dea3c36-d6a5-4e6c-ac36-078677b7cccc',
-    ],
-    responseLevelName: {
-      translation: {
-        en: UserRoles.level1,
-        fr: 'Niveau1',
-      },
-    },
-  },
-];
-
 export const mockOtherProvinceData = (): IEventLocation[] => [{
   province: ECanadaProvinces.OT,
   provinceOther: {
@@ -686,27 +601,10 @@ const getEventEntity = (index = 0) : IEventEntity => ({
   fillEmptyMultilingualAttributes: jest.fn(),
 });
 
-const getEventMetadatum = (index = 0) : IEventMetadata => ({
-  ...mockBaseData(),
-  teamMemberIds: [],
-  eventTypeId: mockEventMetadataData()[index].eventTypeId,
-  agreements: mockEventMetadataData()[index].agreements,
-  eventTypeName: mockEventMetadataData()[index].eventTypeName,
-  scheduleEventStatusName: mockEventMetadataData()[index].scheduleEventStatusName,
-  provinceName: mockEventMetadataData()[index].provinceName,
-  responseLevelName: mockEventMetadataData()[index].responseLevelName,
-});
-
 export const mockEventEntity = (force?: Partial<IEventEntity>, index = 0) : IEventEntity => ({
   ...mockBaseData(),
   ...getEventEntity(index),
   eventStatus: EEventStatus.Open,
-  ...force,
-});
-
-export const mockEventMetadatum = (force?: Partial<IEventMetadata>, index = 0) : IEventMetadata => ({
-  ...mockBaseData(),
-  ...getEventMetadatum(index),
   ...force,
 });
 
@@ -780,38 +678,19 @@ export const mockEmptyEntity = (force?: Partial<IEventEntity>) : IEventEntity =>
   }
 );
 
-export const mockEmptyMetadata = (force?: Partial<IEventMetadata>) : IEventMetadata => (
-  {
-    ...mockEmptyBaseData(),
-    teamMemberIds: [],
-    eventTypeId: null,
-    eventTypeName: emptyMultilingual(),
-    agreements: [],
-    scheduleEventStatusName: emptyMultilingual(),
-    provinceName: emptyMultilingual(),
-    responseLevelName: emptyMultilingual(),
-    ...force,
-  }
-);
-
 export const mockEventEntities = () : IEventEntity[] => [
   mockEventEntity({ id: '1', relatedEventIds: ['2'] }),
   mockEventEntity({ id: '2', eventStatus: EEventStatus.Closed }, 1),
 ];
 
-export const mockEventMetadata = () : IEventMetadata[] => [
-  mockEventMetadatum({ id: '1' }),
-  mockEventMetadatum({ id: '2' }, 1),
-];
-
 export const mockCombinedEvent = (force?: Partial<IEntity>, index?: number): IEventCombined => ({
   entity: mockEventEntity(force, index),
-  metadata: mockEventMetadatum(force, index),
+  metadata: null,
 });
 
 export const mockEmptyCombinedEvent = (force?: Partial<IEntity>): IEventCombined => ({
   entity: mockEmptyEntity(force),
-  metadata: mockEmptyMetadata(force),
+  metadata: null,
 });
 
 export const mockCombinedEvents = (): IEventCombined[] => [
@@ -819,8 +698,14 @@ export const mockCombinedEvents = (): IEventCombined[] => [
   mockCombinedEvent({ id: '2' }, 1),
 ];
 
-export const mockSearchEventEntity = (): IAzureSearchResult<IEventEntity> => ({
+export const mockSearchEventEntity = (): IAzureSearchResult<IEventCombined> => ({
   odataCount: 2,
   odataContext: 'context',
-  value: mockEventEntities(),
+  value: mockCombinedEvents(),
+});
+
+export const mockSearchEventSummary = (): IAzureSearchResult<IEventSummary> => ({
+  odataCount: 1,
+  odataContext: 'context',
+  value: [mockEventSummary()],
 });

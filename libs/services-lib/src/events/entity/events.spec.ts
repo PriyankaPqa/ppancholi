@@ -144,24 +144,19 @@ describe('>>> Events Service', () => {
   test('searchMyEvents is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchMyEvents(params);
-    expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
+    expect(http.get).toHaveBeenCalledWith('event/search/event-summaries', { params: { filter: 'foo and HasAccess eq true' }, isODataSql: true });
   });
 
   test('searchMyEventsById calls the helper callSearchInInBatches with the right params and return the right object', async () => {
     const ids = ['id-1', 'id-2'];
     helpers.callSearchInInBatches = jest.fn(); await service.searchMyEventsById(ids);
     expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
-      searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
+      searchInFilter: 'Id in({ids})',
       service,
       ids,
       api: 'searchMyEvents',
+      otherApiParameters: [null, false, true],
     });
-  });
-
-  test('searchMyRegistrationEvents is linked to the correct URL and params', async () => {
-    const params = mockSearchParams;
-    await service.searchMyRegistrationEvents(params);
-    expect(http.get).toHaveBeenCalledWith('event/search/events-open-for-registration', { params, isOData: true });
   });
 
   describe('setEventStatus', () => {
@@ -335,15 +330,8 @@ describe('>>> Events Service', () => {
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`event/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('event/search/eventsV2', { params, isODataSql: true });
     });
   });
 

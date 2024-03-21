@@ -4,7 +4,7 @@ import {
   mount,
   shallowMount,
 } from '@/test/testSetup';
-import { EEventStatus, mockCombinedEvent, mockCombinedEvents } from '@libs/entities-lib/event';
+import { mockEventSummary } from '@libs/entities-lib/event';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 import Routes from '@/constants/routes';
@@ -98,10 +98,8 @@ describe('EventsSelector.vue', () => {
         doMount(true, true);
         await wrapper.vm.fetchEvents('test', 10);
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenLastCalledWith({
-          filter: null,
-          search: '((/.*test.*/ OR "\\"test\\""))',
-          searchFields: 'Entity/Name/Translation/en',
-          orderBy: 'Entity/Schedule/OpenDate desc',
+          filter: { and: [{ 'Name/Translation/en': { contains: 'test' } }] },
+          orderBy: 'Schedule/OpenDate desc',
           queryType: 'full',
           searchMode: 'all',
           top: 10,
@@ -111,12 +109,10 @@ describe('EventsSelector.vue', () => {
       it('should fetch active events corresponding to the query', async () => {
         await wrapper.vm.fetchEvents('test', 10);
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-          search: '((/.*test.*/ OR "\\"test\\""))',
-          searchFields: 'Entity/Name/Translation/en',
-          orderBy: 'Entity/Schedule/OpenDate desc',
+          orderBy: 'Schedule/OpenDate desc',
           queryType: 'full',
           searchMode: 'all',
-          filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },
+          filter: { Schedule: { Status: 'Open' }, and: [{ 'Name/Translation/en': { contains: 'test' } }] },
           top: 10,
         });
       });
@@ -130,27 +126,9 @@ describe('EventsSelector.vue', () => {
         await wrapper.setProps({
           excludedEvent: '1',
         });
-        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: [...mockCombinedEvents()] }));
+        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: [mockEventSummary({ id: '1' }), mockEventSummary({ id: '2' })] }));
         await wrapper.vm.fetchEvents();
-        expect(wrapper.vm.events).toEqual([new RegistrationEvent(mockCombinedEvent({ id: '2' }, 1).entity)]);
-      });
-
-      it('should call searchMyRegistrationEvents, fetch active events corresponding to the query when user is L0', async () => {
-        doMount(true, false, {
-          computed: {
-            isOnRegistrationPage: jest.fn(() => true),
-          },
-        });
-        await wrapper.vm.fetchEvents('test', 10);
-        expect(wrapper.vm.$services.events.searchMyRegistrationEvents).toHaveBeenCalledWith({
-          search: '((/.*test.*/ OR "\\"test\\""))',
-          searchFields: 'Entity/Name/Translation/en',
-          orderBy: 'Entity/Schedule/OpenDate desc',
-          queryType: 'full',
-          searchMode: 'all',
-          filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },
-          top: 10,
-        });
+        expect(wrapper.vm.events).toEqual([new RegistrationEvent(mockEventSummary({ id: '2' }))]);
       });
     });
 
@@ -173,9 +151,9 @@ describe('EventsSelector.vue', () => {
 
       it('should call searchMyEvents with proper params if param is an array', async () => {
         jest.clearAllMocks();
-        await wrapper.vm.fetchEventsByIds(['1']);
+        await wrapper.vm.fetchEventsByIds(['1', '2']);
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['1'] } } },
+          filter: 'Id in(1,2)',
           top: 999,
         });
       });
@@ -184,7 +162,7 @@ describe('EventsSelector.vue', () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds('1');
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['1'] } } },
+          filter: 'Id in(1)',
           top: 999,
         });
       });
@@ -193,7 +171,7 @@ describe('EventsSelector.vue', () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds({ id: '1' });
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['1'] } } },
+          filter: 'Id in(1)',
           top: 999,
         });
       });

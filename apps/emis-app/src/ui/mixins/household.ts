@@ -3,7 +3,7 @@
 
 import Vue from 'vue';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
-import { IEventGenericLocation, IEventMainInfo } from '@libs/entities-lib/event';
+import { IEventGenericLocation, IEventSummary } from '@libs/entities-lib/event';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -25,7 +25,7 @@ export default Vue.extend({
       * membership in teams assigned to events. This access cannot be inferred from the
       * data, so there are separate requests for "my" and "all" events.
       */
-      myEvents: null as IEventMainInfo[],
+      myEvents: null as IEventSummary[],
       shelterLocations: [] as IEventGenericLocation[],
       otherShelterLocations: [] as IEventGenericLocation[],
     };
@@ -67,9 +67,9 @@ export default Vue.extend({
     /**
      * @param {string} [caseFiles] Optional. Case files for which to fetch the events to which the user has access.
      * To pass if the method is not called in a component that needs the events saved in its state, it only needs the data returned from this call.
-     * @returns {Promise<IEventMainInfo[]>} Case files related to a household
+     * @returns {Promise<IEventSummary[]>} Case files related to a household
      */
-    async fetchMyEvents(caseFiles?: ICaseFileEntity[]): Promise<IEventMainInfo[]> {
+    async fetchMyEvents(caseFiles?: ICaseFileEntity[]): Promise<IEventSummary[]> {
       const cf = caseFiles || this.caseFiles;
       if (cf?.length) {
         const eventIds = cf.map((f) => f.eventId);
@@ -85,7 +85,7 @@ export default Vue.extend({
     /**
      * @param {string} [householdId] Optional. Id of the household for which we fetch the shelter locations.
      * To pass if the mixin is not used in a component that stores the case files and myEvents in the state (eg. for household move).
-     * @returns {Promise<IEventMainInfo[]>} Shelter location data for the active case files of the household, for events to which the user has access.
+     * @returns {Promise<IEventGenericLocation[]>} Shelter location data for the active case files of the household, for events to which the user has access.
      * They are usually fetched to be displayed in the shelter dropdown for the household member's temporary address
      */
     async fetchShelterLocations(householdId?: string): Promise<IEventGenericLocation[]> {
@@ -101,8 +101,8 @@ export default Vue.extend({
       const shelters = [] as IEventGenericLocation[];
       if (events?.length) {
         events.forEach((e) => {
-          if (e.entity.shelterLocations) {
-            shelters.push(...e.entity.shelterLocations);
+          if (e.shelterLocations) {
+            shelters.push(...e.shelterLocations);
           }
         });
       }

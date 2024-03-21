@@ -20,11 +20,11 @@
 import Vue from 'vue';
 
 import { RcRegistrationLandingPage } from '@libs/component-lib/components';
-import { IEvent } from '@libs/entities-lib/registration-event';
 import routes from '@/constants/routes';
 import { tabs } from '@/pinia/registration/tabs';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { IEventSummary } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'RegistrationHome',
@@ -64,7 +64,7 @@ export default Vue.extend({
     redirect() {
       this.$router.replace({ name: routes.registration.individual.name });
     },
-    async setEvent(event: IEvent) {
+    async setEvent(event: IEventSummary) {
       if (!event) {
         return;
       }

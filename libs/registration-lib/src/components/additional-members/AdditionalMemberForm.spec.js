@@ -3,7 +3,7 @@ import helpers from '@libs/entities-lib/helpers';
 import { ECurrentAddressTypes, mockCampGround } from '@libs/entities-lib/src/value-objects/current-address';
 import {
   mockShelterLocations,
-} from '@libs/entities-lib/src/registration-event';
+} from '@libs/entities-lib/src/event';
 import {
   mockGenders,
   mockAdditionalMember,

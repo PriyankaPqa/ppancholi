@@ -86,7 +86,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { RcStatsTemplate } from '@libs/component-lib/components';
-import { IEventMainInfo } from '@libs/entities-lib/event';
+import { IEventSummary } from '@libs/entities-lib/event';
 import { ICaseFileDetailedCount } from '@libs/entities-lib/case-file';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
@@ -100,7 +100,7 @@ export default Vue.extend({
 
   data() {
     return {
-      events: [] as IEventMainInfo[],
+      events: [] as IEventSummary[],
       selectedEventId: null,
       loadingEvents: false,
       loadingQuickStats: false,

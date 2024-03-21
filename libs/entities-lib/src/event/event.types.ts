@@ -101,6 +101,23 @@ export interface IRegistrationAssessment extends IEntity {
 }
 
 /**
+ * Interface that maps to the response structure from the API
+ */
+export interface IEventSummary {
+  id: uuid;
+  name: IMultilingual;
+  responseDetails: IEventResponseDetails;
+  registrationLink: IMultilingual;
+  tenantId: uuid;
+  registrationLocations: Array<IEventGenericLocation>;
+  shelterLocations: IEventGenericLocation[];
+  selfRegistrationEnabled: boolean;
+  schedule: { status: EEventStatus; openDate?: Date | string; },
+  registrationAssessments: IRegistrationAssessment[];
+  consentStatementId?: uuid;
+}
+
+/**
  * Interface that maps to the response structure from the entity API
  */
 export interface IEventData {
@@ -122,49 +139,6 @@ export interface IEventData {
   shelterLocations: Array<IEventGenericLocation>;
   selfRegistrationEnabled: boolean;
   consentStatementId?: uuid;
-}
-
-export interface IEventMainInfo {
-  entity: {
-    id: uuid;
-    name: IMultilingual;
-    responseDetails: IEventResponseDetails;
-    registrationLink: IMultilingual;
-    tenantId: uuid;
-    registrationLocations: Array<IEventGenericLocation>;
-    shelterLocations: Array<IEventGenericLocation>;
-    selfRegistrationEnabled: boolean;
-    schedule: IEventSchedule;
-  }
-}
-
-/**
- * Interface that maps to the response structure from the search API
- */
-export interface IEventSearchData {
-  '@searchScore': number;
-  agreements: Array<IEventAgreementInfos>;
-  callCentres: Array<IEventCallCentre>;
-  registrationLocations: Array<IEventGenericLocation>;
-  shelterLocations: Array<IEventGenericLocation>;
-  createdDate: Date | string;
-  eventDescription: IMultilingual;
-  eventId: uuid;
-  eventName: IMultilingual;
-  eventStatus: number;
-  eventTypeId: uuid;
-  eventTypeName: IMultilingual;
-  location: IEventLocation;
-  number: number;
-  provinceName: IMultilingual;
-  registrationLink: IMultilingual;
-  responseDetails: IEventResponseDetails;
-  responseLevelName: IMultilingual;
-  selfRegistrationEnabled: boolean;
-  schedule: IEventSchedule;
-  scheduleHistory: IEventSchedule[];
-  scheduleEventStatusName: IMultilingual;
-  tenantId: uuid;
 }
 
 /**
@@ -229,16 +203,6 @@ export interface IEventEntity extends IEntity {
    fillEmptyMultilingualAttributes(): void;
 }
 
-export interface IEventMetadata extends IEntity {
-  eventTypeId?: uuid;
-  agreements?: Array<IEventAgreementInfos>;
-  eventTypeName?: IMultilingual;
-  scheduleEventStatusName?: IMultilingual;
-  provinceName?: IMultilingual;
-  teamMemberIds?: Array<string>;
-  responseLevelName?: IMultilingual;
-}
-
-export type IEventCombined = IEntityCombined<IEventEntity, IEventMetadata>;
+export type IEventCombined = IEntityCombined<IEventEntity, null>;
 
 export type IdParams = uuid;

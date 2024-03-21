@@ -65,14 +65,13 @@ import {
   ContactInformation, CurrentAddress, IContactInformation, ICurrentAddress, IIdentitySet, IMember,
 } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
-import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
+import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
 import libHelpers from '@libs/entities-lib/helpers';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
-import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
 import { i18n } from '@/ui/plugins';

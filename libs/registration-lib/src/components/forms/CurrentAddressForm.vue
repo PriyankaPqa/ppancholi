@@ -195,16 +195,16 @@ import {
   VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import { EOptionItemStatus, VForm } from '@libs/shared-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import {
   ECurrentAddressTypes,
-  IShelterLocationData,
   ICurrentAddress,
   CurrentAddress,
 } from '@libs/entities-lib/household-create';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import DateRange from '@libs/component-lib/components/molecule/RcFilterToolbar/inputs/DateRange.vue';
 import Vue from 'vue';
+import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { useAutocomplete } from './mixins/useAutocomplete';
 
@@ -246,7 +246,7 @@ export default Vue.extend({
     },
 
     shelterLocations: {
-      type: Array as () => IShelterLocationData[],
+      type: Array as () => IEventGenericLocation[],
       required: true,
     },
 
@@ -369,8 +369,8 @@ export default Vue.extend({
       }
     },
 
-    currentShelterLocations(): IShelterLocationData[] {
-      return this.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active
+    currentShelterLocations(): IEventGenericLocation[] {
+      return this.shelterLocations.filter((s) => s.status === EEventLocationStatus.Active
         || s.id === this.currentAddress?.shelterLocation?.id);
     },
 

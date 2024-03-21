@@ -26,12 +26,11 @@
 import Vue from 'vue';
 
 import { IMassActionCaseFileStatusDetails, IMassActionEntity } from '@libs/entities-lib/mass-action';
-import { IEventMetadata } from '@libs/entities-lib/event';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
-import { IEventData } from '@libs/entities-lib/registration-event';
+import { IMultilingual } from '@libs/shared-lib/types';
+import { IEventSummary } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'CaseFileStatusMassActionDetailsTable',
@@ -45,7 +44,7 @@ export default Vue.extend({
 
   data() {
     return {
-      event: null as IEventData,
+      event: null as IEventSummary,
       eventLoading: false,
       reason: null as IMultilingual,
       otherReason: '',
@@ -105,7 +104,7 @@ export default Vue.extend({
     async fetchEvent() {
       this.eventLoading = true;
       const eventSearchResult = await this.$services.publicApi.searchEventsById([this.massAction.details.eventId]);
-      this.event = (eventSearchResult?.value?.[0] as ICombinedIndex<IEventData, IEventMetadata>)?.entity;
+      this.event = eventSearchResult?.value?.[0];
       this.eventLoading = false;
     },
 

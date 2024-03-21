@@ -2,7 +2,9 @@ import { storeFactory } from '@/registration/registration';
 import { ERegistrationMode } from '@libs/shared-lib/types';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import { mockEvent, mockEventData, mockShelterLocations, RegistrationEvent } from '@libs/entities-lib/registration-event';
+import { RegistrationEvent } from '@libs/entities-lib/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/event';
+import { mockShelterLocations } from '@libs/entities-lib/event/event.mock';
 import {
   EIndigenousTypes, IdentitySet, mockGenders, mockIndigenousCommunitiesGetData, mockIndigenousTypesItems,
  mockIdentitySet,
@@ -678,13 +680,13 @@ describe('>>> Registration Store', () => {
       expect(publicApi.fetchRegistrationEvent).toHaveBeenCalledTimes(1);
     });
 
-    it('maps IEventData to IEvent, and sets the event', async () => {
+    it('maps IEventSummary to IEvent, and sets the event', async () => {
       useRegistrationStore = initStore();
       expect(useRegistrationStore.getEvent()).toEqual(new RegistrationEvent());
 
       await useRegistrationStore.fetchEvent('en', 'link');
 
-      expect(useRegistrationStore.getEvent()).toEqual(mockEvent());
+      expect(useRegistrationStore.getEvent()).toEqual(mockEventSummary());
     });
   });
 
@@ -727,7 +729,7 @@ describe('>>> Registration Store', () => {
   describe('fetchIndigenousCommunities', () => {
     it('call the getIndigenousCommunities service with proper params', async () => {
       useRegistrationStore = initStore();
-      useRegistrationStore.event = mockEventData();
+      useRegistrationStore.event = mockEventSummary();
       await useRegistrationStore.fetchIndigenousCommunities();
       expect(householdApi.getIndigenousCommunities).toHaveBeenCalledTimes(1);
     });
@@ -736,7 +738,7 @@ describe('>>> Registration Store', () => {
   describe('submitRegistration', () => {
     it('should call proper service for CRC Registration', async () => {
       useRegistrationStore = initStore();
-      useRegistrationStore.event = mockEventData();
+      useRegistrationStore.event = mockEventSummary();
       await useRegistrationStore.submitRegistration();
       expect(householdApi.submitRegistration).toHaveBeenCalledTimes(0);
       expect(householdApi.submitCRCRegistration).toHaveBeenCalledTimes(1);
@@ -746,14 +748,14 @@ describe('>>> Registration Store', () => {
 
     it('should call proper service for Self Registration', async () => {
       useRegistrationStore = initStore(ERegistrationMode.Self);
-      useRegistrationStore.event = mockEventData();
+      useRegistrationStore.event = mockEventSummary();
       await useRegistrationStore.submitRegistration();
       expect(householdApi.submitRegistration).toHaveBeenCalledTimes(1);
       expect(householdApi.submitCRCRegistration).toHaveBeenCalledTimes(0);
 
       expect(householdApi.submitRegistration).toHaveBeenCalledWith({
         household: useRegistrationStore.householdCreate,
-        eventId: mockEventData().id,
+        eventId: mockEventSummary().id,
       });
     });
 
@@ -761,7 +763,7 @@ describe('>>> Registration Store', () => {
       useRegistrationStore = initStore();
       expect(useRegistrationStore.registrationResponse).toBeNull();
 
-      useRegistrationStore.event = mockEventData();
+      useRegistrationStore.event = mockEventSummary();
 
       await useRegistrationStore.submitRegistration();
 
@@ -771,7 +773,7 @@ describe('>>> Registration Store', () => {
     it('sets registrationErrors in case of error', async () => {
       useRegistrationStore = initStore(ERegistrationMode.Self);
       const error = { response: { data: { errors: 'mock-errors' } } };
-      useRegistrationStore.event = mockEventData();
+      useRegistrationStore.event = mockEventSummary();
       householdApi.submitRegistration = jest.fn(() => {
         // eslint-disable-next-line @typescript-eslint/no-throw-literal
         throw error;
@@ -782,7 +784,7 @@ describe('>>> Registration Store', () => {
 
     it('adds tier2Tab if required by result', async () => {
       useRegistrationStore = initStore(ERegistrationMode.Self);
-      useRegistrationStore.event = mockEventData();
+      useRegistrationStore.event = mockEventSummary();
       await useRegistrationStore.submitRegistration();
       expect(useRegistrationStore.tabs.find((x) => x.id === TabId.Tier2auth)).toBeFalsy();
       householdApi.submitRegistration = jest.fn(() => ({
@@ -1029,7 +1031,7 @@ describe('>>> Registration Store', () => {
       householdApi.splitHousehold = jest.fn(() => (mockDetailedRegistrationResponse()));
       useRegistrationStore.householdCreate = mockHouseholdCreate() as HouseholdCreate;
       useRegistrationStore.splitHouseholdState = mockSplitHousehold();
-      useRegistrationStore.event = mockEvent({ id: 'event-id' });
+      useRegistrationStore.event = mockEventSummary({ id: 'event-id' });
       await useRegistrationStore.splitHousehold();
       expect(householdApi.splitHousehold).toHaveBeenCalledWith(mockHouseholdCreate(), mockSplitHousehold().originHouseholdId, 'event-id');
     });
@@ -1039,7 +1041,7 @@ describe('>>> Registration Store', () => {
       householdApi.splitHousehold = jest.fn(() => (mockDetailedRegistrationResponse()));
       useRegistrationStore.householdCreate = mockHouseholdCreate() as HouseholdCreate;
       useRegistrationStore.splitHouseholdState = mockSplitHousehold();
-      useRegistrationStore.event = mockEvent({ id: 'event-id' });
+      useRegistrationStore.event = mockEventSummary({ id: 'event-id' });
       await useRegistrationStore.splitHousehold();
       expect(useRegistrationStore.registrationResponse).toEqual(mockDetailedRegistrationResponse());
     });
@@ -1051,7 +1053,7 @@ describe('>>> Registration Store', () => {
       });
       useRegistrationStore.householdCreate = mockHouseholdCreate() as HouseholdCreate;
       useRegistrationStore.splitHouseholdState = mockSplitHousehold();
-      useRegistrationStore.event = mockEvent({ id: 'event-id' });
+      useRegistrationStore.event = mockEventSummary({ id: 'event-id' });
 
       await useRegistrationStore.splitHousehold();
       expect(useRegistrationStore.registrationErrors).toEqual(new Error());
@@ -1172,14 +1174,12 @@ describe('>>> Registration Store', () => {
 
       it('calls the events search with the right filter if it does not find the shelter in the parameters and stores the result in otherShelterLocations', async () => {
         useRegistrationStore = initStore();
-        publicApi.searchEvents = jest.fn(() => ({ value: [{ entity: { shelterLocations: [{ id: 'sl-1', name: 'SL-1' }] } }] } as any));
+        publicApi.searchEvents = jest.fn(() => ({ value: [{ shelterLocations: [{ id: 'sl-1', name: 'SL-1' }] }] } as any));
         await useRegistrationStore.internalMethods.getShelterLocationDatafromId('sl-1', []);
         expect(publicApi.searchEvents).toHaveBeenCalledWith({
           filter: {
-            Entity: {
-              ShelterLocations: {
-                any: { Id: 'sl-1' },
-              },
+            ShelterLocations: {
+              any: { Id: { value: 'sl-1', type: 'guid' } },
             },
           },
         });

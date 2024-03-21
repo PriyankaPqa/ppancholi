@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { IRegistrationAssessment } from '@libs/entities-lib/src/event';
+import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 import Vue from 'vue';
 

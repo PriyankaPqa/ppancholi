@@ -1,7 +1,7 @@
 import helpers from '@libs/entities-lib/helpers';
 import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/src/household-create';
-import { mockEvent } from '@libs/entities-lib/src/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/src/event';
 import { ECurrentAddressTypes, mockCampGround } from '@libs/entities-lib/src/value-objects/current-address';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { i18n } from '../../ui/plugins/i18n';
@@ -85,7 +85,7 @@ describe('AddressesLib.vue', () => {
             noFixedHome() {
               return false;
             },
-            shelterLocation() {
+            shelterLocations() {
               return [{ id: 1 }];
             },
           },
@@ -119,7 +119,7 @@ describe('AddressesLib.vue', () => {
 
     describe('shelterLocations', () => {
       it('should return the active shelterLocations for the current Event', () => {
-        const event = mockEvent();
+        const event = mockEventSummary();
         const filtered = event.shelterLocations.filter((s) => s.status === EOptionItemStatus.Active);
         expect(wrapper.vm.shelterLocations).toEqual(filtered);
         expect(wrapper.vm.shelterLocations.filter((s) => s.status === EOptionItemStatus.Inactive)).toHaveLength(0);

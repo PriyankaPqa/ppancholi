@@ -85,7 +85,7 @@ import Vue from 'vue';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { RcDialog } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
-import { IEventMainInfo } from '@libs/entities-lib/event';
+import { IEventSummary } from '@libs/entities-lib/event';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { format } from 'date-fns';
 import CaseFileSummary from '../../case-files/details/CaseFileSummary.vue';
@@ -110,8 +110,8 @@ export default Vue.extend({
      * The list of events to which the user has access
      */
     myEvents: {
-      type: Array as () => IEventMainInfo[],
-      default: () => [] as IEventMainInfo[],
+      type: Array as () => IEventSummary[],
+      default: () => [] as IEventSummary[],
     },
     /**
      * Names of events in the context, whether the user has access or not
@@ -148,7 +148,7 @@ export default Vue.extend({
 
     hasAccessToEvent():boolean {
       const { eventId } = this.caseFile;
-      return this.myEvents.map((e) => e.entity.id).includes(eventId);
+      return this.myEvents.map((e) => e.id).includes(eventId);
     },
 
     eventName():IMultilingual {

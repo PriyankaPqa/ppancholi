@@ -1,12 +1,11 @@
-import { IAzureSearchParams, IAzureSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
-import { IEventData } from '@libs/entities-lib/registration-event';
-import { IEventMetadata } from '@libs/entities-lib/event';
+import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import { IEventSummary } from '@libs/entities-lib/event';
 import { IFeatureEntity } from '@libs/entities-lib/src/tenantSettings';
 
 export interface IPublicService {
-  fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
-  searchEvents(searchParams: IAzureSearchParams): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
-  searchEventsById(ids: string[]): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
+  fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventSummary>>;
+  searchEvents(searchParams: IAzureSearchParams): Promise<IAzureSearchResult<IEventSummary>>;
+  searchEventsById(ids: string[]): Promise<IAzureSearchResult<IEventSummary>>;
   getTenantByRegistrationDomain(domain: string): Promise<string>;
   getTenantByEmisDomain(domain: string): Promise<string>;
   getPublicFeatures(): Promise<IFeatureEntity[]>;
@@ -14,9 +13,9 @@ export interface IPublicService {
 }
 
 export interface IPublicServiceMock {
-  fetchRegistrationEvent: jest.Mock<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
-  searchEvents: jest.Mock<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
-  searchEventsById: jest.Mock<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
+  fetchRegistrationEvent: jest.Mock<IAzureSearchResult<IEventSummary>>;
+  searchEvents: jest.Mock<IAzureSearchResult<IEventSummary>>;
+  searchEventsById: jest.Mock<IAzureSearchResult<IEventSummary>>;
   getTenantByRegistrationDomain: jest.Mock<string>;
   getTenantByEmisDomain: jest.Mock<string>;
   getPublicFeatures: jest.Mock<IFeatureEntity[]>; // FeatureKeys.UseIdentityServer

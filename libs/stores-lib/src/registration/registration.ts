@@ -10,7 +10,7 @@ import { IVueI18n, TranslateResult } from 'vue-i18n';
 import {
   EOptionItemStatus, ERegistrationMode, IOptionItemData, IServerError, IdentityAuthenticationStatus,
 } from '@libs/shared-lib/types';
-import { IEventData, IEventData as IRegistrationEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
+import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -19,7 +19,7 @@ import { IPublicService, IPublicServiceMock } from '@libs/services-lib/public';
 import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/services-lib/households/entity';
 import { IDetailedRegistrationResponse, IHouseholdEntity } from '@libs/entities-lib/household';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
-import { IEventGenericLocation, IRegistrationAssessment } from '@libs/entities-lib/event';
+import { IEventGenericLocation, IEventSummary, IRegistrationAssessment } from '@libs/entities-lib/event';
 import libHelpers from '@libs/entities-lib/helpers';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import { ICaseFilesService, ICaseFilesServiceMock } from '@libs/services-lib/case-files/entity';
@@ -58,7 +58,7 @@ export function storeFactory({
   // eslint-disable-next-line max-lines-per-function, max-statements
   return defineStore('registration', () => {
     const isPrivacyAgreed = ref(false);
-    const event = ref(null) as Ref<IRegistrationEventData>;
+    const event = ref(null) as Ref<IEventSummary>;
     const isLeftMenuOpen = ref(true);
     const tabs = ref(pTabs) as Ref<IRegistrationMenuItem[]>;
     const currentTabIndex = ref(0);
@@ -162,18 +162,16 @@ export function storeFactory({
         }
 
         const filter = {
-          Entity: {
-            ShelterLocations: {
-              any: {
-                Id: shelterLocationId,
-              },
+          ShelterLocations: {
+            any: {
+              Id: { value: shelterLocationId, type: 'guid' },
             },
           },
         };
 
         const events = await publicApi.searchEvents({ filter });
         if (events?.value?.length) {
-          const event = events?.value[0].entity as IEventData;
+          const event = events?.value[0];
           const location = event.shelterLocations.find((l) => l.id === shelterLocationId);
           // cache the shelter location data, so that the next member that has the same shelter location id doesn't need to refetch the data
           storeShelterLocations.value.push(location);
@@ -513,7 +511,7 @@ export function storeFactory({
 
     async function fetchEvent(lang: string, registrationLink: string) {
       const result = await publicApi.fetchRegistrationEvent(lang, registrationLink);
-      const eventData = result?.value?.length > 0 ? result.value[0].entity : null;
+      const eventData = result?.value?.length > 0 ? result.value[0] : null;
       event.value = eventData;
       return getEvent();
     }

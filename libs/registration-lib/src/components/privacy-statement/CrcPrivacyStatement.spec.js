@@ -1,5 +1,5 @@
 import { ERegistrationMethod } from '@libs/shared-lib/src/types';
-import { mockEventData, mockRegistrationLocations, mockConsentStatments } from '@libs/entities-lib/src/registration-event';
+import { mockEventSummary, mockRegistrationLocations, mockConsentStatments } from '@libs/entities-lib/src/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './CrcPrivacyStatement.vue';
@@ -31,7 +31,7 @@ describe('CrcPrivacyStatement.vue', () => {
       },
     });
     wrapper.vm.$registrationStore = registrationStore;
-    wrapper.vm.$registrationStore.event = mockEventData();
+    wrapper.vm.$registrationStore.event = mockEventSummary();
   });
 
   describe('Computed', () => {
@@ -73,6 +73,7 @@ describe('CrcPrivacyStatement.vue', () => {
 
     describe('activeRegistrationLocations', () => {
       it('should return the registration location from the current event', () => {
+        const location = { ...mockRegistrationLocations()[0], name: { translation: { en: 'mock-name' } } };
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -81,10 +82,10 @@ describe('CrcPrivacyStatement.vue', () => {
             user: mockUserL6(),
           },
           computed: {
-            event: () => mockEventData(),
+            event: () => mockEventSummary({ registrationLocations: [location] }),
           },
         });
-        expect(wrapper.vm.activeRegistrationLocations).toEqual(mockRegistrationLocations());
+        expect(wrapper.vm.activeRegistrationLocations).toEqual([location]);
       });
 
       it('should return the registration location prop data if there is any', () => {
@@ -112,7 +113,7 @@ describe('CrcPrivacyStatement.vue', () => {
             user: mockUserL6(),
           },
           computed: {
-            event: () => mockEventData(),
+            event: () => mockEventSummary({ consentStatementId: mockConsentStatments()[0].id }),
             consentStatement: () => mockConsentStatments(),
           },
         });

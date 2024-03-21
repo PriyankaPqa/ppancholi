@@ -1,5 +1,5 @@
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { mockEventMainInfo } from '@libs/entities-lib/event';
+import { mockEventSummary } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
@@ -8,15 +8,15 @@ import Component from '../HouseholdCaseFileCard.vue';
 const localVue = createLocalVue();
 const caseFile = mockCaseFileEntity();
 const events = [
-  mockEventMainInfo({
+  mockEventSummary({
     id: caseFile.eventId,
   }),
-  mockEventMainInfo({
+  mockEventSummary({
     id: '2',
   })];
 const allEventNames = { };
-allEventNames[events[0].entity.id] = events[0].entity.name;
-allEventNames[events[1].entity.id] = events[1].entity.name;
+allEventNames[events[0].id] = events[0].name;
+allEventNames[events[1].id] = events[1].name;
 
 describe('HouseholdCaseFileCard.vue', () => {
   let wrapper;
@@ -129,7 +129,7 @@ describe('HouseholdCaseFileCard.vue', () => {
           propsData: {
             isActive: true,
             caseFile: { eventId: 'id-1', created: '2001-01-01T00:00:00Z' },
-            myEvents: [{ entity: { id: 'id-1' } }, { entity: { id: 'id-2' } }],
+            myEvents: [{ id: 'id-1' }, { id: 'id-2' }],
           },
         });
 
@@ -142,7 +142,7 @@ describe('HouseholdCaseFileCard.vue', () => {
           propsData: {
             isActive: true,
             caseFile: { eventId: 'foo', created: '2001-01-01T00:00:00Z' },
-            myEvents: [{ entity: { id: 'id-1' } }, { entity: { id: 'id-2' } }],
+            myEvents: [{ id: 'id-1' }, { id: 'id-2' }],
           },
         });
 
@@ -153,7 +153,7 @@ describe('HouseholdCaseFileCard.vue', () => {
     describe('eventName', () => {
       it('returns the event name for the case file', () => {
         doMount();
-        expect(wrapper.vm.eventName).toEqual(events[0].entity.name);
+        expect(wrapper.vm.eventName).toEqual(events[0].name);
       });
     });
   });

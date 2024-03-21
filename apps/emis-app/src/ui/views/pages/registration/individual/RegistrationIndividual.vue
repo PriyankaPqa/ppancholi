@@ -100,7 +100,6 @@ import mixins from 'vue-typed-mixins';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
-import { IEvent } from '@libs/entities-lib/registration-event';
 import ConfirmationPrintLib from '@libs/registration-lib/components/confirm-registration/ConfirmationPrintLib.vue';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -117,7 +116,7 @@ import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
-import { IRegistrationAssessment } from '@libs/entities-lib/event';
+import { IEventSummary, IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
@@ -208,7 +207,7 @@ export default mixins(individual).extend({
       return useRegistrationStore().householdAssociationMode;
     },
 
-    event(): IEvent {
+    event(): IEventSummary {
       return useRegistrationStore().getEvent();
     },
 

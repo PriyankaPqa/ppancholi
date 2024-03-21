@@ -5,13 +5,14 @@ import _cloneDeep from 'lodash/cloneDeep';
 import _debounce from 'lodash/debounce';
 import helpers from '@libs/entities-lib/helpers';
 import {
-  IShelterLocationData, IHouseholdCreate, IIdentitySet, IdentitySet,
+  IHouseholdCreate, IIdentitySet, IdentitySet,
 } from '@libs/entities-lib/household-create';
 import { IMember } from '@libs/entities-lib/value-objects/member/index';
 import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address/index';
-import { IOptionItemData, EOptionItemStatus } from '@libs/shared-lib/types';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
+import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 import { localStorageKeys } from '../../../constants/localStorage';
 
 /**
@@ -62,10 +63,10 @@ export default Vue.extend({
       return helpers.getCanadianProvincesWithoutOther((this as any).i18n);
     },
 
-    shelterLocations(): IShelterLocationData[] {
+    shelterLocations(): IEventGenericLocation[] {
       const event = this.$registrationStore.getEvent();
       if (event) {
-        return event.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active);
+        return event.shelterLocations.filter((s) => s.status === EEventLocationStatus.Active);
       }
       return [];
     },

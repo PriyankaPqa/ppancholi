@@ -46,9 +46,10 @@ import { VSelectWithValidation, VTextFieldWithValidation } from '@libs/component
 import helpers from '@libs/entities-lib/helpers';
 import VueI18n from 'vue-i18n';
 import { ERegistrationMethod } from '@libs/shared-lib/types';
-import { EEventLocationStatus, IEvent, IEventGenericLocation } from '@libs/entities-lib/registration-event';
 import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
+import { EEventLocationStatus, IEventGenericLocation, IEventSummary } from '@libs/entities-lib/event';
+import { IEventGenericLocationWithEventName } from '@libs/entities-lib/household-create';
 import PrivacyStatementLib from './PrivacyStatementLib.vue';
 
 export interface IUser {
@@ -157,7 +158,7 @@ export default Vue.extend({
       return this.privacyRegistrationMethod === ERegistrationMethod.InPerson;
     },
 
-    event(): IEvent {
+    event(): IEventSummary {
       return this.$registrationStore.event;
     },
 
@@ -193,7 +194,7 @@ export default Vue.extend({
       }
     },
 
-    getRegistrationLocationText(item:IEventGenericLocation): string {
+    getRegistrationLocationText(item:IEventGenericLocationWithEventName): string {
         if (item.eventName) {
           return `${this.$m(item.name)} - ${this.$m(item.eventName)}`;
         }

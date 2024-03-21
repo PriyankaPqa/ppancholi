@@ -1,6 +1,6 @@
 import { mockSignalRService } from '@libs/services-lib/signal-r';
 import { useMockEventStore } from '@/pinia/event/event.mock';
-import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
+import { useEventStore } from '@/pinia/event/event';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
@@ -257,12 +257,6 @@ describe('signalR', () => {
           domain: 'event',
           entityName: 'Event',
           action: useEventStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'event',
-          entityName: 'EventMetadata',
-          action: useEventMetadataStore().setItemFromOutsideNotification,
         });
     });
 

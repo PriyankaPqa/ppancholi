@@ -2,7 +2,7 @@ import {
   createLocalVue, shallowMount, mount,
 } from '@/test/testSetup';
 import {
-  mockEventMainInfo, mockEventEntityData,
+  mockEventSummary, mockEventEntityData,
 } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
@@ -62,12 +62,12 @@ describe('SplitHouseholdEvent', () => {
           pinia,
 
         });
-        registrationStore.event = mockEventMainInfo().entity;
+        registrationStore.event = mockEventSummary();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.event).toEqual(mockEventMainInfo().entity);
+        expect(wrapper.vm.event).toEqual(mockEventSummary());
       });
     });
   });

@@ -79,9 +79,9 @@ export default {
    */
   // eslint-disable-next-line complexity
   async callSearchInInBatches<TEntity, TMetadata>(
-    { service, ids, searchInFilter, otherFilter = '', otherOptions = {}, batchSize = 40, api = 'search' }
+    { service, ids, searchInFilter, otherFilter = '', otherOptions = {}, batchSize = 40, api = 'search', otherApiParameters = [] }
     : { service: any, ids: string[], searchInFilter: Record<string, unknown> | string,
-      otherOptions?: Record<string, unknown>, otherFilter?: string | Record<string, unknown>, batchSize?: number, api?:string },
+      otherOptions?: Record<string, unknown>, otherFilter?: string | Record<string, unknown>, batchSize?: number, api?:string, otherApiParameters?: any[] },
   ) {
     if (!ids?.length || !searchInFilter || !service) {
       return null;
@@ -107,7 +107,7 @@ export default {
           throw new Error('There was an error in parsing the filter in callSearchInInBatches');
         }
       }
-      const call = service[api]({ filter, ...otherOptions });
+      const call = service[api]({ filter, ...otherOptions }, ...otherApiParameters);
       calls.push(call);
     });
 

@@ -32,7 +32,7 @@
 import Vue from 'vue';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { IEventMainInfo } from '@libs/entities-lib/event';
+import { IEventSummary } from '@libs/entities-lib/event';
 import { format } from 'date-fns';
 
 export default Vue.extend({
@@ -47,7 +47,7 @@ export default Vue.extend({
   data() {
     return {
       format,
-      events: [] as IEventMainInfo[],
+      events: [] as IEventSummary[],
       caseFiles: [] as ICaseFileEntity[],
       loading: false,
     };
@@ -56,7 +56,7 @@ export default Vue.extend({
     eventNames(): Record<string, IMultilingual> {
       const names: Record<string, IMultilingual> = {};
       this.events?.forEach((e) => {
-        names[e.entity.id] = e.entity.name;
+        names[e.id] = e.name;
       });
       return names;
     },
@@ -78,7 +78,7 @@ export default Vue.extend({
         return;
       }
       const results = await this.$services.publicApi.searchEventsById(eventIds);
-      this.events = results?.value as IEventMainInfo[];
+      this.events = results?.value as IEventSummary[];
     },
 
     async fetchCaseFilesInformation(householdId: string) {

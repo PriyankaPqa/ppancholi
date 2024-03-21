@@ -27,11 +27,12 @@ import Vue from 'vue';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import _debounce from 'lodash/debounce';
 import helpers from '@/ui/helpers/helpers';
-import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
+import helper from '@libs/shared-lib/helpers/helpers';
+import { EEventStatus, IEventSummary } from '@libs/entities-lib/event';
 
-import { IEvent, IEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import deepmerge from 'deepmerge';
 import Routes from '@/constants/routes';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'EventsSelector',
@@ -72,8 +73,8 @@ export default Vue.extend({
       default: '',
     },
     forceEvents: { // So we can do additional manipulation on the search results. To be used with @fetch:done on external component
-      type: Array as () => Array<IEvent>,
-      default: () => [] as Array<IEvent>,
+      type: Array as () => Array<IEventSummary>,
+      default: () => [] as Array<IEventSummary>,
     },
     disableEventDelete: {
       type: Boolean,
@@ -87,7 +88,7 @@ export default Vue.extend({
 
   data() {
     return {
-      events: this.forceEvents as Array<IEvent>,
+      events: this.forceEvents as Array<IEventSummary>,
       selectedItem: this.value,
       loading: false,
       search: '',
@@ -129,7 +130,7 @@ export default Vue.extend({
 
   methods: {
     // Mandatory to have it here instead of arrow function otherwise it does not work. Known bug in vuetify
-    getTextEvent(item: IEvent): string {
+    getTextEvent(item: IEventSummary): string {
       if (item?.name) {
         return this.$m(item.name);
       }
@@ -142,38 +143,34 @@ export default Vue.extend({
 
     async fetchEvents(querySearch = '', top: number) {
       this.loading = true;
-      const searchParam = helpers.toQuickSearch(querySearch);
+      const searchParam = helpers.toQuickSearchSql(querySearch, `Name/Translation/${this.$i18n.locale}`);
 
       let filter = {
-        Entity: {
-          Schedule: {
-            Status: EEventStatus.Open,
-          },
+        Schedule: {
+          Status: helper.getEnumKeyText(EEventStatus, EEventStatus.Open),
         },
-      };
+        ...searchParam,
+      } as Record<any, any>;
 
       if (this.fetchAllEvents) {
-        filter = null;
+        filter = { ...searchParam };
       }
 
-      let res;
+      if (this.isOnRegistrationPage && this.$hasRole(UserRoles.level0)) {
+        filter.RegistrationsForL0UsersEnabled = true;
+      }
+
       const params = {
-        search: searchParam,
-        searchFields: `Entity/Name/Translation/${this.$i18n.locale}`,
-        orderBy: 'Entity/Schedule/OpenDate desc',
+        orderBy: 'Schedule/OpenDate desc',
         queryType: 'full',
         searchMode: 'all',
         filter,
         top,
       };
 
-      if (this.isOnRegistrationPage) {
-          res = await this.$services.events.searchMyRegistrationEvents(params);
-      } else {
-          res = await this.$services.events.searchMyEvents(params);
-      }
+      const res = await this.$services.events.searchMyEvents(params);
 
-      const resultData = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
+      const resultData = res?.value;
       this.events = resultData;
       if (this.excludedEvent && resultData) {
         this.events = resultData.filter((event) => event.id !== this.excludedEvent);
@@ -204,12 +201,11 @@ export default Vue.extend({
 
       this.loading = true;
       const res = await this.$services.events.searchMyEvents({
-        filter: { Entity: { Id: { searchIn_az: newIds } } },
+        filter: `Id in(${(newIds as string[]).join(',')})`,
         top: 999,
       });
-      const data = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
-      if (data) {
-        this.events = deepmerge(data, this.events);
+      if (res?.value) {
+        this.events = deepmerge(res?.value, this.events);
       }
       await helpers.timeout(this.visualDelay);
       this.loading = false;

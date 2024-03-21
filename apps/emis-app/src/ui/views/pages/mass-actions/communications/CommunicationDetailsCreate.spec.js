@@ -1,5 +1,5 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SMS } from '@libs/shared-lib/constants/validations';
-import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/event/event.mock';
 import {
   createLocalVue,
   shallowMount,
@@ -12,7 +12,7 @@ import { MassActionCommunicationMethod } from '@libs/entities-lib/mass-action';
 import Component from './CommunicationDetailsCreate.vue';
 
 const formCopy = {
-  event: mockEvent(),
+  event: mockEventSummary(),
   messageSubject: { translation: { en: 'en', fr: 'fr' } },
   emailMessage: { translation: { en: 'en', fr: 'fr' } },
   smsMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -29,7 +29,7 @@ describe('CommunicationDetailsCreate.vue', () => {
       localVue,
       propsData: {
         form: {
-          event: mockEvent(),
+          event: mockEventSummary(),
           method,
           messageSubject: { translation: { en: 'en', fr: 'fr' } },
           emailMessage: { translation: { en: 'en', fr: 'fr' } },
@@ -122,7 +122,7 @@ describe('CommunicationDetailsCreate.vue', () => {
 
     describe('onSetEvent', () => {
       it('should set the event and reset other fields', async () => {
-        await wrapper.vm.onSetEvent(mockEvent());
+        await wrapper.vm.onSetEvent(mockEventSummary());
         expect(wrapper.vm.formCopy).toEqual({ ...formCopy });
       });
     });

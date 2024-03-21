@@ -12,7 +12,7 @@ import {
   mockOther,
 } from '@libs/entities-lib/src/household-create';
 
-import { mockShelterLocations } from '@libs/entities-lib/src/registration-event';
+import { mockShelterLocations } from '@libs/entities-lib/src/event';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 

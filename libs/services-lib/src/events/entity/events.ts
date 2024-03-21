@@ -9,10 +9,10 @@ import {
   IEventExceptionalAuthenticationType,
   IEventGenericLocation,
   IEventLocation,
-  IEventMainInfo,
+  IEventSummary,
   IRegistrationAssessment,
 } from '@libs/entities-lib/event';
-import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -145,22 +145,23 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     return this.http.delete(`${this.baseUrl}/${eventId}/registration-assessment/${registrationId}`);
   }
 
-  // events that a user has access to
-  async searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${CONTROLLER}`, { params, isOData: true });
+  async search(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<IEventEntity, null>> {
+    return this.http.get(`${this.apiUrlSuffix}/search/eventsV2`, { params, isODataSql: true });
   }
 
-  async searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventMainInfo>> {
+  // events that a user has access to
+  async searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSummary>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/event-summaries`, { params: this.filterForMyEvents(params), isODataSql: true });
+  }
+
+  async searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventSummary>> {
     return helpers.callSearchInInBatches({
-      searchInFilter: "search.in(Entity/Id, '{ids}')",
+      searchInFilter: 'Id in({ids})',
       service: this,
       ids,
       api: 'searchMyEvents',
-    }) as Promise<IAzureSearchResult<IEventMainInfo>>;
-  }
-
-  async searchMyRegistrationEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/events-open-for-registration`, { params, isOData: true });
+      otherApiParameters: [null, false, true],
+    }) as Promise<IAzureSearchResult<IEventSummary>>;
   }
 
   async toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity> {
@@ -219,5 +220,17 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
         specifiedOther: agreementInfo.agreementType.specifiedOther || null,
       },
     };
+  }
+
+  private filterForMyEvents(params: IAzureSearchParams, forCombinedEntity = false): IAzureSearchParams {
+    const newParams = { ...params };
+    const prefix = forCombinedEntity ? 'Entity/' : '';
+    newParams.filter = newParams.filter || {};
+    if (typeof (newParams.filter) === 'string') {
+      newParams.filter = `${newParams.filter} and ${prefix}HasAccess eq true`;
+    } else {
+      newParams.filter[`${prefix}HasAccess`] = true;
+    }
+    return newParams;
   }
 }

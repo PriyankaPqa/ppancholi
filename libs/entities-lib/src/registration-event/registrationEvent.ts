@@ -1,24 +1,20 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { IRegistrationAssessment } from '../event';
+import { IEventSummary, IRegistrationAssessment, IEventResponseDetails, IEventGenericLocation, EEventStatus } from '../event';
 import utils from '../utils';
-import { IShelterLocationData } from '../household-create';
-import {
-  IEvent, IEventData, IEventGenericLocation, IEventSchedule, IResponseDetails,
-} from './registrationEvent.types';
 
-export class RegistrationEvent implements IEvent {
+export class RegistrationEvent implements IEventSummary {
   id: string;
 
   name: IMultilingual;
 
   registrationLink: IMultilingual;
 
-  responseDetails: IResponseDetails;
+  responseDetails: IEventResponseDetails;
 
   tenantId: uuid;
 
-  shelterLocations: IShelterLocationData[];
+  shelterLocations: IEventGenericLocation[];
 
   registrationLocations: IEventGenericLocation[];
 
@@ -26,11 +22,11 @@ export class RegistrationEvent implements IEvent {
 
   selfRegistrationEnabled: boolean;
 
-  schedule: IEventSchedule;
+  schedule: { status: EEventStatus; openDate?: Date | string; };
 
   consentStatementId?: uuid;
 
-  constructor(data?: IEventData) {
+  constructor(data?: IEventSummary) {
     if (data) {
       this.id = data.id;
       this.responseDetails = _cloneDeep(data.responseDetails);

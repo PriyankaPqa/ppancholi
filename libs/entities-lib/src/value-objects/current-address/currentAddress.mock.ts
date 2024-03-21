@@ -1,10 +1,11 @@
 import deepmerge from 'deepmerge';
-import { ECanadaProvinces, EOptionItemStatus } from '@libs/shared-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import {
   ECurrentAddressTypes, ICurrentAddress, ICurrentAddressData, ICurrentAddressCreateRequest,
 } from './currentAddress.types';
 import { CurrentAddress } from './currentAddress';
 import { mockAddress, mockAddressData } from '../address/address.mock';
+import { EEventLocationStatus } from '../../event';
 
 export const mockCampgroundData = (): ICurrentAddressData => ({
   addressType: ECurrentAddressTypes.Campground,
@@ -68,7 +69,7 @@ export const mockShelterData = (): ICurrentAddressData => ({
         fr: 'shelter fr',
       },
     },
-    status: EOptionItemStatus.Active,
+    status: EEventLocationStatus.Active,
   },
 });
 

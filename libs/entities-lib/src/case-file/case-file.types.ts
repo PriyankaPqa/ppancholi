@@ -1,6 +1,6 @@
 import { IMultilingual, IListOption, IIdMultilingualName, IdentityAuthenticationStatus, IdentityAuthenticationMethod, Tier2State } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
-import { IEventData } from '../registration-event';
+import { IEventSummary } from '../event';
 
 /**
  * Enums
@@ -251,7 +251,7 @@ export interface ITier2Response {
 
 export interface ITier2Details {
   caseFileId: uuid;
-  event: IEventData;
+  event: IEventSummary;
   canCompleteTier2: boolean;
   tier2response: ITier2Response;
   registrationNumber: string;

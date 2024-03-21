@@ -1,6 +1,6 @@
 import Vuetify from 'vuetify';
 import { mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { mockEventMainInfo } from '@libs/entities-lib/event';
+import { mockEventSummary } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockProvider } from '@/services/provider';
@@ -16,11 +16,11 @@ const mockCaseFiles = [
   mockCaseFileEntity({ id: '2', eventId: '22' }),
 ];
 const mockEvents = [
-  mockEventMainInfo({
+  mockEventSummary({
     id: mockCaseFiles[0].eventId,
     name: 'n-1',
   }),
-  mockEventMainInfo({
+  mockEventSummary({
     id: mockCaseFiles[1].eventId,
     name: 'n-2',
   }),
@@ -64,8 +64,8 @@ describe('PreviousEventsTemplate.vue', () => {
     describe('eventNames', () => {
       it('return the expected event names', () => {
         wrapper.setData({ events: mockEvents });
-        expect(wrapper.vm.eventNames[mockCaseFiles[0].eventId]).toEqual(mockEvents[0].entity.name);
-        expect(wrapper.vm.eventNames[mockCaseFiles[1].eventId]).toEqual(mockEvents[1].entity.name);
+        expect(wrapper.vm.eventNames[mockCaseFiles[0].eventId]).toEqual(mockEvents[0].name);
+        expect(wrapper.vm.eventNames[mockCaseFiles[1].eventId]).toEqual(mockEvents[1].name);
       });
     });
   });

@@ -1,7 +1,6 @@
 import eventsFilter from '@/ui/mixins/eventsFilter';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockSearchEventsData } from '@libs/entities-lib/registration-event';
-import { EEventStatus } from '@libs/entities-lib/event';
+import { mockSearchEventEntity } from '@libs/entities-lib/event';
 import { mockProvider } from '@/services/provider';
 
 const Component = {
@@ -24,21 +23,20 @@ describe('eventsFilter', () => {
       it('should fetch events corresponding to the query', async () => {
         await wrapper.vm.fetchEventsFilter('test', 10);
         expect(wrapper.vm.$services.events.search).toHaveBeenCalledWith({
-          search: '((/.*test.*/ OR "\\"test\\""))',
-          searchFields: 'Entity/Name/Translation/en',
           filter: {
+            and: [{ 'Entity/Name/Translation/en': { contains: 'test' } }],
             or: [
               {
                 Entity: {
                   Schedule: {
-                    Status: EEventStatus.Open,
+                    Status: 'Open',
                   },
                 },
               },
               {
                 Entity: {
                   Schedule: {
-                    Status: EEventStatus.OnHold,
+                    Status: 'OnHold',
                   },
                 },
               },
@@ -51,9 +49,9 @@ describe('eventsFilter', () => {
         });
       });
       it('should assign eventsFilter with results ', async () => {
-        wrapper.vm.$services.events.search = jest.fn(() => mockSearchEventsData());
+        wrapper.vm.$services.events.search = jest.fn(() => mockSearchEventEntity());
         await wrapper.vm.fetchEventsFilter();
-        expect(wrapper.vm.eventsFilter).toEqual([{ text: 'Gatineau Floods 2021', value: '7c076603-580a-4400-bef2-5ddececb0931' }]);
+        expect(wrapper.vm.eventsFilter).toEqual([{ text: 'Gatineau Floods 2021', value: '1' }, { text: 'Vegas Earthquake 2021', value: '2' }]);
       });
       it('should change isInitialLoad to false the first time the method is called', async () => {
         await wrapper.vm.fetchEventsFilter();
@@ -63,14 +61,13 @@ describe('eventsFilter', () => {
         await wrapper.setData({ openEventsOnly: true });
         await wrapper.vm.fetchEventsFilter('test', 10);
         expect(wrapper.vm.$services.events.search).toHaveBeenCalledWith({
-          search: '((/.*test.*/ OR "\\"test\\""))',
-          searchFields: 'Entity/Name/Translation/en',
           filter: {
+            and: [{ 'Entity/Name/Translation/en': { contains: 'test' } }],
             or: [
               {
                 Entity: {
                   Schedule: {
-                    Status: EEventStatus.Open,
+                    Status: 'Open',
                   },
                 },
               }, null,
@@ -86,17 +83,18 @@ describe('eventsFilter', () => {
 
     describe('fetchEventsByIds', () => {
       it('should fetch events corresponding to the query', async () => {
+        jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds(['id']);
         expect(wrapper.vm.$services.events.search).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['id'] } } },
+          filter: 'Entity/Id in(id)',
           top: 999,
         });
       });
 
       it('should assign eventsFilter with results ', async () => {
-        wrapper.vm.$services.events.search = jest.fn(() => mockSearchEventsData());
+        wrapper.vm.$services.events.search = jest.fn(() => mockSearchEventEntity());
         await wrapper.vm.fetchEventsFilter();
-        expect(wrapper.vm.eventsFilter).toEqual([{ text: 'Gatineau Floods 2021', value: '7c076603-580a-4400-bef2-5ddececb0931' }]);
+        expect(wrapper.vm.eventsFilter).toEqual([{ text: 'Gatineau Floods 2021', value: '1' }, { text: 'Vegas Earthquake 2021', value: '2' }]);
       });
     });
 
@@ -127,7 +125,7 @@ describe('eventsFilter', () => {
         await wrapper.vm.onLoadFilter(filterFormData);
         expect(wrapper.vm.eventsFilter).toEqual([
           ...[{ text: 'event', value: '1' }],
-          ...[{ text: 'Gatineau Floods 2021', value: '7c076603-580a-4400-bef2-5ddececb0931' }],
+          ...[{ text: 'Gatineau Floods 2021', value: '1' }, { text: 'Vegas Earthquake 2021', value: '2' }],
         ]);
       });
 

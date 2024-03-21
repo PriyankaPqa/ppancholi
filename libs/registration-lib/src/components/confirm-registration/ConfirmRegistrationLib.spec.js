@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
-import { mockEvent } from '@libs/entities-lib/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/event';
 import { mockServerError } from '@libs/services-lib/src/http-client';
 import Component from './ConfirmRegistrationLib.vue';
 
@@ -290,7 +290,7 @@ describe('ConfirmRegistrationLib.vue', () => {
 
     describe('event', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.event).toEqual(mockEvent());
+        expect(wrapper.vm.event).toEqual(mockEventSummary());
       });
     });
 
@@ -355,7 +355,7 @@ describe('ConfirmRegistrationLib.vue', () => {
 
     describe('phoneAssistance', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.phoneAssistance).toEqual(mockEvent().responseDetails.assistanceNumber);
+        expect(wrapper.vm.phoneAssistance).toEqual(mockEventSummary().responseDetails.assistanceNumber);
       });
     });
 

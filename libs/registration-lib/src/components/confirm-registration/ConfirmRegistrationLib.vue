@@ -110,13 +110,13 @@
 import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
 import { IHouseholdCreate, IHouseholdCreateData } from '@libs/entities-lib/src/household-create';
-import { IEvent } from '@libs/entities-lib/src/registration-event';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IServerError } from '@libs/shared-lib/src/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
   IdentityAuthenticationStatus,
 } from '@libs/shared-lib/types';
+import { IEventSummary } from '@libs/entities-lib/src/event';
 import ConfirmationError from './ConfirmationError.vue';
 import { IRegistrationMenuItem } from '../../types';
 
@@ -158,7 +158,7 @@ export default Vue.extend({
       return this.$registrationStore.registrationErrors;
     },
 
-    event(): IEvent {
+    event(): IEventSummary {
       return this.$registrationStore.getEvent();
     },
 

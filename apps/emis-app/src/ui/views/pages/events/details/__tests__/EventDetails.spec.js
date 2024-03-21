@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockEventEntities } from '@libs/entities-lib/event';
+import { mockEventEntities, mockEventSummary } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
@@ -16,11 +16,11 @@ const localVue = createLocalVue();
 const services = mockProvider();
 
 const mockEvent = mockEventEntities()[0];
-const mockRelatedEvent = mockEventEntities()[1];
+const mockRelatedEvent = mockEventSummary();
 
 const { pinia, eventStore } = useMockEventStore();
 
-services.publicApi.searchEventsById = jest.fn(() => ({ value: [{ entity: mockRelatedEvent }] }));
+services.publicApi.searchEventsById = jest.fn(() => ({ value: [mockRelatedEvent] }));
 
 describe('EventDetails.vue', () => {
   let wrapper;
@@ -179,7 +179,7 @@ describe('EventDetails.vue', () => {
         });
 
         it('renders', () => {
-          expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith([mockRelatedEvent.id]);
+          expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith(mockEvent.relatedEventIds);
           const element = wrapper.findDataTest(`related-event-${mockRelatedEvent.id}`);
           expect(element.exists()).toBeTruthy();
         });

@@ -25,12 +25,13 @@
 import Vue from 'vue';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
-import { RegistrationEvent, IEvent } from '@libs/entities-lib/registration-event';
+import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
+import { IEventSummary } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'SplitHouseholdEvent',
@@ -43,7 +44,7 @@ export default Vue.extend({
   data() {
     return {
       i18n: this.$i18n,
-      event: null as IEvent,
+      event: null as IEventSummary,
     };
   },
   computed: {
@@ -63,7 +64,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async setEvent(event: IEvent) {
+    async setEvent(event: IEventSummary) {
       if (event.registrationAssessments?.length) {
         const assessment = await this.$services.assessmentForms.get({ id: event.registrationAssessments[0].assessmentId });
         useRegistrationStore().setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });

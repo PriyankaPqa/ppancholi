@@ -6,7 +6,7 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '@libs/entities-lib/src/household-create';
-import { mockEvent } from '@libs/entities-lib/src/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/src/event';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
@@ -749,7 +749,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('setEmailValidator', () => {
       it('should set isValid', () => {
-        wrapper.vm.$registrationStore.getEvent = jest.fn(() => mockEvent());
+        wrapper.vm.$registrationStore.getEvent = jest.fn(() => mockEventSummary());
         const result = {
           emailIsValid: false,
           errors: [{ code: 'errorCode' }],

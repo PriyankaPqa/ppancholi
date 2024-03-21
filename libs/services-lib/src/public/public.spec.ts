@@ -13,14 +13,12 @@ describe('>>> Public Service', () => {
     top?: number
   };
 
-  test('searchEvents is linked to the correct URL', async () => {
-    const params: SearchEventsParams = {
-      language: 'en',
-      registrationLink: 'link',
-    };
-
-    await service.fetchRegistrationEvent(params.language, params.registrationLink);
-    expect(http.get).toHaveBeenCalledWith('/event/public/search/events', { params, containsEncodedURL: true });
+  test('fetchRegistrationEvent is linked to the correct URL', async () => {
+    await service.fetchRegistrationEvent('en', 'some link');
+    expect(http.get).toHaveBeenCalledWith(
+      '/event/search/event-summaries',
+      { params: { filter: { 'RegistrationLink/Translation/en': 'some link' } }, isODataSql: true, containsEncodedURL: true },
+    );
   });
 
   test('searchEvents is linked to the correct URL', async () => {
@@ -29,7 +27,7 @@ describe('>>> Public Service', () => {
     };
 
     await service.searchEvents(params);
-    expect(http.get).toHaveBeenCalledWith('/event/public/search/events', { params, containsEncodedURL: true, isOData: true });
+    expect(http.get).toHaveBeenCalledWith('/event/search/event-summaries', { params, containsEncodedURL: true, isODataSql: true });
   });
 
   test('searchEventsById calls the helper callSearchInInBatches with the right params and return the right object', async () => {
@@ -37,7 +35,7 @@ describe('>>> Public Service', () => {
     helpers.callSearchInInBatches = jest.fn();
     await service.searchEventsById(ids);
     expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
-      searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
+      searchInFilter: 'Id in({ids})',
       service,
       ids,
       api: 'searchEvents',

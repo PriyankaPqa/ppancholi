@@ -6,7 +6,7 @@ import { mockProvider } from '@/services/provider';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
-import { EEventLocationStatus, mockEventMainInfo } from '@libs/entities-lib/event';
+import { EEventLocationStatus, mockEventSummary } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
 import Component from '../case-file-impacted-individuals/ImpactedIndividuals.vue';
 
@@ -16,13 +16,13 @@ const services = mockProvider();
 const householdCreate = { ...mockHouseholdCreate({ id: 'mock-hh-id' }), additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })] };
 const householdEntity = mockHouseholdEntity({ id: 'mock-hh-id' });
 const events = [
-  mockEventMainInfo({
+  mockEventSummary({
     id: '1',
     shelterLocations: [{ id: 'loc-1', status: EEventLocationStatus.Active }],
     registrationLocations: [{ id: ' loc-id-1-active', status: EEventLocationStatus.Active }, { id: ' loc-id-2-inactive', status: EEventLocationStatus.Inactive }],
     name: { translation: { en: 'event-name-1' } },
   }),
-  mockEventMainInfo({
+  mockEventSummary({
     id: '2',
     shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
     registrationLocations: [{ id: ' loc-id-3-active', status: EEventLocationStatus.Active }, { id: ' loc-id-4-inactive', status: EEventLocationStatus.Inactive }],

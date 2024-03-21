@@ -14,13 +14,13 @@
 import Vue from 'vue';
 import { RcPageLoading, RcRouterViewTransition } from '@libs/component-lib/components';
 import _isEmpty from 'lodash/isEmpty';
-import { EEventStatus, IEvent } from '@libs/entities-lib/registration-event';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { EEventStatus } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -53,7 +53,7 @@ export default Vue.extend({
       const tenantId = await this.$services.publicApi.getTenantByRegistrationDomain(currentdomain);
 
       httpClient.setHeadersTenant(tenantId);
-      const event: IEvent = await useRegistrationStore().fetchEvent(lang, registrationLink);
+      const event = await useRegistrationStore().fetchEvent(lang, registrationLink);
 
       this.$appInsights.setBasicContext({ tenantId });
       this.$appInsights.setBasicContext({ event });
@@ -75,7 +75,7 @@ export default Vue.extend({
       } else {
         useRegistrationStore().setAssessmentToComplete(null);
       }
-      httpClient.setHeadersTenant(event.tenantId);
+      httpClient.setHeadersTenant(tenantId);
       return true;
     },
 

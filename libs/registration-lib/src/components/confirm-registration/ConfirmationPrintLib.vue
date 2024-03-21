@@ -203,14 +203,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IEvent } from '@libs/entities-lib/src/registration-event';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { IEventSummary } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'ConfirmationPrint',
   props: {
     event: {
-      type: Object as () => IEvent,
+      type: Object as () => IEventSummary,
       required: true,
     },
     registrationNumber: {

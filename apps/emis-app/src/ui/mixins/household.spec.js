@@ -152,7 +152,7 @@ describe('household', () => {
 
     describe('fetchShelterLocations', () => {
       it('gets the shelterLocations from my events', async () => {
-        const events = [{ entity: { shelterLocations: [{ id: 'sl-1' }] } }, { entity: { shelterLocations: [{ id: 'sl-2' }] } }];
+        const events = [{ shelterLocations: [{ id: 'sl-1' }] }, { shelterLocations: [{ id: 'sl-2' }] }];
         await wrapper.setData({ myEvents: events });
         const result = await wrapper.vm.fetchShelterLocations();
         expect(result).toEqual([{ id: 'sl-1' }, { id: 'sl-2' }]);
@@ -160,7 +160,7 @@ describe('household', () => {
 
       it('calls fetchCaseFiles and fetchMyEvents the shelterLocations from my events if an argument is passed and there are no myEvents in the state', async () => {
         const caseFiles = [{ eventId: 'id-1', caseFileStatus: CaseFileStatus.Open }, { eventId: 'id-2', caseFileStatus: CaseFileStatus.Closed }];
-        const events = [{ entity: { shelterLocations: [{ id: 'sl-1' }] } }, { entity: { shelterLocations: [{ id: 'sl-2' }] } }];
+        const events = [{ shelterLocations: [{ id: 'sl-1' }] }, { shelterLocations: [{ id: 'sl-2' }] }];
         await wrapper.setData({ myEvents: null });
         wrapper.vm.fetchCaseFiles = jest.fn(() => caseFiles);
         wrapper.vm.fetchMyEvents = jest.fn(() => events);

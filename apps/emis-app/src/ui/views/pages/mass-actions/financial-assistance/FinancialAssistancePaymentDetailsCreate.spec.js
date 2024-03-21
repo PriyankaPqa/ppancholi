@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/event/event.mock';
 import _sortBy from 'lodash/sortBy';
 import {
   createLocalVue,
@@ -17,7 +17,7 @@ import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/fi
 import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 
 const formCopy = {
-  event: mockEvent(),
+  event: mockEventSummary(),
   table: mockFinancialAssistanceTableEntity(),
   item: mockOptionItem({ id: '9b275d2f-00a1-4345-94fe-c37b84beb400' }),
   subItem: mockOptionSubItem(),
@@ -248,8 +248,8 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
 
     describe('onSetEvent', () => {
       it('should set the event and reset other fields', () => {
-        wrapper.vm.onSetEvent(mockEvent());
-        expect(wrapper.vm.formCopy).toEqual({ ...formCopyNull, event: mockEvent() });
+        wrapper.vm.onSetEvent(mockEventSummary());
+        expect(wrapper.vm.formCopy).toEqual({ ...formCopyNull, event: mockEventSummary() });
       });
     });
 

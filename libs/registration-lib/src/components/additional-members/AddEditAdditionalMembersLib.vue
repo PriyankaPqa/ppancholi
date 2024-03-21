@@ -48,14 +48,14 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { IdentitySet, IIdentitySet, MemberDuplicateStatus } from '@libs/entities-lib/value-objects/identity-set';
 import helpers from '@libs/entities-lib/helpers';
 import {
-  EOptionItemStatus,
   IOptionItemData,
   VForm,
 } from '@libs/shared-lib/types';
-import { ICurrentAddress, IShelterLocationData } from '@libs/entities-lib/value-objects/current-address';
+import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import { IMember } from '@libs/entities-lib/value-objects/member';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 import { localStorageKeys } from '../../constants/localStorage';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
@@ -84,7 +84,7 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     shelterLocationsList: {
-      type: Array as () => IShelterLocationData[],
+      type: Array as () => IEventGenericLocation[],
       default: null,
     },
 
@@ -185,9 +185,9 @@ const vueComponent: VueConstructor = Vue.extend({
       return this.getCurrentAddressTypeItems(this.i18n, noFixedHome, !!this.shelterLocations?.length, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
     },
 
-    shelterLocations(): IShelterLocationData[] {
+    shelterLocations(): IEventGenericLocation[] {
       const locations = this.shelterLocationsList || this.$registrationStore.getEvent()?.shelterLocations || [];
-      return locations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active || s.id === this.member?.currentAddress?.shelterLocation?.id);
+      return locations.filter((s) => s.status === EEventLocationStatus.Active || s.id === this.member?.currentAddress?.shelterLocation?.id);
     },
 
     submitDisabled():boolean {

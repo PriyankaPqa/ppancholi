@@ -18,10 +18,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcRegistrationLandingPage } from '@libs/component-lib/components';
-import { IEvent } from '@libs/entities-lib/registration-event';
 import routes from '@/constants/routes';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 
 export default Vue.extend({
   name: 'LandingPage',
@@ -40,7 +40,7 @@ export default Vue.extend({
     phoneNumber(): string {
       return this.event?.responseDetails?.assistanceNumber;
     },
-    event(): IEvent {
+    event(): RegistrationEvent {
       return useRegistrationStore().getEvent();
     },
   },

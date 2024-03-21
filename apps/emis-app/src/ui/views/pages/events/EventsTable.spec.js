@@ -195,10 +195,10 @@ describe('EventsTable.vue', () => {
 
         const expectedColumns = {
           name: 'Entity/Name/Translation/en',
-          responseLevel: 'Metadata/ResponseLevelName/Translation/en',
+          responseLevel: 'Metadata/ResponseLevel/Translation/en',
           openDate: 'Entity/Schedule/OpenDate',
           daysOpen: 'DaysOpen',
-          eventStatus: 'Metadata/ScheduleEventStatusName/Translation/en',
+          eventStatus: 'Metadata/EventStatus/Translation/en',
         };
 
         expect(wrapper.vm.customColumns).toEqual(expectedColumns);
@@ -470,12 +470,11 @@ describe('EventsTable.vue', () => {
     describe('fetchData', () => {
       it('should call combinedEventStore search with proper parameters', async () => {
         const params = {
-          search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
+          filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
         await wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.combinedEventStore.search).toHaveBeenCalledWith({
-          search: params.search,
           filter: params.filter,
           top: params.top,
           skip: params.skip,
@@ -483,42 +482,7 @@ describe('EventsTable.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        });
-      });
-    });
-
-    describe('getFilterParams', () => {
-      it('should get the filter with correct params', () => {
-        wrapper = mount(Component, {
-          localVue,
-          propsData: {
-            isDashboard: false,
-          },
-          computed: {
-            customColumns() {
-              return {
-                name: 'Entity/Name/Translation/En',
-                responseLevel: 'Metadata/ResponseLevelName/Translation/En',
-                openDate: 'Entity/Schedule/OpenDate',
-                daysOpen: 'DaysOpen',
-                eventStatus: 'Metadata/ScheduleEventStatusName/Translation/En',
-              };
-            },
-          },
-        });
-
-        wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
-        wrapper.vm.itemsCount = mockEvents().length;
-
-        const params = { search: 'query' };
-        const filter = {
-          or: [
-            {
-              'Entity/Name/Translation/En': { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
-            },
-          ],
-        };
-        expect(wrapper.vm.getFilterParams(params)).toEqual(filter);
+        }, null, false, true);
       });
     });
 

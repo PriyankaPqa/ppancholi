@@ -12,7 +12,7 @@ import { ISignalRService, ISignalRServiceMock } from '@libs/services-lib/signal-
 import { sub } from 'date-fns';
 import { IEntity } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
-import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
+import { useEventStore } from '@/pinia/event/event';
 import { useUserStore } from '@/pinia/user/user';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
@@ -310,12 +310,6 @@ export class SignalR implements ISignalR {
       action: useEventStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
-      domain: 'event',
-      entityName: 'EventMetadata',
-      action: useEventMetadataStore().setItemFromOutsideNotification,
-    });
-
     this.listenForOptionItemChanges({
       domain: 'event',
       optionItemName: 'AgreementType',
@@ -338,7 +332,6 @@ export class SignalR implements ISignalR {
     });
 
     this.watchedPiniaStores.push(useEventStore());
-    this.watchedPiniaStores.push(useEventMetadataStore());
   }
 
   private listenForTeamModuleChanges() {

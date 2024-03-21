@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/registration-event';
+import { mockEventSummary } from '@libs/entities-lib/event';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
@@ -51,13 +51,13 @@ describe('LandingPage.vue', () => {
   describe('Computed', () => {
     describe('phoneNumber', () => {
       it('should return the phone number of the event', () => {
-        expect(wrapper.vm.phoneNumber).toEqual(mockEvent().responseDetails.assistanceNumber);
+        expect(wrapper.vm.phoneNumber).toEqual(mockEventSummary().responseDetails.assistanceNumber);
       });
     });
 
     describe('event', () => {
       it('should return the event from the storage', () => {
-        expect(wrapper.vm.event).toEqual(mockEvent());
+        expect(wrapper.vm.event).toEqual(mockEventSummary());
       });
     });
   });

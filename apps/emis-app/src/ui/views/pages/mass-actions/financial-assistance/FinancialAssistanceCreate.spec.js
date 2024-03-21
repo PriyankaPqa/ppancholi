@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/event/event.mock';
 import {
   createLocalVue,
   mount,
@@ -19,7 +19,7 @@ const localVue = createLocalVue();
 jest.mock('date-fns', () => ({ format: jest.fn() }));
 
 // eslint-disable-next-line max-len,vue/max-len
-const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"and":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}}';
+const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}';
 
 const { pinia, massActionStore } = useMockMassActionStore();
 
@@ -128,7 +128,7 @@ describe('FinancialAssistanceCreate.vue', () => {
     describe('onUpdate', () => {
       it('should update the form', () => {
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           table: mockFinancialAssistanceTableEntity(),
           item: mockOptionItem(),
           subItem: mockOptionSubItem(),
@@ -148,7 +148,7 @@ describe('FinancialAssistanceCreate.vue', () => {
         wrapper.vm.$refs.base.upload = jest.fn();
 
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           table: mockFinancialAssistanceTableEntity(),
           item: mockOptionItem(),
           subItem: mockOptionSubItem(),
@@ -171,7 +171,7 @@ describe('FinancialAssistanceCreate.vue', () => {
 
       it('should call upload method of the child', () => {
         const formCopy = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           table: mockFinancialAssistanceTableEntity(),
           item: mockOptionItem(),
           subItem: mockOptionSubItem(),
@@ -203,7 +203,7 @@ describe('FinancialAssistanceCreate.vue', () => {
 
         await wrapper.setData({
           form: {
-            event: mockEvent(),
+            event: mockEventSummary(),
             table: mockFinancialAssistanceTableEntity(),
             item: mockOptionItem(),
             subItem: mockOptionSubItem(),
@@ -238,7 +238,7 @@ describe('FinancialAssistanceCreate.vue', () => {
           data() {
             return {
               form: {
-                event: mockEvent(),
+                event: mockEventSummary(),
                 table: mockFinancialAssistanceTableEntity(),
                 item: mockOptionItem(),
                 subItem: mockOptionSubItem(),

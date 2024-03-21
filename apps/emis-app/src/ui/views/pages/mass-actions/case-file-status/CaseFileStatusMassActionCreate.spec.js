@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockEventSummary } from '@libs/entities-lib/event/event.mock';
 import {
   createLocalVue,
   mount,
@@ -14,7 +14,7 @@ import Component from './CaseFileStatusMassActionCreate.vue';
 const localVue = createLocalVue();
 
 // eslint-disable-next-line max-len,vue/max-len
-const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"and":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}}';
+const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}';
 
 const { pinia, massActionStore } = useMockMassActionStore();
 
@@ -118,7 +118,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
         wrapper.vm.$refs.base.upload = jest.fn();
 
         const form = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           reason: { optionItemId: 'option-item-id', specifiedOther: 'other' },
           rationale: 'rationale',
           status: 1,
@@ -135,7 +135,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
 
       it('should call upload method of the child', () => {
         const form = {
-          event: mockEvent(),
+          event: mockEventSummary(),
           reason: { mockOptionItemId: 'option-item-id', specifiedOther: 'other' },
           rationale: 'rationale',
           status: 1,
@@ -161,7 +161,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
         const azureSearchParams = JSON.parse(filtersString);
         await wrapper.setData({
           form: {
-            event: mockEvent(),
+            event: mockEventSummary(),
             reason: { optionItemId: 'option-item-id', specifiedOther: 'other' },
             rationale: 'rationale',
             status: 1,
@@ -192,7 +192,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
           data() {
             return {
               form: {
-                event: mockEvent(),
+                event: mockEventSummary(),
                 reason: { mockOptionItemId: 'option-item-id', specifiedOther: 'other' },
                 rationale: 'rationale',
                 status: 1,

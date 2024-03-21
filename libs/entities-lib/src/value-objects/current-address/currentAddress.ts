@@ -2,7 +2,8 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { isValidCanadianPostalCode, maxLengthCheck, required } from '../../classValidation';
 import { Address, IAddress } from '../address';
-import { ECurrentAddressTypes, ICurrentAddress, ICurrentAddressData, IShelterLocationData } from './currentAddress.types';
+import { ECurrentAddressTypes, ICurrentAddress, ICurrentAddressData } from './currentAddress.types';
+import { IEventGenericLocation } from '../../event';
 
 export class CurrentAddress implements ICurrentAddress {
   addressType: ECurrentAddressTypes;
@@ -13,7 +14,7 @@ export class CurrentAddress implements ICurrentAddress {
 
   address?: IAddress;
 
-  shelterLocation?: IShelterLocationData;
+  shelterLocation?: IEventGenericLocation;
 
   crcProvided: boolean;
 
