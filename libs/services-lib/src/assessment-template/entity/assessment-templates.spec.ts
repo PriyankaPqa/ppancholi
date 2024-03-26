@@ -12,7 +12,7 @@ describe('>>> AssessmentTemplates Service', () => {
     service = new AssessmentTemplatesService(http as never);
   });
 
-  describe('search d', () => {
+  describe('search', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
