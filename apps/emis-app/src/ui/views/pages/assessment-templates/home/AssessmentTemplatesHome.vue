@@ -26,6 +26,7 @@
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filters"
+          :sql-mode="isFormMode ? false : true"
           @open="fetchProgramsFilter()"
           @update:appliedFilter="onApplyFilter" />
       </template>
@@ -110,7 +111,7 @@ import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable, RcAddButtonWithMenu,
 } from '@libs/component-lib/components';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
@@ -120,7 +121,6 @@ import {
   IAssessmentFormEntity,
   IAssessmentFormMetadata,
   IAssessmentTemplateEntity,
-  IAssessmentTemplateMetadata,
   PublishStatus,
   IdParams,
 } from '@libs/entities-lib/assessment-template';
@@ -132,7 +132,7 @@ import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
-import { useAssessmentTemplateStore, useAssessmentTemplateMetadataStore } from '@/pinia/assessment-template/assessment-template';
+import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 import { useProgramStore } from '@/pinia/program/program';
 import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 import CopyAssessment from './CopyAssessment.vue';
@@ -170,10 +170,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       PublishStatus,
       showCopyAssessmentDialog: false,
       combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata, IdParams>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
-      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, IAssessmentTemplateMetadata, IdParams>(
-        useAssessmentTemplateStore(),
-        useAssessmentTemplateMetadataStore(),
-      ),
+      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, null, IdParams>(useAssessmentTemplateStore()),
+      sqlSearchMode: !this.id,
     };
   },
 
@@ -226,7 +224,7 @@ export default mixins(TablePaginationSearchMixin).extend({
           value: this.customColumns.edit,
           width: '200px',
         },
-      ];
+      ] as Array<DataTableHeader>;
 
       if (this.isFormMode) {
         columns.splice(0, 0, {
@@ -391,7 +389,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true);
+      }, null, true, !this.isFormMode);
       return res;
     },
 
