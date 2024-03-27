@@ -1421,6 +1421,7 @@
     "errors.case-file-has-an-ineligible-assessment-outcome": "Case file has an ineligible assessment outcome",
     "errors.case-file-id-is-not-valid": "Case file id is not valid",
     "errors.case-file-must-be-open": "Case file must be open",
+    "errors.case-file-must-be-open-or-inactive": "Case file must be open or inactive",
     "errors.case-file-status-is-open": "Case file status is open",
     "errors.case-note-description-max-length-invalid": "The case note description length must be {MaxLength} or less",
     "errors.case-note-subject-max-length-invalid": "The case note subject length must be {MaxLength} or less",
