@@ -194,6 +194,68 @@ describe('CaseFileActivityDuplicateUpdated.vue', () => {
         expect(wrapper.vm.isFlaggedByTheSystem).toBeFalsy();
       });
     });
+
+    describe('bodyText', () => {
+      it('returns the rationale if the user is not system', async () => {
+        await doMount();
+        expect(wrapper.vm.bodyText).toEqual(wrapper.vm.item.details.rationale);
+      });
+
+      it('returns the right text when user is sytem and status is Potential', async () => {
+        await doMount({ computed: {
+          isFlaggedByTheSystem() {
+            return true;
+          },
+        } });
+
+        expect('householdDetails.manageDuplicates.flaggedByTheSystem');
+      });
+
+      it('returns the right text when user is sytem and status is Resolved', async () => {
+        await doMount({ computed: {
+          isFlaggedByTheSystem() {
+            return true;
+          },
+          itemData() {
+            return itemData(DuplicateStatus.Resolved);
+          },
+        } });
+
+        expect('householdDetails.manageDuplicates.resolvedByTheSystem');
+      });
+
+      it('returns the right text if the rationale is Flagged by the system', async () => {
+        await doMount({ computed: {
+          isFlaggedByTheSystem() {
+            return true;
+          },
+          itemData() {
+            return { duplicateStatus: DuplicateStatus.Potential,
+              duplicateHouseholdRegistrationNumber: '123456',
+              rationale: 'Flagged by the system',
+            };
+          },
+        } });
+
+        expect('householdDetails.manageDuplicates.flaggedByTheSystem');
+      });
+
+      it('returns the right text if the rationale is Resolved by the system', async () => {
+        await doMount({ computed: {
+          isFlaggedByTheSystem() {
+            return true;
+          },
+          itemData() {
+            return { duplicateStatus: DuplicateStatus.Resolved,
+              duplicateHouseholdRegistrationNumber: '123456',
+              rationale: 'Resolved by the system',
+            };
+          },
+        } });
+
+        expect('householdDetails.manageDuplicates.resolvedByTheSystem');
+      });
+    });
   });
 
   describe('Methods', () => {

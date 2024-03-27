@@ -103,7 +103,7 @@
               {{ historyItem.duplicateStatus === DuplicateStatus.Potential
                 ? $t('householdDetails.manageDuplicates.rationale')
                 : $t('householdDetails.manageDuplicates.actionTaken') }}:
-              {{ isFlaggedByTheSystem(historyItem) ? $t('householdDetails.manageDuplicates.flaggedByTheSystem') : historyItem.rationale }}
+              {{ getRationale(historyItem) }}
             </div>
           </div>
         </div>
@@ -177,6 +177,7 @@ import CaseFileDetailsBeneficiaryPhoneNumber from '@/ui/views/pages/case-files/d
 import { UserRoles } from '@libs/entities-lib/user';
 import { format, parseISO } from 'date-fns';
 import { VSelectA11y, VDataTableA11y } from '@libs/component-lib/components';
+import { TranslateResult } from 'vue-i18n';
 import ManageDuplicatesActionDialog from './ManageDuplicatesActionDialog.vue';
 
 export default Vue.extend({
@@ -320,6 +321,19 @@ export default Vue.extend({
 
     isFlaggedByTheSystem(historyItem: IHouseholdDuplicateStatusHistory): boolean {
       return historyItem?.userInformation?.userId === system.system_user_id;
+    },
+
+    getRationale(historyItem: IHouseholdDuplicateStatusHistory): TranslateResult {
+      if (historyItem.duplicateStatus === DuplicateStatus.Potential && (this.isFlaggedByTheSystem(historyItem)
+      || historyItem.rationale === 'Flagged by the system')) {
+        return this.$t('householdDetails.manageDuplicates.flaggedByTheSystem');
+      }
+
+      if (historyItem.duplicateStatus === DuplicateStatus.Resolved && (this.isFlaggedByTheSystem(historyItem)
+      || historyItem.rationale === 'Resolved by the system')) {
+        return this.$t('householdDetails.manageDuplicates.resolvedByTheSystem');
+      }
+      return historyItem.rationale as TranslateResult;
     },
   },
 

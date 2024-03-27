@@ -2395,6 +2395,7 @@
     "householdDetails.manageDuplicates.rationale": "householdDetails.manageDuplicates.rationale",
     "householdDetails.manageDuplicates.referenceCaseFile": "householdDetails.manageDuplicates.referenceCaseFile",
     "householdDetails.manageDuplicates.referenceHousehold": "householdDetails.manageDuplicates.referenceHousehold",
+    "householdDetails.manageDuplicates.resolvedByTheSystem": "",
     "householdDetails.manageDuplicates.resolvedDuplicate": "householdDetails.manageDuplicates.resolvedDuplicate",
     "householdDetails.manageDuplicates.resolvedDuplicates": "householdDetails.manageDuplicates.resolvedDuplicates",
     "householdDetails.manageDuplicates.tab.FlagNew": "householdDetails.manageDuplicates.tab.FlagNew",

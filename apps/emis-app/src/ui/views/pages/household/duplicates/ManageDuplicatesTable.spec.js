@@ -212,6 +212,58 @@ describe('ManageDuplicatesTable.vue', () => {
         expect(result).toBeFalsy();
       });
     });
+
+    describe('getRationale', () => {
+      it('returns the rationale if the user is not system', async () => {
+        await doMount();
+        const historyItem = mockPotentialDuplicateEntity().duplicateStatusHistory;
+        expect(wrapper.vm.getRationale(historyItem)).toEqual(historyItem.rationale);
+      });
+
+      it('returns the right text if the user is not system and status is potential', async () => {
+        await doMount({ computed: {
+          isFlaggedByTheSystem() {
+            return true;
+          },
+        } });
+        const historyItem = { ...mockPotentialDuplicateEntity().duplicateStatusHistory,
+          userInformation: { userId: system.system_user_id },
+          duplicateStatus: DuplicateStatus.Potential,
+        };
+        expect(wrapper.vm.getRationale(historyItem)).toEqual('householdDetails.manageDuplicates.flaggedByTheSystem');
+      });
+
+      it('returns the right text if the user is not system and status is Resolved', async () => {
+        await doMount({ computed: {
+          isFlaggedByTheSystem() {
+            return true;
+          },
+        } });
+        const historyItem = { ...mockPotentialDuplicateEntity().duplicateStatusHistory,
+          userInformation: { userId: system.system_user_id },
+          duplicateStatus: DuplicateStatus.Resolved,
+        };
+        expect(wrapper.vm.getRationale(historyItem)).toEqual('householdDetails.manageDuplicates.resolvedByTheSystem');
+      });
+
+      it('returns the right text if the rationale is Resolved by the system', async () => {
+        await doMount();
+        const historyItem = { ...mockPotentialDuplicateEntity().duplicateStatusHistory,
+          rationale: 'Resolved by the system',
+          duplicateStatus: DuplicateStatus.Resolved,
+        };
+        expect(wrapper.vm.getRationale(historyItem)).toEqual('householdDetails.manageDuplicates.resolvedByTheSystem');
+      });
+
+      it('returns the right text if the rationale is Flagged by the system', async () => {
+        await doMount();
+        const historyItem = { ...mockPotentialDuplicateEntity().duplicateStatusHistory,
+          rationale: 'Flagged by the system',
+          duplicateStatus: DuplicateStatus.Potential,
+        };
+        expect(wrapper.vm.getRationale(historyItem)).toEqual('householdDetails.manageDuplicates.flaggedByTheSystem');
+      });
+    });
   });
 
   describe('Template', () => {

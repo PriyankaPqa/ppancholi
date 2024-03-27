@@ -21,7 +21,7 @@
           {{ itemData.duplicateStatus === DuplicateStatus.Potential
             ? $t('householdDetails.manageDuplicates.rationale')
             : $t('householdDetails.manageDuplicates.actionTakenToResolve') }}:
-          {{ isFlaggedByTheSystem ? $t('householdDetails.manageDuplicates.flaggedByTheSystem') : itemData.rationale }}
+          {{ bodyText }}
         </div>
       </div>
     </div>
@@ -35,6 +35,7 @@ import { DuplicateStatus } from '@libs/entities-lib/potential-duplicate';
 import routes from '@/constants/routes';
 import { system } from '@/constants/system';
 import { ICaseFileActivityUser } from '@libs/entities-lib/case-file';
+import { TranslateResult } from 'vue-i18n';
 
 interface PotentialDuplicateDetails {
   duplicateStatus: DuplicateStatus,
@@ -69,6 +70,20 @@ export default Vue.extend({
 
     isFlaggedByTheSystem(): boolean {
       return this.item?.user?.id === system.system_user_id;
+    },
+
+    bodyText(): TranslateResult {
+      if (this.itemData.duplicateStatus === DuplicateStatus.Potential && (this.isFlaggedByTheSystem
+       || this.itemData.rationale === 'Flagged by the system')) {
+        return this.$t('householdDetails.manageDuplicates.flaggedByTheSystem');
+      }
+
+      if (this.itemData.duplicateStatus === DuplicateStatus.Resolved && (this.isFlaggedByTheSystem
+      || this.itemData.rationale === 'Resolved by the system')) {
+        return this.$t('householdDetails.manageDuplicates.resolvedByTheSystem');
+      }
+
+      return this.itemData.rationale as TranslateResult;
     },
   },
 
