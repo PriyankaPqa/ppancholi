@@ -1,10 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
+import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
 import approvalRoles from './approvalRoles';
 
-const combinedApprovalTable = mockCombinedApprovalTable();
+const combinedApprovalTable = { entity: mockApprovalTableEntity(), metadata: {}, pinned: false };
 combinedApprovalTable.entity.groups[0].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab', 'a6ffce22-8396-43c9-bdc3-6532925af251']);
 combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab', 'a6ffce22-8396-43c9-bdc3-6532925af251']);
 

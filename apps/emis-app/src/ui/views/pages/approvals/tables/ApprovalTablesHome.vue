@@ -27,12 +27,13 @@
           :filter-options="filters"
           :initial-filter="filterState"
           :count="itemsCount"
+          :sql-mode="true"
           add-filter-label="approvalsTable.filter.title"
           @update:appliedFilter="onApplyFilter" />
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
-        {{ $m(item.metadata.programName) }}
+        {{ $m(getProgramName(item.entity.programId)) }}
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">
@@ -75,19 +76,18 @@ import {
   RcDataTable,
   RcAddButtonWithMenu,
 } from '@libs/component-lib/components';
-import { IApprovalTableCombined, IApprovalTableEntity, IApprovalTableMetadata } from '@libs/entities-lib/approvals/approvals-table';
+import { IApprovalTableCombined, IApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
 import { EFilterKeyType, EFilterType, IFilterSettings, ITableAddButtonMenuItems } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { IEntity, IEntityCombined, Status } from '@libs/entities-lib/base';
-import _isEmpty from 'lodash/isEmpty';
+import { Status } from '@libs/entities-lib/base';
 import { IProgramEntity, IdParams } from '@libs/entities-lib/program';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramStore } from '@/pinia/program/program';
-import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
+import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ApprovalTablesHome',
@@ -102,7 +102,7 @@ export default mixins(TablePaginationSearchMixin).extend({
   data() {
     return {
       searchLoading: false,
-      programs: [],
+      programIds: [],
       FilterKey,
       options: {
         page: 1,
@@ -110,7 +110,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
       },
       combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
-      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, IApprovalTableMetadata, IdParams>(useApprovalTableStore(), useApprovalTableMetadataStore()),
+      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, null, IdParams>(useApprovalTableStore()),
+      sqlSearchMode: true,
     };
   },
 
@@ -132,6 +133,10 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     goToEdit(id: string) {
       this.$router.push({ name: routes.events.approvals.edit.name, params: { approvalId: id } });
+    },
+
+    getProgramName(programId: string) {
+      return this.programs?.find((x) => x.id === programId)?.name;
     },
 
     async deleteItem(id: string) {
@@ -164,20 +169,17 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchData(params: IAzureSearchParams) {
       this.searchLoading = true;
-
-      if (_isEmpty(params.filter)) {
-        params.filter = this.presetFilter;
-      }
+      const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.combinedApprovalTableStore.search({
         search: params.search,
-        filter: params.filter,
+        filter: { 'Entity/EventId': { value: this.$route.params.id, type: EFilterKeyType.Guid }, ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true);
+      }, null, false, true);
       this.searchLoading = false;
       return res;
     },
@@ -192,8 +194,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       }, null, true, true);
 
       if (res) {
-        this.programs = this.combinedProgramStore.getByIds(res.ids)
-          .map((combined: IEntityCombined<IProgramEntity, IEntity>) => (combined.entity));
+        this.programIds = res.ids;
       }
     },
   },
@@ -203,11 +204,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       return this.$route.params.id;
     },
 
-    presetFilter(): Record<string, unknown> {
-      return {
-        'Entity/EventId': this.eventId,
-        'Entity/Status': Status.Active, // We don't want to see deleted item
-      };
+    programs(): Array<IProgramEntity> {
+      return useProgramStore().getByIds(this.programIds);
     },
 
     tableData(): IApprovalTableCombined[] {
@@ -286,10 +284,10 @@ export default mixins(TablePaginationSearchMixin).extend({
         type: EFilterType.Text,
         label: this.$t('common.name') as string,
       }, {
-        key: 'Entity/ApprovalBaseStatus',
+        key: this.customColumns.approvalBaseStatus,
         type: EFilterType.MultiSelect,
         label: this.$t('common.status') as string,
-        items: helpers.enumToTranslatedCollection(Status, 'enums.Status', false),
+        items: helpers.enumToTranslatedCollection(Status, 'enums.Status', true, false),
       },
       ];
     },

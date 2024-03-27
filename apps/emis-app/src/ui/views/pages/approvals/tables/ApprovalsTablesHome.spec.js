@@ -4,19 +4,22 @@ import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
-import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
+import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import Component from './ApprovalTablesHome.vue';
 
 const localVue = createLocalVue();
 let wrapper;
 const { approvalTableStore, pinia } = useMockApprovalTableStore();
-const table = { ...mockCombinedApprovalTable(), pinned: false };
+const table = { entity: mockApprovalTableEntity(), metadata: {}, pinned: false };
 
 const doMount = () => {
   const options = {
     localVue,
     pinia,
+    data() {
+      return { params: { filter: {} } };
+    },
     mocks: {
       $route: {
         params: {
@@ -25,6 +28,7 @@ const doMount = () => {
       },
     },
   };
+
   wrapper = shallowMount(Component, options);
 
   wrapper.vm.combinedApprovalTableStore.search = jest.fn();
@@ -116,6 +120,7 @@ describe('ApprovalTablesHome.vue', () => {
           top: 10,
           skip: 10,
           orderBy: 'name asc',
+          filter: { 'Entity/EventId': { value: '1', type: EFilterKeyType.Guid } },
         };
 
         wrapper.vm.fetchData(params);
@@ -129,19 +134,13 @@ describe('ApprovalTablesHome.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        }, null, true);
+        }, null, false, true);
       });
     });
 
     describe('fetchPrograms', () => {
       it('calls combinedProgramStore search', async () => {
         doMount();
-
-        await wrapper.setData({
-          presetFilter: {
-            'Entity/EventId': 'EventId',
-          },
-        });
 
         await wrapper.vm.fetchPrograms();
 
@@ -163,16 +162,6 @@ describe('ApprovalTablesHome.vue', () => {
       it('should be linked to route id parameter', () => {
         doMount();
         expect(wrapper.vm.eventId).toEqual('1');
-      });
-    });
-
-    describe('presetFilter', () => {
-      it('should return correct filter', () => {
-        doMount();
-        expect(wrapper.vm.presetFilter).toEqual({
-          'Entity/EventId': '1',
-          'Entity/Status': Status.Active, // We don't want to see deleted item
-        });
       });
     });
 
@@ -265,10 +254,10 @@ describe('ApprovalTablesHome.vue', () => {
           type: EFilterType.Text,
           label: 'common.name',
         }, {
-          key: 'Entity/ApprovalBaseStatus',
+          key: wrapper.vm.customColumns.approvalBaseStatus,
           type: EFilterType.MultiSelect,
           label: 'common.status',
-          items: helpers.enumToTranslatedCollection(Status, 'enums.Status', false),
+          items: helpers.enumToTranslatedCollection(Status, 'enums.Status', true, false),
         },
         ]);
       });

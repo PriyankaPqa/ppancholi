@@ -19,7 +19,6 @@ import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/f
 import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { MassActionService } from '@libs/services-lib/mass-actions/entity';
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
-import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
 import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { TaskService } from '@libs/services-lib/task/entity';
@@ -30,7 +29,6 @@ import { IProvider } from './provider.types';
 
 export const provider = (httpClient = client): IProvider => ({
   approvalTables: new ApprovalTablesService(httpClient),
-  approvalTablesMetadata: new ApprovalTablesMetadataService(httpClient),
   caseFiles: new CaseFilesService(httpClient),
   caseFilesMetadata: new CaseFilesMetadataService(httpClient),
   caseFileNotes: new CaseNotesService(httpClient),

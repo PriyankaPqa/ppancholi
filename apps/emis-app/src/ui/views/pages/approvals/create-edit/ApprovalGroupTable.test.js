@@ -3,7 +3,7 @@ import { ApprovalGroup } from '@libs/entities-lib/approvals/approvals-group/appr
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
-import { mockApprovalTableEntity, mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
+import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './ApprovalGroupTable.vue';
 
@@ -13,7 +13,7 @@ const { pinia, approvalTableStore } = useMockApprovalTableStore();
 const { userAccountStore } = useMockUserAccountStore(pinia);
 
 const doMount = (editMode = false) => {
-  const combinedApprovalTable = mockCombinedApprovalTable();
+  const combinedApprovalTable = { entity: mockApprovalTableEntity(), metadata: {}, pinned: false };
   combinedApprovalTable.entity.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
   combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
 

@@ -5,8 +5,8 @@
         <v-col xl="10" lg="10" md="11" sm="12" xs="12">
           <v-row no-gutters>
             <v-col cols="8">
-              <div v-if="approvalMetadata" class="rc-body14 mb-2" data-test="approvalDetail_programName">
-                {{ $t('approvalsTable.programName') }}: {{ $m(approvalMetadata.programName) }}
+              <div v-if="program" class="rc-body14 mb-2" data-test="approvalDetail_programName">
+                {{ $t('approvalsTable.programName') }}: {{ $m(program.name) }}
               </div>
               <div class="rc-heading-5 mb-2" data-test="approvalDetail_approval_name">
                 {{ $m(approval.name) }}
@@ -74,16 +74,18 @@ import { TranslateResult } from 'vue-i18n';
 import { RcPageContent, VDataTableA11y } from '@libs/component-lib/components';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
-import { IApprovalTableEntity, IApprovalTableMetadata, IdParams } from '@libs/entities-lib/approvals/approvals-table';
+import { IApprovalTableEntity, IdParams } from '@libs/entities-lib/approvals/approvals-table';
 import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import helpers from '@/ui/helpers/helpers';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
-import { ApprovalAggregatedBy, IApprovalBaseEntity } from '@libs/entities-lib/approvals/approvals-base';
+import { ApprovalAggregatedBy } from '@libs/entities-lib/approvals/approvals-base';
 import mixins from 'vue-typed-mixins';
 import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useApprovalTableMetadataStore, useApprovalTableStore } from '@/pinia/approval-table/approval-table';
+import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
+import { useProgramStore } from '@/pinia/program/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 
 export interface IFilteredGroups {
   groupIndex: string;
@@ -104,11 +106,11 @@ export default mixins(approvalRoles).extend({
   data() {
     return {
       search: '',
-      approval: {} as IApprovalTableEntity | IApprovalBaseEntity, // TODO replace IApprovalBaseEntity by IApprovalTemplate when working on this story
-      approvalMetadata: null as IApprovalTableMetadata,
+      approval: {} as IApprovalTableEntity, // TODO replace IApprovalBaseEntity by IApprovalTemplate when working on this story
       roles: [],
+      program: {} as IProgramEntity,
       loading: false,
-      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, IApprovalTableMetadata, IdParams>(useApprovalTableStore(), useApprovalTableMetadataStore()),
+      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, null, IdParams>(useApprovalTableStore()),
     };
   },
 
@@ -196,9 +198,13 @@ export default mixins(approvalRoles).extend({
       const approvalCombined = await this.combinedApprovalTableStore.fetch(this.approvalId);
 
       if (approvalCombined) {
-        this.approval = approvalCombined.entity;
+        this.approval = approvalCombined.entity as IApprovalTableEntity;
         this.localApproval = this.approval; // For mixin approvalRoles
-        this.approvalMetadata = approvalCombined.metadata;
+
+        this.program = useProgramStore().getById(this.approval.programId);
+        if (!this.program?.id) {
+          this.program = await useProgramStore().fetch({ id: this.approval.programId, eventId: this.approval.eventId });
+        }
       }
 
       this.roles = await useUserAccountStore().fetchRoles();
