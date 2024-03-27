@@ -1,6 +1,6 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
 import {
-  ApprovalTableEntity, mockApprovalTableData, mockApprovalTableEntity, mockCombinedApprovalTable,
+  ApprovalTableEntity, mockApprovalTableData, mockApprovalTableEntity,
 } from '@libs/entities-lib/approvals/approvals-table';
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
@@ -551,7 +551,7 @@ describe('CreateEditApprovals', () => {
       });
 
       it('should set isActive depending on approvalBaseStatus', async () => {
-        const combinedApproval = mockCombinedApprovalTable({ approvalBaseStatus: Status.Inactive });
+        const combinedApproval = { entity: mockApprovalTableEntity({ approvalBaseStatus: Status.Inactive }), metadata: {}, pinned: false };
         await doMount(true, true, []);
         wrapper.vm.combinedApprovalTableStore.fetch = jest.fn(() => combinedApproval);
         await wrapper.vm.initTableDataEdit();

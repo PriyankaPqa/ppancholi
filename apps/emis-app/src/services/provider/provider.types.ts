@@ -21,7 +21,6 @@ import { IFinancialAssistancePaymentsMetadataService } from '@libs/services-lib/
 import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/services-lib/tenantSettings/entity';
 import { IErrorReportingService, IErrorReportingServiceMock } from '@libs/services-lib/error-reporting';
 import { IApprovalTablesService, IApprovalTablesServiceMock } from '@libs/services-lib/approval-tables/entity';
-import { IApprovalTablesMetadataService, IApprovalTablesMetadataServiceMock } from '@libs/services-lib/approval-tables/metadata/approvals.types';
 import { IAssessmentResponsesService, IAssessmentResponsesServiceMock } from '@libs/services-lib/assessment-response/entity';
 import { IAssessmentFormsService, IAssessmentFormsServiceMock } from '@libs/services-lib/assessment-form/entity';
 import { ITaskService, ITaskServiceMock } from '@libs/services-lib/task/entity';
@@ -31,7 +30,6 @@ import { IQueriesService, IQueriesServiceMock } from '@libs/services-lib/queries
 
 export interface IProvider {
   approvalTables: IApprovalTablesService,
-  approvalTablesMetadata: IApprovalTablesMetadataService,
   caseFiles: ICaseFilesService,
   caseFilesMetadata: ICaseFilesMetadataService,
   caseFileNotes: ICaseNotesService,
@@ -61,7 +59,6 @@ export interface IProvider {
 
 export interface IProviderMock {
   approvalTables: IApprovalTablesServiceMock,
-  approvalTablesMetadata: IApprovalTablesMetadataServiceMock,
   caseFiles: ICaseFilesServiceMock,
   caseFilesMetadata: ICaseFilesMetadataServiceMock,
   caseFileNotes: ICaseNotesServiceMock,

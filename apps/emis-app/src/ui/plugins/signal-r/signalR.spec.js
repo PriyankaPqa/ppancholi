@@ -8,7 +8,7 @@ import { useProgramStore } from '@/pinia/program/program';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
-import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
+import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetadataStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
@@ -549,13 +549,6 @@ describe('signalR', () => {
           domain: 'finance',
           entityName: 'ApprovalTable',
           action: useApprovalTableStore().setItemFromOutsideNotification,
-        });
-
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'finance',
-          entityName: 'ApprovalTableMetadata',
-          action: useApprovalTableMetadataStore().setItemFromOutsideNotification,
         });
     });
   });

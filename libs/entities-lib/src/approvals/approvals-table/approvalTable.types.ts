@@ -1,6 +1,5 @@
-import { IMultilingual } from '@libs/shared-lib/types';
-import { IApprovalBaseEntity, IApprovalBaseEntityData, IApprovalBaseMetadata } from '../approvals-base';
-import { IEntityCombined } from '../../base';
+import { IApprovalBaseEntity, IApprovalBaseEntityData } from '../approvals-base';
+import { IEntity, IEntityCombined } from '../../base';
 
 export interface IApprovalTableEntityData extends IApprovalBaseEntityData {
   eventId: uuid;
@@ -11,11 +10,6 @@ export interface IApprovalTableEntity extends IApprovalBaseEntity, IApprovalTabl
   setProgramId(id: uuid):void;
 }
 
-export interface IApprovalTableMetadata extends IApprovalBaseMetadata {
-  programId: uuid;
-  programName: IMultilingual;
-}
-
-export type IApprovalTableCombined = IEntityCombined<IApprovalTableEntity, IApprovalTableMetadata>;
+export type IApprovalTableCombined = IEntityCombined<IApprovalTableEntity, IEntity>;
 
 export type IdParams = uuid;

@@ -18,7 +18,7 @@ export type { IDropdownItem } from './interfaces/IDropdownItem';
 export type { IErrorReport } from './interfaces/IErrorReport';
 export type { IIdMultilingualName } from './interfaces/IIdMultilingualName';
 export type { IListOption } from './interfaces/IListOption';
-export type { IMultilingual, IMultilingualWithId } from './interfaces/IMultilingual';
+export type { IMultilingual, IMultilingualWithId, IMultilingualEnum } from './interfaces/IMultilingual';
 export type { INavigationTab } from './interfaces/INavigationTab';
 export type { INavigationTabGroup } from './interfaces/INavigationTabGroup';
 export type { IOptionItemData } from './interfaces/IOptionItemData';

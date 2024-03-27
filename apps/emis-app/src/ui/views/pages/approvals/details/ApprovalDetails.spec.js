@@ -1,5 +1,5 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
-import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
+import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
@@ -13,7 +13,7 @@ const { userAccountStore } = useMockUserAccountStore(pinia);
 
 let wrapper;
 
-const combinedApprovalTable = mockCombinedApprovalTable();
+const combinedApprovalTable = { entity: mockApprovalTableEntity(), metadata: {}, pinned: false };
 combinedApprovalTable.entity.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
 combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
 
@@ -28,7 +28,6 @@ const doMount = () => {
       roles,
       approval: combinedApprovalTable.entity,
       localApproval: combinedApprovalTable.entity,
-      approvalMetadata: combinedApprovalTable.metadata,
     }),
     mocks: {
       $route: {
@@ -141,11 +140,6 @@ describe('ApprovalDetails', () => {
       it('should set approval with entity', () => {
         doMount();
         expect(wrapper.vm.approval).toEqual(combinedApprovalTable.entity);
-      });
-
-      it('should set approvalMetadata with metadata', () => {
-        doMount();
-        expect(wrapper.vm.approvalMetadata).toEqual(combinedApprovalTable.metadata);
       });
 
       it('should set localApproval with approval', () => {

@@ -21,7 +21,7 @@ import { useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
+import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
@@ -531,14 +531,7 @@ export class SignalR implements ISignalR {
       action: useApprovalTableStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
-      domain: 'finance',
-      entityName: 'ApprovalTableMetadata',
-      action: useApprovalTableMetadataStore().setItemFromOutsideNotification,
-    });
-
     this.watchedPiniaStores.push(useApprovalTableStore());
-    this.watchedPiniaStores.push(useApprovalTableMetadataStore());
   }
 
   private listenForTaskModuleChanges() {

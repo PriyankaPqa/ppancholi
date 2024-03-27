@@ -16,7 +16,6 @@ import { mockTenantSettingsService } from '@libs/services-lib/tenantSettings/ent
 import { mockErrorReportingService } from '@libs/services-lib/error-reporting';
 import { mockCaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
 import { mockApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
-import { mockApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalsTables.mock';
 import { mockAssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { mockAssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { mockTaskService } from '@libs/services-lib/task/entity';
@@ -27,7 +26,6 @@ import { IProviderMock } from './provider.types';
 
 export const mockProvider = (): IProviderMock => ({
   approvalTables: mockApprovalTablesService(),
-  approvalTablesMetadata: mockApprovalTablesMetadataService(),
   caseFiles: mockCaseFilesService(),
   caseFilesMetadata: mockCaseFilesMetadataService(),
   caseFileNotes: mockCaseNotesService(),

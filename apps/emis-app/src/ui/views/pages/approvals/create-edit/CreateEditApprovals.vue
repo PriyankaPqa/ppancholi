@@ -166,9 +166,9 @@ import { ApprovalAggregatedBy, ApprovalBaseEntity, IApprovalBaseEntity } from '@
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import {
-  IApprovalTableEntity, IApprovalTableEntityData, IApprovalTableMetadata, IdParams,
+  IApprovalTableEntity, IApprovalTableEntityData, IdParams,
 } from '@libs/entities-lib/approvals/approvals-table';
-import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
+import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
@@ -208,7 +208,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       groupHasChanged: false, // if group is being edited and values have changed
       ApprovalAggregatedBy,
       showNoGroupErr: false,
-      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, IApprovalTableMetadata, IdParams>(useApprovalTableStore(), useApprovalTableMetadataStore()),
+      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, null, IdParams>(useApprovalTableStore()),
     };
   },
 
