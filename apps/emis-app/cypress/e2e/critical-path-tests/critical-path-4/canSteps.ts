@@ -385,3 +385,25 @@ export const caseFileDetailsPageAssertionSteps = ({ roleName, registrationNumber
     householdProfilePage.getDuplicatesCount().should('eq', '0 potential duplicate(s)');
   }
 };
+
+export const assertPotentialDuplicatesSteps = (params: Partial<PotentialDuplicateCreatedStepsParams>) => {
+  const householdProfilePage = new HouseholdProfilePage();
+
+  if (params.roleName === UserRoles.level0) {
+    householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
+    householdProfilePage.getManageDuplicatesButton().should('not.exist');
+  } else {
+    const manageDuplicatesPage = householdProfilePage.goToManageDuplicatesPage();
+    manageDuplicatesPage.getDuplicateHouseholdPrimaryMemberName().should('eq', `${params.firstName} ${params.lastName}`);
+    manageDuplicatesPage.getDuplicateHouseholdRegistrationNumber().should('eq', `Registration number: ${params.registrationNumber}`);
+    manageDuplicatesPage.getDuplicateHouseholdCaseFileData()
+      .should('string', `Case file number: ${params.caseFileNumber}`)
+      .and('string', `Event: ${params.eventName}`);
+      manageDuplicatesPage.getDuplicateName().should('eq', `${params.firstName} ${params.lastName}`);
+    manageDuplicatesPage.getDuplicateHistoryStatusByIndex().should('eq', 'Flagged as potential');
+    manageDuplicatesPage.getDuplicateHistoryUserByIndex().should('string', 'By: System').and('string', getToday());
+    manageDuplicatesPage.getDuplicateHistoryRationaleByIndex().should('eq', 'Rationale: Flagged by the system');
+    manageDuplicatesPage.getActionDropdownInput().should('exist');
+    manageDuplicatesPage.goToHouseholdProfilePage();
+  }
+};
