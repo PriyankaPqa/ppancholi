@@ -8,6 +8,11 @@ export enum DataTest {
   registeredEvent = 'previous_event_0',
   editButton = '"inlineEdit__open__Personal information"',
   saveButton = '"inlineEdit__save__Personal information"',
+  firstNameAssociateHousehold = 'firstName',
+  lastNameAssociateHousehold = 'lastName',
+  dateOfBirthAssociateHousehold = 'birthDate',
+  cancelButton = 'cancel-action-dialog-confirmation',
+  submitButton = 'submit-action-dialog-confirmation',
 }
 export class AssociateHouseholdPage extends PersonalInformationPage {
   private existingBeneficiarySummary = { selector: DataTest.existingBeneficiarySummary };
@@ -21,6 +26,16 @@ export class AssociateHouseholdPage extends PersonalInformationPage {
   private editButton = { selector: DataTest.editButton };
 
   private saveButton = { selector: DataTest.saveButton };
+
+  private firstNameAssociateHousehold = { selector: DataTest.firstNameAssociateHousehold };
+
+  private lastNameAssociateHousehold = { selector: DataTest.lastNameAssociateHousehold };
+
+  private dateOfBirthAssociateHousehold = { selector: DataTest.dateOfBirthAssociateHousehold };
+
+  private cancelButton = { selector: DataTest.cancelButton };
+
+  private submitButton = { selector: DataTest.submitButton };
 
   public getExistingBeneficiarySummary() {
     return cy.getByDataTest(this.existingBeneficiarySummary);
@@ -52,5 +67,29 @@ export class AssociateHouseholdPage extends PersonalInformationPage {
 
   public savePersonalInformation() {
     cy.getByDataTest(this.saveButton).click();
+  }
+
+  public getFirstName() {
+    return cy.getByDataTest(this.firstNameAssociateHousehold).getAndTrimText();
+  }
+
+  public getLastName() {
+    return cy.getByDataTest(this.lastNameAssociateHousehold).getAndTrimText();
+  }
+
+  public getDateOfBirth() {
+    return cy.getByDataTest(this.dateOfBirthAssociateHousehold).getAndTrimText();
+  }
+
+  public getDialogCancelButton() {
+    return cy.getByDataTest(this.cancelButton);
+  }
+
+  public getDialogConfirmButton() {
+    return cy.getByDataTest(this.submitButton);
+  }
+
+  public goToConfirmationHouseholdAssociationPage() {
+    cy.getByDataTest(this.submitButton).click();
   }
 }

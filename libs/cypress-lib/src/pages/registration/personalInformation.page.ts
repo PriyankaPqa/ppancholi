@@ -107,6 +107,10 @@ export class PersonalInformationPage {
     return new AddressPage();
   }
 
+  public getNextButton() {
+    return cy.getByDataTest(this.nextButton);
+  }
+
   public fillPhoneNumber(phone: string) {
     cy.getByDataTest(this.phoneNumber).clear();
     cy.getByDataTest(this.phoneNumber).type(phone);

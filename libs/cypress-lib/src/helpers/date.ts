@@ -1,5 +1,20 @@
 import { format } from 'date-fns';
 
+const monthId = {
+  '01': 'Jan',
+  '02': 'Feb',
+  '03': 'Mar',
+  '04': 'Apr',
+  '05': 'May',
+  '06': 'Jun',
+  '07': 'Jul',
+  '08': 'Aug',
+  '09': 'Sep',
+  10: 'Oct',
+  11: 'Nov',
+  12: 'Dec',
+} as Record<string, string>;
+
 /**
  * Split a date string into year, month(1-12) and day.
  */
@@ -40,4 +55,16 @@ export function getToday(toFormat = 'PP'): string {
  */
 export function returnDateInFormat(date: string, toFormat = 'PPp'): string {
   return format(new Date(date), toFormat);
+}
+
+/**
+ * @param date
+ * @returns {string} - MMM DD, YYYY
+ */
+export function formatDateToMmmDdYyyy(date: string): string {
+  const inputDate = new Date(date);
+  const year = inputDate.getUTCFullYear();
+  const month = monthId[(inputDate.getUTCMonth() + 1).toString().padStart(2, '0')];
+  const day = inputDate.getUTCDate().toString();
+  return `${month} ${day}, ${year}`;
 }
