@@ -1,6 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
 import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
 import { createTestingPinia } from '@pinia/testing';
 import Component from './CopyAssessment.vue';
@@ -113,14 +112,21 @@ describe('CopyAssessment.vue', () => {
 
     describe('doSearch', () => {
       it('searches storage', async () => {
-        helpers.toQuickSearch = jest.fn(() => 'cleanedUp');
+        const quickSearchSqlObject = {
+          and: [{
+            'metadata/searchableText': {
+              contains: 'hello',
+            },
+          }],
+        };
+
+        helpers.toQuickSearchSql = jest.fn(() => quickSearchSqlObject);
         await mountWrapper();
         await wrapper.setData({ search: 'hello' });
         await wrapper.vm.doSearch();
         expect(assessmentTemplateStore.search).toHaveBeenCalledWith({
           params: {
-            search: 'cleanedUp',
-            filter: { 'Entity/Status': Status.Active },
+            filter: { 'Entity/Status': 'Active', ...quickSearchSqlObject },
             top: 50,
             queryType: 'full',
             orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
