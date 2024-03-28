@@ -29,12 +29,13 @@
           :filter-options="filters"
           :count="itemsCount"
           :initial-filter="filterState"
+          :sql-mode="true"
           add-filter-label="financialAssistance.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
-        {{ $m(item.metadata.programName) }}
+        {{ $m(getProgramName(item.entity.programId)) }}
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">
@@ -72,13 +73,12 @@ import { RcDataTable, RcAddButtonWithMenu } from '@libs/component-lib/components
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
 import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
-import _isEmpty from 'lodash/isEmpty';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
-import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { IdParams, IProgramEntity } from '@libs/entities-lib/program';
@@ -88,7 +88,7 @@ import { useProgramStore } from '@/pinia/program/program';
 import
 {
   IFinancialAssistanceTableEntity,
-  IFinancialAssistanceTableMetadata, IdParams as FAIdParams, IFinancialAssistanceTableCombined,
+  IdParams as FAIdParams, IFinancialAssistanceTableCombined,
 } from '@libs/entities-lib/financial-assistance';
 import { UserRoles } from '@libs/entities-lib/user';
 
@@ -110,13 +110,11 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: [`Metadata/FinancialAssistanceTableStatusName/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
-      programs: [],
+      programIds: [],
       UserRoles,
       combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
-        useFinancialAssistanceStore(),
-        useFinancialAssistanceMetadataStore(),
-      ),
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore(), null),
+      sqlSearchMode: true,
     };
   },
 
@@ -218,10 +216,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       return this.$route.params.id;
     },
 
-    presetFilter(): Record<string, unknown> {
-      return {
-        'Entity/EventId': this.eventId,
-      };
+    programs(): Array<IProgramEntity> {
+      return useProgramStore().getByIds(this.programIds);
     },
   },
 
@@ -233,19 +229,16 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      if (_isEmpty(params.filter)) {
-        params.filter = this.presetFilter;
-      }
+      const filterParams = Object.keys(params.filter || {}).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.combinedFinancialAssistanceStore.search({
-        search: params.search,
-        filter: params.filter,
+        filter: { 'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid }, ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true);
+      }, null, true, true);
 
       return res;
     },
@@ -284,9 +277,11 @@ export default mixins(TablePaginationSearchMixin).extend({
       }, null, true, true);
 
       if (res) {
-        this.programs = this.combinedProgramStore.getByIds(res.ids)
-          .map((combined: IEntityCombined<IProgramEntity, IEntity>) => (combined.entity));
+        this.programIds = res.ids;
       }
+    },
+    getProgramName(programId: string) {
+      return this.programs?.find((x) => x.id === programId)?.name;
     },
   },
 });

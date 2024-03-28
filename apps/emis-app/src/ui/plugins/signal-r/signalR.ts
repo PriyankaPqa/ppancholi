@@ -27,7 +27,7 @@ import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
@@ -514,14 +514,7 @@ export class SignalR implements ISignalR {
       action: useFinancialAssistanceStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
-      domain: 'finance',
-      entityName: 'FinancialAssistanceTableMetadata',
-      action: useFinancialAssistanceMetadataStore().setItemFromOutsideNotification,
-    });
-
     this.watchedPiniaStores.push(useFinancialAssistanceStore());
-    this.watchedPiniaStores.push(useFinancialAssistanceMetadataStore());
   }
 
   private listenForApprovalTablesModuleChanges() {

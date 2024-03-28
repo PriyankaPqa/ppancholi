@@ -7,7 +7,6 @@ import {
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableItemData,
-  IFinancialAssistanceTableMetadata,
   IFinancialAssistanceTableSubItem,
   IFinancialAssistanceTableSubItemData,
 } from './financial-assistance.types';
@@ -268,19 +267,10 @@ export const mockFinancialAssistanceTableEntity = (force = {}): IFinancialAssist
   ...force,
 });
 
-export const mockFinancialAssistanceMetadata = (): IFinancialAssistanceTableMetadata => ({
-  ...mockBaseData(),
-
-  programId: '657ae9a1-bfcc-4292-b871-8113b984e9cb',
-  programName: { translation: { en: 'abcd', fr: 'dcba' } },
-  financialAssistanceTableStatusName: { translation: { en: 'status en', fr: 'status fr' } },
-});
-
 export const mockCombinedFinancialAssistance = (): IFinancialAssistanceTableCombined => ({
   entity: mockFinancialAssistanceTableEntity(),
-  metadata: mockFinancialAssistanceMetadata(),
+  metadata: null,
 });
-
 export const mockCombinedFinancialAssistances = (): IFinancialAssistanceTableCombined[] => ([mockCombinedFinancialAssistance()]);
 
 const categories: IOptionItem[] = [
