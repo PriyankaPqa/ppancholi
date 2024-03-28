@@ -53,12 +53,6 @@ export interface IFinancialAssistanceTableEntity extends IEntity {
   items: IFinancialAssistanceTableItemData[];
 }
 
-export interface IFinancialAssistanceTableMetadata extends IEntity {
-  programId: uuid;
-  programName: IMultilingual;
-  financialAssistanceTableStatusName: IMultilingual;
-}
-
 export interface ICreateFinancialAssistanceTableRequest extends IFinancialAssistanceTableEntity {}
 
 export interface IEditFinancialAssistanceTableRequest extends IEntity {
@@ -66,6 +60,6 @@ export interface IEditFinancialAssistanceTableRequest extends IEntity {
   status: Status;
 }
 
-export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata>;
+export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IEntity>;
 
 export type IdParams = uuid;

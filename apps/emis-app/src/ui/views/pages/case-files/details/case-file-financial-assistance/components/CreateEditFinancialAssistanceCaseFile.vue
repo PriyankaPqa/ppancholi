@@ -155,7 +155,7 @@ import
 {
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableItem,
-  IFinancialAssistanceTableMetadata, IdParams as FAIdParams,
+  IdParams as FAIdParams,
 } from '@libs/entities-lib/financial-assistance';
 import
 {
@@ -168,6 +168,7 @@ import
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
+import { EFilterKeyType } from '@libs/component-lib/types';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
@@ -179,7 +180,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
@@ -242,9 +243,9 @@ export default mixins(caseFileDetail).extend({
         useAssessmentResponseStore(),
         useAssessmentResponseMetadataStore(),
       ),
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(
         useFinancialAssistanceStore(),
-        useFinancialAssistanceMetadataStore(),
+        null,
       ),
     };
   },
@@ -359,10 +360,8 @@ export default mixins(caseFileDetail).extend({
     async searchTables() {
       if (this.caseFile) {
         const tableData = await this.combinedFinancialAssistanceStore.search({
-          filter: {
-            'Entity/EventId': this.caseFile.eventId,
-          },
-        }, null, true);
+          filter: { 'Entity/EventId': { value: this.caseFile.eventId, type: EFilterKeyType.Guid } },
+        }, null, true, true);
         const { ids } = tableData;
 
         this.financialTables = useFinancialAssistanceStore().getByIds(ids)

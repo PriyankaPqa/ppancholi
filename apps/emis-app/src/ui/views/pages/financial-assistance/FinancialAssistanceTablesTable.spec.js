@@ -2,12 +2,14 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockCombinedFinancialAssistances, mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
+import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-assistance';
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
+
 import { UserRoles } from '@libs/entities-lib/user';
 import Component from './FinancialAssistanceTablesTable.vue';
 
@@ -16,8 +18,8 @@ const localVue = createLocalVue();
 describe('FinancialAssistanceTablesTable.vue', () => {
   let wrapper;
   const pinia = getPiniaForUser(UserRoles.level6);
-  const table = { ...mockCombinedFinancialAssistance(), pinned: false };
   const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+  useMockProgramStore(pinia);
 
   describe('Template', () => {
     beforeEach(() => {
@@ -166,18 +168,6 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       });
     });
 
-    describe('tableData', () => {
-      it('should return the correct values', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-        });
-        wrapper.vm.combinedFinancialAssistanceStore.getByIds = jest.fn(() => [table]);
-
-        expect(wrapper.vm.tableData).toEqual([table]);
-      });
-    });
-
     describe('tableProps', () => {
       it('returns the correct object', () => {
         wrapper = shallowMount(Component, {
@@ -270,10 +260,10 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
       beforeEach(() => {
         params = {
-          search: 'query',
           top: 10,
           skip: 10,
           orderBy: 'name asc',
+          filter: { someFilter: 'value' },
         };
 
         wrapper = shallowMount(Component, {
@@ -288,11 +278,9 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('should call the store with proper parameters', async () => {
         wrapper.vm.combinedFinancialAssistanceStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
-
         expect(wrapper.vm.combinedFinancialAssistanceStore.search).toHaveBeenCalledWith({
-          search: params.search,
           filter: {
-            'Entity/EventId': 'event id',
+            'Entity/EventId': { value: 'event id', type: EFilterKeyType.Guid }, someFilter: 'value',
           },
           top: params.top,
           skip: params.skip,
@@ -300,7 +288,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        }, null, true);
+        }, null, true, true);
       });
     });
 

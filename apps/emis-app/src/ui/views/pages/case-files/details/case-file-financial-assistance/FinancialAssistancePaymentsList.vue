@@ -171,7 +171,7 @@ import {
   RcDialog,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
@@ -192,8 +192,8 @@ import {
 import { Status } from '@libs/entities-lib/base';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
-import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
+import { IFinancialAssistanceTableEntity, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -249,10 +249,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         useFinancialAssistancePaymentStore(),
         useFinancialAssistancePaymentMetadataStore(),
       ),
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
-        useFinancialAssistanceStore(),
-        useFinancialAssistanceMetadataStore(),
-      ),
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore(), null),
     };
   },
 
@@ -421,10 +418,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     async initContainsActiveTables() {
       if (this.caseFile) {
         const tableData = await this.combinedFinancialAssistanceStore.search({
-          filter: {
-            'Entity/EventId': this.caseFile.eventId,
-          },
-        });
+          filter: { 'Entity/EventId': { value: this.caseFile.eventId, type: EFilterKeyType.Guid } },
+        }, null, false, true);
         this.containsActiveTables = !!(tableData?.ids?.length);
       }
     },
