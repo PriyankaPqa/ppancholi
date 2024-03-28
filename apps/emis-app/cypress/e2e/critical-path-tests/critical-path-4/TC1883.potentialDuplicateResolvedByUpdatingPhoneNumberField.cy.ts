@@ -29,10 +29,10 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const rationale = 'Flagged by the system';
+const rationale = 'Resolved by the system';
 
 // eslint-disable-next-line
-describe('#TC1833# - Potential duplicate can be resolved by updating any of the field: phone number/Address/FN+LN from household profile', { tags: ['@household'] }, () => {
+describe('#TC1883# - Potential duplicate can be resolved by updating any of the field: phone number/Address/FN+LN from household profile', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

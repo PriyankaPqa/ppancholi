@@ -370,6 +370,7 @@ export class HouseholdProfilePage {
   }
 
   public refreshUntilHouseholdContactInformationUpdated(phoneNumber: string) {
+    cy.contains('Household members').scrollIntoView();
     cy.waitAndRefreshUntilConditions(
       {
         visibilityCondition: () => cy.contains('Household members').should('be.visible'),
