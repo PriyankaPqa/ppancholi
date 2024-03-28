@@ -57,7 +57,6 @@ import Vue from 'vue';
 import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
-import { Status } from '@libs/entities-lib/base';
 import { IAssessmentBaseEntity, IAssessmentTemplateEntity, IdParams } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -133,11 +132,10 @@ export default Vue.extend({
     async doSearch() {
       const assessments = await this.combinedTemplateStore.search({
         search: helpers.toQuickSearch(this.search),
-        filter: { 'Entity/Status': Status.Active },
         top: 50,
         queryType: 'full',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      });
+      }, null, false, true);
       this.searchResultIds = assessments.ids;
     },
 
