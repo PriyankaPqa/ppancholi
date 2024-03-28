@@ -131,7 +131,7 @@ export default Vue.extend({
 
     async doSearch() {
       const assessments = await this.combinedTemplateStore.search({
-        search: helpers.toQuickSearch(this.search),
+        filter: helpers.toQuickSearchSql(this.search),
         top: 50,
         queryType: 'full',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
