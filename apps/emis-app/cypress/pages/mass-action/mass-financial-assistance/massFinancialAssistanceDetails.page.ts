@@ -9,6 +9,9 @@ export enum DataTest {
   payment = 'payment',
   amount = 'amount',
   projectedAmount = 'projectedAmount',
+  showErrorsButton = 'showErrorsButton',
+  errorMessage = 'errorMessage',
+  invalidDownloadButton = 'invalidDownloadButton',
   }
 
   export class MassFinancialAssistanceDetailsPage extends BaseDetailsMassAction {
@@ -27,6 +30,12 @@ export enum DataTest {
     private amount = { selector: DataTest.amount };
 
     private projectedAmount = { selector: DataTest.projectedAmount };
+
+    private showErrorsButton = { selector: DataTest.showErrorsButton };
+
+    private errorMessage = { selector: DataTest.errorMessage };
+
+    private invalidDownloadButton = { selector: DataTest.invalidDownloadButton };
 
     public getMassActionPaymentDetailsEvent() {
       return cy.getByDataTest(this.event).getAndTrimText();
@@ -58,5 +67,17 @@ export enum DataTest {
 
     public getMassActionProjectedAmount() {
       return cy.getByDataTest(this.projectedAmount).getAndTrimText();
+    }
+
+    public clickShowErrorsButton() {
+      return cy.getByDataTest(this.showErrorsButton).click();
+    }
+
+    public getErrorMessage() {
+      return cy.getByDataTest(this.errorMessage).invoke('text').then((text) => text);
+    }
+
+    public clickInvalidDownloadButton() {
+      return cy.getByDataTest(this.invalidDownloadButton).click();
     }
   }

@@ -82,7 +82,7 @@
             </v-col>
             <v-col md="2" class="d-flex justify-end">
               <template v-if="hasErrors">
-                <v-btn icon class="mr-2" :aria-label="$t('common.buttons.expand')" small @click="showErrors = !showErrors">
+                <v-btn icon class="mr-2" :aria-label="$t('common.buttons.expand')" data-test="showErrorsButton" small @click="showErrors = !showErrors">
                   <v-icon>{{ showErrors ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                 </v-btn>
 
@@ -101,7 +101,7 @@
             </v-col>
           </v-row>
 
-          <div v-if="showErrors" class="full-width">
+          <div v-if="showErrors" class="full-width" data-test="errorMessage">
             <v-row v-for="(item, index) in massActionMetadata.lastRun.errors" :key="index" no-gutters>
               <v-col cols="12" md="5" class="pl-7 mb-2 pr-12">
                 <span class="rc-body14">{{ $te(`errors.${item.error}-mass-action`)
