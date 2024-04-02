@@ -291,6 +291,16 @@ export default mixins(TablePaginationSearchMixin).extend({
           description: this.$t('reporting.query.theme.Referrals.description'),
         },
         {
+          id: ReportingTopic.Tasks,
+          name: this.$t('reporting.query.theme.Tasks'),
+          description: this.$t('reporting.query.theme.Tasks.description'),
+        },
+        {
+          id: ReportingTopic.TasksHistory,
+          name: this.$t('reporting.query.theme.TasksHistory'),
+          description: this.$t('reporting.query.theme.TasksHistory.description'),
+        },
+        {
           id: ReportingTopic.CaseNotes,
           name: this.$t('reporting.query.theme.CaseNotes'),
           description: this.$t('reporting.query.theme.CaseNotes.description'),

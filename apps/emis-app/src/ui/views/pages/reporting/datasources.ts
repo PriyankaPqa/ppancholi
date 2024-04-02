@@ -214,6 +214,48 @@ export const personViewDs : IDatasourceBase = {
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
 };
 
+export const taskViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'closedDate', dataType: 'datetime', visible: false },
+    { dataField: 'description', dataType: 'string' },
+    { dataField: 'isUrgent', dataType: 'boolean', visible: false },
+    { dataField: 'assignedTeamName', dataType: 'string' },
+    { dataField: 'createDate', dataType: 'datetime', visible: false },
+    { dataField: 'updateDate', dataType: 'datetime', visible: false },
+    { dataField: 'createdBy', dataType: 'string', visible: false },
+    { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
+    { dataField: 'taskNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'TaskCategory' },
+    { dataField: 'taskNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'TaskCategory' },
+    { dataField: 'taskCategoryEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'TaskCategory', lookupSubItems: true },
+    { dataField: 'taskCategoryFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'TaskCategory', lookupSubItems: true },
+    { dataField: 'taskStatusNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'TaskStatus' },
+    { dataField: 'taskStatusNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'TaskStatus' },
+    { dataField: 'lastActionTakenNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'ActionTaken' },
+    { dataField: 'lastActionTakenNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'ActionTaken' },
+    { dataField: 'userWorkingOn', dataType: 'string', visible: false },
+    { dataField: 'dueDate', dataType: 'date', asUtcDate: true, visible: false },
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.task.${x.dataField}` })),
+};
+
+export const taskHistoryViewDS : IDatasourceBase = {
+  columns: ([
+    { dataField: 'taskId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'rationale', dataType: 'string', visible: false },
+    { dataField: 'roleNameEn', dataType: 'string', lookupType: LookupType.optionItemEn, lookupKey: 'Role', lookupSubItems: true, visible: false },
+    { dataField: 'roleNameFr', dataType: 'string', lookupType: LookupType.optionItemFr, lookupKey: 'Role', lookupSubItems: true, visible: false },
+    { dataField: 'userName', dataType: 'string', visible: false },
+    { dataField: 'dateOfAction', dataType: 'datetime' },
+    { dataField: 'currentAssignedTeamName', dataType: 'string', visible: false },
+    { dataField: 'previousAssignedTeamName', dataType: 'string', visible: false },
+    { dataField: 'taskStatusNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'TaskStatus' },
+    { dataField: 'taskStatusNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'TaskStatus' },
+    { dataField: 'actionTakenNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'ActionTaken' },
+    { dataField: 'actionTakenNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'ActionTaken' },
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.taskHistory.${x.dataField}` })),
+};
+
 export const programsPerCaseFileCsvViewDS : IDatasourceBase = {
   columns: ([
     { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
@@ -484,6 +526,34 @@ export const caseFileAuthenticationIdViewDS : IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileAuthenticationId.${x.dataField}` })),
 };
 
+export const teamTaskDs : IDatasourceSettings = {
+  url: 'common/data-providers/team-tasks',
+  reportingTopic: ReportingTopic.Tasks,
+  key: { taskId: 'Guid' },
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(taskViewDS.columns.filter((c) => c.dataField !== 'caseFileId')
+              .map((x) => ({ ...x, dataField: `task.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId')
+              .map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+  ],
+};
+
+export const teamTaskHistoryDs : IDatasourceSettings = {
+  url: 'common/data-providers/team-tasks-history',
+  reportingTopic: ReportingTopic.TasksHistory,
+  key: { taskId: 'Guid', dateOfAction: 'String' },
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(taskViewDS.columns.filter((c) => c.dataField !== 'caseFileId')
+              .map((x) => ({ ...x, dataField: `task.${x.dataField}` }))),
+    ...(taskHistoryViewDS.columns.filter((c) => c.dataField !== 'taskId')
+              .map((x) => ({ ...x, dataField: `taskHistory.${x.dataField}` }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'id' && c.dataField !== 'householdId')
+              .map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+  ],
+};
+
 export const caseFileHouseholdPrimaryDs : IDatasourceSettings = {
   url: 'common/data-providers/household-primary',
   reportingTopic: ReportingTopic.HouseholdPrimary,
@@ -654,4 +724,6 @@ export const datasources = [
   caseNotesDs,
   caseFileAuthenticationIdsDs,
   potentialDuplicateDs,
+  teamTaskDs,
+  teamTaskHistoryDs,
 ];

@@ -269,6 +269,16 @@ describe('QueriesList.vue', () => {
             description: 'reporting.query.theme.Referrals.description',
           },
           {
+            id: ReportingTopic.Tasks,
+            name: 'reporting.query.theme.Tasks',
+            description: 'reporting.query.theme.Tasks.description',
+          },
+          {
+            id: ReportingTopic.TasksHistory,
+            name: 'reporting.query.theme.TasksHistory',
+            description: 'reporting.query.theme.TasksHistory.description',
+          },
+          {
             id: ReportingTopic.UsersInTeams,
             name: 'reporting.query.theme.UsersInTeams',
             description: 'reporting.query.theme.UsersInTeams.description',

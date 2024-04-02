@@ -28,6 +28,7 @@ import { CaseNotesL6En, CaseNotesL6Fr } from './CaseNotesL6';
 import { DataCorrectionAuthenticationL6En, DataCorrectionAuthenticationL6Fr } from './DataCorrectionAuthenticationL6';
 import { DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr } from './DataCorrectionContactInformationL6';
 import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDuplicatesL6';
+import { TasksL6En, TasksL6Fr } from './TasksL6';
 import { DataCorrectionTriageL6En, DataCorrectionTriageL6Fr } from './DataCorrectionTriageL6';
 
 import { AllPbiReports } from './PowerBiEmbedded';
@@ -55,6 +56,42 @@ export const UsersL5Fr = {
   ...UserListL6Fr,
   id: 'UserListL5',
   queryType: QueryType.StandardL5fr,
+} as IQuery;
+
+export const TasksL5En = {
+  ...TasksL6En,
+  id: 'TasksL5',
+  queryType: QueryType.StandardL5en,
+} as IQuery;
+
+export const TasksL5Fr = {
+  ...TasksL6Fr,
+  id: 'TasksL5',
+  queryType: QueryType.StandardL5fr,
+} as IQuery;
+
+export const TasksL4En = {
+  ...TasksL6En,
+  id: 'TasksL4',
+  queryType: QueryType.StandardL4en,
+} as IQuery;
+
+export const TasksL4Fr = {
+  ...TasksL6Fr,
+  id: 'TasksL4',
+  queryType: QueryType.StandardL4fr,
+} as IQuery;
+
+export const TasksIMEn = {
+  ...TasksL6En,
+  id: 'TasksIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const TasksIMFr = {
+  ...TasksL6Fr,
+  id: 'TasksIM',
+  queryType: QueryType.StandardIMfr,
 } as IQuery;
 
 export const IDAuthenticationL5En = {
@@ -233,4 +270,8 @@ export const AllReports : IQuery[] = [
   DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr,
   PotentialDuplicatesL6En, PotentialDuplicatesL6Fr,
   DataCorrectionTriageL6En, DataCorrectionTriageL6Fr,
+  TasksL6En, TasksL6Fr,
+  TasksL5En, TasksL5Fr,
+  TasksL4En, TasksL4Fr,
+  TasksIMEn, TasksIMFr,
 ];
