@@ -487,6 +487,15 @@ export default Vue.extend({
 
     /// saves the current query
     async doSave(saveAs = false) {
+      // HACK used when creating standard queries - just uncomment this, make your standard query and hit save.
+      // then put the state from the console in standard_queries.ts.   ta-dah!
+      // const state = this.grid?.instance?.state();
+      // if (Array.isArray(state?.columns)) {
+      //   state.columns = sortBy(state.columns, 'dataField');
+      // }
+      // console.log('state: ' + JSON.stringify(JSON.stringify(state)));
+      // return;
+
       let query = _cloneDeep(this.query);
       if (saveAs) {
         query.id = null;
@@ -503,14 +512,6 @@ export default Vue.extend({
         this.query = query;
       }
       this.showSaveDialog = false;
-
-      // used when creating standard queries - just uncomment this, make your standard query and hit save.
-      // then put the state from the console in standard_queries.ts.   ta-dah!
-      // const state = this.grid?.instance?.state();
-      // if (Array.isArray(state?.columns)) {
-      //   state.columns = sortBy(state.columns, 'dataField');
-      // }
-      // console.log('state: ' + JSON.stringify(JSON.stringify(state)));
 
       if (this.shareAfterSave) {
         this.grid?.instance?.hideColumnChooser();

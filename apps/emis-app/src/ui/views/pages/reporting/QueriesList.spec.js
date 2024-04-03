@@ -239,6 +239,11 @@ describe('QueriesList.vue', () => {
             description: 'reporting.query.theme.HouseholdMembers.description',
           },
           {
+            id: ReportingTopic.HouseholdMembersAddressHistory,
+            name: 'reporting.query.theme.HouseholdMembersAddressHistory',
+            description: 'reporting.query.theme.HouseholdMembersAddressHistory.description',
+          },
+          {
             id: ReportingTopic.HouseholdPrimary,
             name: 'reporting.query.theme.HouseholdPrimary',
             description: 'reporting.query.theme.HouseholdPrimary.description',

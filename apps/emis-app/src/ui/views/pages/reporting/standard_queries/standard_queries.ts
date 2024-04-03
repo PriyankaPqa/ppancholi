@@ -30,10 +30,47 @@ import { DataCorrectionContactInformationL6En, DataCorrectionContactInformationL
 import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDuplicatesL6';
 import { TasksL6En, TasksL6Fr } from './TasksL6';
 import { DataCorrectionTriageL6En, DataCorrectionTriageL6Fr } from './DataCorrectionTriageL6';
+import { LodgingOverviewWithHistoryL6En, LodgingOverviewWithHistoryL6Fr } from './LodgingOverviewWithHistoryL6';
 
 import { AllPbiReports } from './PowerBiEmbedded';
 
 /* clones of other queries available for different levels */
+export const LodgingOverviewWithHistoryL5En = {
+  ...LodgingOverviewWithHistoryL6En,
+  id: 'LodgingOverviewWithHistoryL5',
+  queryType: QueryType.StandardL5en,
+} as IQuery;
+
+export const LodgingOverviewWithHistoryL5Fr = {
+  ...LodgingOverviewWithHistoryL6Fr,
+  id: 'LodgingOverviewWithHistoryL5',
+  queryType: QueryType.StandardL5fr,
+} as IQuery;
+
+export const LodgingOverviewWithHistoryL4En = {
+  ...LodgingOverviewWithHistoryL6En,
+  id: 'LodgingOverviewWithHistoryL4',
+  queryType: QueryType.StandardL4en,
+} as IQuery;
+
+export const LodgingOverviewWithHistoryL4Fr = {
+  ...LodgingOverviewWithHistoryL6Fr,
+  id: 'LodgingOverviewWithHistoryL4',
+  queryType: QueryType.StandardL4fr,
+} as IQuery;
+
+export const LodgingOverviewWithHistoryIMEn = {
+  ...LodgingOverviewWithHistoryL6En,
+  id: 'LodgingOverviewWithHistoryIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const LodgingOverviewWithHistoryIMFr = {
+  ...LodgingOverviewWithHistoryL6Fr,
+  id: 'LodgingOverviewWithHistoryIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
 export const PaymentsL5En = {
   ...PaymentsL6En,
   id: 'PaymentsL5',
@@ -230,6 +267,10 @@ export const PaymentApprovalsIMFr = {
 
 export const AllReports : IQuery[] = [
   ...AllPbiReports,
+  LodgingOverviewWithHistoryL6En, LodgingOverviewWithHistoryL6Fr,
+  LodgingOverviewWithHistoryL5En, LodgingOverviewWithHistoryL5Fr,
+  LodgingOverviewWithHistoryL4En, LodgingOverviewWithHistoryL4Fr,
+  LodgingOverviewWithHistoryIMEn, LodgingOverviewWithHistoryIMFr,
   PaymentsL6En, PaymentsL6Fr,
   RegistrationByBeneficiaryL6En, RegistrationByBeneficiaryL6Fr, 
   RegistrationByCaseFileL6En, RegistrationByCaseFileL6Fr, 

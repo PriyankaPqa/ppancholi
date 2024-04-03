@@ -190,8 +190,8 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'shelterLocationsNameEn', dataType: 'string', visible: false },
     { dataField: 'shelterLocationsNameFr', dataType: 'string', visible: false },
 
-    { dataField: 'address_From', dataType: 'datetime', visible: false },
-    { dataField: 'address_To', dataType: 'datetime', visible: false },
+    { dataField: 'address_From', dataType: 'date', visible: false, asUtcDate: true },
+    { dataField: 'address_To', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'address_Country', dataType: 'string', visible: false },
     { dataField: 'address_StreetAddress', dataType: 'string', visible: false },
     { dataField: 'address_UnitSuite', dataType: 'string', visible: false },
@@ -212,6 +212,13 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
     { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
+};
+
+export const personAddressHistoryViewDs : IDatasourceBase = {
+  columns: personViewDs.columns.map((x) => ({
+    ...x,
+    caption: x.dataField.startsWith('address_') || x.dataField.startsWith('shelterLocation') ? `ds.personAddressHistory.${x.dataField}` : x.caption,
+  })),
 };
 
 export const taskViewDS : IDatasourceBase = {
@@ -584,6 +591,19 @@ export const householdMembersDs : IDatasourceSettings = {
   ],
 };
 
+export const householdMembersAddressHistoryDs : IDatasourceSettings = {
+  url: 'common/data-providers/household-members-address-history',
+  reportingTopic: ReportingTopic.HouseholdMembersAddressHistory,
+  key: { caseFileId: 'Guid', memberId: 'Guid', address_from: 'String' },
+  columns: [
+    ...(caseFileViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(householdViewDs.columns.map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+    ...(personAddressHistoryViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
+    ...(caseFileTagsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileTagsCsv.${x.dataField}` }))),
+  ],
+};
+
 export const referralsDs : IDatasourceSettings = {
   url: 'common/data-providers/referrals',
   reportingTopic: ReportingTopic.Referrals,
@@ -713,6 +733,7 @@ export const caseFileAuthenticationIdsDs : IDatasourceSettings = {
 
 export const datasources = [
   householdMembersDs,
+  householdMembersAddressHistoryDs,
   caseFileHouseholdPrimaryDs,
   caseFileActivitiesDs,
   financialAssistancePaymentLineDs,
