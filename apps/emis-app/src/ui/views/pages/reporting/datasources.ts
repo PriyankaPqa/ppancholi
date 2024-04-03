@@ -29,6 +29,7 @@ export interface IDatasourceSettings extends IDatasourceBase {
   reportingTopic: ReportingTopic;
   columns: ExtendedColumn[]
   key: Record<string, 'String' | 'Int32' | 'Int64' | 'Guid' | 'Boolean' | 'Single' | 'Decimal'>;
+  filter?: any;
 }
 
 export const caseNoteViewDs : IDatasourceBase = {

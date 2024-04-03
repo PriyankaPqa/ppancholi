@@ -21,6 +21,7 @@ const CaseFileReferralDetails = () => import('@/ui/views/pages/case-files/detail
 const CreateEditCaseFileReferral = () => import('@/ui/views/pages/case-files/details/case-file-referral/components/CreateEditReferral.vue');
 
 const CaseFileDocument = () => import('@/ui/views/pages/case-files/details/case-file-document/CaseFileDocument.vue');
+const CaseFileDocumentDX = () => import('@/ui/views/pages/case-files/details/case-file-document/CaseFileDocumentDX.vue');
 const CreateEditCaseFileDocument = () => import('@/ui/views/pages/case-files/details/case-file-document/components/CreateEditCaseFileDocument.vue');
 const CaseFileDocumentDetails = () => import('@/ui/views/pages/case-files/details/case-file-document/components/CaseFileDocumentDetails.vue');
 
@@ -149,6 +150,13 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.documents.home.path,
           name: Routes.caseFile.documents.home.name,
           component: CaseFileDocument,
+          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.documents.homeDx.path,
+          name: Routes.caseFile.documents.homeDx.name,
+          component: CaseFileDocumentDX,
           meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },

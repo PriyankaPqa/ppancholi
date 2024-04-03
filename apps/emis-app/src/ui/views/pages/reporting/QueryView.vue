@@ -99,6 +99,27 @@
               :enabled="true" />
           </DxColumnChooser>
           <DxSorting mode="multiple" />
+          <template #linkto="{ data }">
+            <router-link
+              class="rc-link14 font-weight-bold pr-1"
+              data-test="documentDetail-link"
+              :to="data.column.linkPath(data.data)">
+              {{ data.text }}
+            </router-link>
+          </template>
+          <template #statuspill="{ data }">
+            <status-chip :status-name="data.column.statusName" :status="data.column.getStatus(data.data)" />
+          </template>
+          <template #button="{ data }">
+            <v-btn v-if="data.column.iconType" icon :aria-label="data.column.buttonText" @click="data.column.buttonAction(data.data)">
+              <v-icon size="24" color="grey darken-2">
+                {{ data.column.iconType }}
+              </v-icon>
+            </v-btn>
+            <v-btn v-else :aria-label="data.column.buttonText" @click="data.column.buttonAction(data.data)">
+              {{ data.column.buttonText }}
+            </v-btn>
+          </template>
         </DxDataGrid>
       </div>
     </v-card>
@@ -191,6 +212,7 @@ import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { UserTeamMember } from '@libs/entities-lib/user-account';
 import { UserRoles, UserRolesNames } from '@libs/entities-lib/user';
 import config from 'devextreme/core/config';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { ExtendedColumn, IDatasourceSettings, LookupType, datasources } from './datasources';
 import { AllReports } from './standard_queries/standard_queries';
 import { ReportingPages } from './reportingPages';
@@ -222,6 +244,7 @@ export default Vue.extend({
     RcDataTableHeader,
     VTextFieldWithValidation,
     SelectUsersPopup,
+    StatusChip,
   },
   props: {
     queryId: {
@@ -235,6 +258,14 @@ export default Vue.extend({
     queryTypeName: {
       type: String,
       default: 'Custom',
+    },
+    specificDatasource: {
+      type: Object,
+      default: null,
+    },
+    tableTitle: {
+      type: String,
+      default: null,
     },
   },
   data() {
@@ -284,7 +315,7 @@ export default Vue.extend({
     },
 
     title(): string {
-      return ReportingPages.titleForQuery(this.query, this);
+      return this.tableTitle || ReportingPages.titleForQuery(this.query, this);
     },
     canSave(): boolean {
       return this.query.queryType === QueryType.Custom;
@@ -339,6 +370,9 @@ export default Vue.extend({
         await helpers.timeout(50);
         this.grid = (this.$refs.gridDx as DxDataGrid);
       }
+      if (this.specificDatasource?.filter) {
+        this.grid.instance?.filter(this.specificDatasource.filter);
+      }
       if (this.query.state) {
         this.grid.instance?.state(JSON.parse(this.queryType === QueryType.Custom ? window.atob(this.query.state) : this.query.state));
       }
@@ -347,16 +381,16 @@ export default Vue.extend({
 
     /// this picks the right datasource for this query.  Also it sets the initial "select" list to the list of columns that are visible by default
     async initializeDatasource() {
-      const ds = datasources.find((d) => d.reportingTopic === this.query.topic);
+      const ds = this.specificDatasource || datasources.find((d) => d.reportingTopic === this.query.topic);
       const columns = sortBy(ds.columns.map((c) => ({
         ...c,
         caption: this.$t(c.caption) as string,
         cssClass: `grid-column ${c.cssClass || ''}`,
         allowSearch: c.allowSearch !== false && c.visible !== false,
-      })), (x) => x.caption.toLowerCase()) as ExtendedColumn[];
+      })), (x) => (this.specificDatasource ? '' : x.caption.toLowerCase())) as ExtendedColumn[];
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
       Object.keys(ds.key).forEach((k) => {
-          if (select.indexOf(k) === -1) {
+        if (select.indexOf(k) === -1) {
           select.push(k);
         }
       });
@@ -394,7 +428,7 @@ export default Vue.extend({
               e.timeout = 60 * 60000;
           },
         }),
-        select,
+        select: null,
       };
     },
 
@@ -570,7 +604,7 @@ export default Vue.extend({
       });
 
       // sets the "select" to the list of correct columns
-      grid.getDataSource().select(cols.filter((c) => c != null));
+      // grid.getDataSource().select(cols.filter((c) => c != null));
       grid.refresh();
     },
 

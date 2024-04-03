@@ -167,6 +167,10 @@ const routes = {
         path: 'documents',
         name: 'casefile.documents',
       },
+      homeDx: {
+        path: 'documentsDx',
+        name: 'casefile.documents.dx',
+      },
       details: {
         path: 'documents/:documentId',
         name: 'casefile.documents.details',
