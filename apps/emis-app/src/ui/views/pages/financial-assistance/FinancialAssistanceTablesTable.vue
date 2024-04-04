@@ -82,7 +82,7 @@ import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financ
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { IdParams, IProgramEntity } from '@libs/entities-lib/program';
-import { IEntity, IEntityCombined, Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/entities-lib/base';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramStore } from '@/pinia/program/program';
 import

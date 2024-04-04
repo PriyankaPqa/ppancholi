@@ -251,6 +251,11 @@ export default mixins(TablePaginationSearchMixin).extend({
     availableThemes(): { name: string, description: string, id: ReportingTopic }[] {
       const themes = sharedHelpers.filterCollectionByValue([
         {
+          id: ReportingTopic.HouseholdMembersAddressHistory,
+          name: this.$t('reporting.query.theme.HouseholdMembersAddressHistory'),
+          description: this.$t('reporting.query.theme.HouseholdMembersAddressHistory.description'),
+        },
+        {
           id: ReportingTopic.HouseholdMembers,
           name: this.$t('reporting.query.theme.HouseholdMembers'),
           description: this.$t('reporting.query.theme.HouseholdMembers.description'),

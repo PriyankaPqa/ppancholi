@@ -33,6 +33,7 @@ export enum ReportingTopic {
   LatestCaseFileActivities = 10,
   CaseFileAuthenticationIds = 11,
   PotentialDuplicates = 12,
+  HouseholdMembersAddressHistory = 13,
   Tasks = 14,
   TasksHistory = 15,
   PowerBi = 99,
