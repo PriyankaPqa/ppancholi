@@ -99,8 +99,9 @@ export default Vue.extend({
     async fetchUserAccounts(ids: string[]): Promise<void> {
       await helpers.callSearchInInBatches({
         service: this.combinedUserAccountStore,
-        searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
         ids,
+        searchInFilter: 'Id in ({ids})',
+        otherApiParameters: [null, false, true],
       });
     },
 

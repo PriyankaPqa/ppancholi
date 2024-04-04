@@ -149,6 +149,15 @@ interface IIndividual extends IUserAccountCombined {
   assignedTeamName: string;
 }
 
+interface IIndividualMetaDataSearch {
+    TeamsAsString: {
+      contains: string;
+    };
+    DisplayName: {
+      contains: string;
+    };
+}
+
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'AssignCaseFile',
 
@@ -189,6 +198,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
       },
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
+      sqlSearchMode: true,
     };
   },
 
@@ -306,14 +316,15 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchUserAccounts(teamId: string, params: IAzureSearchParams, initialLoad = false): Promise<IAzureTableSearchResults> {
       this.loading = true;
-      const filter: { Metadata: unknown, } = {
-        Metadata: {
-          Teams: {
-            any: {
-              TeamId: teamId,
+      const filter: { Metadata: IIndividualMetaDataSearch, } = {
+          Metadata: {
+            TeamsAsString: {
+              contains: teamId,
+            },
+            DisplayName: {
+              contains: '',
             },
           },
-        },
       };
 
       let callParams: IAzureSearchParams = {
@@ -326,18 +337,18 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
 
       if (!initialLoad) {
-        const search = this.searchTerm ? `Metadata/DisplayName:/.*${this.searchTerm}.*/ OR Metadata/DisplayName:"\\"${this.searchTerm}\\""` : '';
+        if (this.searchTerm) {
+          filter.Metadata.DisplayName.contains = this.searchTerm;
+        }
         callParams = {
           ...callParams,
           filter,
-          search,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
         };
       }
-
-      const res = await this.combinedUserAccountStore.search(callParams);
+      const res = await this.combinedUserAccountStore.search(callParams, null, false, true);
 
       this.loading = false;
       return res;
@@ -366,14 +377,15 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     async fetchAssignedIndividualsData(): Promise<IUserAccountCombined[]> {
-      const assignedIndividualIds = _flatten(this.caseFile.assignedTeamMembers.map((m) => m.teamMembersIds));
+      const assignedIndividualIds :string[] = _flatten(this.caseFile.assignedTeamMembers.map((m) => m.teamMembersIds));
 
       const fetchedAssignedUserAccountData = await helpers.callSearchInInBatches({
         service: this.combinedUserAccountStore,
         ids: assignedIndividualIds,
-        searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+        searchInFilter: { Entity: { Id: { in: '{ids}' } } },
         otherOptions: { queryType: 'full',
           searchMode: 'all' },
+        otherApiParameters: [null, false, true],
       });
 
       const ids = (fetchedAssignedUserAccountData as IAzureTableSearchResults)?.ids;

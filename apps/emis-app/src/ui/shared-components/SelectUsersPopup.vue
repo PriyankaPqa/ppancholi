@@ -269,9 +269,7 @@ export default Vue.extend({
       await useUserAccountStore().fetchRoles();
       const rolesId = this.levels?.length ? useUserAccountStore().rolesByLevels(this.levels)?.map((r) => r.id) : null;
 
-      const searchParam = helpers.toQuickSearch(this.search);
       const params = {
-        search: searchParam,
         searchFields: this.searchFields,
         top: this.maxNbResults,
         orderBy: 'Metadata/DisplayName',
@@ -283,12 +281,15 @@ export default Vue.extend({
       if (rolesId?.length) {
         searchResults = await sharedHelpers.callSearchInInBatches({
           ids: rolesId,
-          searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
+          searchInFilter: 'Metadata/RoleName/Id in ({ids})',
           otherOptions: { ...params },
+          otherFilter: `contains(Metadata/DisplayName, '${this.search}')`,
           service: this.combinedUserAccountStore,
+          otherApiParameters: [null, false, true],
         });
       } else {
-        searchResults = await this.combinedUserAccountStore.search(params);
+        params.filter = helpers.toQuickSearchSql(this.search);
+        searchResults = await this.combinedUserAccountStore.search(params, null, false, true);
       }
 
       if (searchResults) {

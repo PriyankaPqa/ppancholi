@@ -150,9 +150,8 @@ export default Vue.extend({
 
       const allMemberIds = this.caseFile.assignedTeamMembers.reduce((acc, i) => i.teamMembersIds.concat(acc), []);
       const firstMemberIds = allMemberIds.slice(0, 2);
-      const filter = `search.in(Entity/Id, '${firstMemberIds.join('|')}', '|')`;
-
-      const individualsData: IAzureTableSearchResults = await this.combinedUserAccountStore.search({ filter });
+      const filter = `Id in (${firstMemberIds.join(', ')})`;
+      const individualsData: IAzureTableSearchResults = await this.combinedUserAccountStore.search({ filter }, null, false, true);
       if (individualsData) {
         const { ids } = individualsData;
         const userAccounts = this.combinedUserAccountStore.getByIds(ids);

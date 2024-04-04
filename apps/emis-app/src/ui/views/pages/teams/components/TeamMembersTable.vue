@@ -361,10 +361,11 @@ export default Vue.extend({
       const fetchedAssignedUserAccountData = await sharedHelpers.callSearchInInBatches({
         service: this.combinedUserAccountStore,
         ids: teamMemberIds,
-        searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+        searchInFilter: { Entity: { Id: { in: '{ids}' } } },
         otherOptions: { queryType: 'full',
-          searchMode: 'all' },
-      });
+        searchMode: 'all' },
+        otherApiParameters: [null, false, true],
+        });
 
       const ids = (fetchedAssignedUserAccountData as IAzureTableSearchResults)?.ids;
       if (ids) {

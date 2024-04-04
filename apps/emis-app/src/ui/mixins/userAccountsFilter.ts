@@ -55,7 +55,7 @@ export default Vue.extend({
 
     async fetchUsersByIds(ids: Array<string>) {
       const params = {
-        filter: { Entity: { Id: { searchIn_az: ids } } },
+        filter: { Entity: { Id: { in: ids } } },
         top: 999,
       };
       return this.searchUserAccount(params);
@@ -63,26 +63,27 @@ export default Vue.extend({
 
     // eslint-disable-next-line @typescript-eslint/default-param-last
     async fetchUsersFilter(query = '', rolesId: Array<string>, top = 6) {
-      const searchParam = helpers.toQuickSearch(query);
       const params = {
-        search: searchParam,
         searchFields: 'Metadata/DisplayName',
         top,
         orderBy: 'Metadata/DisplayName',
         queryType: 'full',
         searchMode: 'all',
-      };
+      } as IAzureSearchParams;
 
       let searchResults;
       if (rolesId?.length) {
         searchResults = await sharedHelpers.callSearchInInBatches({
           ids: rolesId,
-          searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
-          otherOptions: params,
+          searchInFilter: 'Metadata/RoleName/Id in ({ids})',
+          otherOptions: { ...params },
+          otherFilter: `contains(Metadata/DisplayName, '${query}')`,
           service: this.combinedUserAccountStore,
+          otherApiParameters: [null, false, true],
         });
       } else {
-        searchResults = await this.combinedUserAccountStore.search(params);
+        params.filter = helpers.toQuickSearchSql(query);
+        searchResults = await this.combinedUserAccountStore.search(params, null, false, true);
       }
 
       if (searchResults?.ids) {
@@ -93,7 +94,8 @@ export default Vue.extend({
     },
 
     async searchUserAccount(params: IAzureSearchParams) {
-      const searchResult: IAzureTableSearchResults = await this.combinedUserAccountStore.search(params);
+      // eslint-disable-next-line @typescript-eslint/comma-spacing
+      const searchResult: IAzureTableSearchResults = await this.combinedUserAccountStore.search(params, null, false, true);
       if (searchResult) {
         return this.combinedUserAccountStore.getByIds(searchResult.ids);
       }

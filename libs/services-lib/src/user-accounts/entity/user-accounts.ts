@@ -65,8 +65,8 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
     return this.http.get(`${this.baseUrl}/users-by-event-role?eventId=${targetEvent}&roleIds=${(targetRoles || []).join('&roleIds=')}`);
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IUserAccountEntity, unknown>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
+  async search(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<IUserAccountEntity, unknown>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/user-accountsV2`, { params, isOData: true });
   }
 
   async searchDirectoryUsers(searchTerm: string): Promise<IUserProfileQueryResponse[]> {

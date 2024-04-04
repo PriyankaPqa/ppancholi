@@ -302,24 +302,23 @@ describe('AssignCaseFile.vue', () => {
         const result = await wrapper.vm.fetchUserAccounts('id-1', {}, true);
         const filter = {
           Metadata: {
-            Teams: {
-              any: {
-                TeamId: 'id-1',
-              },
+            TeamsAsString: {
+              contains: 'id-1',
+            },
+            DisplayName: {
+              contains: '',
             },
           },
         };
 
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
-          {
-            filter,
-            top: 1,
-            skip: 0,
-            count: true,
-            queryType: 'full',
-            searchMode: 'all',
-          },
-        );
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
+          filter,
+          top: 1,
+          skip: 0,
+          count: true,
+          queryType: 'full',
+          searchMode: 'all',
+        }, null, false, true);
         expect(result).toEqual({ ids: ['search-id'] });
       });
 
@@ -333,26 +332,24 @@ describe('AssignCaseFile.vue', () => {
 
         const filter = {
           Metadata: {
-            Teams: {
-              any: {
-                TeamId: 'id-1',
-              },
+            TeamsAsString: {
+              contains: 'id-1',
+            },
+            DisplayName: {
+              contains: 'query',
             },
           },
         };
 
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
-          {
-            filter,
-            search: 'Metadata/DisplayName:/.*query.*/ OR Metadata/DisplayName:"\\"query\\""',
-            top: 10,
-            skip: 10,
-            count: true,
-            orderBy: 'mock',
-            queryType: 'full',
-            searchMode: 'all',
-          },
-        );
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
+          filter,
+          top: 10,
+          skip: 10,
+          count: true,
+          orderBy: 'mock',
+          queryType: 'full',
+          searchMode: 'all',
+        }, null, false, true);
         expect(result).toEqual({ ids: ['search-id'] });
       });
     });
@@ -388,9 +385,10 @@ describe('AssignCaseFile.vue', () => {
         expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
           service: wrapper.vm.combinedUserAccountStore,
           ids: ['id-1', 'id-2', 'id-3'],
-          searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+          searchInFilter: { Entity: { Id: { in: '{ids}' } } },
           otherOptions: { queryType: 'full',
             searchMode: 'all' },
+          otherApiParameters: [null, false, true],
         });
         expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['search-id']);
         expect(result).toEqual([mockCombinedUserAccount()]);

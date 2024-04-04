@@ -66,18 +66,16 @@ describe('CaseFileSummary.vue', () => {
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           filter: {
             Entity: {
-              Id: {
-                searchIn_az: [
-                  'mock-assigned-individual-id-1',
-                  'mock-assigned-individual-id-2',
-                  'mock-assigned-individual-id-3',
-                ],
-              },
+              Id: { in: [
+                'mock-assigned-individual-id-1',
+                'mock-assigned-individual-id-2',
+                'mock-assigned-individual-id-3',
+              ] },
             },
           },
           queryType: 'full',
           searchMode: 'all',
-        });
+        }, null, false, true);
         expect(caseFileReferralStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'abcd' });
         expect(caseFileReferralStore.getByCaseFile).toHaveBeenCalledWith('abcd');
         expect(wrapper.vm.hasReferrals).toEqual(true);
@@ -155,11 +153,12 @@ describe('CaseFileSummary.vue', () => {
         expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
           ids: ['id-1'],
           service: wrapper.vm.combinedUserAccountStore,
-          searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+          searchInFilter: { Entity: { Id: { in: '{ids}' } } },
           otherOptions: {
             queryType: 'full',
             searchMode: 'all',
           },
+          otherApiParameters: [null, false, true],
         });
       });
     });

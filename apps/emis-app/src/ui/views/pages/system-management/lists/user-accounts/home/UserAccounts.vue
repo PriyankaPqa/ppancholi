@@ -204,6 +204,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       disallowedRoles: [] as IOptionSubItem[], // Roles that a Level5 cannot change
       tableName: 'user-accounts',
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
+      sqlSearchMode: true,
     };
   },
 
@@ -346,7 +347,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, false, true);
       return res;
     },
 

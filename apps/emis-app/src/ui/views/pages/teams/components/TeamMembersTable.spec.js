@@ -281,9 +281,9 @@ describe('TeamMembersTable.vue', () => {
         expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
           service: wrapper.vm.combinedUserAccountStore,
           ids: ['id-1'],
-          searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
-          otherOptions: { queryType: 'full',
-            searchMode: 'all' },
+          searchInFilter: { Entity: { Id: { in: '{ids}' } } },
+          otherOptions: { queryType: 'full', searchMode: 'all' },
+          otherApiParameters: [null, false, true],
         });
       });
 

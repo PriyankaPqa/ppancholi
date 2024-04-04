@@ -251,7 +251,7 @@ describe('UserAccounts.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        });
+        }, null, false, true);
       });
     });
 

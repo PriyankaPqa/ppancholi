@@ -102,8 +102,9 @@ describe('ViewAssigned.vue', () => {
         await wrapper.vm.fetchUserAccounts(ids);
         expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
           service: wrapper.vm.combinedUserAccountStore,
-          searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
           ids,
+          searchInFilter: 'Id in ({ids})',
+          otherApiParameters: [null, false, true],
         });
       });
     });

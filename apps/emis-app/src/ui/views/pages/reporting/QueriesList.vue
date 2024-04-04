@@ -347,11 +347,12 @@ export default mixins(TablePaginationSearchMixin).extend({
         await sharedHelpers.callSearchInInBatches({
           ids: userIds,
           service: this.combinedUserAccountStore,
-          searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+          searchInFilter: { Entity: { Id: { in: '{ids}' } } },
           otherOptions: {
             queryType: 'full',
             searchMode: 'all',
           },
+          otherApiParameters: [null, false, true],
         });
       }
       const users = useUserAccountMetadataStore().getByIds(userIds);

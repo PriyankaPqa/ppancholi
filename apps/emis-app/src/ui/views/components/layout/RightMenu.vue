@@ -168,6 +168,7 @@ export default Vue.extend({
       currentTenantId: null as string,
       appVersion: '',
       UserRoles,
+      useUserStore,
     };
   },
 

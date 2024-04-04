@@ -209,54 +209,73 @@ describe('SelectUsersPopup.vue', () => {
     describe('fetchFilteredUsers', () => {
       it('calls the search endpoint with the right data when no role and default props', async () => {
         wrapper.vm.combinedUserAccountStore.search = jest.fn();
-        helpers.toQuickSearch = jest.fn(() => 'query from helper');
+        helpers.toQuickSearchSql = jest.fn(() => ({
+          and: [
+            { 'metadata/searchableText': { contains: 'test' } },
+          ],
+        }));
         await wrapper.vm.fetchFilteredUsers();
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           orderBy: 'Metadata/DisplayName',
           queryType: 'full',
-          search: 'query from helper',
+          filter: {
+            and: [
+              { 'metadata/searchableText': { contains: 'test' } },
+            ],
+          },
           searchFields: null,
           searchMode: 'all',
           top: null,
-        });
+        }, null, false, true);
       });
 
       it('calls the search endpoint with the right data when no role but props', async () => {
         wrapper.vm.combinedUserAccountStore.search = jest.fn();
-        helpers.toQuickSearch = jest.fn(() => 'query from helper');
+        helpers.toQuickSearchSql = jest.fn(() => ({
+          and: [
+            { 'metadata/searchableText': { contains: 'test' } },
+          ],
+        }));
         await wrapper.setProps({ searchFields: 'some field', maxNbResults: 3 });
 
         await wrapper.vm.fetchFilteredUsers();
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           orderBy: 'Metadata/DisplayName',
           queryType: 'full',
-          search: 'query from helper',
+          filter: {
+            and: [
+              { 'metadata/searchableText': { contains: 'test' } },
+            ],
+          },
           searchFields: 'some field',
           searchMode: 'all',
           top: 3,
-        });
+        }, null, false, true);
       });
 
       it('calls the search endpoint with the right data when role', async () => {
         sharedHelpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
         wrapper.vm.combinedUserAccountStore.search = jest.fn();
-        helpers.toQuickSearch = jest.fn(() => 'query from helper');
         await wrapper.setProps({ levels: ['l3', 'l4'], searchFields: 'some field', maxNbResults: 3 });
+        await wrapper.setData({
+          search: 'test',
+        });
 
         userAccountStore.rolesByLevels = jest.fn(() => [{ name: 'role1', id: 'id-1' }]);
 
         await wrapper.vm.fetchFilteredUsers();
         expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
           ids: ['id-1'],
-          searchInFilter: 'Entity/Roles/any(r: search.in(r/OptionItemId, \'{ids}\'))',
+          searchInFilter: 'Metadata/RoleName/Id in ({ids})',
           otherOptions: {
-            search: 'query from helper',
             searchFields: 'some field',
             top: 3,
             orderBy: 'Metadata/DisplayName',
             queryType: 'full',
             searchMode: 'all' },
           service: wrapper.vm.combinedUserAccountStore,
+          otherFilter: 'contains(Metadata/DisplayName, \'test\')',
+          otherApiParameters: [null, false, true],
         });
       });
 

@@ -49,7 +49,7 @@ describe('userAccountsFilter', () => {
         wrapper.vm.searchUserAccount = jest.fn();
         await wrapper.vm.fetchUsersByIds(['id']);
         expect(wrapper.vm.searchUserAccount).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['id'] } } },
+          filter: { Entity: { Id: { in: ['id'] } } },
           top: 999,
         });
       });
@@ -58,7 +58,7 @@ describe('userAccountsFilter', () => {
     describe('searchUserAccount', () => {
       it('should fetch user accounts corresponding to the query and should return the right mapped object', async () => {
         const params = {
-          filter: { Entity: { Id: { searchIn_az: ['id'] } } },
+          filter: { Entity: { Id: { in: ['id'] } } },
           top: 999,
         };
 
@@ -68,9 +68,9 @@ describe('userAccountsFilter', () => {
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [user]);
         const result = await wrapper.vm.searchUserAccount(params);
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['id'] } } },
+          filter: { Entity: { Id: { in: ['id'] } } },
           top: 999,
-        });
+        }, null, false, true);
 
         expect(result).toEqual([mockCombinedUserAccount()]);
       });
@@ -81,13 +81,17 @@ describe('userAccountsFilter', () => {
         wrapper.vm.combinedUserAccountStore.search = jest.fn();
         await wrapper.vm.fetchUsersFilter('test', null, 10);
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
-          search: '((/.*test.*/ OR "\\"test\\""))',
+          filter: {
+            and: [
+              { 'metadata/searchableText': { contains: 'test' } },
+            ],
+          },
           searchFields: 'Metadata/DisplayName',
           top: 10,
           orderBy: 'Metadata/DisplayName',
           queryType: 'full',
           searchMode: 'all',
-        });
+        }, null, false, true);
       });
 
       it('should call callSearchInInBatches with the right payload if there are roles passed as argument', async () => {
@@ -95,15 +99,16 @@ describe('userAccountsFilter', () => {
         await wrapper.vm.fetchUsersFilter('test', ['level3', 'level4'], 10);
         expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
           ids: ['level3', 'level4'],
-          searchInFilter: 'Entity/Roles/any(r: search.in(r/OptionItemId, \'{ids}\'))',
+          searchInFilter: 'Metadata/RoleName/Id in ({ids})',
+          otherFilter: 'contains(Metadata/DisplayName, \'test\')',
           otherOptions: {
-            search: '((/.*test.*/ OR "\\"test\\""))',
-            searchFields: 'Metadata/DisplayName',
             top: 10,
+            searchFields: 'Metadata/DisplayName',
             orderBy: 'Metadata/DisplayName',
             queryType: 'full',
             searchMode: 'all' },
           service: wrapper.vm.combinedUserAccountStore,
+          otherApiParameters: [null, false, true],
         });
       });
     });
