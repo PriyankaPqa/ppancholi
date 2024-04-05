@@ -13,6 +13,12 @@ export enum DataTest {
   financialAssistance = 'case-financial-assistance',
   pageTitle = 'page-title',
   registrationNumber = 'caseFileActivity-listItem-content-body-registration-number',
+  addTag = 'caseFile-add-tags-btn',
+  dialogActionCancel = 'dialog-cancel-action',
+  dialogActionSubmit = 'dialog-submit-action',
+  addTagItem = 'checkbox-item',
+  displayedTagItemChipText = 'caseFileTags-chip',
+  caseFileActivityTags = 'caseFileActivity-tags',
 }
 
 export class CaseFileDetailsPage {
@@ -41,6 +47,14 @@ export class CaseFileDetailsPage {
   private pageTitle = { selector: DataTest.pageTitle };
 
   private registrationNumber = { selector: DataTest.registrationNumber };
+
+  private addTag = { selector: DataTest.addTag };
+
+  private dialogActionCancel = { selector: DataTest.dialogActionCancel };
+
+  private dialogActionSubmit = { selector: DataTest.dialogActionSubmit };
+
+  private caseFileActivityTags = { selector: DataTest.caseFileActivityTags };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -123,5 +137,35 @@ export class CaseFileDetailsPage {
 
   public goToDuplicateHouseholdProfilebyIndex(index = 0) {
     cy.getByDataTest(this.registrationNumber).eq(index).click();
+  }
+
+  public addTagButton() {
+    cy.getByDataTest(this.addTag).click();
+  }
+
+  public getAddTagButton() {
+    return cy.getByDataTest(this.addTag);
+  }
+
+  public getDialogActionCancelButton() {
+    return cy.getByDataTest(this.dialogActionCancel);
+  }
+
+  public getDialogActionSubmitButton() {
+    return cy.getByDataTest(this.dialogActionSubmit);
+  }
+
+  public selectTagItem(caseFileTag: string) {
+    const tagItemSelector = { selector: `${DataTest.addTagItem}-${caseFileTag}` };
+    cy.getByDataTest(tagItemSelector).click();
+  }
+
+  public getCaseFileActivityTags() {
+    return cy.getByDataTest(this.caseFileActivityTags).getAndTrimText();
+  }
+
+  public getDisplayedSelectedTag(caseFileTag: string) {
+    const tagItemSelector = { selector: `${DataTest.displayedTagItemChipText}-${caseFileTag}` };
+    return cy.getByDataTest(tagItemSelector);
   }
 }
