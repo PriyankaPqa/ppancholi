@@ -33,6 +33,64 @@ describe('HouseholdCard.vue', () => {
   ];
   helpers.enumToTranslatedCollection = jest.fn(() => mockAddressTypes);
 
+  describe('Template', () => {
+    describe('household_address', () => {
+      it('should display no fixed home address when noFixedHome is true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            household: mockHouseholdCreate({ noFixedHome: true }),
+            position: 'left',
+            shelterLocations,
+            enabledMove: true,
+            moveSubmitted: false,
+          },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
+          computed: {
+            members() {
+              return [mockMember()];
+            },
+          },
+        });
+        await wrapper.vm.$nextTick();
+        const element = wrapper.findDataTest('household_address');
+        expect(element.text()).toEqual('registration.addresses.noFixedHomeAddress');
+      });
+
+      it('should display correct address when noFixedHome is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            household: mockHouseholdCreate({ noFixedHome: false }),
+            position: 'left',
+            shelterLocations,
+            enabledMove: true,
+            moveSubmitted: false,
+          },
+          data() {
+            return {
+              apiKey: 'mock-api-key',
+            };
+          },
+          computed: {
+            members() {
+              return [mockMember()];
+            },
+          },
+        });
+        await wrapper.vm.$nextTick();
+        const element = wrapper.findDataTest('household_address');
+        expect(element.text()).toEqual('123-247 Some Street'
+          + '\n           '
+          + '\n            Ottawa, ON, K1W 1G7    Canada');
+      });
+    });
+  });
+
   describe('Computed', () => {
     describe('members', () => {
       it('returns the list of members of a household', () => {

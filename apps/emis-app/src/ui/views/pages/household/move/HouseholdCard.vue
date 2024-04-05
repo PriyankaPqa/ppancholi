@@ -27,13 +27,20 @@
           </v-icon>
           <span class="rc-body14 fw-bold">{{ $t('household.move.card.address') }}</span>
         </v-col>
-        <v-col>
-          <div class="rc-body14">
-            {{ householdHelpers.addressLine1(household) }}
-          </div>
-          <div class="rc-body14">
-            {{ householdHelpers.addressLine2(household) }}    {{ householdHelpers.country(household) }}
-          </div>
+        <v-col data-test="household_address">
+          <template v-if="household.noFixedHome">
+            <div class="rc-body14">
+              {{ $t('registration.addresses.noFixedHomeAddress') }}
+            </div>
+          </template>
+          <template v-else>
+            <div class="rc-body14">
+              {{ householdHelpers.addressLine1(household) }}
+            </div>
+            <div class="rc-body14">
+              {{ householdHelpers.addressLine2(household) }}    {{ householdHelpers.country(household) }}
+            </div>
+          </template>
         </v-col>
       </v-row>
       <v-row no-gutters class="grey-container px-4 pt-1 pb-4">
