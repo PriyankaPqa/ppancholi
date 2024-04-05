@@ -1,12 +1,10 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
-import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import {
   createEventAndTeam,
-  createProgramWithTableWithItemAndSubItem, IPrepareStateHousehold, prepareStateHousehold,
+  createProgramWithTableWithItemAndSubItem, creatingDuplicateHousehold,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureBaseMassAction, fixtureGenerateFaCsvFile, fixtureNewMassFinancialAssistance } from '../../../fixtures/mass-actions';
@@ -32,8 +30,6 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-let resultOriginalHousehold: IPrepareStateHousehold;
-let createDuplicateHousehold: ICreateHouseholdRequest;
 const filePath = 'cypress/downloads/faFile.csv';
 
 describe('#TC1852# - Fails mass action FA upload file pre-processing when household has a duplicate flag on it', { tags: ['@case-file', '@mass-actions'] }, () => {
@@ -60,15 +56,11 @@ describe('#TC1852# - Fails mass action FA upload file pre-processing when househ
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            cy.wrap(resultOriginalHousehold.registrationResponse.caseFile).as('originalCaseFile');
-            cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.id).as('originalCaseFileId');
-            cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalCaseFileNumber');
-            createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
-              this.event.id,
-              resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
-            );
-            await this.provider.households.postCrcRegistration(createDuplicateHousehold);
+            const resultCreateDuplicateHousehold = await creatingDuplicateHousehold(accessTokenL6, this.event, this.provider);
+            const { firstHousehold } = resultCreateDuplicateHousehold;
+            cy.wrap(firstHousehold.registrationResponse.caseFile).as('originalCaseFile');
+            cy.wrap(firstHousehold.registrationResponse.caseFile.id).as('originalCaseFileId');
+            cy.wrap(firstHousehold.registrationResponse.caseFile.caseFileNumber).as('originalCaseFileNumber');
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });

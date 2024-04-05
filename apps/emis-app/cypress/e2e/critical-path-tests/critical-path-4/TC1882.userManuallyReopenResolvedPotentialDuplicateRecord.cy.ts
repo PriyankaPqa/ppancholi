@@ -1,9 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
-import { IDetailedRegistrationResponse } from '@libs/entities-lib/household';
-import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
-import { createEventAndTeam, IPrepareStateHousehold, prepareStateHousehold, resolvePotenialDuplicateRecord } from '../../helpers/prepareState';
+import { createEventAndTeam, creatingDuplicateHousehold, resolvePotenialDuplicateRecord } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { UpdateDuplicateRecordTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
 import {
@@ -31,9 +28,6 @@ const cannotRoles = [
 ];
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
-let resultOriginalHousehold: IPrepareStateHousehold;
-let resultComparisonHousehold: IDetailedRegistrationResponse;
-let createDuplicateHousehold: ICreateHouseholdRequest;
 let accessTokenL6 = '';
 const rationale = 'I am re-opening this duplicate';
 
@@ -59,27 +53,24 @@ describe('#TC1882# - User can manually re-open a resolved potential duplicate re
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
-            createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
-              this.eventCreated.id,
-              resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
-            );
-            resultComparisonHousehold = await this.provider.households.postCrcRegistration(createDuplicateHousehold);
+            const resultCreateDuplicateHousehold = await creatingDuplicateHousehold(accessTokenL6, this.eventCreated, this.provider);
+            const { firstHousehold, duplicateHousehold, createDuplicateHouseholdRequest } = resultCreateDuplicateHousehold;
+            cy.wrap(firstHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.firstName).as('originalHouseholdPrimaryBeneficiaryFirstName');
+            cy.wrap(firstHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.lastName).as('originalHouseholdPrimaryBeneficiaryLastName');
+            cy.wrap(firstHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
+            cy.wrap(firstHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
+            cy.wrap(firstHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number).as('phoneNumber');
+            cy.wrap(createDuplicateHouseholdRequest.primaryBeneficiary.identitySet).as('comparisonHouseholdPrimaryBeneficiary');
+            cy.wrap(duplicateHousehold.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
+            cy.wrap(duplicateHousehold.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            cy.wrap(duplicateHousehold.caseFile).as('comparisonHouseholdCaseFile');
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(2000);
           cy.then(async function () {
-            await resolvePotenialDuplicateRecord(this.provider, resultComparisonHousehold.caseFile.householdId);
-              cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.firstName).as('originalHouseholdPrimaryBeneficiaryFirstName');
-              cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.lastName).as('originalHouseholdPrimaryBeneficiaryLastName');
-              cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
-              cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
-              cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number).as('phoneNumber');
-              cy.wrap(createDuplicateHousehold.primaryBeneficiary.identitySet).as('comparisonHouseholdPrimaryBeneficiary');
-              cy.wrap(resultComparisonHousehold.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
-              cy.wrap(resultComparisonHousehold.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+              await resolvePotenialDuplicateRecord(this.provider, this.comparisonHouseholdCaseFile.householdId);
               cy.login(roleName);
-              cy.goTo(`casefile/household/${resultComparisonHousehold.caseFile.householdId}`);
+              cy.goTo(`casefile/household/${this.comparisonHouseholdCaseFile.householdId}`);
           });
         });
         it('should manually re-open a resolved potential duplicate record', function () {
@@ -136,18 +127,15 @@ describe('#TC1882# - User can manually re-open a resolved potential duplicate re
   describe('Cannot roles', () => {
     before(() => {
       cy.then(async function () {
-        resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
-        createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
-          this.eventCreated.id,
-          resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
-        );
-        resultComparisonHousehold = await this.provider.households.postCrcRegistration(createDuplicateHousehold);
+        const resultCreateDuplicateHousehold = await creatingDuplicateHousehold(accessTokenL6, this.eventCreated, this.provider);
+        const { duplicateHousehold } = resultCreateDuplicateHousehold;
+        cy.wrap(duplicateHousehold.caseFile).as('comparisonHouseholdCaseFile');
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);
       cy.then(async function () {
-        await resolvePotenialDuplicateRecord(this.provider, resultComparisonHousehold.caseFile.householdId);
-        cy.wrap(resultComparisonHousehold.caseFile.householdId).as('householdId');
+          await resolvePotenialDuplicateRecord(this.provider, this.comparisonHouseholdCaseFile.householdId);
+          cy.wrap(this.comparisonHouseholdCaseFile.householdId).as('householdId');
       });
     });
     for (const roleName of filteredCannotRoles) {

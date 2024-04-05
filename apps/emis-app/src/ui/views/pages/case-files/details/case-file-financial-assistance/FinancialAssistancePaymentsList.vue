@@ -2,6 +2,7 @@
   <div class="pa-4">
     <rc-data-table
       class="financialAssistanceOverview__table"
+      data-test="financialAssistanceOverview__table"
       :items="tableData"
       :count="itemsCount"
       :headers="headers"

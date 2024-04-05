@@ -16,6 +16,7 @@ import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/moc
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import {
+  mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest,
   mockCreateHouseholdRequest,
   mockCustomCurrentAddressCreateRequest,
   mockUpdatePersonIdentityRequest,
@@ -717,4 +718,22 @@ export const resolvePotenialDuplicateRecord = async (provider: IProvider, househ
   const householdDuplicate = await provider.potentialDuplicates.getDuplicates(householdId);
   const resolvedDuplicate = await provider.potentialDuplicates.resolveDuplicate(householdDuplicate[0].id, 'I am resolving this duplicate');
   return { householdDuplicate, resolvedDuplicate };
+};
+
+/**
+ * Creates duplicate household
+ * @param accessTokenL6
+ * @param event
+ * @param provider
+ */
+export const creatingDuplicateHousehold = async (accessTokenL6: string, event: IEventEntity, provider: IProvider) => {
+  const firstHousehold = await prepareStateHousehold(accessTokenL6, event);
+  cy.wrap(firstHousehold.registrationResponse.caseFile).as('originalCaseFile');
+  cy.wrap(firstHousehold.registrationResponse.caseFile.id).as('originalCaseFileId');
+  const createDuplicateHouseholdRequest = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
+    event.id,
+    firstHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
+  );
+  const duplicateHousehold = await provider.households.postCrcRegistration(createDuplicateHouseholdRequest);
+  return { firstHousehold, duplicateHousehold, createDuplicateHouseholdRequest };
 };

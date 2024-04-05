@@ -8,7 +8,8 @@
         <slot name="headerLeft" />
         <h1
           v-if="labels.title"
-          class="rc-title-3 white--text">
+          class="rc-title-3 white--text"
+          data-test="table_title">
           {{ labels.title }}
         </h1>
       </div>

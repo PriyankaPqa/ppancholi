@@ -1,7 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
-import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
+import { createEventAndTeam, creatingDuplicateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 import { ResolvedBy, UpdateDuplicateRecordTo } from '../../../pages/manage-duplicates/manageDuplicates.page';
@@ -55,22 +54,18 @@ describe('#TC1881# - User can manually update the status of a potential duplicat
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
-            const createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(
-              this.eventCreated.id,
-              resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number,
-            );
-            const resultComparisonHousehold = await this.provider.households.postCrcRegistration(createDuplicateHousehold);
-            cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.firstName).as('originalHouseholdPrimaryBeneficiaryFirstName');
-            cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.lastName).as('originalHouseholdPrimaryBeneficiaryLastName');
-            cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
-            cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
-            cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number).as('phoneNumber');
-            cy.wrap(createDuplicateHousehold.primaryBeneficiary.identitySet).as('comparisonHouseholdPrimaryBeneficiary');
-            cy.wrap(resultComparisonHousehold.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
-            cy.wrap(resultComparisonHousehold.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            const resultCreateDuplicateHousehold = await creatingDuplicateHousehold(accessTokenL6, this.eventCreated, this.provider);
+            const { firstHousehold, duplicateHousehold, createDuplicateHouseholdRequest } = resultCreateDuplicateHousehold;
+            cy.wrap(firstHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.firstName).as('originalHouseholdPrimaryBeneficiaryFirstName');
+            cy.wrap(firstHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.lastName).as('originalHouseholdPrimaryBeneficiaryLastName');
+            cy.wrap(firstHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
+            cy.wrap(firstHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
+            cy.wrap(firstHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number).as('phoneNumber');
+            cy.wrap(createDuplicateHouseholdRequest.primaryBeneficiary.identitySet).as('comparisonHouseholdPrimaryBeneficiary');
+            cy.wrap(duplicateHousehold.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
+            cy.wrap(duplicateHousehold.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
             cy.login(roleName);
-            cy.goTo(`casefile/household/${resultComparisonHousehold.caseFile.householdId}`);
+            cy.goTo(`casefile/household/${duplicateHousehold.caseFile.householdId}`);
           });
         });
         it('should manually update potential duplicate records status to resolved', function () {
