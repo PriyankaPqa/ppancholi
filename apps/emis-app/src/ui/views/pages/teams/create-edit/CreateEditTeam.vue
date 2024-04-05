@@ -49,7 +49,7 @@
 
                   <v-checkbox-with-validation
                     v-model="team.isAssignable"
-                    :disabled="team.isEscalation"
+                    :disabled="team.isEscalation || !$hasLevel(UserRoles.level5)"
                     :label="$t('teams.set_assignable_team')"
                     data-test="team-isAssignable-checkbox"
                     class="is-assignable-checkbox" />

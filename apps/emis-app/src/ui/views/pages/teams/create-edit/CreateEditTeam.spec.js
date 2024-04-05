@@ -382,6 +382,25 @@ describe('CreateEditTeam.vue', () => {
         expect(element.attributes('disabled')).toEqual('true');
         expect(wrapper.vm.team.isAssignable).toEqual(true);
       });
+
+      it('should be disabled when isEscalation is false, but user doesnt have L5', async () => {
+        await mountWrapper(false, 4, {
+          featureList: [FeatureKeys.TaskManagement],
+          propsData: {
+            teamType: 'standard',
+          },
+          data() {
+            return {
+              team: {
+                isEscalation: false,
+                isAssignable: false,
+              },
+            };
+          },
+        });
+        const element = wrapper.findDataTest('team-isAssignable-checkbox');
+        expect(element.attributes('disabled')).toEqual('true');
+      });
     });
   });
 
