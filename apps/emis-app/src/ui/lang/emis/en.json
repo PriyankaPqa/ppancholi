@@ -1093,6 +1093,27 @@
     "ds.potentialDuplicateViewDs.potentialDuplicateRegistrationNumber": "Duplicate Household - Registration Number",
     "ds.potentialDuplicateViewDs.primaryBeneficiaryFirstName": "Primary Household Member - First Name",
     "ds.potentialDuplicateViewDs.primaryBeneficiaryLastName": "Primary Household Member - Last Name",
+    
+    "ds.potentialDuplicateViewDs.caseFileCreatedOn": "Case File - Date Created",
+    "ds.potentialDuplicateViewDs.duplicateCaseFileCreatedOn": "Duplicate Household - Case File Date Created",
+    "ds.potentialDuplicateViewDs.email": "Primary Household Member - Email",
+    "ds.potentialDuplicateViewDs.potentialDuplicateEmail": "Duplicate Household - Primary Household Member Email",
+    
+    "ds.potentialDuplicateViewDs.matchedMemberFirstName": "Matched Member - First Name",
+    "ds.potentialDuplicateViewDs.matchedMemberLastName": "Matched Member - Last Name",
+    "ds.potentialDuplicateViewDs.matchedMemberDateOfBirth": "Matched Member - Date Of Birth",
+    "ds.potentialDuplicateViewDs.matchedMemberAge": "Matched Member - Age",
+    "ds.potentialDuplicateViewDs.matchedDuplicateMemberFirstName": "Duplicate Member - First Name",
+    "ds.potentialDuplicateViewDs.matchedDuplicateMemberLastName": "Duplicate Member - Last Name",
+    "ds.potentialDuplicateViewDs.matchedDuplicateMemberDateOfBirth": "Duplicate Member - Date Of Birth",
+    "ds.potentialDuplicateViewDs.matchedDuplicateMemberAge": "Duplicate Member - Age",
+
+    "ds.potentialDuplicateViewDs.caseFileNumber": "Case File - Number",
+    "ds.potentialDuplicateViewDs.duplicateCaseFileNumber": "Duplicate Household - Case File Number",
+    "ds.potentialDuplicateViewDs.duplicateEventId": "Duplicate Household - Event ID",
+    "ds.potentialDuplicateViewDs.duplicateEventNameEn": "Duplicate Household - Event Name (en)",
+    "ds.potentialDuplicateViewDs.duplicateEventNameFr": "Duplicate Household - Event Name (fr)",
+
     "ds.potentialDuplicateViewDs.registrationNumber": "Household - Registration Number",
     "ds.programsPerCaseFileCsv.programNameEn": "Case File - Programs (en)",
     "ds.programsPerCaseFileCsv.programNameEnFr": "Case File - Programs (en\/fr)",
