@@ -16,6 +16,13 @@ export enum DataTest {
   dialogApprovalHistoryRationale = 'rationale-item',
   dialogApprovalHistoryAction = 'action-item',
   dialogCancel = 'dialog-cancel-action',
+  dialogSubmit = 'dialog-submit-action',
+  dialogTitle = 'dialog-title',
+  dialogClose = 'dialog-close',
+  errorMessage = 'error-message',
+  searchField = 'dataTableHeader__search',
+  backButton = 'back-button',
+  statsButton = 'financialAssistanceOverview__statsButton',
 }
 
 export class FinancialAssistanceHomePage {
@@ -45,7 +52,21 @@ export class FinancialAssistanceHomePage {
 
   private dialogApprovalHistoryAction = { selector: DataTest.dialogApprovalHistoryAction };
 
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
   private dialogCancel = { selector: DataTest.dialogCancel };
+
+  private dialogSubmit = { selector: DataTest.dialogSubmit };
+
+  private dialogClose = { selector: DataTest.dialogClose };
+
+  private errorMessage = { selector: DataTest.errorMessage };
+
+  private searchField = { selector: DataTest.searchField, type: 'input' };
+
+  private backButton = { selector: DataTest.backButton };
+
+  private statsButton = { selector: DataTest.statsButton };
 
   public getFAPaymentById(financialAssistancePaymentId: string) {
     cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).click();
@@ -134,5 +155,31 @@ export class FinancialAssistanceHomePage {
 
   public getDialogCancelApprovalStatusHistoryButton() {
     return cy.getByDataTest(this.dialogCancel);
+  }
+
+  public getDialogSubmitButton() {
+    return cy.getByDataTest(this.dialogSubmit);
+  }
+
+  public getDialogTitleElement() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public getErrorMessageElement() {
+    return cy.getByDataTest(this.errorMessage);
+  }
+
+  public getDialogCloseElement() {
+    return cy.getByDataTest(this.dialogClose);
+  }
+
+  public verifyClickSuccessful() {
+    return cy.getByDataTest(this.dialogClose);
+  }
+
+  public addNewFaPayment() {
+    this.getAddFaPaymentButton().should('be.visible');
+    cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
+    this.getAddFaPaymentButton().click({ force: true });
   }
 }
