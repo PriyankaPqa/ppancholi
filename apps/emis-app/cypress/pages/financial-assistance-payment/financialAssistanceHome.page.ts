@@ -12,7 +12,7 @@ export enum DataTest {
   caseFileDetails = 'item-text-0',
   faHistory = 'history-link',
   addFaPayment = 'table__addButton',
-  refreshButton = 'undefined_refresh_button',
+  refreshButton = 'financialAssistanceOverview__table_refresh_button',
   dialogApprovalHistoryRationale = 'rationale-item',
   dialogApprovalHistoryAction = 'action-item',
   dialogCancel = 'dialog-cancel-action',
