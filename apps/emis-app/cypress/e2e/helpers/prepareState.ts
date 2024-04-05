@@ -32,7 +32,7 @@ import {
 } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
-import { EPaymentModalities } from '@libs/entities-lib/program';
+import { EPaymentModalities, IProgramEntityData } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
@@ -146,8 +146,8 @@ export const createCustomProgram = async (provider: IProvider, eventId: string, 
  * @param provider
  * @param eventId
  */
-export const createProgram = async (provider: IProvider, eventId: string) => {
-  const mockCreateProgram = mockProgram({ eventId });
+export const createProgram = async (provider: IProvider, eventId: string, otherOption?: Partial<IProgramEntityData>) => {
+  const mockCreateProgram = mockProgram({ eventId, ...otherOption });
   const program = await provider.programs.createProgram(mockCreateProgram);
   return { program, mockCreateProgram };
 };
@@ -231,8 +231,13 @@ export const setHouseholdStatus = async (provider: IProvider, householdId: strin
  * @param eventId
  * @param amountType
  */
-export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType: EFinancialAmountModes) => {
-  const { program, mockCreateProgram } = await createProgram(provider, eventId);
+export const createProgramWithTableWithItemAndSubItem = async (
+  provider: IProvider,
+  eventId: string,
+  amountType: EFinancialAmountModes,
+  otherOption?: Partial<IProgramEntityData>,
+) => {
+  const { program, mockCreateProgram } = await createProgram(provider, eventId, otherOption);
   const createFaTableParamData: CreateFATableParams = {
     provider,
     eventId,
@@ -718,6 +723,17 @@ export const resolvePotenialDuplicateRecord = async (provider: IProvider, househ
   const householdDuplicate = await provider.potentialDuplicates.getDuplicates(householdId);
   const resolvedDuplicate = await provider.potentialDuplicates.resolveDuplicate(householdDuplicate[0].id, 'I am resolving this duplicate');
   return { householdDuplicate, resolvedDuplicate };
+};
+
+/**
+ * Update Authentication of identity
+ * @param provider
+ * @param caseFileId
+ * @param params
+*/
+export const updateAuthenticationOfIdentity = async (provider: IProvider, caseFileId: string, params: IIdentityAuthentication) => {
+  const resultCaseFileUpdateAuthenticationOfIdentity = await provider.caseFiles.setCaseFileIdentityAuthentication(caseFileId, params);
+  return resultCaseFileUpdateAuthenticationOfIdentity;
 };
 
 /**
