@@ -6,9 +6,6 @@ export interface IAssessmentBaseMetadata extends IEntity {
   assessmentTemplateStatusName: IMultilingual;
 }
 
-export interface IAssessmentTemplateMetadata extends IAssessmentBaseMetadata {
-}
-
 export interface IAssessmentFormMetadata extends IAssessmentBaseMetadata {
   programName: IMultilingual;
   totalSubmissions: number;
@@ -171,7 +168,7 @@ export interface IAssessmentResponseMetadata extends IEntity {
 }
 
 export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>;
-export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>;
+export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IEntity>;
 export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IAssessmentFormMetadata>;
 export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IAssessmentBaseMetadata>;
 

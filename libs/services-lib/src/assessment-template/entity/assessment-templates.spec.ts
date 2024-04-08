@@ -13,17 +13,10 @@ describe('>>> AssessmentTemplates Service', () => {
   });
 
   describe('search', () => {
-    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`assessment/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+    it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('assessment/search/assessment-templates', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('assessment/search/assessment-templatesV2', { params, isODataSql: true });
     });
   });
 

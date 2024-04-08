@@ -1,4 +1,5 @@
-import { IAssessmentTemplateEntity, IAssessmentTemplateMetadata, IdParams } from '@libs/entities-lib/assessment-template';
+import { IAssessmentTemplateEntity, IdParams } from '@libs/entities-lib/assessment-template';
+import { IEntity } from '@libs/entities-lib/base';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -33,8 +34,8 @@ export class AssessmentTemplatesService extends DomainBaseService<IAssessmentTem
     });
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null):
-    Promise<IAzureCombinedSearchResult<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>> {
-    return this.http.get(`assessment/search/${searchEndpoint ?? 'assessment-templates'}`, { params, isOData: true });
+  async search(params: IAzureSearchParams):
+    Promise<IAzureCombinedSearchResult<IAssessmentTemplateEntity, IEntity>> {
+      return this.http.get('assessment/search/assessment-templatesV2', { params, isODataSql: true });
   }
 }
