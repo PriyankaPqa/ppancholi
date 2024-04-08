@@ -1,11 +1,10 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
-import {
-  createEventAndTeam,
-  createProgramWithTableWithItemAndSubItem, creatingDuplicateHousehold,
-} from '../../helpers/prepareState';
+import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureBaseMassAction, fixtureGenerateFaCsvFile, fixtureNewMassFinancialAssistance } from '../../../fixtures/mass-actions';
 import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
@@ -30,14 +29,25 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const filePath = 'cypress/downloads/TC1852FaFile.csv';
+const filePath = 'cypress/downloads/TC1857FaFile.csv';
 
-describe('#TC1852# - Fails mass action FA upload file pre-processing when household has a duplicate flag on it', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('#TC1857# - Mass Action FA upload file passes pre-processing when Authentication status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultCreatedEvent.provider, resultCreatedEvent.event.id, EFinancialAmountModes.Fixed);
+      const eligibilityCriteria: IEligibilityCriteria = {
+        authenticated: true,
+        impacted: false,
+        completedAssessments: false,
+        completedAssessmentIds: [],
+      };
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(
+        resultCreatedEvent.provider,
+        resultCreatedEvent.event.id,
+        EFinancialAmountModes.Fixed,
+        { eligibilityCriteria },
+      );
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
       cy.wrap(resultCreatedEvent.team).as('teamCreated');
@@ -57,18 +67,26 @@ describe('#TC1852# - Fails mass action FA upload file pre-processing when househ
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const resultCreateDuplicateHousehold = await creatingDuplicateHousehold(accessTokenL6, this.event, this.provider);
-            const { firstHousehold } = resultCreateDuplicateHousehold;
-            cy.wrap(firstHousehold.registrationResponse.caseFile).as('originalCaseFile');
-            cy.wrap(firstHousehold.registrationResponse.caseFile.id).as('originalCaseFileId');
-            cy.wrap(firstHousehold.registrationResponse.caseFile.caseFileNumber).as('originalCaseFileNumber');
+            const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
+            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
+            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
+            cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
+            const params: IIdentityAuthentication = {
+              identificationIds: [{
+                optionItemId: '72b7957c-7091-402e-bf87-25047d10a9a5',
+                specifiedOther: null,
+               }],
+              method: IdentityAuthenticationMethod.InPerson,
+              status: IdentityAuthenticationStatus.Passed,
+            };
+              await updateAuthenticationOfIdentity(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
         it('should successfully upload file but fail to preprocessing a file', function () {
-          fixtureGenerateFaCsvFile([this.originalCaseFile], this.faTable.id, filePath);
+          fixtureGenerateFaCsvFile([this.caseFile], this.faTable.id, filePath);
           const baseMassActionData = fixtureBaseMassAction(this.test.retries.length);
           const newMassFinancialAssistanceData = fixtureNewMassFinancialAssistance();
 
@@ -94,18 +112,11 @@ describe('#TC1852# - Fails mass action FA upload file pre-processing when househ
           massFinancialAssistanceDetailsPage.getMassActionName().as('massActionName');
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionName().should('string', `${this.programName} - ${newMassFinancialAssistanceData.item}`);
-          massFinancialAssistanceDetailsPage.clickShowErrorsButton();
-          massFinancialAssistanceDetailsPage.getErrorMessage().should('string', 'Household has potential duplicates');
-          massFinancialAssistanceDetailsPage.clickInvalidDownloadButton();
-
-          cy.get('@massActionName').then((name) => {
-            cy.readFile(`cypress/downloads/${name}.invalid.csv`, 'utf-8').then((fileContent) => {
-              const expectedContent = `CaseFileId,CaseFileNumber,Reasons\r\n${this.originalCaseFileId},${this.originalCaseFileNumber},Household has potential duplicates\r\n`;
-              expect(fileContent.trim()).to.equal(expectedContent.trim());
-            });
-          });
-          });
+          massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', '1');
+          massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.enabled');
+          massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
         });
+      });
     }
   });
 

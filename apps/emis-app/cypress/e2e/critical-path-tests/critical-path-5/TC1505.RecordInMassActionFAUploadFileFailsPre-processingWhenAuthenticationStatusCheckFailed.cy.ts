@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 const filePath = 'cypress/downloads/TC1505FaFile.csv';
 
-describe('#TC1505# - Mass Action FA upload file fails pre-processing when Authentication status check failed', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('#TC1505# - Mass Action FA upload file fails pre-processing when Authentication status check failed', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -50,6 +50,7 @@ describe('#TC1505# - Mass Action FA upload file fails pre-processing when Authen
       );
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
+      cy.wrap(resultCreatedEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
       cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
     });

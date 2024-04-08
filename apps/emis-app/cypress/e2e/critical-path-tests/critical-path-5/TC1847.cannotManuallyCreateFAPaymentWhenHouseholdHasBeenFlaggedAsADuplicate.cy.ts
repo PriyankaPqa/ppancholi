@@ -30,7 +30,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1847# - Cannot create manual FA payment when Household has been flagged as a duplicate', { tags: ['@case-file', '@financial-assistance'] }, () => {
+describe('#TC1847# - Cannot create manual FA payment when Household has been flagged as a duplicate', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -38,6 +38,7 @@ describe('#TC1847# - Cannot create manual FA payment when Household has been fla
       await createProgramWithTableWithItemAndSubItem(resultCreatedEvent.provider, resultCreatedEvent.event.id, EFinancialAmountModes.Fixed);
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
+      cy.wrap(resultCreatedEvent.team).as('teamCreated');
     });
   });
 
