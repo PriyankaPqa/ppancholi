@@ -15,3 +15,8 @@ export const mockSetCaseFileStatusRequest = (status: CaseFileStatus): IMockSetCa
   },
   rationale: 'test rationale',
 });
+
+export const mockAddTagToCaseFileRequest = (tagId: string): IListOption => ({
+  optionItemId: tagId,
+  specifiedOther: null,
+});

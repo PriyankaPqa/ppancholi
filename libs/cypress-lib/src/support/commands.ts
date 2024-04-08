@@ -29,6 +29,17 @@ Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (url, statusCode, max
   interceptAndRetry();
 });
 
+Cypress.Commands.add('waitForStatusCode', (url, statusCode, timeout?: 5000) => {
+  cy.intercept('GET', url).as('interceptedRequest');
+  cy.wait('@interceptedRequest', { timeout }).then((interception) => {
+    if (interception.response.statusCode === statusCode) {
+      cy.log(`Expected ${statusCode} received for ${interception.request.url}`);
+    } else {
+      cy.log(`Expected ${statusCode} not received for ${interception.request.url}`);
+    }
+  });
+});
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -38,8 +49,8 @@ declare global {
       // eslint-disable-next-line no-undef
       getByDataTest({ selector, type }: { selector: string; type?: string; }, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>): Chainable<JQuery<HTMLElement>>
       getByDataTestLike({ selector, type }: { selector: string; type?: string; }, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>): Chainable<JQuery<HTMLElement>>
-      selectListElementByIndex(dataTest:string, index: number, parentSelectorType?: string): Chainable<string>;
-      selectMultipleElementByIndex(dataTest:string, indexes: number[]): Chainable<void>
+      selectListElementByIndex(dataTest: string, index: number, parentSelectorType?: string): Chainable<string>;
+      selectMultipleElementByIndex(dataTest: string, indexes: number[]): Chainable<void>
       selectListElementByValue(dataTest: string, value: string): Chainable<void>
       selectMultipleElementByValues(dataTest: string, values: string[]): Chainable<void>
       writeInputSelect(dataTest: string, value: string): Chainable<void>
@@ -58,12 +69,12 @@ declare global {
       ): Chainable<void>
       setDatePicker(dataTest: string, { year, month, day }: { year: number; month: number; day: number }): Chainable<void>
       searchAndSelect(dataTest: string, searchString: string, opts?: { timeoutInSec: number; intervalInSec: number }): Chainable<void>
-      shouldBeRequired(label:string): Chainable<void>
+      shouldBeRequired(label: string): Chainable<void>
       waitUntilTableFullyLoaded(tableDataTest: string): Chainable<void>
       getAndTrimText(): Chainable<string>
       interceptAndRetryUntilNoMoreStatus(url: string | RegExp, statusCode: number, maxRetries?: number): Chainable<string>
       // eslint-disable-next-line
-      typeAndWaitUntilSearchResultsVisible(searchString: string, dataTestSearchField: string, dataTestSearchResult:string, opts?: { timeout: number; interval: number }): Chainable<void>
+      typeAndWaitUntilSearchResultsVisible(searchString: string, dataTestSearchField: string, dataTestSearchResult: string, opts?: { timeout: number; interval: number }): Chainable<void>
       waitAndRefreshUntilConditions(
         conditions: {
           visibilityCondition: () => Chainable<undefined> | Chainable<JQuery<HTMLElement>>,
@@ -77,6 +88,7 @@ declare global {
           foundMsg?: string,
         }
       ): Chainable<string>
+      waitForStatusCode(url: string | RegExp, statusCode: number): Chainable<string>
     }
   }
 }

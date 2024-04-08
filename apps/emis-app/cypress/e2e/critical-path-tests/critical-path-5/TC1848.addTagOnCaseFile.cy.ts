@@ -3,7 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
+import { CaseFileDetailsPage, caseFileTags } from '../../../pages/casefiles/caseFileDetails.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -21,10 +21,6 @@ const cannotRoles = [
   UserRoles.contributor3,
   UserRoles.readonly,
 ];
-
-export enum caseFileTags {
-  Irregular = '631e8b83-9ba3-49ad-9595-d959b8d924ba',
-}
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 

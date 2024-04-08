@@ -21,6 +21,10 @@ export enum DataTest {
   caseFileActivityTags = 'caseFileActivity-tags',
 }
 
+export enum caseFileTags {
+  Irregular = '631e8b83-9ba3-49ad-9595-d959b8d924ba',
+}
+
 export class CaseFileDetailsPage {
   private caseFileActivityTitle = { selector: DataTest.caseFileActivityTitle };
 
