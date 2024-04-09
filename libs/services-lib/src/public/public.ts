@@ -3,6 +3,7 @@ import { IAzureSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 
 import helpers from '@libs/shared-lib/helpers/helpers';
+import helpersUrl from '@libs/entities-lib/helpers';
 import { IFeatureEntity } from '@libs/entities-lib/src/tenantSettings';
 import { IEventSummary } from '@libs/entities-lib/event';
 import { GlobalHandler, IHttpClient } from '../http-client';
@@ -14,7 +15,7 @@ export class PublicService implements IPublicService {
   async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventSummary>> {
     return this.http.get('/event/search/event-summaries', {
       params: {
-        filter: lang === 'fr' ? { 'RegistrationLink/Translation/fr': registrationLink } : { 'RegistrationLink/Translation/en': registrationLink },
+        filter: lang === 'fr' ? { 'RegistrationLink/Translation/fr': helpersUrl.encodeUrl(registrationLink) } : { 'RegistrationLink/Translation/en': helpersUrl.encodeUrl(registrationLink) },
       },
       containsEncodedURL: true,
       isODataSql: true,

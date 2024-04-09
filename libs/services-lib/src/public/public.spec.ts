@@ -1,4 +1,5 @@
 import helpers from '@libs/shared-lib/helpers/helpers';
+import helpersUrl from '@libs/entities-lib/helpers';
 import { mockHttp, GlobalHandler } from '../http-client';
 import { PublicService } from './public';
 
@@ -17,7 +18,7 @@ describe('>>> Public Service', () => {
     await service.fetchRegistrationEvent('en', 'some link');
     expect(http.get).toHaveBeenCalledWith(
       '/event/search/event-summaries',
-      { params: { filter: { 'RegistrationLink/Translation/en': 'some link' } }, isODataSql: true, containsEncodedURL: true },
+      { params: { filter: { 'RegistrationLink/Translation/en': helpersUrl.encodeUrl('some link') } }, isODataSql: true, containsEncodedURL: true },
     );
   });
 
