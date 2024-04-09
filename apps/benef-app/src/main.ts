@@ -34,6 +34,9 @@ applicationInsights.initialize({
   connectionString: process.env.VITE_APPLICATION_INSIGHTS_CONNECTION_STRING,
   router,
   appName: 'beneficiary-webapp',
+  excludeRequestFromAutoTrackingPatterns: [
+    'https://maps.googleapis.com/*', // traceparent in request header would cause Google Maps API to not return the "Access-Control-Allow-Origin" in the response headers
+  ],
 });
 
 applicationInsights.setBasicContext({ app: 'beneficiary-webapp' });

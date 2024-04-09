@@ -7,6 +7,7 @@ export interface ApplicationInsightsOptions {
   connectionString: string;
   appName: string;
   router: VueRouter;
+  excludeRequestFromAutoTrackingPatterns?: string[] | RegExp[];
 }
 
 class AppInsights {
@@ -34,6 +35,8 @@ class AppInsights {
           enableRequestHeaderTracking: true,
           // If true, AJAX & Fetch request's response headers is tracked. Required for proper correlation.
           enableResponseHeaderTracking: true,
+
+          excludeRequestFromAutoTrackingPatterns: options.excludeRequestFromAutoTrackingPatterns || [],
         },
       });
       this.instance.loadAppInsights();

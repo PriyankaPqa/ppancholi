@@ -13,6 +13,9 @@ describe('ApplicationInsights', () => {
   const connectionString = 'some connection string';
   const appName = 'TestEMIS';
   const oldWindowLoc = window.location;
+  const excludeRequestFromAutoTrackingPatterns = [
+    'https://maps.googleapis.com/*',
+  ];
 
   let appInsights;
   let router;
@@ -54,7 +57,7 @@ describe('ApplicationInsights', () => {
 
   describe('Initializing', () => {
     it('should instantiate Application Insight SDK', () => {
-      applicationInsights.initialize({ connectionString, router, appName });
+      applicationInsights.initialize({ connectionString, router, appName, excludeRequestFromAutoTrackingPatterns });
 
       expect((ApplicationInsights).mock.calls).toEqual([[{
         config:
@@ -64,6 +67,7 @@ describe('ApplicationInsights', () => {
           enableCorsCorrelation: true,
           enableRequestHeaderTracking: true,
           enableResponseHeaderTracking: true,
+          excludeRequestFromAutoTrackingPatterns,
         },
       }]]);
       expect(appInsights.loadAppInsights).toHaveBeenCalled();
