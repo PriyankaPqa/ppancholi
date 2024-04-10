@@ -36,7 +36,7 @@ import { EPaymentModalities, IProgramEntityData } from '@libs/entities-lib/progr
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
-import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication, IImpactStatusValidation } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { ECurrentAddressTypes, ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
@@ -734,6 +734,17 @@ export const resolvePotenialDuplicateRecord = async (provider: IProvider, househ
 export const updateAuthenticationOfIdentity = async (provider: IProvider, caseFileId: string, params: IIdentityAuthentication) => {
   const resultCaseFileUpdateAuthenticationOfIdentity = await provider.caseFiles.setCaseFileIdentityAuthentication(caseFileId, params);
   return resultCaseFileUpdateAuthenticationOfIdentity;
+};
+
+/**
+ * Update Validation of impact status
+ * @param provider
+ * @param caseFileId
+ * @param params
+ */
+export const updateValidationOfImpactStatus = async (provider: IProvider, caseFileId: string, params: IImpactStatusValidation) => {
+  const resultCaseFileUpdateValidationOfImpactStatus = await provider.caseFiles.setCaseFileValidationOfImpact(caseFileId, params);
+  return resultCaseFileUpdateValidationOfImpactStatus;
 };
 
 /**
