@@ -2059,6 +2059,7 @@
     "event.programManagement.ProgramDetails": "Program details",
     "event.programManagement.addNewProgram": "Add new program",
     "event.programManagement.approvalRequired": "Approval required",
+    "event.programManagement.setAsLodging": "Set as Lodging program",
     "event.programManagement.assessments.title": "Assessments",
     "event.programManagement.backToPrograms": "Back to programs",
     "event.programManagement.create.failed": "There was an issue creating the program",

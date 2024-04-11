@@ -118,6 +118,23 @@
               </v-col>
             </v-row>
 
+            <v-row v-if="$hasFeature(FeatureKeys.Lodging)" class="list-row">
+              <v-col class="rc-body14 fw-bold" cols="12" md="5" />
+
+              <v-col class="rc-body14" cols="12" md="7">
+                <div>
+                  <v-icon
+                    class="mr-1"
+                    :color="getEligibilityIconColor(program.useForLodging)"
+                    small
+                    data-test="program-details-icon-useForLodging">
+                    {{ getEligibilityIcon(program.useForLodging) }}
+                  </v-icon>
+                  {{ $t('event.programManagement.setAsLodging') }}
+                </div>
+              </v-col>
+            </v-row>
+
             <v-row class="list-row">
               <v-col class="rc-body14 fw-bold" cols="12" md="5">
                 {{ $t('event.programManagement.programDescription.title') }}
@@ -191,6 +208,7 @@ import {
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
@@ -227,6 +245,7 @@ export default Vue.extend({
       financialAssistanceTables: [] as IFinancialAssistanceTableEntity[],
       assessmentIds: [] as string[],
       combinedFormStore: new CombinedStoreFactory(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
+      FeatureKeys,
     };
   },
 

@@ -18,6 +18,7 @@ export const mockProgram = (force?: Partial<IProgramEntity>): IProgramEntity => 
     },
   },
   approvalRequired: false,
+  useForLodging: false,
   eligibilityCriteria: {
     authenticated: false,
     impacted: false,

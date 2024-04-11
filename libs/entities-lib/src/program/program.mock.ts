@@ -19,6 +19,7 @@ export const mockProgramEntityData = (force?: Partial<IProgramEntityData>): IPro
     },
   },
   approvalRequired: true,
+  useForLodging: true,
   eligibilityCriteria: {
     authenticated: true,
     impacted: false,
