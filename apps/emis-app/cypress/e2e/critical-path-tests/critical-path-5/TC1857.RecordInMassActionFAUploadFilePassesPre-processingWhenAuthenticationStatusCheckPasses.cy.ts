@@ -5,7 +5,6 @@ import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureBaseMassAction, fixtureGenerateFaCsvFile, fixtureNewMassFinancialAssistance } from '../../../fixtures/mass-actions';
 import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
 
 const canRoles = [
@@ -28,7 +27,6 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const filePath = 'cypress/downloads/TC1857FaFile.csv';
 
 describe('#TC1857# - Mass Action FA upload file passes pre-processing when Authentication status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
@@ -85,16 +83,13 @@ describe('#TC1857# - Mass Action FA upload file passes pre-processing when Authe
         });
 
         it('should successfully upload file and passes pre-processing', function () {
-          fixtureGenerateFaCsvFile([this.caseFile], this.faTable.id, filePath);
-          const baseMassActionData = fixtureBaseMassAction(this.test.retries.length);
-          const newMassFinancialAssistanceData = fixtureNewMassFinancialAssistance();
           massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps({
-            baseMassActionData,
-            newMassFinancialAssistanceData,
+            caseFile: this.caseFile,
             event: this.event,
             faTable: this.faTable,
-            filePath,
+            filePath: 'cypress/downloads/TC1857FaFile.csv',
             programName: this.programName,
+            retries: this.test.retries.length,
           });
         });
       });

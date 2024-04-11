@@ -1,29 +1,33 @@
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { getToday } from '@libs/cypress-lib/helpers';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
-import { INewMassFinancialAssistanceFields } from '../../../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
-import { IBaseMassActionFields } from '../../../pages/mass-action/base/baseCreateMassAction';
+import { fixtureBaseMassAction, fixtureGenerateFaCsvFile, fixtureNewMassFinancialAssistance } from '../../../fixtures/mass-actions';
 
 export interface IMassActionFAUploadFilePassesPreProcessParams {
-  baseMassActionData: IBaseMassActionFields;
-  newMassFinancialAssistanceData: INewMassFinancialAssistanceFields;
+  caseFile: ICaseFileEntity;
   event: IEventEntity;
   faTable: IFinancialAssistanceTableEntity;
   filePath: string;
   programName: string;
+  retries: number;
 }
 
 export const massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps = (params: IMassActionFAUploadFilePassesPreProcessParams) => {
+  fixtureGenerateFaCsvFile([params.caseFile], params.faTable.id, params.filePath);
+  const baseMassActionData = fixtureBaseMassAction(params.retries);
+  const newMassFinancialAssistanceData = fixtureNewMassFinancialAssistance();
   const massFinancialAssistanceHomePage = new MassFinancialAssistanceHomePage();
   massFinancialAssistanceHomePage.getAddMassFinancialAssistanceButton().click();
 
   const newMassFinancialAssistancePage = massFinancialAssistanceHomePage.selectProcessViaFileUpload();
-  newMassFinancialAssistancePage.fillDescription(params.baseMassActionData);
+  newMassFinancialAssistancePage.fillDescription(baseMassActionData);
   newMassFinancialAssistancePage.fillEvent(params.event.name.translation.en);
   newMassFinancialAssistancePage.fillTableName(params.faTable.name.translation.en);
-  newMassFinancialAssistancePage.fillItemSubItem(params.newMassFinancialAssistanceData);
-  newMassFinancialAssistancePage.fillPaymentModality(params.newMassFinancialAssistanceData.paymentModality);
+  newMassFinancialAssistancePage.fillItemSubItem(newMassFinancialAssistanceData);
+  newMassFinancialAssistancePage.fillPaymentModality(newMassFinancialAssistanceData.paymentModality);
   newMassFinancialAssistancePage.uploadFile().selectFile(params.filePath, { force: true });
   newMassFinancialAssistancePage.clickNext();
   newMassFinancialAssistancePage.getDialogTitle().should('eq', 'Confirm pre-processing');
@@ -36,8 +40,21 @@ export const massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps = (
   cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
   massFinancialAssistanceDetailsPage.getMassActionName().as('massActionName');
   massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
-  massFinancialAssistanceDetailsPage.getMassActionName().should('string', `${params.programName} - ${params.newMassFinancialAssistanceData.item}`);
-  massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', '1');
+  massFinancialAssistanceDetailsPage.getMassActionName().should('string', `${params.programName} - ${newMassFinancialAssistanceData.item}`);
   massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.enabled');
   massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
+  massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
+  massFinancialAssistanceDetailsPage.getMassActionProjectedAmount().should('string', `${parseFloat(newMassFinancialAssistanceData.paymentAmount)}.00`);
+  massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', '1');
+  massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
+  massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Financial assistance');
+  massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
+  massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsEvent().should('eq', params.event.name.translation.en);
+  massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsTable().should('eq', params.faTable.name.translation.en);
+  massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsProgram().should('eq', params.programName);
+  massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsItem().should('eq', newMassFinancialAssistanceData.item);
+  massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsSubItem().should('eq', newMassFinancialAssistanceData.subItem);
+  massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', newMassFinancialAssistanceData.paymentModality.toLowerCase());
+  massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', `$${newMassFinancialAssistanceData.paymentAmount}`);
+  massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.enabled');
 };
