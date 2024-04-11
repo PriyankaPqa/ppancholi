@@ -1,14 +1,12 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import {
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem, creatingDuplicateHousehold,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureBaseMassAction, fixtureGenerateFaCsvFile, fixtureNewMassFinancialAssistance } from '../../../fixtures/mass-actions';
-import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
+import { cannotPreProcessFaMassActionSteps } from './steps';
 
 const canRoles = [
   UserRoles.level6,
@@ -30,7 +28,6 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-const filePath = 'cypress/downloads/TC1852FaFile.csv';
 
 describe('#TC1852# - Fails mass action FA upload file pre-processing when household has a duplicate flag on it', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
@@ -60,52 +57,23 @@ describe('#TC1852# - Fails mass action FA upload file pre-processing when househ
             const resultCreateDuplicateHousehold = await creatingDuplicateHousehold(accessTokenL6, this.event, this.provider);
             const { firstHousehold } = resultCreateDuplicateHousehold;
             cy.wrap(firstHousehold.registrationResponse.caseFile).as('originalCaseFile');
-            cy.wrap(firstHousehold.registrationResponse.caseFile.id).as('originalCaseFileId');
-            cy.wrap(firstHousehold.registrationResponse.caseFile.caseFileNumber).as('originalCaseFileNumber');
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
         it('should successfully upload file but fail to preprocessing a file', function () {
-          fixtureGenerateFaCsvFile([this.originalCaseFile], this.faTable.id, filePath);
-          const baseMassActionData = fixtureBaseMassAction(this.test.retries.length);
-          const newMassFinancialAssistanceData = fixtureNewMassFinancialAssistance();
-
-          const massFinancialAssistanceHomePage = new MassFinancialAssistanceHomePage();
-          massFinancialAssistanceHomePage.getAddMassFinancialAssistanceButton().click();
-
-          const newMassFinancialAssistancePage = massFinancialAssistanceHomePage.selectProcessViaFileUpload();
-          newMassFinancialAssistancePage.fillDescription(baseMassActionData);
-          newMassFinancialAssistancePage.fillEvent(this.event.name.translation.en);
-          newMassFinancialAssistancePage.fillTableName(this.faTable.name.translation.en);
-          newMassFinancialAssistancePage.fillItemSubItem(newMassFinancialAssistanceData);
-          newMassFinancialAssistancePage.fillPaymentModality(newMassFinancialAssistanceData.paymentModality);
-          newMassFinancialAssistancePage.uploadFile().selectFile(filePath, { force: true });
-          newMassFinancialAssistancePage.clickNext();
-          newMassFinancialAssistancePage.getDialogTitle().should('eq', 'Confirm pre-processing');
-          newMassFinancialAssistancePage.getDialogText().should('eq', 'Are you sure you want to start pre-processing this mass action?');
-          newMassFinancialAssistancePage.getDialogConfirmSubmitButton().should('be.visible');
-          newMassFinancialAssistancePage.getDialogConfirmCancelButton().should('be.visible');
-          const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
-          massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
-          massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
-          cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
-          massFinancialAssistanceDetailsPage.getMassActionName().as('massActionName');
-          massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
-          massFinancialAssistanceDetailsPage.getMassActionName().should('string', `${this.programName} - ${newMassFinancialAssistanceData.item}`);
-          massFinancialAssistanceDetailsPage.clickShowErrorsButton();
-          massFinancialAssistanceDetailsPage.getErrorMessage().should('string', 'Household has potential duplicates');
-          massFinancialAssistanceDetailsPage.clickInvalidDownloadButton();
-
-          cy.get('@massActionName').then((name) => {
-            cy.readFile(`cypress/downloads/${name}.invalid.csv`, 'utf-8').then((fileContent) => {
-              const expectedContent = `CaseFileId,CaseFileNumber,Reasons\r\n${this.originalCaseFileId},${this.originalCaseFileNumber},Household has potential duplicates\r\n`;
-              expect(fileContent.trim()).to.equal(expectedContent.trim());
-            });
-          });
+          cannotPreProcessFaMassActionSteps({
+            programName: this.programName,
+            eventName: this.event.name.translation.en,
+            filePath: 'cypress/downloads/TC1852FaFile.csv',
+            retries: this.test.retries.length,
+            errorMessage: 'Household has potential duplicates',
+            financialAssistanceTable: this.faTable,
+            caseFile: this.originalCaseFile,
           });
         });
+      });
     }
   });
 
