@@ -97,10 +97,9 @@
               :disabled="localProgram.useForLodging"
               data-test="program-approvalRequired"
               :label="$t('event.programManagement.approvalRequired')" />
-          </div>
 
-          <div v-if="$hasFeature(FeatureKeys.Lodging)" class="grey-container px-4 py-1 my-8">
             <v-checkbox
+              v-if="$hasFeature(FeatureKeys.Lodging)"
               v-model="localProgram.useForLodging"
               data-test="program-useForLodging"
               :label="$t('event.programManagement.setAsLodging')" />

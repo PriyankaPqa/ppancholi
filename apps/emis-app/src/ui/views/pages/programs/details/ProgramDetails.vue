@@ -115,14 +115,8 @@
                   </v-icon>
                   {{ $t('event.programManagement.approvalRequired') }}
                 </div>
-              </v-col>
-            </v-row>
 
-            <v-row v-if="$hasFeature(FeatureKeys.Lodging)" class="list-row">
-              <v-col class="rc-body14 fw-bold" cols="12" md="5" />
-
-              <v-col class="rc-body14" cols="12" md="7">
-                <div>
+                <div v-if="$hasFeature(FeatureKeys.Lodging)" data-test="program-details-div-useForLodging">
                   <v-icon
                     class="mr-1"
                     :color="getEligibilityIconColor(program.useForLodging)"
