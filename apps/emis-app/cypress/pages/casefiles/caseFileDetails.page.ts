@@ -20,6 +20,7 @@ export enum DataTest {
   displayedTagItemChipText = 'caseFileTags-chip',
   caseFileActivityTags = 'caseFileActivity-tags',
   verifyIdentityIcon = 'caseFileDetails-verify-identity-icon',
+  identityIconColorValidation = 'caseFileDetails-identity-icon-color-validation',
 }
 
 export enum caseFileTags {
@@ -62,6 +63,8 @@ export class CaseFileDetailsPage {
   private caseFileActivityTags = { selector: DataTest.caseFileActivityTags };
 
   private verifyIdentityIcon = { selector: DataTest.verifyIdentityIcon };
+
+  private identityIconColorValidation = { selector: DataTest.identityIconColorValidation };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -178,5 +181,9 @@ export class CaseFileDetailsPage {
 
   public getVerifyIdentityIconElement() {
     return cy.getByDataTest(this.verifyIdentityIcon);
+  }
+
+  public getIdentityIconColorValidationElement() {
+    return cy.getByDataTest(this.identityIconColorValidation);
   }
 }

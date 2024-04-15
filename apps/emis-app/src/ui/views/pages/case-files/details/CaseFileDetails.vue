@@ -26,7 +26,7 @@
         <rc-tooltip bottom>
           <template #activator="{ on }">
             <v-btn v-if="canEdit" text tile class="pa-0 mb-2 validation-button" data-test="caseFileDetails-verify-identity-icon" v-on="on" @click="openVerifyIdentity">
-              <div class="d-flex align-center" :class="colorVerifyIdentity">
+              <div class="d-flex align-center" :class="colorVerifyIdentity" data-test="caseFileDetails-identity-icon-color-validation">
                 <div class="py-1 px-1" :class="colorVerifyIdentityIcon">
                   <v-icon dense color="white" class="default-icon-color">
                     {{ verifyIdentityIcon }}

@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1845# - Cannot create manual FA payment when Case File Authentication status check failed', { tags: ['@financial-assistance'] }, () => {
+describe('#TC1131# - Cannot create manual FA payment when Case File Authentication status check fails (Not Verified)', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -50,7 +50,7 @@ describe('#TC1845# - Cannot create manual FA payment when Case File Authenticati
       const params: IIdentityAuthentication = {
         identificationIds: [],
         method: IdentityAuthenticationMethod.NotApplicable,
-        status: IdentityAuthenticationStatus.Failed,
+        status: IdentityAuthenticationStatus.NotVerified,
       };
       await updateAuthenticationOfIdentity(resultCreatedEvent.provider, resultHousehold.registrationResponse.caseFile.id, params);
       cy.wrap(resultCreatedEvent.provider).as('provider');
@@ -75,9 +75,9 @@ describe('#TC1845# - Cannot create manual FA payment when Case File Authenticati
           cy.goTo(`casefile/${this.caseFileId}`);
         });
 
-        it('should not be able to manually create financial assistance payment when case file has authentication status check failed', function () {
+        it('should not be able to manually create financial assistance payment when case file authentication status check fails with Not verified', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
-          caseFileDetailsPage.getIdentityIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-error');
+          caseFileDetailsPage.getIdentityIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-warning');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
