@@ -94,6 +94,7 @@
           <div class="grey-container px-4 py-1 my-8">
             <v-checkbox
               v-model="localProgram.approvalRequired"
+              :disabled="localProgram.useForLodging"
               data-test="program-approvalRequired"
               :label="$t('event.programManagement.approvalRequired')" />
           </div>
@@ -245,6 +246,12 @@ export default Vue.extend({
   watch: {
     localProgram: {
       handler(newProgram) {
+        // if program is use for lodging then it cannot be approval required
+        if (newProgram.useForLodging === true) {
+          newProgram.approvalRequired = false;
+          this.localProgram.approvalRequired = false;
+        }
+
         this.$emit('update:program', newProgram);
         this.$emit('update:is-dirty', true);
       },
