@@ -51,7 +51,7 @@ export class ProgramEntity extends BaseEntity implements IProgramEntity {
     this.name = utils.initMultilingualAttributes();
     this.description = utils.initMultilingualAttributes();
     this.approvalRequired = true;
-    this.useForLodging = true;
+    this.useForLodging = false;
     this.eligibilityCriteria = {
       authenticated: false,
       impacted: false,
