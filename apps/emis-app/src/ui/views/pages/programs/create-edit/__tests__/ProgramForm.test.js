@@ -5,6 +5,7 @@ import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validat
 import { Status } from '@libs/entities-lib/base';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { createTestingPinia } from '@pinia/testing';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from '../ProgramForm.vue';
 
@@ -338,6 +339,146 @@ describe('ProgramForm.vue', () => {
 
       const el = wrapper.findDataTest('program-selectAssessment');
       expect(el.attributes('disabled')).toBe('disabled');
+    });
+  });
+
+  describe('Program use for lodging checkbox', () => {
+    it('should be rendered when feature flag Lodging is on', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          isEditMode: false,
+          program: new ProgramEntity(),
+          isNameUnique: true,
+          isDirty: false,
+        },
+        featureList: [FeatureKeys.Lodging],
+      });
+
+      const element = wrapper.findDataTest('program-useForLodging');
+      expect(element.exists()).toBeTruthy();
+    });
+
+    it('should not be rendered when feature flag Lodging is off', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          isEditMode: false,
+          program: new ProgramEntity(),
+          isNameUnique: true,
+          isDirty: false,
+        },
+        featureList: [],
+      });
+
+      const element = wrapper.findDataTest('program-useForLodging');
+      expect(element.exists()).toBeFalsy();
+    });
+
+    it('approval required checkbox should be disabled when use for lodging is checked', async () => {
+      const currentProgram = new ProgramEntity();
+      currentProgram.useForLodging = true;
+
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          isEditMode: false,
+          program: currentProgram,
+          isNameUnique: true,
+          isDirty: false,
+        },
+        featureList: [FeatureKeys.Lodging],
+      });
+
+      const element = wrapper.findDataTest('program-approvalRequired');
+      expect(element.attributes('disabled')).toBeTruthy();
+    });
+
+    it('approval required checkbox not should be disabled when use for lodging is unchecked', async () => {
+      const currentProgram = new ProgramEntity();
+      currentProgram.useForLodging = false;
+
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          isEditMode: false,
+          program: currentProgram,
+          isNameUnique: true,
+          isDirty: false,
+        },
+        featureList: [FeatureKeys.Lodging],
+      });
+
+      const element = wrapper.findDataTest('program-approvalRequired');
+      expect(element.attributes('disabled')).toBeFalsy();
+    });
+
+    it('approval required checkbox should be unchecked when use for lodging is checked', async () => {
+      const currentProgram = new ProgramEntity();
+      currentProgram.approvalRequired = true;
+      currentProgram.useForLodging = false;
+
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          isEditMode: false,
+          program: currentProgram,
+          isNameUnique: true,
+          isDirty: false,
+        },
+        featureList: [FeatureKeys.Lodging],
+      });
+
+      await wrapper.setData({
+        localProgram: {
+          useForLodging: true,
+        },
+      });
+
+      expect(wrapper.vm.localProgram.approvalRequired).toEqual(false);
+    });
+  });
+
+  describe('watch', () => {
+    describe('program lodging', () => {
+      it('should only update program approval required to false when program lodging is updated to true', async () => {
+        const currentProgram = new ProgramEntity();
+        currentProgram.approvalRequired = true;
+        currentProgram.useForLodging = true;
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            isEditMode: false,
+            program: currentProgram,
+            isNameUnique: true,
+            isDirty: false,
+          },
+          featureList: [FeatureKeys.Lodging],
+        });
+
+        await wrapper.setData({
+          localProgram: {
+            useForLodging: false,
+          },
+        });
+
+        expect(wrapper.vm.localProgram.approvalRequired).toEqual(true);
+
+        await wrapper.setData({
+          localProgram: {
+            useForLodging: true,
+          },
+        });
+
+        expect(wrapper.vm.localProgram.approvalRequired).toEqual(false);
+      });
     });
   });
 });
