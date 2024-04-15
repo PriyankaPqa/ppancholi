@@ -173,8 +173,8 @@ export default Vue.extend({
           text: 'reporting.leftMenu.title',
           test: 'reporting',
           exact: false,
-          level: this.$hasFeature(FeatureKeys.InSystemQuerying) ? UserRoles.level4 : UserRoles.level6,
-          roles: this.$hasFeature(FeatureKeys.InSystemQuerying) ? [UserRoles.contributorIM] : [],
+          level: UserRoles.level4,
+          roles: [UserRoles.contributorIM],
         },
         {
           to: routes.appointments.home.name,
