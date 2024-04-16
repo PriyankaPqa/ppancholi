@@ -1,16 +1,15 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import { mockAddTagToCaseFileRequest } from '@libs/cypress-lib/mocks/casefiles/casefile';
 import {
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem,
   prepareStateHousehold,
-  updateValidationOfImpactStatus,
-  } from '../../helpers/prepareState';
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
+import { caseFileTags } from '../../../pages/casefiles/caseFileDetails.page';
+import { cannotPreProcessFaMassActionSteps } from './steps';
 
 const canRoles = [
   UserRoles.level6,
@@ -33,26 +32,15 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1859# - Mass Action FA upload file passes pre-processing when Validation of Impact status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+// eslint-disable-next-line
+describe('#TC1850# - Confirm that a record cannot be pre-processed in a Mass Action FA file for a Case File that has an Irregular tag on it', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
-      const eligibilityCriteria: IEligibilityCriteria = {
-        authenticated: false,
-        impacted: true,
-        completedAssessments: false,
-        completedAssessmentIds: [],
-      };
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(
-        resultCreatedEvent.provider,
-        resultCreatedEvent.event.id,
-        EFinancialAmountModes.Fixed,
-        { eligibilityCriteria },
-      );
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultCreatedEvent.provider, resultCreatedEvent.event.id, EFinancialAmountModes.Fixed);
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
-      cy.wrap(resultCreatedEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
       cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
     });
@@ -69,28 +57,23 @@ describe('#TC1859# - Mass Action FA upload file passes pre-processing when Valid
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
-            const params: IImpactStatusValidation = {
-              method: ImpactValidationMethod.Manual,
-              status: ValidationOfImpactStatus.Impacted,
-            };
-            await updateValidationOfImpactStatus(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
+            const resultHouseholdCreated = await prepareStateHousehold(accessTokenL6, this.event);
+            await this.provider.caseFiles.setCaseFileTags(resultHouseholdCreated.registrationResponse.caseFile.id, [mockAddTagToCaseFileRequest(caseFileTags.Irregular)]);
+            cy.wrap(resultHouseholdCreated.registrationResponse.caseFile).as('caseFile');
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
-        it('should successfully upload file and passes pre-processing', function () {
-          massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps({
-            caseFile: this.caseFile,
-            event: this.event,
-            faTable: this.faTable,
-            filePath: 'cypress/downloads/TC1859FaFile.csv',
+        it('should fail to pre-process financial assistance mass action for casefile with irregular tag', function () {
+          cannotPreProcessFaMassActionSteps({
             programName: this.programName,
+            eventName: this.event.name.translation.en,
+            filePath: 'cypress/downloads/TC1850FaFile.csv',
             retries: this.test.retries.length,
+            errorMessage: 'Financial assistance cannot be added due to tags',
+            financialAssistanceTable: this.faTable,
+            caseFile: this.caseFile,
           });
         });
       });
@@ -104,7 +87,7 @@ describe('#TC1859# - Mass Action FA upload file passes pre-processing when Valid
           cy.login(roleName);
           cy.goTo('mass-actions/financial-assistance');
         });
-        it('should not be able to do the mass action FA', () => {
+        it('should not be able to pre-process a financial assistance Mass Action', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

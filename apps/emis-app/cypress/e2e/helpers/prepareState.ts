@@ -32,7 +32,7 @@ import {
 } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
-import { EPaymentModalities, IProgramEntityData } from '@libs/entities-lib/program';
+import { EPaymentModalities, IProgramEntity, IProgramEntityData } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
@@ -150,6 +150,16 @@ export const createProgram = async (provider: IProvider, eventId: string, otherO
   const mockCreateProgram = mockProgram({ eventId, ...otherOption });
   const program = await provider.programs.createProgram(mockCreateProgram);
   return { program, mockCreateProgram };
+};
+
+/**
+ * Update a program
+ * @param provider
+ * @param newProgram
+ */
+export const updateProgram = async (provider: IProvider, newProgram: IProgramEntity) => {
+  const resultUpdateProgram = await provider.programs.updateProgram(newProgram);
+  return { resultUpdateProgram };
 };
 
 /**

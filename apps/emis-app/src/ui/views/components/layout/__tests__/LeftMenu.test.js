@@ -260,7 +260,8 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-alert-octagon');
         expect(item.text).toBe('reporting.leftMenu.title');
         expect(item.test).toBe('reporting');
-        expect(item.level).toBe(UserRoles.level6);
+        expect(item.level).toBe(UserRoles.level4);
+        expect(item.roles).toEqual([UserRoles.contributorIM]);
       });
 
       test('assessmentTemplates', () => {

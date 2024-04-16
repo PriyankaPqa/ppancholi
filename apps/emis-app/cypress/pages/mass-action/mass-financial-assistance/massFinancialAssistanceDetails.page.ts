@@ -12,6 +12,7 @@ export enum DataTest {
   showErrorsButton = 'showErrorsButton',
   errorMessage = 'errorMessage',
   invalidDownloadButton = 'invalidDownloadButton',
+  backToMassActionListButton = 'back_to_mass_action_list_button',
   }
 
   export class MassFinancialAssistanceDetailsPage extends BaseDetailsMassAction {
@@ -36,6 +37,8 @@ export enum DataTest {
     private errorMessage = { selector: DataTest.errorMessage };
 
     private invalidDownloadButton = { selector: DataTest.invalidDownloadButton };
+
+    private backToMassActionListButton = { selector: DataTest.backToMassActionListButton };
 
     public getMassActionPaymentDetailsEvent() {
       return cy.getByDataTest(this.event).getAndTrimText();
@@ -79,5 +82,9 @@ export enum DataTest {
 
     public clickInvalidDownloadButton() {
       return cy.getByDataTest(this.invalidDownloadButton).click();
+    }
+
+    public getBackToMassActionListButton() {
+      return cy.getByDataTest(this.backToMassActionListButton);
     }
   }

@@ -6,11 +6,10 @@ import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStat
 import {
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem,
-  prepareStateHousehold,
-  updateValidationOfImpactStatus,
-  } from '../../helpers/prepareState';
+  prepareStateHousehold, updateValidationOfImpactStatus,
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
+import { cannotPreProcessFaMassActionSteps } from './steps';
 
 const canRoles = [
   UserRoles.level6,
@@ -33,7 +32,8 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1859# - Mass Action FA upload file passes pre-processing when Validation of Impact status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+// eslint-disable-next-line
+describe('#TC1506# - Record in Mass Action FA upload file fails pre-processing when Validation of Impact status check fails (Failed)', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -69,28 +69,27 @@ describe('#TC1859# - Mass Action FA upload file passes pre-processing when Valid
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
+            const resultHouseholdCreated = await prepareStateHousehold(accessTokenL6, this.event);
+            cy.wrap(resultHouseholdCreated.registrationResponse.caseFile).as('caseFile');
             const params: IImpactStatusValidation = {
               method: ImpactValidationMethod.Manual,
-              status: ValidationOfImpactStatus.Impacted,
+              status: ValidationOfImpactStatus.NotImpacted,
             };
-            await updateValidationOfImpactStatus(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
+            await updateValidationOfImpactStatus(this.provider, resultHouseholdCreated.registrationResponse.caseFile.id, params);
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
-        it('should successfully upload file and passes pre-processing', function () {
-          massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps({
-            caseFile: this.caseFile,
-            event: this.event,
-            faTable: this.faTable,
-            filePath: 'cypress/downloads/TC1859FaFile.csv',
+        it('should fail to pre-process financial assistance mass action for Case file does not meet program impacted criteria', function () {
+          cannotPreProcessFaMassActionSteps({
             programName: this.programName,
+            eventName: this.event.name.translation.en,
+            filePath: 'cypress/downloads/TC1506FaFile.csv',
             retries: this.test.retries.length,
+            errorMessage: 'Case file does not meet program impacted criteria',
+            financialAssistanceTable: this.faTable,
+            caseFile: this.caseFile,
           });
         });
       });
@@ -104,7 +103,7 @@ describe('#TC1859# - Mass Action FA upload file passes pre-processing when Valid
           cy.login(roleName);
           cy.goTo('mass-actions/financial-assistance');
         });
-        it('should not be able to do the mass action FA', () => {
+        it('should not be able to pre-process a financial assistance Mass Action', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

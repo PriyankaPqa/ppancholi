@@ -9,7 +9,6 @@ export enum FeatureKeys {
   UseIdentityServer = 'UseIdentityServer',
   TaskManagement = 'TaskManagement',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
-  InSystemQuerying = 'InSystemQuerying',
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
   MassActionCommunications = 'MassActionCommunications',
   FeatureDashboard = 'FeatureDashboard',

@@ -66,7 +66,7 @@
     </mass-action-pre-processed-processed-base>
 
     <template #actions>
-      <v-btn color="primary" @click="back()">
+      <v-btn color="primary" data-test="back_to_mass_action_list_button" @click="back()">
         {{ $t('massActions.backToList.label') }}
       </v-btn>
     </template>
