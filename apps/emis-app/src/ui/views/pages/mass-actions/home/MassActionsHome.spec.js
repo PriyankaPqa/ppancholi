@@ -52,7 +52,6 @@ describe('MassActionsHome.vue', () => {
             level: UserRoles.level6,
             roles: null,
             group: MassActionGroup.Group1,
-            feature: FeatureKeys.MassActionCommunications,
           },
           {
             title: 'mass_action.card.caseFileStatus',

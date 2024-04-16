@@ -44,3 +44,4 @@ event.status.on_hold
 registration.privacy_statement.agreeSelf
 registration.privacy_consent
 registration.privacy_consent_updated
+massActions.assessment.create.emailText.label

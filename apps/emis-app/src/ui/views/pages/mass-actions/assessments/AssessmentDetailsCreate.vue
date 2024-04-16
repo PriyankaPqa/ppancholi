@@ -41,16 +41,13 @@
             :label="`${$t('massActions.assessment.create.emailSubject.label')} *`"
             :rules="rules.emailSubject" />
 
-          <div v-if="$hasFeature(FeatureKeys.MassActionCommunications)">
-            <span>{{ $t('massActions.assessment.create.emailTopCustomContent.label') }}</span>
-            <v-btn class="ma-2" small @click="clearEmailText(true)">
-              {{ $t('common.clear') }}
-            </v-btn>
-            <vue-editor v-model="formCopy.emailTopCustomContent.translation[languageMode]" :editor-toolbar="toolbarSettings" />
-          </div>
+          <span>{{ $t('massActions.assessment.create.emailTopCustomContent.label') }}</span>
+          <v-btn class="ma-2" small @click="clearEmailText(true)">
+            {{ $t('common.clear') }}
+          </v-btn>
+          <vue-editor v-model="formCopy.emailTopCustomContent.translation[languageMode]" :editor-toolbar="toolbarSettings" />
 
-          <span>{{ $hasFeature(FeatureKeys.MassActionCommunications)
-            ? $t('massActions.assessment.create.emailBottomCustomContent.label') : $t('massActions.assessment.create.emailText.label') }}</span>
+          <span>{{ $t('massActions.assessment.create.emailBottomCustomContent.label') }}</span>
           <v-btn class="ma-2" small @click="clearEmailText(false)">
             {{ $t('common.clear') }}
           </v-btn>

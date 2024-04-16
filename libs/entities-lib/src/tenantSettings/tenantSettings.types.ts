@@ -10,7 +10,6 @@ export enum FeatureKeys {
   TaskManagement = 'TaskManagement',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
-  MassActionCommunications = 'MassActionCommunications',
   FeatureDashboard = 'FeatureDashboard',
   FinancialAssistanceRemovePaymentLine = 'FinancialAssistanceRemovePaymentLine',
   AppointmentBooking = 'AppointmentBooking',
