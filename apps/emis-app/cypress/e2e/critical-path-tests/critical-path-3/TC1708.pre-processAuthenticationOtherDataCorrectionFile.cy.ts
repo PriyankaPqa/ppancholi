@@ -36,7 +36,7 @@ const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDataTest = 'Data Correction Authentication';
 const dataCorrectionTypeDropDown = 'Authentication';
 
-describe('#TC1708# - Pre-process a Authentication data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('#TC1708# - Pre-process a Authentication data correction file.', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

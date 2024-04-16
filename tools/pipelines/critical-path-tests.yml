@@ -36,9 +36,13 @@ stages:
       jobs:
         - template: './jobs/cypress-role-mode.yml'
           parameters:
-            canMode: 'all'
-            cannotMode: 'all'
-
+            ${{ if eq(variables['build.reason'], 'Schedule') }}:
+              canMode: 'boundary'
+              cannotMode: 'boundary'
+            ${{ else }}:
+              canMode: 'all'
+              cannotMode: 'all'
+              
         - template: './jobs/cypress-job.yml'
           parameters:
             displayName: 'Critical Path Tests'
