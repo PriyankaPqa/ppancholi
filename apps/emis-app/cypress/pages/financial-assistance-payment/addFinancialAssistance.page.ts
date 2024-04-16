@@ -124,4 +124,8 @@ export class AddFinancialAssistancePage {
   public getPaymentLineGroupStatus() {
     return cy.getByDataTest(this.paymentLineGroupStatus).getAndTrimText();
   }
+
+  public getCancelButton() {
+    return cy.getByDataTest(this.backToFinancialAssistance);
+  }
 }
