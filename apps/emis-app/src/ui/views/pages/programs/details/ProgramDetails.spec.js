@@ -8,6 +8,7 @@ import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-f
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { createTestingPinia } from '@pinia/testing';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from './ProgramDetails.vue';
 
@@ -385,6 +386,56 @@ describe('ProgramDetails.vue', () => {
           name: routes.programs.home.name,
         });
       });
+    });
+  });
+
+  describe('Program use for lodging', () => {
+    it('should be rendered when feature flag Lodging is on', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          programId: 'PROGRAM_ID',
+          id: 'EVENT_ID',
+        },
+        featureList: [FeatureKeys.Lodging],
+        computed: {
+          program() {
+            return program;
+          },
+        },
+      });
+
+      await wrapper.setData({
+        loading: false,
+      });
+
+      const col = wrapper.findDataTest('program-details-div-useForLodging');
+      expect(col.exists()).toBeTruthy();
+    });
+
+    it('should not be rendered when feature flag Lodging is off', async () => {
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          programId: 'PROGRAM_ID',
+          id: 'EVENT_ID',
+        },
+        featureList: [],
+        computed: {
+          program() {
+            return program;
+          },
+        },
+      });
+
+      await wrapper.setData({
+        loading: false,
+      });
+
+      const col = wrapper.findDataTest('program-details-div-useForLodging');
+      expect(col.exists()).toBeFalsy();
     });
   });
 });
