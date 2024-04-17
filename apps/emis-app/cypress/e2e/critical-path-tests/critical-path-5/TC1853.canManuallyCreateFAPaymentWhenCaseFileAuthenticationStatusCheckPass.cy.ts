@@ -3,6 +3,7 @@ import { IIdentityAuthentication, IdentityAuthenticationMethod, IdentityAuthenti
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
+import { identificationIdProvided } from '@libs/cypress-lib/helpers/optionLists';
 import { fixturePrepaidCardPaymentLine } from '../../../fixtures/financial-assistance';
 import {
   createProgramWithTableWithItemAndSubItem,
@@ -71,7 +72,7 @@ describe('#TC1853# -Can create manual FA payment when Case File Authentication s
             const resultHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
             const params: IIdentityAuthentication = {
               identificationIds: [{
-                optionItemId: '72b7957c-7091-402e-bf87-25047d10a9a5',
+                optionItemId: identificationIdProvided.CanadianCitizenshipCard,
                 specifiedOther: null,
               }],
               method: IdentityAuthenticationMethod.InPerson,
@@ -94,9 +95,8 @@ describe('#TC1853# -Can create manual FA payment when Case File Authentication s
           addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
           addFinancialAssistancePage.getCreateButton().should('be.disabled');
           addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
-          addFinancialAssistancePage.getAddPaymentLineButton().click();
 
-          const addNewPaymentLinePage = addFinancialAssistancePage.addPaymentLine();
+          const addNewPaymentLinePage = addFinancialAssistancePage.goToAddNewPaymentLinePage();
           addNewPaymentLinePage.fill(paymentLineData);
           addNewPaymentLinePage.getAmountValue().should('eq', paymentLineData.amount);
           addNewPaymentLinePage.getRelatedNumberField().should('be.visible');

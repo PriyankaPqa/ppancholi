@@ -55,3 +55,12 @@ export enum subItemFinancialAssistance {
     nonWinterClothing = '26372777-a945-493d-b3da-2db7a3a09e3f',
     winterClothing = '39443fea-7010-4e63-9d13-280db61a9715',
 }
+
+export enum authenticationExceptionalType {
+    ApprovedByLegal = 'c4241dd7-c727-4a4c-bc93-752a58e9fe03',
+}
+
+export enum identificationIdProvided {
+    CanadianCitizenshipCard = '72b7957c-7091-402e-bf87-25047d10a9a5',
+    Other = 'd9c5618e-40df-446c-86d4-19d5d6b37a04',
+}

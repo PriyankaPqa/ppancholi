@@ -128,4 +128,9 @@ export class AddFinancialAssistancePage {
   public getCancelButton() {
     return cy.getByDataTest(this.backToFinancialAssistance);
   }
+
+  public goToAddNewPaymentLinePage() {
+    cy.getByDataTest(this.addPaymentLineButton).click();
+    return new AddNewPaymentLinePage();
+  }
 }

@@ -1,4 +1,4 @@
-import { getToday } from '@libs/cypress-lib/helpers';
+import { authenticationExceptionalType, getToday, identificationIdProvided } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { BaseDetailsMassAction } from 'cypress/pages/mass-action/base/baseDetailsMassAction';
@@ -10,11 +10,11 @@ export const updatedIdentityAuthenticationStatus: IIdentityAuthentication = {
   status: IdentityAuthenticationStatus.Passed,
   method: IdentityAuthenticationMethod.Exceptional,
   identificationIds: [{
-    optionItemId: 'd9c5618e-40df-446c-86d4-19d5d6b37a04',
+    optionItemId: identificationIdProvided.Other,
     specifiedOther: 'Update Identity Authentication using Mass Action',
   }],
   exceptionalAuthenticationTypeId: {
-    optionItemId: 'c4241dd7-c727-4a4c-bc93-752a58e9fe03',
+    optionItemId: authenticationExceptionalType.ApprovedByLegal,
     specifiedOther: null,
   },
 };
