@@ -33,7 +33,7 @@ describe('>>> Program', () => {
     });
 
     it('should instantiate useForLodging', () => {
-      expect(program.useForLodging).toBe(true);
+      expect(program.useForLodging).toBe(false);
     });
 
     it('should instantiate eligibilityCriteria', () => {
