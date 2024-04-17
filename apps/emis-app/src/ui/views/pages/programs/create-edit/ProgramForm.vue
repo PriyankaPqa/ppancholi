@@ -247,7 +247,6 @@ export default Vue.extend({
       handler(newProgram) {
         // if program is use for lodging then it cannot be approval required
         if (newProgram.useForLodging === true) {
-          newProgram.approvalRequired = false;
           this.localProgram.approvalRequired = false;
         }
 
