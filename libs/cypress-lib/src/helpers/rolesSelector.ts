@@ -87,6 +87,10 @@ export const getRoles = (canRoles: UserRoles[], cannotRoles: UserRoles[]) => {
 
   if (roleModes[cannotMode]) {
     filteredCannotRoles = roleModes[cannotMode](cannotRoles); // Will use method linked to the mode with canRoles parameters. Ex: getAllRoles(cannotRoles)
+
+    if (cannotRoles.indexOf(UserRoles.contributor2) !== -1 && cannotMode === 'boundary') {
+      filteredCannotRoles.push(UserRoles.contributor2);
+    }
   }
 
   const allRoles = [...filteredCanRoles, ...filteredCannotRoles];
