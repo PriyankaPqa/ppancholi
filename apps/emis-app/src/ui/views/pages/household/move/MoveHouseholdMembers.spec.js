@@ -134,13 +134,13 @@ describe('MoveHouseholdMembers.vue', () => {
         wrapper.vm.search = jest.fn();
         await wrapper.setData({
           searchResults: [
-            { entity: { id: '1' } },
-            { entity: { id: '2' } },
+            { id: '1' },
+            { id: '2' },
           ],
           firstHousehold: { id: '1' },
         });
         await wrapper.vm.onSearch(null);
-        expect(wrapper.vm.searchResultsWithoutFirst).toEqual([{ entity: { id: '2' } }]);
+        expect(wrapper.vm.searchResultsWithoutFirst).toEqual([{ id: '2' }]);
       });
 
       it('should set showResults to true', async () => {

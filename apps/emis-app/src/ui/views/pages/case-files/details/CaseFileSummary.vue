@@ -142,7 +142,6 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import _flatten from 'lodash/flatten';
-import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import {
   CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity, ICaseFileMetadata,
 } from '@libs/entities-lib/case-file';
@@ -157,9 +156,10 @@ import { IdParams, IUserAccountEntity, IUserAccountMetadata } from '@libs/entiti
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTeamStore } from '@/pinia/team/team';
-import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useHouseholdStore } from '@/pinia/household/household';
+import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
-import { subMinutes } from 'date-fns';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
 import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 
 export interface CaseFileSummary {
@@ -292,33 +292,31 @@ export default Vue.extend({
     },
 
     async getHouseholdMembers() {
-      const mapToMember = (m: IHouseholdMemberMetadata) => ({
-        name: `${m.firstName} ${m.lastName}`,
-        birthDate: helpers.getLocalStringDate(m.dateOfBirth, 'HouseholdMemberMetadata.dateOfBirth', 'PP'),
+      const mapToMember = (m: IMemberEntity) => ({
+        name: `${m.identitySet.firstName} ${m.identitySet.lastName}`,
+        birthDate: helpers.getLocalStringDate(m.identitySet.dateOfBirth, 'HouseholdMemberMetadata.dateOfBirth', 'PP'),
       });
-      // if we have a date of archival/close we get the household at that date else we get the current households
-      if (!this.closeActivity?.created) {
-        const household = useHouseholdStore().getById(this.caseFile?.householdId);
-        const householdMetadata = useHouseholdMetadataStore().getById(this.caseFile?.householdId);
-        this.primary = (householdMetadata?.memberMetadata || [])
-          .filter((m) => m.id === household.primaryBeneficiary).map(mapToMember)[0];
-        this.householdMembers = (householdMetadata?.memberMetadata || [])
-          .filter((m) => m.id !== household?.primaryBeneficiary).map(mapToMember);
-      } else {
-        let historyE = (await this.$services.households.getHouseholdHistory(this.caseFile?.householdId) || []);
-        let historyM = (await this.$services.households.getHouseholdMetadataHistory(this.caseFile?.householdId) || []);
-        historyE = _orderBy(historyE, 'timestamp', 'desc');
-        historyM = _orderBy(historyM, 'timestamp', 'desc');
-        // since our BE stuff happens async, some history might not be recorded at the exact same time
-        // it has been decided that we will look at the version of history that was valid one minute before the close/archive
-        const oneMinuteBeforeCloseArchive = subMinutes(new Date(this.closeActivity.created), 1).toISOString();
-        const lastMeta = historyM.filter((h) => h.timestamp <= oneMinuteBeforeCloseArchive)[0]?.entity as IHouseholdMetadata;
-        const lastEntity = historyE.filter((h) => h.timestamp <= oneMinuteBeforeCloseArchive)[0]?.entity as IHouseholdEntity;
-        if (lastMeta) {
-          this.primary = (lastMeta.memberMetadata || []).filter((m) => m.id === lastEntity?.primaryBeneficiary).map(mapToMember)[0];
-          this.householdMembers = (lastMeta.memberMetadata || []).filter((m) => m.id !== lastEntity?.primaryBeneficiary).map(mapToMember);
-        }
+
+      const household = useHouseholdStore().getById(this.caseFile?.householdId);
+      if (!household.id) {
+        return;
       }
+
+      const memberIds = this.caseFile.impactedIndividuals.filter((i) => i.receivingAssistance).map((x) => x.personId);
+      let primaryId = household.primaryBeneficiary;
+
+      // we get primary and all members marked as receiving assistance - if the case file is closed we get the primary of that day
+      if (this.closeActivity?.created) {
+        // we look for primary at that date
+        const date = new Date(this.closeActivity.created);
+        const dayOfClosing = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)).toISOString();
+        primaryId = (_orderBy(household.primaryBeneficiariesHistory || [], (x) => new Date(x.from).toISOString() + (x.to || 'ZZZZ'), 'desc'))
+          .filter((x) => new Date(x.from).toISOString() <= dayOfClosing).map((x) => x.memberId)[0];
+      }
+
+      const members = await usePersonStore().fetchByIds([...memberIds, primaryId], true);
+      this.primary = members.filter((m) => m.id === primaryId).map(mapToMember)[0];
+      this.householdMembers = members.filter((m) => m.id !== primaryId).map(mapToMember);
     },
   },
 });

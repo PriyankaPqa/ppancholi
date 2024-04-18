@@ -7,27 +7,27 @@
         mdi-phone
       </v-icon>
       <div class="d-flex flex-column">
-        <span v-if="onDuplicatePage && primaryBeneficiary.homePhoneNumber"> {{ $t("household.profile.member.phone_numbers.home") }}: </span>
+        <span v-if="onDuplicatePage && primaryBeneficiary.contactInformation.homePhoneNumber"> {{ $t("household.profile.member.phone_numbers.home") }}: </span>
         <case-file-details-beneficiary-phone-number
-          v-if="primaryBeneficiary.homePhoneNumber"
+          v-if="primaryBeneficiary.contactInformation.homePhoneNumber"
           data-test="caseFileDetails-home-phone-number"
-          :phone-number="primaryBeneficiary.homePhoneNumber"
+          :phone-number="primaryBeneficiary.contactInformation.homePhoneNumber"
           :show-labels="!onDuplicatePage"
           :label="'caseFileDetail.beneficiaryPhoneNumber.homeInitial'" />
 
-        <span v-if="onDuplicatePage && primaryBeneficiary.mobilePhoneNumber"> {{ $t("household.profile.member.phone_numbers.mobile") }}: </span>
+        <span v-if="onDuplicatePage && primaryBeneficiary.contactInformation.mobilePhoneNumber"> {{ $t("household.profile.member.phone_numbers.mobile") }}: </span>
         <case-file-details-beneficiary-phone-number
-          v-if="primaryBeneficiary.mobilePhoneNumber"
+          v-if="primaryBeneficiary.contactInformation.mobilePhoneNumber"
           data-test="caseFileDetails-mobile-phone-number"
-          :phone-number="primaryBeneficiary.mobilePhoneNumber"
+          :phone-number="primaryBeneficiary.contactInformation.mobilePhoneNumber"
           :show-labels="!onDuplicatePage"
           :label="'caseFileDetail.beneficiaryPhoneNumber.mobileInitial'" />
 
-        <span v-if="onDuplicatePage && primaryBeneficiary.alternatePhoneNumber"> {{ $t("household.profile.member.phone_numbers.alternate") }}: </span>
+        <span v-if="onDuplicatePage && primaryBeneficiary.contactInformation.alternatePhoneNumber"> {{ $t("household.profile.member.phone_numbers.alternate") }}: </span>
         <case-file-details-beneficiary-phone-number
-          v-if="primaryBeneficiary.alternatePhoneNumber"
+          v-if="primaryBeneficiary.contactInformation.alternatePhoneNumber"
           data-test="caseFileDetails-alternate-phone-number"
-          :phone-number="primaryBeneficiary.alternatePhoneNumber"
+          :phone-number="primaryBeneficiary.contactInformation.alternatePhoneNumber"
           :show-labels="!onDuplicatePage"
           :label="'caseFileDetail.beneficiaryPhoneNumber.alternateInitial'" />
       </div>
@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IHouseholdMemberMetadata } from '@libs/entities-lib/household';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
 import CaseFileDetailsBeneficiaryPhoneNumber from './CaseFileDetailsBeneficiaryPhoneNumber.vue';
 
 export default Vue.extend({
@@ -63,7 +63,7 @@ export default Vue.extend({
 
   props: {
     primaryBeneficiary: {
-      type: Object as ()=> IHouseholdMemberMetadata,
+      type: Object as ()=> IMemberEntity,
       required: true,
     },
 

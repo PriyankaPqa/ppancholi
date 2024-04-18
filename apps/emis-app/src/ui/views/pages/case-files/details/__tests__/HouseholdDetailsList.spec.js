@@ -8,18 +8,22 @@ const propsData = {
   addressFirstLine: '100 Right ave',
   addressSecondLine: 'Montreal, QC H2H 2H2',
   primaryBeneficiary: {
-    email: 'Jane.doe@email.com',
-    mobilePhoneNumber: {
-      number: '(514) 123 4444',
-      extension: '',
+    identitySet: {
+      email: 'Jane.doe@email.com',
     },
-    homePhoneNumber: {
-      number: '(514) 123 2222',
-      extension: '123',
-    },
-    alternatePhoneNumber: {
-      number: '(514) 123 1111',
-      extension: '',
+    contactInformation: {
+      mobilePhoneNumber: {
+        number: '(514) 123 4444',
+        extension: '',
+      },
+      homePhoneNumber: {
+        number: '(514) 123 2222',
+        extension: '123',
+      },
+      alternatePhoneNumber: {
+        number: '(514) 123 1111',
+        extension: '',
+      },
     },
   },
   onDuplicatePage: false,
@@ -51,11 +55,11 @@ describe('HouseholdDetailsList.spec.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.homePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.contactInformation.homePhoneNumber);
       });
 
       it('is NOT rendered if the beneficiary does not have a home phone number', () => {
-        doMount({ propsData: { ...propsData, primaryBeneficiary: { homePhoneNumber: null } } });
+        doMount({ propsData: { ...propsData, primaryBeneficiary: { contactInformation: { homePhoneNumber: null } } } });
 
         element = wrapper.findDataTest('caseFileDetails-home-phone-number');
         expect(element.exists()).toBeFalsy();
@@ -73,11 +77,11 @@ describe('HouseholdDetailsList.spec.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.mobilePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.contactInformation.mobilePhoneNumber);
       });
 
       it('is NOT rendered if the beneficiary does not have a mobile number', () => {
-        doMount({ propsData: { ...propsData, primaryBeneficiary: { mobilePhoneNumber: null } } });
+        doMount({ propsData: { ...propsData, primaryBeneficiary: { contactInformation: { mobilePhoneNumber: null } } } });
 
         element = wrapper.findDataTest('caseFileDetails-mobile-phone-number');
         expect(element.exists()).toBeFalsy();
@@ -94,11 +98,11 @@ describe('HouseholdDetailsList.spec.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.alternatePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.contactInformation.alternatePhoneNumber);
       });
 
       it('is NOT rendered if the beneficiary does not have a alternate number', () => {
-        doMount({ propsData: { ...propsData, primaryBeneficiary: { alternatePhoneNumber: null } } });
+        doMount({ propsData: { ...propsData, primaryBeneficiary: { contactInformation: { alternatePhoneNumber: null } } } });
 
         element = wrapper.findDataTest('caseFileDetails-alternate-phone-number');
         expect(element.exists()).toBeFalsy();

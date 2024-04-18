@@ -35,4 +35,5 @@ export interface IAzureTableSearchResults {
   count: number;
   ids: Array<uuid>;
   date?: Date;
+  values?: any[];
 }

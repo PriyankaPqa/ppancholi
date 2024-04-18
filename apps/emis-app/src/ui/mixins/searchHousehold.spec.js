@@ -2,7 +2,6 @@ import searchHousehold from '@/ui/mixins/searchHousehold';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedHousehold } from '@libs/entities-lib/household';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
-import { format, parseISO } from 'date-fns';
 
 const Component = {
   render() {},
@@ -35,37 +34,34 @@ describe('searchHousehold', () => {
         wrapper.vm.combinedHouseholdStore.search = jest.fn();
         await wrapper.vm.search({});
         expect(wrapper.vm.combinedHouseholdStore.search).toHaveBeenCalledWith({
-          search: wrapper.vm.searchCriteria,
           filter: wrapper.vm.filters,
-          top: 999,
           queryType: 'full',
-        });
+          includeMembers: true,
+        }, null, false, true);
       });
 
       it('should set searchResults', async () => {
         wrapper.vm.combinedHouseholdStore.search = jest.fn(() => ({ ids: ['1'] }));
-        wrapper.vm.combinedHouseholdStore.getByIds = jest.fn(() => mockCombinedHousehold());
+        wrapper.vm.combinedHouseholdStore.getByIds = jest.fn(() => [mockCombinedHousehold()]);
         await wrapper.setData({
           searchResults: [],
         });
         await wrapper.vm.search({});
-        expect(wrapper.vm.searchResults).toEqual(mockCombinedHousehold());
+        expect(wrapper.vm.searchResults).toEqual([mockCombinedHousehold().entity]);
       });
     });
   });
 
   describe('Computed', () => {
-    describe('metadataFilters', () => {
+    describe('memberFilters', () => {
       it('should add email to filter if here', () => {
         wrapper.setData({
           criteria: {
             emailAddress: 'test@test.ca',
           },
         });
-        const expected = {
-          Email: wrapper.vm.criteria.emailAddress,
-        };
-        expect(wrapper.vm.metadataFilters).toEqual(expected);
+
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'ContactInformation/Email': 'test@test.ca' }] });
       });
 
       it('should add birthDate to filter if here', () => {
@@ -74,10 +70,8 @@ describe('searchHousehold', () => {
             birthDate: '1990-01-01',
           },
         });
-        const expected = {
-          DateOfBirth: format(parseISO(wrapper.vm.criteria.birthDate), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
-        };
-        expect(wrapper.vm.metadataFilters).toEqual(expected);
+
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/DateOfBirth': { eq: new Date('1990-01-01') } }] });
       });
 
       it('should add phone to filter if here', () => {
@@ -88,25 +82,21 @@ describe('searchHousehold', () => {
         });
         const expected = {
           or: [
-            { 'HomePhoneNumber/E164Number': wrapper.vm.criteria.phone },
-            { 'MobilePhoneNumber/E164Number': wrapper.vm.criteria.phone },
-            { 'AlternatePhoneNumber/E164Number': wrapper.vm.criteria.phone },
+            { 'ContactInformation/HomePhoneNumber/E164Number': wrapper.vm.criteria.phone },
+            { 'ContactInformation/MobilePhoneNumber/E164Number': wrapper.vm.criteria.phone },
+            { 'ContactInformation/AlternatePhoneNumber/E164Number': wrapper.vm.criteria.phone },
           ],
         };
-        expect(wrapper.vm.metadataFilters).toEqual(expected);
+        expect(wrapper.vm.memberFilters).toEqual({ and: [expected] });
       });
-    });
 
-    describe('searchCriteria', () => {
       it('should add firstName to search if here (contains operator)', () => {
         wrapper.setData({
           criteria: {
             firstName: 'Mister',
           },
         });
-        // eslint-disable-next-line max-len
-        const expected = `Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${wrapper.vm.criteria.firstName}\\""`;
-        expect(wrapper.vm.searchCriteria).toEqual(expected);
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/FirstName': { contains: 'Mister' } }] });
       });
 
       it('should add lastName to search if here (contains operator)', () => {
@@ -116,8 +106,7 @@ describe('searchHousehold', () => {
           },
         });
         // eslint-disable-next-line max-len
-        const expected = `Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${wrapper.vm.criteria.lastName}\\""`;
-        expect(wrapper.vm.searchCriteria).toEqual(expected);
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/LastName': { contains: 'Test' } }] });
       });
 
       it('should add both to filter if here (contains operator)', () => {
@@ -127,32 +116,30 @@ describe('searchHousehold', () => {
             lastName: 'Test',
           },
         });
-        // eslint-disable-next-line max-len
-        const expected = `(Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${wrapper.vm.criteria.firstName}\\"")
-        AND (Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${wrapper.vm.criteria.lastName}\\"")`;
-        expect(wrapper.vm.searchCriteria).toEqual(expected);
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/FirstName': { contains: 'Mister' } },
+          { 'IdentitySet/LastName': { contains: 'Test' } }] });
       });
     });
 
     describe('filters', () => {
-      it('should return the correct filters', () => {
+      it('should return the correct filters', async () => {
+        await wrapper.setData({
+          criteria: {
+            registrationNumber: 'number',
+            firstName: 'Mister',
+          },
+        });
         expect(wrapper.vm.filters).toEqual({
-          and: [
-            {
-              Metadata: {
-                MemberMetadata: {
-                  any: {
-                    ...wrapper.vm.metadataFilters,
-                  },
+          Entity: {
+            HouseholdMembers: {
+              any: {
+                Person: {
+                  and: [{ 'IdentitySet/FirstName': { contains: 'Mister' } }],
                 },
               },
             },
-            {
-              Entity: {
-                RegistrationNumber: wrapper.vm.criteria.registrationNumber,
-              },
-            },
-          ],
+            RegistrationNumber: 'number',
+          },
         });
       });
     });

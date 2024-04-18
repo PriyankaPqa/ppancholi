@@ -34,10 +34,10 @@
               v-if="linkToHousehold"
               class="rc-link14 font-weight-bold px-1"
               :to="getHouseholdRoute(household)">
-              {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
+              {{ household.primaryBeneficiary.identitySet.firstName }} {{ household.primaryBeneficiary.identitySet.lastName }}
             </router-link>
             <span v-else data-test="name" class="fw-bold">
-              {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
+              {{ household.primaryBeneficiary.identitySet.firstName }} {{ household.primaryBeneficiary.identitySet.lastName }}
             </span>
           </div>
           <div v-for="(member, i) in household.additionalMembers" :key="i" class="ml-5 my-2">
@@ -45,14 +45,14 @@
               mdi-account-supervisor
             </v-icon>
             <span :data-test="`name__houseHoldMember_${i}`" class="fw-bold ">
-              {{ member.firstName }} {{ member.lastName }}
+              {{ member.identitySet.firstName }} {{ member.identitySet.lastName }}
             </span>
           </div>
         </template>
         <template #item.emailAddress="{ item: household }">
           <div class="">
             <span data-test="emailAddress">
-              {{ household.primaryBeneficiary.email || '-' }}
+              {{ household.primaryBeneficiary.contactInformation.email || '-' }}
             </span>
             <div v-for="(member) in household.additionalMembers" :key="member.id">
               <span>-</span>
@@ -72,13 +72,13 @@
         <template #item.birthDate="{ item: household }">
           <div>
             <span data-test="birthDate" class="no-wrap">
-              {{ format(utcToZonedTime(new Date(household.primaryBeneficiary.dateOfBirth), 'UTC'), 'PP') }}
+              {{ format(utcToZonedTime(new Date(household.primaryBeneficiary.identitySet.dateOfBirth), 'UTC'), 'PP') }}
             </span>
           </div>
           <div v-if="hasAdditionalMember(household)">
             <div v-for="(member, i) in household.additionalMembers" :key="i">
               <span :data-test="`birthdate__houseHoldMember_${i}`">
-                {{ format(utcToZonedTime(new Date(member.dateOfBirth), 'UTC'), 'PP') }}
+                {{ format(utcToZonedTime(new Date(member.identitySet.dateOfBirth), 'UTC'), 'PP') }}
               </span>
             </div>
           </div>
@@ -86,13 +86,13 @@
         <template #item.registrationNumber="{ item: household }">
           <div>
             <span data-test="registrationNumber">
-              {{ household.primaryBeneficiary.registrationNumber }}
+              {{ household.registrationNumber }}
             </span>
           </div>
           <div v-if="hasAdditionalMember(household)">
             <div v-for="(member, i) in household.additionalMembers" :key="i">
               <span :data-test="`registrationNumber__houseHoldMember_${i}`">
-                {{ member.registrationNumber }}
+                {{ household.registrationNumber }}
               </span>
             </div>
           </div>
@@ -100,7 +100,7 @@
         <template #item.householdStatus="{ item: household }">
           <status-select
             data-test="household-profile-status-chip"
-            :value="household.primaryBeneficiary.householdStatus"
+            :value="household.householdStatus"
             status-name="HouseholdStatus"
             disabled />
         </template>
@@ -148,7 +148,7 @@
 </template>
 
 <script lang="ts">
-import { HouseholdStatus, IHouseholdCombined } from '@libs/entities-lib/household';
+import { HouseholdStatus } from '@libs/entities-lib/household';
 import { VDataTableA11y } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import mixins from 'vue-typed-mixins';
@@ -170,10 +170,6 @@ export default mixins(household, householdResults).extend({
     VDataTableA11y,
   },
   props: {
-    items: {
-      type: Array as () => IHouseholdCombined[],
-      required: true,
-    },
     isSplitMode: {
       type: Boolean,
       default: false,
@@ -279,7 +275,8 @@ export default mixins(household, householdResults).extend({
     async getCaseFilesInEvent() {
       this.loading = true;
       try {
-        const householdIds = this.items.map((h) => h.entity.id);
+        const householdIds = this.items.map((h) => h.id);
+
         const res = await helpers.callSearchInInBatches({
           ids: householdIds,
           service: this.combinedCaseFileStore,
@@ -332,7 +329,7 @@ export default mixins(household, householdResults).extend({
     },
 
     detailsButtonDisabled(household?: IFormattedHousehold):boolean {
-      return this.loading || household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open;
+      return this.loading || household.householdStatus !== HouseholdStatus.Open;
     },
   },
 });

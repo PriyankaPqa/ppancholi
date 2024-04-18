@@ -1,5 +1,5 @@
+import { IMemberEntity } from '../household-create';
 import { IEntity, IEntityCombined } from '../base';
-import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
 import { IAssessmentResponseEntity } from '../assessment-template';
 import { ICaseFileEntity } from '../case-file';
@@ -21,20 +21,16 @@ export interface IHouseholdEntity extends IEntity {
   address?: IHouseholdAddress;
   addressHistory?: Array<IHouseholdAddress>;
   members?: Array<string>;
+  membersHistory?: Array<{ memberId: uuid, from: string | Date, to?: string | Date }>;
   primaryBeneficiary?: string;
+  primaryBeneficiariesHistory?: Array<{ memberId: uuid, from: string | Date, to?: string | Date }>;
   registrationNumber?: string;
   householdStatus: HouseholdStatus;
 }
 
-export interface IHouseholdMemberMetadata {
-  id: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  email: string;
-  homePhoneNumber: IPhoneNumber;
-  mobilePhoneNumber: IPhoneNumber;
-  alternatePhoneNumber: IPhoneNumber;
+export interface IHouseholdEntityWithMembers extends IHouseholdEntity {
+  primaryBeneficiaryMember?: IMemberEntity;
+  householdMembers?: { isPrimary: boolean, personId: uuid, person: IMemberEntity }[];
 }
 
 export interface IHouseholdCaseFile {
@@ -44,13 +40,7 @@ export interface IHouseholdCaseFile {
   caseFileStatus: number;
   registeredDate: string | Date;
 }
-
-export interface IHouseholdMetadata extends IEntity {
-  memberMetadata: Array<IHouseholdMemberMetadata>;
-  potentialDuplicatesCount?: number;
-}
-
-export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, IHouseholdMetadata>;
+export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, null>;
 
 export interface IOustandingPaymentResponse {
   hasOutstandingPayments: boolean;

@@ -1,7 +1,6 @@
 import {
   mockCaseFinancialAssistanceEntities,
   mockCaseFinancialAssistanceEntity,
-  mockFinancialPaymentHistory,
   mockPaymentSummary,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { mockDomainBaseService } from '../../base';
@@ -19,8 +18,6 @@ export const mockFinancialAssistanceService = (): IFinancialAssistancePaymentsSe
   editFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   deleteFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   cancelFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
-  getHistory: jest.fn(() => mockFinancialPaymentHistory()),
-  getMetadataHistory: jest.fn(() => []),
   getPaymentSummary: jest.fn(() => mockPaymentSummary()),
   getNextApprovalGroupRoles: jest.fn(() => []),
 });

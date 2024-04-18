@@ -268,30 +268,19 @@ describe('>>> Household Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/info-outstanding-payments`);
   });
 
-  test('getHouseholdHistory is linked to the correct URL', async () => {
-    const id = 'mock-id';
-    await service.getHouseholdHistory(id);
-    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/history`);
-  });
-
-  test('getHouseholdMetadataHistory is linked to the correct URL', async () => {
-    const id = 'mock-id';
-    await service.getHouseholdMetadataHistory(id);
-    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/metadata/${id}/history`);
-  });
-
   describe('search', () => {
-    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`household/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
+    it('should call the proper endpoint', async () => {
+      let params = { filter: { Foo: 'foo' } } as any;
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('household/search/households', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=false&includeMembers=false', { params, isODataSql: true });
+
+      params = { filter: { Foo: 'foo' }, includePrimary: true };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=true&includeMembers=false', { params, isODataSql: true });
+
+      params = { filter: { Foo: 'foo' }, includeMembers: true };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=false&includeMembers=true', { params, isODataSql: true });
     });
   });
 

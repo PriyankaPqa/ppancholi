@@ -2,34 +2,24 @@
 
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { HouseholdStatus, IHouseholdCombined } from '@libs/entities-lib/household/index';
-import { IPhoneNumber } from '@libs/entities-lib/value-objects/contact-information/index';
+import { HouseholdStatus, IHouseholdEntity } from '@libs/entities-lib/household/index';
 import routes from '@/constants/routes';
-
-export interface IMember {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  email?: string;
-  homePhoneNumber?: IPhoneNumber;
-  mobilePhoneNumber?: IPhoneNumber;
-  alternatePhoneNumber?: IPhoneNumber;
-  isPrimary: boolean;
-  registrationNumber: string;
-  householdStatus?: HouseholdStatus;
-}
+import { usePersonStore } from '@/pinia/person/person';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
 
 export interface IFormattedHousehold {
   id: string;
-  primaryBeneficiary: IMember;
-  additionalMembers: IMember[];
+  registrationNumber: string;
+  primaryBeneficiary: IMemberEntity;
+  additionalMembers: IMemberEntity[];
+  householdStatus: HouseholdStatus;
 }
 
 export default Vue.extend({
 
   props: {
     items: {
-      type: Array as () => IHouseholdCombined[],
+      type: Array as () => IHouseholdEntity[],
       required: true,
     },
   },
@@ -42,27 +32,24 @@ export default Vue.extend({
 
   computed: {
     formattedItems(): IFormattedHousehold[] {
-      const items = this.items.map((household: IHouseholdCombined) => {
+      const items = this.items.map((household) => {
         const final = {
           primaryBeneficiary: {},
           additionalMembers: [],
-          id: household.entity.id,
+          id: household.id,
+          registrationNumber: household.registrationNumber,
+          householdStatus: household.householdStatus,
         } as IFormattedHousehold;
 
-        household.metadata.memberMetadata.forEach((member) => {
-          if (household.entity.primaryBeneficiary === member.id) {
-            final.primaryBeneficiary = {
-              ...member,
-              isPrimary: true,
-              registrationNumber: household.entity.registrationNumber,
-              householdStatus: household.entity.householdStatus,
-            };
+        household.members.forEach((memberId) => {
+          let member = usePersonStore().getById(memberId);
+          if (!member.id) {
+            member = { identitySet: {}, contactInformation: {} } as IMemberEntity;
+          }
+          if (household.primaryBeneficiary === memberId) {
+            final.primaryBeneficiary = member;
           } else {
-            final.additionalMembers.push({
-              ...member,
-              isPrimary: false,
-              registrationNumber: household.entity.registrationNumber,
-            });
+            final.additionalMembers.push(member);
           }
         });
         return final;
@@ -70,21 +57,28 @@ export default Vue.extend({
 
       const direction = this.sortDesc ? 'desc' : 'asc';
 
-      return _orderBy(items, [(user) => user.primaryBeneficiary.firstName?.toLowerCase()], direction);
+      return _orderBy(items, [(user) => user.primaryBeneficiary.identitySet.firstName?.toLowerCase()], direction);
+    },
+  },
+
+  watch: {
+    async items() {
+      // in case someone added a new person since the search to a household
+      await usePersonStore().fetchByIds(this.items.flatMap((x) => x.members), true);
     },
   },
 
   methods: {
     getPhone(household: IFormattedHousehold): string {
-      const mPhone = household.primaryBeneficiary.mobilePhoneNumber;
+      const mPhone = household.primaryBeneficiary.contactInformation.mobilePhoneNumber;
       if (mPhone) {
         return mPhone.number;
       }
-      const hPhone = household.primaryBeneficiary.homePhoneNumber;
+      const hPhone = household.primaryBeneficiary.contactInformation.homePhoneNumber;
       if (hPhone) {
         return hPhone.number;
       }
-      const oPhone = household.primaryBeneficiary.alternatePhoneNumber;
+      const oPhone = household.primaryBeneficiary.contactInformation.alternatePhoneNumber;
       if (oPhone) {
         return oPhone.number;
       }

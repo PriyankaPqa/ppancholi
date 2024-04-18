@@ -243,8 +243,8 @@
       :show.sync="showDuplicatesDialog"
       data-test="manage-duplicates-dialog"
       :household="householdEntity"
-      :household-metadata="householdMetadata"
-      @close="fetchMetadataAndClose" />
+      :members="members"
+      @close="closeDuplicatesDialog" />
   </rc-page-content>
 </template>
 
@@ -256,8 +256,8 @@ import _isEmpty from 'lodash/isEmpty';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { CurrentAddress, EIndigenousTypes, ICurrentAddress, IEventGenericLocationWithEventName, IHouseholdCreate, IIdentitySet,
-    IMember, Member } from '@libs/entities-lib/household-create';
-import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
+    IMember, IMemberEntity, Member } from '@libs/entities-lib/household-create';
+import { HouseholdStatus, IHouseholdEntity } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
@@ -269,12 +269,14 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useHouseholdStore } from '@/pinia/household/household';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { HouseholdActivityType, IHouseholdActivity, IHouseholdActivityMembers } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedStatus from '@/ui/views/pages/household/components/PinnedStatus.vue';
 import _debounce from 'lodash/debounce';
+import _orderBy from 'lodash/orderBy';
 import { format, max } from 'date-fns';
+import { usePersonStore } from '@/pinia/person/person';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -337,6 +339,7 @@ export default mixins(household).extend({
       newStatus: null as HouseholdStatus,
       activityItemsData: [] as IHouseholdActivity[],
       showDuplicatesDialog: false,
+      duplicateCount: null as number,
     };
   },
 
@@ -348,9 +351,13 @@ export default mixins(household).extend({
           this.showDuplicatesDialog = false;
           await this.fetchData();
         } else if (newValue && !_isEmpty(newValue)) {
-          this.fetchMyEvents();
-          this.fetchAllEvents();
-          this.setHouseholdCreate();
+          await Promise.all([
+            this.fetchMembers(),
+            this.fetchDuplicatesCount(),
+            this.fetchMyEvents(),
+            this.fetchAllEvents(),
+          ]);
+          await this.setHouseholdCreate();
         }
       },
       deep: true,
@@ -385,8 +392,8 @@ export default mixins(household).extend({
       return useHouseholdStore().getById(this.id);
     },
 
-    householdMetadata(): IHouseholdMetadata {
-      return useHouseholdMetadataStore().getById(this.id);
+    members(): IMemberEntity[] {
+      return usePersonStore().getByIds(this.householdEntity?.members || []);
     },
 
     inactiveCaseFiles(): ICaseFileEntity[] {
@@ -415,11 +422,11 @@ export default mixins(household).extend({
         return '';
       }
 
-      const metadataTimestamp = this.householdMetadata?.timestamp;
+      const lastActivityTimestamp = _orderBy(this.activityItemsData, (x) => x.timestamp, 'desc')[0]?.timestamp;
       let date;
 
-      if (metadataTimestamp) {
-        const maxDate = max([new Date(entityTimestamp), new Date(metadataTimestamp)]);
+      if (lastActivityTimestamp) {
+        const maxDate = max([new Date(entityTimestamp), new Date(lastActivityTimestamp)]);
         date = format(maxDate, 'PP');
       } else {
         date = format(new Date(entityTimestamp), 'PP');
@@ -535,10 +542,6 @@ export default mixins(household).extend({
       return this.activityItemsData.filter((e) => e.activityType === HouseholdActivityType.StatusChanged)[0];
     },
 
-    duplicateCount(): number {
-      return this.householdMetadata?.potentialDuplicatesCount || 0;
-    },
-
     editingDisabled(): boolean {
       return (this.householdEntity.householdStatus === HouseholdStatus.Closed
           || this.householdEntity.householdStatus === HouseholdStatus.Archived)
@@ -567,9 +570,9 @@ export default mixins(household).extend({
       await this.fetchCaseFiles();
       await this.fetchMyEvents();
       await this.fetchShelterLocations();
-      await this.fetchHouseholdData();
       await this.fetchAllEvents();
       this.activityItemsData = await this.$services.households.getHouseholdActivity(this.id);
+      await this.fetchHouseholdData();
       this.loading = false;
     },
 
@@ -584,17 +587,29 @@ export default mixins(household).extend({
     async fetchHouseholdData() {
       this.loading = true;
       try {
+        // household could potentially be of a newer version in cosmos than sql
         await useHouseholdStore().fetch(this.id);
-        await useHouseholdMetadataStore().fetch(this.id, false);
+        await this.fetchMembers();
+        await this.fetchDuplicatesCount();
         await this.setHouseholdCreate();
       } finally {
         this.loading = false;
       }
     },
 
-    async fetchMetadataAndClose() {
-      await useHouseholdMetadataStore().fetch(this.id, false);
+    async fetchDuplicatesCount() {
+      this.duplicateCount = await this.$services.potentialDuplicates.getPotentialDuplicatesCount(this.id);
+    },
+
+    async fetchMembers() {
+      if (this.householdEntity?.members) {
+        usePersonStore().fetchByIds(this.householdEntity.members, true);
+      }
+    },
+
+    async closeDuplicatesDialog() {
       this.showDuplicatesDialog = false;
+      await this.fetchDuplicatesCount();
     },
 
     async setHouseholdCreate() {

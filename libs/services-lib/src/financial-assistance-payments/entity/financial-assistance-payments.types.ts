@@ -1,4 +1,3 @@
-import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
   EPaymentCancellationReason,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentsSummary, PaymentStatus,
@@ -29,8 +28,6 @@ export interface IFinancialAssistancePaymentsService extends IDomainBaseService<
   Promise<IFinancialAssistancePaymentEntity>;
   cancelFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid, reason: EPaymentCancellationReason):
   Promise<IFinancialAssistancePaymentEntity>;
-  getHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
-  getMetadataHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
   getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary>;
   getNextApprovalGroupRoles(financialAssistanceId: uuid): Promise<uuid[]>;
 }
@@ -46,8 +43,6 @@ export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServ
   editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   cancelFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
-  getHistory: jest.Mock<IVersionedEntity[]>;
-  getMetadataHistory: jest.Mock<IVersionedEntity[]>;
   getPaymentSummary: jest.Mock<PaymentsSummary>;
   getNextApprovalGroupRoles: jest.Mock<uuid[]>;
 }

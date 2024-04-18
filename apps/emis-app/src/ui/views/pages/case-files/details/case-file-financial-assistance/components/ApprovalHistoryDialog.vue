@@ -64,7 +64,6 @@
 import Vue from 'vue';
 import { system } from '@/constants/system';
 import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
-import { IVersionedEntityCombined } from '@libs/entities-lib/src/value-objects/versioned-entity';
 import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
@@ -92,8 +91,6 @@ export default Vue.extend({
 
   data() {
     return {
-      historyItems: [] as IVersionedEntityCombined[],
-      submittedHistory: null as IVersionedEntityCombined,
       getLocalStringDate: helpers.getLocalStringDate,
       ApprovalAction,
     };

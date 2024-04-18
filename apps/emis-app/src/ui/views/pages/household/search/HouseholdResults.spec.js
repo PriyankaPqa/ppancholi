@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { mockCombinedHouseholds, mockCombinedHousehold, mockHouseholdMemberMetadata, HouseholdStatus } from '@libs/entities-lib/household';
+import { mockHouseholdEntity, HouseholdStatus } from '@libs/entities-lib/household';
 import {
   createLocalVue,
   shallowMount,
@@ -18,9 +18,9 @@ const vuetify = new Vuetify();
 const { pinia, registrationStore } = useMockRegistrationStore();
 
 const parsedHousehold = {
-  ...mockHouseholdMemberMetadata(),
+  householdStatus: HouseholdStatus.Open,
   id: 'mock-id-1',
-  primaryBeneficiary: { ...mockMember(), id: 'mock-person-id-1', householdStatus: HouseholdStatus.Open },
+  primaryBeneficiary: { ...mockMember(), id: 'mock-person-id-1' },
   additionalMembers: [mockMember({ id: 'mock-person-id-2' })],
 };
 
@@ -34,7 +34,7 @@ describe('HouseholdResultsMove.vue', () => {
       pinia,
       vuetify,
       propsData: {
-        items: mockCombinedHouseholds(),
+        items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
         isSplitMode: false,
       },
     });
@@ -49,7 +49,7 @@ describe('HouseholdResultsMove.vue', () => {
           pinia,
           vuetify,
           propsData: {
-            items: mockCombinedHouseholds(),
+            items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
             isSplitMode: false,
             hideEventInfo: false,
           },
@@ -70,7 +70,7 @@ describe('HouseholdResultsMove.vue', () => {
           pinia,
           vuetify,
           propsData: {
-            items: mockCombinedHouseholds(),
+            items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
             isSplitMode: true,
             hideEventInfo: false,
           },
@@ -91,7 +91,7 @@ describe('HouseholdResultsMove.vue', () => {
           pinia,
           vuetify,
           propsData: {
-            items: mockCombinedHouseholds(),
+            items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
             isSplitMode: false,
             hideEventInfo: true,
           },
@@ -126,7 +126,7 @@ describe('HouseholdResultsMove.vue', () => {
           pinia,
           vuetify,
           propsData: {
-            items: [mockCombinedHousehold({ id: 'mock-id-1' }), mockCombinedHousehold({ id: 'mock-id-2' })],
+            items: [mockHouseholdEntity({ id: 'mock-id-1' }), mockHouseholdEntity({ id: 'mock-id-2' })],
             isSplitMode: false,
           },
           computed: {
@@ -221,7 +221,7 @@ describe('HouseholdResultsMove.vue', () => {
             pinia,
             vuetify,
             propsData: {
-              items: mockCombinedHouseholds(),
+              items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
               isSplitMode: true,
             },
           });
@@ -238,7 +238,7 @@ describe('HouseholdResultsMove.vue', () => {
             pinia,
             vuetify,
             propsData: {
-              items: mockCombinedHouseholds(),
+              items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
               isSplitMode: true,
             },
             data() {
@@ -256,7 +256,7 @@ describe('HouseholdResultsMove.vue', () => {
             pinia,
             vuetify,
             propsData: {
-              items: mockCombinedHouseholds(),
+              items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
               isSplitMode: true,
             },
             data() {

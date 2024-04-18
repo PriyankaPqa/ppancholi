@@ -4,6 +4,7 @@ import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 export interface IPotentialDuplicatesService extends IDomainBaseService<IPotentialDuplicateEntity, uuid> {
   getHouseholds(id: uuid): Promise<IDuplicateHousehold[]>;
   getDuplicates(id: uuid): Promise<IPotentialDuplicateEntity[]>;
+  getPotentialDuplicatesCount(householdId: uuid): Promise<number>;
   flagNewDuplicate(payload: { householdIds: uuid[], duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
   : Promise<IPotentialDuplicateEntity>;
   flagDuplicate(id: string, rationale: string): Promise<IPotentialDuplicateEntity>;
@@ -16,4 +17,5 @@ export interface IPotentialDuplicatesServiceMock extends IDomainBaseServiceMock<
   flagNewDuplicate: jest.Mock<IPotentialDuplicateEntity>;
   flagDuplicate: jest.Mock<IPotentialDuplicateEntity>;
   resolveDuplicate: jest.Mock<IPotentialDuplicateEntity>;
+  getPotentialDuplicatesCount: jest.Mock<number>;
 }

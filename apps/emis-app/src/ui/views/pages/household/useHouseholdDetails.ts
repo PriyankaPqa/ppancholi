@@ -1,9 +1,10 @@
 import { ref, Ref } from 'vue';
 import householdHelpers from '@/ui/helpers/household';
-import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
 
-export function useHouseholdDetails(household: Ref<IHouseholdEntity>, householdMetadata: Ref<IHouseholdMetadata>) {
-  const primaryMember = ref(null);
+export function useHouseholdDetails(household: Ref<IHouseholdEntity>, members: Ref<IMemberEntity[]>) {
+  const primaryMember = ref(null) as Ref<IMemberEntity>;
 
   function getAddressFirstLine(): string {
     return householdHelpers.getAddressLines(household?.value?.address?.address)[0] || '';
@@ -13,8 +14,8 @@ export function useHouseholdDetails(household: Ref<IHouseholdEntity>, householdM
     return householdHelpers.getAddressLines(household?.value?.address?.address)[1] || '';
   }
 
-  function getPrimaryMember(): IHouseholdMemberMetadata {
-    const primaryMemberData = householdMetadata?.value?.memberMetadata?.find((m: IHouseholdMemberMetadata) => m.id === household?.value?.primaryBeneficiary);
+  function getPrimaryMember(): IMemberEntity {
+    const primaryMemberData = members?.value?.find((m) => m.id === household?.value?.primaryBeneficiary);
     primaryMember.value = primaryMemberData;
     return primaryMemberData;
   }
@@ -24,16 +25,17 @@ export function useHouseholdDetails(household: Ref<IHouseholdEntity>, householdM
     if (!primaryMemberData) {
       return '';
     }
-    const { firstName, lastName } = primaryMemberData;
+    const { firstName, lastName } = primaryMemberData.identitySet;
     return `${firstName} ${lastName}`;
   }
 
   function hasPhoneNumbers(): boolean {
     const primaryMemberData = primaryMember?.value || getPrimaryMember();
-    if (!primaryMemberData) {
+    if (!primaryMemberData?.contactInformation) {
       return false;
     }
-    return !!(primaryMemberData.mobilePhoneNumber || primaryMemberData.homePhoneNumber || primaryMemberData.alternatePhoneNumber);
+    return !!(primaryMemberData.contactInformation.mobilePhoneNumber?.number || primaryMemberData.contactInformation.homePhoneNumber?.number
+        || primaryMemberData.contactInformation.alternatePhoneNumber?.number);
   }
 
   function getCountry() {

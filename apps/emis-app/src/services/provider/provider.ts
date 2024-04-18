@@ -1,6 +1,5 @@
 import { PublicService } from '@libs/services-lib/public';
 import { HouseholdsService } from '@libs/services-lib/households/entity';
-import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
 import { httpClient as client } from '@/services/httpClient';
 import { CaseFilesService } from '@libs/services-lib/case-files/entity';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
@@ -40,7 +39,6 @@ export const provider = (httpClient = client): IProvider => ({
   programs: new ProgramsService(httpClient),
   publicApi: new PublicService(httpClient),
   households: new HouseholdsService(httpClient),
-  householdsMetadata: new HouseholdMetadataService(httpClient),
   financialAssistanceTables: new FinancialAssistanceTablesService(httpClient),
   financialAssistancePaymentsService: new FinancialAssistancePaymentsService(httpClient),
   financialAssistancePaymentsServiceMetadata: new FinancialAssistancePaymentsMetadataService(httpClient),

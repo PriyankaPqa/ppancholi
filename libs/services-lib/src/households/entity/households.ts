@@ -8,10 +8,9 @@ import {
   IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IHoneyPotIdentitySet,
   ICheckForPossibleDuplicateResponse, ISendOneTimeCodeRegistrationPublicPayload, IVerifyOneTimeCodeRegistrationPublicPayload,
 } from '@libs/entities-lib/household-create';
-import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity/versionedEntity.types';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
 import {
-  ECanadaProvinces, ERegistrationMode, IOptionItemData,
+  ECanadaProvinces, ERegistrationMode, IAzureCombinedSearchResult, IAzureSearchParams, IOptionItemData,
 } from '@libs/shared-lib/types';
 import { DomainBaseService } from '../../base';
 import { GlobalHandler, IHttpClient, IHttpMock } from '../../http-client';
@@ -158,12 +157,13 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${this.baseUrl}/${id}/activities`);
   }
 
-  async getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]> {
-    return this.http.get(`${this.baseUrl}/${id}/history`);
-  }
-
-  async getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
-    return this.http.get(`${this.baseUrl}/metadata/${id}/history`);
+  // eslint-disable-next-line
+  async search(params: IAzureSearchParams & { includePrimary?: boolean, includeMembers?: boolean }, searchEndpoint: string = null, includePrimary: boolean = false, includeMembers: boolean = false)
+  : Promise<IAzureCombinedSearchResult<IHouseholdEntity, null>> {
+    return this.http.get(
+      `${this.apiUrlSuffix}/search/householdsV2?includePrimary=${params.includePrimary || includePrimary}&includeMembers=${params.includeMembers || includeMembers}`,
+      { params, isODataSql: true },
+    );
   }
 
   publicGetHousehold(id: uuid): Promise<IHouseholdEntity> {

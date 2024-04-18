@@ -216,7 +216,9 @@ export class MSAL {
     const accessTokenClientId = localStorage[localStorageKeys.accessTokenClientId.name];
     if ((interactionStatus && interactionStatus !== configWithCurrentTenant.auth.clientId)
       || (accessTokenExists && accessTokenClientId !== configWithCurrentTenant.auth.clientId)) {
+      const forceTenant = sessionStorage.getItem('force-tenant');
       sessionStorage.clear();
+      sessionStorage.setItem('force-tenant', forceTenant);
       localStorage.clear();
     }
 

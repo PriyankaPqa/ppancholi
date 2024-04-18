@@ -1,4 +1,3 @@
-import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
   IFinancialAssistancePaymentEntity,
   CreateFinancialAssistancePaymentServiceRequest,
@@ -83,14 +82,6 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
   async cancelFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid, reason: EPaymentCancellationReason):
     Promise<IFinancialAssistancePaymentEntity> {
     return this.http.patch(`${this.baseUrl}/${financialAssistanceId}/cancel-payment-line/${paymentId}`, { cancellationReason: reason });
-  }
-
-  async getHistory(id: uuid): Promise<IVersionedEntity[]> {
-    return this.http.get(`${this.baseUrl}/${id}/history`);
-  }
-
-  async getMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
-    return this.http.get(`${this.baseUrl}/metadata/${id}/history`);
   }
 
   async getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary> {

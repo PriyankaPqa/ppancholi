@@ -1,23 +1,21 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import { getMockEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
-import { getMockExtensionComponents } from '@/pinia/household/household-extension.mock';
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 
 // Should be the same as the original store
-const storeId = 'household';
+const storeId = 'person';
 
-export const useMockHouseholdStore = (pinia?: TestingPinia) => {
+export const useMockPersonStore = (pinia?: TestingPinia) => {
   const p = pinia || createTestingPinia({ stubActions: false });
 
   const useStore = defineStore(`${storeId}-entities`, () => ({
-    ...getMockEntityStoreComponents([mockHouseholdEntity()]),
-    ...getMockExtensionComponents(mockHouseholdEntity()),
+    ...getMockEntityStoreComponents([mockMember()]),
     $reset: jest.fn(),
   }));
 
   return {
     pinia: p,
-    householdStore: useStore(),
+    personStore: useStore(),
   };
 };

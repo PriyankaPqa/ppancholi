@@ -18,7 +18,7 @@ import { EIndigenousTypes, mockIdentitySet } from '../identity-set';
     id: '60983874-18bb-467d-b55a-94dc55818153',
     name: { translation: { en: 'sys admin', fr: 'admin de systeme' } },
   },
-  timestamp: '2021-01-01T19:02:43.8376544Z"',
+  timestamp: '2021-01-01T19:02:43.8376544Z',
 };
 
  const householdActivityIdentity = (force? : Partial<IHouseholdActivityIdentity>) => ({

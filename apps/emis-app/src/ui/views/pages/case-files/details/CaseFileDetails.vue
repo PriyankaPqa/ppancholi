@@ -81,12 +81,12 @@
           </rc-tooltip>
         </div>
         <div
-          v-if="getPrimaryMember() && getPrimaryMember().email"
+          v-if="getPrimaryMember() && getPrimaryMember().contactInformation.email"
           class="d-flex flex-row align-start mb-2 rc-body14 break-word">
           <v-icon small class="mr-2 mt-1" color="gray darken-2">
             mdi-email
           </v-icon>
-          <span data-test="caseFileDetails-email">{{ getPrimaryMember().email }}</span>
+          <span data-test="caseFileDetails-email">{{ getPrimaryMember().contactInformation.email }}</span>
         </div>
 
         <household-details-list
@@ -158,11 +158,11 @@ import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
-import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserStore } from '@/pinia/user/user';
 import { useHouseholdDetails } from '@/ui/views/pages/household/useHouseholdDetails';
-import { IHouseholdMetadata } from '@libs/entities-lib/household';
+import { usePersonStore } from '@/pinia/person/person';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import HouseholdDetailsList from './components/HouseholdDetailsList.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -182,7 +182,7 @@ export default mixins(caseFileDetail).extend({
   setup(props: { id: string }) {
     const caseFile = computed(() => useCaseFileStore().getById(props.id));
     const household = computed(() => useHouseholdStore().getById(caseFile.value.householdId));
-    const householdMetadata = computed(() => useHouseholdMetadataStore().getById(caseFile.value.householdId));
+    const members = computed(() => usePersonStore().getByIds(household.value?.members || []));
 
     const { getAddressFirstLine,
     getAddressSecondLine,
@@ -190,8 +190,8 @@ export default mixins(caseFileDetail).extend({
     getPrimaryMemberFullName,
     hasPhoneNumbers,
     getCountry,
-     } = useHouseholdDetails(household, householdMetadata);
-    return { household, householdMetadata, getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
+     } = useHouseholdDetails(household, members);
+    return { household, members, getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
   },
 
   data() {
@@ -200,6 +200,7 @@ export default mixins(caseFileDetail).extend({
       showVerifyIdentityDialog: false,
       showImpact: false,
       FeatureKeys,
+      isDuplicate: null as boolean,
     };
   },
 
@@ -350,10 +351,6 @@ export default mixins(caseFileDetail).extend({
       return true;
     },
 
-    isDuplicate(): boolean {
-      return (this.householdMetadata as unknown as IHouseholdMetadata)?.potentialDuplicatesCount > 0;
-    },
-
     receivingAssistanceMembersCount(): number {
         const receivingAssistanceMembers = this.caseFile.impactedIndividuals?.filter((m) => m.receivingAssistance);
         return receivingAssistanceMembers?.length || 0;
@@ -367,6 +364,10 @@ export default mixins(caseFileDetail).extend({
       }
       await this.fetchData();
     },
+
+    household() {
+      this.getRelatedHouseholdInfo();
+    },
   },
 
   async created() {
@@ -377,7 +378,15 @@ export default mixins(caseFileDetail).extend({
     async getHouseholdInfo() {
       const { householdId } = this.caseFile;
       await useHouseholdStore().fetch(householdId);
-      await useHouseholdMetadataStore().fetch(householdId, false);
+      await this.getRelatedHouseholdInfo();
+    },
+
+    async getRelatedHouseholdInfo() {
+      if (!this.household?.members) {
+        return;
+      }
+      await usePersonStore().fetchByIds(this.household.members, true);
+      this.isDuplicate = (await this.$services.potentialDuplicates.getPotentialDuplicatesCount(this.household.id)) > 0;
     },
 
     goToHouseholdProfile() {

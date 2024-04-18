@@ -1,12 +1,13 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockDuplicateHousehold, DuplicateStatus, mockHouseholdDuplicateFullData, mockPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
-import { mockHouseholdEntity, mockHouseholdMetadata, mockHouseholdMemberMetadata } from '@libs/entities-lib/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import helpers from '@/ui/helpers/helpers';
 import { mockProvider } from '@/services/provider';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
 
+import { mockMember } from '@libs/entities-lib/household-create';
 import Component, { SelectedTab } from './ManageDuplicates.vue';
 
 const { pinia, potentialDuplicateStore } = useMockPotentialDuplicateStore();
@@ -23,19 +24,24 @@ describe('ManageDuplicates.vue', () => {
   let wrapper;
   const propsData = {
     household: mockHouseholdEntity({ primaryBeneficiary: 'id-1' }),
-    householdMetadata: mockHouseholdMetadata({ memberMetadata: [{ id: 'id-1',
-      firstName: 'John',
-      lastName: 'Smith',
-      email: 'Test@mail.com',
-      alternatePhoneNumber: null,
-      homePhoneNumber: null,
-      mobilePhoneNumber: null,
-    },
-    { id: 'id-2',
-      firstName: 'Jane',
-      lastName: 'Doe',
-    },
-    ] }),
+    members: [mockMember({ id: 'id-1',
+      identitySet: {
+        firstName: 'John',
+        lastName: 'Smith',
+      },
+      contactInformation: {
+        email: 'Test@mail.com',
+        alternatePhoneNumber: null,
+        homePhoneNumber: null,
+        mobilePhoneNumber: null,
+      },
+    }),
+    mockMember({ id: 'id-2',
+      identitySet: {
+        firstName: 'Jane',
+        lastName: 'Doe',
+      },
+    })],
     show: true,
   };
 
@@ -118,17 +124,15 @@ describe('ManageDuplicates.vue', () => {
 
     describe('sortedMembers', () => {
       it('returns the right sorted members', async () => {
-        const memberMetadata = [
-          mockHouseholdMemberMetadata({ id: 'primary-id' }),
-          mockHouseholdMemberMetadata({ id: 'member-id-1', firstName: 'B' }),
-          mockHouseholdMemberMetadata({ id: 'member-id-2', firstName: 'A' })];
+        const members = [
+          mockMember({ id: 'primary-id' }),
+          mockMember({ id: 'member-id-1', identitySet: { firstName: 'B' } }),
+          mockMember({ id: 'member-id-2', identitySet: { firstName: 'A' } })];
 
         doMount();
 
-        await wrapper.setProps({ householdMetadata: mockHouseholdMetadata({ memberMetadata }), household: { id: '1', primaryBeneficiary: 'primary-id' } });
-        expect(wrapper.vm.sortedMembers).toEqual([mockHouseholdMemberMetadata({ id: 'member-id-2', firstName: 'A' }),
-          mockHouseholdMemberMetadata({ id: 'member-id-1', firstName: 'B' }),
-        ]);
+        await wrapper.setProps({ members, household: { id: '1', primaryBeneficiary: 'primary-id' } });
+        expect(wrapper.vm.sortedMembers).toEqual([members[2], members[1]]);
       });
     });
 
@@ -320,12 +324,12 @@ describe('ManageDuplicates.vue', () => {
       it('contains the right data', () => {
         doMount(false, {
           computed: { sortedMembers() {
-            return [mockHouseholdMemberMetadata()];
+            return [mockMember()];
           } },
         });
         const element = wrapper.findDataTest('householdDetails-manageDuplicate-householdMembers');
-        expect(element.text()).toContain(mockHouseholdMemberMetadata().firstName);
-        expect(element.text()).toContain(mockHouseholdMemberMetadata().lastName);
+        expect(element.text()).toContain(mockMember().identitySet.firstName);
+        expect(element.text()).toContain(mockMember().identitySet.lastName);
       });
     });
   });

@@ -20,6 +20,10 @@ export class PotentialDuplicatesService extends DomainBaseService<IPotentialDupl
     return this.http.get(`${this.baseUrl}/${id}/duplicates`);
   }
 
+  async getPotentialDuplicatesCount(householdId: uuid): Promise<number> {
+    return this.http.get(`${this.baseUrl}/${householdId}/potential-duplicates-count`);
+  }
+
   flagNewDuplicate(payload: { householdIds: uuid[], duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
   : Promise<IPotentialDuplicateEntity> {
   return this.http.post(`${this.baseUrl}/duplicates`, payload);

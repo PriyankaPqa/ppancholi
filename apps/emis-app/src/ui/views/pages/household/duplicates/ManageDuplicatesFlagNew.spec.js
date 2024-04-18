@@ -1,14 +1,18 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { HouseholdStatus, mockCombinedHousehold, mockHouseholdMemberMetadata } from '@libs/entities-lib/household';
+import { mockHouseholdEntity, mockCombinedHousehold } from '@libs/entities-lib/household';
 import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
-import { Status } from '@libs/entities-lib/base';
 import { mockProvider } from '@/services/provider';
 import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
+import { useMockPersonStore } from '@/pinia/person/person.mock';
+import { mockMember } from '@libs/entities-lib/household-create';
 import Component from './ManageDuplicatesFlagNew.vue';
 
 const services = mockProvider();
 const { pinia, potentialDuplicateStore } = useMockPotentialDuplicateStore();
+const { personStore } = useMockPersonStore(pinia);
 const localVue = createLocalVue();
+
+personStore.getByIds = jest.fn((ids) => ids.map((x) => mockMember({ id: x })));
 
 describe('ManageDuplicatesFlagNew.vue', () => {
   let wrapper;
@@ -65,10 +69,10 @@ describe('ManageDuplicatesFlagNew.vue', () => {
     });
 
     describe('members', () => {
-      it('returns the list of members in the metadata of the selected household', async () => {
+      it('returns the list of members', async () => {
         doMount();
-        await wrapper.setData({ selectedHousehold: { metadata: { memberMetadata: [mockHouseholdMemberMetadata()] } } });
-        expect(wrapper.vm.members).toEqual([mockHouseholdMemberMetadata()]);
+        await wrapper.setData({ selectedHousehold: { members: ['abc'] } });
+        expect(wrapper.vm.members).toEqual([mockMember({ id: 'abc' })]);
       });
     });
   });
@@ -77,7 +81,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
     describe('getRegistrationNumberText', () => {
       it('returns the registration number in the passed argument ', () => {
         doMount();
-        expect(wrapper.vm.getRegistrationNumberText(mockCombinedHousehold())).toEqual(mockCombinedHousehold().entity.registrationNumber);
+        expect(wrapper.vm.getRegistrationNumberText(mockHouseholdEntity())).toEqual(mockHouseholdEntity().registrationNumber);
       });
     });
 
@@ -86,10 +90,10 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         doMount();
         wrapper.setData({
           selectedDuplicateReasons: [1, 2],
-          member: mockHouseholdMemberMetadata(),
+          member: mockMember(),
           rationale: 'rationale',
           searchTerm: 'abc',
-          selectedHousehold: mockCombinedHousehold(),
+          selectedHousehold: mockHouseholdEntity(),
         });
         wrapper.vm.$refs.form.reset = jest.fn();
         await wrapper.vm.clearForm();
@@ -103,10 +107,10 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         doMount();
         wrapper.setData({
           selectedDuplicateReasons: [1, 2],
-          member: mockHouseholdMemberMetadata(),
+          member: mockMember(),
           rationale: 'rationale',
           searchTerm: 'abc',
-          selectedHousehold: mockCombinedHousehold(),
+          selectedHousehold: mockHouseholdEntity(),
         });
         wrapper.vm.$refs.form.reset = jest.fn();
         await wrapper.vm.clearForm(false);
@@ -114,7 +118,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         expect(wrapper.vm.member).toEqual(null);
         expect(wrapper.vm.rationale).toEqual('');
         expect(wrapper.vm.searchTerm).toEqual('abc');
-        expect(wrapper.vm.selectedHousehold).toEqual(mockCombinedHousehold());
+        expect(wrapper.vm.selectedHousehold).toEqual(mockHouseholdEntity());
       });
     });
 
@@ -124,18 +128,22 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         wrapper.vm.$services.households.search = jest.fn(() => ({ value: [mockCombinedHousehold({ id: '1', registrationNumber: '111' })] }));
         await wrapper.vm.fetchHouseholds('abc');
         expect(wrapper.vm.$services.households.search).toHaveBeenCalledWith({
-          search: 'Entity/RegistrationNumber: ((/.*abc.*/ OR "\\"abc\\""))',
           filter: {
             and: [
               {
                 Entity: {
-                  Status: Status.Active,
+                  RegistrationNumber: { contains: 'abc' },
+                },
+              },
+              {
+                Entity: {
+                  Status: 'Active',
                 },
               },
               {
                 not: {
                   Entity: {
-                    HouseholdStatus: HouseholdStatus.Archived,
+                    HouseholdStatus: 'Archived',
                   },
                 },
               },
@@ -146,7 +154,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
           orderBy: 'Entity/RegistrationNumber',
         });
 
-        expect(wrapper.vm.households).toEqual([mockCombinedHousehold({ id: '1', registrationNumber: '111' })]);
+        expect(wrapper.vm.households).toEqual([mockHouseholdEntity({ id: '1', registrationNumber: '111' })]);
       });
 
       it('excludes the current household when it saves the result to households', async () => {
@@ -159,14 +167,14 @@ describe('ManageDuplicatesFlagNew.vue', () => {
           ] }));
 
         await wrapper.vm.fetchHouseholds('abc');
-        expect(wrapper.vm.households).toEqual([mockCombinedHousehold({ id: '11', registrationNumber: 'different' })]);
+        expect(wrapper.vm.households).toEqual([mockHouseholdEntity({ id: '11', registrationNumber: 'different' })]);
       });
     });
 
     describe('inputRegistrationNumber', () => {
       it('calls clearForm and debounceSearch when the passed argument is different than the existing registration number', async () => {
         doMount();
-        await wrapper.setData({ selectedHousehold: { entity: { registrationNumber: '12345' } } });
+        await wrapper.setData({ selectedHousehold: { registrationNumber: '12345' } });
         wrapper.vm.clearForm = jest.fn();
         wrapper.vm.debounceSearch = jest.fn();
         await wrapper.vm.inputRegistrationNumber('0000');
@@ -175,7 +183,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
       });
       it('calls only clearForm with false  when the passed argument is same as the existing registration number', async () => {
         doMount();
-        await wrapper.setData({ selectedHousehold: { entity: { registrationNumber: '12345' } } });
+        await wrapper.setData({ selectedHousehold: { registrationNumber: '12345' } });
         wrapper.vm.clearForm = jest.fn();
         wrapper.vm.debounceSearch = jest.fn();
         await wrapper.vm.inputRegistrationNumber('12345');
@@ -208,9 +216,9 @@ describe('ManageDuplicatesFlagNew.vue', () => {
       it('calls flagNewDuplicate service with the right params if the form is valid', async () => {
         doMount();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.setData({ selectedHousehold: { entity: { id: 'hh-id' } },
+        wrapper.setData({ selectedHousehold: { id: 'hh-id' },
           selectedDuplicateReasons: [3],
-          member: { firstName: 'Joe', lastName: 'Black' },
+          member: { identitySet: { firstName: 'Joe', lastName: 'Black' } },
           rationale: 'rationale' });
         await wrapper.vm.submit();
         expect(potentialDuplicateStore.flagNewDuplicate).toHaveBeenCalledWith({
@@ -233,7 +241,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         doMount();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$emit = jest.fn();
-        wrapper.setData({ selectedHousehold: { entity: { id: 'hh-id' } }, selectedDuplicateReasons: [3], member: { id: 'member-id' }, rationale: 'rationale' });
+        wrapper.setData({ selectedHousehold: { id: 'hh-id' }, selectedDuplicateReasons: [3], member: { id: 'member-id' }, rationale: 'rationale' });
         await wrapper.vm.submit();
         expect(wrapper.vm.$emit).toHaveBeenCalledWith('fetchDuplicateHouseholds');
         expect(wrapper.vm.$emit).toHaveBeenCalledWith('goToFirstTab');

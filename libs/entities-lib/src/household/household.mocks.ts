@@ -1,14 +1,11 @@
 import { mockAssessmentResponseEntity } from '../assessment-template';
 import { mockCaseFileEntity } from '../case-file';
-import { IEntity, mockBaseData } from '../base';
 import {
   HouseholdStatus,
   IDetailedRegistrationResponse,
   IHouseholdCaseFile,
   IHouseholdCombined,
   IHouseholdEntity,
-  IHouseholdMemberMetadata,
-  IHouseholdMetadata,
 } from './household.types';
 /* eslint-disable no-nested-ternary */
 
@@ -64,18 +61,6 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
   ...force,
 });
 
-export const mockHouseholdMemberMetadata = (force?: Partial<IHouseholdMemberMetadata>): IHouseholdMemberMetadata => ({
-  id: 'id-1',
-  firstName: 'Mister',
-  lastName: 'Test',
-  email: 'Test@mail.com',
-  alternatePhoneNumber: null,
-  homePhoneNumber: null,
-  mobilePhoneNumber: null,
-  dateOfBirth: '2000-06-12',
-  ...force,
-});
-
 export const mockHouseholdCaseFile = (force?: Partial<IHouseholdCaseFile>): IHouseholdCaseFile => ({
   eventId: '60983874-18bb-467d-b55a-94dc55818151',
   caseFileId: '11-22-334',
@@ -85,16 +70,9 @@ export const mockHouseholdCaseFile = (force?: Partial<IHouseholdCaseFile>): IHou
   ...force,
 });
 
-export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHouseholdMetadata => ({
-  ...mockBaseData(),
-  memberMetadata: [mockHouseholdMemberMetadata()],
-  potentialDuplicatesCount: 0,
-  ...force,
-});
-
-export const mockCombinedHousehold = (force?: Partial<IEntity>): IHouseholdCombined => ({
+export const mockCombinedHousehold = (force?: Partial<IHouseholdEntity>): IHouseholdCombined => ({
   entity: mockHouseholdEntity(force),
-  metadata: mockHouseholdMetadata(force),
+  metadata: null,
 });
 
 export const mockCombinedHouseholds = (): IHouseholdCombined[] => [

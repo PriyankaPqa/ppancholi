@@ -1,7 +1,7 @@
 import { mockHouseholdCreate, Member } from '@libs/entities-lib/household-create';
 import {
   HouseholdStatus,
-  mockHouseholdCaseFile, mockHouseholdEntity, mockHouseholdMetadata,
+  mockHouseholdCaseFile, mockHouseholdEntity,
 } from '@libs/entities-lib/household';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
@@ -27,7 +27,7 @@ const householdEntity = mockHouseholdEntity();
 const services = mockProvider();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
-const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
+const { householdStore } = useMockHouseholdStore(pinia);
 
 const events = [
   mockEventSummary({
@@ -163,15 +163,13 @@ describe('HouseholdProfile.vue', () => {
         statuses() {
           return [HouseholdStatus.Archived, HouseholdStatus.Closed];
         },
-        duplicateCount() {
-          return 3;
-        },
         canManageDuplicates() {
           return true;
         },
       });
       householdStore.fetch = jest.fn(() => householdEntity);
       await flushPromises();
+      await wrapper.setData({ duplicateCount: 3 });
     });
 
     describe('registration number', () => {
@@ -710,14 +708,14 @@ describe('HouseholdProfile.vue', () => {
 
     describe('eventNames', () => {
       beforeEach(() => {
-        doMount(null, {
-          allEvents: [...events, otherEvent],
-        });
+        doMount();
       });
-      it('returns expected number of names', () => {
+      it('returns expected number of names', async () => {
+        await wrapper.setData({ allEvents: [...events, otherEvent] });
         expect(Object.keys(wrapper.vm.eventNames).length).toBe(3);
       });
-      it('includes expected values', () => {
+      it('includes expected values', async () => {
+        await wrapper.setData({ allEvents: [...events, otherEvent] });
         expect(wrapper.vm.eventNames[events[0].id]).toBeTruthy();
         expect(wrapper.vm.eventNames[events[1].id]).toBeTruthy();
         expect(wrapper.vm.eventNames[otherEvent.id]).toBeTruthy();
@@ -839,8 +837,9 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('movedMembers', () => {
-      it('should return correct data', () => {
-        doMount(null, {
+      it('should return correct data', async () => {
+        await doMount();
+        await wrapper.setData({
           activityItemsData: mockHouseholdActivities(HouseholdActivityType.HouseholdMoved),
         });
         const expectResult = [
@@ -951,14 +950,6 @@ describe('HouseholdProfile.vue', () => {
       it('should return true when household status is not Open, and user has no level6', () => {
         wrapper.vm.$hasLevel = jest.fn(() => false);
         expect(wrapper.vm.editingDisabled).toEqual(true);
-      });
-    });
-
-    describe('duplicateCount', () => {
-      it('returns the number of potential duplicates', () => {
-        doMount();
-
-        expect(wrapper.vm.duplicateCount).toEqual(mockHouseholdMetadata().potentialDuplicatesCount);
       });
     });
   });
@@ -1081,18 +1072,27 @@ describe('HouseholdProfile.vue', () => {
           caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
           newStatus: HouseholdStatus.Open,
         });
+        wrapper.vm.fetchMembers = jest.fn();
+        wrapper.vm.fetchDuplicatesCount = jest.fn();
+        wrapper.vm.setHouseholdCreate = jest.fn();
+        jest.clearAllMocks();
         await wrapper.vm.fetchHouseholdData();
         expect(householdStore.fetch).toHaveBeenCalledWith(householdEntity.id);
-        expect(householdMetadataStore.fetch).toHaveBeenCalledWith(householdEntity.id, false);
+        expect(wrapper.vm.fetchMembers).toHaveBeenCalled();
+        expect(wrapper.vm.fetchDuplicatesCount).toHaveBeenCalled();
+        expect(wrapper.vm.setHouseholdCreate).toHaveBeenCalled();
       });
     });
 
-    describe('fetchMetadataAndClose', () => {
-      it('fetches household metadata and closes the manage duplicate dialog', async () => {
+    describe('closeDuplicatesDialog', () => {
+      it('fetches duplicate data and closes the manage duplicate dialog', async () => {
         await doMount();
-        await wrapper.vm.fetchMetadataAndClose();
-        expect(householdMetadataStore.fetch).toHaveBeenCalledWith(householdEntity.id, false);
+        await wrapper.setData({ showDuplicatesDialog: true });
+        wrapper.vm.fetchDuplicatesCount = jest.fn();
+        jest.clearAllMocks();
+        await wrapper.vm.closeDuplicatesDialog();
         expect(wrapper.vm.showDuplicatesDialog).toBeFalsy();
+        expect(wrapper.vm.fetchDuplicatesCount).toHaveBeenCalled();
       });
     });
 

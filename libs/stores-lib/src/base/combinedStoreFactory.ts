@@ -100,7 +100,9 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     return newParams;
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean): Promise<IAzureTableSearchResults> {
+  // eslint-disable-next-line max-params
+  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean, otherSearchEndpointParameters: any[] = [])
+    : Promise<IAzureTableSearchResults> {
     this.storeEntity.setSearchLoading(true);
     let newParams = { ...params };
     if (includeInactiveItems !== true) {
@@ -110,6 +112,7 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     const res = await this.storeEntity.search({
       params: newParams,
       searchEndpoint,
+      ...otherSearchEndpointParameters,
     });
 
     const data = res?.value as ICombinedIndex<TEntity, TMetadata>[];
@@ -136,6 +139,7 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
         ids,
         count: res.odataCount,
         date: new Date(),
+        values: filteredData,
       };
     }
     return null;

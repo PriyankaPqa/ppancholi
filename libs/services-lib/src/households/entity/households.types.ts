@@ -16,9 +16,8 @@ import {
   ICreateHouseholdRequest,
 } from '@libs/entities-lib/household-create';
 import { HouseholdStatus, IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
-import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
-import { IOptionItemData } from '@libs/shared-lib/types';
+import { IOptionItemData, IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity, IdParams> {
@@ -49,8 +48,6 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity>;
   hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse>;
   getHouseholdActivity(id: uuid): Promise<IHouseholdActivity[]>;
-  getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]>;
-  getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
   setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity>;
   checkForPossibleDuplicatePublic(eventId: uuid, member: IMember, householdId? : uuid): Promise<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void>;
@@ -58,6 +55,8 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getPublicToken(recaptchaToken: string): Promise<string>;
   publicGetHousehold(id: uuid): Promise<IHouseholdEntity>;
   publicGetPerson(id: uuid): Promise<IMemberEntity>;
+  search(params: IAzureSearchParams & { includePrimary?: boolean, includeMembers?: boolean },
+    searchEndpoint?: string, includePrimary?: boolean, includeMembers?: boolean): Promise<IAzureCombinedSearchResult<IHouseholdEntity, unknown>>;
 }
 
 export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHouseholdEntity> {
@@ -84,8 +83,6 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   makePrimary: jest.Mock<IHouseholdEntity>;
   hasOutstandingPayments: jest.Mock<IOustandingPaymentResponse>;
   getHouseholdActivity: jest.Mock<IHouseholdActivity[]>;
-  getHouseholdHistory: jest.Mock<IVersionedEntity[]>;
-  getHouseholdMetadataHistory: jest.Mock<IVersionedEntity[]>;
   setHouseholdStatus: jest.Mock<IHouseholdEntity>;
   checkForPossibleDuplicatePublic: jest.Mock<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic: jest.Mock<void>;

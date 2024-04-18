@@ -118,7 +118,7 @@ export default Vue.extend({
      */
     eventNames: {
       type: Object as () => Record<string, IMultilingual>,
-      default: () => ({}),
+      default: () => ({} as Record<string, IMultilingual>),
     },
     /**
      * Whether the case file is active

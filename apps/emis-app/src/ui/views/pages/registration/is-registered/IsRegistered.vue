@@ -70,7 +70,7 @@ export default mixins(searchHousehold).extend({
 
   created() {
     // We get back results
-    this.searchResults = this.combinedHouseholdStore.getAll();
+    this.searchResults = this.combinedHouseholdStore.getByIds(useHouseholdStore().lastSearchResults).map((x) => x.entity);
     if (this.isSplitMode) {
       this.filterOutSplitHousehold();
     }
@@ -98,7 +98,7 @@ export default mixins(searchHousehold).extend({
     filterOutSplitHousehold() {
       const splitHouseholdId = useRegistrationStore().splitHouseholdState?.originHouseholdId;
       if (splitHouseholdId) {
-        this.searchResults = this.searchResults.filter((r) => r.entity.id !== splitHouseholdId);
+        this.searchResults = this.searchResults.filter((r) => r.id !== splitHouseholdId);
       }
     },
   },

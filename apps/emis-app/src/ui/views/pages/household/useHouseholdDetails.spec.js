@@ -1,5 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockMember } from '@libs/entities-lib/household-create';
 import { ref } from 'vue';
 
 import { ECanadaProvinces } from '@libs/shared-lib/types';
@@ -44,32 +45,29 @@ describe('useCaseFileDetails', () => {
 
   describe('getPrimaryMember', () => {
     it('sets the right beneficiary from the household metadata', async () => {
-      const altHouseholdMetadata = {
-        memberMetadata: [
-          { id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' },
-          { id: 'foo', firstName: 'Joe', lastName: 'Dane' },
-        ],
-      };
+      const altPersonData = [
+        mockMember({ id: 'mock-beneficiary-id', identitySet: { firstName: 'Jane', lastName: 'Doe' } }),
+        mockMember({ id: 'foo', identitySet: { firstName: 'Joe', lastName: 'Dane' } }),
+      ];
 
       const altHousehold = mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' });
 
-      const primaryMember = useHouseholdDetails(ref(altHousehold), ref(altHouseholdMetadata)).getPrimaryMember();
+      const primaryMember = useHouseholdDetails(ref(altHousehold), ref(altPersonData)).getPrimaryMember();
 
-      expect(primaryMember).toEqual({ id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' });
+      expect(primaryMember).toEqual(altPersonData[0]);
     });
   });
 
   describe('getPrimaryMemberFullName', () => {
     it('return the beneficiary first and last name', () => {
-      const altHouseholdMetadata = {
-        memberMetadata: [
-          { id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' },
-        ],
-      };
+      const altPersonData = [
+        mockMember({ id: 'mock-beneficiary-id', identitySet: { firstName: 'Jane', lastName: 'Doe' } }),
+        mockMember({ id: 'foo', identitySet: { firstName: 'Joe', lastName: 'Dane' } }),
+      ];
 
       const altHousehold = mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' });
 
-      const primaryMemberFullName = useHouseholdDetails(ref(altHousehold), ref(altHouseholdMetadata)).getPrimaryMemberFullName();
+      const primaryMemberFullName = useHouseholdDetails(ref(altHousehold), ref(altPersonData)).getPrimaryMemberFullName();
 
       expect(primaryMemberFullName).toEqual('Jane Doe');
     });
@@ -77,85 +75,90 @@ describe('useCaseFileDetails', () => {
 
   describe('hasPhoneNumbers', () => {
     it('return true if the beneficiary has a home phone number', () => {
-      const altHouseholdMetadata = {
-        memberMetadata: [
-          { id: 'mock-beneficiary-id',
-            firstName: 'Jane',
-            lastName: 'Doe',
+      const altPersonData = [
+        mockMember({
+          id: 'mock-beneficiary-id',
+          identitySet: { firstName: 'Jane', lastName: 'Doe' },
+          contactInformation: {
             homePhoneNumber: {
               number: '514-555-5555',
               extension: '',
             },
             mobilePhoneNumber: null,
-            alternatePhoneNumber: null },
-        ],
-      };
+            alternatePhoneNumber: null,
+          } }),
+        mockMember({ id: 'foo', identitySet: { firstName: 'Joe', lastName: 'Dane' } }),
+      ];
 
       const altHousehold = mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' });
 
-      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altHouseholdMetadata)).hasPhoneNumbers();
+      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altPersonData)).hasPhoneNumbers();
 
       expect(hasPhoneNumbers).toBeTruthy();
     });
 
     it('return true if the beneficiary has a mobile phone number', () => {
-      const altHouseholdMetadata = {
-        memberMetadata: [
-          { id: 'mock-beneficiary-id',
-            firstName: 'Jane',
-            lastName: 'Doe',
+      const altPersonData = [
+        mockMember({
+          id: 'mock-beneficiary-id',
+          identitySet: { firstName: 'Jane', lastName: 'Doe' },
+          contactInformation: {
+            homePhoneNumber: null,
             mobilePhoneNumber: {
               number: '514-555-5555',
               extension: '',
             },
-            homePhoneNumber: null,
-            alternatePhoneNumber: null },
-        ],
-      };
+            alternatePhoneNumber: null,
+          } }),
+        mockMember({ id: 'foo', identitySet: { firstName: 'Joe', lastName: 'Dane' } }),
+      ];
 
       const altHousehold = mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' });
 
-      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altHouseholdMetadata)).hasPhoneNumbers();
+      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altPersonData)).hasPhoneNumbers();
 
       expect(hasPhoneNumbers).toBeTruthy();
     });
 
     it('return true if the beneficiary has an alternate phone number', () => {
-      const altHouseholdMetadata = {
-        memberMetadata: [
-          { id: 'mock-beneficiary-id',
-            firstName: 'Jane',
-            lastName: 'Doe',
+      const altPersonData = [
+        mockMember({
+          id: 'mock-beneficiary-id',
+          identitySet: { firstName: 'Jane', lastName: 'Doe' },
+          contactInformation: {
+            homePhoneNumber: null,
+            mobilePhoneNumber: null,
             alternatePhoneNumber: {
               number: '514-555-5555',
               extension: '',
             },
-            mobilePhoneNumber: null,
-            homePhoneNumber: null },
-        ],
-      };
+          } }),
+        mockMember({ id: 'foo', identitySet: { firstName: 'Joe', lastName: 'Dane' } }),
+      ];
 
       const altHousehold = mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' });
 
-      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altHouseholdMetadata)).hasPhoneNumbers();
+      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altPersonData)).hasPhoneNumbers();
 
       expect(hasPhoneNumbers).toBeTruthy();
     });
 
     it('return false if the beneficiary has no phone number', () => {
-      const altHouseholdMetadata = {
-        memberMetadata: [
-          { id: 'mock-beneficiary-id',
-            firstName: 'Jane',
-            lastName: 'Doe',
-            alternatePhoneNumber: null,
-            mobilePhoneNumber: null,
+      const altPersonData = [
+        mockMember({
+          id: 'mock-beneficiary-id',
+          identitySet: { firstName: 'Jane', lastName: 'Doe' },
+          contactInformation: {
             homePhoneNumber: null,
-          }] };
+            mobilePhoneNumber: null,
+            alternatePhoneNumber: null,
+          } }),
+        mockMember({ id: 'foo', identitySet: { firstName: 'Joe', lastName: 'Dane' } }),
+      ];
 
       const altHousehold = mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' });
 
-      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altHouseholdMetadata)).hasPhoneNumbers();
+      const hasPhoneNumbers = useHouseholdDetails(ref(altHousehold), ref(altPersonData)).hasPhoneNumbers();
 
       expect(hasPhoneNumbers).toBeFalsy();
     });

@@ -3,7 +3,6 @@ import {
   IPublicService,
   IPublicServiceMock,
 } from '@libs/services-lib/public';
-import { IHouseholdMetadataService } from '@libs/services-lib/households/metadata';
 import { IMassActionService, IMassActionServiceMock } from '@libs/services-lib/mass-actions/entity';
 import { ICaseFilesService, ICaseFilesServiceMock } from '@libs/services-lib/case-files/entity';
 import { IOptionItemsService, IOptionItemsServiceMock } from '@libs/services-lib/optionItems';
@@ -41,7 +40,6 @@ export interface IProvider {
   programs: IProgramsService,
   publicApi: IPublicService,
   households: IHouseholdsService,
-  householdsMetadata: IHouseholdMetadataService,
   financialAssistanceTables: IFinancialAssistanceTablesService,
   financialAssistancePaymentsService: IFinancialAssistancePaymentsService,
   financialAssistancePaymentsServiceMetadata: IFinancialAssistancePaymentsMetadataService,

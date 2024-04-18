@@ -9,8 +9,11 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockPersonStore } from '@/pinia/person/person.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 import { mockProvider } from '@/services/provider';
+import { mockMember } from '@libs/entities-lib/household-create';
 import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
@@ -20,6 +23,8 @@ const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { caseFileReferralStore } = useMockCaseFileReferralStore(pinia);
 const { teamStore } = useMockTeamStore(pinia);
 const { caseFileStore } = useMockCaseFileStore(pinia);
+const { personStore } = useMockPersonStore(pinia);
+const { householdStore } = useMockHouseholdStore(pinia);
 
 describe('CaseFileSummary.vue', () => {
   let wrapper;
@@ -87,59 +92,35 @@ describe('CaseFileSummary.vue', () => {
 
   describe('Methods', () => {
     describe('getHouseholdMembers', () => {
-      it('calls the household history to get the members at the time of closing - 1 minute', async () => {
+      it('gets the old members if the case file has been closed', async () => {
         await mountWrapper();
         jest.clearAllMocks();
         wrapper.vm.closeActivity.created = '2020-02-01T00:05:00Z';
 
-        // 02 will be ignored as the change >  wrapper.vm.closeActivity.created - 1 minute
-        wrapper.vm.$services.households.getHouseholdHistory = jest.fn(() => [
-          {
-            timestamp: '2020-02-01T00:03:10Z',
-            entity: {
-              primaryBeneficiary: '01',
-            },
-          },
-          {
-            timestamp: '2020-02-01T00:04:55Z',
-            entity: {
-              primaryBeneficiary: '02',
-            },
-          },
-        ]);
+        const household = { ...householdStore.getById(),
+          primaryBeneficiariesHistory: [
+            { memberId: '01', from: '2020-01-01T00:00:00Z', to: '2020-01-10T00:00:00Z' },
+            { memberId: '02', from: '2020-01-11T00:00:00Z', to: '2020-02-01T00:00:00Z' },
+            { memberId: '01', from: '2020-02-02T00:00:00Z', to: '2020-02-28T00:00:00Z' },
+            { memberId: '03', from: '2020-03-01T00:00:00Z', to: null },
+          ] };
 
-        wrapper.vm.$services.households.getHouseholdMetadataHistory = jest.fn(() => [
-          {
-            timestamp: '2020-01-01T00:00:00Z',
-            entity: {
-              memberMetadata: [
-                {
-                  id: '02', firstName: 'firstName2', lastName: 'lName2', dateOfBirth: '1991-01-01T00:00:00Z',
-                },
-                {
-                  id: '01', firstName: 'firstName', lastName: 'lastName', dateOfBirth: '1990-01-01T00:00:00Z',
-                },
-              ],
-            },
-          },
-          {
-            timestamp: '2021-01-01T00:00:00Z',
-            entity: {
-              memberMetadata: [
-                {
-                  id: '01', firstName: 'firstName', lastName: 'lastName', dateOfBirth: '1990-01-01T00:00:00Z',
-                },
-              ],
-            },
-          },
-        ]);
+        householdStore.getById = jest.fn(() => household);
+
+        // mock-member-id-1 is impacted in the case file, so it will fetch him and 02 as primary from history
+
+        personStore.fetchByIds = jest.fn(() => [mockMember({ id: 'mock-member-id-1', identitySet: { firstName: '01 name' } }),
+          mockMember({ id: '02', identitySet: { firstName: '02 name' } })]);
+
         await wrapper.vm.getHouseholdMembers();
-        expect(wrapper.vm.$services.households.getHouseholdMetadataHistory).toHaveBeenCalledWith(caseFileStore.fetch().householdId);
+
+        expect(personStore.fetchByIds).toHaveBeenCalledWith(['mock-member-id-1', '02'], true);
+
         expect(wrapper.vm.householdMembers).toEqual([
-          { birthDate: helpers.getLocalStringDate('1991-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'PP'), name: 'firstName2 lName2' },
+          { birthDate: helpers.getLocalStringDate('1999-02-12T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'PP'), name: '01 name Smith' },
         ]);
         expect(wrapper.vm.primary).toEqual(
-          { birthDate: helpers.getLocalStringDate('1990-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'PP'), name: 'firstName lastName' },
+          { birthDate: helpers.getLocalStringDate('1999-02-12T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'PP'), name: '02 name Smith' },
         );
       });
     });

@@ -1,6 +1,8 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { EEventStatus } from '@libs/entities-lib/event';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { useMockPersonStore } from '@/pinia/person/person.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { CaseFileStatus, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 
@@ -16,6 +18,8 @@ let wrapper;
 
 const { pinia, eventStore } = useMockEventStore();
 const { caseFileStore } = useMockCaseFileStore(pinia);
+const { householdStore } = useMockHouseholdStore(pinia);
+const { personStore } = useMockPersonStore(pinia);
 
 describe('caseFileDetail mixin', () => {
   const mountWrapper = async (fullMount = false, level = 5, additionalOverwrites = {}) => {
@@ -58,6 +62,22 @@ describe('caseFileDetail mixin', () => {
         const ev = wrapper.vm.event;
         expect(eventStore.getById).toHaveBeenCalledWith(wrapper.vm.caseFile.eventId);
         expect(JSON.stringify(ev)).toBe(JSON.stringify(eventStore.getById()));
+      });
+    });
+
+    describe('household', () => {
+      it('returns the household from getter', () => {
+        const ev = wrapper.vm.household;
+        expect(householdStore.getById).toHaveBeenCalledWith(wrapper.vm.caseFile.householdId);
+        expect(JSON.stringify(ev)).toBe(JSON.stringify(householdStore.getById()));
+      });
+    });
+
+    describe('primaryMember', () => {
+      it('returns the person from getter', () => {
+        const ev = wrapper.vm.primaryMember;
+        expect(personStore.getById).toHaveBeenCalledWith(householdStore.getById().primaryBeneficiary);
+        expect(JSON.stringify(ev)).toBe(JSON.stringify(personStore.getById()));
       });
     });
 

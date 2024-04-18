@@ -29,7 +29,8 @@ import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-a
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
-import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useHouseholdStore } from '@/pinia/household/household';
+import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useNotificationStore } from '@/pinia/notification/notification';
@@ -221,26 +222,12 @@ export class SignalR implements ISignalR {
       entityName: 'Household',
       action: useHouseholdStore().setItemFromOutsideNotification,
     });
-
-    this.listenForChanges({
-      domain: 'household',
-      entityName: 'HouseholdMetadata',
-      action: useHouseholdMetadataStore().setItemFromOutsideNotification,
-    });
-
     this.watchedPiniaStores.push(useHouseholdStore());
-    this.watchedPiniaStores.push(useHouseholdMetadataStore());
 
     this.listenForChanges({
       domain: 'household',
       entityName: 'Person',
-      action: this.noAction,
-    });
-
-    this.listenForChanges({
-      domain: 'household',
-      entityName: 'PersonMetadata',
-      action: this.noAction,
+      action: usePersonStore().setItemFromOutsideNotification,
     });
 
     this.listenForOptionItemChanges({

@@ -163,13 +163,13 @@ describe('IsRegistered.vue', () => {
 
         await wrapper.setData({
           searchResults: [
-            { entity: { id: mockSplitHousehold().originHouseholdId } },
-            { entity: { id: 'foo' } },
+            { id: mockSplitHousehold().originHouseholdId },
+            { id: 'foo' },
           ],
         });
         registrationStore.splitHouseholdState = mockSplitHousehold();
         await wrapper.vm.filterOutSplitHousehold();
-        expect(wrapper.vm.searchResults).toEqual([{ entity: { id: 'foo' } }]);
+        expect(wrapper.vm.searchResults).toEqual([{ id: 'foo' }]);
       });
     });
   });
@@ -206,12 +206,12 @@ describe('IsRegistered.vue', () => {
     describe('created', () => {
       it('sets results so we can come back on page with results', () => {
         jest.clearAllMocks();
-        wrapper.vm.combinedHouseholdStore.getAll = jest.fn(() => []);
+        wrapper.vm.combinedHouseholdStore.getByIds = jest.fn(() => []);
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.combinedHouseholdStore.getAll).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.combinedHouseholdStore.getByIds).toHaveBeenCalledTimes(1);
       });
 
       it('calls filterOutSplitHousehold if isSplitMode is true', () => {

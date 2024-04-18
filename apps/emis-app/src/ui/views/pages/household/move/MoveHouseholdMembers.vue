@@ -100,7 +100,7 @@ import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import {
   HouseholdCreate, ICurrentAddress, IHouseholdCreate, IMember,
 } from '@libs/entities-lib/household-create';
-import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { VForm, IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 import household from '@/ui/mixins/household';
 import searchHousehold from '@/ui/mixins/searchHousehold';
@@ -143,7 +143,7 @@ export default mixins(searchHousehold, household).extend({
       householdLoading: true,
       submitLoading: false,
       showResults: false,
-      searchResultsWithoutFirst: [] as unknown as IHouseholdCombined[],
+      searchResultsWithoutFirst: [] as unknown as IHouseholdEntity[],
       firstHousehold: null as IMovingHouseholdCreate,
       secondHousehold: null as IMovingHouseholdCreate,
       firstHouseholdShelterLocations: [] as IEventGenericLocation[],
@@ -178,7 +178,7 @@ export default mixins(searchHousehold, household).extend({
 
     async onSearch(criteria: IHouseholdSearchCriteria) {
       await this.search(criteria);
-      this.searchResultsWithoutFirst = this.searchResults.filter((h) => h.entity.id !== this.firstHousehold.id);
+      this.searchResultsWithoutFirst = this.searchResults.filter((h) => h.id !== this.firstHousehold.id);
       this.showResults = true;
 
       // Hide the results on the main household search page, because they use the same store

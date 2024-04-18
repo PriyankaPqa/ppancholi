@@ -42,7 +42,7 @@
         v-model="member"
         :items="members"
         :rules="rules.member"
-        :item-text="item => item && item.firstName + ' ' + item.lastName"
+        :item-text="item => item && item.identitySet.firstName + ' ' + item.identitySet.lastName"
         return-object
         :label="`${$t('householdDetails.manageDuplicates.flagNew.member')} *`"
         data-test="payment_modalities" />
@@ -76,15 +76,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VForm, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import { VAutocompleteWithValidation, VTextAreaWithValidation, VSelectWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { HouseholdStatus, IHouseholdCombined, IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { HouseholdStatus, IHouseholdEntity } from '@libs/entities-lib/household';
 import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
 import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import { Status } from '@libs/entities-lib/base';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
+import { usePersonStore } from '@/pinia/person/person';
+import helper from '@libs/shared-lib/helpers/helpers';
 
 const VISUAL_DELAY = 500;
 
@@ -115,9 +118,9 @@ export default Vue.extend({
       rationale: '',
       searchTerm: '',
       selectedDuplicateReasons: [] as DuplicateReason[],
-      selectedHousehold: null as IHouseholdCombined,
-      households: [] as IHouseholdCombined[],
-      member: null as IHouseholdMemberMetadata,
+      selectedHousehold: null as IHouseholdEntity,
+      households: [] as IHouseholdEntity[],
+      member: null as IMemberEntity,
       loading: false,
       submitting: false,
     };
@@ -146,9 +149,9 @@ export default Vue.extend({
       return helpers.enumToTranslatedCollection(DuplicateReason, 'householdDetails.manageDuplicates.enum.duplicateReason', false, false);
     },
 
-    members(): IHouseholdMemberMetadata[] {
-      if (this.selectedHousehold?.metadata) {
-        return this.selectedHousehold?.metadata.memberMetadata;
+    members(): IMemberEntity[] {
+      if (this.selectedHousehold?.members) {
+        return usePersonStore().getByIds(this.selectedHousehold.members);
       }
       return [];
     },
@@ -160,13 +163,19 @@ export default Vue.extend({
         this.member = null;
       }
     },
+
+    selectedHousehold() {
+      if (this.selectedHousehold?.members) {
+        usePersonStore().fetchByIds(this.selectedHousehold.members, true);
+      }
+    },
   },
 
   methods: {
     // Mandatory to have it here instead of arrow function otherwise it does not work. Known bug in vuetify
-    getRegistrationNumberText(item: IHouseholdCombined): string {
-      if (item?.entity?.registrationNumber) {
-        return item.entity.registrationNumber;
+    getRegistrationNumberText(item: IHouseholdEntity): string {
+      if (item?.registrationNumber) {
+        return item.registrationNumber;
       }
       return '';
     },
@@ -181,18 +190,24 @@ export default Vue.extend({
       const filterForArchivedStatus = {
         not: {
           Entity: {
-            HouseholdStatus: HouseholdStatus.Archived,
+            HouseholdStatus: helper.getEnumKeyText(HouseholdStatus, HouseholdStatus.Archived),
           },
         },
       };
 
       const params = {
-        search: `Entity/RegistrationNumber: ${helpers.toQuickSearch(query)}`,
         filter: {
           and: [
             {
               Entity: {
-                Status: Status.Active,
+                RegistrationNumber: {
+                  contains: query,
+                },
+              },
+            },
+            {
+              Entity: {
+                Status: helper.getEnumKeyText(Status, Status.Active),
               },
             },
             filterForArchivedStatus,
@@ -204,11 +219,11 @@ export default Vue.extend({
       };
 
     try {
-      const res = await this.$services.households.search(params) as IAzureCombinedSearchResult<IHouseholdEntity, IHouseholdMetadata>;
+      const res = await this.$services.households.search(params);
       await helpers.timeout(VISUAL_DELAY);
 
       if (res?.value) {
-          this.households = res.value.filter((h) => h.entity.registrationNumber !== this.householdRegistrationNumber);
+          this.households = res.value.map((x) => x.entity).filter((h) => h.registrationNumber !== this.householdRegistrationNumber);
         }
     } finally {
       this.loading = false;
@@ -216,7 +231,7 @@ export default Vue.extend({
     },
 
     inputRegistrationNumber(registrationNumber: string) {
-      if (registrationNumber && registrationNumber !== this.selectedHousehold?.entity.registrationNumber) {
+      if (registrationNumber && registrationNumber !== this.selectedHousehold?.registrationNumber) {
         this.clearForm();
         this.debounceSearch(registrationNumber);
       } else {
@@ -249,10 +264,10 @@ export default Vue.extend({
         try {
           const res = await usePotentialDuplicateStore().flagNewDuplicate(
             {
-              householdIds: [this.selectedHousehold.entity.id, this.householdId],
+              householdIds: [this.selectedHousehold.id, this.householdId],
               duplicateReasons: this.selectedDuplicateReasons,
-              memberFirstName: this.member?.firstName,
-              memberLastName: this.member?.lastName,
+              memberFirstName: this.member?.identitySet?.firstName,
+              memberLastName: this.member?.identitySet?.lastName,
               rationale: this.rationale,
             },
           );

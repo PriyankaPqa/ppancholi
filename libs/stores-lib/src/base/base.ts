@@ -26,19 +26,22 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     return _cloneDeep(newlyCreatedIds.value.filter((i) => i.createdOn > maxTime));
   }
 
-  function getById(id: uuid) {
-    return _cloneDeep(items.value.find((e) => e.id === id) || {});
+  function getById(id: uuid): T {
+    return _cloneDeep(items.value.find((e) => e.id === id) || {} as T);
   }
   function getByCriteria(query: string, searchAll: boolean, searchAmong: string[]) {
     return sharedHelpers.filterCollectionByValue(items.value, query, searchAll, searchAmong);
   }
 
-  function getByIds(ids: uuid[], onlyActive?: boolean) {
+  function getByIds(ids: uuid[], onlyActive?: boolean): T[] {
+    if (!ids?.length) {
+      return [];
+    }
     if (onlyActive) {
       // metadata doesnt always have status
-      return ids.map((id) => _cloneDeep(items.value.find((e) => e.id === id && (e.status === Status.Active || e.status == null))) || {});
+      return ids.map((id) => _cloneDeep(items.value.find((e) => e.id === id && (e.status === Status.Active || e.status == null))) || {} as T);
     }
-    return ids.map((id) => _cloneDeep(items.value.find((e) => e.id === id)) || {});
+    return ids.map((id) => _cloneDeep(items.value.find((e) => e.id === id)) || {} as T);
   }
 
   function getAll() {
@@ -117,7 +120,9 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
 
   async function fetchByIds(ids: uuid[], fetchMissingOnly: boolean = false, batchSize = 40): Promise<T[]> {
     // default batch size should keep the query string under 2,083 characters (max length for Edge)
-
+    if (!ids?.length) {
+      return [];
+    }
     let idsToGet = ids.filter((x) => x != null);
     try {
       if (fetchMissingOnly) {
@@ -125,9 +130,8 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
         idsToGet = idsToGet.filter((id) => !stored.find((s) => s.id === id));
       }
 
-      // only fetched values are returned
       if (idsToGet.length === 0) {
-        return <T[]>[];
+        return getByIds(ids);
       }
 
       const idBatches = _chunk(idsToGet, batchSize);
@@ -140,7 +144,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
       }));
 
       setAll(res);
-      return res;
+      return getByIds(ids);
     } catch (e) {
       applicationInsights.trackException(e, { }, 'module.base', 'fetchByIds');
       return null;

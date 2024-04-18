@@ -7,8 +7,8 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockPersonStore } from '@/pinia/person/person.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
-import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import Component from '../CaseFileDetails.vue';
@@ -23,8 +23,10 @@ mockEvent.schedule.status = EEventStatus.Open;
 
 const pinia = getPiniaForUser(UserRoles.level1);
 const { caseFileStore, caseFileMetadataStore } = useMockCaseFileStore(pinia);
-const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
+const { householdStore } = useMockHouseholdStore(pinia);
 const { userStore } = useMockUserStore(pinia);
+const { personStore } = useMockPersonStore(pinia);
+
 describe('CaseFileDetails.vue', () => {
   let wrapper;
   const doMount = async (featureList = [], otherComputed = {}) => {
@@ -54,20 +56,24 @@ describe('CaseFileDetails.vue', () => {
     wrapper.vm.getAddressFirstLine = jest.fn(() => '100 Right ave');
     wrapper.vm.getAddressSecondLine = jest.fn(() => 'Montreal, QC H2H 2H2');
     wrapper.vm.getPrimaryMember = jest.fn(() => ({
-      email: 'Jane.doe@email.com',
-      mobilePhoneNumber: {
-        number: '(514) 123 4444',
-        extension: '',
-      },
-      homePhoneNumber: {
-        number: '(514) 123 2222',
-        extension: '123',
-      },
-      alternatePhoneNumber: {
-        number: '(514) 123 1111',
-        extension: '',
+      contactInformation: {
+        email: 'Jane.doe@email.com',
+        mobilePhoneNumber: {
+          number: '(514) 123 4444',
+          extension: '',
+        },
+        homePhoneNumber: {
+          number: '(514) 123 2222',
+          extension: '123',
+        },
+        alternatePhoneNumber: {
+          number: '(514) 123 1111',
+          extension: '',
+        },
       },
     }));
+
+    await flushPromises();
   };
 
   describe('Template', () => {
@@ -484,45 +490,6 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
-    describe('isDuplicate', () => {
-      it('returns true if household has potential duplicates', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          data() {
-            return { household: mockHouseholdEntity(),
-              householdMetadata: mockHouseholdMetadata({ potentialDuplicatesCount: 1 }) };
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
-        expect(wrapper.vm.isDuplicate).toEqual(true);
-      });
-
-      it('returns false if household has no potential duplicates', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          data() {
-            return { household: mockHouseholdEntity(), householdMetadata: mockHouseholdMetadata({ potentialDuplicatesCount: 0 }) };
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
-        expect(wrapper.vm.isDuplicate).toEqual(false);
-      });
-    });
-
     describe('receivingAssistanceMembersCount', () => {
       it('should return proper data', async () => {
         expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(1);
@@ -655,7 +622,8 @@ describe('CaseFileDetails.vue', () => {
       it('should fetch household ', async () => {
         await wrapper.vm.getHouseholdInfo();
         expect(householdStore.fetch).toBeCalledWith(mockCaseFile.householdId);
-        expect(householdMetadataStore.fetch).toBeCalledWith(mockCaseFile.householdId, false);
+        expect(personStore.fetchByIds).toBeCalledWith(householdStore.fetch().members, true);
+        expect(services.potentialDuplicates.getPotentialDuplicatesCount).toBeCalledWith(householdStore.fetch().id);
       });
     });
 

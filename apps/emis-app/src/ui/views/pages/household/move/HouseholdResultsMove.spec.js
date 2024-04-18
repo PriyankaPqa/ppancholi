@@ -1,4 +1,4 @@
-import { HouseholdStatus, mockCombinedHouseholds, mockHouseholdMemberMetadata } from '@libs/entities-lib/household';
+import { HouseholdStatus, mockCombinedHouseholds } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockMember } from '@libs/entities-lib/value-objects/member';
@@ -7,9 +7,9 @@ import Component from './HouseholdResultsMove.vue';
 const localVue = createLocalVue();
 
 const mockFormattedItem = (householdStatus) => ({
-  ...mockHouseholdMemberMetadata(),
   id: 'mock-id-1',
-  primaryBeneficiary: { ...mockMember(), id: 'mock-person-id-1', householdStatus },
+  householdStatus,
+  primaryBeneficiary: { ...mockMember(), id: 'mock-person-id-1' },
   additionalMembers: [mockMember({ id: 'mock-person-id-2' })],
 });
 

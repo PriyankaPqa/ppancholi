@@ -1,10 +1,9 @@
 import { mockBaseData } from '../../base';
 import { VersionedEntityCombined } from './index';
 import { mockVersionedEntity } from './versionedEntity.mock';
-import { mockMemberMetadata } from '../member';
 
 const mockEntity = mockVersionedEntity();
-const mockMetadata = mockVersionedEntity('householdMetadata');
+const mockMetadata = mockVersionedEntity();
 
 const i18n = {
   t: jest.fn((p) => p),
@@ -73,7 +72,7 @@ describe('>>> Versioned Entity', () => {
       const entityData = mockVersionedEntity('householdMember', {
         entityType: 'householdMember',
       });
-      const versionedEntity = new VersionedEntityCombined(entityData, mockMemberMetadata());
+      const versionedEntity = new VersionedEntityCombined(entityData, {});
 
       expect(versionedEntity.makeEmptyTemplate(entityData.entity)).toEqual([
         { label: '—', value: '' },

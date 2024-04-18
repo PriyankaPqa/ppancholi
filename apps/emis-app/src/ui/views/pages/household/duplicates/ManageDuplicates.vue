@@ -44,11 +44,11 @@
               <div data-test="householdDetails-manageDuplicate-householdMembers">
                 {{ $t('householdDetails.manageDuplicates.householdMembers') }}:
                 <div v-for="member in sortedMembers" :key="member.id" class="d-flex flex-column">
-                  {{ member.firstName }} {{ member.lastName }}
+                  {{ member.identitySet.firstName }} {{ member.identitySet.lastName }}
                 </div>
               </div>
             </div>
-            <v-divider v-if="hasPhoneNumbers || addressFirstLine()" class="mx-0 mb-3" />
+            <v-divider v-if="hasPhoneNumbers || getAddressFirstLine()" class="mx-0 mb-3" />
 
             <household-details-list
               v-if="getPrimaryMember() && household"
@@ -121,12 +121,13 @@ import _orderBy from 'lodash/orderBy';
 import { TranslateResult } from 'vue-i18n';
 import { RcDialog, RcTab, RcTabs } from '@libs/component-lib/components';
 import HouseholdDetailsList from '@/ui/views/pages/case-files/details/components/HouseholdDetailsList.vue';
-import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { IDuplicateHousehold, IPotentialDuplicateEntity, DuplicateStatus, IPotentialDuplicateExtended } from '@libs/entities-lib/potential-duplicate';
 import { UserRoles } from '@libs/entities-lib/user';
 import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
 import { useHouseholdDetails } from '../useHouseholdDetails';
 import ManageDuplicatesTable from './ManageDuplicatesTable.vue';
 import ManageDuplicatesFlagNew from './ManageDuplicatesFlagNew.vue';
@@ -158,8 +159,8 @@ export default Vue.extend({
       type: Object as () => IHouseholdEntity,
       required: true,
     },
-    householdMetadata: {
-      type: Object as () => IHouseholdMetadata,
+    members: {
+      type: Array as () => IMemberEntity[],
       required: true,
     },
   },
@@ -171,7 +172,7 @@ export default Vue.extend({
     getPrimaryMemberFullName,
     hasPhoneNumbers,
     getCountry,
-     } = useHouseholdDetails(toRef(props, 'household'), toRef(props, 'householdMetadata'));
+     } = useHouseholdDetails(toRef(props, 'household'), toRef(props, 'members'));
     return { getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
   },
 
@@ -202,11 +203,11 @@ export default Vue.extend({
       return this.duplicates?.filter((d) => d.duplicateStatus === DuplicateStatus.Resolved) || [];
     },
 
-    sortedMembers(): IHouseholdMemberMetadata[] {
-      if (!this.householdMetadata?.memberMetadata) {
+    sortedMembers(): IMemberEntity[] {
+      if (!this.members) {
         return [];
       }
-      return _orderBy(this.householdMetadata.memberMetadata.filter((m) => m.id !== this.getPrimaryMember()?.id), 'firstName');
+      return _orderBy(this.members.filter((m) => m.id !== this.getPrimaryMember()?.id), (item) => item.identitySet?.firstName);
     },
 
     subtitle():TranslateResult {

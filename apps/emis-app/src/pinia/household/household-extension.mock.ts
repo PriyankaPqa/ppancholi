@@ -3,6 +3,7 @@ import { IHouseholdEntity } from '@libs/entities-lib/household';
 
 export function getMockExtensionComponents(entity: IHouseholdEntity) {
   return {
+    lastSearchResults: ref([]),
     searchResultsShown: ref(false),
     updateNoFixedHomeAddress: jest.fn(() => entity),
     updateHomeAddress: jest.fn(() => entity),

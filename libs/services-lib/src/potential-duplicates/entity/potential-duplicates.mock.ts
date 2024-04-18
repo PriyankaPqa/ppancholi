@@ -9,4 +9,5 @@ export const mockPotentialDuplicatesService = (): IPotentialDuplicatesServiceMoc
   flagNewDuplicate: jest.fn(() => mockPotentialDuplicateEntity()),
   flagDuplicate: jest.fn(() => mockPotentialDuplicateEntity()),
   resolveDuplicate: jest.fn(() => mockPotentialDuplicateEntity()),
+  getPotentialDuplicatesCount: jest.fn(() => 6),
 });

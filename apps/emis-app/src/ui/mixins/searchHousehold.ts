@@ -2,74 +2,66 @@
 
 import Vue from 'vue';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
-import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useHouseholdStore } from '@/pinia/household/household';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { IdParams, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
-import { parseISO, format } from 'date-fns';
+import { IdParams, IHouseholdEntity, IHouseholdEntityWithMembers } from '@libs/entities-lib/household';
+import { parseISO } from 'date-fns';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { usePersonStore } from '@/pinia/person/person';
 
 export default Vue.extend({
   data() {
     return {
-      searchResults: [],
+      searchResults: [] as IHouseholdEntity[],
       criteria: {} as IHouseholdSearchCriteria,
       searchLoading: false,
-      combinedHouseholdStore: new CombinedStoreFactory<IHouseholdEntity, IHouseholdMetadata, IdParams>(useHouseholdStore(), useHouseholdMetadataStore()),
+      combinedHouseholdStore: new CombinedStoreFactory<IHouseholdEntity, null, IdParams>(useHouseholdStore()),
     };
   },
   computed: {
-    metadataFilters(): Record<string, unknown> {
-      const metadataFilters = {} as Record<string, unknown>;
+    memberFilters(): Record<string, unknown> {
+      const memberFilters = { and: [] as any[] };
 
       if (this.criteria.emailAddress) {
-        metadataFilters.Email = this.criteria.emailAddress;
+        memberFilters.and.push({ 'ContactInformation/Email': this.criteria.emailAddress });
       }
 
       if (this.criteria.birthDate) {
-        metadataFilters.DateOfBirth = format(parseISO(this.criteria.birthDate), "yyyy-MM-dd'T'HH:mm:ss'Z'");
+        const date = parseISO(`${this.criteria.birthDate}Z`);
+        memberFilters.and.push({ 'IdentitySet/DateOfBirth': { eq: date } });
       }
 
       if (this.criteria.phone) {
-        metadataFilters.or = [
-          { 'HomePhoneNumber/E164Number': this.criteria.phone },
-          { 'MobilePhoneNumber/E164Number': this.criteria.phone },
-          { 'AlternatePhoneNumber/E164Number': this.criteria.phone },
-        ];
+        memberFilters.and.push({ or: [
+          { 'ContactInformation/HomePhoneNumber/E164Number': this.criteria.phone },
+          { 'ContactInformation/MobilePhoneNumber/E164Number': this.criteria.phone },
+          { 'ContactInformation/AlternatePhoneNumber/E164Number': this.criteria.phone },
+        ],
+        });
       }
-      return metadataFilters;
-    },
 
-    searchCriteria(): string {
-      if (this.criteria.firstName && this.criteria.lastName) {
-        return `(Metadata/MemberMetadata/FirstName:/.*${this.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${this.criteria.firstName}\\"")
-        AND (Metadata/MemberMetadata/LastName:/.*${this.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${this.criteria.lastName}\\"")`;
-      }
       if (this.criteria.firstName) {
-        return `Metadata/MemberMetadata/FirstName:/.*${this.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${this.criteria.firstName}\\""`;
+        memberFilters.and.push({ 'IdentitySet/FirstName': { contains: this.criteria.firstName } });
       }
+
       if (this.criteria.lastName) {
-        return `Metadata/MemberMetadata/LastName:/.*${this.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${this.criteria.lastName}\\""`;
+        memberFilters.and.push({ 'IdentitySet/LastName': { contains: this.criteria.lastName } });
       }
-      return '';
+      return memberFilters;
     },
 
     filters(): Record<string, unknown> {
       return {
-        and: [
-          {
-            Metadata: {
-              MemberMetadata: {
-                any: {
-                  ...this.metadataFilters,
-                },
+        Entity: {
+          RegistrationNumber: this.criteria.registrationNumber,
+          HouseholdMembers: {
+            any: {
+              Person: {
+                ...this.memberFilters,
               },
             },
           },
-          {
-            Entity: {
-              RegistrationNumber: this.criteria.registrationNumber,
-            },
-          },
-        ],
+        },
       };
     },
   },
@@ -78,18 +70,20 @@ export default Vue.extend({
     async search(criteria: IHouseholdSearchCriteria) {
       this.searchLoading = true;
       this.criteria = criteria;
-      useHouseholdStore().$reset();
-      useHouseholdMetadataStore().$reset();
+      useHouseholdStore().lastSearchResults = [];
 
       const res = await this.combinedHouseholdStore.search({
-        search: this.searchCriteria,
         filter: this.filters,
-        top: 999,
         queryType: 'full',
-      });
+        includeMembers: true, // loads members at the same time - returns IHouseholdEntityWithMembers
+      } as IAzureSearchParams, null, false, true);
+      if (res?.values) {
+        usePersonStore().setAll(res.values.flatMap((x: { entity: IHouseholdEntityWithMembers }) => x.entity.householdMembers?.map((x) => x.person)));
+      }
 
       if (res?.ids) {
-        this.searchResults = this.combinedHouseholdStore.getByIds(res.ids);
+        this.searchResults = this.combinedHouseholdStore.getByIds(res.ids).map((x) => x.entity);
+        useHouseholdStore().lastSearchResults = res.ids;
       }
 
       this.searchLoading = false;

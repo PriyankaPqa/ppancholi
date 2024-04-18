@@ -28,17 +28,17 @@
               mdi-account-box
             </v-icon>
             <span data-test="name" class="fw-bold">
-              {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
+              {{ household.primaryBeneficiary.identitySet.firstName }} {{ household.primaryBeneficiary.identitySet.lastName }}
             </span>
           </v-col>
 
           <v-col cols="4" class="email-phone-dob-item">
             <div data-test="emailAddress">
-              {{ household.primaryBeneficiary.email || '-' }}
+              {{ household.primaryBeneficiary.contactInformation.email || '-' }}
             </div>
             <div data-test="birthDate">
               {{ householdHelpers.getBirthDateDisplayWithAge(
-                householdHelpers.convertBirthDateStringToObject(household.primaryBeneficiary.dateOfBirth)) }}
+                householdHelpers.convertBirthDateStringToObject(household.primaryBeneficiary.identitySet.dateOfBirth)) }}
             </div>
             <div data-test="phoneNumber">
               {{ getPhone(household) }}
@@ -49,12 +49,12 @@
             <div class="status-registration-number-item">
               <status-select
                 data-test="household-profile-status-chip"
-                :value="household.primaryBeneficiary.householdStatus"
+                :value="household.householdStatus"
                 status-name="HouseholdStatus"
                 disabled />
             </div>
             <span class="status-registration-number-item">
-              {{ household.primaryBeneficiary.registrationNumber }}
+              {{ household.registrationNumber }}
             </span>
             <span class="status-registration-number-item">
               <v-btn
@@ -62,7 +62,7 @@
                 small
                 color="primary"
                 data-test="household_move_results_select"
-                :disabled="household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open"
+                :disabled="household.householdStatus !== HouseholdStatus.Open"
                 @click="select(household.id)">
                 <v-icon left>
                   mdi-check
@@ -78,11 +78,11 @@
               <v-icon data-test="iconType" small color="grey">
                 mdi-account-supervisor
               </v-icon>
-              {{ member.firstName }} {{ member.lastName }}
+              {{ member.identitySet.firstName }} {{ member.identitySet.lastName }}
             </span>
           </v-col>
           <v-col cols="4" class="email-phone-dob-item">
-            {{ householdHelpers.getBirthDateDisplayWithAge(householdHelpers.convertBirthDateStringToObject(member.dateOfBirth)) }}
+            {{ householdHelpers.getBirthDateDisplayWithAge(householdHelpers.convertBirthDateStringToObject(member.identitySet.dateOfBirth)) }}
           </v-col>
         </v-row>
       </div>
