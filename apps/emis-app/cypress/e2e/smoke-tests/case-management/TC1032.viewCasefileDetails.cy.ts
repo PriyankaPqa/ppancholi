@@ -61,8 +61,7 @@ describe('#TC1032# - View Case File Details', { tags: ['@case-file'] }, () => {
         });
         it('should successfully view case file details', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
-          cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
-          cy.interceptAndRetryUntilNoMoreStatus('**/household/households/metadata/*', 404);
+          cy.waitForStatusCode('**/household/potential-duplicates/*/potential-duplicates-count', 200, 10000);
           // eslint-disable-next-line
           caseFileDetailsPage.getPrimaryBeneficiaryName().should('eq', `${this.household.primaryBeneficiary.identitySet.firstName} ${household.primaryBeneficiary.identitySet.lastName}`);
           caseFileDetailsPage.getCaseFileNumber().should('eq', this.caseFileCreated.caseFileNumber);

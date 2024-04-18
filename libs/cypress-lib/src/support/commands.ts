@@ -88,7 +88,7 @@ declare global {
           foundMsg?: string,
         }
       ): Chainable<string>
-      waitForStatusCode(url: string | RegExp, statusCode: number): Chainable<string>
+      waitForStatusCode(url: string | RegExp, statusCode: number, timeout?: number): Chainable<string>
     }
   }
 }
