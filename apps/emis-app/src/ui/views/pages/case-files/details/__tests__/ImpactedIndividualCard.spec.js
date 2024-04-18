@@ -46,17 +46,17 @@ describe('ImpactedIndividualCard.vue', () => {
   });
 
   describe('Template', () => {
-    describe('previous-address-row', () => {
+    describe('previous-address-section', () => {
       it('should not exist when there is no previous address data', async () => {
         await doMount({ reorderedAddressHistory: () => [] });
-        const element = wrapper.findDataTest('previous-address-row');
+        const element = wrapper.findDataTest('previous-address-section');
         expect(element.exists()).toBeFalsy();
       });
 
       it('should exist when there is previous address data', async () => {
         await doMount({ reorderedAddressHistory: () => [mockOther()] });
         await wrapper.vm.$nextTick();
-        const element = wrapper.findDataTest('previous-address-row');
+        const element = wrapper.findDataTest('previous-address-section');
         expect(element.exists()).toBeTruthy();
       });
     });

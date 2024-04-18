@@ -48,7 +48,7 @@
       :disable-editing="disableEditing"
       @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
 
-    <div v-if="reorderedAddressHistory.length > 0" data-test="previous-address-row">
+    <div v-if="reorderedAddressHistory.length > 0" data-test="previous-address-section">
       <div class="px-4 py-0 rc-body14 fw-bold background">
         <v-btn
           icon
@@ -62,7 +62,7 @@
         {{ $t('impactedIndividuals.Previous_temporary_address') }}
       </div>
       <template v-if="showPreviousTemporaryAddress">
-        <div v-for="(address, $index) in reorderedAddressHistory" :key="$index">
+        <div v-for="(address, $index) in reorderedAddressHistory" :key="$index" data-test="previous-address-row">
           <impacted-individual-address-template :address="address" is-previous-temporary-address />
         </div>
       </template>

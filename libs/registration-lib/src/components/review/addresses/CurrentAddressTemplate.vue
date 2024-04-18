@@ -1,5 +1,5 @@
 <template>
-  <div class="rc-body14" :class="{ 'disabled-table': disabled }">
+  <div class="rc-body14" :class="{ 'disabled-table': disabled }" data-test="current_address_template">
     <div v-if="!hideTitle" class="fw-bold">
       {{ $t('registration.addresses.currentAddress') }}
     </div>

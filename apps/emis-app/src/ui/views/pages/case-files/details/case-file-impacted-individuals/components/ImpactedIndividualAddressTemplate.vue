@@ -3,7 +3,7 @@
     <v-col cols="3" class="font-weight-bold" data-test="current_temporary_address_title">
       {{ isPreviousTemporaryAddress ? '' : $t('impactedIndividuals.current_temporary_address') }}
     </v-col>
-    <v-col cols="3">
+    <v-col cols="3" data-test="current_temporary_address">
       <current-address-template :current-address="address" hide-title />
     </v-col>
     <v-col cols="5">
@@ -24,7 +24,7 @@
       </div>
       <div>
         <span class="font-weight-bold">{{ $t('impactedIndividuals.temporary_address.crc_provided') + ':' }}</span>
-        {{ address.crcProvided ? $t('common.yes') : $t('common.no') }}
+        <span data-test="impacted_individuals_card_template_is_crc_provided">{{ address.crcProvided ? $t('common.yes') : $t('common.no') }}</span>
       </div>
     </v-col>
     <v-col cols="1" class="pt-2 d-flex justify-end">

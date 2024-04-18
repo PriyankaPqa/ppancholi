@@ -42,6 +42,12 @@ export enum DataTest {
   duplicateCount = 'household-profile-duplicateCount',
   dialogConfirmationCancel = 'cancel-action-dialog-confirmation',
   dialogConfirmationSubmit = 'submit-action-dialog-confirmation',
+  householdMemberCard = 'household_profile_primary_member_card',
+  currentAddressType = 'currentAddress__type',
+  currentAddressStreet = 'currentAddress__street',
+  currentAddressLine = 'currentAddress__line',
+  currentAddressCountry = 'currentAddress__country',
+
 }
 
 export class HouseholdProfilePage {
@@ -116,6 +122,16 @@ export class HouseholdProfilePage {
   private dialogConfirmationCancel = { selector: DataTest.dialogConfirmationCancel };
 
   private dialogConfirmationSubmit = { selector: DataTest.dialogConfirmationSubmit };
+
+  private householdMemberCard = { selector: DataTest.householdMemberCard };
+
+  private currentAddressType = { selector: DataTest.currentAddressType };
+
+  private currentAddressStreet = { selector: DataTest.currentAddressStreet };
+
+  private currentAddressLine = { selector: DataTest.currentAddressLine };
+
+  private currentAddressCountry = { selector: DataTest.currentAddressCountry };
 
   public getCaseFileNumber() {
     return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
@@ -382,5 +398,25 @@ export class HouseholdProfilePage {
         foundMsg: 'Household contact information updated',
       },
     );
+  }
+
+  public getHouseholdMemberCard(index = 0) {
+    return cy.getByDataTest(this.householdMemberCard).eq(index);
+  }
+
+  public getCurrentAddressType() {
+    return cy.getByDataTest(this.currentAddressType).getAndTrimText();
+  }
+
+  public getCurrentAddressStreet() {
+    return cy.getByDataTest(this.currentAddressStreet).getAndTrimText();
+  }
+
+  public getCurrentAddressLine() {
+    return cy.getByDataTest(this.currentAddressLine).getAndTrimText();
+  }
+
+  public getCurrentAddressCountry() {
+    return cy.getByDataTest(this.currentAddressCountry).getAndTrimText();
   }
 }

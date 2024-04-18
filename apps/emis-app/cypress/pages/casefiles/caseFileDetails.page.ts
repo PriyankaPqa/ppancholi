@@ -1,3 +1,5 @@
+import { CaseFileDetailsBase } from './caseFileDetailsBase.page';
+
 export enum DataTest {
   caseFileActivityTitle = 'caseFileActivity-listItem-content-title',
   caseFileActivityBody = 'caseFileActivity-listItem-content-body',
@@ -6,11 +8,7 @@ export enum DataTest {
   roleName = 'caseFileItem__roleName',
   dateCreated = 'caseFileItem__created',
   backButton = 'back-button',
-  caseNote = 'case-note',
   primaryBeneficiaryName = 'title-left-menu',
-  caseFileNumber = 'caseFileDetails-caseFileNumber',
-  eventName = 'caseFileDetails-event',
-  financialAssistance = 'case-financial-assistance',
   pageTitle = 'page-title',
   registrationNumber = 'caseFileActivity-listItem-content-body-registration-number',
   addTag = 'caseFile-add-tags-btn',
@@ -27,7 +25,7 @@ export enum caseFileTags {
   Irregular = '631e8b83-9ba3-49ad-9595-d959b8d924ba',
 }
 
-export class CaseFileDetailsPage {
+export class CaseFileDetailsPage extends CaseFileDetailsBase {
   private caseFileActivityTitle = { selector: DataTest.caseFileActivityTitle };
 
   private caseFileActivityBody = { selector: DataTest.caseFileActivityBody };
@@ -38,17 +36,7 @@ export class CaseFileDetailsPage {
 
   private dateCreated = { selector: DataTest.dateCreated };
 
-  private backButton = { selector: DataTest.backButton };
-
-  private caseNote = { selector: DataTest.caseNote };
-
   private primaryBeneficiaryName = { selector: DataTest.primaryBeneficiaryName };
-
-  private caseFileNumber = { selector: DataTest.caseFileNumber };
-
-  private eventName = { selector: DataTest.eventName };
-
-  private financialAssistance = { selector: DataTest.financialAssistance };
 
   private pageTitle = { selector: DataTest.pageTitle };
 
@@ -106,28 +94,8 @@ export class CaseFileDetailsPage {
     return cy.getByDataTest(this.caseFileActivityBody).getAndTrimText();
   }
 
-  public goBackToHouseholdProfilePage() {
-    cy.getByDataTest(this.backButton).click();
-  }
-
-  public goToCaseNotesPage() {
-    cy.getByDataTest(this.caseNote).click();
-  }
-
   public getPrimaryBeneficiaryName() {
     return cy.getByDataTest(this.primaryBeneficiaryName).getAndTrimText();
-  }
-
-  public getCaseFileNumber() {
-    return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
-  }
-
-  public getEventName() {
-    return cy.getByDataTest(this.eventName).getAndTrimText();
-  }
-
-  public goToFinancialAssistanceHomePage() {
-    return cy.getByDataTest(this.financialAssistance).click();
   }
 
   public waitAndRefreshUntilCaseFileActivityVisibleWithBody(expectedCaseFileActivityBody: string) {

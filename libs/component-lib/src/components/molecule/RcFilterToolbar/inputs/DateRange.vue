@@ -16,7 +16,7 @@
             <template #activator="{ on }">
               <v-text-field
                 prepend-inner-icon="mdi-calendar"
-                :data-test="`filterToolbar__input-${id}-dateRange-start-input`"
+                :data-test="`filterToolbar__input-${id}-dateRange-start`"
                 outlined
                 readonly
                 clearable
@@ -29,7 +29,7 @@
 
             <v-date-picker
               v-model="pickerStart"
-              :data-test="`filterToolbar__input-${id}-dateRange-start-datePicker`"
+              :data-test="`filterToolbar__input-${id}-dateRange-start-date-picker`"
               :locale="locale"
               :max="pickerEnd"
               @change="menuStart = false" />
@@ -50,7 +50,7 @@
             <template #activator="{ on }">
               <v-text-field
                 prepend-inner-icon="mdi-calendar"
-                :data-test="`filterToolbar__input-${id}-dateRange-end-input`"
+                :data-test="`filterToolbar__input-${id}-dateRange-end`"
                 outlined
                 readonly
                 clearable
@@ -63,7 +63,7 @@
 
             <v-date-picker
               v-model="pickerEnd"
-              :data-test="`filterToolbar__input-${id}-dateRange-end-datePicker`"
+              :data-test="`filterToolbar__input-${id}-dateRange-end-date-picker`"
               :locale="locale"
               :min="pickerStart"
               @change="menuEnd = false" />
