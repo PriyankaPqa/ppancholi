@@ -139,7 +139,7 @@ export class HouseholdProfilePage {
 
   public goToCaseFileDetailsPage() {
     cy.getByDataTest(this.caseFileNumber).click();
-    cy.waitForStatusCode('**/household/potential-duplicates/*/potential-duplicates-count', 200, 10000);
+    cy.waitForStatusCode('**/case-file/case-files/*/activities', 200, 10000);
     return new CaseFileDetailsPage();
   }
 
