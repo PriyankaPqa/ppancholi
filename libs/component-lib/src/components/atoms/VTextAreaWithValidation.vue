@@ -7,6 +7,7 @@
       :error-messages="errors"
       v-bind="$attrs"
       onfocus="this.setAttribute('autocomplete','off');"
+      :data-test="`${$attrs['data-test']}_input`"
       v-on="$listeners" />
   </validation-provider>
 </template>

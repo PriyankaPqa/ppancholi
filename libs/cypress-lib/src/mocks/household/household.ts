@@ -19,6 +19,9 @@ const mockCurrentAddressCreateRequest = (force?: Partial<ICurrentAddressCreateRe
   shelterLocationId: null,
   address: null,
   from: today,
+  checkIn: '',
+  checkOut: '',
+  crcProvided: null,
   ...force,
 });
 
@@ -107,10 +110,11 @@ export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdReque
   };
 };
 
-export const mockCustomCurrentAddressCreateRequest = (addressType: ECurrentAddressTypes): ICurrentAddress => ({
+export const mockCustomCurrentAddressCreateRequest = (addressType: ECurrentAddressTypes, force?: Partial<ICurrentAddress>): ICurrentAddress => ({
   ...mockCurrentAddressCreateRequest(),
   addressType,
   address: mockBaseAddressData(),
+  ...force,
 });
 
 export const mockUpdatePersonIdentityRequest = () => ({

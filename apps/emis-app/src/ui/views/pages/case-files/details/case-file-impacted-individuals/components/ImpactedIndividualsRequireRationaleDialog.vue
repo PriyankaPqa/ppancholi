@@ -19,7 +19,8 @@
       <div class="px-16 mx-8 overflow-hidden">
         <v-col
           cols="12"
-          class=" mt-2 mb-8 pa-4 border-radius-all background-color rc-body14">
+          class=" mt-2 mb-8 pa-4 border-radius-all background-color rc-body14"
+          data-test="impacted-individual-rationale-dialog-user-date">
           <span class="font-weight-bold">
             {{ isReceivingAssistanceChangeTo
               ? $t('impactedIndividuals.remove_member_from_receiving_assistance.actioned_by')
@@ -33,7 +34,8 @@
           rows="2"
           :label="`${$t('impactedIndividuals.rationale')} *`"
           class="full-width"
-          :rules="rules.rationale" />
+          :rules="rules.rationale"
+          data-test="impacted-individual-rationale-dialog-rationale" />
       </div>
     </rc-dialog>
   </validation-observer>

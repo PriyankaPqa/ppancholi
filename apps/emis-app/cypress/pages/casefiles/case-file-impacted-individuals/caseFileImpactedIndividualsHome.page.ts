@@ -17,12 +17,23 @@ export enum DataTest {
   currentAddressStreet = 'currentAddress__street',
   currentAddressLine = 'currentAddress__line',
   currentAddressCountry = 'currentAddress__country',
+  impactedIndividualRationaleDialog = 'impacted-individual-rationale-dialog',
+  confirmReceivingAssistanceDialogTitle = 'dialog-title',
+  userAndDate = 'impacted-individual-rationale-dialog-user-date',
+  rationaleInput = 'impacted-individual-rationale-dialog-rationale',
+  rationaleInputTextArea = 'impacted-individual-rationale-dialog-rationale_input',
+  dialogCloseButton = 'dialog-close',
+  dialogSubmitButton = 'dialog-submit-action',
+  dialogCancelButton = 'dialog-cancel-action',
+  impactedIndividualsPinnedActivity = 'impacted-individuals-pinned-activity',
+  pinnedActivityUserInformation = 'action_user_information',
+  pinnedActivityRationale = 'impacted-individuals-pinned-activity-rationale',
 }
 
 export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
   private primaryMemberCard = { selector: DataTest.primaryMemberCard };
 
-  private receivingAssistanceToggle = { selector: DataTest.receivingAssistanceToggle };
+  private receivingAssistanceToggle = { selector: DataTest.receivingAssistanceToggle, type: 'input' };
 
   private currentTemporaryAddress = { selector: DataTest.currentTemporaryAddress };
 
@@ -49,6 +60,28 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
   private currentAddressLine = { selector: DataTest.currentAddressLine };
 
   private currentAddressCountry = { selector: DataTest.currentAddressCountry };
+
+  private impactedIndividualRationaleDialog = { selector: DataTest.impactedIndividualRationaleDialog };
+
+  private confirmReceivingAssistanceDialogTitle = { selector: DataTest.confirmReceivingAssistanceDialogTitle };
+
+  private userAndDate = { selector: DataTest.userAndDate };
+
+  private rationaleInput = { selector: DataTest.rationaleInput };
+
+  private rationaleInputTextArea = { selector: DataTest.rationaleInputTextArea, type: 'textarea' };
+
+  private dialogSubmitButton = { selector: DataTest.dialogSubmitButton };
+
+  private dialogCloseButton = { selector: DataTest.dialogCloseButton };
+
+  private dialogCancelButton = { selector: DataTest.dialogCancelButton };
+
+  private impactedIndividualsPinnedActivity = { selector: DataTest.impactedIndividualsPinnedActivity };
+
+  private pinnedActivityUserInformation = { selector: DataTest.pinnedActivityUserInformation };
+
+  private pinnedActivityRationale = { selector: DataTest.pinnedActivityRationale };
 
   public getPrimaryMemberCard() {
     return cy.getByDataTest(this.primaryMemberCard);
@@ -125,6 +158,64 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
         timeoutInSec: 45,
         errorMsg: 'Failed to update Impacted Individuals',
         foundMsg: 'Impacted Individuals updated',
+      },
+    );
+  }
+
+  public getImpactedIndividualRationaleDialog() {
+    return cy.getByDataTest(this.impactedIndividualRationaleDialog);
+  }
+
+  public getImpactedIndividualRationaleDialogTitle() {
+    return cy.getByDataTest(this.confirmReceivingAssistanceDialogTitle).getAndTrimText();
+  }
+
+  public getUserAndDate() {
+    return cy.getByDataTest(this.userAndDate).getAndTrimText();
+  }
+
+  public getRationaleInput() {
+    return cy.getByDataTest(this.rationaleInput);
+  }
+
+  public getRationaleInputTextArea() {
+    return cy.getByDataTest(this.rationaleInputTextArea);
+  }
+
+  public getDialogSubmitButton() {
+    return cy.getByDataTest(this.dialogSubmitButton);
+  }
+
+  public getDialogCancelButton() {
+    return cy.getByDataTest(this.dialogCancelButton);
+  }
+
+  public getDialogCloseButton() {
+    return cy.getByDataTest(this.dialogCloseButton);
+  }
+
+  public getImpactedIndividualsPinnedActivity() {
+    return cy.getByDataTest(this.impactedIndividualsPinnedActivity);
+  }
+
+  public getPinnedActivityUserInformation() {
+    return cy.getByDataTest(this.pinnedActivityUserInformation);
+  }
+
+  public getPinnedActivityRationale() {
+    return cy.getByDataTest(this.pinnedActivityRationale);
+  }
+
+  public refreshUntilImpactedIndividualsCardPinnedActivityUpdated(rationale: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => this.getPrimaryMemberCard().should('be.visible'),
+        checkCondition: () => Cypress.$('[data-test="impacted-individuals-pinned-activity-rationale"]').text().includes(rationale),
+      },
+      {
+        timeoutInSec: 45,
+        errorMsg: 'Failed to update Impacted Individuals activity',
+        foundMsg: 'Impacted Individuals activity updated',
       },
     );
   }

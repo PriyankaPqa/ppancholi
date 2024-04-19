@@ -1,5 +1,5 @@
 <template>
-  <v-col class="pinnedInfoBackground border-radius-all py-2 px-4 rc-body14">
+  <v-col class="pinnedInfoBackground border-radius-all py-2 px-4 rc-body14" data-test="impacted-individuals-pinned-activity">
     <v-col class="pa-0" data-test="action_user_information">
       <span class="font-weight-bold" data-test="impacted_individuals_pinned_activity_action">{{
         pinnedActivity.activityType === CaseFileActivityType.ImpactedIndividualReceivingAssistance
@@ -9,7 +9,7 @@
     </v-col>
     <v-col class="pa-0 " data-test="rationale">
       <span class="font-weight-bold">{{ $t('impactedIndividuals.rationale') + ':' }}</span>
-      <span> {{ pinnedActivity.details.rationale }} </span>
+      <span data-test="impacted-individuals-pinned-activity-rationale"> {{ pinnedActivity.details.rationale }} </span>
     </v-col>
   </v-col>
 </template>

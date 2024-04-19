@@ -39,7 +39,7 @@ import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication, IImpactStatusValidation } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
-import { ECurrentAddressTypes, ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
+import { ECurrentAddressTypes, ICreateHouseholdRequest, ICurrentAddress } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { linkEventToTeamForManyRoles } from './teams';
 
@@ -695,10 +695,22 @@ export const getHouseholdsSummary = async (provider: IProvider, HouseholdIds: st
  * @param provider
  * @param personIds
  * @param addressType
+ * @param overrideAddressData
 */
-export const updatePersonsCurrentAddress = async (provider: IProvider, personIds: string[], addressType: ECurrentAddressTypes) => {
-  const getUpdatePersonAddressPromises = personIds.map((personId) => provider.households.updatePersonAddress(personId, false, mockCustomCurrentAddressCreateRequest(addressType)));
+export const updatePersonsCurrentAddress = async (
+  provider: IProvider,
+  personIds: string[],
+  addressType: ECurrentAddressTypes,
+  overrideAddressData?: Partial<ICurrentAddress>,
+): Promise<ICurrentAddress> => {
+  const currentAddressCreateRequest = mockCustomCurrentAddressCreateRequest(addressType, overrideAddressData);
+  const getUpdatePersonAddressPromises = personIds.map((personId) => provider.households.updatePersonAddress(
+    personId,
+    false,
+    currentAddressCreateRequest,
+    ));
   await Promise.all(getUpdatePersonAddressPromises);
+  return currentAddressCreateRequest;
 };
 
 /**
