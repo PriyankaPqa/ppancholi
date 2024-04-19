@@ -55,7 +55,7 @@
           <rc-tooltip bottom>
             <template #activator="{ on }">
               <v-btn v-if="canEdit" text tile class="pa-0 validation-button" data-test="caseFileDetails-verify-impact-icon" v-on="on" @click="openImpactValidation">
-                <div class="d-flex align-center" :class="colorValidationImpact">
+                <div class="d-flex align-center" :class="colorValidationImpact" data-test="caseFileDetails-impact-icon-color-validation">
                   <div class="py-1 px-1" :class="colorValidationImpactIcon">
                     <v-icon dense color="white" class="default-icon-color">
                       {{ validationImpactIcon }}
