@@ -139,7 +139,7 @@ export class HouseholdProfilePage {
 
   public goToCaseFileDetailsPage() {
     cy.getByDataTest(this.caseFileNumber).click();
-    cy.waitForStatusCode('**/case-file/case-files/*/activities', 200, 20000); // There are many calls done between the click on fetch of activities, ie all fetch from CaseFileDetails + all fetch from CaseFileActivity
+    cy.waitForStatusCode('**/case-file/case-files/*/activities', 200, 50000); // There are many calls done between the click on fetch of activities, ie all fetch from CaseFileDetails + all fetch from CaseFileActivity
     return new CaseFileDetailsPage();
   }
 
