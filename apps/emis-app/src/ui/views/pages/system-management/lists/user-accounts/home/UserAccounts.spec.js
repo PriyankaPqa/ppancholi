@@ -202,11 +202,9 @@ describe('UserAccounts.vue', () => {
     describe('tableProps', () => {
       it('is correctly defined', async () => {
         await mountWrapper();
-        expect(wrapper.vm.tableProps.loading).toEqual(false);
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: wrapper.vm.loading,
-          footerProps: { itemsPerPageOptions: [5, 10, 15, 250] },
-        });
+        expect(wrapper.vm.tableProps.loading).toEqual(wrapper.vm.loading);
+        expect(wrapper.vm.tableProps.footerProps).toEqual({ itemsPerPageOptions: [5, 10, 15, 250] });
+        expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
     });
 

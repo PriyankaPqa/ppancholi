@@ -302,6 +302,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       return {
         loading: useUserAccountStore().searchLoading,
         footerProps: { itemsPerPageOptions: [5, 10, 15, 250] },
+        itemClass: (item: IUserAccountCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
 
