@@ -81,7 +81,7 @@
           </rc-tooltip>
         </div>
         <div
-          v-if="getPrimaryMember() && getPrimaryMember().contactInformation.email"
+          v-if="getPrimaryMember() && getPrimaryMember().contactInformation && getPrimaryMember().contactInformation.email"
           class="d-flex flex-row align-start mb-2 rc-body14 break-word">
           <v-icon small class="mr-2 mt-1" color="gray darken-2">
             mdi-email

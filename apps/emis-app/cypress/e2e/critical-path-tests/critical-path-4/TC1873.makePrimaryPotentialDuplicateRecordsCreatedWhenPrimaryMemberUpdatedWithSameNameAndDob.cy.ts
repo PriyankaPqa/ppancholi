@@ -28,7 +28,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1873# - Make Primary - Potential duplicate records created when Primary Member Name and DOB are updated to match that of another EMIS member', { tags: ['@household'] }, () => {
+describe('#TC1873# - Make Primary - Potential duplicate records created when Primary Member Name and DOB are updated to match that of another EMIS member.', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

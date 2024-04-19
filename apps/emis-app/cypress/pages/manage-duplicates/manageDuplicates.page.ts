@@ -13,6 +13,7 @@ export enum DataTest {
   flagNewHouseholdRegistrationNumber = 'flag-new-household-registration-number',
   duplicateReason = 'duplicate-reasons',
   flagNewHouseholdRationale = 'householdDetails-manageDuplicates-actionDialog-rationale',
+  flagNewHouseholdRationaleTextArea = 'householdDetails-manageDuplicates-actionDialog-rationale_input',
   actionMenuResolved = 'householdDetails-manageDuplicates-action-menu-Resolved',
   actionMenuPotential = 'householdDetails-manageDuplicates-action-menu-Potential',
   memberName = 'payment_modalities',
@@ -68,7 +69,7 @@ export class ManageDuplicatesPage {
 
   private memberName = { selector: DataTest.memberName };
 
-  private flagNewHouseholdRationale = { selector: DataTest.flagNewHouseholdRationale, type: 'textarea' };
+  private flagNewHouseholdRationale = { selector: DataTest.flagNewHouseholdRationaleTextArea, type: 'textarea' };
 
   private buttonSubmit = { selector: DataTest.buttonSubmit };
 

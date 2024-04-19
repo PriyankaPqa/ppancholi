@@ -10,7 +10,7 @@ export enum DataTest {
   approvalActionRequestInfo = 'approval_action_action_requestInfo',
   approvalActionRequestApproved = 'approval_action_action_approved',
   confirmCheckbox = 'checkbox_confirmed',
-  approvalActionRationale = 'approval_action_rationale',
+  approvalActionRationale = 'approval_action_rationale_input',
   approvalActionSubmit = 'dialog-submit-action',
   faPaymentLink = 'approval_requests_fa-link_',
   selectSupervisor = 'approval_action_supervisor',

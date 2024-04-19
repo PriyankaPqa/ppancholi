@@ -7,7 +7,7 @@ export enum DataTest {
   startDate = 'callcentre-start-date',
   endDate = 'callcentre-end-date',
   statusToggle = 'callcentre-switch-status',
-  details = 'callcentre-details',
+  details = 'callcentre-details_input',
   frenchTab = 'tab-lang-fr',
   addButton = 'dialog-submit-action',
 }

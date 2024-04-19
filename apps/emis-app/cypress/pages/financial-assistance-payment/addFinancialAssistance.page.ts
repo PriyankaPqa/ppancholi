@@ -2,7 +2,7 @@ import { AddNewPaymentLinePage } from './addNewPaymentLine.page';
 
 export enum DataTest {
   tableSelect = 'financialCreate_tableSelect',
-  description = 'financial_description',
+  description = 'financial_description_input',
   addPaymentLineBtn = 'financial-addPaymentLineBtn',
   create = 'save',
   paymentLineGroupTitle = 'paymentLineGroup__title',

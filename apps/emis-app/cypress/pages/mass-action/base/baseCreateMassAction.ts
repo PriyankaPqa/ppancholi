@@ -1,6 +1,6 @@
 export enum DataTest {
   name = 'name',
-  description = 'description',
+  description = 'description_input',
 }
 
 export interface IBaseMassActionFields {

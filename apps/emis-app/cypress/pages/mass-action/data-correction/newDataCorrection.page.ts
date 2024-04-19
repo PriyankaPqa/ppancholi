@@ -3,7 +3,7 @@ import { BaseDetailsMassAction } from '../base/baseDetailsMassAction';
 export enum DataTest {
   massActionCorrectionType = 'massActionType',
   eventName = 'data-correction-events',
-  description = 'description',
+  description = 'description_input',
   fileUpload = 'upload-file',
   next = 'next',
   dialogTitle = 'dialog-title',

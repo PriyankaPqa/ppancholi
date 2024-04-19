@@ -4,7 +4,7 @@ export enum DataTest {
   caseNoteCreate = 'caseNote__createBtn',
   caseNoteSubject = 'case-note-form-subject',
   caseNoteCategory = 'case-note-form-categories',
-  caseNoteDescription = 'case-note-form-description',
+  caseNoteDescription = 'case-note-form-description_input',
   caseNoteSave = 'case-note-form-save',
   caseFileUserName = 'caseFileItem__userName',
   caseFileRoleName = 'caseFileItem__roleName',

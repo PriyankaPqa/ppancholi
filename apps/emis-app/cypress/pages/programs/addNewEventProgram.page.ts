@@ -7,7 +7,7 @@ export enum DataTest {
   statusToggle = 'program-status-toggle',
   paymentModalities = 'payment-modalities',
   approvalRequired = 'program-approvalRequired',
-  programDescription = 'program-description',
+  programDescription = 'program-description_input',
   programCreate = 'save',
   frenchTab = 'tab-lang-fr',
   eligibilityCriteriaAuthenticated = 'program-eligibility-authenticated',

@@ -4,7 +4,7 @@ import { AssessmentDetailsPage } from './assessmentDetails.page';
 export enum DataTest {
   assessmentName = 'assessment-name',
   programSelect = 'assessmentTemplate__programSelect',
-  assessmentDescription = 'assessment-description',
+  assessmentDescription = 'assessment-description_input',
   publishStatus = 'assessment-switch-publishstatus',
   frequencyMultiple = 'assessment-form-frequency-multiple',
   savePartialResults = 'save-partial-survey-results',
