@@ -3,10 +3,10 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
-import { updatePaymentGroupStatusTo } from './canSteps';
+import { removeTeamMembersFromTeam } from '../helpers/teams';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
+import { FinancialAssistanceHomePage } from '../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags: ['@financial-assistance'] }, () => {
+describe('#TC245# - Update Voucher payment group status - L6 and C2 only', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -56,7 +56,7 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
               event: this.event,
               tableId: this.table.id,
               paymentStatus: PaymentStatus.Cancelled,
-              paymentModalities: EPaymentModalities.Invoice,
+              paymentModalities: EPaymentModalities.Voucher,
             };
             const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
             cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
@@ -64,21 +64,18 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully update Invoice Payment Group Status', function () {
+        it('should successfully update Voucher payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
+          financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
+          financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00');
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'invoice',
           });
 
           updatePaymentGroupStatusTo({
@@ -87,6 +84,11 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Cancelled',
+            paymentModality: 'voucher',
           });
 
           updatePaymentGroupStatusTo({
@@ -104,7 +106,7 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
           event: this.event,
           tableId: this.table.id,
           paymentStatus: PaymentStatus.Cancelled,
-          paymentModalities: EPaymentModalities.Invoice,
+          paymentModalities: EPaymentModalities.Voucher,
         };
         const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
         cy.wrap(resultPrepareStateHouseholdFAPayment.caseFile.id).as('caseFileId');
@@ -117,7 +119,7 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
           cy.login(roleName);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to update Invoice Payment Group Status', function () {
+        it('should not be able to update Voucher payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

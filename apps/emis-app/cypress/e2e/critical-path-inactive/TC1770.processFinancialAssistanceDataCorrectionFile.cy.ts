@@ -4,7 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { removeTeamMembersFromTeam } from '../helpers/teams';
 import {
   AddFinancialAssistancePaymentParams,
   addFinancialAssistancePayment,
@@ -13,13 +13,13 @@ import {
   prepareStateHousehold,
   prepareStateMassActionXlsxFile,
   submitFinancialAssistancePayment,
-} from '../../helpers/prepareState';
+} from '../helpers/prepareState';
 import {
   GenerateFaDataCorrectionXlsxFileParams,
   GenerateRandomFaDataCorrectionParams,
   fixtureGenerateFaDataCorrectionXlsxFile,
-} from '../../../fixtures/mass-action-data-correction';
-import { processDataCorrectionFileSteps } from './canSteps';
+} from '../../fixtures/mass-action-data-correction';
+import { processDataCorrectionFileSteps } from '../critical-path-tests/critical-path-3/canSteps';
 
 const canRoles = [
   UserRoles.level6,

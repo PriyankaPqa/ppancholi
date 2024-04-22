@@ -3,20 +3,20 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
-import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
-import { updatePaymentGroupStatusTo } from './canSteps';
+import { removeTeamMembersFromTeam } from '../helpers/teams';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
+import { FinancialAssistanceHomePage } from '../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
 
 const canRoles = [
   UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
   UserRoles.contributor2,
 ];
 
 const cannotRoles = [
-  UserRoles.level5,
-  UserRoles.level4,
-  UserRoles.level3,
   UserRoles.level2,
   UserRoles.level1,
   UserRoles.level0,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC245# - Update Voucher payment group status - L6 and C2 only', { tags: ['@financial-assistance'] }, () => {
+describe('#TC291# - Update Voucher payment group status from Issued to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,7 +55,7 @@ describe('#TC245# - Update Voucher payment group status - L6 and C2 only', { tag
               accessTokenL6,
               event: this.event,
               tableId: this.table.id,
-              paymentStatus: PaymentStatus.Cancelled,
+              paymentStatus: PaymentStatus.Issued,
               paymentModalities: EPaymentModalities.Voucher,
             };
             const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
@@ -66,33 +66,15 @@ describe('#TC245# - Update Voucher payment group status - L6 and C2 only', { tag
         });
         it('should successfully update Voucher payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
-          financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
-          financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00');
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Issued',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Issued');
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
             paymentModality: 'voucher',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Issued',
           });
         });
       });
@@ -105,7 +87,7 @@ describe('#TC245# - Update Voucher payment group status - L6 and C2 only', { tag
           accessTokenL6,
           event: this.event,
           tableId: this.table.id,
-          paymentStatus: PaymentStatus.Cancelled,
+          paymentStatus: PaymentStatus.Issued,
           paymentModalities: EPaymentModalities.Voucher,
         };
         const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);

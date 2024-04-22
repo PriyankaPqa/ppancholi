@@ -3,25 +3,25 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
-import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
-import { updatePaymentGroupStatusTo } from './canSteps';
+import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
+import { removeTeamMembersFromTeam } from '../helpers/teams';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
+import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
 
 const canRoles = [
   UserRoles.level6,
-  UserRoles.level5,
-  UserRoles.level4,
-  UserRoles.level3,
   UserRoles.contributor2,
 ];
 
 const cannotRoles = [
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
   UserRoles.level2,
   UserRoles.level1,
   UserRoles.level0,
-  UserRoles.contributor3,
   UserRoles.contributor1,
+  UserRoles.contributor3,
   UserRoles.readonly,
 ];
 
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC286# - Update Prepaid card payment group status from New to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
+describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,8 +55,8 @@ describe('#TC286# - Update Prepaid card payment group status from New to Cancell
               accessTokenL6,
               event: this.event,
               tableId: this.table.id,
-              paymentStatus: PaymentStatus.New,
-              paymentModalities: EPaymentModalities.PrepaidCard,
+              paymentStatus: PaymentStatus.Cancelled,
+              paymentModalities: EPaymentModalities.Invoice,
             };
             const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
             cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
@@ -64,16 +64,33 @@ describe('#TC286# - Update Prepaid card payment group status from New to Cancell
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully update Prepaid card payment group status from New to Cancelled', function () {
+        it('should successfully update Invoice Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
+
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
-            paymentModality: 'prepaid card',
+            paymentModality: 'invoice',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Issued',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Issued',
           });
         });
       });
@@ -86,8 +103,8 @@ describe('#TC286# - Update Prepaid card payment group status from New to Cancell
           accessTokenL6,
           event: this.event,
           tableId: this.table.id,
-          paymentStatus: PaymentStatus.New,
-          paymentModalities: EPaymentModalities.PrepaidCard,
+          paymentStatus: PaymentStatus.Cancelled,
+          paymentModalities: EPaymentModalities.Invoice,
         };
         const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
         cy.wrap(resultPrepareStateHouseholdFAPayment.caseFile.id).as('caseFileId');
@@ -100,7 +117,7 @@ describe('#TC286# - Update Prepaid card payment group status from New to Cancell
           cy.login(roleName);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to update Prepaid card payment group status', function () {
+        it('should not be able to update Invoice Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

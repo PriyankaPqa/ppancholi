@@ -1,17 +1,16 @@
 parameters:
-  workingDir: ''
-  testsDir: '' # The folder containing all tests we want to run
-
+  workingDir: ""
+  testsDir: "" # The folder containing all tests we want to run
 
 stages:
   - stage: DetermineCypressTestsStage
-    displayName: 'Determine Cypress Tests'
+    displayName: "Determine Cypress Tests"
     jobs:
       - job: DetermineCypressTestsJob
-        displayName: 'Determine cypress tests to run'
+        displayName: "Determine cypress tests to run"
         steps:
-          - checkout: 'self'
-            submodules: 'true'
+          - checkout: "self"
+            submodules: "true"
             fetchDepth: 0
             persistCredentials: true
           - script: |
@@ -19,11 +18,12 @@ stages:
               if [ "$(Build.Reason)" != "Schedule" ] && [ "$(Build.Reason)" != "Manual" ]; then
                  # We take the current working director and remove ./
                  WORKING_DIR=$(echo "${{ parameters.workingDir }}" | sed 's/^\.\///')
-              
+
                  # Get the list of affected Cypress tests files compared to master
+                 # Ignore tests whose path includes 'critical-path-inactive' or 'smoke-tests-inactive', as we don't want them to be triggered
                  # Remove working director from the path
                  # Put multiline on the same line separated by a comma
-                 AFFECTED_TESTS=$(git diff --name-only --diff-filter=AMR HEAD^1 HEAD | grep -E '.*\.cy\.ts$' | sed "s|$WORKING_DIR||" | tr '\n' ',')
+                 AFFECTED_TESTS=$(git diff --name-only --diff-filter=AMR HEAD^1 HEAD | grep -E '.*\.cy\.ts$' | grep -v '/critical-path-inactive/' | grep -v '/smoke-tests-inactive/' | sed "s|$WORKING_DIR||" | tr '\n' ',')
                  # Remove last , 
                  AFFECTED_TESTS=${AFFECTED_TESTS%?}
                  echo "The following test will be run:"
@@ -36,4 +36,4 @@ stages:
                 echo "##vso[task.setvariable variable=affectedTests;isOutput=true]${{parameters.testsDir}}"
               fi
             name: getCypressTests
-            displayName: 'Generate cypress spec parameter'
+            displayName: "Generate cypress spec parameter"
