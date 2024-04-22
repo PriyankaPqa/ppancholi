@@ -1,34 +1,27 @@
 parameters:
   - name: storage
-    displayName: 'The azure storage'
+    displayName: "The azure storage"
   - name: azureSubscription
-    displayName: 'The azure subscription'
+    displayName: "The azure subscription"
   - name: cdnEndpoint
-    displayName: 'The CDN endpoint'
+    displayName: "The CDN endpoint"
   - name: cdnProfile
-    displayName: 'The CDN profile'
+    displayName: "The CDN profile"
 
 steps:
-  - task: replacetokens@3
-    displayName: 'Replace Tokens'
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@6
+    displayName: "Replace Tokens"
     inputs:
-      targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
-      encoding: "auto"
-      writeBOM: true
-      verbosity: "detailed"
-      actionOnMissing: "warn"
-      keepToken: false
-      tokenPrefix: "#{"
-      tokenSuffix: "}#"
-      useLegacyPattern: false
-      enableTelemetry: true
+      sources: "$(Pipeline.Workspace)/dist/**/index*.js"
+      addBOM: true
+      telemetryOptout: true
 
   - task: AzureCLI@2
-    displayName: 'Upload to Azure'
+    displayName: "Upload to Azure"
     inputs:
-      azureSubscription: '${{ parameters.azureSubscription }}'
-      scriptType: 'pscore'
-      scriptLocation: 'inlineScript'
+      azureSubscription: "${{ parameters.azureSubscription }}"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
       inlineScript: |
         az storage blob upload-batch --overwrite --destination '$web' --account-name '${{ parameters.storage }}$(environment)' --source "$(Pipeline.Workspace)/dist"
 
@@ -36,23 +29,21 @@ steps:
   # Note that client requests without extensions follow a URL rewrite rule, resolving to index.html.
   # These requests get cached and must be purged, meaning that this action targets all content instead of being selective.
   - task: AzureCLI@2
-    displayName: 'Purge CDN'
+    displayName: "Purge CDN"
     inputs:
-      azureSubscription: '${{ parameters.azureSubscription }}'
-      scriptType: 'pscore'
-      scriptLocation: 'inlineScript'
+      azureSubscription: "${{ parameters.azureSubscription }}"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
       inlineScript: |
         az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
 
   # Maintenance: delete any files that are older than one day
   # (the file presence is fine, we simply want to stop the container from growing indefinitely)
   - task: AzureCLI@2
-    displayName: 'Clean Storage Folder'
+    displayName: "Clean Storage Folder"
     inputs:
-      azureSubscription: '${{ parameters.azureSubscription }}'
-      scriptType: 'pscore'
-      scriptLocation: 'inlineScript'
+      azureSubscription: "${{ parameters.azureSubscription }}"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
       inlineScript: |
         az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment) --if-unmodified-since (Get-Date).AddDays(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mmZ")
-
-
