@@ -49,10 +49,6 @@
             {{ $t('event_stats.unassigned.label') }}
             <span class="fw-bold" data-test="event_stats_unassigned_case_files">({{ quickStats.openCount.unAssigned }})</span>
           </div>
-          <div class="rc-body14 my-3">
-            {{ $t('event_stats.duplicate.label') }}
-            <span class="fw-bold" data-test="event_stats_duplicate_case_files">({{ quickStats.openCount.duplicate }})</span>
-          </div>
         </div>
         <div v-if="currentTab === 2" data-test="event_stats_tab_2">
           <div class="line">

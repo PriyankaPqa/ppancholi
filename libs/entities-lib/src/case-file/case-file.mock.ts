@@ -23,7 +23,6 @@ export const mockCaseFileDetailedCount = (): ICaseFileDetailedCount => ({
   openCount: {
     assigned: 1,
     unAssigned: 2,
-    duplicate: 3,
   },
   caseFileTriageCounts: {
     tier1: 1,

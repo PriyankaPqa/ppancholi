@@ -221,7 +221,6 @@ export interface ICaseFileDetailedCount {
   openCount: {
     assigned: number,
     unAssigned: number,
-    duplicate: number,
   };
   caseFileTriageCounts: {
     tier1: number,
