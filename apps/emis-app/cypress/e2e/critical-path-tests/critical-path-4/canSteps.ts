@@ -63,6 +63,8 @@ export interface SplitHouseholdDuplicateHouseholdStepsParams {
 export interface ManualDuplicateCreatedStepsParams {
   comparisonHouseholdPrimaryBeneficiary: MemberCreateRequest,
   originalHouseholdRegistrationNumber: string,
+  firstName: string,
+  lastName: string,
   duplicatedBy: string,
   potentialDuplicateBasis?: string,
 }
@@ -273,7 +275,7 @@ export const manualDuplicateCreatedSteps = (params: Partial<ManualDuplicateCreat
   manageDuplicatesPage.provideFlagNewDuplicateRationale('This is a potential duplicate');
   manageDuplicatesPage.selectDuplicatedBy(params.duplicatedBy);
   if (params.potentialDuplicateBasis === PotentialDuplicateBasis.ManualDuplicateName) {
-    manageDuplicatesPage.selectHouseholdMemberByIndex();
+    manageDuplicatesPage.selectHouseholdMemberByValue(`${params.firstName} ${params.lastName}`);
   }
   manageDuplicatesPage.submitFlagNewDuplicate();
   cy.contains('Household was successfully flagged as potential duplicate').should('be.visible');

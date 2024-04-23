@@ -149,8 +149,8 @@ export class ManageDuplicatesPage {
     cy.getByDataTest(this.flagNewHouseholdRationale).type(rationale);
   }
 
-  public selectHouseholdMemberByIndex(index = 0) {
-    return cy.selectListElementByIndex(DataTest.memberName, index);
+  public selectHouseholdMemberByValue(memberName: string) {
+    return cy.selectListElementByValue(DataTest.memberName, memberName);
   }
 
   public submitFlagNewDuplicate() {

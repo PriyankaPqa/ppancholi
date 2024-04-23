@@ -70,6 +70,8 @@ describe('#TC1815# - User can manually create potential duplicate records based 
           manualDuplicateCreatedSteps({
             comparisonHouseholdPrimaryBeneficiary: this.comparisonHouseholdPrimaryBeneficiary,
             originalHouseholdRegistrationNumber: this.originalHouseholdRegistrationNumber,
+            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
             duplicatedBy: DuplicatedBy.FullName,
             potentialDuplicateBasis: PotentialDuplicateBasis.ManualDuplicateName,
           });
