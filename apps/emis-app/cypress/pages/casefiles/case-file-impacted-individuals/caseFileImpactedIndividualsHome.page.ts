@@ -148,11 +148,11 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
     return cy.getByDataTest(this.currentAddressCountry).getAndTrimText();
   }
 
-  public refreshUntilImpactedIndividualsCardUpdated(addressType: string) {
+  public refreshUntilImpactedIndividualsCardUpdated(addressStreet: string) {
     cy.waitAndRefreshUntilConditions(
       {
         visibilityCondition: () => this.getPrimaryMemberCard().should('be.visible'),
-        checkCondition: () => Cypress.$('[data-test="currentAddress__type"]').text().includes(addressType),
+        checkCondition: () => Cypress.$('[data-test="currentAddress__street"]').text().includes(addressStreet),
       },
       {
         timeoutInSec: 45,
@@ -203,7 +203,7 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
   }
 
   public getPinnedActivityRationale() {
-    return cy.getByDataTest(this.pinnedActivityRationale);
+    return cy.getByDataTest(this.pinnedActivityRationale).getAndTrimText();
   }
 
   public refreshUntilImpactedIndividualsCardPinnedActivityUpdated(rationale: string) {

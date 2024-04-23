@@ -14,7 +14,7 @@ export enum DataTest {
   tempAddressMunicipality = 'tempAddress__city',
   tempAddressProvince = 'tempAddress__province',
   tempAddressPostalCode = 'tempAddress__postalCode',
-  tempAddressCountry = 'tempAddress__country_input',
+  tempAddressCountry = 'tempAddress__country',
   tempAddress = 'tempAddress__currentAddressType',
   tempAddressAutoComplete = 'temporary_address_autocomplete',
   crcProvidedYes = 'CRC_provided_yes',
@@ -52,7 +52,7 @@ export class CaseFileImpactedIndividualsEditAddressPage {
 
   private postalCode = { selector: DataTest.tempAddressPostalCode, type: 'input' };
 
-  private country = { selector: DataTest.tempAddressCountry, type: 'input' };
+  private country = { selector: DataTest.tempAddressCountry };
 
   private tempAddress = { selector: DataTest.tempAddress };
 
@@ -81,7 +81,7 @@ export class CaseFileImpactedIndividualsEditAddressPage {
   }
 
   getProvince() {
-    return cy.getByDataTest(this.province);
+    return cy.getByDataTest(this.province).getAndTrimText();
   }
 
   getPostalCode() {
@@ -89,7 +89,7 @@ export class CaseFileImpactedIndividualsEditAddressPage {
   }
 
   getCountry() {
-    return cy.getByDataTest(this.country);
+    return cy.getByDataTest(this.country).getAndTrimText();
   }
 
   fillTempAddressInput() {
@@ -97,7 +97,7 @@ export class CaseFileImpactedIndividualsEditAddressPage {
   }
 
   getTempAddress() {
-    return cy.getByDataTest(this.tempAddress).invoke('text').then((text) => `${text}`.trim());
+    return cy.getByDataTest(this.tempAddress).getAndTrimText();
   }
 
   getTempAddressAutoComplete() {

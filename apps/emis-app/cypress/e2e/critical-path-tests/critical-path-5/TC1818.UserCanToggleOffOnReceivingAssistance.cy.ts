@@ -112,7 +112,7 @@ describe('#TC1818# - User can toggle off/on receiving assistance', { tags: ['@ca
               'eq',
               `Individual no longer receiving assistance by ${getUserName(roleName)} (${getUserRoleDescription(roleName)}) - ${format(new Date(), 'PP')}`,
             );
-            caseFileImpactedIndividualsHomePage.getPinnedActivityRationale().invoke('text').then((text) => `${text}`.trim()).should(
+            caseFileImpactedIndividualsHomePage.getPinnedActivityRationale().should(
               'eq',
               mockRemoveMemberFromReceivingAssistanceRationale,
             );
@@ -133,7 +133,7 @@ describe('#TC1818# - User can toggle off/on receiving assistance', { tags: ['@ca
               'eq',
               `Individual is receiving assistance by ${getUserName(roleName)} (${getUserRoleDescription(roleName)}) - ${format(new Date(), 'PP')}`,
             );
-            caseFileImpactedIndividualsHomePage.getPinnedActivityRationale().invoke('text').then((text) => `${text}`.trim()).should(
+            caseFileImpactedIndividualsHomePage.getPinnedActivityRationale().should(
               'eq',
               mockMemberReceivingAssistanceRationale,
             );

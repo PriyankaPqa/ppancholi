@@ -90,13 +90,13 @@ describe('#TC1817# - User can change the address type from Impacted Individuals.
           caseFileImpactedIndividualsEditAddressPage.getUnitSuite().should('be.visible');
           caseFileImpactedIndividualsEditAddressPage.getMunicipality().should('be.visible');
           caseFileImpactedIndividualsEditAddressPage.getPostalCode().should('be.visible');
-          caseFileImpactedIndividualsEditAddressPage.getProvince().should('be.visible');
-          caseFileImpactedIndividualsEditAddressPage.getCountry().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getProvince().should('string', 'Province');
+          caseFileImpactedIndividualsEditAddressPage.getCountry().should('string', 'Canada');
 
           caseFileImpactedIndividualsEditAddressPage.fill(temporaryAddressData);
           caseFileImpactedIndividualsEditAddressPage.getSaveButton().click();
 
-          caseFileImpactedIndividualsHomePage.refreshUntilImpactedIndividualsCardUpdated('Friends / Family');
+          caseFileImpactedIndividualsHomePage.refreshUntilImpactedIndividualsCardUpdated(temporaryAddressData.address.streetAddress);
           caseFileImpactedIndividualsHomePage.getPrimaryMemberCard().within(() => {
             caseFileImpactedIndividualsHomePage.getCurrentAddressType().should('eq', 'Friends / Family');
             caseFileImpactedIndividualsHomePage.getCurrentAddressStreet().should(

@@ -46,24 +46,24 @@ export class ProfileHistoryPage {
     );
   }
 
-  public getHouseholdHistoryEditedBy() {
-    return cy.getByDataTest(this.householdHistoryEditedBy).getAndTrimText();
+  public getHouseholdHistoryEditedBy(index = 0) {
+    return cy.getByDataTest(this.householdHistoryEditedBy).eq(index).getAndTrimText();
   }
 
-  public getHouseholdHistoryChangeDate() {
-    return cy.getByDataTest(this.householdHistoryChangeDate).getAndTrimText();
+  public getHouseholdHistoryChangeDate(index = 0) {
+    return cy.getByDataTest(this.householdHistoryChangeDate).eq(index).getAndTrimText();
   }
 
-  public getHouseholdHistoryLastAction() {
-    return cy.getByDataTest(this.householdHistoryLastAction).getAndTrimText();
+  public getHouseholdHistoryLastAction(index = 0) {
+    return cy.getByDataTest(this.householdHistoryLastAction).eq(index).getAndTrimText();
   }
 
-  public getHouseholdHistoryPreviousValue() {
-    return cy.getByDataTest(this.householdHistoryPreviousValue).getAndTrimText();
+  public getHouseholdHistoryPreviousValue(index = 0) {
+    return cy.getByDataTest(this.householdHistoryPreviousValue).eq(index).getAndTrimText();
   }
 
-  public getHouseholdHistoryNewValue() {
-    return cy.getByDataTest(this.householdHistoryNewValue).getAndTrimText();
+  public getHouseholdHistoryNewValue(index = 0) {
+    return cy.getByDataTest(this.householdHistoryNewValue).eq(index).getAndTrimText();
   }
 
   public getTitleText() {

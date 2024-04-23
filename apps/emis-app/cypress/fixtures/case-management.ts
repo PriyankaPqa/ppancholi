@@ -24,7 +24,7 @@ export const fixtureCaseNotes = (retries: number): ICaseNotesData => ({
   description: 'Case Notes Description En',
 });
 
-export const fixtureTemporaryAddress = (force?: IFixtureTemporaryAddress): IFixtureTemporaryAddress => ({
+export const fixtureTemporaryAddress = (force?: Partial<IFixtureTemporaryAddress>): IFixtureTemporaryAddress => ({
   checkIn: format(Date.now(), 'PP'),
   checkOut: format(faker.date.future(), 'PP'),
   crcProvided: false,
