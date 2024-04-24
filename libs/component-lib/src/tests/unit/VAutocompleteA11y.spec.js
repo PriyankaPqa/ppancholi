@@ -33,6 +33,44 @@ describe('VAutocompleteA11y.spec.vue', () => {
     });
   });
 
+  describe('customFilter', () => {
+    test('it should return true when partially match', () => {
+      const queryText = 'ste';
+      const itemText = 'July Stéphanie events Ontario’s';
+      expect(wrapper.vm.customFilter({}, queryText, itemText)).toEqual(true);
+    });
+
+    test('it should return false when doesnt partially match', () => {
+      const queryText = 'stph';
+      const itemText = 'July Stéphanie events Ontario’s';
+      expect(wrapper.vm.customFilter({}, queryText, itemText)).toEqual(false);
+    });
+
+    test('it should compare de-accent string', () => {
+      const queryText = 'stephanie';
+      const itemText = 'July Stéphanie events Ontario’s';
+      expect(wrapper.vm.customFilter({}, queryText, itemText)).toEqual(true);
+    });
+
+    test('it should compare case-insensitive string', () => {
+      const queryText = 'JULY';
+      const itemText = 'July Stéphanie events Ontario’s';
+      expect(wrapper.vm.customFilter({}, queryText, itemText)).toEqual(true);
+    });
+
+    test('it should compare character Single quotation', () => {
+      const queryText = "'";
+      const itemText = "July Stéphanie events Ontario's";
+      expect(wrapper.vm.customFilter({}, queryText, itemText)).toEqual(true);
+    });
+
+    test('it should compare character dash', () => {
+      const queryText = '-';
+      const itemText = 'July Stéphanie-events Ontario’s';
+      expect(wrapper.vm.customFilter({}, queryText, itemText)).toEqual(true);
+    });
+  });
+
   describe('watch', () => {
     test('selectedItem should be updated properly when props value changed', async () => {
       await wrapper.setProps({

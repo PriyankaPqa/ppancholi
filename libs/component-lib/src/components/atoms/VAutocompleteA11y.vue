@@ -10,6 +10,7 @@
     :aria-label="ariaLabel"
     :data-test="`${$attrs['data-test']}_input`"
     outlined
+    :filter="customFilter"
     :attach="attach"
     :menu-props="{ contentClass: 'v-autocomplete-with-validation-dropdown' }"
     v-bind="$attrs"
@@ -28,6 +29,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import helpers from '@libs/component-lib/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
 export default {
   name: 'VAutocompleteA11y',
@@ -113,7 +115,13 @@ export default {
       }
       return listeners;
     },
-  },
 
+    // override the default filter of v-autocomplete. It compares de-accent and case-insensitive string
+    customFilter(item: any, queryText: string, itemText: string) {
+      return (
+        sharedHelpers.getNormalizedString(itemText).toLowerCase().indexOf(sharedHelpers.getNormalizedString(queryText).toLowerCase()) > -1
+      );
+    },
+  },
 };
 </script>
