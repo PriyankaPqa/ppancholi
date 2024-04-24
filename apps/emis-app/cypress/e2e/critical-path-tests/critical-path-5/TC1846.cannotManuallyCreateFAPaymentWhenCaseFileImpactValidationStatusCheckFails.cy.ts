@@ -79,7 +79,7 @@ describe('#TC1846# - Cannot manually create FA payment when Case File Validation
           caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-error');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
 
-          const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
 
           const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
