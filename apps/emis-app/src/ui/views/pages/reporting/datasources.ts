@@ -550,6 +550,33 @@ export const caseFileAuthenticationIdViewDS : IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.caseFileAuthenticationId.${x.dataField}` })),
 };
 
+export const eTransferPaymentConfirmationViewDS: IDatasourceBase = {
+  columns: ([
+    { dataField: 'financialAssistancePaymentGroupId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'financialAssistancePaymentId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false },
+    { dataField: 'amount', dataType: 'number', visible: false },
+    { dataField: 'paymentType', dataType: 'string', visible: false },
+    { dataField: 'senderAccountIdentifier', dataType: 'string', visible: false },
+    { dataField: 'senderAccountType', dataType: 'string', visible: false },
+    { dataField: 'receiverAccountIdentifier', dataType: 'string', visible: false },
+    { dataField: 'receiverAccountType', dataType: 'string', visible: false },
+    { dataField: 'httpStatusCode', dataType: 'number', visible: false },
+    { dataField: 'responseStatusEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'RbcResponseStatus' },
+    { dataField: 'responseStatusFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'RbcResponseStatus' },
+    { dataField: 'isSuccess', dataType: 'boolean', visible: false },
+    { dataField: 'pinOrAutoDepositEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'RbcDepositMethod' },
+    { dataField: 'pinOrAutoDepositFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'RbcDepositMethod' },
+    { dataField: 'referenceNumber', dataType: 'string', visible: false },
+    { dataField: 'failedReasonCode', dataType: 'string', visible: false },
+    { dataField: 'failedReasonMessage', dataType: 'string', visible: false },
+    { dataField: 'requestId', dataType: 'string', visible: false },
+    { dataField: 'bankNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'Bank' },
+    { dataField: 'bankNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'Bank' },
+    { dataField: 'autoDepositEnabled', dataType: 'boolean', visible: false },
+    { dataField: 'sentTimestamp', dataType: 'datetime', visible: false },
+  ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.eTransferPaymentConfirmation.${x.dataField}` })),
+};
+
 export const teamTaskDs : IDatasourceSettings = {
   url: 'common/data-providers/team-tasks',
   reportingTopic: ReportingTopic.Tasks,
@@ -720,6 +747,8 @@ export const financialAssistancePaymentGroupDs : IDatasourceSettings = {
     ...(householdViewDs.columns.filter((c) => c.dataField !== 'primaryBeneficiary' && c.dataField !== 'primaryBeneficiaryFirstName' && c.dataField !== 'primaryBeneficiaryLastName')
           .map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
     ...(caseFileLifetimeActivitiesViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileLifetimeActivities.${x.dataField}` }))),
+    ...(eTransferPaymentConfirmationViewDS.columns.filter((c) => c.dataField !== 'financialAssistancePaymentId' && c.dataField !== 'financialAssistancePaymentGroupId')
+      .map((x) => ({ ...x, dataField: `eTransferPaymentConfirmation.${x.dataField}` }))),
   ],
 };
 

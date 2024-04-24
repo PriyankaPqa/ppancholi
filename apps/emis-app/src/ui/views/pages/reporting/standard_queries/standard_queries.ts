@@ -21,6 +21,7 @@ import { RegistrationByCaseFileL5En, RegistrationByCaseFileL5Fr } from './Regist
 import { ReferralsL5En, ReferralsL5Fr } from './ReferralsL5';
 import { PaymentLinesL5En, PaymentLinesL5Fr } from './PaymentLinesL5';
 import { PaymentsL6En, PaymentsL6Fr } from './PaymentsL6';
+import { PaymentsL5En, PaymentsL5Fr } from './PaymentsL5';
 import { CaseFileStatusAndActionL6En, CaseFileStatusAndActionL6Fr } from './CaseFileStatusAndActionL6';
 import { UserListL6En, UserListL6Fr } from './UserListL6';
 import { UserAccessListEMISL6En, UserAccessListEMISL6Fr } from './UserAccessListEMISL6';
@@ -69,18 +70,6 @@ export const LodgingOverviewWithHistoryIMFr = {
   ...LodgingOverviewWithHistoryL6Fr,
   id: 'LodgingOverviewWithHistoryIM',
   queryType: QueryType.StandardIMfr,
-} as IQuery;
-
-export const PaymentsL5En = {
-  ...PaymentsL6En,
-  id: 'PaymentsL5',
-  queryType: QueryType.StandardL5en,
-} as IQuery;
-
-export const PaymentsL5Fr = {
-  ...PaymentsL6Fr,
-  id: 'PaymentsL5',
-  queryType: QueryType.StandardL5fr,
 } as IQuery;
 
 export const UsersL5En = {
@@ -272,8 +261,8 @@ export const AllReports : IQuery[] = [
   LodgingOverviewWithHistoryL4En, LodgingOverviewWithHistoryL4Fr,
   LodgingOverviewWithHistoryIMEn, LodgingOverviewWithHistoryIMFr,
   PaymentsL6En, PaymentsL6Fr,
-  RegistrationByBeneficiaryL6En, RegistrationByBeneficiaryL6Fr, 
-  RegistrationByCaseFileL6En, RegistrationByCaseFileL6Fr, 
+  RegistrationByBeneficiaryL6En, RegistrationByBeneficiaryL6Fr,
+  RegistrationByCaseFileL6En, RegistrationByCaseFileL6Fr,
   DataCorrectionIdentitySetL6En, DataCorrectionIdentitySetL6Fr,
   DataCorrectionTemporaryAddressL6En, DataCorrectionTemporaryAddressL6Fr,
   DataCorrectionHomeAddressL6En, DataCorrectionHomeAddressL6Fr,
