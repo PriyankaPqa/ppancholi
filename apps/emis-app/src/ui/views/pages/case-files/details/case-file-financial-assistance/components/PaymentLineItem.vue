@@ -41,7 +41,7 @@
         </v-btn>
 
         <span
-          v-if="$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) && paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
+          v-if="paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
           class="cancelled-text rc-body14 mr-1"
           data-test="paymentLineItem__cancelled_label">
           {{ $t("caseFile.financialAssistance.cancelled") }}
@@ -50,10 +50,7 @@
         <div
           data-test="paymentLineItem__amount"
           class="amount rc-body14"
-          :class="{
-            'text-decoration-line-through': isGroupCancelled
-              || ($hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) && paymentLine.paymentStatus === PaymentLineStatus.Cancelled),
-          }">
+          :class="{ 'text-decoration-line-through': isGroupCancelled || paymentLine.paymentStatus === PaymentLineStatus.Cancelled }">
           {{ amounts }}
         </div>
 
@@ -78,7 +75,7 @@
     </div>
 
     <payment-cancelled-by
-      v-if="$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine) && paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
+      v-if="paymentLine.paymentStatus === PaymentLineStatus.Cancelled"
       is-line-level
       :by="paymentLine.cancellationBy"
       :date="paymentLine.cancellationDate"
@@ -242,9 +239,7 @@ export default Vue.extend({
     },
 
     showCancelButton(): boolean {
-      return this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine)
-      && this.$hasLevel(UserRoles.level6)
-      && this.isCompleted && this.paymentLine.paymentStatus !== PaymentLineStatus.Cancelled;
+      return this.$hasLevel(UserRoles.level6) && this.isCompleted && this.paymentLine.paymentStatus !== PaymentLineStatus.Cancelled;
     },
   },
 

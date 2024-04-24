@@ -7,7 +7,6 @@ import { ApprovalStatus, PaymentLineStatus, mockCaseFinancialAssistancePaymentGr
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import flushPromises from 'flush-promises';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import Component from '../PaymentLineItem.vue';
 
@@ -49,10 +48,11 @@ describe('CaseFilePaymentLineItem.vue', () => {
     });
 
     describe('cancelled-text', () => {
-      it('displays if the feature is on and the line is cancelled', async () => {
+      it('displays if  the line is cancelled', async () => {
         paymentLine.paymentStatus = PaymentLineStatus.Cancelled;
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (fn) => fn === FeatureKeys.FinancialAssistanceRemovePaymentLine } });
-        wrapper.vm.$hasFeature = jest.fn((fn) => fn === FeatureKeys.FinancialAssistanceRemovePaymentLine);
+        paymentLine.cancellationDate = 'today';
+        paymentLine.cancellationBy = 'me';
+        await mountWrapper();
         expect(wrapper.findDataTest('paymentLineItem__cancelled_label').exists()).toBeTruthy();
       });
     });
@@ -300,39 +300,33 @@ describe('CaseFilePaymentLineItem.vue', () => {
     });
 
     describe('showCancelButton', () => {
-      it('returns true when user is level 6,feature flag is on and status is isCompleted and payment line status is not cancelled', async () => {
+      it('returns true when user is level 6 and status is isCompleted and payment line status is not cancelled', async () => {
         paymentLine.paymentStatus = null;
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine, $hasLevel: () => true },
+        await mountWrapper(false, 6, 'role', { mocks: { $hasLevel: () => true },
         });
         await wrapper.setProps({ isCompleted: true });
         expect(wrapper.vm.showCancelButton).toBeTruthy();
       });
 
-      it('returns false when user is level 6,feature flag is on and status is isCompleted and payment line status is cancelled', async () => {
+      it('returns false when user is level 6  and status is isCompleted and payment line status is cancelled', async () => {
         paymentLine.paymentStatus = PaymentLineStatus.Cancelled;
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine, $hasLevel: () => true },
+        paymentLine.cancellationDate = 'today';
+        paymentLine.cancellationBy = 'me';
+        await mountWrapper(false, 6, 'role', { mocks: { $hasLevel: () => true },
         });
         await wrapper.setProps({ isCompleted: true });
         expect(wrapper.vm.showCancelButton).toBeFalsy();
       });
 
       it('returns false if user is not level 6 ', async () => {
-        await mountWrapper(false, 5, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine, $hasLevel: () => false },
-        });
-        await wrapper.setProps({ isCompleted: true });
-        expect(wrapper.vm.showCancelButton).toBeFalsy();
-      });
-
-      it('returns false if feature flag is off ', async () => {
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f !== FeatureKeys.FinancialAssistanceRemovePaymentLine },
+        await mountWrapper(false, 5, 'role', { mocks: { $hasLevel: () => false },
         });
         await wrapper.setProps({ isCompleted: true });
         expect(wrapper.vm.showCancelButton).toBeFalsy();
       });
 
       it('returns false if status is not isCompleted', async () => {
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine },
-        });
+        await mountWrapper();
         await wrapper.setProps({ isCompleted: false });
         expect(wrapper.vm.showCancelButton).toBeFalsy();
       });
@@ -341,8 +335,7 @@ describe('CaseFilePaymentLineItem.vue', () => {
         paymentLine.paymentStatus = PaymentLineStatus.Cancelled;
         paymentLine.cancellationBy = 'id';
         paymentLine.cancellationDate = 'today';
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (f) => f === FeatureKeys.FinancialAssistanceRemovePaymentLine },
-        });
+        await mountWrapper();
         await wrapper.setProps({ isCompleted: false });
         expect(wrapper.vm.showCancelButton).toBeFalsy();
       });

@@ -11,7 +11,6 @@ export enum FeatureKeys {
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
   FeatureDashboard = 'FeatureDashboard',
-  FinancialAssistanceRemovePaymentLine = 'FinancialAssistanceRemovePaymentLine',
   AppointmentBooking = 'AppointmentBooking',
   RemainingInHomeForAdditionalMembers = 'RemainingInHomeForAdditionalMembers',
   DataCorrectionTriage = 'DataCorrectionTriage',

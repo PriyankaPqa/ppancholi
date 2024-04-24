@@ -1,7 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   EPaymentCancellationReason } from '@libs/entities-lib/financial-assistance-payment';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../PaymentCancellationReason.vue';
 
 const localVue = createLocalVue();
@@ -29,16 +28,13 @@ describe('PaymentCancellationReason.vue', () => {
   });
 
   describe('Template', () => {
-    it('show warning if feature flag is on', async () => {
+    it('show warning', async () => {
       wrapper = shallowMount(Component, { localVue,
         data() {
           return { cancellationReason: EPaymentCancellationReason.AdminCancellation0 };
         },
         propsData: {
           isLineLevel: true,
-        },
-        mocks: {
-          $hasFeature: (ft) => ft === FeatureKeys.FinancialAssistanceRemovePaymentLine,
         },
       });
       let element = wrapper.findDataTest('paymentGroup__cancellationWarning');

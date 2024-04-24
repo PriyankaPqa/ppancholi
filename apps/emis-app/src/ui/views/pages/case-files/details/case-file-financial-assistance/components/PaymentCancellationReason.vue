@@ -12,7 +12,6 @@
     <template #default>
       <div>
         <div
-          v-if="$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine)"
           class=" d-flex pb-5 warning-text"
           data-test="paymentGroup__cancellationWarning">
           <v-icon size="20" color="red" class="pr-1">
@@ -41,7 +40,6 @@ import { RcConfirmationDialog, VSelectWithValidation } from '@libs/component-lib
 import {
   EPaymentCancellationReason,
 } from '@libs/entities-lib/financial-assistance-payment';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
@@ -61,7 +59,6 @@ export default Vue.extend({
 
   data() {
     return {
-      FeatureKeys,
       cancellationReason: null as EPaymentCancellationReason,
       cancellationReasons: helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'),
     };

@@ -42,7 +42,6 @@ import {
 import { UserRoles } from '@libs/entities-lib/user';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import { IProgramEntity } from '@libs/entities-lib/program';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import PaymentLineGroup from './PaymentLineGroup.vue';
 
 export default Vue.extend({
@@ -96,7 +95,7 @@ export default Vue.extend({
 
   computed: {
     total(): number {
-      return FinancialAssistancePaymentGroup.total(this.paymentGroups, this.$hasFeature(FeatureKeys.FinancialAssistanceRemovePaymentLine));
+      return FinancialAssistancePaymentGroup.total(this.paymentGroups);
     },
 
     canSubmit(): boolean {

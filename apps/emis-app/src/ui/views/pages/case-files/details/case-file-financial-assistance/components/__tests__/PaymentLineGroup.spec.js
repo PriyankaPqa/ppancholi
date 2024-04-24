@@ -10,7 +10,6 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { UserRoles } from '@libs/entities-lib/user';
 import flushPromises from 'flush-promises';
 import { GlobalHandler } from '@libs/services-lib/http-client';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -550,7 +549,7 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         paymentGroup.cancellationBy = 'mock-user-id';
         paymentGroup.cancellationDate = '2021-01-01';
-        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
 
       it('GiftCard contributorFinance PaymentStatus.Issued, PaymentStatus.Cancelled', async () => {
@@ -562,7 +561,7 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         paymentGroup.cancellationBy = 'mock-user-id';
         paymentGroup.cancellationDate = '2021-01-01';
-        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
 
       it('GiftCard level1 only current status', async () => {
@@ -589,12 +588,12 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
 
-      it('returns current status if status is cancelled and feature flag is on', async () => {
+      it('returns current status if status is cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         paymentGroup.cancellationBy = 'id';
         paymentGroup.cancellationDate = 'date';
-        await mountWrapper(false, 6, 'role', { mocks: { $hasFeature: (fb) => fb === FeatureKeys.FinancialAssistanceRemovePaymentLine } });
+        await mountWrapper(false, 6, 'role');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
     });
@@ -631,27 +630,11 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.emitted('update-payment-status')).toBeUndefined();
       });
 
-      it('for not etransfer, opens the confirmation dialog with the right text if feature flag is off', async () => {
+      it('for not etransfer, opens the confirmation dialog with the right text', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
         await mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => true);
         wrapper.vm.$t = jest.fn((k) => k);
-        wrapper.vm.$hasFeature = jest.fn((fb) => fb !== FeatureKeys.FinancialAssistanceRemovePaymentLine);
-
-        await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
-          title: 'caseFile.financialAssistance.cancelPaymentGroup.confirm.title',
-          messages: null,
-          htmlContent: ('caseFile.financialAssistance.cancelPaymentGroup.confirm.message '),
-        });
-      });
-
-      it('for not etransfer, opens the confirmation dialog with the right text if feature flag is on', async () => {
-        paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
-        await mountWrapper();
-        wrapper.vm.$confirm = jest.fn(() => true);
-        wrapper.vm.$t = jest.fn((k) => k);
-        wrapper.vm.$hasFeature = jest.fn((fb) => fb === FeatureKeys.FinancialAssistanceRemovePaymentLine);
 
         await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
