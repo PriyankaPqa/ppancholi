@@ -23,6 +23,7 @@ export interface IProgramEntityData extends IEntity {
   name: IMultilingual;
   description: IMultilingual;
   approvalRequired: boolean;
+  useForLodging: boolean;
   eligibilityCriteria: IEligibilityCriteria;
   paymentModalities: EPaymentModalities[];
 }

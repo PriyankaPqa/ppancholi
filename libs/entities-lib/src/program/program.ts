@@ -17,6 +17,8 @@ export class ProgramEntity extends BaseEntity implements IProgramEntity {
 
   approvalRequired: boolean;
 
+  useForLodging: boolean;
+
   eligibilityCriteria: IEligibilityCriteria;
 
   paymentModalities: EPaymentModalities[];
@@ -28,6 +30,7 @@ export class ProgramEntity extends BaseEntity implements IProgramEntity {
       this.name = utils.initMultilingualAttributes(data.name);
       this.description = utils.initMultilingualAttributes(data.description);
       this.approvalRequired = data.approvalRequired;
+      this.useForLodging = data.useForLodging;
       this.eligibilityCriteria = {
         authenticated: data.eligibilityCriteria.authenticated,
         impacted: data.eligibilityCriteria.impacted,
@@ -48,6 +51,7 @@ export class ProgramEntity extends BaseEntity implements IProgramEntity {
     this.name = utils.initMultilingualAttributes();
     this.description = utils.initMultilingualAttributes();
     this.approvalRequired = true;
+    this.useForLodging = false;
     this.eligibilityCriteria = {
       authenticated: false,
       impacted: false,

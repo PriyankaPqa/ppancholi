@@ -94,8 +94,15 @@
           <div class="grey-container px-4 py-1 my-8">
             <v-checkbox
               v-model="localProgram.approvalRequired"
+              :disabled="localProgram.useForLodging"
               data-test="program-approvalRequired"
               :label="$t('event.programManagement.approvalRequired')" />
+
+            <v-checkbox
+              v-if="$hasFeature(FeatureKeys.Lodging)"
+              v-model="localProgram.useForLodging"
+              data-test="program-useForLodging"
+              :label="$t('event.programManagement.setAsLodging')" />
           </div>
 
           <v-row>
@@ -127,6 +134,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { EPaymentModalities, ProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
@@ -172,6 +180,7 @@ export default Vue.extend({
       localProgram,
       languageMode: 'en',
       assessmentForms: [] as IAssessmentFormEntity[],
+      FeatureKeys,
     };
   },
 
@@ -236,6 +245,11 @@ export default Vue.extend({
   watch: {
     localProgram: {
       handler(newProgram) {
+        // if program is use for lodging then it cannot be approval required
+        if (newProgram.useForLodging === true) {
+          this.localProgram.approvalRequired = false;
+        }
+
         this.$emit('update:program', newProgram);
         this.$emit('update:is-dirty', true);
       },

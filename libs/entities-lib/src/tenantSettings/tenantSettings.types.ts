@@ -14,6 +14,7 @@ export enum FeatureKeys {
   AppointmentBooking = 'AppointmentBooking',
   RemainingInHomeForAdditionalMembers = 'RemainingInHomeForAdditionalMembers',
   DataCorrectionTriage = 'DataCorrectionTriage',
+  Lodging = 'Lodging',
 }
 
 export enum FeatureType {

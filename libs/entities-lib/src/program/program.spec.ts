@@ -32,6 +32,10 @@ describe('>>> Program', () => {
       expect(program.approvalRequired).toBe(true);
     });
 
+    it('should instantiate useForLodging', () => {
+      expect(program.useForLodging).toBe(false);
+    });
+
     it('should instantiate eligibilityCriteria', () => {
       expect(program.eligibilityCriteria).toEqual(mockProgramData.eligibilityCriteria);
     });
