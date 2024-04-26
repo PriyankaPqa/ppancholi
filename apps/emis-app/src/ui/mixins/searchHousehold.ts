@@ -23,45 +23,37 @@ export default Vue.extend({
       const memberFilters = { and: [] as any[] };
 
       if (this.criteria.emailAddress) {
-        memberFilters.and.push({ 'ContactInformation/Email': this.criteria.emailAddress });
+        memberFilters.and.push({ 'Person/ContactInformation/Email': this.criteria.emailAddress });
       }
 
       if (this.criteria.birthDate) {
         const date = parseISO(`${this.criteria.birthDate}Z`);
-        memberFilters.and.push({ 'IdentitySet/DateOfBirth': { eq: date } });
+        memberFilters.and.push({ 'Person/IdentitySet/DateOfBirth': { eq: date } });
       }
 
       if (this.criteria.phone) {
         memberFilters.and.push({ or: [
-          { 'ContactInformation/HomePhoneNumber/E164Number': this.criteria.phone },
-          { 'ContactInformation/MobilePhoneNumber/E164Number': this.criteria.phone },
-          { 'ContactInformation/AlternatePhoneNumber/E164Number': this.criteria.phone },
+          { 'Person/ContactInformation/HomePhoneNumber/E164Number': this.criteria.phone },
+          { 'Person/ContactInformation/MobilePhoneNumber/E164Number': this.criteria.phone },
+          { 'Person/ContactInformation/AlternatePhoneNumber/E164Number': this.criteria.phone },
         ],
         });
       }
 
       if (this.criteria.firstName) {
-        memberFilters.and.push({ 'IdentitySet/FirstName': { contains: this.criteria.firstName } });
+        memberFilters.and.push({ 'Person/IdentitySet/FirstName': { contains: this.criteria.firstName } });
       }
 
       if (this.criteria.lastName) {
-        memberFilters.and.push({ 'IdentitySet/LastName': { contains: this.criteria.lastName } });
+        memberFilters.and.push({ 'Person/IdentitySet/LastName': { contains: this.criteria.lastName } });
       }
       return memberFilters;
     },
 
     filters(): Record<string, unknown> {
       return {
-        Entity: {
-          RegistrationNumber: this.criteria.registrationNumber,
-          HouseholdMembers: {
-            any: {
-              Person: {
-                ...this.memberFilters,
-              },
-            },
-          },
-        },
+        'Entity/RegistrationNumber': this.criteria.registrationNumber,
+        Entity: { HouseholdMembers: { any: { ...this.memberFilters } } },
       };
     },
   },

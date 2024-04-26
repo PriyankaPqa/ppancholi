@@ -61,7 +61,7 @@ describe('searchHousehold', () => {
           },
         });
 
-        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'ContactInformation/Email': 'test@test.ca' }] });
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'Person/ContactInformation/Email': 'test@test.ca' }] });
       });
 
       it('should add birthDate to filter if here', () => {
@@ -71,7 +71,7 @@ describe('searchHousehold', () => {
           },
         });
 
-        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/DateOfBirth': { eq: new Date('1990-01-01') } }] });
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'Person/IdentitySet/DateOfBirth': { eq: new Date('1990-01-01') } }] });
       });
 
       it('should add phone to filter if here', () => {
@@ -82,9 +82,9 @@ describe('searchHousehold', () => {
         });
         const expected = {
           or: [
-            { 'ContactInformation/HomePhoneNumber/E164Number': wrapper.vm.criteria.phone },
-            { 'ContactInformation/MobilePhoneNumber/E164Number': wrapper.vm.criteria.phone },
-            { 'ContactInformation/AlternatePhoneNumber/E164Number': wrapper.vm.criteria.phone },
+            { 'Person/ContactInformation/HomePhoneNumber/E164Number': wrapper.vm.criteria.phone },
+            { 'Person/ContactInformation/MobilePhoneNumber/E164Number': wrapper.vm.criteria.phone },
+            { 'Person/ContactInformation/AlternatePhoneNumber/E164Number': wrapper.vm.criteria.phone },
           ],
         };
         expect(wrapper.vm.memberFilters).toEqual({ and: [expected] });
@@ -96,7 +96,7 @@ describe('searchHousehold', () => {
             firstName: 'Mister',
           },
         });
-        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/FirstName': { contains: 'Mister' } }] });
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'Person/IdentitySet/FirstName': { contains: 'Mister' } }] });
       });
 
       it('should add lastName to search if here (contains operator)', () => {
@@ -106,7 +106,7 @@ describe('searchHousehold', () => {
           },
         });
         // eslint-disable-next-line max-len
-        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/LastName': { contains: 'Test' } }] });
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'Person/IdentitySet/LastName': { contains: 'Test' } }] });
       });
 
       it('should add both to filter if here (contains operator)', () => {
@@ -116,8 +116,8 @@ describe('searchHousehold', () => {
             lastName: 'Test',
           },
         });
-        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'IdentitySet/FirstName': { contains: 'Mister' } },
-          { 'IdentitySet/LastName': { contains: 'Test' } }] });
+        expect(wrapper.vm.memberFilters).toEqual({ and: [{ 'Person/IdentitySet/FirstName': { contains: 'Mister' } },
+          { 'Person/IdentitySet/LastName': { contains: 'Test' } }] });
       });
     });
 
@@ -130,15 +130,11 @@ describe('searchHousehold', () => {
           },
         });
         expect(wrapper.vm.filters).toEqual({
+          'Entity/RegistrationNumber': 'number',
           Entity: {
             HouseholdMembers: {
-              any: {
-                Person: {
-                  and: [{ 'IdentitySet/FirstName': { contains: 'Mister' } }],
-                },
-              },
+              any: { and: [{ 'Person/IdentitySet/FirstName': { contains: 'Mister' } }] },
             },
-            RegistrationNumber: 'number',
           },
         });
       });
