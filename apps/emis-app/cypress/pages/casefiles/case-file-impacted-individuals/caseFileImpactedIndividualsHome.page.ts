@@ -3,6 +3,7 @@ import { CaseFileImpactedIndividualsEditAddressPage } from './caseFileImpactedIn
 
 export enum DataTest {
   primaryMemberCard = 'primary_impacted_individual_card',
+  nonPrimaryMemberCard = 'non_primary_impacted_individual_card',
   receivingAssistanceToggle = 'receiving_assistance_toggle',
   currentTemporaryAddress = 'current_temporary_address',
   checkIn = 'impacted_individuals_card_template_check_in',
@@ -32,6 +33,8 @@ export enum DataTest {
 
 export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
   private primaryMemberCard = { selector: DataTest.primaryMemberCard };
+
+  private nonPrimaryMemberCard = { selector: DataTest.nonPrimaryMemberCard };
 
   private receivingAssistanceToggle = { selector: DataTest.receivingAssistanceToggle, type: 'input' };
 
@@ -85,6 +88,10 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
 
   public getPrimaryMemberCard() {
     return cy.getByDataTest(this.primaryMemberCard);
+  }
+
+  public getNonPrimaryMemberCard(index = 0) {
+    return cy.getByDataTest(this.nonPrimaryMemberCard).eq(index);
   }
 
   public getReceivingAssistanceToggle() {

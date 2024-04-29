@@ -8,7 +8,7 @@ export type {
   ICombinedIndex,
 } from './interfaces/IAzureSearchParams';
 
-export { ECanadaProvinces } from './enums/ECanadaProvinces';
+export { ECanadaProvinces, ECanadaProvincesName } from './enums/ECanadaProvinces';
 export { EOptionItemStatus } from './enums/EOptionItemStatus';
 export { ERegistrationMode } from './enums/ERegistrationMode';
 export { ERegistrationMethod } from './enums/ERegistrationMethod';

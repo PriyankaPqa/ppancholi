@@ -14,7 +14,7 @@
       @submit="submitUpdatedAddress()">
       <div v-if="!isPrimaryMember" class="d-flex justify-center mb-8">
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12" class="pa-0">
-          <div class="rc-body16 fw-bold">
+          <div class="rc-body16 fw-bold" data-test="same_current_address">
             {{ $t('registration.household_member.sameAddress') }} *
           </div>
           <validation-provider v-slot="{ errors }" :rules="rules.isSameAddress">

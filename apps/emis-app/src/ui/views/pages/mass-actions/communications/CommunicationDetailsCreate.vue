@@ -17,7 +17,7 @@
                 :label="$t('enums.communicationMethod.SMS')"
                 data-test="communication-form-method-sms"
                 :value="CommunicationMethod.SMS"
-                disabled="true" />
+                :disabled="true" />
             </v-radio-group>
           </validation-provider>
         </v-col>

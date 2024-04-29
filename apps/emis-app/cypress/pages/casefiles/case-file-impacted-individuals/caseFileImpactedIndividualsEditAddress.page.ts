@@ -19,6 +19,9 @@ export enum DataTest {
   tempAddressAutoComplete = 'temporary_address_autocomplete',
   crcProvidedYes = 'CRC_provided_yes',
   crcProvidedNo = 'CRC_provided_no',
+  sameCurrentAddressTitle = 'same_current_address',
+  sameCurrentAddressYes = 'same_current_address_yes',
+  sameCurrentAddressNo = 'same_current_address_no',
 }
 
 const addressTypeHasCrcProvided = [
@@ -63,6 +66,12 @@ export class CaseFileImpactedIndividualsEditAddressPage {
   private crcProvidedYes = { selector: DataTest.crcProvidedYes, type: 'input' };
 
   private crcProvidedNo = { selector: DataTest.crcProvidedNo, type: 'input' };
+
+  private sameCurrentAddressTitle = { selector: DataTest.sameCurrentAddressTitle };
+
+  private sameCurrentAddressYes = { selector: DataTest.sameCurrentAddressYes, type: 'input' };
+
+  private sameCurrentAddressNo = { selector: DataTest.sameCurrentAddressNo, type: 'input' };
 
   setTempAddressType(value: string) {
     cy.selectListElementByValue(DataTest.tempAddress, value);
@@ -134,6 +143,18 @@ export class CaseFileImpactedIndividualsEditAddressPage {
 
   public getCrcProvidedNo() {
     return cy.getByDataTest(this.crcProvidedNo);
+  }
+
+  public getSameCurrentAddressTitle() {
+    return cy.getByDataTest(this.sameCurrentAddressTitle).getAndTrimText();
+  }
+
+  public getSameCurrentAddressYes() {
+    return cy.getByDataTest(this.sameCurrentAddressYes);
+  }
+
+  public getSameCurrentAddressNo() {
+    return cy.getByDataTest(this.sameCurrentAddressNo);
   }
 
   async fill(data: IFixtureTemporaryAddress) {

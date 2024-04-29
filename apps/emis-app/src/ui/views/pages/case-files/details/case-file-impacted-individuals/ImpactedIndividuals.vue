@@ -24,6 +24,7 @@
           :shelter-locations-list="shelterLocations"
           :impacted-individuals="caseFile.impactedIndividuals"
           :case-file-id="caseFileId"
+          data-test="non_primary_impacted_individual_card"
           :impacted-individual-activities="impactedIndividualActivities"
           :disable-editing-by-status="disableEditingByStatus" />
       </div>
