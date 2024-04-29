@@ -6,7 +6,7 @@ import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { useProgramStore } from '@/pinia/program/program';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
-import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 
@@ -421,12 +421,6 @@ describe('signalR', () => {
           domain: 'assessment',
           entityName: 'AssessmentResponse',
           action: useAssessmentResponseStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'assessment',
-          entityName: 'AssessmentResponseMetadata',
-          action: useAssessmentResponseMetadataStore().setItemFromOutsideNotification,
         });
     });
   });

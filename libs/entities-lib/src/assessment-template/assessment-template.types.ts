@@ -2,15 +2,6 @@
 import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
-export interface IAssessmentBaseMetadata extends IEntity {
-  assessmentTemplateStatusName: IMultilingual;
-}
-
-export interface IAssessmentFormMetadata extends IAssessmentBaseMetadata {
-  programName: IMultilingual;
-  totalSubmissions: number;
-}
-
 export enum AssessmentFormType {
   AssessmentTemplate = 1,
   AssessmentForm = 2,
@@ -164,12 +155,9 @@ export interface IAssessmentTotalSubmissions {
   totalAssigned: number;
 }
 
-export interface IAssessmentResponseMetadata extends IEntity {
-}
-
-export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>;
+export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEntity, IEntity>;
 export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IEntity>;
-export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IAssessmentFormMetadata>;
-export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IAssessmentBaseMetadata>;
+export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IEntity>;
+export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IEntity>;
 
 export type IdParams = { id: uuid };

@@ -1,12 +1,12 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
 import {
   AssociationType,
 } from '@libs/entities-lib/assessment-template';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { createTestingPinia } from '@pinia/testing';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 
 import Component from './AddCaseFileAssessment.vue';
 
@@ -15,6 +15,7 @@ const localVue = createLocalVue();
 let pinia = createTestingPinia({ stubActions: false });
 let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+useMockProgramStore(pinia);
 
 describe('AddCaseFileAssessment.vue', () => {
   let wrapper;
@@ -41,6 +42,7 @@ describe('AddCaseFileAssessment.vue', () => {
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+    useMockProgramStore(pinia);
     jest.clearAllMocks();
   });
 
@@ -70,7 +72,7 @@ describe('AddCaseFileAssessment.vue', () => {
         const tds = wrapper.findAll('td');
 
         expect(tds.wrappers[0].text()).toBe('Assessment Floods 2021');
-        expect(tds.wrappers[1].text()).toBe('Prog EN');
+        expect(tds.wrappers[1].text()).toBe('Program A');
         expect(tds.wrappers[2].text()).toBe('common.add');
       });
     });
@@ -115,6 +117,15 @@ describe('AddCaseFileAssessment.vue', () => {
       });
     });
 
+    describe('getProgramName', () => {
+      it('should return the right text', async () => {
+        await mountWrapper();
+        await wrapper.setData({ programs: [{ id: 'abc', name: { translation: { en: 'cde' } } }, { id: 'abc1', name: { translation: { en: 'cde1' } } }] });
+
+        expect(wrapper.vm.getProgramName({ programId: 'abc1' })).toEqual('cde1');
+      });
+    });
+
     describe('select', () => {
       it('calls create then closes', async () => {
         await mountWrapper();
@@ -130,14 +141,13 @@ describe('AddCaseFileAssessment.vue', () => {
 
     describe('doSearch', () => {
       it('searches storage', async () => {
-        helpers.toQuickSearch = jest.fn(() => 'cleanedUp');
+        helpers.toQuickSearchSql = jest.fn(() => ({ somefilter: 'cleanedUp' }));
         await mountWrapper();
         await wrapper.setData({ search: 'hello' });
         await wrapper.vm.doSearch();
         expect(assessmentFormStore.search).toHaveBeenCalledWith({
           params: {
-            search: 'cleanedUp',
-            filter: { 'Entity/EventId': 'eventId', 'Entity/Status': Status.Active, 'Entity/Id': { notSearchIn_az: ['id1', 'id2'] } },
+            filter: { 'Entity/EventId': { value: 'eventId', type: 'guid' }, 'Entity/Status': 'Active', not: { 'Entity/Id': { in: ['id1', 'id2'] } }, somefilter: 'cleanedUp' },
             top: 50,
             queryType: 'full',
             orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,

@@ -161,7 +161,7 @@ import { RcDataTable, RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import mixins from 'vue-typed-mixins';
 import {
-  EDateMode, EFilterType, FilterFormData, IFilterSettings,
+  EDateMode, EFilterKeyType, EFilterType, FilterFormData, IFilterSettings,
 } from '@libs/component-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { ECanadaProvinces, IDropdownItem } from '@libs/shared-lib/types';
@@ -426,7 +426,7 @@ export default mixins(massActionCaseFileFiltering).extend({
       } else {
         this.assessmentsFilterLoading = true;
         this.assessments = (await this.$services.assessmentForms.search({
-          filter: { 'Entity/EventId': eventId },
+          filter: { 'Entity/EventId': { value: eventId, type: EFilterKeyType.Guid } },
           orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
         })).value.map((x) => x.entity);
         this.assessmentsFilterLoading = false;

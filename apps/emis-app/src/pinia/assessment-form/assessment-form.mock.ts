@@ -1,6 +1,6 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
-import { mockAssessmentFormEntities, mockAssessmentFormMetadatum } from '@libs/entities-lib/assessment-template';
-import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@libs/stores-lib/base';
+import { mockAssessmentFormEntities } from '@libs/entities-lib/assessment-template';
+import { getMockEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
 import { getMockExtensionComponents } from '@/pinia/assessment-form/assessment-form-extension.mock';
 
@@ -15,13 +15,8 @@ export const useMockAssessmentFormStore = (pinia?: TestingPinia) => {
     ...getMockExtensionComponents(),
   }));
 
-  const useAssessmentFormMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-    ...getMockBaseStoreComponents(mockAssessmentFormMetadatum()),
-  }));
-
   return {
     pinia: p,
     assessmentFormStore: useAssessmentFormStore(),
-    assessmentFormMetadataStore: useAssessmentFormMetadataStore(),
   };
 };
