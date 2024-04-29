@@ -622,11 +622,12 @@ export const prepareStateMassActionXlsxFile = async (provider: any, massAction: 
  */
 export const prepareStateMassActionFinancialAssistanceUploadFile = async (params: MassActionFinancialAssistanceUploadFileParams) => {
   const responseCreateHouseholds = await prepareStateMultipleHouseholds(params.accessToken, params.event, params.householdQuantity);
-  const caseFileCreated1 = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile;
-  const caseFileCreated2 = responseCreateHouseholds.householdsCreated[1].registrationResponse.caseFile;
-  const caseFileCreated3 = responseCreateHouseholds.householdsCreated[2].registrationResponse.caseFile;
-  await searchCaseFilesRecursively(responseCreateHouseholds.provider, [caseFileCreated1, caseFileCreated2, caseFileCreated3]);
-  const generatedFaCsvData = fixtureGenerateFaCsvFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], params.tableId, params.filePath);
+  const caseFilesList = [] as ICaseFileEntity[];
+  for (const household of responseCreateHouseholds.householdsCreated) {
+    caseFilesList.push(household.registrationResponse.caseFile);
+  }
+  await searchCaseFilesRecursively(responseCreateHouseholds.provider, caseFilesList);
+  const generatedFaCsvData = fixtureGenerateFaCsvFile(caseFilesList, params.tableId, params.filePath);
 
   const mockRequestParamData: MockCreateMassActionFaUploadCsvFileRequestParams = {
     eventId: params.event.id,

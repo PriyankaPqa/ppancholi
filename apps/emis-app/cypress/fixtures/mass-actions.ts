@@ -23,11 +23,12 @@ export const fixtureBaseMassAction = (retries: number) : IBaseMassActionFields =
   description: `description mass action - retry ${retries}`,
 });
 
-export const fixtureNewMassFinancialAssistance = () : INewMassFinancialAssistanceFields => ({
+export const fixtureNewMassFinancialAssistance = (force?: INewMassFinancialAssistanceFields) : INewMassFinancialAssistanceFields => ({
   paymentModality: 'Direct Deposit',
   item: 'Clothing',
   subItem: 'Winter Clothing',
   paymentAmount: '80.00',
+  ...force,
 });
 
 export interface IFinancialAssistanceMassActionTemplate {
