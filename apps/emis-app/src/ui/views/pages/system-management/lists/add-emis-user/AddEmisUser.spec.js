@@ -1,13 +1,11 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+
 import { mockProvider } from '@/services/provider';
 import { mockUserProfileQueryResponse, mockUserProfileData } from '@libs/entities-lib/user-account';
 import Component from './AddEmisUser.vue';
-import { createUserAccount, getSubRoleById } from '../user-accounts/userAccountsHelpers';
 
-jest.mock('../user-accounts/userAccountsHelpers');
-createUserAccount.mockImplementation(() => {});
-const { pinia } = useMockUserAccountStore();
+const { pinia, userAccountStore } = useMockUserAccountStore();
 const localVue = createLocalVue();
 const services = mockProvider();
 
@@ -20,8 +18,6 @@ const mockSubRole = {
     },
   },
 };
-getSubRoleById.mockImplementation(() => mockSubRole);
-
 const usersTestData = () => [
   {
     entity: {
@@ -447,27 +443,80 @@ describe('AddEmisUser.vue', () => {
           selectedUsers: appUsersTestData(),
         });
         wrapper.vm.isSubmitAllowed = false;
-        wrapper.vm.setUserRole = jest.fn();
+        // userAccount.assignRole = jest.fn();
         await wrapper.vm.submit();
-        expect(wrapper.vm.setUserRole).not.toHaveBeenCalled();
+        expect(userAccountStore.assignRole).not.toHaveBeenCalled();
       });
 
-      it('should call createUserAccount', async () => {
+      it('should call services correctly', async () => {
         wrapper.vm.isSubmitAllowed = true;
+        userAccountStore.assignRole = jest.fn(() => usersTestData[0]);
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
         wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].role = mockSubRole;
         await wrapper.vm.submit();
-        expect(createUserAccount).toHaveBeenCalled();
+
+        expect(userAccountStore.assignRole).toHaveBeenCalled();
       });
 
       it('emits users-added', async () => {
         wrapper.vm.isSubmitAllowed = true;
+        userAccountStore.assignRole = jest.fn((u) => u);
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
         wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].role = mockSubRole;
         await wrapper.vm.submit();
         wrapper.vm.$nextTick();
 
         expect(wrapper.emitted('users-added')).toBeTruthy();
+        expect(userAccountStore.assignRole).toHaveBeenCalledTimes(1);
+      });
+
+      it('opens a toast on success', async () => {
+        wrapper.vm.isSubmitAllowed = true;
+        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+        userAccountStore.assignRole = jest.fn((u) => u);
+        wrapper.vm.selectedUsers = [usersTestData()[0]];
+        wrapper.vm.selectedUsers[0].role = mockSubRole;
+        await wrapper.vm.submit();
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalled();
+      });
+    });
+
+    describe('getSubRoleById', () => {
+      it('retrieves the correct sub-role from a user', async () => {
+        const user = usersTestData()[0];
+        user.roleId = wrapper.vm.allSubRoles[0].id;
+        expect(wrapper.vm.getSubRoleById(user.roleId)).toEqual(wrapper.vm.allSubRoles[0]);
+      });
+    });
+
+    describe('setUserRole', () => {
+      it('should call services correctly', async () => {
+        wrapper.vm.selectedUsers = [appUsersTestData()[0], appUsersTestData()[1]];
+        userAccountStore.assignRole = jest.fn(() => usersTestData()[0]);
+        wrapper.vm.createUserAccount = jest.fn();
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
+
+        await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
+        wrapper.vm.$nextTick();
+
+        expect(userAccountStore.assignRole).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.add_users.success');
+      });
+
+      it('emits error toast on null response', async () => {
+        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
+        wrapper.vm.selectedUsers = [appUsersTestData()[0], appUsersTestData()[1]];
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
+        userAccountStore.assignRole = jest.fn(() => null);
+        wrapper.vm.selectedUsers[0].role = mockSubRole;
+
+        await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
+        wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('system_management.add_users.error');
       });
     });
 

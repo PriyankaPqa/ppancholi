@@ -75,7 +75,12 @@ import { IMultilingual, VForm } from '@libs/shared-lib/types';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { IAppUser, createUserAccount } from '../user-accounts/userAccountsHelpers';
+import { IServerError } from '@libs/shared-lib/src/types';
+import { IUserProfileData, IRolesData } from '@libs/entities-lib/user-account';
+
+interface IAppUser extends IUserProfileData {
+  role: IRolesData
+}
 
 export default Vue.extend({
   name: 'AddUserAccount',
@@ -147,7 +152,7 @@ export default Vue.extend({
 
       if (isValid && this.isSubmitAllowed) {
         this.loading = true;
-        const closePage = await createUserAccount(this.user, this.allSubRoles as IOptionSubItem[], useUserAccountStore().createUserAccount, this.$i18n, this.$toasted);
+        const closePage = await this.createUserAccount(this.user);
         if (closePage) {
           this.close();
           this.$emit('users-added');
@@ -155,6 +160,40 @@ export default Vue.extend({
           this.loading = false;
         }
       }
+    },
+
+    getSubRoleById(roleId: string) {
+      return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
+    },
+
+    async createUserAccount(user: IAppUser) : Promise<boolean> {
+      const subRole:IOptionSubItem = this.getSubRoleById(user.role.id);
+      let errorCode = 'system_management.add_users.error';
+
+      if (subRole) {
+        const payload = {
+          emailAddress: user.emailAddress,
+          givenName: user.givenName,
+          surname: user.surname,
+          roleId: subRole.id,
+        };
+
+        try {
+          const userAccount = await useUserAccountStore().createUserAccount(payload, true);
+          if (userAccount) {
+            this.$toasted.global.success(this.$t('system_management.add_users.success'));
+            return true;
+          }
+        } catch (e) {
+          const errorData = (e as IServerError)?.response?.data?.errors;
+          if (errorData?.length && errorData.length > 0 && errorData[0].code) {
+            errorCode = errorData[0].code;
+          }
+        }
+      }
+
+      this.$toasted.global.error(this.$t(errorCode));
+      return false;
     },
   },
 });

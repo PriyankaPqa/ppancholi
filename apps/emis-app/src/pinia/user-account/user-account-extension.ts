@@ -78,7 +78,6 @@ export function getExtensionComponents(
       const res = await service.createUserAccount(payload);
       if (res) {
         baseComponents.set(res);
-        baseComponents.addNewlyCreatedId(res);
       }
       return res;
     } catch (e) {
