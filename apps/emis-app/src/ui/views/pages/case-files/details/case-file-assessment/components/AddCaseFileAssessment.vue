@@ -36,7 +36,7 @@
               {{ $m(item.entity.name) }}
             </template>
             <template #[`item.program`]="{ item }">
-              {{ item.metadata ? $m(item.metadata.programName) : '' }}
+              {{ getProgramName(item.entity) }}
             </template>
             <template #[`item.select`]="{ item }">
               <v-btn
@@ -62,12 +62,16 @@ import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
 import { Status } from '@libs/entities-lib/base';
 import {
-  IAssessmentFormCombined, IAssessmentResponseCreateRequest, AssociationType, IAssessmentFormEntity, IAssessmentFormMetadata, IdParams,
+  IAssessmentFormCombined, IAssessmentResponseCreateRequest, AssociationType, IAssessmentFormEntity, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
-import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { EFilterKeyType } from '@libs/component-lib/types';
+import helper from '@libs/shared-lib/helpers/helpers';
+import { IProgramEntity } from '@libs/entities-lib/program';
+import { useProgramStore } from '@/pinia/program/program';
 
 const DEBOUNCE_RATE = 500;
 const debouncedSearch = _debounce((context) => {
@@ -106,7 +110,8 @@ export default Vue.extend({
       search: '',
       searchResultIds: [] as Array<string>,
       loading: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata, IdParams>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, null, IdParams>(useAssessmentFormStore()),
+      programs: [] as IProgramEntity[],
     };
   },
 
@@ -145,23 +150,32 @@ export default Vue.extend({
     },
   },
 
-  created() {
-    this.doSearch();
+  async created() {
+    this.programs = await useProgramStore().fetchAllIncludingInactive({ eventId: this.eventId });
+    await this.doSearch();
   },
 
   methods: {
+    getProgramName(item: IAssessmentFormEntity) {
+      return this.$m(this.programs.find((x) => x.id === item.programId)?.name);
+    },
+
     close() {
       this.$emit('update:show', false);
     },
 
     async doSearch() {
       const assessments = await this.combinedFormStore.search({
-        search: helpers.toQuickSearch(this.search),
-        filter: { 'Entity/EventId': this.eventId, 'Entity/Status': Status.Active, 'Entity/Id': { notSearchIn_az: this.excludedIds || [] } },
+        filter: {
+          'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid },
+          'Entity/Status': helper.getEnumKeyText(Status, Status.Active),
+          not: { 'Entity/Id': { in: this.excludedIds || [] } },
+          ...helpers.toQuickSearchSql(this.search),
+        },
         top: 50,
         queryType: 'full',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      });
+      }, null, false, true);
       this.searchResultIds = assessments.ids;
     },
 

@@ -19,7 +19,6 @@ import {
 import {
   mockAssessmentFormEntity,
   mockAssessmentResponseEntity,
-  AssociationType,
   CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -870,8 +869,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(assessmentResponseStore.search).toHaveBeenCalledWith({
           params: {
             filter: {
-              'Entity/Association/Id': 'caseFileId',
-              'Entity/Association/Type': AssociationType.CaseFile,
+              'Entity/Association/Id': { value: 'caseFileId', type: 'guid' },
+              'Entity/Association/Type': 'CaseFile',
             },
             top: 999,
             queryType: 'full',

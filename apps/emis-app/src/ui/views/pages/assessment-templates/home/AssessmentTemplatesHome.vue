@@ -26,8 +26,7 @@
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filters"
-          :sql-mode="isFormMode ? false : true"
-          @open="fetchProgramsFilter()"
+          :sql-mode="true"
           @update:appliedFilter="onApplyFilter" />
       </template>
       <template #[`item.${customColumns.name}`]="{ item }">
@@ -40,7 +39,7 @@
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
-        {{ item.metadata ? $m(item.metadata.programName) : '' }}
+        {{ getProgramName(item.entity) }}
       </template>
 
       <template #[`item.${customColumns.published}`]="{ item }">
@@ -111,7 +110,7 @@ import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable, RcAddButtonWithMenu,
 } from '@libs/component-lib/components';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
@@ -119,7 +118,6 @@ import { FilterKey } from '@libs/entities-lib/user-account';
 import {
  IAssessmentBaseCombined,
   IAssessmentFormEntity,
-  IAssessmentFormMetadata,
   IAssessmentTemplateEntity,
   PublishStatus,
   IdParams,
@@ -131,7 +129,7 @@ import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 import { useProgramStore } from '@/pinia/program/program';
 import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
@@ -165,13 +163,13 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: [`Entity/Name/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
-      programsFilterLoading: false,
-      programsFilter: [],
+      programsLoading: false,
+      programs: [] as { text: string, value: string }[],
       PublishStatus,
       showCopyAssessmentDialog: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata, IdParams>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, null, IdParams>(useAssessmentFormStore()),
       combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, null, IdParams>(useAssessmentTemplateStore()),
-      sqlSearchMode: !this.id,
+      sqlSearchMode: true,
     };
   },
 
@@ -190,7 +188,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         status: `Metadata/Assessment${this.isFormMode ? 'Form' : 'Template'}StatusName/Translation/${this.$i18n.locale}`,
         published: 'Entity/PublishStatus',
         edit: 'edit',
-        program: `Metadata/ProgramName/Translation/${this.$i18n.locale}`,
+        program: `Metadata/Program/Translation/${this.$i18n.locale}`,
         submissions: 'Metadata/TotalSubmissions',
       };
     },
@@ -265,11 +263,12 @@ export default mixins(TablePaginationSearchMixin).extend({
         filters.push(
           {
             key: 'Entity/ProgramId',
+            keyType: EFilterKeyType.Guid,
             type: EFilterType.Select,
             label: this.$t('assessmentTemplate.program') as string,
-            items: this.programsFilter,
-            loading: this.programsFilterLoading,
-            disabled: this.programsFilterLoading,
+            items: this.programs,
+            loading: this.programsLoading,
+            disabled: this.programsLoading,
           },
         );
       }
@@ -314,9 +313,14 @@ export default mixins(TablePaginationSearchMixin).extend({
   async created() {
     this.saveState = true;
     this.loadState();
+    await this.fetchPrograms();
   },
 
   methods: {
+    getProgramName(item: IAssessmentFormEntity) {
+      return this.programs.find((x) => x.value === item.programId)?.text || "";
+    },
+
     getAssessmentDetailsRoute(id: string) {
       return {
         name: this.baseRoute.details.name,
@@ -379,7 +383,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
-      const filters = this.isFormMode ? { ...params.filter as Record<string, unknown>, 'Entity/EventId': this.id } : params.filter;
+      const filters = this.isFormMode ? { ...params.filter as Record<string, unknown>, 'Entity/EventId': { value: this.id, type: EFilterKeyType.Guid } } : params.filter;
       const res = await (this.isFormMode ? this.combinedFormStore : this.combinedTemplateStore).search({
         search: params.search,
         filter: filters,
@@ -389,20 +393,20 @@ export default mixins(TablePaginationSearchMixin).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true, !this.isFormMode);
+      }, null, true, true);
       return res;
     },
 
-    async fetchProgramsFilter() {
+    async fetchPrograms() {
       if (!this.isFormMode) {
         return;
       }
-      this.programsFilterLoading = true;
+      this.programsLoading = true;
 
       const res = (await useProgramStore().fetchAllIncludingInactive({ eventId: this.id })).map((e) => e.id);
-      this.programsFilterLoading = false;
+      this.programsLoading = false;
       if (res?.length) {
-        this.programsFilter = _sortBy(useProgramStore().getByIds(res).map((e) => ({
+        this.programs = _sortBy(useProgramStore().getByIds(res).map((e) => ({
           text: this.$m(e.name),
           value: e.id,
         })), (p) => p.text);

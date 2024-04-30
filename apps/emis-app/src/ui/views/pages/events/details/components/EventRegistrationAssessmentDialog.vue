@@ -89,6 +89,7 @@ import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form'
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { VSelectWithValidation, RcDialog, VTextAreaWithValidation } from '@libs/component-lib/components';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 export default Vue.extend({
   name: 'EventRegistrationAssessmentDialog',
@@ -171,7 +172,7 @@ export default Vue.extend({
     }
 
     this.assessments = (await this.$services.assessmentForms.search({
-      filter: { 'Entity/EventId': this.event.id },
+      filter: { 'Entity/EventId': { value: this.event.id, type: EFilterKeyType.Guid } },
       orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
     })).value.map((x) => x.entity).filter((a) => (a.status === Status.Active)
       || a.id === this.selectedAssessment?.id);

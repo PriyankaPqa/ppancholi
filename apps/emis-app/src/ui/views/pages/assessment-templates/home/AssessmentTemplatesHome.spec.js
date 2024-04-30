@@ -91,7 +91,7 @@ describe('AssessmentTemplatesHome.vue', () => {
         await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
         const tds = wrapper.findAll('td');
 
-        expect(tds.wrappers[0].text()).toBe('Prog EN');
+        expect(tds.wrappers[0].text()).toBe('Program A');
         expect(tds.wrappers[1].text()).toBe('Assessment Floods 2021');
         expect(tds.wrappers[2].text()).toBe('enums.assessmentPublishStatus.Published');
         expect(tds.wrappers[3].text()).toBe('enums.Status.Active');
@@ -134,7 +134,7 @@ describe('AssessmentTemplatesHome.vue', () => {
           status: 'Metadata/AssessmentTemplateStatusName/Translation/en',
           published: 'Entity/PublishStatus',
           edit: 'edit',
-          program: 'Metadata/ProgramName/Translation/en',
+          program: 'Metadata/Program/Translation/en',
           submissions: 'Metadata/TotalSubmissions',
         });
       });
@@ -147,7 +147,7 @@ describe('AssessmentTemplatesHome.vue', () => {
           status: 'Metadata/AssessmentFormStatusName/Translation/en',
           published: 'Entity/PublishStatus',
           edit: 'edit',
-          program: 'Metadata/ProgramName/Translation/en',
+          program: 'Metadata/Program/Translation/en',
           submissions: 'Metadata/TotalSubmissions',
         });
       });
@@ -206,10 +206,11 @@ describe('AssessmentTemplatesHome.vue', () => {
         {
           key: 'Entity/ProgramId',
           type: EFilterType.Select,
+          keyType: 'guid',
           label: 'assessmentTemplate.program',
-          items: wrapper.vm.programsFilter,
-          loading: wrapper.vm.programsFilterLoading,
-          disabled: wrapper.vm.programsFilterLoading,
+          items: wrapper.vm.programs,
+          loading: wrapper.vm.programsLoading,
+          disabled: wrapper.vm.programsLoading,
         }]);
       });
     });
@@ -330,7 +331,7 @@ describe('AssessmentTemplatesHome.vue', () => {
         expect(assessmentFormStore.search).toHaveBeenCalledWith({
           params: {
             search: params.search,
-            filter: { MyFilter: 'zzz', 'Entity/EventId': 'abc' },
+            filter: { MyFilter: 'zzz', 'Entity/EventId': { value: 'abc', type: 'guid' } },
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
@@ -343,13 +344,22 @@ describe('AssessmentTemplatesHome.vue', () => {
       });
     });
 
-    describe('fetchProgramsFilter', () => {
+    describe('getProgramName', () => {
+      it('should return the right text', async () => {
+        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
+        await wrapper.setData({ programs: [{ value: 'abc', text: 'cde' }, { value: 'abc1', text: 'cde1' }] });
+
+        expect(wrapper.vm.getProgramName({ programId: 'abc1' })).toEqual('cde1');
+      });
+    });
+
+    describe('fetchPrograms', () => {
       it('should call fetchAllIncludingInactive', async () => {
         await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
-        await wrapper.vm.fetchProgramsFilter();
+        await wrapper.vm.fetchPrograms();
 
         expect(programStore.fetchAllIncludingInactive).toHaveBeenCalledWith({ eventId: wrapper.vm.id });
-        expect(wrapper.vm.programsFilter).toEqual([{ text: 'Program A', value: '1' }, { text: 'Program A', value: '2' }]);
+        expect(wrapper.vm.programs).toEqual([{ text: 'Program A', value: '1' }, { text: 'Program A', value: '2' }]);
       });
     });
 

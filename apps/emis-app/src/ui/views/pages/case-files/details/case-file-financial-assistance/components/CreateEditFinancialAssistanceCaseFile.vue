@@ -161,7 +161,6 @@ import
 {
   IAssessmentFormEntity,
   IAssessmentResponseEntity,
-  IAssessmentResponseMetadata,
   AssociationType,
   CompletionStatus, IdParams,
 } from '@libs/entities-lib/assessment-template';
@@ -177,8 +176,9 @@ import SubmitFinancialAssistancePaymentDialog
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useProgramStore } from '@/pinia/program/program';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '@/pinia/assessment-response/assessment-response';
+import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import helper from '@libs/shared-lib/helpers/helpers';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -239,14 +239,8 @@ export default mixins(caseFileDetail).extend({
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
       isDeletingPayment: false,
-      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, IAssessmentResponseMetadata, IdParams>(
-        useAssessmentResponseStore(),
-        useAssessmentResponseMetadataStore(),
-      ),
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(
-        useFinancialAssistanceStore(),
-        null,
-      ),
+      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, null, IdParams>(useAssessmentResponseStore()),
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore()),
     };
   },
 
@@ -611,8 +605,8 @@ export default mixins(caseFileDetail).extend({
 
     async fetchAssessmentResponseByCaseFileId(caseFileId: string) {
       const caseFileFilter = {
-        'Entity/Association/Id': caseFileId,
-        'Entity/Association/Type': AssociationType.CaseFile,
+        'Entity/Association/Id': { value: caseFileId, type: EFilterKeyType.Guid },
+        'Entity/Association/Type': helper.getEnumKeyText(AssociationType, AssociationType.CaseFile),
       };
 
       const res = await this.combinedResponseStore.search({
@@ -620,7 +614,7 @@ export default mixins(caseFileDetail).extend({
         top: 999,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true);
+      }, null, true, true);
 
       this.caseFileAssessmentResponses = useAssessmentResponseStore().getByIds(res.ids);
     },

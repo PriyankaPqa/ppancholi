@@ -75,6 +75,8 @@ import {
   VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { EFilterKeyType } from '@libs/component-lib/types';
+import helper from '@libs/shared-lib/helpers/helpers';
 import { AssessmentDetailsForm } from './AssessmentCreate.vue';
 
 export default Vue.extend({
@@ -156,7 +158,11 @@ export default Vue.extend({
       this.formCopy.assessment = null;
 
       this.assessments = event ? (await this.$services.assessmentForms.search({
-        filter: { 'Entity/EventId': event.id, 'Entity/Status': Status.Active, 'Entity/PublishStatus': PublishStatus.Published },
+        filter: {
+          'Entity/EventId': { value: event.id, type: EFilterKeyType.Guid },
+          'Entity/Status': helper.getEnumKeyText(Status, Status.Active),
+          'Entity/PublishStatus': helper.getEnumKeyText(PublishStatus, PublishStatus.Published),
+        },
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
       })).value.map((x) => x.entity) : [];
     },
