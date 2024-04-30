@@ -3,8 +3,8 @@ import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { mockBaseData, IEntity } from '../base';
 import {
   AssessmentFormType, AssessmentFrequencyType, IAssessmentBaseEntity,
-  IAssessmentFormCombined, IAssessmentFormEntity,
-  IAssessmentTemplateEntity,
+  IAssessmentBaseMetadata, IAssessmentFormCombined, IAssessmentFormEntity,
+  IAssessmentFormMetadata, IAssessmentTemplateEntity,
   IAssessmentTotalSubmissions, PublishStatus, SurveyJsAssessmentFormState,
 } from './assessment-template.types';
 
@@ -189,7 +189,7 @@ export const mockAssessmentFormEntity = (force? : Partial<IAssessmentFormEntity>
   ...mockAssessmentBaseEntity(),
   assessmentFormType: AssessmentFormType.AssessmentForm,
   eventId: '044fcd68-3d70-4a3a-b5c8-22da9e01730f',
-  programId: '1',
+  programId: '0f6c1714-045a-4054-8133-c96abb94782a',
   ...force,
 });
 
@@ -205,7 +205,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
   ...mockAssessmentBaseEntity(),
   assessmentFormType: AssessmentFormType.AssessmentForm,
   eventId: '044fcd68-3d70-4a3a-b5c8-22da9e01730f',
-  programId: '1',
+  programId: '0f6c1714-045a-4054-8133-c96abb94782a',
   externalToolState: {
     tool: 'SurveyJs',
     data: {
@@ -444,6 +444,29 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
   ...force,
 });
 
+export const mockAssessmentBaseMetadata = (force? : Partial<IAssessmentBaseMetadata>) : IAssessmentBaseMetadata => ({
+  ...mockBaseData(),
+  assessmentTemplateStatusName: {
+    translation: {
+      en: 'Active',
+      fr: 'Actif',
+    },
+  },
+  ...force,
+});
+
+export const mockAssessmentFormMetadata = (force? : Partial<IAssessmentFormMetadata>) : IAssessmentFormMetadata => ({
+  ...mockAssessmentBaseMetadata(),
+  programName: {
+    translation: {
+      en: 'Prog EN',
+      fr: 'Prog FR',
+    },
+  },
+  totalSubmissions: 8,
+  ...force,
+});
+
 export const mockAssessmentTemplateEntities = () : IAssessmentTemplateEntity[] => [
   mockAssessmentTemplateEntity({ id: '1' }),
   mockAssessmentTemplateEntity({ id: '2' }),
@@ -454,8 +477,13 @@ export const mockAssessmentFormEntities = () : IAssessmentFormEntity[] => [
   mockAssessmentFormEntity({ id: '2' }),
 ];
 
+export const mockAssessmentFormMetadatum = () : IAssessmentFormMetadata[] => [
+  mockAssessmentFormMetadata({ id: '1' }),
+  mockAssessmentFormMetadata({ id: '2' }),
+];
+
 export const mockCombinedAssessmentForm = (force?: Partial<IEntity>): IAssessmentFormCombined => ({
-  metadata: null,
+  metadata: mockAssessmentFormMetadata(force),
   entity: mockAssessmentFormEntity(force),
 });
 
@@ -465,7 +493,7 @@ export const mockCombinedAssessmentForms = (): IAssessmentFormCombined[] => [
   mockCombinedAssessmentForm({ id: '3' }),
 ];
 
-export const mockSearchDataForm: IAzureCombinedSearchResult<IAssessmentFormEntity, IEntity> = {
+export const mockSearchDataForm: IAzureCombinedSearchResult<IAssessmentFormEntity, IAssessmentFormMetadata> = {
   odataContext: 'https://emis-search-dev.search.windows.net/indexes("index-assessment-form")/$metadata#docs(*)',
   odataCount: 3,
   value: mockCombinedAssessmentForms().map((x) => ({

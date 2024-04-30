@@ -18,7 +18,7 @@ import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-r
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { useProgramStore } from '@/pinia/program/program';
-import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
@@ -484,7 +484,14 @@ export class SignalR implements ISignalR {
       entityName: 'AssessmentResponse',
       action: useAssessmentResponseStore().setItemFromOutsideNotification,
     });
+
+    this.listenForChanges({
+      domain: 'assessment',
+      entityName: 'AssessmentResponseMetadata',
+      action: useAssessmentResponseMetadataStore().setItemFromOutsideNotification,
+    });
     this.watchedPiniaStores.push(useAssessmentResponseStore());
+    this.watchedPiniaStores.push(useAssessmentResponseMetadataStore());
   }
 
   private listenForFinancialAssistanceModuleChanges() {

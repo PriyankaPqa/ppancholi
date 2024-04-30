@@ -296,7 +296,7 @@ describe('ProgramDetails.vue', () => {
         expect(assessmentFormStore.search).toHaveBeenCalledTimes(1);
         expect(assessmentFormStore.search).toHaveBeenCalledWith({
           params: {
-            filter: { 'Entity/ProgramId': { value: wrapper.vm.programId, type: 'guid' } },
+            filter: { 'Entity/ProgramId': wrapper.vm.programId },
             top: 999,
             queryType: 'full',
             orderBy: 'Entity/Name/Translation/en',

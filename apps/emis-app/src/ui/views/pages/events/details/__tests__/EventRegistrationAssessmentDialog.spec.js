@@ -76,7 +76,7 @@ describe('EventRegistrationAssessmentDialog.vue', () => {
           a.nameWithStatus = 'Assessment Floods 2021 [enums.assessmentPublishStatus.Published]';
         });
         expect(wrapper.vm.$services.assessmentForms.search).toHaveBeenCalledWith({
-          filter: { 'Entity/EventId': { value: wrapper.vm.event.id, type: 'guid' } },
+          filter: { 'Entity/EventId': wrapper.vm.event.id },
           orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
         });
 

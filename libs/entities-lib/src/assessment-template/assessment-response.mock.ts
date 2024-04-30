@@ -4,6 +4,7 @@ import { mockBaseData, IEntity } from '../base';
 import {
   CompletionStatus,
   IAssessmentResponseCombined, IAssessmentResponseEntity,
+  IAssessmentResponseMetadata,
 } from './assessment-template.types';
 
 export const mockAssessmentResponseEntity = (force?: Partial<IAssessmentResponseEntity>): IAssessmentResponseEntity => ({
@@ -215,13 +216,23 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
   ...force,
 });
 
+export const mockAssessmentResponseMetadata = (force?: Partial<IAssessmentResponseMetadata>): IAssessmentResponseMetadata => ({
+  ...mockBaseData(),
+  ...force,
+});
+
 export const mockAssessmentResponseEntities = (): IAssessmentResponseEntity[] => [
   mockAssessmentResponseEntity({ id: '1' }),
   mockAssessmentResponseEntity({ id: '2' }),
 ];
 
+export const mockAssessmentResponseMetadatum = (): IAssessmentResponseMetadata[] => [
+  mockAssessmentResponseMetadata({ id: '1' }),
+  mockAssessmentResponseMetadata({ id: '2' }),
+];
+
 export const mockCombinedAssessmentResponse = (force?: Partial<IEntity>): IAssessmentResponseCombined => ({
-  metadata: null,
+  metadata: mockAssessmentResponseMetadata(force),
   entity: mockAssessmentResponseEntity(force),
 });
 
@@ -231,7 +242,7 @@ export const mockCombinedAssessmentResponses = (): IAssessmentResponseCombined[]
   mockCombinedAssessmentResponse({ id: '3' }),
 ];
 
-export const mockSearchDataResponse: IAzureCombinedSearchResult<IAssessmentResponseEntity, IEntity> = {
+export const mockSearchDataResponse: IAzureCombinedSearchResult<IAssessmentResponseEntity, IAssessmentResponseMetadata> = {
   odataContext: 'https://emis-search-dev.search.windows.net/indexes("index-assessment-response")/$metadata#docs(*)',
   odataCount: 3,
   value: mockCombinedAssessmentResponses().map((x) => ({

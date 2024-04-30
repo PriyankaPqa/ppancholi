@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import {
-  AssessmentFrequencyType, CompletionStatus, PublishStatus, mockCombinedAssessmentResponse,
+  AssociationType, AssessmentFrequencyType, CompletionStatus, PublishStatus, mockCombinedAssessmentResponse,
 } from '@libs/entities-lib/assessment-template';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
@@ -506,7 +506,7 @@ describe('CaseFileAssessment.vue', () => {
         await wrapper.vm.fetchAssessments();
         expect(assessmentFormStore.search).toHaveBeenCalledWith({
           params: {
-            filter: { 'Entity/Id': { in: wrapper.vm.items.map((i) => i.entity.assessmentFormId) } },
+            filter: { 'Entity/Id': { searchIn_az: wrapper.vm.items.map((i) => i.entity.assessmentFormId) } },
             top: 999,
             queryType: 'full',
             searchMode: 'all',
@@ -524,8 +524,8 @@ describe('CaseFileAssessment.vue', () => {
           params:
           {
             filter: {
-              'Entity/Association/Id': { value: 'cfId', type: 'guid' },
-              'Entity/Association/Type': 'CaseFile',
+              'Entity/Association/Id': 'cfId',
+              'Entity/Association/Type': AssociationType.CaseFile,
             },
             top: 999,
             count: true,

@@ -161,6 +161,7 @@ import
 {
   IAssessmentFormEntity,
   IAssessmentResponseEntity,
+  IAssessmentResponseMetadata,
   AssociationType,
   CompletionStatus, IdParams,
 } from '@libs/entities-lib/assessment-template';
@@ -176,7 +177,7 @@ import SubmitFinancialAssistancePaymentDialog
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useProgramStore } from '@/pinia/program/program';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
@@ -238,8 +239,14 @@ export default mixins(caseFileDetail).extend({
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
       isDeletingPayment: false,
-      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, null, IdParams>(useAssessmentResponseStore()),
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore()),
+      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, IAssessmentResponseMetadata, IdParams>(
+        useAssessmentResponseStore(),
+        useAssessmentResponseMetadataStore(),
+      ),
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(
+        useFinancialAssistanceStore(),
+        null,
+      ),
     };
   },
 

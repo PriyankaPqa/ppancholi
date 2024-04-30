@@ -171,19 +171,18 @@ import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import {
   AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType,
   IAssessmentResponseCombined, CompletionStatus, PublishStatus, IAssessmentFormEntity,
-  IAssessmentResponseEntity, IdParams,
+  IAssessmentFormMetadata, IAssessmentResponseEntity, IAssessmentResponseMetadata, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
-import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
-import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { useAssessmentFormMetadataStore, useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
-import { EFilterKeyType } from '@libs/component-lib/types';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
 
@@ -238,10 +237,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         itemClass: (item: MappedAssessment) => (item.pinned ? 'pinned' : ''),
       },
       showAddPopup: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, null, IdParams>(useAssessmentFormStore()),
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata, IdParams>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
       combinedResponseStore:
-        new CombinedStoreFactory<IAssessmentResponseEntity, null, IdParams>(useAssessmentResponseStore()),
-      sqlSearchMode: true,
+        new CombinedStoreFactory<IAssessmentResponseEntity, IAssessmentResponseMetadata, IdParams>(useAssessmentResponseStore(), useAssessmentResponseMetadataStore()),
     };
   },
 
@@ -418,7 +416,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       }
 
       await this.combinedFormStore.search({
-        filter: { 'Entity/Id': { in: this.items.map((i) => i.entity.assessmentFormId) || [] } },
+        filter: { 'Entity/Id': { searchIn_az: this.items.map((i) => i.entity.assessmentFormId) || [] } },
         top: 999,
         queryType: 'full',
         searchMode: 'all',
@@ -427,8 +425,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     async fetchData(params: IAzureSearchParams) {
       const caseFileFilter = {
-        'Entity/Association/Id': { value: this.caseFileId, type: EFilterKeyType.Guid },
-        'Entity/Association/Type': sharedHelpers.getEnumKeyText(AssociationType, AssociationType.CaseFile),
+        'Entity/Association/Id': this.caseFileId,
+        'Entity/Association/Type': AssociationType.CaseFile,
       };
 
       params.filter = caseFileFilter;
@@ -439,7 +437,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true, true);
+      }, null, true);
       return res;
     },
 

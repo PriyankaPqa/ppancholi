@@ -327,7 +327,7 @@ describe('AssessmentCaseFileFiltering.vue', () => {
         await wrapper.vm.fetchAssessmentsFilters('new_id');
 
         expect(wrapper.vm.$services.assessmentForms.search).toHaveBeenCalledWith({
-          filter: { 'Entity/EventId': { value: 'new_id', type: 'guid' } },
+          filter: { 'Entity/EventId': 'new_id' },
           orderBy: 'Entity/Name/Translation/en',
         });
         expect(wrapper.vm.assessments).toEqual([{}]);
