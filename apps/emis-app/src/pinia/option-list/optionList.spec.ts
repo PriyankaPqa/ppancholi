@@ -425,5 +425,27 @@ describe('>>> Option List Store', () => {
         );
       });
     });
+
+    describe('setLodging', () => {
+      it('throws an error if list is not set in the store', async () => {
+        const store = createTestStore();
+        await expect(store.setLodging).rejects.toThrow();
+      });
+
+      it('calls the setOptionItemLodging endpoint if the list is Case File Tags', async () => {
+        const store = createTestStore();
+        store.list = EOptionLists.CaseFileTags;
+        await store.setLodging({
+          id: 'ID',
+          isLodging: true,
+        });
+
+        expect(entityService.setOptionItemLodging).toHaveBeenCalledWith(
+          EOptionLists.CaseFileTags,
+          'ID',
+          true,
+        );
+      });
+    });
   });
 });

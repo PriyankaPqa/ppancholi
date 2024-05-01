@@ -75,6 +75,7 @@ describe('AddSubItemSubItem.vue', () => {
             isOther: false,
             isDefault: true,
             restrictFinancial: false,
+            isLodging: false,
             id: '-1',
           },
         ]);

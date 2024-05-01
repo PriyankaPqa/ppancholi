@@ -464,6 +464,23 @@ describe('OptionListItem.vue', () => {
     });
   });
 
+  describe('setLodging', () => {
+    it('calls the right action', async () => {
+      await wrapper.setData({ item: { ...wrapper.vm.item, isLodging: false } });
+      optionListStore.setLodging = jest.fn();
+      wrapper.vm.setLodging();
+      expect(optionListStore.setLodging).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isLodging: true });
+    });
+
+    it('doesnt do anything in readonly', async () => {
+      await wrapper.setProps({ isSubItem: false, readonly: true });
+      await wrapper.setData({ item: { ...wrapper.vm.item, isLodging: false } });
+      optionListStore.setLodging = jest.fn();
+      wrapper.vm.setLodging();
+      expect(optionListStore.setLodging).not.toHaveBeenCalled();
+    });
+  });
+
   describe('setIsOther', () => {
     it('calls the right action when is not subitem', async () => {
       await wrapper.setProps({ isSubItem: false });

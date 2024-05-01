@@ -64,6 +64,17 @@
             @click:close="setRestrictFinancial">
             {{ $t('common.restrictFinancial') }}
           </v-chip>
+
+          <v-chip
+            v-if="hasLodging && item.isLodging"
+            class="otherDefaultChip ml-2"
+            small
+            color="primary lighten-1"
+            text-color="grey darken-4"
+            close
+            @click:close="setLodging">
+            {{ $t('common.lodging') }}
+          </v-chip>
         </div>
       </v-col>
 
@@ -104,7 +115,7 @@
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
 
-        <v-menu v-if="hasOther || hasDefault || hasRestrictFinancial" offset-y>
+        <v-menu v-if="hasOther || hasDefault || hasRestrictFinancial || hasLodging" offset-y>
           <template #activator="{ on, attrs }">
             <v-btn v-bind="attrs" data-test="optionsListItem__menuBtn" :aria-label="$t('task.action')" icon :disabled="editDisabled" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -129,6 +140,13 @@
             <v-list-item v-if="hasRestrictFinancial" @click="setRestrictFinancial">
               {{ $t('common.restrictFinancial') }}
               <v-icon v-if="item.restrictFinancial" :aria-label="$t('common.buttons.close')" class="ml-2" small>
+                mdi-close
+              </v-icon>
+            </v-list-item>
+
+            <v-list-item v-if="hasLodging" @click="setLodging">
+              {{ $t('common.lodging') }}
+              <v-icon v-if="item.isLodging" :aria-label="$t('common.buttons.close')" class="ml-2" small>
                 mdi-close
               </v-icon>
             </v-list-item>
@@ -356,6 +374,14 @@ export default Vue.extend({
     },
 
     /**
+     * If the list allows the user to set the lodging attribute for an item
+     */
+    hasLodging: {
+      type: Boolean,
+      default: false,
+    },
+
+    /**
      * If the list allows the user to see and modify the status of the item
      */
     hideItemStatus: {
@@ -540,6 +566,19 @@ export default Vue.extend({
         this.$toasted.global.success(this.$t('system_management.lists.restrictFinancialOptionSet'));
       } else {
         this.$toasted.global.success(this.$t('system_management.lists.restrictFinancialOptionUnset'));
+      }
+    },
+
+    async setLodging() {
+      if (this.readonly) {
+        return;
+      }
+      const value = !this.item.isLodging;
+      await useOptionListStore().setLodging({ id: this.item.id, isLodging: value });
+      if (value) {
+        this.$toasted.global.success(this.$t('system_management.lists.lodgingOptionSet'));
+      } else {
+        this.$toasted.global.success(this.$t('system_management.lists.lodgingOptionUnset'));
       }
     },
 

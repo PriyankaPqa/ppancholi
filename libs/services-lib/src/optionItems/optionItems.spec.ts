@@ -173,4 +173,10 @@ describe('>>> OptionItems Service', () => {
     await service.setOptionItemRestrictFinancial(list, 'ID', true);
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/restrict-financial`, { restrictFinancial: true });
   });
+
+  test('setOptionItemLodging is linked to the correct URL', async () => {
+    const list = EOptionLists.CaseFileTags;
+    await service.setOptionItemLodging(list, 'ID', true);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/is-lodging`, { value: true });
+  });
 });

@@ -37,6 +37,8 @@ export interface IOptionItemsService {
   setOptionItemIsDefault(target: EOptionLists, id: string, isDefault: boolean): Promise<IOptionItemData>;
 
   setOptionItemRestrictFinancial(target: EOptionLists, id: string, restrictFinancial: boolean): Promise<IOptionItemData>;
+
+  setOptionItemLodging(target: EOptionLists, id: string, isLodging: boolean): Promise<IOptionItemData>;
 }
 
 export interface IOptionItemsServiceMock {
@@ -65,4 +67,6 @@ export interface IOptionItemsServiceMock {
   setOptionItemIsDefault: jest.Mock<IOptionItemData>;
 
   setOptionItemRestrictFinancial: jest.Mock<IOptionItemData>;
+
+  setOptionItemLodging: jest.Mock<IOptionItemData>;
 }

@@ -7,6 +7,7 @@ export interface IOptionItemData {
     isOther: boolean;
     isDefault: boolean;
     restrictFinancial: boolean;
+    isLodging?: boolean;
     status?: number;
     optionItemId?: string;
     specifiedOther?: string;

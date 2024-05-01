@@ -6,6 +6,7 @@
     has-default
     sub-item-has-other
     hide-item-drag
+    :has-lodging="$hasFeature(FeatureKeys.Lodging)"
     item-label="taskCategories.nestedTable.headers.item"
     sub-item-label="taskCategories.nestedTable.headers.subItem"
     sub-item-name-label="taskCategories.nestedTable.headers.subItem"
@@ -17,6 +18,7 @@
 import Vue from 'vue';
 import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { useOptionListStore } from '@/pinia/option-list/optionList';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import OptionList from '../components/OptionList.vue';
 
 export default Vue.extend({
@@ -24,6 +26,10 @@ export default Vue.extend({
 
   components: {
     OptionList,
+  },
+
+  data() {
+    return { FeatureKeys };
   },
 
   created() {

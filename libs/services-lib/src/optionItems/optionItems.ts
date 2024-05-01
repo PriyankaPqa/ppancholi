@@ -128,4 +128,10 @@ export class OptionItemsService implements IOptionItemsService {
       restrictFinancial,
     });
   }
+
+  async setOptionItemLodging(list: EOptionLists, id: string, isLodging: boolean): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${id}/is-lodging`, {
+      value: isLodging,
+    });
+  }
 }

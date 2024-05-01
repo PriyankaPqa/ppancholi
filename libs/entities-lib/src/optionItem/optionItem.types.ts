@@ -27,6 +27,7 @@ export interface IOptionSubItem extends IEntity {
   isOther: boolean;
   isDefault: boolean;
   restrictFinancial: boolean;
+  isLodging?: boolean;
   description?: IMultilingual;
 }
 
@@ -38,6 +39,7 @@ export interface IOptionItemData extends IEntity {
   isHidden: boolean;
   isDefault: boolean;
   restrictFinancial: boolean;
+  isLodging?: boolean;
   subitems: IOptionSubItem[];
 }
 

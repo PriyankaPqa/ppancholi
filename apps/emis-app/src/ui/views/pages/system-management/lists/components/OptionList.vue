@@ -86,6 +86,7 @@
                 :has-default="hasDefault"
                 :has-other="hasOther"
                 :has-restrict-financial="hasRestrictFinancial"
+                :has-lodging="hasLodging"
                 :hide-item-status="hideItemStatus"
                 :hide-item-drag="hideItemDrag"
                 :readonly="readonly"
@@ -271,6 +272,11 @@ export default Vue.extend({
     },
 
     hasRestrictFinancial: {
+      type: Boolean,
+      default: false,
+    },
+
+    hasLodging: {
       type: Boolean,
       default: false,
     },

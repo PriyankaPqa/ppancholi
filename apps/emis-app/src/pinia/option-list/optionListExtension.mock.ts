@@ -23,5 +23,6 @@ export function getMockOptionListExtensionComponents() {
     setIsOther: jest.fn(),
     setIsDefault: jest.fn(),
     setRestrictFinancial: jest.fn(),
+    setLodging: jest.fn(),
   };
 }

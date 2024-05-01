@@ -308,6 +308,30 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function setLodging(payload: { id: string, isLodging: boolean }): Promise<IOptionItem> {
+    const { id, isLodging } = payload;
+    if (!list.value) {
+      throw new Error('You must set a value for list');
+    }
+
+    const data = await optionItemService.setOptionItemLodging(list.value, id, isLodging);
+
+    if (data != null) {
+      // Unset the Lodging value from all the items
+
+      items.value = items.value.map((i) => ({
+        ...i,
+        isLodging: false,
+      }));
+      // Update the modified item in the state
+      addOrUpdateItem(data);
+
+      return data;
+    }
+
+    return null;
+  }
+
   return {
     items,
     list,
@@ -327,6 +351,7 @@ export function getExtensionComponents(
     setIsOther,
     setSubItemIsOther,
     setIsDefault,
+    setLodging,
     setRestrictFinancial,
   };
 }
