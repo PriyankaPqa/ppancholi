@@ -28,7 +28,7 @@ let eventId = '';
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC1652# - Create an Approval table ', { tags: ['@event', '@approval', '@financial-assistance'] }, () => {
+describe('#TC1652# - Create a Approval table', { tags: ['@event', '@approval', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
