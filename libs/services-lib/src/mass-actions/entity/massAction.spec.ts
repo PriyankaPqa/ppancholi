@@ -52,6 +52,19 @@ describe('>>> Mass Action Service', () => {
     });
   });
 
+  test('getEmailTemplate is linked to the correct URL', async () => {
+    const emailTemplateKey = 'MassCommunication';
+    const eventId = '1';
+
+    await service.getEmailTemplate(emailTemplateKey, eventId);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/email-template`, {
+      params: {
+        emailTemplateKey,
+        eventId,
+      },
+    });
+  });
+
   test('create is linked to the correct URL', async () => {
     const urlSuffix = 'financial-assistance-from-list';
     const payload = mockMassActionCreatePayload();

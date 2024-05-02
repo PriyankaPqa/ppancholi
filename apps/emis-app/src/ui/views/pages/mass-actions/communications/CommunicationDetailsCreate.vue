@@ -84,7 +84,26 @@
             </validation-provider>
           </template>
         </v-col>
+        <v-btn
+          v-if="$hasFeature(FeatureKeys.EmailSendingPreview)"
+          class="ma-2 preview"
+          small
+          data-test="communication-preview-button"
+          @click="showPreview = true">
+          <v-icon left>
+            mdi-camera-metering-center
+          </v-icon>
+          {{ $t('massAction.communication.buttons.preview') }}
+        </v-btn>
       </v-row>
+      <email-template-preview
+        email-template-key="MassCommunication"
+        :show.sync="showPreview"
+        :title="$t('massAction.communication.email.preview.title')"
+        :language-mode="languageMode"
+        :event="formCopy.event"
+        :subject="formCopy.messageSubject.translation[languageMode]"
+        :message="formCopy.emailMessage.translation[languageMode]" />
     </div>
   </div>
 </template>
@@ -106,6 +125,8 @@ import {
 VTextFieldWithValidation, VTextAreaWithValidation,
 } from '@libs/component-lib/components';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import EmailTemplatePreview from '@/ui/views/pages/mass-actions/components/EmailTemplatePreview.vue';
 import { CommunicationDetailsForm } from './CommunicationCreate.vue';
 
 export default Vue.extend({
@@ -118,6 +139,7 @@ export default Vue.extend({
     VTextFieldWithValidation,
     VTextAreaWithValidation,
     RcFileUpload,
+    EmailTemplatePreview,
   },
 
   props: {
@@ -139,6 +161,8 @@ export default Vue.extend({
       allowedExtensions: CASE_FILE_DOC_EXTENSIONS,
       toolbarSettings: ui.vueEditorToolbarSettings,
       smsLength: 0,
+      showPreview: false,
+      FeatureKeys,
     };
   },
 
@@ -218,5 +242,12 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .optionsList__tabContainer {
   background:none;
+}
+
+.preview{
+  text-transform:none;
+  background-color: #E6F5FC !important;
+  border: solid 1px #007DA3;
+  margin-left: 12px !important;
 }
 </style>

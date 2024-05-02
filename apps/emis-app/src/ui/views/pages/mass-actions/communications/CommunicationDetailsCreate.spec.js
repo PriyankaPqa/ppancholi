@@ -9,6 +9,7 @@ import utils from '@libs/entities-lib/utils';
 
 import { mockProvider } from '@/services/provider';
 import { MassActionCommunicationMethod } from '@libs/entities-lib/mass-action';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './CommunicationDetailsCreate.vue';
 
 const formCopy = {
@@ -60,6 +61,29 @@ describe('CommunicationDetailsCreate.vue', () => {
         doMount(MassActionCommunicationMethod.SMS);
         const element = wrapper.findDataTest('communication-sms-description');
         expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('Preview Button', () => {
+      it('displays when feature flag is on', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.EmailSendingPreview],
+          propsData: {
+            form: formCopy,
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+        const element = wrapper.findDataTest('communication-preview-button');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('Does not display when feature flag is off', async () => {
+        doMount(MassActionCommunicationMethod.Email);
+        const element = wrapper.findDataTest('communication-preview-button');
+        expect(element.exists()).toBeFalsy();
       });
     });
   });

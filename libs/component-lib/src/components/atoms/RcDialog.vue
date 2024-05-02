@@ -54,7 +54,7 @@
       <div
         class="content-wrapper"
         :style="contentWrapperStyle">
-        <div :id="scrollAnchorId" :class="`content full-width pa-${contentPadding}`">
+        <div :id="scrollAnchorId" :class="`content full-width pa-${contentPadding}`" :style="contentStyle">
           <slot name="default" />
         </div>
         <template v-if="initLoading">
@@ -67,6 +67,7 @@
               :small="isDense"
               :data-test="cancelDataTest"
               :disabled="cancelButtonDisabled || loading"
+              :class="cancelButtonClass"
               @click.native="$emit('cancel')">
               {{ cancelActionLabel }}
             </v-btn>
@@ -282,6 +283,14 @@ export default Vue.extend({
       type: String,
       default: 'dialog-cancel-action',
     },
+    contentStyle: {
+      type: String,
+      default: '',
+    },
+    cancelButtonClass: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -384,5 +393,10 @@ export default Vue.extend({
     & button {
       margin: 0 0 0 16px;
     }
+  }
+  .preview-cancel-button{
+    text-transform:none;
+    background-color: #E6F5FC !important;
+    border: solid 1px #007DA3;
   }
 </style>

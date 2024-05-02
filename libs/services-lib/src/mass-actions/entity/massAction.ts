@@ -1,7 +1,7 @@
 import {
   IMassActionEntity, MassActionDataCorrectionType, MassActionRunType, MassActionType,
 } from '@libs/entities-lib/mass-action/massActions.types';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
 import { IMassActionExportListPayload, IMassActionService } from './massAction.types';
 import { GlobalHandler, IHttpClient, IRestResponse } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -38,6 +38,10 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
       },
       globalHandler: GlobalHandler.Disabled,
     });
+  }
+
+  async getEmailTemplate(emailTemplateKey: string, eventId?: uuid): Promise<IMultilingual> {
+    return this.http.get(`${this.baseUrl}/email-template`, { params: { emailTemplateKey, eventId } });
   }
 
   async create(urlSuffix: string, payload: unknown): Promise<IMassActionEntity> {

@@ -53,7 +53,27 @@
           </v-btn>
           <vue-editor v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
         </v-col>
+        <v-btn
+          v-if="$hasFeature(FeatureKeys.EmailSendingPreview)"
+          class="ma-2 preview"
+          small
+          data-test="assessment-preview-button"
+          @click="showPreview = true">
+          <v-icon left>
+            mdi-camera-metering-center
+          </v-icon>
+          {{ $t('massAction.communication.buttons.preview') }}
+        </v-btn>
       </v-row>
+      <email-template-preview
+        email-template-key="AssessmentAssigned"
+        :show.sync="showPreview"
+        :title="$t('massAction.assessment.email.preview.title')"
+        :language-mode="languageMode"
+        :event="formCopy.event"
+        :subject="formCopy.emailSubject.translation[languageMode]"
+        :message="formCopy.emailTopCustomContent.translation[languageMode]"
+        :second-message="formCopy.emailAdditionalDescription.translation[languageMode]" />
     </div>
   </div>
 </template>
@@ -75,6 +95,7 @@ import {
   VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import EmailTemplatePreview from '@/ui/views/pages/mass-actions/components/EmailTemplatePreview.vue';
 import { EFilterKeyType } from '@libs/component-lib/types';
 import helper from '@libs/shared-lib/helpers/helpers';
 import { AssessmentDetailsForm } from './AssessmentCreate.vue';
@@ -88,6 +109,7 @@ export default Vue.extend({
     LanguageTabs,
     VSelectWithValidation,
     VTextFieldWithValidation,
+    EmailTemplatePreview,
   },
 
   props: {
@@ -106,6 +128,7 @@ export default Vue.extend({
       isEmpty,
       assessments: [] as IAssessmentFormEntity[],
       toolbarSettings: ui.vueEditorToolbarSettings,
+      showPreview: false,
       FeatureKeys,
     };
   },
@@ -188,3 +211,12 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.preview{
+  text-transform:none;
+  background-color: #E6F5FC !important;
+  border: solid 1px #007DA3;
+  margin-left: 12px !important;
+}
+</style>

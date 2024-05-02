@@ -10,6 +10,7 @@ export const mockMassActionService = (): IMassActionServiceMock => ({
   process: jest.fn(() => mockMassActionEntity()),
   update: jest.fn(() => mockMassActionEntity()),
   getInvalidFile: jest.fn(() => null),
+  getEmailTemplate: jest.fn(() => ({ translation: { en: 'en', fr: 'fr' } })),
   create: jest.fn(() => mockMassActionEntity()),
   exportList: jest.fn(() => null),
   getValidFile: jest.fn(() => null),

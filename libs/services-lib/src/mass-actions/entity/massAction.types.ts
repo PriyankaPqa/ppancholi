@@ -71,6 +71,7 @@ export interface IMassActionService extends IDomainBaseService<IMassActionEntity
   deactivate(id: uuid): Promise<IMassActionEntity>
   update(id: uuid, payload: { name: string; description: string }): Promise<IMassActionEntity>
   getInvalidFile({ massActionId, runId, language }: { massActionId: uuid; runId: uuid; language: string }): Promise<IRestResponse<string>>
+  getEmailTemplate(emailTemplateKey: string, eventId?: uuid): Promise<IMultilingual>
   create(urlSuffix: string, payload: unknown): Promise<IMassActionEntity>
   exportList(massActionType: MassActionType, payload: IMassActionExportListPayload): Promise<IRestResponse<string>>
   getValidFile({ massActionId, runId, language, massActionType }: {
@@ -87,6 +88,7 @@ export interface IMassActionServiceMock extends IDomainBaseServiceMock<IMassActi
   deactivate: jest.Mock<IMassActionEntity>;
   update: jest.Mock<IMassActionEntity>;
   getInvalidFile: jest.Mock<IRestResponse<string>>;
+  getEmailTemplate: jest.Mock<IMultilingual>;
   create: jest.Mock<IMassActionEntity>;
   exportList: jest.Mock<IRestResponse<string>>;
   getValidFile: jest.Mock<IRestResponse<string>>;
