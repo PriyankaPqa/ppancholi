@@ -2,8 +2,8 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
-import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
+import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateValidationOfImpactStatus } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { cannotPreProcessFaMassActionSteps } from './steps';
 
@@ -28,14 +28,15 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1844# - Mass Action FA upload file fails pre-processing when Authentication status check not verified', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+// eslint-disable-next-line
+describe('#TC1843# - Case File flagged during Mass Action FA upload file fails pre-processing if Validation of Impact check is Undetermined', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const eligibilityCriteria: IEligibilityCriteria = {
-        authenticated: true,
-        impacted: false,
+        authenticated: false,
+        impacted: true,
         completedAssessments: false,
         completedAssessmentIds: [],
       };
@@ -64,28 +65,27 @@ describe('#TC1844# - Mass Action FA upload file fails pre-processing when Authen
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
-            const params: IIdentityAuthentication = {
-              identificationIds: [],
-              method: IdentityAuthenticationMethod.NotApplicable,
-              status: IdentityAuthenticationStatus.NotVerified,
+            const resultHouseholdCreated = await prepareStateHousehold(accessTokenL6, this.event);
+            cy.wrap(resultHouseholdCreated.registrationResponse.caseFile).as('caseFile');
+            cy.wrap(resultHouseholdCreated.registrationResponse.caseFile.id).as('caseFileId');
+            cy.wrap(resultHouseholdCreated.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
+            const params: IImpactStatusValidation = {
+              method: ImpactValidationMethod.NotApplicable,
+              status: ValidationOfImpactStatus.Undetermined,
             };
-            await updateAuthenticationOfIdentity(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
+            await updateValidationOfImpactStatus(this.provider, resultHouseholdCreated.registrationResponse.caseFile.id, params);
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
-        it('should successfully upload file but fail to preprocessing a file', function () {
+        it('should successfully upload file but fail to preprocessing a file when impact validation status check undetermined', function () {
           cannotPreProcessFaMassActionSteps({
             programName: this.programName,
             eventName: this.event.name.translation.en,
-            filePath: 'cypress/downloads/TC1844FaFile.csv',
+            filePath: 'cypress/downloads/TC1843FaFile.csv',
             retries: this.test.retries.length,
-            errorMessage: 'Case file does not meet program authenticated criteria',
+            errorMessage: 'Case file does not meet program impacted criteria',
             financialAssistanceTable: this.faTable,
             caseFile: this.caseFile,
           });
