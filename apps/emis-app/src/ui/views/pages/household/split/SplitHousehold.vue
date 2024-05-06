@@ -96,6 +96,7 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { tabs } from '@/ui/views/pages/household/split/tabs';
 import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',
@@ -143,7 +144,7 @@ export default mixins(individual).extend({
 
   computed: {
     registrationAssessment(): IRegistrationAssessment {
-      return useRegistrationStore().getAssessmentToComplete()?.registrationAssessment;
+      return (!this.$hasRole(UserRoles.level0) || this.event.assessmentsForL0usersEnabled) && useRegistrationStore().getAssessmentToComplete()?.registrationAssessment;
     },
 
     splitMemberName(): string {

@@ -22,6 +22,8 @@ export class RegistrationEvent implements IEventSummary {
 
   selfRegistrationEnabled: boolean;
 
+  assessmentsForL0usersEnabled: boolean;
+
   schedule: { status: EEventStatus; openDate?: Date | string; };
 
   consentStatementId?: uuid;
@@ -38,6 +40,7 @@ export class RegistrationEvent implements IEventSummary {
       this.schedule = _cloneDeep(data.schedule);
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.registrationAssessments = data.registrationAssessments;
+      this.assessmentsForL0usersEnabled = data.assessmentsForL0usersEnabled;
       this.consentStatementId = data.consentStatementId;
     }
   }

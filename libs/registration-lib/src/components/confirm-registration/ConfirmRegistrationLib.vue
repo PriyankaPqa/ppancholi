@@ -196,7 +196,7 @@ export default Vue.extend({
     },
 
     showCompleteAssessmentMessage(): boolean {
-      return !!this.$registrationStore.assessmentToComplete;
+      return !!this.$registrationStore.assessmentToComplete && (!this.isCRCRegistration || !this.$hasRole || !this.$hasRole('level0') || this.event.assessmentsForL0usersEnabled);
     },
 
     identityAuthenticationMessage(): { color?: string, icon?: string, header?: TranslateResult, details?: string } {

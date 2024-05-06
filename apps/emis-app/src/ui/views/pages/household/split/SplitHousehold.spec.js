@@ -329,6 +329,44 @@ describe('SplitHousehold.vue', () => {
         expect(registrationStore.getAssessmentToComplete).toHaveBeenCalled();
         expect(registrationAssessment).toEqual(registrationStore.getAssessmentToComplete().registrationAssessment);
       });
+
+      it('shouldn\'t return the registrationAssessment when L0 and not enabled for L0', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          computed: {
+            currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
+          },
+        });
+        wrapper.vm.$hasRole = (lvl) => (lvl === 'level0');
+
+        const event = registrationStore.getEvent();
+        registrationStore.getEvent = () => event;
+        event.assessmentsForL0usersEnabled = false;
+        jest.clearAllMocks();
+        registrationStore.getAssessmentToComplete = jest.fn(() => ({
+          registrationAssessment: 'registrationAssessment',
+        }));
+        expect(wrapper.vm.registrationAssessment).not.toEqual('registrationAssessment');
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          computed: {
+            currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
+          },
+
+        });
+        wrapper.vm.$hasRole = (lvl) => (lvl === 'level0');
+        event.assessmentsForL0usersEnabled = true;
+        expect(wrapper.vm.registrationAssessment).toEqual('registrationAssessment');
+      });
     });
 
     describe('splitMemberName', () => {

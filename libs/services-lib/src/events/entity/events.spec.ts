@@ -338,7 +338,7 @@ describe('>>> Events Service', () => {
 
   test('toggleAssessmentsForL0Users is linked to the correct url', async () => {
     await service.toggleAssessmentsForL0Users('ID', false);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/assessments-for-l0-users-enabled`, { assessmentsForL0UsersEnabled: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/assessments-for-l0-users-enabled`, { assessmentsForL0usersEnabled: false });
   });
 
   test('toggleRegistrationForL0Users is linked to the correct url', async () => {

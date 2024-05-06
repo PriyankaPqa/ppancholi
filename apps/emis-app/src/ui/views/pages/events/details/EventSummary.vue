@@ -430,7 +430,7 @@ export default Vue.extend({
 
       const response = await useEventStore().toggleAssessmentsForL0Users({
         id: this.event.id,
-        assessmentsForL0UsersEnabled: toggleChangedResult,
+        assessmentsForL0usersEnabled: toggleChangedResult,
       });
 
       if (response) {

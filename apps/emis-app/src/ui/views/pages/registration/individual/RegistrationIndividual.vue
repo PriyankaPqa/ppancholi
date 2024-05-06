@@ -120,6 +120,7 @@ import { IEventSummary, IRegistrationAssessment } from '@libs/entities-lib/event
 import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -216,7 +217,7 @@ export default mixins(individual).extend({
     },
 
     registrationAssessment(): IRegistrationAssessment {
-      return useRegistrationStore().getAssessmentToComplete()?.registrationAssessment;
+      return (!this.$hasRole(UserRoles.level0) || this.event.assessmentsForL0usersEnabled) && useRegistrationStore().getAssessmentToComplete()?.registrationAssessment;
     },
 
     isPersonalInfoTouched(): boolean {

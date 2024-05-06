@@ -184,8 +184,8 @@ export function getExtensionComponents(
     return null;
   }
 
-  async function toggleAssessmentsForL0Users(payload: { id: uuid, assessmentsForL0UsersEnabled: boolean }): Promise<IEventEntity> {
-    const data = await entityService.toggleAssessmentsForL0Users(payload.id, payload.assessmentsForL0UsersEnabled);
+  async function toggleAssessmentsForL0Users(payload: { id: uuid, assessmentsForL0usersEnabled: boolean }): Promise<IEventEntity> {
+    const data = await entityService.toggleAssessmentsForL0Users(payload.id, payload.assessmentsForL0usersEnabled);
     if (data) {
       baseComponents.set(data);
       return data;

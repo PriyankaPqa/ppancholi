@@ -508,6 +508,26 @@ describe('Individual.vue', () => {
         }));
         expect(wrapper.vm.registrationAssessment).toEqual('registrationAssessment');
       });
+      it('shouldn\'t return the registrationAssessment when L0 and not enabled for L0', () => {
+        wrapper.vm.$hasRole = (lvl) => (lvl === 'level0');
+
+        const event = registrationStore.getEvent();
+        registrationStore.getEvent = () => event;
+        event.assessmentsForL0usersEnabled = false;
+        jest.clearAllMocks();
+        registrationStore.getAssessmentToComplete = jest.fn(() => ({
+          registrationAssessment: 'registrationAssessment',
+        }));
+        expect(wrapper.vm.registrationAssessment).not.toEqual('registrationAssessment');
+
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => true,
+        });
+        wrapper.vm.$hasRole = (lvl) => (lvl === 'level0');
+        event.assessmentsForL0usersEnabled = true;
+        expect(wrapper.vm.registrationAssessment).toEqual('registrationAssessment');
+      });
     });
 
     describe('getTitle', () => {

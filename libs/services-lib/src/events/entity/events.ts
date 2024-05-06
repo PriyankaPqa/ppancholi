@@ -164,8 +164,8 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     }) as Promise<IAzureSearchResult<IEventSummary>>;
   }
 
-  async toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity> {
-    return this.http.patch(`${this.baseUrl}/${id}/assessments-for-l0-users-enabled`, { assessmentsForL0UsersEnabled });
+  async toggleAssessmentsForL0Users(id: uuid, assessmentsForL0usersEnabled: boolean): Promise<IEventEntity> {
+    return this.http.patch(`${this.baseUrl}/${id}/assessments-for-l0-users-enabled`, { assessmentsForL0usersEnabled });
   }
 
   async toggleRegistrationForL0Users(id: uuid, registrationsForL0UsersEnabled: boolean): Promise<IEventEntity> {

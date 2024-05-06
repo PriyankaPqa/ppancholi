@@ -55,7 +55,7 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
 
   removeRegistrationAssessment(eventId:uuid, agreementId: uuid): Promise<IEventEntity>;
 
-  toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity>;
+  toggleAssessmentsForL0Users(id: uuid, assessmentsForL0usersEnabled: boolean): Promise<IEventEntity>;
 
   toggleRegistrationForL0Users(id: uuid, registrationsForL0UsersEnabled: boolean): Promise<IEventEntity>;
 

@@ -1000,6 +1000,7 @@ export const mockTier2Details = (): ITier2Details => ({
       id: '38ff3de1-89d5-4437-993b-30da7448d9d3',
       tenantId: '',
       registrationAssessments: [],
+      assessmentsForL0usersEnabled: false,
   },
   canCompleteTier2: true,
   tier2response: {

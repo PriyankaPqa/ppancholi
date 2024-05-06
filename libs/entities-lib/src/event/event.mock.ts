@@ -92,6 +92,7 @@ export const mockEventSummary = (force?: Partial<IEventSummary>): IEventSummary 
   shelterLocations: [],
   registrationAssessments: [{ assessmentId: 'assessmentId', id: 'id' } as IRegistrationAssessment],
   selfRegistrationEnabled: true,
+  assessmentsForL0usersEnabled: false,
   schedule: {
     status: EEventStatus.Open,
     openDate: '2021-01-01T00:00:00Z',

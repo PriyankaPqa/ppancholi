@@ -112,6 +112,7 @@ export interface IEventSummary {
   registrationLocations: Array<IEventGenericLocation>;
   shelterLocations: IEventGenericLocation[];
   selfRegistrationEnabled: boolean;
+  assessmentsForL0usersEnabled: boolean;
   schedule: { status: EEventStatus; openDate?: Date | string; },
   registrationAssessments: IRegistrationAssessment[];
   consentStatementId?: uuid;

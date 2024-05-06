@@ -182,6 +182,42 @@ describe('ConfirmRegistrationLib.vue', () => {
         wrapper.vm.$registrationStore.assessmentToComplete = false;
         expect(wrapper.vm.showCompleteAssessmentMessage).toBeFalsy();
       });
+
+      it('shouldn\'t return true when L0 and not enabled for L0', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+        });
+        wrapper.vm.$hasRole = (lvl) => (lvl === 'level0');
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+
+        const event = wrapper.vm.$registrationStore.getEvent();
+        wrapper.vm.$registrationStore.getEvent = () => event;
+        event.assessmentsForL0usersEnabled = false;
+        jest.clearAllMocks();
+        wrapper.vm.$registrationStore.assessmentToComplete = true;
+        expect(wrapper.vm.showCompleteAssessmentMessage).toBeFalsy();
+
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+        wrapper = shallowMount(Component, {
+          localVue,
+        });
+        wrapper.vm.$hasRole = (lvl) => (lvl === 'level0');
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        wrapper.vm.$registrationStore.getEvent = () => event;
+        event.assessmentsForL0usersEnabled = true;
+        expect(wrapper.vm.showCompleteAssessmentMessage).toBeTruthy();
+
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+        wrapper = shallowMount(Component, {
+          localVue,
+        });
+        wrapper.vm.$hasRole = (lvl) => (lvl === 'level1');
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        wrapper.vm.$registrationStore.getEvent = () => event;
+        event.assessmentsForL0usersEnabled = false;
+        expect(wrapper.vm.showCompleteAssessmentMessage).toBeTruthy();
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+      });
     });
 
     describe('identityAuthenticationMessage', () => {

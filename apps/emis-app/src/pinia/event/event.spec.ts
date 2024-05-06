@@ -473,7 +473,7 @@ describe('>>> Event Store', () => {
           const store = createTestStore(bComponents);
           const payload = {
             id: event.id,
-            assessmentsForL0UsersEnabled: true,
+            assessmentsForL0usersEnabled: true,
           };
           expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledTimes(0);
 

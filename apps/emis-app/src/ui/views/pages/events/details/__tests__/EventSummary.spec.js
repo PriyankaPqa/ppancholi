@@ -993,11 +993,11 @@ describe('EventSummary.vue', () => {
     });
 
     describe('toggleAccessAssessment', () => {
-      it('calls the actions assessmentsForL0UsersEnabled', async () => {
+      it('calls the actions assessmentsForL0usersEnabled', async () => {
         await wrapper.vm.toggleAccessAssessment(true);
         expect(eventStore.toggleAssessmentsForL0Users).toHaveBeenCalledWith({
           id: wrapper.vm.event.id,
-          assessmentsForL0UsersEnabled: true,
+          assessmentsForL0usersEnabled: true,
         });
       });
 
