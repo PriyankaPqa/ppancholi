@@ -64,6 +64,15 @@ export default {
     return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0));
   },
 
+  getEnumKeysAndText(myEnum: Record<string, unknown>, translationPath: string, sort = true) {
+    const enumKeys = this.getEnumKeys(myEnum);
+    const data = [] as Array<{ value: unknown, text: string, dataTest: string }>;
+    enumKeys.forEach((val) => {
+      data.push({ value: val, text: i18n.t(`${translationPath}.${val}`).toString(), dataTest: val });
+    });
+    return sort ? data.sort((a, b) => a.text.localeCompare(b.text)) : data;
+  },
+
   getEnumValues(myEnum: Record<string, unknown>): Array<unknown> {
     // eslint-disable-next-line radix
     return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0)).map((key) => myEnum[key]);

@@ -110,9 +110,9 @@ describe('TeamStats.vue', () => {
           countClose: 0, countOpen: 0, countTeamMembers: 0, countTotal: 0,
         });
         expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({
-          filter: { Metadata: { Events: { any: { Id: wrapper.vm.selectedEventId } } } },
+          filter: { Entity: { Events: { any: { Id: { value: wrapper.vm.selectedEventId, type: 'guid' } } } } },
           orderBy: 'Entity/Name asc',
-        });
+        }, null, false, true, { manageableTeamsOnly: true });
       });
 
       it('should filter team based on event id', async () => {

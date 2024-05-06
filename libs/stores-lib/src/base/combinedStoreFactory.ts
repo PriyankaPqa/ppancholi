@@ -101,18 +101,18 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
   }
 
   // eslint-disable-next-line max-params
-  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean, otherSearchEndpointParameters: any[] = [])
+  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean, otherSearchEndpointParameters: any = {})
     : Promise<IAzureTableSearchResults> {
     this.storeEntity.setSearchLoading(true);
-    let newParams = { ...params };
+    let newParams = { ...params, ...otherSearchEndpointParameters };
+
     if (includeInactiveItems !== true) {
-      newParams = CombinedStoreFactory.RemoveInactiveItemsFilterOdata(params, sqlMode);
+      newParams = CombinedStoreFactory.RemoveInactiveItemsFilterOdata(newParams, sqlMode);
     }
 
     const res = await this.storeEntity.search({
       params: newParams,
       searchEndpoint,
-      ...otherSearchEndpointParameters,
     });
 
     const data = res?.value as ICombinedIndex<TEntity, TMetadata>[];

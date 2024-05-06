@@ -6,7 +6,7 @@ import {
 } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import {
-  TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc, mockTeamsMetadataStandard,
+  TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc,
 } from '@libs/entities-lib/team';
 
 import { mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
@@ -21,11 +21,11 @@ import { mockProvider } from '@/services/provider';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
-const services = mockProvider();
+let services = mockProvider();
 
-const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
-const { teamStore, teamMetadataStore } = useMockTeamStore(pinia);
-const { eventStore } = useMockEventStore(pinia);
+let { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
+let { teamStore } = useMockTeamStore(pinia);
+let { eventStore } = useMockEventStore(pinia);
 
 const mockTeamMember = {
   displayName: 'Jane Smith',
@@ -37,13 +37,12 @@ const teamEventsMock = mockTeamEvents();
 const inactiveEvent = { id: 'foo', name: { translation: { en: 'mock-name' } } };
 const inactiveEvent2 = { id: 'foo2', name: { translation: { en: 'mock-name2' } } };
 const allEvents = mockEventEntities();
+allEvents[0].id = 'id-1';
 
 describe('CreateEditTeam.vue', () => {
   let wrapper;
 
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
-    eventStore.getEventsByStatus = jest.fn(() => teamEventsMock);
-    eventStore.getAll = jest.fn(() => [...allEvents, inactiveEvent, inactiveEvent2]);
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       pinia,
@@ -62,11 +61,22 @@ describe('CreateEditTeam.vue', () => {
     await flushPromises();
   };
 
+  beforeEach(async () => {
+    const u = useMockUserAccountStore();
+    pinia = u.pinia;
+    userAccountStore = u.userAccountStore;
+    userAccountMetadataStore = u.userAccountMetadataStore;
+    teamStore = useMockTeamStore(pinia).teamStore;
+    eventStore = useMockEventStore(pinia).eventStore;
+    services = mockProvider();
+    eventStore.getEventsByStatus = jest.fn(() => teamEventsMock);
+    eventStore.getAll = jest.fn(() => [...allEvents, inactiveEvent, inactiveEvent2]);
+  });
+
   describe('Template', () => {
     beforeEach(async () => {
       await mountWrapper(true);
       teamStore.getById = jest.fn(() => mockTeamEntity());
-      teamMetadataStore.getById = jest.fn(() => mockTeamsMetadataStandard());
     });
 
     describe('Rendered elements', () => {
@@ -890,40 +900,21 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('getAvailableEvents', () => {
-      it('calls getAll to get the events with on hold and active status', () => {
+      it('calls the store to fetch the current team events and those with on hold and active status', async () => {
+        await wrapper.setData({ team: mockTeamsDataAddHoc() });
         wrapper.vm.getAvailableEvents();
+        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['id-1'], true);
         expect(eventStore.getEventsByStatus).toHaveBeenCalledWith([EEventStatus.Open, EEventStatus.OnHold]);
       });
 
       it('sets into availableEvents the events returned by the storage in the right form', async () => {
-        expect(wrapper.vm.availableEvents).toEqual(teamEventsMock);
-      });
-
-      it('adds into availableEvents the events that are existing in the team but are not currently active/on hold, only for edit mode', async () => {
-        const myTeam = mockTeamEntity();
-        myTeam.eventIds = [inactiveEvent.id];
-        await mountWrapper(false, 5, {
-          computed: {
-            isEditMode() {
-              return true;
-            },
-          },
-        });
-        await wrapper.setData({ team: myTeam, currentEvents: [] });
-
         wrapper.vm.getAvailableEvents();
-
-        expect(wrapper.vm.availableEvents).toEqual([
-          inactiveEvent,
-          ...teamEventsMock,
-        ]);
-      });
-
-      it('sets current events into available events', async () => {
-        const mockTeamEvent = { entity: { id: 'foo', name: { translation: { en: 'current-event' } } } };
-        await wrapper.setData({ currentEvents: [mockTeamEvent] });
-        await wrapper.vm.getAvailableEvents();
-        expect(wrapper.vm.availableEvents).toContain(mockTeamEvent);
+        // when no id on eventStore.getEventsByStatus
+        expect(wrapper.vm.availableEvents).toEqual(eventStore.getEventsByStatus());
+        // adds the current event id
+        await wrapper.setData({ team: mockTeamsDataAddHoc() });
+        wrapper.vm.getAvailableEvents();
+        expect(wrapper.vm.availableEvents).toEqual([allEvents[0], ...eventStore.getEventsByStatus()]);
       });
     });
 
@@ -1041,10 +1032,8 @@ describe('CreateEditTeam.vue', () => {
     describe('loadTeam', (() => {
       it('calls the action getTeam', async () => {
         teamStore.fetch = jest.fn();
-        teamMetadataStore.fetch = jest.fn();
         await wrapper.vm.loadTeam();
         expect(teamStore.fetch).toHaveBeenCalledWith('abc');
-        expect(teamMetadataStore.fetch).toHaveBeenCalledWith('abc');
       });
 
       it('should set the team with a cloneDeep of team from storage', async () => {
@@ -1083,12 +1072,6 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.mapToTeamMember).toHaveBeenCalledWith(mockUserAccountEntity(), mockUserAccountMetadata(), true);
         expect(wrapper.vm.currentPrimaryContact).toEqual(mockTeamMember);
         expect(wrapper.vm.userAccountFilter.users).toEqual([{ value: mockTeamMember.id, text: mockTeamMember.displayName }]);
-      });
-
-      it('sets currentEvents from the team metadata', async () => {
-        teamMetadataStore.getById = jest.fn(() => mockTeamsMetadataStandard());
-        await wrapper.vm.loadTeamFromState();
-        expect(wrapper.vm.currentEvents).toEqual(mockTeamsMetadataStandard().events);
       });
 
       it('should do nothing if it receives an error of existing name as argument ', async () => {

@@ -36,7 +36,7 @@
                     {{ $t('teams.teamtype') }}
                   </div>
                   <div class="rc-body14" data-test="team_type">
-                    {{ $m(teamMetadata.teamTypeName) }}
+                    {{ $t(`enums.TeamType.${TeamType[team.teamType]}`) }}
                   </div>
                 </v-col>
 
@@ -72,7 +72,7 @@
                     {{ $tc('teams.related_events', eventAmount) }}
                   </div>
                   <div class="rc-body14" data-test="team_events">
-                    {{ buildEventsString(teamMetadata.events) }}
+                    {{ getEventNames(team) }}
                   </div>
                 </v-col>
                 <v-col
@@ -122,15 +122,17 @@
 import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
 import {
-  TeamType, ITeamEvent, ITeamEntity, ITeamMetadata,
+  TeamType, ITeamEntity,
 } from '@libs/entities-lib/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useEventStore } from '@/pinia/event/event';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 
 export default Vue.extend({
   name: 'TeamDetails',
@@ -161,10 +163,6 @@ export default Vue.extend({
       return useTeamStore().getById(this.id);
     },
 
-    teamMetadata(): ITeamMetadata {
-      return useTeamMetadataStore().getById(this.id);
-    },
-
     primaryContactId() : string {
       return (this.team?.teamMembers || []).find((x) => x.isPrimaryContact)?.id;
     },
@@ -174,7 +172,7 @@ export default Vue.extend({
     },
 
     eventAmount(): number {
-      return this.teamMetadata?.events?.length;
+      return this.team?.eventIds?.length;
     },
 
     teamMemberAmount(): number {
@@ -195,11 +193,16 @@ export default Vue.extend({
   },
 
   methods: {
+    getEventNames(team: ITeamEntity) {
+      return useEventStore().getByIds(team.eventIds, false).map((e) => this.$m(e.name)).sort((a, b) => a?.toLowerCase()?.localeCompare(b?.toLowerCase()))
+        .join(', ');
+    },
+
     async loadTeam() {
-      await useTeamStore().fetch(this.id);
-      await useTeamMetadataStore().fetch(this.id, false);
+      const t = await useTeamStore().fetch(this.id);
+      await useEventStore().fetchByIds(t.eventIds, true);
       if (this.primaryContactId) {
-        await useUserAccountMetadataStore().fetch(this.primaryContactId, false);
+        await useUserAccountMetadataStore().fetch(this.primaryContactId, GlobalHandler.Disabled);
       }
     },
 
@@ -210,13 +213,6 @@ export default Vue.extend({
     navigateToEdit() {
       const teamType = this.team.teamType === TeamType.Standard ? 'standard' : 'adhoc';
       this.$router.push({ name: routes.teams.edit.name, params: { teamType, id: this.id, from: this.$route.name } });
-    },
-
-    buildEventsString(events: ITeamEvent[]): string {
-      if (!events) {
-        return '';
-      }
-      return events.map((e: ITeamEvent) => this.$m(e.name)).join(', ');
     },
   },
 });

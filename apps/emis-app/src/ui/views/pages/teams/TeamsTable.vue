@@ -19,6 +19,7 @@
           :count="itemsCount"
           :filter-options="filters"
           :initial-filter="filterState"
+          :sql-mode="true"
           add-filter-label="team.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
@@ -41,7 +42,7 @@
       </template>
 
       <template #[`item.${customColumns.type}`]="{ item }">
-        <span data-test="team_type"> {{ $m(item.metadata.teamTypeName) }}</span>
+        <span data-test="team_type">{{ $t(`enums.TeamType.${TeamType[item.entity.teamType]}`) }}</span>
       </template>
 
       <template #[`item.${customColumns.teamMemberCount}`]="{ item }">
@@ -49,18 +50,17 @@
       </template>
 
       <template #[`item.${customColumns.eventCount}`]="{ item }">
-        <span data-test="team_events">{{ item.metadata.eventCount }}</span>
+        <span data-test="team_events">{{ item.entity.eventIds.length }}</span>
       </template>
 
       <template #[`item.${customColumns.primaryContact}`]="{ item }">
-        <span data-test="team_primary_contact">{{ item.metadata.primaryContactDisplayName }}</span>
+        <span data-test="team_primary_contact">{{ getPrimaryName(item.entity) }}</span>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
         <status-chip
           v-if="item.entity.status"
           data-test="team_status"
-          :text="$m(item.metadata.teamStatusName)"
           :status="item.entity.status"
           status-name="Status" />
       </template>
@@ -78,6 +78,7 @@
 
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
+import _throttle from 'lodash/throttle';
 import {
   RcDataTable, RcAddButtonWithMenu,
 } from '@libs/component-lib/components';
@@ -86,7 +87,7 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTy
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import {
-  TeamType, ITeamCombined, ITeamEntity, IdParams, ITeamMetadata,
+  TeamType, ITeamCombined, ITeamEntity, IdParams,
 } from '@libs/entities-lib/team';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -96,8 +97,9 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'TeamsTable',
@@ -136,7 +138,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
+      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, null, IdParams>(useTeamStore()),
+      sqlSearchMode: true,
     };
   },
 
@@ -158,11 +161,11 @@ export default mixins(TablePaginationSearchMixin).extend({
     customColumns(): Record<string, string> {
       return {
         name: 'Entity/Name',
-        type: `Metadata/TeamTypeName/Translation/${this.$i18n.locale}`,
+        type: `Metadata/TeamType/Translation/${this.$i18n.locale}`,
         eventCount: 'Metadata/EventCount',
         primaryContact: 'Metadata/PrimaryContactDisplayName',
         teamMemberCount: 'Metadata/TeamMemberCount',
-        status: `Metadata/TeamStatusName/Translation/${this.$i18n.locale}`,
+        status: `Metadata/TeamStatus/Translation/${this.$i18n.locale}`,
         edit: 'edit',
       };
     },
@@ -247,13 +250,13 @@ export default mixins(TablePaginationSearchMixin).extend({
           key: 'Entity/TeamType',
           type: EFilterType.Select,
           label: this.$t('teams.team_type') as string,
-          items: helpers.enumToTranslatedCollection(TeamType, 'enums.teamType'),
+          items: helpers.getEnumKeysAndText(TeamType, 'enums.teamType'),
         },
         {
           key: 'Entity/Status',
           type: EFilterType.Select,
           label: this.$t('teams.status') as string,
-          items: helpers.enumToTranslatedCollection(Status, 'enums.teamStatus'),
+          items: helpers.getEnumKeysAndText(Status, 'enums.teamStatus'),
         },
       ];
     },
@@ -263,8 +266,21 @@ export default mixins(TablePaginationSearchMixin).extend({
     this.saveState = true;
     this.loadState();
   },
+  watch: {
+    tableData() {
+      this.fetchPrimaryUsers();
+    },
+  },
 
   methods: {
+    fetchPrimaryUsers: _throttle(async function func(this: { tableData: ITeamCombined[] }) {
+      useUserAccountStore().fetchByIds(this.tableData.map((x) => x.entity.teamMembers.find((t) => t.isPrimaryContact)?.id), true);
+    }, 100),
+
+    getPrimaryName(item: ITeamEntity) {
+      return useUserAccountStore().getById(item.teamMembers.find((t) => t.isPrimaryContact)?.id)?.displayName;
+    },
+
     goToCreateTeam(item: Record<string, string>) {
       const teamType = item.value;
       this.$router.push({ name: routes.teams.create.name, params: { teamType } });
@@ -277,7 +293,6 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchData(params: IAzureSearchParams) {
       const res = await this.combinedTeamStore.search({
-        search: params.search,
         filter: params.filter,
         top: params.top,
         skip: params.skip,
@@ -285,7 +300,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true);
+      }, null, true, true, { manageableTeamsOnly: true });
       return res;
     },
 

@@ -1,19 +1,21 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import {
-  mockTeamEntity, mockTeamEvents, mockTeamsDataAddHoc, mockTeamsDataStandard, mockTeamsMetadataStandard,
+  mockTeamEntity, mockTeamsDataAddHoc, mockTeamsDataStandard,
 } from '@libs/entities-lib/team';
 import { RcPageContent } from '@libs/component-lib/components';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 
 import Component from './TeamDetails.vue';
 
 const localVue = createLocalVue();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
-const { teamStore, teamMetadataStore } = useMockTeamStore(pinia);
+const { teamStore } = useMockTeamStore(pinia);
+const eventStore = useMockEventStore(pinia).eventStore;
 
 describe('TeamDetails.vue', () => {
   let wrapper;
@@ -60,11 +62,10 @@ describe('TeamDetails.vue', () => {
           },
         });
         teamStore.getById = jest.fn(() => mockTeamEntity());
-        teamMetadataStore.getById = jest.fn(() => mockTeamsMetadataStandard());
       });
 
       test('Team type', () => {
-        expect(wrapper.findDataTest('team_type').text()).toBe('Standard');
+        expect(wrapper.findDataTest('team_type').text()).toBe('enums.TeamType.Standard');
       });
 
       test('Team Member Count', () => {
@@ -76,7 +77,7 @@ describe('TeamDetails.vue', () => {
       });
 
       test('Team events', () => {
-        expect(wrapper.findDataTest('team_events').text()).toBe('Event 1, Event 2');
+        expect(wrapper.findDataTest('team_events').text()).toBe('Gatineau Floods 2021, Vegas Earthquake 2021');
       });
     });
 
@@ -147,20 +148,19 @@ describe('TeamDetails.vue', () => {
       await mountWrapper(false, 5, {
         computed: {
           team: () => mockTeamEntity(),
-          teamMetadata: () => mockTeamsMetadataStandard(),
         },
       });
     });
 
     describe('loadTeam', () => {
-      it('should calls getTeam actions', async () => {
+      it('should calls getTeam actions and the events', async () => {
         await wrapper.vm.loadTeam();
         expect(teamStore.fetch).toHaveBeenLastCalledWith('id');
-        expect(teamMetadataStore.fetch).toHaveBeenLastCalledWith('id', false);
+        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['id-1'], true);
       });
 
       it('should fetch userAccount metadata with correct Id', async () => {
-        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('guid-member-1', false);
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('guid-member-1', 'Disabled');
       });
     });
 
@@ -183,16 +183,11 @@ describe('TeamDetails.vue', () => {
       });
     });
 
-    describe('buildEventsString', () => {
-      it('should generate empty string if array is empty', () => {
-        const res = wrapper.vm.buildEventsString([]);
-        expect(res).toBe('');
-      });
-
-      it('should generate the correct string', () => {
-        const events = mockTeamEvents();
-        const res = wrapper.vm.buildEventsString(events);
-        expect(res).toBe('Event 1, Event 2');
+    describe('getEventNames', () => {
+      it('should call the store and return the names', () => {
+        const res = wrapper.vm.getEventNames({ eventIds: ['abc'] });
+        expect(eventStore.getByIds).toHaveBeenCalledWith(['abc'], false);
+        expect(res).toBe('Gatineau Floods 2021, Vegas Earthquake 2021');
       });
     });
   });
@@ -209,20 +204,6 @@ describe('TeamDetails.vue', () => {
           id: 'guid-team-1',
         });
         expect(wrapper.vm.team).toEqual(mockTeamEntity({ id: 'guid-team-1' }));
-      });
-    });
-
-    describe('teamMetadata', () => {
-      it('should be linked to team getters teamMetadata', async () => {
-        await mountWrapper(false, 5, {
-          computed: {
-            teamMetadata: () => mockTeamsMetadataStandard(),
-          },
-        });
-        await wrapper.setProps({
-          id: 'guid-team-1',
-        });
-        expect(wrapper.vm.teamMetadata).toEqual(mockTeamsMetadataStandard({ id: 'guid-team-1' }));
       });
     });
 

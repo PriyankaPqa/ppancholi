@@ -74,34 +74,45 @@ describe('>>> Teams Service', () => {
   });
 
   describe('getTeamsByEvent', () => {
-    it('should link to correct URL with empty string when there is no params', async () => {
+    it('should link to correct URL when there is no params', async () => {
       await service.getTeamsByEvent('1234');
-      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: '', includeInactive: false } });
+      expect(http.get).toHaveBeenCalledWith(
+        'team/search/teamsV2?manageableTeamsOnly=false',
+        { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } }, 'Entity/Status': 'Active' } }, isODataSql: true },
+      );
     });
 
-    it('should link to correct URL with empty string when include inactive', async () => {
+    it('should link to correct URL when include inactive', async () => {
       await service.getTeamsByEvent('1234', '', true);
-      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: '', includeInactive: true } });
+      expect(http.get).toHaveBeenCalledWith(
+        'team/search/teamsV2?manageableTeamsOnly=false',
+        { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } } } }, isODataSql: true },
+      );
     });
 
-    it('should link to correct URL with string or teamIds when there is params', async () => {
+    it('should link to correct URL with teamIds', async () => {
       await service.getTeamsByEvent('1234', 'mock-team-id-1, mock-team-id-2');
-      expect(http.get).toHaveBeenCalledWith('team/teams/teams-by-event/1234/', { params: { teamIds: 'mock-team-id-1, mock-team-id-2', includeInactive: false } });
+      expect(http.get).toHaveBeenCalledWith(
+        'team/search/teamsV2?manageableTeamsOnly=false',
+        {
+          params: {
+            filter: {
+              Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } },
+              'Entity/Status': 'Active',
+              'Entity/Id': { in: 'mock-team-id-1, mock-team-id-2' },
+            },
+          },
+          isODataSql: true,
+        },
+      );
     });
   });
 
   describe('search', () => {
-    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`team/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+    it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('team/search/teams', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('team/search/teamsV2?manageableTeamsOnly=false', { params, isODataSql: true });
     });
   });
 });

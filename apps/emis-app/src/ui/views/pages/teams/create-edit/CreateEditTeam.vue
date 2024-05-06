@@ -198,7 +198,7 @@ import {
 import _isEqual from 'lodash/isEqual';
 import _sortBy from 'lodash/sortBy';
 import {
-  TeamType, ITeamEvent, TeamEntity, ITeamEntity,
+  TeamType, TeamEntity, ITeamEntity,
 } from '@libs/entities-lib/team';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
@@ -217,7 +217,7 @@ import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useEventStore } from '@/pinia/event/event';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
@@ -273,9 +273,8 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       minimumContactQueryLength: 1,
       eventsAfterRemoval: null as string[],
       team: null as ITeamEntity,
-      currentEvents: [] as ITeamEvent[],
       isLoading: true,
-      availableEvents: [] as ITeamEvent[],
+      availableEvents: [] as IEventEntity[],
       original: {
         name: null as string,
         status: null as Status,
@@ -299,7 +298,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     deleteEventConfirmationMessage(): TranslateResult {
       if (this.eventsAfterRemoval) {
         const removedEvent = _difference(this.team.eventIds, this.eventsAfterRemoval);
-        const name = this.$m((this.availableEvents.find((e: ITeamEvent) => e.id === removedEvent[0]))?.name);
+        const name = this.$m((this.availableEvents.find((e) => e.id === removedEvent[0]))?.name);
         return this.$t('team.event.confirmDeleteDialog.message', { name });
       }
       return '';
@@ -380,7 +379,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     } else {
       await this.loadTeam();
     }
-    this.getAvailableEvents();
+    await this.getAvailableEvents();
     this.setOriginalData();
     this.isLoading = false;
   },
@@ -397,29 +396,15 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       });
     },
 
-    getAvailableEvents() {
-      let availableEvents = this.currentEvents ?? [];
-      const allEvents = useEventStore().getAll().map((e: IEventEntity) => e);
-      const eventsByStatus = useEventStore().getEventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
-
-      if (eventsByStatus) {
-        const activeEvents: ITeamEvent[] = eventsByStatus.map((e: IEventEntity) => ({
-          id: e.id,
-          name: e.name,
-        }));
-
-        let existingInactiveEvents = [] as ITeamEvent[];
-
-        if (this.isEditMode) {
-          const selectedEvents = allEvents.filter((e) => this.team.eventIds.indexOf(e.id) > -1);
-          existingInactiveEvents = selectedEvents.filter((ev: ITeamEvent) => !activeEvents.find((e) => e.id === ev.id));
-        }
-        availableEvents = availableEvents.concat([...existingInactiveEvents, ...activeEvents]);
-      }
-      this.availableEvents = availableEvents;
+    async getAvailableEvents() {
+      await useEventStore().fetchByIds(this.team?.eventIds, true);
+      const allEvents = useEventStore().getAll();
+      const activeEvents = useEventStore().getEventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
+      const availableEvents = allEvents.filter((e) => this.team.eventIds.indexOf(e.id) > -1);
+      this.availableEvents = availableEvents.concat(activeEvents);
     },
 
-    handleRemoveEvent(leftEvents: (ITeamEvent | string)[]) {
+    handleRemoveEvent(leftEvents: (IEventEntity | string)[]) {
       this.eventsAfterRemoval = leftEvents.map((x) => (typeof x === 'string' ? x : x.id));
       this.showEventDeleteConfirmationDialog = true;
     },
@@ -438,7 +423,6 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       const teamId = this.id;
       if (teamId) {
         await useTeamStore().fetch(teamId);
-        await useTeamMetadataStore().fetch(teamId);
         await this.loadTeamFromState();
       }
     },
@@ -455,9 +439,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       }
 
       const storeTeam = _cloneDeep(useTeamStore().getById(this.id));
-      const storeTeamMetadata = _cloneDeep(useTeamMetadataStore().getById(this.id));
       this.team = new TeamEntity(storeTeam);
-      this.currentEvents = storeTeamMetadata?.events;
       if (this.team.getPrimaryContact()) {
         const primaryContactUser = await this.fetchUsersByIds([this.team.getPrimaryContact().id]);
         if (primaryContactUser?.length) {
@@ -511,7 +493,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       }
     },
 
-    setEvents(events: (ITeamEvent | string) | (ITeamEvent | string)[]) {
+    setEvents(events: (IEventEntity | string) | (IEventEntity | string)[]) {
       if (!events) {
         this.team.setEventIds([]);
         return;

@@ -1,4 +1,3 @@
-import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 import { IUserAccountCombined } from '../user-account';
 
@@ -14,11 +13,6 @@ export enum TeamType {
 /**
  * Interfaces
  */
-
-export interface ITeamEvent {
-  id: uuid;
-  name?: IMultilingual;
-}
 
 export interface ITeamMember {
   id: uuid;
@@ -48,15 +42,6 @@ export interface ITeamEntity extends IEntity {
   setEventIds?(eventIds: uuid | uuid[]): void;
 }
 
-export interface ITeamMetadata extends IEntity {
-  primaryContactDisplayName: string;
-  eventCount: number;
-  teamMemberCount: number;
-  events?: Array<ITeamEvent>;
-  teamTypeName: IMultilingual;
-  teamStatusName: IMultilingual;
-}
-
-export type ITeamCombined = IEntityCombined<ITeamEntity, ITeamMetadata>;
+export type ITeamCombined = IEntityCombined<ITeamEntity, IEntity>;
 
 export type IdParams = uuid;

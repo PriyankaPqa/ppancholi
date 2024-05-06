@@ -73,9 +73,7 @@ import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { ITaskEntity, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ValidationProvider } from 'vee-validate';
 import { VForm } from '@libs/shared-lib/types';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { IdParams, ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { ITeamEntity } from '@libs/entities-lib/team';
 import { TranslateResult } from 'vue-i18n';
 import { useTaskStore } from '@/pinia/task/task';
 
@@ -116,7 +114,6 @@ export default Vue.extend({
     return {
       rationale: '',
       actionTaken: null as TaskActionTaken,
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
       teamsOfEvent: [] as ITeamEntity[],
       assignedTeamId: '',
       submitLoading: false,

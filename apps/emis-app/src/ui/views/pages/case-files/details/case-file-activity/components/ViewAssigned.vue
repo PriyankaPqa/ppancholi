@@ -29,12 +29,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
-import { IdParams, ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
+import { ITeamEntity } from '@libs/entities-lib/team';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { IUserAccountEntity, IUserAccountMetadata, IdParams as IdParamsUserAccount } from '@libs/entities-lib/user-account';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useTeamStore } from '@/pinia/team/team';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import AssignedList, { IIndividual } from './AssignedList.vue';
 
@@ -64,7 +64,6 @@ export default Vue.extend({
       allAssignedTeams: [] as ITeamEntity[],
       loading: false,
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
 
@@ -102,14 +101,6 @@ export default Vue.extend({
         ids,
         searchInFilter: 'Id in ({ids})',
         otherApiParameters: [null, false, true],
-      });
-    },
-
-    async fetchTeams(ids: string[]): Promise<void> {
-      await helpers.callSearchInInBatches({
-        service: this.combinedTeamStore,
-        searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
-        ids,
       });
     },
 

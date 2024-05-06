@@ -1,7 +1,7 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import { defineStore } from 'pinia';
-import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@libs/stores-lib/base';
-import { mockTeamEntities, mockTeamMetadatum } from '@libs/entities-lib/team';
+import { getMockEntityStoreComponents } from '@libs/stores-lib/base';
+import { mockTeamEntities } from '@libs/entities-lib/team';
 import { getMockExtensionComponents } from '@/pinia/team/team-extension.mock';
 
 // Should be the same as the original store
@@ -15,13 +15,8 @@ export const useMockTeamStore = (pinia?: TestingPinia) => {
     ...getMockExtensionComponents(),
   }));
 
-  const useTeamMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-    ...getMockBaseStoreComponents(mockTeamMetadatum()),
-  }));
-
   return {
     pinia: p,
     teamStore: useTeamStore(),
-    teamMetadataStore: useTeamMetadataStore(),
   };
 };

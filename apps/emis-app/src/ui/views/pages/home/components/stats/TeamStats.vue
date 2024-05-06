@@ -59,9 +59,10 @@
 import Vue from 'vue';
 import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
-import { IdParams, ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { IdParams, ITeamEntity } from '@libs/entities-lib/team';
+import { useTeamStore } from '@/pinia/team/team';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 const defaultTeamStats = {
   countTeamMembers: 0,
@@ -88,7 +89,7 @@ export default Vue.extend({
       statsLoaded: false,
       loadingStats: false,
       statTeam: [],
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
+      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, null, IdParams>(useTeamStore()),
     };
   },
   computed: {
@@ -109,9 +110,9 @@ export default Vue.extend({
       this.statsLoaded = false;
       this.teamStats = defaultTeamStats;
       const eventTeams = await this.combinedTeamStore.search({
-        filter: { Metadata: { Events: { any: { Id: this.selectedEventId } } } },
+        filter: { Entity: { Events: { any: { Id: { value: this.selectedEventId, type: EFilterKeyType.Guid } } } } },
         orderBy: 'Entity/Name asc',
-      });
+      }, null, false, true, { manageableTeamsOnly: true });
       if (eventTeams) {
         this.statTeam = useTeamStore().getByIds(eventTeams.ids);
       }

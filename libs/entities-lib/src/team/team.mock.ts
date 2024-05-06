@@ -1,11 +1,12 @@
 /* eslint-disable max-lines-per-function */
 import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { IEventEntity } from '../event';
 import { IEntity, mockBaseData, Status } from '../base';
 import {
-  ITeamEntity, ITeamMetadata, ITeamEvent, ITeamMember, TeamType, ITeamCombined,
+  ITeamEntity, ITeamMember, TeamType, ITeamCombined,
 } from './team.types';
 
-export const mockTeamEvents = (): ITeamEvent[] => [
+export const mockTeamEvents = (): IEventEntity[] => [
   {
     id: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
     name: {
@@ -24,7 +25,7 @@ export const mockTeamEvents = (): ITeamEvent[] => [
       },
     },
   },
-];
+] as any[];
 
 // Data received from user-account projection
 export const mockTeamMembersData = (): ITeamMember[] => [
@@ -51,31 +52,6 @@ export const mockTeamsDataStandard = (force? : Partial<IEntity>): ITeamEntity =>
   ...force,
 });
 
-export const mockTeamsMetadataStandard = (force? : Partial<ITeamMetadata>): ITeamMetadata => ({
-  ...mockBaseData(),
-  id: 'guid-team-1',
-  primaryContactDisplayName: 'Some Person',
-  eventCount: 2,
-  teamMemberCount: 1,
-  events: [
-    {
-      id: '1',
-      name: {
-        translation: { en: 'Event 1', fr: 'Événement 1' },
-      },
-    },
-    {
-      id: '2',
-      name: {
-        translation: { en: 'Event 2', fr: 'Événement 2' },
-      },
-    },
-  ],
-  teamTypeName: { translation: { en: 'Standard', fr: 'FR-Standard' } },
-  teamStatusName: { translation: { en: 'Active', fr: 'Actif' } },
-  ...force,
-});
-
 export const mockTeamsDataAddHoc = (force? : Partial<IEntity>): ITeamEntity => ({
   ...mockBaseData(),
   id: 'guid-team-2',
@@ -89,25 +65,6 @@ export const mockTeamsDataAddHoc = (force? : Partial<IEntity>): ITeamEntity => (
   ...force,
 });
 
-export const mockTeamsMetadataAddHoc = (force? : Partial<ITeamMetadata>): ITeamMetadata => ({
-  ...mockBaseData(),
-  id: 'guid-team-2',
-  primaryContactDisplayName: 'Some Person',
-  eventCount: 1,
-  teamMemberCount: 2,
-  events: [
-    {
-      id: '1',
-      name: {
-        translation: { en: 'Event 1', fr: 'Événement 1' },
-      },
-    },
-  ],
-  teamTypeName: { translation: { en: 'Standard', fr: 'FR-Standard' } },
-  teamStatusName: { translation: { en: 'Active', fr: 'Actif' } },
-  ...force,
-});
-
 export const mockTeamEntity = (force?: Partial<IEntity>) => mockTeamsDataStandard(force);
 
 export const mockTeamEntities = (force?: Partial<IEntity>) : ITeamEntity[] => ([
@@ -115,25 +72,20 @@ export const mockTeamEntities = (force?: Partial<IEntity>) : ITeamEntity[] => ([
   mockTeamsDataAddHoc(force),
 ]);
 
-export const mockTeamMetadatum = (force?: Partial<IEntity>) : ITeamMetadata[] => ([
-  mockTeamsMetadataAddHoc(force),
-  mockTeamsMetadataStandard(force),
-]);
-
 export const mockCombinedTeams = (): ITeamCombined[] => [
   {
     entity: mockTeamsDataStandard(),
-    metadata: mockTeamsMetadataStandard(),
+    metadata: null,
     pinned: false,
   },
   {
     entity: mockTeamsDataAddHoc(),
-    metadata: mockTeamsMetadataAddHoc(),
+    metadata: null,
     pinned: false,
   },
 ];
 
-export const mockTeamSearchData: IAzureCombinedSearchResult<ITeamEntity, ITeamMetadata> = {
+export const mockTeamSearchData: IAzureCombinedSearchResult<ITeamEntity, IEntity> = {
   odataContext: "https://emis-search-dev.search.windows.net/indexes('index-teams')/$metadata#docs(*)",
   odataCount: mockCombinedTeams().length,
   value: mockCombinedTeams().map((t) => ({

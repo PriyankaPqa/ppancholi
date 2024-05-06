@@ -66,6 +66,22 @@ describe('>>>> helpers', () => {
     });
   });
 
+  describe('getEnumKeysAndText', () => {
+    it('should return display and enum keys of the enum in an array', () => {
+      enum Test {
+        A = 0,
+        Z = 1,
+        B = 3,
+      }
+      const res = helpers.getEnumKeysAndText(Test, 'somekeyprefix');
+      expect(res).toEqual([
+        { value: 'A', text: 'somekeyprefix.A', dataTest: 'A' },
+        { value: 'B', text: 'somekeyprefix.B', dataTest: 'B' },
+        { value: 'Z', text: 'somekeyprefix.Z', dataTest: 'Z' },
+      ]);
+    });
+  });
+
   describe('getEnumValues', () => {
     it('should return values of the enum in an array', () => {
       enum Test {

@@ -13,7 +13,7 @@ import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetadataStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
@@ -283,12 +283,6 @@ describe('signalR', () => {
           domain: 'team',
           entityName: 'Team',
           action: useTeamStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'team',
-          entityName: 'TeamMetadata',
-          action: useTeamMetadataStore().setItemFromOutsideNotification,
         });
     });
   });

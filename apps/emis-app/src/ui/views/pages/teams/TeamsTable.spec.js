@@ -222,11 +222,11 @@ describe('TeamsTable.vue', () => {
     test('customColumns', () => {
       expect(wrapper.vm.customColumns).toEqual({
         name: 'Entity/Name',
-        type: 'Metadata/TeamTypeName/Translation/en',
+        type: 'Metadata/TeamType/Translation/en',
         eventCount: 'Metadata/EventCount',
         primaryContact: 'Metadata/PrimaryContactDisplayName',
         teamMemberCount: 'Metadata/TeamMemberCount',
-        status: 'Metadata/TeamStatusName/Translation/en',
+        status: 'Metadata/TeamStatus/Translation/en',
         edit: 'edit',
       });
     });
@@ -248,14 +248,13 @@ describe('TeamsTable.vue', () => {
 
     describe('fetchData', () => {
       const params = {
-        search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
+        filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
       };
 
       it('should call storage actions with proper parameters', async () => {
         wrapper.vm.combinedTeamStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
         expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({
-          search: 'query',
           searchMode: 'all',
           queryType: 'full',
           filter: params.filter,
@@ -263,7 +262,7 @@ describe('TeamsTable.vue', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-        }, null, true);
+        }, null, true, true, { manageableTeamsOnly: true });
       });
 
       it('returns the search results', async () => {

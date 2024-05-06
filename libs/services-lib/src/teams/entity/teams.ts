@@ -1,6 +1,8 @@
 import {
   ITeamEntity, ITeamMember,
 } from '@libs/entities-lib/team';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/src/types';
+import { IEntity } from '@libs/entities-lib/src/base';
 import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
@@ -44,7 +46,21 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
   }
 
   async getTeamsByEvent(eventId: uuid, teamIds = '', includeInactive = false): Promise<ITeamEntity[]> {
-    return this.http.get(`team/teams/teams-by-event/${eventId}/`, { params: { teamIds, includeInactive } });
+    const filter = { Entity: { Events: { any: { Id: { value: eventId, type: 'guid' } } } } } as any;
+    const params = { filter } as IAzureSearchParams;
+    if (!includeInactive) {
+      filter['Entity/Status'] = 'Active';
+    }
+    if (teamIds) {
+      filter['Entity/Id'] = { in: teamIds };
+    }
+    return (await this.search(params))?.value?.map((t) => t.entity);
+  }
+
+  // eslint-disable-next-line
+  async search(params: IAzureSearchParams & { manageableTeamsOnly?: boolean }, searchEndpoint: string = null, manageableTeamsOnly = false):
+    Promise<IAzureCombinedSearchResult<ITeamEntity, IEntity>> {
+    return this.http.get(`team/search/teamsV2?manageableTeamsOnly=${params.manageableTeamsOnly || manageableTeamsOnly}`, { params, isODataSql: true });
   }
 
   private teamToEditTeamRequestPayload(team: ITeamEntity) {

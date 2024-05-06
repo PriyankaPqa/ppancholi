@@ -109,19 +109,6 @@ describe('ViewAssigned.vue', () => {
       });
     });
 
-    describe('fetchTeams', () => {
-      it('should fetch teams by ids', async () => {
-        helpers.callSearchInInBatches = jest.fn();
-        const ids = ['1', '2'];
-        await wrapper.vm.fetchTeams(ids);
-        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
-          service: wrapper.vm.combinedTeamStore,
-          searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
-          ids,
-        });
-      });
-    });
-
     describe('setAssignedIndividuals', () => {
       it('build the proper object, attaching team info on each user', async () => {
         await wrapper.vm.setAssignedIndividuals();
