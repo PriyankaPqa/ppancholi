@@ -943,7 +943,7 @@ describe('TaskDetails.vue', () => {
         });
         await flushPromises();
         await wrapper.vm.getTeamsByEventAndStoreAssignedTeam();
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-id-1', '', true);
+        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-id-1', [], true);
         expect(wrapper.vm.teamsByEvent).toEqual([mockTeamEntity({ id: 'guid-team-1' })]);
         expect(wrapper.vm.assignedTeam).toEqual(mockTeamEntity({ id: 'guid-team-1' }));
       });

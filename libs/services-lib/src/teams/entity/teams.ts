@@ -45,13 +45,13 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     return this.http.patch(`/team/teams/${teamId}/empty-team`);
   }
 
-  async getTeamsByEvent(eventId: uuid, teamIds = '', includeInactive = false): Promise<ITeamEntity[]> {
+  async getTeamsByEvent(eventId: uuid, teamIds = [] as string[], includeInactive = false): Promise<ITeamEntity[]> {
     const filter = { Entity: { Events: { any: { Id: { value: eventId, type: 'guid' } } } } } as any;
     const params = { filter } as IAzureSearchParams;
     if (!includeInactive) {
       filter['Entity/Status'] = 'Active';
     }
-    if (teamIds) {
+    if (teamIds?.length) {
       filter['Entity/Id'] = { in: teamIds };
     }
     return (await this.search(params))?.value?.map((t) => t.entity);

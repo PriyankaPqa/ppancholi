@@ -364,7 +364,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
           this.localTask.assignedTeamId = this.assignedTeam?.id;
         }
       } else {
-        const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, this.task.assignedTeamId);
+        const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, [this.task.assignedTeamId]);
         if (res.length > 0) {
           this.assignedTeam = res[0];
           this.localTask.assignedTeamId = this.task.assignedTeamId;

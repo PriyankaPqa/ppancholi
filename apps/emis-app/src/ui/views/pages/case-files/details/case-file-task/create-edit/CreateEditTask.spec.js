@@ -348,7 +348,7 @@ describe('CreateEditTask.vue', () => {
           mockTeamEntity({ id: 'mock-team-id-2', name: 'mock-team-name-2', isEscalation: false }),
         ]);
         await wrapper.vm.fetchAssignedTeamAndSetTeamId();
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id', 'mock-team-id-2');
+        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id', ['mock-team-id-2']);
         expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-team-id-2');
         expect(wrapper.vm.assignedTeam).toEqual(mockTeamEntity({ id: 'mock-team-id-2', name: 'mock-team-name-2', isEscalation: false }));
       });

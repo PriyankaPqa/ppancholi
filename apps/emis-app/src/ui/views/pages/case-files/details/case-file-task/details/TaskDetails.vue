@@ -336,7 +336,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     },
 
     async getTeamsByEventAndStoreAssignedTeam() {
-      const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, '', true);
+      const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, [], true);
       if (res) {
         this.teamsByEvent = res;
         this.assignedTeam = res.filter((t) => t.id === this.task.assignedTeamId)[0];

@@ -13,7 +13,7 @@ export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid> {
   removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamEntity>;
   emptyTeam(teamId: uuid) : Promise<ITeamEntity>;
   getTeamsAssigned(caseFileId: uuid): Promise<ITeamEntity[]>;
-  getTeamsByEvent(eventId: uuid, teamIds?: string, includeInactive?: boolean): Promise<ITeamEntity[]>;
+  getTeamsByEvent(eventId: uuid, teamIds?: string[], includeInactive?: boolean): Promise<ITeamEntity[]>;
   search(params: IAzureSearchParams & { manageableTeamsOnly?: boolean },
     searchEndpoint?: string, manageableTeamsOnly?: boolean):Promise<IAzureCombinedSearchResult<ITeamEntity, IEntity>>;
 }
