@@ -131,6 +131,7 @@ describe('>>> Events Service', () => {
       selfRegistrationEnabled: false,
       assessmentsForL0usersEnabled: false,
       registrationsForL0usersEnabled: false,
+      appointmentBookingForL0usersEnabled: false,
       authenticationTier1disabled: false,
       authenticationTier2disabled: true,
     }, { globalHandler: GlobalHandler.Partial });
@@ -343,5 +344,10 @@ describe('>>> Events Service', () => {
   test('toggleRegistrationForL0Users is linked to the correct url', async () => {
     await service.toggleRegistrationForL0Users('ID', false);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/registrations-for-l0-users-enabled`, { registrationsForL0UsersEnabled: false });
+  });
+
+  test('toggleAppointmentBookingForL0Users is linked to the correct url', async () => {
+    await service.toggleAppointmentBookingForL0Users('ID', false);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/appointment-booking-for-l0-users-enabled`, { appointmentBookingForL0UsersEnabled: false });
   });
 });

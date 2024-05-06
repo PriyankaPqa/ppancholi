@@ -33,6 +33,7 @@ export function getMockExtensionComponents() {
     updateEvent: jest.fn(() => Promise.resolve(mockEventEntity())),
     toggleAssessmentsForL0Users: jest.fn(),
     toggleRegistrationForL0Users: jest.fn(),
+    toggleAppointmentBookingForL0Users: jest.fn(),
     updateEventConsent: jest.fn(),
   };
 }

@@ -221,10 +221,30 @@ describe('EventSummary.vue', () => {
           expect(toggleRegistration.exists()).toBeTruthy();
           expect(toggleAssessment.exists()).toBeTruthy();
         });
+
+        it('should display Appointment booking toggle when feature flag is on', () => {
+          doMount(getPiniaForUser(UserRoles.level6), {
+            showToggleForL0Access() {
+              return true;
+            },
+          }, [FeatureKeys.AppointmentBooking], false);
+          const toggle = wrapper.findDataTest('event-summary-toggle-appointment-booking');
+          expect(toggle.exists()).toBeTruthy();
+        });
+
+        it('shouldnot display Appointment booking toggle when feature flag is off', () => {
+          doMount(getPiniaForUser(UserRoles.level6), {
+            showToggleForL0Access() {
+              return true;
+            },
+          }, [], false);
+          const toggle = wrapper.findDataTest('event-summary-toggle-appointment-booking');
+          expect(toggle.exists()).toBeFalsy();
+        });
       });
 
       describe('event-summary-toggle-assessment', () => {
-        it('should call toggleAccessAssessment when changed', () => {
+        it('should call toggleAccessAssessment when changed ', () => {
           doMount(getPiniaForUser(UserRoles.level6), {
             showToggleForL0Access() {
               return true;
@@ -990,6 +1010,23 @@ describe('EventSummary.vue', () => {
         await wrapper.vm.toggleAccessAssessment(false);
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.accessAssessmentDisabled');
+      });
+    });
+
+    describe('toggleAppointmentBooking', () => {
+      it('calls the event store action toggleAppointmentBookingForL0Users', async () => {
+        await wrapper.vm.toggleAppointmentBooking(true);
+        expect(eventStore.toggleAppointmentBookingForL0Users).toHaveBeenCalledWith({
+          id: wrapper.vm.event.id,
+          appointmentBookingForL0usersEnabled: true,
+        });
+      });
+      it('shows a toast notification when toggleAccessAssessment completes successfully', async () => {
+        eventStore.toggleAppointmentBookingForL0Users = jest.fn(() => true);
+        await wrapper.vm.toggleAppointmentBooking(true);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.appointmentBookingEnabled');
+        await wrapper.vm.toggleAppointmentBooking(false);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.appointmentBookingDisabled');
       });
     });
   });

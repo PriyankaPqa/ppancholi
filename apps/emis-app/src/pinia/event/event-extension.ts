@@ -202,6 +202,15 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function toggleAppointmentBookingForL0Users(payload: { id: uuid, appointmentBookingForL0usersEnabled: boolean }): Promise<IEventEntity> {
+    const data = await entityService.toggleAppointmentBookingForL0Users(payload.id, payload.appointmentBookingForL0usersEnabled);
+    if (data) {
+      baseComponents.set(data);
+      return data;
+    }
+    return null;
+  }
+
   return {
     eventsFetched,
     agreementTypes,
@@ -230,5 +239,6 @@ export function getExtensionComponents(
     updateEvent,
     toggleAssessmentsForL0Users,
     toggleRegistrationForL0Users,
+    toggleAppointmentBookingForL0Users,
   };
 }

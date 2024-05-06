@@ -14,6 +14,7 @@ export const mockEventsService = (): IEventsServiceMock => ({
   toggleSelfRegistration: jest.fn(() => mockEventEntity()),
   toggleAssessmentsForL0Users: jest.fn(() => mockEventEntity()),
   toggleRegistrationForL0Users: jest.fn(() => mockEventEntity()),
+  toggleAppointmentBookingForL0Users: jest.fn(() => mockEventEntity()),
   getOtherProvinces: jest.fn(() => mockOtherProvinceData()),
   getRegions: jest.fn(() => mockRegionData()),
   setEventStatus: jest.fn(() => mockEventEntity()),

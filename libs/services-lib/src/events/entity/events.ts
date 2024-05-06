@@ -172,6 +172,10 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     return this.http.patch(`${this.baseUrl}/${id}/registrations-for-l0-users-enabled`, { registrationsForL0UsersEnabled });
   }
 
+  async toggleAppointmentBookingForL0Users(id: uuid, appointmentBookingForL0UsersEnabled: boolean): Promise<IEventEntity> {
+    return this.http.patch(`${this.baseUrl}/${id}/appointment-booking-for-l0-users-enabled`, { appointmentBookingForL0UsersEnabled });
+  }
+
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {
     const payload: ICreateEventRequest = {
       assistanceNumber: event.responseDetails.assistanceNumber,
@@ -206,6 +210,7 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
       selfRegistrationEnabled: event.selfRegistrationEnabled,
       assessmentsForL0usersEnabled: event.assessmentsForL0usersEnabled,
       registrationsForL0usersEnabled: event.registrationsForL0usersEnabled,
+      appointmentBookingForL0usersEnabled: event.appointmentBookingForL0usersEnabled,
     };
   }
 

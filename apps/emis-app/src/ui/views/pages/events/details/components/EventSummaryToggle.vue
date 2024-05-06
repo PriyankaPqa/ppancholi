@@ -19,6 +19,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'EventSummaryToggle',
 
@@ -30,7 +31,7 @@ export default {
     },
 
     titleOfToggle: {
-      type: String,
+      type: [String, Object],
       default: '',
       require: true,
     },

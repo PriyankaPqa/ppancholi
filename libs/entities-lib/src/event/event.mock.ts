@@ -123,6 +123,7 @@ export const mockEventEntityData = (): IEventEntity[] => [
     selfRegistrationEnabled: false,
     assessmentsForL0usersEnabled: false,
     registrationsForL0usersEnabled: false,
+    appointmentBookingForL0usersEnabled: false,
     registrationLink: {
       translation: {
         en: 'https://www.redcross.ca/gatineau-floods-2021',
@@ -486,6 +487,7 @@ export const mockEventEntityData = (): IEventEntity[] => [
     selfRegistrationEnabled: false,
     assessmentsForL0usersEnabled: false,
     registrationsForL0usersEnabled: false,
+    appointmentBookingForL0usersEnabled: false,
     shelterLocations: [
       {
         id: 'shelter-id-1',
@@ -580,6 +582,7 @@ const getEventEntity = (index = 0) : IEventEntity => ({
   selfRegistrationEnabled: mockEventEntityData()[index].selfRegistrationEnabled,
   assessmentsForL0usersEnabled: mockEventEntityData()[index].assessmentsForL0usersEnabled,
   registrationsForL0usersEnabled: mockEventEntityData()[index].registrationsForL0usersEnabled,
+  appointmentBookingForL0usersEnabled: mockEventEntityData()[index].appointmentBookingForL0usersEnabled,
   consentStatementId: mockEventEntityData()[index].consentStatementId,
   eventStatus: mockEventEntityData()[index].eventStatus,
   name: mockEventEntityData()[index].name,
@@ -670,6 +673,7 @@ export const mockEmptyEntity = (force?: Partial<IEventEntity>) : IEventEntity =>
     selfRegistrationEnabled: false,
     assessmentsForL0usersEnabled: false,
     registrationsForL0usersEnabled: false,
+    appointmentBookingForL0usersEnabled: false,
     shelterLocations: [],
     eventStatus: null,
     relatedEventIds: [],

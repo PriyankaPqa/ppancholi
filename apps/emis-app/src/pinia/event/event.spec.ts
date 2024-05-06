@@ -504,6 +504,25 @@ describe('>>> Event Store', () => {
     });
   });
 
+  describe('toggleAppointmentBookingForL0Users', () => {
+    it('calls the toggleAppointmentBookingForL0Users service', async () => {
+          const event = mockEventEntity();
+          const bComponents = { ...baseComponents, set: jest.fn() };
+          const store = createTestStore(bComponents);
+          const payload = {
+            id: event.id,
+            appointmentBookingForL0usersEnabled: true,
+          };
+          expect(entityService.toggleAppointmentBookingForL0Users).toHaveBeenCalledTimes(0);
+
+          const res = await store.toggleAppointmentBookingForL0Users(payload);
+
+          expect(entityService.toggleAppointmentBookingForL0Users).toHaveBeenCalledTimes(1);
+          expect(entityService.toggleAppointmentBookingForL0Users).toHaveBeenCalledWith(event.id, true);
+          expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
+
   describe('updateExceptionalAuthenticationType', () => {
     it('calls the updateExceptionalAuthenticationType service', async () => {
       const bComponents = { ...baseComponents, set: jest.fn() };

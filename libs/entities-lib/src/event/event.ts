@@ -58,6 +58,8 @@ export class EventEntity extends BaseEntity {
 
   registrationsForL0usersEnabled: boolean;
 
+  appointmentBookingForL0usersEnabled: boolean;
+
   consentStatementId?: uuid;
 
   authenticationTier1disabled?: boolean;
@@ -103,6 +105,7 @@ export class EventEntity extends BaseEntity {
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.assessmentsForL0usersEnabled = data.assessmentsForL0usersEnabled;
       this.registrationsForL0usersEnabled = data.registrationsForL0usersEnabled;
+      this.appointmentBookingForL0usersEnabled = data.appointmentBookingForL0usersEnabled || false;
       this.authenticationTier1disabled = data.authenticationTier1disabled;
       this.authenticationTier2disabled = data.authenticationTier2disabled;
       this.eventStatus = data.eventStatus;

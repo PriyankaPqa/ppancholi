@@ -224,6 +224,11 @@ describe('>>> EventEntity', () => {
     });
   });
 
+  it('should instantiate appointmentBookingForL0usersEnabled', () => {
+    const event = new EventEntity(mockEvent);
+    expect(event.appointmentBookingForL0usersEnabled).toEqual(mockEvent.appointmentBookingForL0usersEnabled);
+  });
+
   describe('>> computed getters', () => {
     describe('hasBeenOpen', () => {
       it('returns true if at least one item in scheduleHistory has Open status', () => {

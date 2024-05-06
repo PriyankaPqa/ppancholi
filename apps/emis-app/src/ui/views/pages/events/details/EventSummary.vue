@@ -89,6 +89,15 @@
             is-last-child
             data-test="event-summary-toggle-assessment"
             @toggleChanged="toggleAccessAssessment($event)" />
+
+          <event-summary-toggle
+            v-if="$hasFeature(FeatureKeys.AppointmentBooking)"
+            :toggle-value="event.appointmentBookingForL0usersEnabled"
+            :loading="updatingAppointmentBookingToggle"
+            :title-of-toggle="$t('eventSummary.enableAppointmentBooking')"
+            is-last-child
+            data-test="event-summary-toggle-appointment-booking"
+            @toggleChanged="toggleAppointmentBooking($event)" />
         </template>
       </event-summary-section-body>
 
@@ -251,6 +260,7 @@ export default Vue.extend({
       FeatureKeys,
       updatingAccessAssessmentToggle: false,
       updatingRegistrationToggle: false,
+      updatingAppointmentBookingToggle: false,
       UserRoles,
       exceptionalTypeCounts: null as ICaseFileCountByExceptionalAuthentication[],
     };
@@ -451,6 +461,25 @@ export default Vue.extend({
       }
 
       this.updatingRegistrationToggle = false;
+    },
+
+    async toggleAppointmentBooking(toggleChangedResult: boolean) {
+      this.updatingAppointmentBookingToggle = true;
+
+      const response = await useEventStore().toggleAppointmentBookingForL0Users({
+        id: this.event.id,
+        appointmentBookingForL0usersEnabled: toggleChangedResult,
+      });
+
+      if (response) {
+        if (toggleChangedResult) {
+          this.$toasted.global.success(this.$t('eventSummary.appointmentBookingEnabled'));
+        } else {
+          this.$toasted.global.success(this.$t('eventSummary.appointmentBookingDisabled'));
+        }
+      }
+
+      this.updatingAppointmentBookingToggle = false;
     },
   },
 });

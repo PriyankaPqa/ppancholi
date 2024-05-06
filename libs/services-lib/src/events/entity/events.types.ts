@@ -59,6 +59,8 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
 
   toggleRegistrationForL0Users(id: uuid, registrationsForL0UsersEnabled: boolean): Promise<IEventEntity>;
 
+  toggleAppointmentBookingForL0Users(id: uuid, appointmentBookingForL0UsersEnabled: boolean): Promise<IEventEntity>;
+
   editEventConsent(eventId:uuid, consentStatementId: uuid): Promise<IEventEntity>;
 }
 
@@ -86,5 +88,6 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   searchMyEventsById: jest.Mock<IAzureSearchResult<IEventSummary>>;
   toggleAssessmentsForL0Users: jest.Mock<IEventEntity>;
   toggleRegistrationForL0Users: jest.Mock<IEventEntity>;
+  toggleAppointmentBookingForL0Users: jest.Mock<IEventEntity>;
   editEventConsent: jest.Mock<IEventEntity>;
 }

@@ -168,6 +168,7 @@ export interface IEditEventRequest extends ICreateEventRequest {
   selfRegistrationEnabled: boolean;
   assessmentsForL0usersEnabled: boolean;
   registrationsForL0usersEnabled: boolean;
+  appointmentBookingForL0usersEnabled: boolean;
 }
 
 export interface IEventExceptionalAuthenticationType { exceptionalAuthenticationTypeId: uuid, maxNumberOfUsages?: number }
@@ -194,6 +195,7 @@ export interface IEventEntity extends IEntity {
    agreements?: Array<IEventAgreement>;
    assessmentsForL0usersEnabled: boolean;
    registrationsForL0usersEnabled: boolean;
+   appointmentBookingForL0usersEnabled: boolean;
    consentStatementId?: uuid;
    authenticationTier1disabled?: boolean;
    authenticationTier2disabled?: boolean;
