@@ -105,7 +105,7 @@
                             icon
                             x-small
                             :data-test="`unselect_${user.id}`"
-                            :aria-label="$('common.delete')"
+                            :aria-label="$t('common.delete')"
                             @click="toggleUserSelection(user)"
                             v-on="on">
                             <v-icon>mdi-close</v-icon>
@@ -129,18 +129,15 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import _difference from 'lodash/difference';
+import _debounce from 'lodash/debounce';
 import { RcDialog, VSelectWithValidation, VDataTableA11y } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import _debounce from 'lodash/debounce';
 import { DataTableHeader } from 'vuetify';
 import { IOptionSubItem } from '@libs/entities-lib/optionItem';
-import { IRolesData, IUserProfileQueryResponse } from '@libs/entities-lib/user-account';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
-
-interface IAppUser extends IUserProfileQueryResponse {
-  role: IRolesData;
-}
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IAppUser, createUserAccount, getSubRoleById } from '../user-accounts/userAccountsHelpers';
 
 export default Vue.extend({
   name: 'AddEmisUser',
@@ -296,20 +293,19 @@ export default Vue.extend({
       if (this.isSubmitAllowed) {
         this.loading = true;
         this.selectedUsers.forEach(async (user) => {
-          // eslint-disable-next-line no-await-in-loop
-          await this.setUserRole(user);
+          if (this.$hasFeature(FeatureKeys.UseIdentityServer)) {
+            await createUserAccount(user, this.allSubRoles as IOptionSubItem[], useUserAccountStore().createUserAccount, this.$i18n, this.$toasted);
+          } else {
+            await this.setUserRole(user);
+          }
         });
         this.close();
         this.$emit('users-added');
       }
     },
 
-    getSubRoleById(roleId: string) {
-      return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
-    },
-
     async setUserRole(user: IAppUser) {
-      const subRole:IOptionSubItem = this.getSubRoleById(user.role.id);
+      const subRole:IOptionSubItem = getSubRoleById(user.role.id, this.allSubRoles as IOptionSubItem[]);
 
       if (subRole) {
         const payload = {

@@ -1,39 +1,16 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
-
 import { mockProvider } from '@/services/provider';
-import { mockServerError, mockHttpError } from '@libs/services-lib/src/http-client';
+import { createUserAccount } from '../user-accounts/userAccountsHelpers';
+
 import Component from './AddUserAccount.vue';
 
+jest.mock('../user-accounts/userAccountsHelpers');
+createUserAccount.mockImplementation(() => {});
 const { pinia, userAccountStore } = useMockUserAccountStore();
 const localVue = createLocalVue();
 const services = mockProvider();
-
-const mockSubRole = {
-  id: '123',
-  name: {
-    translation: {
-      en: 'case worker 2',
-      fr: 'case worker 2 fr',
-    },
-  },
-};
-
-const testUserData = {
-  entity: {
-    id: '1',
-    status: 1,
-  },
-  metadata: {
-    id: '1',
-    displayName: 'C',
-    givenName: 'Some Person',
-    surname: '',
-    emailAddress: 'fake@email.com',
-    phoneNumber: '123-456-7890',
-  },
-};
 
 const optionData = [
   {
@@ -182,83 +159,7 @@ describe('AddUserAccount.vue', () => {
         wrapper.vm.createUserAccount = jest.fn();
         await wrapper.vm.submit();
 
-        expect(wrapper.vm.createUserAccount).toHaveBeenCalled();
-      });
-
-      it('emits users-added on success', async () => {
-        const roleData = { value: optionData[0].id, text: optionData[0].name };
-        wrapper.vm.onRoleSelected(roleData);
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.createUserAccount = jest.fn(() => true);
-        await wrapper.vm.submit();
-        wrapper.vm.$nextTick();
-
-        expect(wrapper.emitted('users-added')).toBeTruthy();
-      });
-
-      it('does not emit users-added on failure', async () => {
-        const roleData = { value: optionData[0].id, text: optionData[0].name };
-        wrapper.vm.onRoleSelected(roleData);
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.createUserAccount = jest.fn(() => false);
-        await wrapper.vm.submit();
-        wrapper.vm.$nextTick();
-
-        expect(wrapper.emitted('users-added')).toBeFalsy();
-      });
-    });
-
-    describe('getSubRoleById', () => {
-      it('retrieves the correct sub-role from a user', async () => {
-        const user = testUserData;
-        user.roleId = wrapper.vm.allSubRoles[0].id;
-        expect(wrapper.vm.getSubRoleById(user.roleId)).toEqual(wrapper.vm.allSubRoles[0]);
-      });
-    });
-
-    describe('createUserAccount', () => {
-      it('should call services correctly', async () => {
-        const roleData = { value: optionData[0].id, text: optionData[0].name };
-        wrapper.vm.onRoleSelected(roleData);
-        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
-        userAccountStore.createUserAccount = jest.fn(() => testUserData);
-        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
-        await wrapper.vm.createUserAccount(wrapper.vm.user);
-
-        expect(userAccountStore.createUserAccount).toHaveBeenCalled();
-      });
-
-      it('opens the correct toast on success', async () => {
-        const roleData = { value: optionData[0].id, text: optionData[0].name };
-        wrapper.vm.onRoleSelected(roleData);
-        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
-        userAccountStore.createUserAccount = jest.fn(() => testUserData);
-        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
-        await wrapper.vm.createUserAccount(wrapper.vm.user);
-
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalled();
-      });
-
-      it('opens the correct toast on failure', async () => {
-        const roleData = { value: optionData[0].id, text: optionData[0].name };
-        wrapper.vm.onRoleSelected(roleData);
-        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        userAccountStore.createUserAccount = jest.fn(() => null);
-        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
-        await wrapper.vm.createUserAccount(wrapper.vm.user);
-
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalled();
-      });
-
-      it('opens the correct toast on exception', async () => {
-        const roleData = { value: optionData[0].id, text: optionData[0].name };
-        wrapper.vm.onRoleSelected(roleData);
-        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        userAccountStore.createUserAccount = jest.fn(() => Promise.reject(mockServerError([mockHttpError({ code: 'system_management.add_users.error' })])));
-        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
-        await wrapper.vm.createUserAccount(wrapper.vm.user);
-
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('system_management.add_users.error');
+        expect(createUserAccount).toHaveBeenCalled();
       });
     });
   });
