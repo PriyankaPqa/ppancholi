@@ -7,6 +7,8 @@ import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
 import { fixtureBaseMassAction, fixtureGenerateFaCsvFile, fixtureNewMassFinancialAssistance } from '../../../fixtures/mass-actions';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
+import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { IAddNewPaymentLineFields } from '../../../pages/financial-assistance-payment/addNewPaymentLine.page';
 
 export interface IMassActionFAUploadFilePassesPreProcessParams {
   caseFile: ICaseFileEntity;
@@ -25,6 +27,11 @@ export interface IMassActionFAUploadFilePassesProcessParams {
   retries: number;
   massFinancialAssistance: IMassActionEntity
   roleName: string;
+}
+
+export interface ManuallyCreateFaPaymentParams {
+  faTableName: string,
+  paymentLineData: IAddNewPaymentLineFields,
 }
 
 // eslint-disable-next-line max-statements
@@ -99,4 +106,37 @@ export const massActionFinancialAssistanceUploadFilePassesProcessCanSteps = (par
   massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', newMassFinancialAssistanceData.paymentModality.toLowerCase());
   massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', `$${newMassFinancialAssistanceData.paymentAmount}`);
   massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.enabled');
+};
+
+export const manuallyCreatePrepaidCardFaPaymentCanSteps = (params: ManuallyCreateFaPaymentParams) => {
+  const addFinancialAssistancePage = new AddFinancialAssistancePage();
+  addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
+  addFinancialAssistancePage.getCreateButton().should('be.disabled');
+  addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
+  addFinancialAssistancePage.selectTable(params.faTableName);
+  addFinancialAssistancePage.fillDescription('Financial Description Payment');
+  addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
+  addFinancialAssistancePage.getCreateButton().should('be.disabled');
+  addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
+
+  const addNewPaymentLinePage = addFinancialAssistancePage.goToAddNewPaymentLinePage();
+  addNewPaymentLinePage.fill(params.paymentLineData);
+  addNewPaymentLinePage.getAmountValue().should('eq', params.paymentLineData.amount);
+  addNewPaymentLinePage.addNewPaymentLine();
+
+  addFinancialAssistancePage.getPaymentLineGroupTitle().should('eq', 'Prepaid card');
+  addFinancialAssistancePage.getItemEditButton().should('be.visible');
+  addFinancialAssistancePage.getItemDeleteButton().should('be.visible');
+  addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
+  addFinancialAssistancePage.getSubmitAssistanceButton().should('be.disabled');
+  addFinancialAssistancePage.getCreateButton().click();
+
+  cy.contains('The financial assistance has been successfully created').should('be.visible');
+  addFinancialAssistancePage.getPaymentStatus().should('eq', 'New');
+  addFinancialAssistancePage.getPaymentEditButton().should('be.visible');
+  addFinancialAssistancePage.getPaymentDeleteButton().should('be.visible');
+  addFinancialAssistancePage.getPaymentLineItemTitle().should('eq', `${params.paymentLineData.item} > ${params.paymentLineData.subItem}`);
+  addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
+  addFinancialAssistancePage.getSubmitAssistanceButton().should('be.enabled');
+  addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
 };

@@ -12,7 +12,7 @@ import {
   updateAuthenticationOfIdentity,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { manuallyCreatePrepaidCardFaPaymentCanSteps } from './canStep';
 
 const canRoles = [
   UserRoles.level6,
@@ -84,40 +84,10 @@ describe('#TC1853# -Can create manual FA payment when Case File Authentication s
           });
         });
         it('should be able to manually create financial assistance payment when case file has authentication status check passes', function () {
-          const paymentLineData = fixturePrepaidCardPaymentLine();
-
-          const addFinancialAssistancePage = new AddFinancialAssistancePage();
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
-          addFinancialAssistancePage.getCreateButton().should('be.disabled');
-          addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
-          addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
-          addFinancialAssistancePage.fillDescription('Financial Description Payment');
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getCreateButton().should('be.disabled');
-          addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
-
-          const addNewPaymentLinePage = addFinancialAssistancePage.goToAddNewPaymentLinePage();
-          addNewPaymentLinePage.fill(paymentLineData);
-          addNewPaymentLinePage.getAmountValue().should('eq', paymentLineData.amount);
-          addNewPaymentLinePage.getRelatedNumberField().should('be.visible');
-          addNewPaymentLinePage.fillRelatedNumber(paymentLineData.relatedNumber);
-          addNewPaymentLinePage.addNewPaymentLine();
-
-          addFinancialAssistancePage.getPaymentLineGroupTitle().should('eq', 'Prepaid card');
-          addFinancialAssistancePage.getItemEditButton().should('be.visible');
-          addFinancialAssistancePage.getItemDeleteButton().should('be.visible');
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getSubmitAssistanceButton().should('not.be.enabled');
-          addFinancialAssistancePage.getCreateButton().click();
-
-          cy.contains('The financial assistance has been successfully created').should('be.visible');
-          addFinancialAssistancePage.getPaymentStatus().should('eq', 'New');
-          addFinancialAssistancePage.getPaymentEditButton().should('be.visible');
-          addFinancialAssistancePage.getPaymentDeleteButton().should('be.visible');
-          addFinancialAssistancePage.getPaymentLineItemTitle().should('eq', `${paymentLineData.item} > ${paymentLineData.subItem}`);
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getSubmitAssistanceButton().should('be.enabled');
-          addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
+          manuallyCreatePrepaidCardFaPaymentCanSteps({
+            faTableName: this.faTable.name.translation.en,
+            paymentLineData: fixturePrepaidCardPaymentLine(),
+          });
         });
       });
     }
