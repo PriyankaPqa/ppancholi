@@ -103,7 +103,7 @@ describe(
     describe('Cannot Roles', () => {
       before(() => {
         cy.then(async function () {
-          const resultHouseholdCreated = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+          const resultHouseholdCreated = await prepareStateHousehold(accessTokenL6, this.event);
           cy.wrap(resultHouseholdCreated.registrationResponse.caseFile.id).as('caseFileId');
         });
       });
