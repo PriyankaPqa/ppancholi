@@ -7,7 +7,8 @@ import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareSt
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
-import { fixtureDirectDepositPaymentLine } from '../../../fixtures/financial-assistance';
+import { fixturePrepaidCardPaymentLine } from '../../../fixtures/financial-assistance';
+import { manuallyCreatePrepaidCardFaPaymentCanSteps } from './canStep';
 
 const canRoles = [
   UserRoles.level6,
@@ -77,44 +78,17 @@ describe('#TC1854# - Can create manual FA payment when Validation of Impact stat
         });
 
         it('should be able to manually create financial assistance payment when case file validation of impact status is Impacted', function () {
-          const paymentLineData = fixtureDirectDepositPaymentLine();
-
           const caseFileDetailsPage = new CaseFileDetailsPage();
           caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-success');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
+          financialAssistanceHomePage.addNewFaPayment();
 
-          const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
-          addFinancialAssistancePage.getCreateButton().should('be.disabled');
-          addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
-          addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
-          addFinancialAssistancePage.fillDescription('Financial Description Payment');
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getCreateButton().should('be.disabled');
-          addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
-
-          const addNewPaymentLinePage = addFinancialAssistancePage.goToAddNewPaymentLinePage();
-          addNewPaymentLinePage.fill(paymentLineData);
-          addNewPaymentLinePage.getAmountValue().should('eq', paymentLineData.amount);
-          addNewPaymentLinePage.addNewPaymentLine();
-
-          addFinancialAssistancePage.getPaymentLineGroupTitle().should('eq', 'Direct deposit');
-          addFinancialAssistancePage.getItemEditButton().should('be.visible');
-          addFinancialAssistancePage.getItemDeleteButton().should('be.visible');
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getSubmitAssistanceButton().should('be.disabled');
-          addFinancialAssistancePage.getCreateButton().click();
-
-          cy.contains('The financial assistance has been successfully created').should('be.visible');
-          addFinancialAssistancePage.getPaymentStatus().should('eq', 'New');
-          addFinancialAssistancePage.getPaymentEditButton().should('be.visible');
-          addFinancialAssistancePage.getPaymentDeleteButton().should('be.visible');
-          addFinancialAssistancePage.getPaymentLineItemTitle().should('eq', `${paymentLineData.item} > ${paymentLineData.subItem}`);
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getSubmitAssistanceButton().should('be.enabled');
-          addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
+          manuallyCreatePrepaidCardFaPaymentCanSteps({
+            faTableName: this.faTable.name.translation.en,
+            paymentLineData: fixturePrepaidCardPaymentLine(),
+          });
         });
       });
     }
