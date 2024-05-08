@@ -141,6 +141,28 @@ describe('TeamDetails.vue', () => {
         expect(element.exists()).toBeFalsy();
       });
     });
+
+    describe('team_lodging', () => {
+      it('should be rendered if displayUseLodging is true', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayUseLodging: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('team_lodging');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered if displayUseLodging is false', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayUseLodging: () => false,
+          },
+        });
+        const element = wrapper.findDataTest('team_lodging');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -272,6 +294,38 @@ describe('TeamDetails.vue', () => {
         });
         expect(wrapper.vm.displayEscalationLabel).toBeFalsy();
       });
+    });
+  });
+
+  describe('displayUseLodging', () => {
+    it('should be true if has feature flag Lodging and useForLodging is true', async () => {
+      await mountWrapper(false, 5, {
+        featureList: [FeatureKeys.Lodging],
+        computed: {
+          team: () => mockTeamsDataAddHoc({ useForLodging: true }),
+        },
+      });
+      expect(wrapper.vm.displayUseLodging).toBeTruthy();
+    });
+
+    it('should be false if has no feature flag Lodging', async () => {
+      await mountWrapper(false, 5, {
+        featureList: [],
+        computed: {
+          team: () => mockTeamsDataAddHoc({ useForLodging: true }),
+        },
+      });
+      expect(wrapper.vm.displayUseLodging).toBeFalsy();
+    });
+
+    it('should be false if useForLodging is false', async () => {
+      await mountWrapper(false, 5, {
+        featureList: [FeatureKeys.TaskManagement],
+        computed: {
+          team: () => mockTeamsDataAddHoc({ useForLodging: false }),
+        },
+      });
+      expect(wrapper.vm.displayUseLodging).toBeFalsy();
     });
   });
 });

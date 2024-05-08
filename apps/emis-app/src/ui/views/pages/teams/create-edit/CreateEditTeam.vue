@@ -39,20 +39,31 @@
                   </validation-provider>
                 </div>
 
-                <div v-if="$hasFeature(FeatureKeys.TaskManagement)" class="mb-4">
-                  <v-checkbox-with-validation
-                    v-if="teamType === 'adhoc'"
-                    v-model="team.isEscalation"
-                    :label="$t('teams.set_escalation_team')"
-                    data-test="team-isEscalation-checkbox"
-                    :disabled="!$hasLevel(UserRoles.level5)" />
+                <div v-if="$hasFeature(FeatureKeys.TaskManagement) || $hasFeature(FeatureKeys.Lodging)" class="mb-4">
+                  <div v-if="$hasFeature(FeatureKeys.TaskManagement)">
+                    <v-checkbox-with-validation
+                      v-if="teamType === 'adhoc'"
+                      v-model="team.isEscalation"
+                      :label="$t('teams.set_escalation_team')"
+                      data-test="team-isEscalation-checkbox"
+                      :disabled="!$hasLevel(UserRoles.level5)" />
 
-                  <v-checkbox-with-validation
-                    v-model="team.isAssignable"
-                    :disabled="team.isEscalation || !$hasLevel(UserRoles.level5)"
-                    :label="$t('teams.set_assignable_team')"
-                    data-test="team-isAssignable-checkbox"
-                    class="is-assignable-checkbox" />
+                    <v-checkbox-with-validation
+                      v-model="team.isAssignable"
+                      :disabled="team.isEscalation || !$hasLevel(UserRoles.level5)"
+                      :label="$t('teams.set_assignable_team')"
+                      data-test="team-isAssignable-checkbox"
+                      class="is-assignable-checkbox" />
+                  </div>
+
+                  <div v-if="$hasFeature(FeatureKeys.Lodging)" class="mb-4">
+                    <v-checkbox-with-validation
+                      v-model="team.useForLodging"
+                      :disabled="!$hasLevel(UserRoles.level5)"
+                      :label="$t('teams.set_useForLodging')"
+                      data-test="team-useForLodging-checkbox"
+                      class="is-assignable-checkbox" />
+                  </div>
                 </div>
 
                 <v-row>
@@ -282,6 +293,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         primaryContact: null as string,
         isEscalation: null as boolean,
         isAssignable: null as boolean,
+        useForLodging: null as boolean,
       },
       showErrorDialog: false,
       errorMessage: '' as TranslateResult,
@@ -350,6 +362,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         primaryContact: (this.currentPrimaryContact || {}).email,
         isEscalation: this.team.isEscalation,
         isAssignable: this.team.isAssignable,
+        useForLodging: this.team.useForLodging,
       });
     },
 
@@ -393,6 +406,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         primaryContact: (this.currentPrimaryContact || {}).email,
         isEscalation: this.team.isEscalation,
         isAssignable: this.team.isAssignable,
+        useForLodging: this.team.useForLodging,
       });
     },
 
@@ -549,8 +563,13 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         this.setOriginalData();
       } catch (e) {
         const errorData = (e as IServerError).response?.data?.errors;
-        this.$appInsights.trackTrace('Team create error', { error: errorData });
-        this.handleSubmitError(e);
+        if (errorData && errorData.length > 0) {
+          this.errorMessage = this.$t(errorData[0].code);
+          this.showErrorDialog = true;
+        } else {
+          this.$appInsights.trackTrace('Team create error', { error: errorData });
+          this.handleSubmitError(e);
+        }
       } finally {
         this.isSubmitting = false;
       }

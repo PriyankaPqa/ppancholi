@@ -3374,6 +3374,8 @@
     "teams.selected_members": "New members selected",
     "teams.set_as": "Set as",
     "teams.set_assignable_team": "Assignable to tasks",
+    "teams.set_useForLodging": "Set as Lodging Team",
+    "teams.lodging": "Lodging",
     "teams.set_escalation_team": "Set as escalation team",
     "teams.set_useForLodging": "Set as Lodging Team",
     "teams.standard_team_created": "The standard team has been successfully created.",

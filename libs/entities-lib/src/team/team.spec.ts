@@ -54,6 +54,14 @@ describe('>>> Team', () => {
       const teamEntity = new TeamEntity();
       expect(teamEntity.isAssignable).toEqual(false);
     });
+
+    it('should instantiate useForLodging', () => {
+      const team = new TeamEntity({ ...mockTeamData, useForLodging: true });
+      expect(team.useForLodging).toEqual(true);
+
+      const teamEntity = new TeamEntity();
+      expect(teamEntity.useForLodging).toEqual(false);
+    });
   });
 
   describe('Methods', () => {

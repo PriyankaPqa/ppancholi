@@ -65,19 +65,10 @@
                   </div>
                 </v-col>
               </v-row>
-
-              <v-row no-gutters class="mt-6 flex justify-space-between">
-                <v-col class="team_data">
-                  <div class="rc-body14 fw-bold">
-                    {{ $tc('teams.related_events', eventAmount) }}
-                  </div>
-                  <div class="rc-body14" data-test="team_events">
-                    {{ getEventNames(team) }}
-                  </div>
-                </v-col>
+              <v-row no-gutters class="mt-6 flex">
                 <v-col
                   v-if="$hasFeature(FeatureKeys.TaskManagement)"
-                  :cols="displayEscalationLabel ? 4 : 8"
+                  :cols="4"
                   class="team_data"
                   data-test="team_isAssignable">
                   <div class="rc-body14 fw-bold">
@@ -97,6 +88,28 @@
                   </div>
                   <div class="rc-body14">
                     {{ $t('teams.escalation') }}
+                  </div>
+                </v-col>
+                <v-col
+                  v-if="displayUseLodging"
+                  cols="4"
+                  class="team_data"
+                  data-test="team_lodging">
+                  <div class="rc-body14 fw-bold">
+                    {{ $t('teams.set_as') }}
+                  </div>
+                  <div class="rc-body14">
+                    {{ $t('teams.lodging') }}
+                  </div>
+                </v-col>
+              </v-row>
+              <v-row no-gutters class="mt-6 flex">
+                <v-col class="team_data">
+                  <div class="rc-body14 fw-bold">
+                    {{ $tc('teams.related_events', eventAmount) }}
+                  </div>
+                  <div class="rc-body14" data-test="team_events">
+                    {{ getEventNames(team) }}
                   </div>
                 </v-col>
               </v-row>
@@ -185,6 +198,10 @@ export default Vue.extend({
 
     displayEscalationLabel(): boolean {
       return this.$hasFeature(FeatureKeys.TaskManagement) && this.team.teamType === TeamType.AdHoc && this.team.isEscalation;
+    },
+
+    displayUseLodging(): boolean {
+      return this.$hasFeature(FeatureKeys.Lodging) && this.team.useForLodging;
     },
   },
 

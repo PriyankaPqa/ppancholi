@@ -42,6 +42,7 @@ describe('>>> Teams Service', () => {
       status: payload.status,
       isEscalation: payload.isEscalation,
       isAssignable: payload.isAssignable,
+      useForLodging: payload.useForLodging,
     };
 
     expect(http.patch).toHaveBeenCalledWith(`/team/teams/${payload.id}`, expectedPayload, { globalHandler: GlobalHandler.Partial });

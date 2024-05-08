@@ -71,6 +71,7 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
       status: team.status,
       isEscalation: team.isEscalation,
       isAssignable: team.isAssignable,
+      useForLodging: team.useForLodging,
     };
   }
 }

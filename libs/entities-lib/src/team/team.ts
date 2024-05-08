@@ -18,6 +18,8 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
 
   isAssignable: boolean;
 
+  useForLodging: boolean;
+
   constructor(data?: ITeamEntity) {
     if (data) {
       super(data);
@@ -27,12 +29,14 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
       this.teamMembers = _cloneDeep(data.teamMembers) || [];
       this.isEscalation = data.isEscalation;
       this.isAssignable = data.isAssignable;
+      this.useForLodging = data.useForLodging;
     } else {
       super();
       this.eventIds = [];
       this.teamMembers = [];
       this.isEscalation = false;
       this.isAssignable = false;
+      this.useForLodging = false;
     }
   }
 

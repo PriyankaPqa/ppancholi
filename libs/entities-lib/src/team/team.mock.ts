@@ -49,6 +49,7 @@ export const mockTeamsDataStandard = (force? : Partial<IEntity>): ITeamEntity =>
   eventIds: ['id-1'],
   isEscalation: false,
   isAssignable: false,
+  useForLodging: false,
   ...force,
 });
 
@@ -62,6 +63,7 @@ export const mockTeamsDataAddHoc = (force? : Partial<IEntity>): ITeamEntity => (
   eventIds: ['id-1'],
   isEscalation: false,
   isAssignable: false,
+  useForLodging: false,
   ...force,
 });
 
