@@ -462,7 +462,7 @@ export default Vue.extend({
       const filter = this.grid.instance.columnOption(columnDef.dataField).defaultCalculateFilterExpression(value, selectedFilterOperation, target);
 
       // this returns either an array where the dates (between) are params 0-2 and 2-2, or a date as last parameter, which we'll change the offset back to utc
-      const getDateFilterAsUtc = (d: Date) => new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+      const getDateFilterAsUtc = (d: Date) => (d ? new Date(d.getTime() + d.getTimezoneOffset() * 60000) : d);
       if (filter) {
         if (Array.isArray(filter[0])) {
           filter[0][2] = getDateFilterAsUtc(filter[0][2]);

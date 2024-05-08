@@ -46,6 +46,23 @@ export const caseNoteViewDs : IDatasourceBase = {
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.casenote.${x.dataField}` })),
 };
 
+export const documentViewDs : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: true },
+    { dataField: 'name', dataType: 'string' },
+    { dataField: 'note', dataType: 'string', visible: false },
+    { dataField: 'documentCategoryNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'DocumentCategory' },
+    { dataField: 'documentCategoryNameFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'DocumentCategory' },
+    { dataField: 'documentStatusEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'DocumentStatus' },
+    { dataField: 'documentStatusFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'DocumentStatus' },
+    { dataField: 'createdBy', dataType: 'string', visible: false },
+    { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
+    { dataField: 'createDate', dataType: 'datetime', visible: true },
+    { dataField: 'updateDate', dataType: 'datetime', visible: false },
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.document.${x.dataField}` })),
+};
+
 export const caseFileActivitiesViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -766,6 +783,16 @@ export const caseNotesDs : IDatasourceSettings = {
   ],
 };
 
+export const documentsDs : IDatasourceSettings = {
+  url: 'common/data-providers/documents',
+  reportingTopic: ReportingTopic.Documents,
+  key: { documentId: 'Guid' },
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(documentViewDs.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `document.${x.dataField}` }))),
+  ],
+};
+
 export const caseFileAuthenticationIdsDs : IDatasourceSettings = {
   url: 'common/data-providers/case-file-authentication-ids',
   reportingTopic: ReportingTopic.CaseFileAuthenticationIds,
@@ -793,4 +820,5 @@ export const datasources = [
   potentialDuplicateDs,
   teamTaskDs,
   teamTaskHistoryDs,
+  documentsDs,
 ];

@@ -30,6 +30,7 @@ import { DataCorrectionAuthenticationL6En, DataCorrectionAuthenticationL6Fr } fr
 import { DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr } from './DataCorrectionContactInformationL6';
 import { PotentialDuplicatesL6En, PotentialDuplicatesL6Fr } from './PotentialDuplicatesL6';
 import { TasksL6En, TasksL6Fr } from './TasksL6';
+import { DocumentsL6En, DocumentsL6Fr } from './DocumentsL6';
 import { DataCorrectionTriageL6En, DataCorrectionTriageL6Fr } from './DataCorrectionTriageL6';
 import { LodgingOverviewWithHistoryL6En, LodgingOverviewWithHistoryL6Fr } from './LodgingOverviewWithHistoryL6';
 
@@ -82,6 +83,42 @@ export const UsersL5Fr = {
   ...UserListL6Fr,
   id: 'UserListL5',
   queryType: QueryType.StandardL5fr,
+} as IQuery;
+
+export const DocumentsL5En = {
+  ...DocumentsL6En,
+  id: 'DocumentsL5',
+  queryType: QueryType.StandardL5en,
+} as IQuery;
+
+export const DocumentsL5Fr = {
+  ...DocumentsL6Fr,
+  id: 'DocumentsL5',
+  queryType: QueryType.StandardL5fr,
+} as IQuery;
+
+export const DocumentsL4En = {
+  ...DocumentsL6En,
+  id: 'DocumentsL4',
+  queryType: QueryType.StandardL4en,
+} as IQuery;
+
+export const DocumentsL4Fr = {
+  ...DocumentsL6Fr,
+  id: 'DocumentsL4',
+  queryType: QueryType.StandardL4fr,
+} as IQuery;
+
+export const DocumentsIMEn = {
+  ...DocumentsL6En,
+  id: 'DocumentsIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const DocumentsIMFr = {
+  ...DocumentsL6Fr,
+  id: 'DocumentsIM',
+  queryType: QueryType.StandardIMfr,
 } as IQuery;
 
 export const TasksL5En = {
@@ -304,4 +341,8 @@ export const AllReports : IQuery[] = [
   TasksL5En, TasksL5Fr,
   TasksL4En, TasksL4Fr,
   TasksIMEn, TasksIMFr,
+  DocumentsL6En, DocumentsL6Fr,
+  DocumentsL5En, DocumentsL5Fr,
+  DocumentsL4En, DocumentsL4Fr,
+  DocumentsIMEn, DocumentsIMFr,
 ];
