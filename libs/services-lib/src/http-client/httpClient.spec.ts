@@ -6,6 +6,7 @@ import axios from 'axios';
 import { Toasted } from 'vue-toasted';
 import { buildQuery } from '@/odata-query';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
+import { buildQuerySql } from '@/odata-query-sql';
 import {
   HttpClient, IRestResponse, mockHttp, mockHttpErrorResponse, GlobalHandler,
 } from './index';
@@ -14,6 +15,7 @@ import * as owasp from '../utils/owasp';
 
 jest.mock('uuid');
 jest.mock('@/odata-query');
+jest.mock('@/odata-query-sql');
 jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');
 
 const mockAxios = axios.create();
@@ -402,6 +404,18 @@ describe('httpClient', () => {
         const expectedResult = 'search=(something)';
 
         expect(mockHttpClient.serializeParams()).toBe(expectedResult);
+      });
+    });
+
+    describe('serializeParamsSql', () => {
+      it('builds correct query', () => {
+        const testQuery = '?$search=(something)';
+        (buildQuerySql as any).mockImplementation(jest.fn(() => testQuery));
+
+        // eslint-disable-next-line no-useless-escape
+        const expectedResult = '$search=(something)';
+
+        expect(mockHttpClient.serializeParamsSql()).toBe(expectedResult);
       });
     });
 

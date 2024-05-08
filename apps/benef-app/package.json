@@ -40,7 +40,6 @@
     "date-fns": "2.30.0",
     "deepmerge": "^4.2.2",
     "lodash": "^4.17.21",
-    "odata-query": "^6.7.0",
     "pinia": "^2.0.27",
     "register-service-worker": "^1.7.1",
     "sanitize-html": "2.7.1",

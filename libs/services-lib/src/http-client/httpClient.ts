@@ -9,8 +9,8 @@ import { camelKeys } from 'js-convert-case';
 import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { localStorageKeys } from '@libs/shared-lib/constants/localStorage';
-// for sql search we use the original package
-import buildQuerySql from 'odata-query';
+// for sql search we use the updated version of original package Odata-query V7.0.6
+import { buildQuerySql } from '../odata-query-sql';
 import { GlobalHandler,
   IHttpClient, IError, IRestResponse, RequestConfig, IHttpClientOptions,
 } from './httpClient.types';
