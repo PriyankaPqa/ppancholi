@@ -34,6 +34,7 @@ export function getExtensionComponents(
       fr: '',
     },
   }) as Ref<IMultilingual>;
+  const useForLodging = ref(false);
   const status = ref(Status.Inactive);
   const program = ref(null) as Ref<IProgramEntity>;
   const mainItems = ref([]) as Ref<IFinancialAssistanceTableItem[]>;
@@ -145,6 +146,7 @@ export function getExtensionComponents(
         fr: '',
       },
     };
+    useForLodging.value = false;
     status.value = Status.Inactive;
     program.value = null;
     mainItems.value = [];
@@ -179,6 +181,7 @@ export function getExtensionComponents(
     program.value = newProgram;
     name.value = fa.name;
     status.value = fa.status;
+    useForLodging.value = fa.useForLodging;
 
     // when editing an existing payment
     // or showing one that was submitted already, we need to keep inactive items
@@ -194,6 +197,7 @@ export function getExtensionComponents(
       eventId: program.value.eventId,
       programId: program.value.id,
       name: utils.getFilledMultilingualField(name.value),
+      useForLodging: useForLodging.value,
       items,
     } as ICreateFinancialAssistanceTableRequest;
 
@@ -215,6 +219,7 @@ export function getExtensionComponents(
     const payload = {
       status: status.value,
       name: utils.getFilledMultilingualField(name.value),
+      useForLodging: useForLodging.value,
     } as IEditFinancialAssistanceTableRequest;
 
     const res = await entityService.editFinancialAssistanceTable(id.value, payload);
@@ -294,6 +299,7 @@ export function getExtensionComponents(
     editedSubItemIndex,
     newItem,
     newSubItem,
+    useForLodging,
     isOperating,
     getName,
     getSubItems,

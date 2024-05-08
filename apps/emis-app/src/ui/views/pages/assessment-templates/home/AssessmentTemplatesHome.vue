@@ -318,7 +318,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   methods: {
     getProgramName(item: IAssessmentFormEntity) {
-      return this.programs.find((x) => x.value === item.programId)?.text || "";
+      return this.programs.find((x) => x.value === item.programId)?.text || '';
     },
 
     getAssessmentDetailsRoute(id: string) {

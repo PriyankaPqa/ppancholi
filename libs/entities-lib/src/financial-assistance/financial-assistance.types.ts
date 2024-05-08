@@ -51,6 +51,7 @@ export interface IFinancialAssistanceTableEntity extends IEntity {
   name: IMultilingual;
   status: Status;
   items: IFinancialAssistanceTableItemData[];
+  useForLodging: boolean;
 }
 
 export interface ICreateFinancialAssistanceTableRequest extends IFinancialAssistanceTableEntity {}
@@ -58,6 +59,7 @@ export interface ICreateFinancialAssistanceTableRequest extends IFinancialAssist
 export interface IEditFinancialAssistanceTableRequest extends IEntity {
   name: IMultilingual;
   status: Status;
+  useForLodging: boolean;
 }
 
 export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IEntity>;

@@ -341,6 +341,7 @@ describe('Financial assistance payment store', () => {
         eventId: mockProgram.eventId,
         programId: mockProgram.id,
         name: mockFinancialAssistanceTableEntity().name,
+        useForLodging: false,
         items: store.mainItems.map(itemToItemData),
       });
     });
@@ -356,6 +357,7 @@ describe('Financial assistance payment store', () => {
       expect(entityService.editFinancialAssistanceTable).toHaveBeenCalledWith('id', {
         status: store.status,
         name: mockFinancialAssistanceTableEntity().name,
+        useForLodging: false,
       });
     });
   });

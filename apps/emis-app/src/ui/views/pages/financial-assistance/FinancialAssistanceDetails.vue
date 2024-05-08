@@ -36,6 +36,13 @@
           {{ name }}
         </div>
 
+        <div v-if="faTable && faTable.useForLodging" class="rc-body14 mx-8 mb-4">
+          <span class="rc-body14 fw-bold">
+            {{ $t('common.set_as') }}
+          </span>
+          {{ $t('common.lodging') }}
+        </div>
+
         <rc-nested-table :headers="headers" :items="filteredItems" collapsible item-sub-item="subItems" data-test="financialDetails__table">
           <template #[`item.item`]="{ item }">
             <span class="rc-body14 fw-bold">
@@ -102,6 +109,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
+  IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableSubItem,
 } from '@libs/entities-lib/financial-assistance';
@@ -131,6 +139,7 @@ export default Vue.extend({
       search: '',
       loading: false,
       error: false,
+      faTable: null as IFinancialAssistanceTableEntity,
     };
   },
 
@@ -248,6 +257,7 @@ export default Vue.extend({
     const res = await useFinancialAssistanceStore().fetch(this.$route.params.faId);
     const categories = await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
     const program = await useProgramStore().fetch({ id: res.programId, eventId: res.eventId }) as IProgramEntity;
+    this.faTable = res;
     useFinancialAssistanceStore().setFinancialAssistance({
       fa: res, categories, newProgram: program, removeInactiveItems: true,
     });

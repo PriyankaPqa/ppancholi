@@ -108,6 +108,14 @@
                   </div>
                 </v-col>
               </v-row>
+              <v-row v-if="$hasFeature(FeatureKeys.Lodging)">
+                <v-col>
+                  <v-checkbox
+                    v-model="useForLodging"
+                    data-test="financialAssistance.table.useForLodging"
+                    :label="$t('financialAssistance.table.useForLodging')" />
+                </v-col>
+              </v-row>
 
               <v-row v-if="isEdit">
                 <v-spacer />
@@ -122,7 +130,7 @@
                     color="primary"
                     data-test="financial-assistance-save-edit-btn"
                     :loading="isSaving"
-                    :disabled="!changed || invalid || isOperating"
+                    :disabled="(!changed && !formDirty) || invalid || isOperating"
                     @click="saveEdit">
                     {{ $t('common.buttons.save') }}
                   </v-btn>
@@ -197,6 +205,7 @@ import { VForm } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
 import ErrorPanel from './ErrorPanel.vue';
 import FinancialAssistanceItems from './FinancialAssistanceItems.vue';
@@ -242,6 +251,7 @@ export default Vue.extend({
       showConfirm: false,
       attemptedSave: false,
       formDirty: false,
+      FeatureKeys,
     };
   },
 
@@ -358,6 +368,17 @@ export default Vue.extend({
       },
     },
 
+    useForLodging: {
+      get(): boolean {
+        return useFinancialAssistanceStore().useForLodging;
+      },
+
+      set(value: boolean) {
+        useFinancialAssistanceStore().$patch({ useForLodging: value, formDirty: true });
+        this.formDirty = true;
+      },
+    },
+
     itemsDirty: {
       get(): boolean {
         return useFinancialAssistanceStore().dirty;
@@ -457,6 +478,7 @@ export default Vue.extend({
         if (res) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           this.$nextTick(() => (this.$refs.form as any).reset());
+          this.formDirty = false;
           this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
         }
       }

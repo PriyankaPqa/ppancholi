@@ -8,7 +8,7 @@ import { SignalR } from '@/ui/plugins/signal-r';
 import { User } from '@libs/entities-lib/user';
 
 interface IFormatCurrency {
-  (value: number): string;
+  (value: number, hideDecimals?: boolean): string;
 }
 
 interface IMFunction {

@@ -19,6 +19,8 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
 
   items: Array<IFinancialAssistanceTableItemData>;
 
+  useForLodging: boolean;
+
   constructor(data?: IFinancialAssistanceTableEntity) {
     if (data) {
       super(data);
@@ -27,6 +29,7 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
       this.eventId = data.eventId;
       this.status = data.status;
       this.programId = data.programId;
+      this.useForLodging = data.useForLodging;
       this.items = _cloneDeep(data.items) || [];
     } else {
       super();
@@ -40,6 +43,7 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
     this.eventId = '';
     this.status = Status.Active;
     this.programId = '';
+    this.useForLodging = false;
     this.items = [];
   }
 }

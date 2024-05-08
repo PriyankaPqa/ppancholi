@@ -226,6 +226,7 @@ export const mockFinancialAssistanceTableEntity = (force = {}): IFinancialAssist
   eventId: '8d88bc46-22c2-412d-814d-ff898357b745',
   programId: '657ae9a1-bfcc-4292-b871-8113b984e9cb',
   name: { translation: { en: 'abcd', fr: 'dcba' } },
+  useForLodging: false,
   items: [
     {
       mainCategory: { optionItemId: '9b275d2f-00a1-4345-94fe-c37b84beb400', specifiedOther: null },
