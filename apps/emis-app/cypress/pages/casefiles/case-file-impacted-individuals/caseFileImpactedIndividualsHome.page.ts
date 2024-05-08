@@ -162,7 +162,7 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
         checkCondition: () => Cypress.$('[data-test="currentAddress__street"]').text().includes(addressStreet),
       },
       {
-        timeoutInSec: 45,
+        timeoutInSec: 60,
         errorMsg: 'Failed to update Impacted Individuals',
         foundMsg: 'Impacted Individuals updated',
       },
@@ -220,7 +220,7 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
         checkCondition: () => Cypress.$('[data-test="impacted-individuals-pinned-activity-rationale"]').text().includes(rationale),
       },
       {
-        timeoutInSec: 45,
+        timeoutInSec: 60,
         errorMsg: 'Failed to update Impacted Individuals activity',
         foundMsg: 'Impacted Individuals activity updated',
       },

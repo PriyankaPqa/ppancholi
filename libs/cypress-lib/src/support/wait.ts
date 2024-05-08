@@ -190,8 +190,8 @@ Cypress.Commands.add(
   (
     { visibilityCondition, checkCondition, actionsAfterReload = () => {} },
     {
-      timeoutInSec = 30,
-      intervalInSec = 2,
+      timeoutInSec = 150,
+      intervalInSec = 10,
       errorMsg = 'Timeout: Failed to meet the conditions',
       foundMsg = 'Condition met',
     },

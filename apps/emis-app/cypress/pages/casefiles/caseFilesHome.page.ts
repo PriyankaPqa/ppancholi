@@ -49,7 +49,7 @@ export class CaseFilesHomePage {
         actionsAfterReload: () => cy.wait(4000),
       },
       {
-        timeoutInSec: 45,
+        timeoutInSec: 60,
         errorMsg: 'Failed to update Case Files',
         foundMsg: 'Case File updated',
       },

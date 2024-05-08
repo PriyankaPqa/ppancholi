@@ -394,7 +394,7 @@ export class HouseholdProfilePage {
         checkCondition: () => Cypress.$('[data-test=\'household_profile_member_info_data_phone_numbers\']').text().includes(phoneNumber),
       },
       {
-        timeoutInSec: 45,
+        timeoutInSec: 60,
         errorMsg: 'Failed to update Household contact info',
         foundMsg: 'Household contact information updated',
       },

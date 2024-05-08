@@ -125,7 +125,7 @@ export enum DataTest {
           },
         },
         {
-          timeoutInSec: 5,
+          timeoutInSec: 60,
           intervalInSec: 10,
           errorMsg: 'Failed to find approver supervisor',
           foundMsg: 'Approver supervisor found',

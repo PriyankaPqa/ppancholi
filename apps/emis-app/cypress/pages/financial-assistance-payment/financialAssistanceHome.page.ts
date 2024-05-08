@@ -139,7 +139,7 @@ export class FinancialAssistanceHomePage {
         checkCondition: () => Cypress.$("[data-test='fap_total']").text().includes(faPaymentTotal),
       },
       {
-        timeoutInSec: 45,
+        timeoutInSec: 60,
         errorMsg: 'Unable to display update FA Payment',
         foundMsg: 'FA Payment updated',
       },

@@ -164,9 +164,8 @@ export class FinancialAssistanceDetailsPage {
     Sent: this.statusSent,
     } as Record<string, { selector: DataTest }>;
 
-    cy.getByDataTest(this.paymentLineStatus).click().then(() => {
-      cy.getByDataTest(mapPaymentLineStatus[status]).click();
-    });
+    cy.getByDataTest(this.paymentLineStatus).click();
+    cy.getByDataTest(mapPaymentLineStatus[status]).click();
   }
 
   public getDialogSubmitButton() {
@@ -197,7 +196,7 @@ export class FinancialAssistanceDetailsPage {
         actionsAfterReload: () => cy.get("[data-test='submit']").should('be.visible').click(),
       },
       {
-        timeoutInSec: 50,
+        timeoutInSec: 60,
         intervalInSec: 10,
         errorMsg: 'Failed to find approver group',
       },

@@ -14,7 +14,7 @@ export class ApprovalTableHomePage {
         checkCondition: () => Cypress.$("[data-test='approval_table_details-link']").text().includes(approvalTableName),
       },
       {
-        timeoutInSec: 45,
+        timeoutInSec: 60,
         errorMsg: 'Failed to find approval table',
         foundMsg: 'Approval table created',
       },

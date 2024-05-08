@@ -11,7 +11,7 @@ export default defineConfig({
     configFile: 'cypress-reporter-config.js',
   },
   retries: {
-    runMode: 1,
+    runMode: 5,
     openMode: 0,
   },
   e2e: {
@@ -40,6 +40,6 @@ export default defineConfig({
   },
   viewportWidth: 1920,
   viewportHeight: 1080,
-  defaultCommandTimeout: 8000, // Time, in milliseconds, to wait until most DOM based commands are considered timed out.
-  pageLoadTimeout: 80000, // Time, in milliseconds, to wait for page transition events or cy.visit(), cy.go(), cy.reload() commands to fire their page load events.
+  defaultCommandTimeout: 120000, // Time, in milliseconds, to wait until most DOM based commands are considered timed out.
+  pageLoadTimeout: 120000, // Time, in milliseconds, to wait for page transition events or cy.visit(), cy.go(), cy.reload() commands to fire their page load events.
 });

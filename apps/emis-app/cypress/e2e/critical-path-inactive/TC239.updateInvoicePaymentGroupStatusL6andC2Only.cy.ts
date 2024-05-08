@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags: ['@financial-assistance'] }, () => {
+describe('#TC239# - Update Invoice payment group Status- L6 and C2 only.', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
