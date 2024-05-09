@@ -1,5 +1,8 @@
 import { defineConfig } from 'cypress';
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
+import zephyrPlugin from 'cypress-zephyr/dist/plugin';
+import { initPlugins } from 'cypress-plugin-init';
+import reporterConfig from './cypress-reporter-config';
 
 const { cloudPlugin } = require('cypress-cloud/plugin');
 
@@ -9,22 +12,20 @@ require('dotenv').config({ path: `${__dirname}/../../.env.local`, override: true
 
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
-  reporterOptions: {
-    configFile: 'cypress-reporter-config.js',
-  },
+  reporterOptions: reporterConfig,
   retries: {
     runMode: 5,
     openMode: 0,
   },
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
       installLogsPrinter(on, { // https://github.com/archfz/cypress-terminal-report
         printLogsToConsole: 'onFail', // 'never'
         includeSuccessfulHookLogs: false,
       });
       // eslint-disable-next-line global-require
       require('@cypress/grep/src/plugin')(config);
-      return cloudPlugin(on, config);
+      return initPlugins(on, [cloudPlugin, zephyrPlugin], config);
     },
     videoUploadOnPasses: false,
     baseUrl: 'http://localhost:8080/',

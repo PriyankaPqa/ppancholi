@@ -36,3 +36,6 @@ yalc.lock
 apps/emis-app/components.d.ts
 apps/benef-app/components.d.ts
 apps/emis-app/cypress/downloads
+apps/emis-app/cypress/reports
+apps/benef-app/cypress/downloads
+apps/benef-app/cypress/reports

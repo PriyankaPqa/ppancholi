@@ -1,34 +1,34 @@
 parameters:
-  packageFeed: ''
-  nodeJsVersion: ''
-  distDir: ''
-  workingDir: ''
+  packageFeed: ""
+  nodeJsVersion: ""
+  distDir: ""
+  workingDir: ""
 
 steps:
-  - template: '../steps/cache-install-npm.yml'
+  - template: "../steps/cache-install-npm.yml"
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
 
   - script: npx cypress install --force
-    displayName: 'Install cypress binary'
+    displayName: "Install cypress binary"
     workingDirectory: ${{ parameters.workingDir }}
     env:
       CYPRESS_DOWNLOAD_MIRROR: https://cy-cdn.currents.dev
 
   # Optional
   - script: npx cypress verify
-    displayName: 'Cypress verify'
+    displayName: "Cypress verify"
     workingDirectory: ${{ parameters.workingDir }}
 
   # Optional
   - script: npx cypress cache list
-    displayName: 'Cypress cache List'
+    displayName: "Cypress cache List"
     workingDirectory: ${{ parameters.workingDir }}
 
   # Optional
   - script: npx cypress info
-    displayName: 'Cypress info'
+    displayName: "Cypress info"
     workingDirectory: ${{ parameters.workingDir }}
     env:
       CYPRESS_CONTRIBUTOR1_PASSWORD: $(CYPRESS_CONTRIBUTOR1_PASSWORD)
@@ -47,38 +47,31 @@ steps:
       CYPRESS_IDS_CLIENT_SECRET: $(CYPRESS_IDS_CLIENT_SECRET)
       CYPRESS_CAN_MODE: $(cypressCanRoleMode)
       CYPRESS_CANNOT_MODE: $(cypressCannotRoleMode)
-      SPIRA_TOKEN: $(SPIRA_TOKEN)
+      ZEPHYR_AUTHORIZATION_TOKEN: $(ZEPHYR_AUTHORIZATION_TOKEN)
 
   # The WebApp artifact (dist) was created in a previous stage/job
   # We need to download it again in app folder before running the server
   - task: DownloadPipelineArtifact@2
-    displayName: 'Download web app'
+    displayName: "Download web app"
     inputs:
-      buildType: 'current'
-      artifactName: 'dist'
+      buildType: "current"
+      artifactName: "dist"
       targetPath: ${{ parameters.distDir }}
 
   # Will replace the env variables placeholders by the one contained in the library used by this stage here: Env-Dev
-  - task: replacetokens@5
-    displayName: 'Replace Tokens'
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@6
+    displayName: "Replace Tokens"
     inputs:
-      targetFiles: "index*.js"
-      rootDirectory: '${{ parameters.distDir }}/assets'
-      tokenPattern: 'default'
-      encoding: "auto"
-      writeBOM: true
-      verbosity: "detailed"
-      actionOnMissing: "warn"
-      keepToken: false
-      useLegacyPattern: false
-      enableTelemetry: true
-
+      sources: "index*.js"
+      root: "${{ parameters.distDir }}/assets"
+      addBOM: true
+      telemetryOptout: true
   # Run a local server, wait for it and then start testing with cypress
   # Kill the server after it's done
   - script: |
       yarn start-server-and-test 'yarn vite preview' http-get://localhost:8080 'yarn cy:report --spec "$(CYPRESS_SPEC)" --record --key $(CYPRESS_RECORD_KEY) --parallel --ci-build-id "$BUILD_BUILDNUMBER+$SYSTEM_JOBATTEMPT" --group "Azure CI"'
     workingDirectory: ${{ parameters.workingDir }}
-    displayName: 'Run cypress tests'
+    displayName: "Run cypress tests"
     env:
       TERM: xterm # avoid warnings about terminal
       CYPRESS_CONTRIBUTOR1_PASSWORD: $(CYPRESS_CONTRIBUTOR1_PASSWORD)
@@ -97,19 +90,19 @@ steps:
       CYPRESS_IDS_CLIENT_SECRET: $(CYPRESS_IDS_CLIENT_SECRET)
       CYPRESS_CAN_MODE: $(cypressCanRoleMode)
       CYPRESS_CANNOT_MODE: $(cypressCannotRoleMode)
-      SPIRA_TOKEN: $(SPIRA_TOKEN)
+      ZEPHYR_AUTHORIZATION_TOKEN: $(ZEPHYR_AUTHORIZATION_TOKEN)
 
   # Combine results, so they can be published in Azure Devops
   # Note that this could be optional as we can see results in Cypress Cloud
   - script: yarn cy:combine:reports
     workingDirectory: ${{ parameters.workingDir }}
-    displayName: 'Combine test results'
+    displayName: "Combine test results"
 
   - task: PublishTestResults@2
-    displayName: 'Publish test results'
-#    condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    displayName: "Publish test results"
+    #    condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
     condition: succeededOrFailed()
     inputs:
       testRunner: JUnit
-      testResultsFiles: '**/combined-report.xml'
+      testResultsFiles: "**/combined-report.xml"
       failTaskOnFailedTests: false
