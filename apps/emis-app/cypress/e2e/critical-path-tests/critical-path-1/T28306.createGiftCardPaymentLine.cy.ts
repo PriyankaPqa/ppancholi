@@ -4,9 +4,9 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureETransferPaymentLine } from '../../../fixtures/financial-assistance';
-import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { fixtureGiftCardPaymentLine } from '../../../fixtures/financial-assistance';
 import { PaymentLineCanStepsParams, paymentLineGeneralCanSteps } from './canSteps';
+import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -30,11 +30,11 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 
-describe('#TC207# - Create e-transfer payment line', { tags: ['@financial-assistance'] }, () => {
+describe('[T28306] Create Gift Card Payment Line', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRoles, EFinancialAmountModes.Fixed);
+      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRoles, EFinancialAmountModes.Variable);
       cy.wrap(resultPrepareStateEventTeamProgramTable.event).as('event');
       cy.wrap(resultPrepareStateEventTeamProgramTable.table).as('table');
       cy.wrap(resultPrepareStateEventTeamProgramTable.provider).as('provider');
@@ -58,12 +58,12 @@ describe('#TC207# - Create e-transfer payment line', { tags: ['@financial-assist
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create E-Transfer Payment Line', function () {
+        it('should successfully create Gift Card Payment Line', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
-            paymentLineData: fixtureETransferPaymentLine(),
-            groupTitle: 'E-Transfer',
+            paymentLineData: fixtureGiftCardPaymentLine(),
+            groupTitle: 'Gift card',
           };
           paymentLineGeneralCanSteps(canStepsParamData);
         });
@@ -81,7 +81,7 @@ describe('#TC207# - Create e-transfer payment line', { tags: ['@financial-assist
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should not be able to create E-Transfer Payment Line', () => {
+        it('should not be able to create create Gift Card Payment Line', () => {
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
 
           cy.contains('You do not have permission to access this page').should('be.visible');

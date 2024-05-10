@@ -4,7 +4,7 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureDirectDepositPaymentLine } from '../../../fixtures/financial-assistance';
+import { fixtureInvoicePaymentLine } from '../../../fixtures/financial-assistance';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 import { PaymentLineCanStepsParams, paymentLineGeneralCanSteps } from './canSteps';
 
@@ -30,11 +30,11 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 
-describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T28297] Create Invoice Payment Line', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRoles, EFinancialAmountModes.Fixed);
+      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRoles, EFinancialAmountModes.Variable);
       cy.wrap(resultPrepareStateEventTeamProgramTable.event).as('event');
       cy.wrap(resultPrepareStateEventTeamProgramTable.table).as('table');
       cy.wrap(resultPrepareStateEventTeamProgramTable.provider).as('provider');
@@ -58,12 +58,12 @@ describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-a
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Direct Deposit Payment Line', function () {
+        it('should successfully create Invoice Payment Line', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
-            paymentLineData: fixtureDirectDepositPaymentLine(),
-            groupTitle: 'Direct deposit',
+            paymentLineData: fixtureInvoicePaymentLine(),
+            groupTitle: 'Invoice',
           };
           paymentLineGeneralCanSteps(canStepsParamData);
         });
@@ -71,7 +71,7 @@ describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-a
     }
   });
   describe('Cannot Roles', () => {
-    for (const roleName of filteredCannotRoles) {
+     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
@@ -81,7 +81,7 @@ describe('#TC206# - Create Direct Deposit Payment Line.', { tags: ['@financial-a
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should not be able to create Direct Deposit Payment Line', () => {
+        it('should not be able to create create Invoice Payment Line', () => {
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
 
           cy.contains('You do not have permission to access this page').should('be.visible');
