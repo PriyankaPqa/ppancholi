@@ -52,6 +52,7 @@ describe('#TC1652# - Create a Approval table', { tags: ['@event', '@approval', '
             const provider = useProvider(accessTokenL6);
             const { mockCreateProgram } = await createProgram(provider, eventId);
             cy.wrap(mockCreateProgram).as('mockProgram');
+            cy.wrap(mockCreateProgram.name.translation.en).as('programName');
             cy.login(roleName);
             cy.goTo(`events/${eventId}/approvals/create`);
           });
@@ -74,7 +75,7 @@ describe('#TC1652# - Create a Approval table', { tags: ['@event', '@approval', '
           createApprovalTablePage.getMinimumValueField().type(approvalTableData.minimumAmount);
           createApprovalTablePage.getMaximumValueField().type(approvalTableData.maximumAmount);
           createApprovalTablePage.saveApprovalGroup();
-          createApprovalTablePage.getCreateApprovalTableButton().should('be.visible');
+            createApprovalTablePage.getCreateApprovalTableButton().should('be.visible');
           createApprovalTablePage.getApprovalGroupTable().contains('Group 1').should('be.visible');
           createApprovalTablePage.getApprovalGroupTable().contains(approvalTableData.userRole).should('be.visible');
           createApprovalTablePage.getApprovalGroupTable().contains(`$${approvalTableData.minimumAmount}`).should('be.visible');
@@ -82,20 +83,25 @@ describe('#TC1652# - Create a Approval table', { tags: ['@event', '@approval', '
           createApprovalTablePage.getEditApprovalGroupButton().should('be.visible');
           createApprovalTablePage.getDeleteApprovalGroupButton().should('be.visible');
 
+          cy.intercept('POST', '**/finance/approval-tables').as('createApprovalTable');
           const approvalTableHomePage = createApprovalTablePage.createApprovalTable();
-          approvalTableHomePage.waitAndRefreshUntilApprovalTableVisible(approvalTableData.tableName);
-
-          const approvalTableDetailsPage = approvalTableHomePage.getApprovalTableDetails();
-          approvalTableDetailsPage.getProgramName().should('string', this.mockProgram.name.translation.en);
-          approvalTableDetailsPage.getApprovalTableName().should('eq', approvalTableData.tableName);
-          cy.contains('Approval aggregated by').should('be.visible');
-          cy.contains('Total financial assistance on case file').should('be.visible');
-          approvalTableDetailsPage.getApprovalStatus().should('eq', 'Active');
-          approvalTableDetailsPage.getApprovalEditButton().should('be.visible');
-          approvalTableDetailsPage.getApprovalGroupDetails().contains('Group 1').should('be.visible');
-          approvalTableDetailsPage.getApprovalGroupDetails().contains(approvalTableData.userRole).should('be.visible');
-          approvalTableDetailsPage.getApprovalGroupDetails().contains(`$${approvalTableData.minimumAmount}`).should('be.visible');
-          approvalTableDetailsPage.getApprovalGroupDetails().contains(`$${approvalTableData.maximumAmount}`).should('be.visible');
+          cy.wait('@createApprovalTable').then((interception) => {
+            cy.wrap(interception.response.body.id).as('approvalTableId');
+          });
+          cy.get('@approvalTableId').then((approvalTableId) => {
+              approvalTableHomePage.waitAndRefreshUntilApprovalTableVisible(approvalTableId.toString());
+              const approvalTableDetailsPage = approvalTableHomePage.getApprovalTableDetails(approvalTableId.toString());
+              approvalTableDetailsPage.getProgramName().should('string', this.mockProgram.name.translation.en);
+              approvalTableDetailsPage.getApprovalTableName().should('eq', approvalTableData.tableName);
+              cy.contains('Approval aggregated by').should('be.visible');
+              cy.contains('Total financial assistance on case file').should('be.visible');
+              approvalTableDetailsPage.getApprovalStatus().should('eq', 'Active');
+              approvalTableDetailsPage.getApprovalEditButton().should('be.visible');
+              approvalTableDetailsPage.getApprovalGroupDetails().contains('Group 1').should('be.visible');
+              approvalTableDetailsPage.getApprovalGroupDetails().contains(approvalTableData.userRole).should('be.visible');
+              approvalTableDetailsPage.getApprovalGroupDetails().contains(`$${approvalTableData.minimumAmount}`).should('be.visible');
+              approvalTableDetailsPage.getApprovalGroupDetails().contains(`$${approvalTableData.maximumAmount}`).should('be.visible');
+          });
         });
       });
     }

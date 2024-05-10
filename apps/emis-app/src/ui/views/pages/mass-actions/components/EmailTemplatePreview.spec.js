@@ -13,7 +13,8 @@ const doMount = (otherOptions = {}, fullMount = false) => {
     localVue,
     propsData: {
       show: true,
-      event: null,
+      event: mockEventEntity({ id: 'mock-id-1' }),
+      emailTemplateKey: 'mock-key',
     },
     mocks: {
       $services: services,
@@ -31,7 +32,7 @@ describe('EmailTemplatePreview', () => {
         doMount();
         wrapper.vm.$services.massActions.getEmailTemplate = jest.fn();
         wrapper.vm.setEmailTemplate = jest.fn();
-        await wrapper.setData({ event: mockEvent });
+        await wrapper.setProps({ event: mockEvent });
         expect(wrapper.vm.event).toEqual(mockEvent);
         expect(wrapper.vm.setEmailTemplate).toHaveBeenCalled();
       });

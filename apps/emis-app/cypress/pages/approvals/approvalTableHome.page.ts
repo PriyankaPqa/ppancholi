@@ -7,11 +7,11 @@ export enum DataTest {
 export class ApprovalTableHomePage {
   private approvalTableDetails = { selector: DataTest.approvalTableDetails };
 
-  public waitAndRefreshUntilApprovalTableVisible(approvalTableName: string) {
+  public waitAndRefreshUntilApprovalTableVisible(approvalTableId: string) {
     cy.waitAndRefreshUntilConditions(
       {
         visibilityCondition: () => cy.contains('Refresh').should('be.visible'),
-        checkCondition: () => Cypress.$("[data-test='approval_table_details-link']").text().includes(approvalTableName),
+        checkCondition: () => Cypress.$(`[data-test='${this.approvalTableDetails.selector}_${approvalTableId}']`).length > 0,
       },
       {
         timeoutInSec: 60,
@@ -21,8 +21,8 @@ export class ApprovalTableHomePage {
     );
   }
 
-  public getApprovalTableDetails(index = 0) {
-    cy.getByDataTest(this.approvalTableDetails).eq(index).click();
+  public getApprovalTableDetails(approvalTableId: string) {
+    cy.getByDataTest({ selector: `${this.approvalTableDetails.selector}_${approvalTableId}` }).click();
     return new ApprovalTableDetailsPage();
   }
 }

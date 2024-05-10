@@ -257,7 +257,7 @@ describe('TasksTable.vue', () => {
     describe('task-table-task-name', () => {
       it('should be rendered', async () => {
         await doMount({}, false);
-        const element = wrapper.findDataTest('task-table-task-name');
+        const element = wrapper.findDataTest(`task-table-task-name-${wrapper.vm.parsedTableData[0].entity.id}`);
         expect(element.exists()).toBeTruthy();
       });
     });
@@ -269,7 +269,7 @@ describe('TasksTable.vue', () => {
             isInCaseFile: false,
           },
         }, false);
-        const element = wrapper.findDataTest('task-table-case-file-number-link');
+        const element = wrapper.findDataTest(`task-table-case-file-number-link-${wrapper.vm.parsedTableData[0].metadata.caseFileId}`);
         expect(element.exists()).toBeTruthy();
       });
 

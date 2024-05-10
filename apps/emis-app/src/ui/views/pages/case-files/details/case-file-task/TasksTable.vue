@@ -101,7 +101,7 @@
           <router-link
             type="button"
             class="rc-link14 font-weight-bold pl-2"
-            data-test="task-table-task-name"
+            :data-test="`task-table-task-name-${item.entity.id}`"
             :to="getTaskDetailsRoute(item.metadata.caseFileId, item.entity.id)">
             {{ $m(item.metadata.name) }}
           </router-link>
@@ -116,7 +116,7 @@
       <template v-if="!isInCaseFile" #[`item.${customColumns.caseFileNumber}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          data-test="task-table-case-file-number-link"
+          :data-test="`task-table-case-file-number-link-${item.metadata.caseFileId}`"
           :to="getCaseFileDetailsRoute(item.metadata.caseFileId)">
           <span data-test="task-table-case-file-number"> {{ item.metadata.caseFileNumber }}</span>
         </router-link>

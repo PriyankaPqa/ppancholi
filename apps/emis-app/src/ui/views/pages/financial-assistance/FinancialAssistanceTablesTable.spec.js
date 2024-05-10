@@ -123,8 +123,12 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
     describe('filters', () => {
       it('should have correct filters', async () => {
-        await wrapper.setData({
-          programs: mockProgramEntities(),
+        wrapper = mount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.level6),
+          computed: {
+            programs: () => mockProgramEntities(),
+          },
         });
 
         const expected = [

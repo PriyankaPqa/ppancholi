@@ -73,8 +73,8 @@ export class AssessmentsListPage {
     return cy.getByDataTest(this.assessmentStart);
   }
 
-  public getAssessmentDetailLink() {
-    return cy.getByDataTest(this.assessmentDetailLink);
+  public getAssessmentDetailLink(assessmentId: string) {
+    return cy.getByDataTest({ selector: `${this.assessmentDetailLink.selector}-${assessmentId}` });
   }
 
   public getAssessmentDateAssigned() {
@@ -105,12 +105,12 @@ export class AssessmentsListPage {
     return cy.getByDataTest(this.assessmentDelete);
   }
 
-  public refreshUntilFilledAssessmentUpdated() {
+  public refreshUntilFilledAssessmentUpdated(assessmentId: string) {
     cy.waitAndRefreshUntilConditions(
       {
         // eslint-disable-next-line
         visibilityCondition: () => cy.contains('Pending assessments').should('be.visible').wait(2000),
-        checkCondition: () => Cypress.$("[data-test='assessmentDetail-link']").length > 0,
+        checkCondition: () => Cypress.$(`[data-test='assessmentDetail-link-${assessmentId}']`).length > 0,
       },
       {
         errorMsg: 'Failed to update assessment',

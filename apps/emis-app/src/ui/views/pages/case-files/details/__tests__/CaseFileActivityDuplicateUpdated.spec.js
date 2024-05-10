@@ -104,7 +104,7 @@ describe('CaseFileActivityDuplicateUpdated.vue', () => {
           },
         } });
 
-        const element = wrapper.findDataTest('caseFileActivity-listItem-content-body-registration-number');
+        const element = wrapper.findDataTest(`caseFileActivity-listItem-content-body-registration-number-${item.details.duplicateHouseholdRegistrationNumber}`);
         expect(element.text()).toContain(itemData().duplicateHouseholdRegistrationNumber);
       });
 

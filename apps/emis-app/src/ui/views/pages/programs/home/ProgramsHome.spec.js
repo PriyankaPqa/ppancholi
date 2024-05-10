@@ -3,7 +3,7 @@ import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockProgramEntities } from '@libs/entities-lib/program';
+import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 
@@ -30,6 +30,11 @@ describe('ProgramsHome.vue', () => {
         pinia,
         propsData: {
           id: 'event-id',
+        },
+        computed: {
+          tableData: () => ([{
+            entity: mockProgramEntity({ id: 1 }),
+          }]),
         },
       });
 
@@ -74,7 +79,7 @@ describe('ProgramsHome.vue', () => {
 
     describe('table elements', () => {
       test('program name redirects to program details', () => {
-        const link = wrapper.findDataTest('programDetail-link');
+        const link = wrapper.findDataTest(`programDetail-link-${wrapper.vm.tableData[0].entity.id}`);
         expect(link.props('to')).toEqual({
           name: routes.programs.details.name,
           params: mockParams,

@@ -33,6 +33,7 @@
             <router-link
               v-if="linkToHousehold"
               class="rc-link14 font-weight-bold px-1"
+              :data-test="`household_search_result_link_${household.id}`"
               :to="getHouseholdRoute(household)">
               {{ household.primaryBeneficiary.identitySet.firstName }} {{ household.primaryBeneficiary.identitySet.lastName }}
             </router-link>

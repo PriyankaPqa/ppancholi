@@ -10,7 +10,10 @@
           <span class="rc-body14 content-body" data-test="caseFileActivity-listItem-content-body-start">
             {{ $t(`caseFileActivity.duplicateUpdated.bodyStart.${itemData.duplicateStatus}`) }}
           </span>
-          <router-link :to="getHouseholdRoute()" class="rc-link14" data-test="caseFileActivity-listItem-content-body-registration-number">
+          <router-link
+            :to="getHouseholdRoute()"
+            class="rc-link14"
+            :data-test="`caseFileActivity-listItem-content-body-registration-number-${item.details.duplicateHouseholdRegistrationNumber}`">
             {{ `#${itemData.duplicateHouseholdRegistrationNumber}` }}
           </router-link>
           <span class="rc-body14" data-test="caseFileActivity-listItem-content-body-end">

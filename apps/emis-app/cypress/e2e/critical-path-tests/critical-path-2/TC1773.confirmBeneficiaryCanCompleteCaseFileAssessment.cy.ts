@@ -57,6 +57,7 @@ describe('#TC1773# - Confirm that Beneficiary can complete a Case File Assessmen
             const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, this.assessmentFormId);
             cy.wrap(resultHousehold).as('householdCreated');
             cy.wrap(resultCreateAssessmentResponse).as('casefileAssessment');
+            cy.wrap(resultCreateAssessmentResponse.id).as('casefileAssessmentId');
             cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/assessments`);
           });
@@ -71,7 +72,7 @@ describe('#TC1773# - Confirm that Beneficiary can complete a Case File Assessmen
             assessmentFormId: this.assessmentFormId,
           };
           completeAndSubmitCasefileAssessment(casefileAssessmentParamData); // completely respond to assessment as a beneficiary and click on submit
-          assessmentsListPage.refreshUntilFilledAssessmentUpdated();
+          assessmentsListPage.refreshUntilFilledAssessmentUpdated(this.casefileAssessmentId);
           verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
         });
       });

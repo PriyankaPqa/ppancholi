@@ -60,6 +60,7 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
             const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, this.assessmentFormId);
             cy.wrap(resultHousehold).as('householdCreated');
             cy.wrap(resultCreateAssessmentResponse).as('casefileAssessment');
+            cy.wrap(resultCreateAssessmentResponse.id).as('casefileAssessmentId');
             cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/assessments`);
           });
@@ -76,8 +77,8 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
             };
             partiallyCompleteCasefileAssessment(casefileAssessmentParamData); // partially respond to assessment as a crc user
           });
-          assessmentsListPage.refreshUntilFilledAssessmentUpdated();
-          verifyPartiallyCompletedCaseFileAssessment(roleName);
+          assessmentsListPage.refreshUntilFilledAssessmentUpdated(this.casefileAssessmentId);
+          verifyPartiallyCompletedCaseFileAssessment(roleName, this.casefileAssessmentId);
         });
       });
     }

@@ -270,13 +270,13 @@ describe('ManageDuplicatesTable.vue', () => {
     describe('primaryBeneficiaryFullName link', () => {
       it('renders', () => {
         doMount(false);
-        const element = wrapper.findDataTest('householdDetails-manageDuplicates-household-link');
+        const element = wrapper.findDataTest(`householdDetails-manageDuplicates-household-link-${wrapper.vm.duplicates[0].duplicateHousehold.householdId}`);
         expect(element.exists()).toBeTruthy();
       });
 
       it('contains the right data', () => {
         doMount(false);
-        const element = wrapper.findDataTest('householdDetails-manageDuplicates-household-link');
+        const element = wrapper.findDataTest(`householdDetails-manageDuplicates-household-link-${wrapper.vm.duplicates[0].duplicateHousehold.householdId}`);
         expect(element.text()).toContain('Jane Doe');
       });
     });

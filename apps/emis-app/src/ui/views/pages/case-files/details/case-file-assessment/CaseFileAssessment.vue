@@ -95,7 +95,7 @@
           <template #[`item.${customColumns.name}`]="{ item }">
             <router-link
               class="rc-link14 font-weight-bold pr-1"
-              data-test="assessmentDetail-link"
+              :data-test="`assessmentDetail-link-${item.id}`"
               :to="getAssessmentDetailsRoute(item.id)">
               {{ item.name }}
             </router-link>

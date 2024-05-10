@@ -10,7 +10,7 @@
         <div class="d-flex flex-column my-3">
           <router-link
             class="rc-link14 font-weight-bold"
-            data-test="householdDetails-manageDuplicates-household-link"
+            :data-test="`householdDetails-manageDuplicates-household-link-${item.duplicateHousehold.householdId}`"
             :to="getHouseholdRoute(item)">
             {{ item.duplicateHousehold.primaryBeneficiaryFullName }}
           </router-link>

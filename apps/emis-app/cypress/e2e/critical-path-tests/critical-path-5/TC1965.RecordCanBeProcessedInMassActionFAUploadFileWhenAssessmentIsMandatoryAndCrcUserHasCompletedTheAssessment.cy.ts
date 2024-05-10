@@ -4,11 +4,16 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
 import {
-  addAssessmentToCasefile, CasefileAssessmentParams, completeAndSubmitCasefileAssessmentByCrcUser,
+  addAssessmentToCasefile, callSearchUntilMeetCondition,
+  CasefileAssessmentParams,
+  completeAndSubmitCasefileAssessmentByCrcUser,
   createAndUpdateAssessment,
   createEventAndTeam,
-  createProgramWithTableWithItemAndSubItem, MassActionFinancialAssistanceUploadFileParams,
-  prepareStateMassActionFinancialAssistanceUploadFile, updateProgram,
+  createProgramWithTableWithItemAndSubItem,
+  MassActionFinancialAssistanceUploadFileWithoutCreatingHouseholdParams,
+  prepareStateHousehold,
+  prepareStateMassActionFinancialAssistanceUploadFileWithoutCreatingHousehold,
+  updateProgram,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { massActionFinancialAssistanceUploadFilePassesProcessCanSteps } from './canStep';
@@ -69,18 +74,9 @@ describe(
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const massActionFaUploadFileParamData: MassActionFinancialAssistanceUploadFileParams = {
-              accessToken: accessTokenL6,
-              event: this.event,
-              tableId: this.faTable.id,
-              programId: this.program.id,
-              householdQuantity,
-              filePath: 'cypress/downloads/TC1965FaFile.csv',
-            };
-            const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceUploadFile(massActionFaUploadFileParamData);
-            const { responseMassFinancialAssistance, responseCreateHouseholds } = resultMassFinancialAssistance;
-            massFinancialAssistance = responseMassFinancialAssistance;
-            const caseFileId = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile.id;
+            const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
+            const { registrationResponse } = resultHousehold;
+            const caseFileId = resultHousehold.registrationResponse.caseFile.id;
             const resultAssessment = await createAndUpdateAssessment(this.provider, this.event.id, this.program.id);
             const eligibilityCriteria: IEligibilityCriteria = {
               authenticated: false,
@@ -101,9 +97,38 @@ describe(
               casefileId: caseFileId,
               assessmentFormId: resultAssessment.id,
             };
-            await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
-            cy.login(roleName);
-            cy.goTo(`mass-actions/financial-assistance/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
+            cy.intercept('PATCH', `**/assessment/assessment-responses/${resultCreateAssessmentResponse.id}/submit`).as('submitAssessment');
+            cy.then(async () => {
+              await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
+            });
+            cy.wait('@submitAssessment', { timeout: 60000 }).then(async (interception) => {
+              if (interception.response.statusCode === 200) {
+                await callSearchUntilMeetCondition({
+                  accessToken: accessTokenL6,
+                  caseFileId,
+                  maxAttempt: 20,
+                  waitTime: 2000,
+                  searchCallBack: (provider: any) => (provider.caseFiles.search({
+                  filter: { Entity: { Id: caseFileId } },
+                  top: 1,
+                })),
+                  conditionCallBack: (value: any) => (value.metadata.assessments.length > 0),
+              });
+                const massActionFaUploadFileParamData: MassActionFinancialAssistanceUploadFileWithoutCreatingHouseholdParams = {
+                  event: this.event,
+                  tableId: this.faTable.id,
+                  programId: this.program.id,
+                  filePath: 'cypress/downloads/TC1965FaFile.csv',
+                  provider: this.provider,
+                  caseFilesList: [registrationResponse.caseFile],
+                };
+                const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceUploadFileWithoutCreatingHousehold(massActionFaUploadFileParamData);
+                const { responseMassFinancialAssistance } = resultMassFinancialAssistance;
+                massFinancialAssistance = responseMassFinancialAssistance;
+                cy.login(roleName);
+                cy.goTo(`mass-actions/financial-assistance/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
+              }
+            });
           });
         });
 

@@ -116,8 +116,8 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
     );
   }
 
-  public goToDuplicateHouseholdProfilebyIndex(index = 0) {
-    cy.getByDataTest(this.registrationNumber).eq(index).click();
+  public goToDuplicateHouseholdProfilebyIndex(duplicateHouseholdRegistrationNumber: string, index = 0) {
+    cy.getByDataTest({ selector: `${this.registrationNumber.selector}-${duplicateHouseholdRegistrationNumber}` }).eq(index).click();
   }
 
   public addTagButton() {

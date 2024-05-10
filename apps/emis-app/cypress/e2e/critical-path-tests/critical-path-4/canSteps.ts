@@ -139,7 +139,7 @@ export const potentialDuplicateCreatedSteps = ({ roleName, firstName, lastName, 
   caseFileDetailsPage.getAllCaseFileActivityBody()
     .should('string', `This household has been identified as a potential duplicate with  #${registrationNumber}`)
     .and('string', `Rationale: ${rationale}`);
-  caseFileDetailsPage.goToDuplicateHouseholdProfilebyIndex();
+  caseFileDetailsPage.goToDuplicateHouseholdProfilebyIndex(registrationNumber);
 
   householdProfilePage.getDuplicatesIcon().should('be.visible');
   householdProfilePage.getDuplicatesCount().should('eq', '1 potential duplicate(s)');
@@ -378,7 +378,7 @@ export const caseFileDetailsPageAssertionSteps = ({ roleName, registrationNumber
       .should('string', `The potential duplicate with  #${registrationNumber}  has been resolved`)
       .and('string', `Action taken to resolve: ${rationale}`);
   }
-  caseFileDetailsPage.goToDuplicateHouseholdProfilebyIndex(0);
+  caseFileDetailsPage.goToDuplicateHouseholdProfilebyIndex(registrationNumber);
 
   householdProfilePage.getDuplicatesIcon().should('be.visible');
   if (updateDuplicateRecordTo === UpdateDuplicateRecordTo.Potential) {

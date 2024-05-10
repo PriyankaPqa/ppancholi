@@ -86,9 +86,16 @@ describe(
               casefileId: resultHousehold.registrationResponse.caseFile.id,
               assessmentFormId: resultAssessment.id,
             };
-            await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
-            cy.login(roleName);
-            cy.goTo('mass-actions/financial-assistance');
+            cy.intercept('PATCH', `**/assessment/assessment-responses/${resultCreateAssessmentResponse.id}/submit`).as('submitAssessment');
+            cy.then(async () => {
+              await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
+            });
+            cy.wait('@submitAssessment', { timeout: 60000 }).then((interception) => {
+              if (interception.response.statusCode === 200) {
+                cy.login(roleName);
+                cy.goTo('mass-actions/financial-assistance');
+              }
+            });
           });
         });
 

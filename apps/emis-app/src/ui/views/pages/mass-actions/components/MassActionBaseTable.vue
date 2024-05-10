@@ -14,7 +14,7 @@
       @add-button="goToAdd"
       @search="search">
       <template #[`item.${customColumns.name}`]="{ item }">
-        <router-link class="rc-link14 font-weight-bold" data-test="massAction-name" :to="goToDetails(item.entity.id)">
+        <router-link class="rc-link14 font-weight-bold" :data-test="`massAction-name-${item.entity.id}`" :to="goToDetails(item.entity.id)">
           {{ item.entity.name }}
         </router-link>
       </template>

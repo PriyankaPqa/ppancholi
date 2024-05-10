@@ -17,7 +17,7 @@
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          data-test="queryDetail-link"
+          :data-test="`queryDetail-link-${item.id}`"
           :to="getQueryRoute(item.id, item.isPbiReport)">
           {{ item.name }}
         </router-link>

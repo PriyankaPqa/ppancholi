@@ -13,7 +13,7 @@ let wrapper;
 const { approvalTableStore, pinia } = useMockApprovalTableStore();
 const table = { entity: mockApprovalTableEntity(), metadata: {}, pinned: false };
 
-const doMount = () => {
+const doMount = (otherOptions = {}) => {
   const options = {
     localVue,
     pinia,
@@ -27,6 +27,7 @@ const doMount = () => {
         },
       },
     },
+    ...otherOptions,
   };
 
   wrapper = shallowMount(Component, options);
@@ -235,10 +236,10 @@ describe('ApprovalTablesHome.vue', () => {
 
     describe('filters', () => {
       it('should return proper filters', async () => {
-        doMount();
-
-        await wrapper.setData({
-          programs: [mockProgramEntity()],
+        doMount({
+          computed: {
+            programs: () => [mockProgramEntity()],
+          },
         });
 
         expect(wrapper.vm.filters).toEqual([{

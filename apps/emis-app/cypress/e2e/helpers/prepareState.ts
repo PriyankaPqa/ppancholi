@@ -105,6 +105,15 @@ export interface MassActionFinancialAssistanceUploadFileParams {
   filePath: string
 }
 
+export interface MassActionFinancialAssistanceUploadFileWithoutCreatingHouseholdParams {
+  event: IEventEntity,
+  tableId: string,
+  programId: string,
+  filePath: string,
+  caseFilesList: ICaseFileEntity[],
+  provider: any
+}
+
 export interface MassActionDataCorrectionFileParams {
   provider: any,
   dataCorrectionType: MassActionDataCorrectionType,
@@ -116,6 +125,15 @@ export interface IPrepareStateHousehold {
   provider: IProvider,
   registrationResponse: IDetailedRegistrationResponse,
   mockCreateHousehold: ICreateHouseholdRequest,
+}
+
+export interface ICallSearchUntilMeetConditionParams {
+  searchCallBack: (provider: any) => any,
+  conditionCallBack: (value: any) => boolean,
+  accessToken: string,
+  caseFileId: string,
+  maxAttempt: number,
+  waitTime:number,
 }
 
 /**
@@ -642,6 +660,33 @@ export const prepareStateMassActionFinancialAssistanceUploadFile = async (params
 };
 
 /**
+ * Creates a Mass Financial Assistance using csv file without creating household
+ * @param tableId
+ * @param event
+ * @param programId
+ * @param filePath
+ * @param caseFilesList
+ * @param provider
+ */
+export const prepareStateMassActionFinancialAssistanceUploadFileWithoutCreatingHousehold = async (
+  params: MassActionFinancialAssistanceUploadFileWithoutCreatingHouseholdParams,
+  ) => {
+  await searchCaseFilesRecursively(params.provider, params.caseFilesList);
+  const generatedFaCsvData = fixtureGenerateFaCsvFile(params.caseFilesList, params.tableId, params.filePath);
+
+  const mockRequestParamData: MockCreateMassActionFaUploadCsvFileRequestParams = {
+    eventId: params.event.id,
+    tableId: params.tableId,
+    programId: params.programId,
+    fileContents: generatedFaCsvData,
+  };
+  const mockCreateMassFinancialAssistanceUploadCsvFile = mockCreateMassFinancialAssistanceUploadCsvFileRequest(mockRequestParamData);
+  // eslint-disable-next-line
+  const responseMassFinancialAssistance = await params.provider.cypress.massAction.createWithFile('financial-assistance', mockCreateMassFinancialAssistanceUploadCsvFile);
+  return { responseMassFinancialAssistance };
+};
+
+/**
  * Fetch household members persons info
  * @param provider
  * @param personIds
@@ -786,4 +831,35 @@ export const creatingDuplicateHousehold = async (accessTokenL6: string, event: I
   );
   const duplicateHousehold = await provider.households.postCrcRegistration(createDuplicateHouseholdRequest);
   return { firstHousehold, duplicateHousehold, createDuplicateHouseholdRequest };
+};
+
+/**
+ * Search case file until metadata generated properly
+ * @param accessToken
+ * @param caseFileId
+ * @param maxAttempt
+ * @param waitTime
+ * @param searchCallBack
+ * @param conditionCallBack
+ */
+export const callSearchUntilMeetCondition = async (params: ICallSearchUntilMeetConditionParams) => {
+  let searchResult = [] as any;
+  let attempt = 0;
+
+  const waitForCaseFileMetadataUpdated = async (): Promise<number> => {
+    if (attempt < params.maxAttempt) {
+      const provider = useProvider(params.accessToken);
+      const search = await params.searchCallBack(provider);
+      searchResult = search?.value;
+      attempt += 1;
+      if (params.conditionCallBack(searchResult[0])) {
+        cy.log('Case file metadata successfully updated');
+        return searchResult;
+      }
+      await helpers.timeout(params.waitTime);
+      return waitForCaseFileMetadataUpdated();
+    }
+    throw new Error(`Failed to search for index after ${params.maxAttempt} retries.`);
+  };
+  return waitForCaseFileMetadataUpdated();
 };

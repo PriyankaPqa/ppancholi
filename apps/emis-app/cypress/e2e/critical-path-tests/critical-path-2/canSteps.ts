@@ -16,10 +16,10 @@ export interface UpdateHouseholdStatusCanStepsParams {
   casefileActivityBody: string,
 }
 
-export const verifyPartiallyCompletedCaseFileAssessment = (roleName:string) => {
+export const verifyPartiallyCompletedCaseFileAssessment = (roleName: string, assessmentId: string) => {
   const assessmentsListPage = new AssessmentsListPage();
   assessmentsListPage.getCompletedAssessmentTable().contains('Partial').should('be.visible');
-  assessmentsListPage.getAssessmentDetailLink().should('be.visible');
+  assessmentsListPage.getAssessmentDetailLink(assessmentId).should('be.visible');
   assessmentsListPage.getAssessmentDateAssigned().should('eq', getToday());
   assessmentsListPage.getAssessmentDateModified().should('eq', getToday());
   assessmentsListPage.getAssessmentDateCompletedElement().should('not.be.visible');

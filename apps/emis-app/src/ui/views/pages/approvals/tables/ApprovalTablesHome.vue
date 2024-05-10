@@ -33,13 +33,15 @@
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
-        {{ $m(getProgramName(item.entity.programId)) }}
+        <span data-test="program_name">
+          {{ $m(getProgramName(item.entity.programId)) }}
+        </span>
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          data-test="approval_table_details-link"
+          :data-test="`approval_table_details-link_${item.entity.id}`"
           :to="getDetailsRoute(item.entity.id)">
           {{ $m(item.entity.name) }}
         </router-link>

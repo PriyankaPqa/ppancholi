@@ -32,7 +32,7 @@
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          data-test="assessmentDetail-link"
+          :data-test="`assessmentDetail-link-${item.entity.id}`"
           :to="getAssessmentDetailsRoute(item.entity.id)">
           {{ $m(item.entity.name) }}
         </router-link>

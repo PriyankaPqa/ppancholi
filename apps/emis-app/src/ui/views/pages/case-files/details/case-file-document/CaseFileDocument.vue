@@ -31,7 +31,7 @@
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          data-test="documentDetail-link"
+          :data-test="`documentDetail-link-${item.id}`"
           :to="getDocumentDetailsRoute(item.id)">
           {{ item.name }}
         </router-link>

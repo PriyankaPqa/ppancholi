@@ -30,7 +30,7 @@
       <template #[`item.${customColumns.name}`]="{ item: program }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          data-test="programDetail-link"
+          :data-test="`programDetail-link-${program.entity.id}`"
           :to="getProgramDetailsRoute(program.entity)">
           {{ (program.entity && $m(program.entity.name)) || '-' }}
         </router-link>

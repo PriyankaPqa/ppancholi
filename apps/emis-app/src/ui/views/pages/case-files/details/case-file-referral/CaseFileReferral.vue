@@ -29,7 +29,7 @@
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          data-test="referralDetail-link"
+          :data-test="`referralDetail-link-${item.entity.id}`"
           :to="getReferralDetailsRoute(item.entity.id)">
           {{ (item.entity && item.entity.name) || '-' }}
         </router-link>
