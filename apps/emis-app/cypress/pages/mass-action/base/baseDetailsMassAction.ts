@@ -16,6 +16,7 @@ export enum DataTest {
   processLabelTwo = 'processLabelTwo',
   dialogConfirmCancel = 'cancel-action-dialog-confirmation',
   dialogConfirmSubmit = 'submit-action-dialog-confirmation',
+  backToMassActionListButton = 'back_to_mass_action_list_button',
 }
 
 export class BaseDetailsMassAction {
@@ -52,6 +53,8 @@ export class BaseDetailsMassAction {
   private dialogConfirmSubmit = { selector: DataTest.dialogConfirmSubmit };
 
   private dialogConfirmCancel = { selector: DataTest.dialogConfirmCancel };
+
+  private backToMassActionListButton = { selector: DataTest.backToMassActionListButton };
 
   public getMassActionName() {
     return cy.getByDataTest(this.name).getAndTrimText();
@@ -133,5 +136,9 @@ export class BaseDetailsMassAction {
 
   public getPreProcessingLabelTwo() {
     return cy.getByDataTest(this.processLabelTwo).getAndTrimText();
+  }
+
+  public getBackToMassActionListButton() {
+    return cy.getByDataTest(this.backToMassActionListButton);
   }
 }

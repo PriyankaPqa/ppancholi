@@ -94,6 +94,8 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           newMassFinancialAssistancePage.getDialogConfirmCancelButton().should('be.visible');
 
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
+          massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
+          massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionName().should('string', `${this.programName} - ${newMassFinancialAssistanceData.item}`);
@@ -101,6 +103,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           massFinancialAssistanceDetailsPage.getMassActionProjectedAmount().should('string', `${parseFloat(newMassFinancialAssistanceData.paymentAmount) * householdQuantity}.00`);
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', `${householdQuantity}`.toString());
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
+          massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Financial assistance');
           massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsEvent().should('eq', this.event.name.translation.en);
@@ -111,6 +114,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', newMassFinancialAssistanceData.paymentModality.toLowerCase());
           massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', `$${newMassFinancialAssistanceData.paymentAmount}`);
+          massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.visible');
         });
       });
     }
