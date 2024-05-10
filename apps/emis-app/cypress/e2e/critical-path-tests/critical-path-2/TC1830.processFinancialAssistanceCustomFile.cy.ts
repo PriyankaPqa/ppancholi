@@ -4,6 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { GenerateFaCustomOptionsXlsxFileParams, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
@@ -101,6 +102,9 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed case files.');
           cy.waitForMassActionToBe(MassActionRunStatus.Processed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Processed').should('be.visible');
+          massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Mass financial assistance - custom options');
+          massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
             if (quantity === householdQuantity.toString()) {
               massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
@@ -108,6 +112,8 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
               massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.enabled');
             }
           });
+          massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.visible');
+
           cy.visit(`en/casefile/${this.caseFileId}`);
 
           const caseFileDetailsPage = new CaseFileDetailsPage();

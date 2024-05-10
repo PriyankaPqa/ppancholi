@@ -3,6 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { getToday } from '@libs/cypress-lib/helpers';
+import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   MassActionFinancialAssistanceUploadFileParams,
@@ -57,6 +58,9 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
             const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceUploadFile(massActionFaUploadFileParamData);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
+            cy.wrap(resultPrepareStateEvent.event).as('event');
+            cy.wrap(resultCreateProgram.table).as('faTable');
+            cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
             cy.wrap(resultMassFinancialAssistance.responseMassFinancialAssistance.name).as('massFinancialAssistanceName');
             cy.wrap(resultMassFinancialAssistance.responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile.id).as('caseFileId');
             cy.login(roleName);
@@ -68,6 +72,7 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
+        // eslint-disable-next-line
         it('should successfully process a financial assistance upload file', function () {
           const massFinancialAssistanceDetailsPage = new MassFinancialAssistanceDetailsPage();
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
@@ -81,6 +86,9 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed case files.');
           cy.waitForMassActionToBe(MassActionRunStatus.Processed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Processed').should('be.visible');
+          massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Financial assistance');
+          massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
             if (quantity === householdQuantity.toString()) {
               massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
@@ -88,6 +96,14 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
               massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.enabled');
             }
           });
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsEvent().should('eq', this.event.name.translation.en);
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsTable().should('eq', this.faTable.name.translation.en);
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsProgram().should('eq', this.programName);
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsItem().should('eq', 'Clothing');
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsSubItem().should('eq', 'Winter Clothing');
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', 'cheque');
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', '$80.00');
+          massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.visible');
           cy.visit(`en/casefile/${this.caseFileId}`);
 
           const caseFileDetailsPage = new CaseFileDetailsPage();
@@ -116,7 +132,7 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
     }
   });
   describe('Cannot Roles', () => {
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);

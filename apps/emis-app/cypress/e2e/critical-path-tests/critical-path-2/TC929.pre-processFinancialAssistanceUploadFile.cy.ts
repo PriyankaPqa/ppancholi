@@ -3,6 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { getToday } from '@libs/cypress-lib/helpers';
+import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
@@ -101,7 +102,9 @@ describe('#TC929# - Pre-process a Financial Assistance upload file', { tags: ['@
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsItem().should('eq', newMassFinancialAssistanceData.item);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsSubItem().should('eq', newMassFinancialAssistanceData.subItem);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', newMassFinancialAssistanceData.paymentModality.toLowerCase());
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', `$${newMassFinancialAssistanceData.paymentAmount}`);
+          massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.visible');
         });
       });
     }
