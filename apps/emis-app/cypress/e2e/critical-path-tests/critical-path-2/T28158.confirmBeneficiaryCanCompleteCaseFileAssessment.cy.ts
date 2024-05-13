@@ -29,7 +29,7 @@ const { filteredCanRoles } = getRoles(canRoles, []);
 
 let accessTokenL6 = '';
 
-describe('#TC1773# - Confirm that Beneficiary can complete a Case File Assessment', { tags: ['@assessments'] }, () => {
+describe('[T28158] Confirm that Beneficiary can complete a Case File Assessment', { tags: ['@assessments'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

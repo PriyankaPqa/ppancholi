@@ -40,7 +40,7 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const fileName = 'faCustomOptionsFile';
 
-describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T28902] Process a Financial Assistance custom file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

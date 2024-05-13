@@ -1,8 +1,8 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   createProgramWithTableWithItemAndSubItem,
@@ -34,7 +34,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC300# - Submit a Direct Deposit Payment', { tags: ['@financial-assistance'] }, () => {
+describe('[T28383] Submit a Voucher Payment', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -61,7 +61,7 @@ describe('#TC300# - Submit a Direct Deposit Payment', { tags: ['@financial-assis
 
             const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
               provider: resultPrepareStateHousehold.provider,
-              modality: EPaymentModalities.DirectDeposit,
+              modality: EPaymentModalities.Voucher,
               caseFileId: resultPrepareStateHousehold.registrationResponse.caseFile.id,
               financialAssistanceTableId: this.table.id,
             };
@@ -71,12 +71,12 @@ describe('#TC300# - Submit a Direct Deposit Payment', { tags: ['@financial-assis
             cy.goTo(`casefile/${resultPrepareStateHousehold.registrationResponse.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully submit a Direct Deposit Payment', function () {
+        it('should successfully submit a Voucher Payment', function () {
           const canStepsParamData: Partial<SubmitPaymentTypeCanStepsParams> = {
             financialAssistancePayment: this.financialAssistancePayment,
-            paymentType: 'Direct deposit',
+            paymentType: 'Voucher',
             roleName,
-            paymentGroupStatus: 'New',
+            paymentGroupStatus: 'Issued',
           };
           submitPaymentTypeCanSteps(canStepsParamData);
         });
@@ -87,9 +87,10 @@ describe('#TC300# - Submit a Direct Deposit Payment', { tags: ['@financial-assis
     before(() => {
       cy.then(async function () {
         const resultPrepareStateHousehold = await prepareStateHousehold(accessTokenL6, this.event);
+
         const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
           provider: resultPrepareStateHousehold.provider,
-          modality: EPaymentModalities.DirectDeposit,
+          modality: EPaymentModalities.Voucher,
           caseFileId: resultPrepareStateHousehold.registrationResponse.caseFile.id,
           financialAssistanceTableId: this.table.id,
         };
@@ -105,7 +106,7 @@ describe('#TC300# - Submit a Direct Deposit Payment', { tags: ['@financial-assis
           cy.login(roleName);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to submit a Direct Deposit Payment', function () {
+        it('should not be able to submit a Voucher Payment', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.financialAssistancePaymentId);

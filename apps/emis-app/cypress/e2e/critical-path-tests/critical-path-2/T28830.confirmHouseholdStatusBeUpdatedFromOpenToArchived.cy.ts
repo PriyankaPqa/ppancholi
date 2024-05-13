@@ -28,7 +28,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1805# - Confirm that Household Status can be updated from Open to Archived (L2+)', { tags: ['@household'] }, () => {
+describe('[T28830] Confirm that Household Status can be updated from Open to Archived (L2+)', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

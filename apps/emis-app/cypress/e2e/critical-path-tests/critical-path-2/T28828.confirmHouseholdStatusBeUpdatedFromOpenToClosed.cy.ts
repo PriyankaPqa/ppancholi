@@ -12,10 +12,10 @@ const canRoles = [
   UserRoles.level5,
   UserRoles.level4,
   UserRoles.level3,
+  UserRoles.level2,
 ];
 
 const cannotRoles = [
-  UserRoles.level2,
   UserRoles.level1,
   UserRoles.level0,
   UserRoles.contributor1,
@@ -28,7 +28,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1809# - Confirm that Household Status can be updated from Closed to Open (L3+)', { tags: ['@household'] }, () => {
+describe('[T28828] Confirm that Household Status can be updated from Open to Closed (L2+)', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -51,27 +51,27 @@ describe('#TC1809# - Confirm that Household Status can be updated from Closed to
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.eventCreated);
             await setCasefileStatus(result.provider, result.registrationResponse.caseFile.id, CaseFileStatus.Closed);
-            await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Closed);
+            await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Open);
             cy.wrap(result.registrationResponse.caseFile.id).as('casefileId');
             cy.wrap(result.registrationResponse.household.id).as('householdId');
             cy.login(roleName);
             cy.goTo(`casefile/household/${result.registrationResponse.household.id}`);
           });
         });
-        it('should successfully update Household Status from Closed to Open', function () {
+        it('should successfully update Household Status from Open to Closed', function () {
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdStatus().should('eq', 'Closed');
-          householdProfilePage.selectStatusToOpen();
+          householdProfilePage.getHouseholdStatus().should('eq', 'Open');
+          householdProfilePage.selectStatusToClosed();
 
           const canStepsParamData: Partial<UpdateHouseholdStatusCanStepsParams> = {
-            actionUpdateHousehold: 'Open',
-            updatedStatus: 'Open',
-            userActionInformation: 'Opened',
-            rationale: 'This is my reasoning for updating the status to Open',
+            actionUpdateHousehold: 'Close',
+            updatedStatus: 'Closed',
+            userActionInformation: 'Closed',
+            rationale: 'This is my reasoning for updating the status to Closed',
             roleName,
-            statusEnum: HouseholdStatus.Open,
+            statusEnum: HouseholdStatus.Closed,
             casefileId: this.casefileId,
-            casefileActivityBody: 'Closed to Open',
+            casefileActivityBody: 'Open to Closed',
           };
           updateHouseholdStatusCanSteps(canStepsParamData);
         });
@@ -83,7 +83,7 @@ describe('#TC1809# - Confirm that Household Status can be updated from Closed to
       cy.then(async function () {
         const result = await prepareStateHousehold(accessTokenL6, this.eventCreated);
         await setCasefileStatus(result.provider, result.registrationResponse.caseFile.id, CaseFileStatus.Closed);
-        await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Closed);
+        await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Open);
         cy.wrap(result.registrationResponse.household.id).as('householdId');
       });
     });
@@ -95,9 +95,9 @@ describe('#TC1809# - Confirm that Household Status can be updated from Closed to
             cy.goTo(`casefile/household/${this.householdId}`);
           });
         });
-        it('should not be able to update Household Status from Closed to Open', () => {
+        it('should not be able to update Household Status from Open to Closed', () => {
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdStatus().should('eq', 'Closed');
+          householdProfilePage.getHouseholdStatus().should('eq', 'Open');
           householdProfilePage.getHouseholdStatusChevronDownIcon().should('not.exist');
         });
       });

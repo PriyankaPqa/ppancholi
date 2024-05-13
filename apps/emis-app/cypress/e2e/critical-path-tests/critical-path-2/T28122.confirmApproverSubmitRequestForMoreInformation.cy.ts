@@ -36,7 +36,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1791# - Confirm that an Approver can submit a request for more information', { tags: ['@approval', '@financial-assistance'] }, () => {
+describe('[T28122] Confirm that an Approver can submit a request for more information', { tags: ['@approval', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

@@ -33,7 +33,7 @@ const householdQuantity = 3;
 const fileName = 'faCustomOptionsFile';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
 
-describe('#TC1829# - Pre-process a Financial Assistance custom file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T28903] Pre-process a Financial Assistance custom file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

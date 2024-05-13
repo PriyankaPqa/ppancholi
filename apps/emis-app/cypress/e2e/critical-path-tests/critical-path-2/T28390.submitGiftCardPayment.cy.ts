@@ -34,7 +34,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistance'] }, () => {
+describe('[T28390] Submit a Gift Card Payment', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -61,7 +61,7 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
 
             const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
               provider: resultPrepareStateHousehold.provider,
-              modality: EPaymentModalities.ETransfer,
+              modality: EPaymentModalities.GiftCard,
               caseFileId: resultPrepareStateHousehold.registrationResponse.caseFile.id,
               financialAssistanceTableId: this.table.id,
             };
@@ -71,12 +71,12 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
             cy.goTo(`casefile/${resultPrepareStateHousehold.registrationResponse.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully submit a E-Transfer Payment', function () {
+        it('should successfully submit a Gift Card Payment', function () {
           const canStepsParamData: Partial<SubmitPaymentTypeCanStepsParams> = {
             financialAssistancePayment: this.financialAssistancePayment,
-            paymentType: 'E-Transfer',
+            paymentType: 'Gift card',
             roleName,
-            paymentGroupStatus: 'New',
+            paymentGroupStatus: 'Issued',
           };
           submitPaymentTypeCanSteps(canStepsParamData);
         });
@@ -90,7 +90,7 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
 
         const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
           provider: resultPrepareStateHousehold.provider,
-          modality: EPaymentModalities.ETransfer,
+          modality: EPaymentModalities.GiftCard,
           caseFileId: resultPrepareStateHousehold.registrationResponse.caseFile.id,
           financialAssistanceTableId: this.table.id,
         };
@@ -106,7 +106,7 @@ describe('#TC301# - Submit a E-Transfer Payment', { tags: ['@financial-assistanc
           cy.login(roleName);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to submit a E-Transfer Payment', function () {
+        it('should not be able to submit a Gift Card Payment', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.financialAssistancePaymentId);

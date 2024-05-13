@@ -40,7 +40,7 @@ const { filteredCanRoles, filteredCannotRoles } = getRoles(canRoles, cannotRoles
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be given when Approval table has more than one Approval Group level', { tags: ['@approval', '@financial-assistance'] }, () => {
+describe('[T28120] 2nd Approval Group - Confirm that FINAL approval can be given when Approval table has more than one Approval Group level', { tags: ['@approval', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

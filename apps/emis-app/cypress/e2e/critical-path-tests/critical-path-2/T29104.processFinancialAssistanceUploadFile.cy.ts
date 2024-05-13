@@ -37,7 +37,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 const householdQuantity = 3;
 
-describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T29104] Process a Financial Assistance upload file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

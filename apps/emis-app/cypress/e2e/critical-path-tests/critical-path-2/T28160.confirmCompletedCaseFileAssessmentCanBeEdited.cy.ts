@@ -35,7 +35,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1740# - Confirm that a Completed Case File Assessment can be edited', { tags: ['@assessments'] }, () => {
+describe('[T28160] Confirm that a Completed Case File Assessment can be edited', { tags: ['@assessments'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

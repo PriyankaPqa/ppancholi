@@ -36,7 +36,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1792# - Confirm that an Approver can decline a payment request', { tags: ['@approval', '@financial-assistance'] }, () => {
+describe('[T28119] Confirm that an Approver can decline a payment request', { tags: ['@approval', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
