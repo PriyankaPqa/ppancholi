@@ -2,15 +2,15 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { fixtureGenerateContactInformationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
   createEventAndTeam,
-  getCaseFiles,
+  getPersonsInfo,
   prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
-import { fixtureGenerateLabelDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 
 const canRoles = [
   UserRoles.level6,
@@ -33,9 +33,9 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const fileName = 'labelsDataCorrectionMassAction';
+const fileName = 'contactInformationDataCorrectionFile';
 
-describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('[T28845] Process a Contact Information data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -43,26 +43,26 @@ describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
-            // eslint-disable-next-line
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const casefileIds: string[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
+
+            const personIds: string[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
+            const resultPersonsInfo = await getPersonsInfo(resultMultipleHousehold.provider, personIds);
 
-            const resultCaseFiles = await getCaseFiles(resultMultipleHousehold.provider, casefileIds);
-
-            const casefiles: Record<string, string> = {
-              [resultCaseFiles[0].id]: resultCaseFiles[0].etag.replace(/"/g, ''),
-              [resultCaseFiles[1].id]: resultCaseFiles[1].etag.replace(/"/g, ''),
-              [resultCaseFiles[2].id]: resultCaseFiles[2].etag.replace(/"/g, ''),
+            const primaryMemberHouseholds: Record<string, string> = {
+              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
+              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
+              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag.replace(/"/g, ''),
             };
-            const resultGeneratedXlsxFile = await fixtureGenerateLabelDataCorrectionXlsxFile(casefiles, 'MassActionTable', fileName);
+
+            const resultGeneratedXlsxFile = await fixtureGenerateContactInformationDataCorrectionXlsxFile(primaryMemberHouseholds, 'MassActionTable', fileName);
 
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
               fileContents: resultGeneratedXlsxFile,
-              massActionType: MassActionDataCorrectionType.Labels,
+              massActionType: MassActionDataCorrectionType.ContactInformation,
               fileName,
               eventId: null,
             };
@@ -70,25 +70,21 @@ describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultCaseFiles).as('caseFiles');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
         });
-
         afterEach(function () {
           if (this.teamCreated?.id && this.provider) {
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-
-        it('should successfully process a Label data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records');
+        it('should successfully process a Contact Information data correction file', () => {
+          processDataCorrectionFileSteps(householdQuantity, 'household records');
         });
       });
     }
   });
-
   describe('Cannot Roles', () => {
     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
@@ -96,7 +92,7 @@ describe('#TC1838# - Process a Label data correction file', { tags: ['@case-file
           cy.login(roleName);
           cy.goTo('mass-actions/data-correction/create');
         });
-        it('should not be able to process a Label data correction file', () => {
+        it('should not be able to process a Contact Information data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

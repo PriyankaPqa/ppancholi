@@ -1,9 +1,14 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureGenerateLabelDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
-import { createEventAndTeam, getCaseFiles, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { fixtureGenerateAuthenticationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import {
+  createEventAndTeam,
+  prepareStateMultipleHouseholds,
+  setCaseFileIdentityAuthentication,
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { preprocessDataCorrectionFileCanSteps } from './canSteps';
+import { preprocessDataCorrectionFileCanSteps, updatedIdentityAuthenticationStatus } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -26,12 +31,12 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const fileName = 'labelsDataCorrectionMassAction';
+const fileName = 'authenticationDataCorrectionFile';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Labels';
-const dataCorrectionTypeDropDown = 'Labels';
+const dataCorrectionTypeDataTest = 'Data Correction Authentication';
+const dataCorrectionTypeDropDown = 'Authentication';
 
-describe('#TC1712# - Pre-process a Label data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('[T28832] Pre-process a Authentication data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -41,35 +46,27 @@ describe('#TC1712# - Pre-process a Label data correction file', { tags: ['@case-
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             // eslint-disable-next-line
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const casefileIds: string[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
+            const casefiles: ICaseFileEntity[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile,
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile,
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile,
             ];
-            const resultCaseFiles = await getCaseFiles(resultMultipleHousehold.provider, casefileIds);
+            await setCaseFileIdentityAuthentication(resultMultipleHousehold.provider, casefiles, updatedIdentityAuthenticationStatus);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultCaseFiles).as('caseFiles');
+            cy.wrap(casefiles).as('caseFiles');
             cy.login(roleName);
             cy.goTo('mass-actions/data-correction/create');
           });
         });
-
         afterEach(function () {
           if (this.teamCreated?.id && this.provider) {
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-
-        it('should successfully pre-process a Label data correction file', function () {
-          const casefiles: Record<string, string> = {
-            [this.caseFiles[0].id]: this.caseFiles[0].etag.replace(/"/g, ''),
-            [this.caseFiles[1].id]: this.caseFiles[1].etag.replace(/"/g, ''),
-            [this.caseFiles[2].id]: this.caseFiles[2].etag.replace(/"/g, ''),
-          };
-
-          fixtureGenerateLabelDataCorrectionXlsxFile(casefiles, 'MassActionTable', fileName);
+        it('should successfully pre-process an Authentication data correction file', function () {
+          fixtureGenerateAuthenticationDataCorrectionXlsxFile([this.caseFiles[0], this.caseFiles[1], this.caseFiles[2]], 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,
@@ -84,7 +81,6 @@ describe('#TC1712# - Pre-process a Label data correction file', { tags: ['@case-
       });
     }
   });
-
   describe('Cannot Roles', () => {
     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
@@ -92,8 +88,7 @@ describe('#TC1712# - Pre-process a Label data correction file', { tags: ['@case-
           cy.login(roleName);
           cy.goTo('mass-actions/data-correction/create');
         });
-
-        it('should not be able to pre-process a Label data correction file', () => {
+        it('should not be able to pre-process an Authentication Other data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

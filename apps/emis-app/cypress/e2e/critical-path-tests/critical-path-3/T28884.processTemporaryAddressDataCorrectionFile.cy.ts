@@ -1,13 +1,15 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
-import { fixtureGenerateContactInformationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import { fixtureGenerateTemporaryAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
   createEventAndTeam,
   getPersonsInfo,
   prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
+  updatePersonsCurrentAddress,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
@@ -33,9 +35,9 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const fileName = 'contactInformationDataCorrectionFile';
+const fileName = 'temporaryAddressDataCorrectionFile';
 
-describe('#TC1835# - Process a Contact Information data correction file', { tags: ['@household', '@mass-actions'] }, () => {
+describe('[T28884] Process a Temporary Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -43,30 +45,30 @@ describe('#TC1835# - Process a Contact Information data correction file', { tags
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
-            const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-
+            // eslint-disable-next-line
+            const resultCreatedMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
             const personIds: string[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
+              resultCreatedMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
+              resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
+              resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            const resultPersonsInfo = await getPersonsInfo(resultMultipleHousehold.provider, personIds);
-
-            const primaryMemberHouseholds: Record<string, string> = {
+            updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
+            const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, personIds);
+            const memberHouseholds: Record<string, string> = {
               [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
               [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
               [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag.replace(/"/g, ''),
             };
 
-            const resultGeneratedXlsxFile = await fixtureGenerateContactInformationDataCorrectionXlsxFile(primaryMemberHouseholds, 'MassActionTable', fileName);
+            const resultGeneratedXlsxFile = await fixtureGenerateTemporaryAddressDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
 
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
               fileContents: resultGeneratedXlsxFile,
-              massActionType: MassActionDataCorrectionType.ContactInformation,
+              massActionType: MassActionDataCorrectionType.TemporaryAddress,
               fileName,
               eventId: null,
             };
-            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultCreatedMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -74,17 +76,20 @@ describe('#TC1835# - Process a Contact Information data correction file', { tags
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
         });
+
         afterEach(function () {
           if (this.teamCreated?.id && this.provider) {
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process a Contact Information data correction file', () => {
+
+        it('should successfully process a Temporary Address data correction file', () => {
           processDataCorrectionFileSteps(householdQuantity, 'household records');
         });
       });
     }
   });
+
   describe('Cannot Roles', () => {
     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
@@ -92,7 +97,8 @@ describe('#TC1835# - Process a Contact Information data correction file', { tags
           cy.login(roleName);
           cy.goTo('mass-actions/data-correction/create');
         });
-        it('should not be able to process a Contact Information data correction file', () => {
+
+        it('should not be able to process a Temporary Address data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

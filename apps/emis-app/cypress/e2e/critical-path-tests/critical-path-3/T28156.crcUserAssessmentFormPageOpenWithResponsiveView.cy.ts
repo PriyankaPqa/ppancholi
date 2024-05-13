@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // If this test becomes flaky with time, we could create and test multiple surveys. Each of them would contain only one component at a time, which could allow a more generic selection
-describe('#TC1884# - CRC User: The assessment form page should be open with a responsive view', { tags: ['@assessments'] }, () => {
+describe('[T28156] CRC User: The assessment form page should be open with a responsive view', { tags: ['@assessments'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -68,26 +68,40 @@ describe('#TC1884# - CRC User: The assessment form page should be open with a re
         it('should successfully open assessment form page for crc user with a responsive view', () => {
           const pageComponents = propertyStateMockAllComponentsData.pages[0].elements;
           cy.contains(pageComponents[1].name).should('be.visible');
-          cy.get(`input[value='${pageComponents[0].choices[0]}']`).click({ force: true }).log('radiogroup component responsive');
-          cy.get(`input[name='${pageComponents[1].name}']`).eq(0).click({ force: true }).log('rating component responsive');
-          cy.get(`input[name='${pageComponents[2].name}']`).eq(0).click({ force: true }).log('checkbox component responsive');
+          cy.get(`input[value='${pageComponents[0].choices[0]}']`).click({ force: true });
+          cy.log('radiogroup component responsive');
+          cy.get(`input[name='${pageComponents[1].name}']`).eq(0).click({ force: true });
+          cy.log('rating component responsive');
+          cy.get(`input[name='${pageComponents[2].name}']`).eq(0).click({ force: true });
+          cy.log('checkbox component responsive');
           cy.get(`input[placeholder='${pageComponents[3].placeholder}']`).click({ force: true });
-          cy.contains(pageComponents[3].choices[1]).click({ force: true }).log('dropdown component responsive');
-          cy.get(`[data-name='${pageComponents[4].name}']`).contains('No').click({ force: true }).log('boolean component responsive');
-          cy.get(`input[aria-label='${pageComponents[5].name}']`).type('1').log('single input component responsive');
-          cy.get(`textarea[aria-label='${pageComponents[6].name}']`).type('Pleasant').log('comment component responsive');
+          cy.contains(pageComponents[3].choices[1]).click({ force: true });
+          cy.log('dropdown component responsive');
+          cy.get(`[data-name='${pageComponents[4].name}']`).contains('No').click({ force: true });
+          cy.log('boolean component responsive');
+          cy.get(`input[aria-label='${pageComponents[5].name}']`).type('1');
+          cy.log('single input component responsive');
+          cy.get(`textarea[aria-label='${pageComponents[6].name}']`).type('Pleasant');
+          cy.log('comment component responsive');
           cy.get(`input[aria-label='${pageComponents[7].items[0].name}']`).type('John');
-          cy.get(`input[aria-label='${pageComponents[7].items[1].name}']`).type('Doe').log('multiple text component responsive');
-          cy.get(`input[aria-label='${pageComponents[8].elements[0].name}']`).type('Test text').log('panel component responsive');
+          cy.get(`input[aria-label='${pageComponents[7].items[1].name}']`).type('Doe');
+          cy.log('multiple text component responsive');
+          cy.get(`input[aria-label='${pageComponents[8].elements[0].name}']`).type('Test text');
+          cy.log('panel component responsive');
           cy.get(`[data-name='${pageComponents[9].name}']`).contains('Add new').click();
           cy.get(`input[aria-label='${pageComponents[9].templateElements[0].name}']`).type('2');
-          cy.get(`input[aria-label='${pageComponents[9].templateElements[1].name}']`).type('2').log('dynamic panel component responsive');
-          cy.get(`input[aria-label='${pageComponents[10].columns[1]}']`).eq(0).click({ force: true }).log('single choice matrix component responsive');
-          cy.get(`input[placeholder='${pageComponents[11].placeholder}']`).eq(0).click({ force: true }).type('4')
-            .log('multiple choice matrix component responsive');
-          cy.get(`input[placeholder='${pageComponents[12].placeholder}']`).eq(0).click({ force: true }).type('2')
-            .log('dynamic matrix component responsive');
-          cy.get(`[data-name='${pageComponents[13].name}']`).contains('No').click({ force: true }).log('yes-no component responsive');
+          cy.get(`input[aria-label='${pageComponents[9].templateElements[1].name}']`).type('2');
+          cy.log('dynamic panel component responsive');
+          cy.get(`input[aria-label='${pageComponents[10].columns[1]}']`).eq(0).click({ force: true });
+          cy.log('single choice matrix component responsive');
+          cy.get(`input[placeholder='${pageComponents[11].placeholder}']`).eq(0).click({ force: true });
+          cy.get(`input[placeholder='${pageComponents[11].placeholder}']`).eq(0).type('4');
+          cy.log('multiple choice matrix component responsive');
+          cy.get(`input[placeholder='${pageComponents[12].placeholder}']`).eq(0).click({ force: true });
+          cy.get(`input[placeholder='${pageComponents[12].placeholder}']`).eq(0).type('2');
+          cy.log('dynamic matrix component responsive');
+          cy.get(`[data-name='${pageComponents[13].name}']`).contains('No').click({ force: true });
+          cy.log('yes-no component responsive');
           cy.get(`[data-name='${pageComponents[14].name}']`).contains('Note to Case Managers').log('html component visible');
           cy.get(`img[alt='${pageComponents[15].name}']`).should('have.prop', 'tagName', 'IMG').log('image component visible');
           cy.get("input[value='Complete']").click();

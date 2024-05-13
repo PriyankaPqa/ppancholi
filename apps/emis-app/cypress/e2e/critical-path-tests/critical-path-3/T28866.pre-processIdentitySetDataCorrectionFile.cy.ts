@@ -31,7 +31,7 @@ const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDataTest = 'Identity Set';
 const dataCorrectionTypeDropDown = 'Identity Set';
 
-describe('#TC1711# - Pre-process a Identity Set data correction file', { tags: ['@household', '@mass-actions'] }, () => {
+describe('[T28866] Pre-process a Identity Set data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

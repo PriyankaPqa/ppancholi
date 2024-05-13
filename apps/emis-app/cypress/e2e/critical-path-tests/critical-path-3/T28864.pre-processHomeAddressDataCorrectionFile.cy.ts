@@ -1,14 +1,9 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { ICaseFileEntity } from '@libs/entities-lib/case-file';
-import { fixtureGenerateAuthenticationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
-import {
-  createEventAndTeam,
-  prepareStateMultipleHouseholds,
-  setCaseFileIdentityAuthentication,
-} from '../../helpers/prepareState';
+import { fixtureGenerateHomeAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import { createEventAndTeam, getHouseholdsSummary, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { preprocessDataCorrectionFileCanSteps, updatedIdentityAuthenticationStatus } from './canSteps';
+import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -31,12 +26,12 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const fileName = 'authenticationDataCorrectionFile';
+const fileName = 'homeAddressDataCorrectionMassAction';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Data Correction Authentication';
-const dataCorrectionTypeDropDown = 'Authentication';
+const dataCorrectionTypeDataTest = 'Home Address';
+const dataCorrectionTypeDropDown = 'Home Address';
 
-describe('#TC1708# - Pre-process a Authentication data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('[T28864] Pre-process a Home Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -46,16 +41,16 @@ describe('#TC1708# - Pre-process a Authentication data correction file', { tags:
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             // eslint-disable-next-line
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const casefiles: ICaseFileEntity[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile,
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile,
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile,
+            const householdIds: string[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.id,
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.id,
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.id,
             ];
-            await setCaseFileIdentityAuthentication(resultMultipleHousehold.provider, casefiles, updatedIdentityAuthenticationStatus);
+            const resultHouseholdSummary = await getHouseholdsSummary(resultMultipleHousehold.provider, householdIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(casefiles).as('caseFiles');
+            cy.wrap(resultHouseholdSummary).as('householdsSummary');
             cy.login(roleName);
             cy.goTo('mass-actions/data-correction/create');
           });
@@ -65,15 +60,20 @@ describe('#TC1708# - Pre-process a Authentication data correction file', { tags:
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully pre-process an Authentication data correction file', function () {
-          fixtureGenerateAuthenticationDataCorrectionXlsxFile([this.caseFiles[0], this.caseFiles[1], this.caseFiles[2]], 'MassActionTable', fileName);
+        it('should successfully pre-process a Home Address data correction file', function () {
+          const householdIds: Record<string, string> = {
+            [this.householdsSummary[0].id]: this.householdsSummary[0].etag.replace(/"/g, ''),
+            [this.householdsSummary[1].id]: this.householdsSummary[1].etag.replace(/"/g, ''),
+            [this.householdsSummary[2].id]: this.householdsSummary[2].etag.replace(/"/g, ''),
+          };
+          fixtureGenerateHomeAddressDataCorrectionXlsxFile(householdIds, 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,
             dataCorrectionTypeDataTest,
             dataCorrectionTypeDropDown,
             filePath,
-            preprocessedItems: 'case files',
+            preprocessedItems: 'household records',
             roleName,
             householdQuantity,
           });
@@ -88,7 +88,7 @@ describe('#TC1708# - Pre-process a Authentication data correction file', { tags:
           cy.login(roleName);
           cy.goTo('mass-actions/data-correction/create');
         });
-        it('should not be able to pre-process an Authentication Other data correction file', () => {
+        it('should not be able to pre-process a Home Address data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

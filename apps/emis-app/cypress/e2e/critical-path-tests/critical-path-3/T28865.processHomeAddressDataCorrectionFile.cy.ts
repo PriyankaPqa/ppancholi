@@ -1,14 +1,13 @@
-import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
-import { fixtureGenerateIdentitySetDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import { fixtureGenerateHomeAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
   createEventAndTeam,
-  getPersonsInfo,
+  getHouseholdsSummary,
   prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
-  updatePersonsGender,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
@@ -34,9 +33,9 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const fileName = 'identitySetDataCorrectionMassAction';
+const fileName = 'homeAddressDataCorrectionFile';
 
-describe('#TC1837# - Process an Identity Set data correction file', { tags: ['@household', '@mass-actions'] }, () => {
+describe('[T28865] Process a Home Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -45,30 +44,30 @@ describe('#TC1837# - Process an Identity Set data correction file', { tags: ['@h
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             // eslint-disable-next-line
-            const resultCreatedMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const householdMemberIds: string[] = [
-              resultCreatedMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
-              resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
-              resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
+            const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
+            const householdIds: string[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.household.id,
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.household.id,
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.household.id,
             ];
-            updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
-            const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, householdMemberIds);
-            const memberHouseholds: Record<string, string> = {
-              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
-              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
-              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag.replace(/"/g, ''),
+            const resultHouseholdSummary = await getHouseholdsSummary(resultMultipleHousehold.provider, householdIds);
+            const households: Record<string, string> = {
+              [resultHouseholdSummary[0].id]: resultHouseholdSummary[0].etag.replace(/"/g, ''),
+              [resultHouseholdSummary[1].id]: resultHouseholdSummary[1].etag.replace(/"/g, ''),
+              [resultHouseholdSummary[2].id]: resultHouseholdSummary[2].etag.replace(/"/g, ''),
             };
-            const resultGenerateXlsxFile = await fixtureGenerateIdentitySetDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
+            const resultGeneratedCsvFile = await fixtureGenerateHomeAddressDataCorrectionXlsxFile(households, 'MassActionTable', fileName);
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
-              fileContents: resultGenerateXlsxFile,
-              massActionType: MassActionDataCorrectionType.IdentitySet,
+              fileContents: resultGeneratedCsvFile,
+              massActionType: MassActionDataCorrectionType.HomeAddress,
               fileName,
               eventId: null,
             };
-            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultCreatedMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
-
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
+            cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
+            cy.wrap(resultHouseholdSummary).as('householdsSummary');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
@@ -78,7 +77,7 @@ describe('#TC1837# - Process an Identity Set data correction file', { tags: ['@h
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process a Identity Set data correction file', () => {
+        it('should successfully process a Home Address data correction file', () => {
           processDataCorrectionFileSteps(householdQuantity, 'household records');
         });
       });
@@ -91,7 +90,7 @@ describe('#TC1837# - Process an Identity Set data correction file', { tags: ['@h
           cy.login(roleName);
           cy.goTo('mass-actions/data-correction/create');
         });
-        it('should not be able to process a Identity Set data correction file', () => {
+        it('should not be able to process a Home Address data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

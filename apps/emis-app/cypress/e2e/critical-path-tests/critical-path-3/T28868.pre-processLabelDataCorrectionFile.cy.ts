@@ -1,8 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
-import { fixtureGenerateTemporaryAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
-import { createEventAndTeam, getPersonsInfo, prepareStateMultipleHouseholds, updatePersonsCurrentAddress } from '../../helpers/prepareState';
+import { fixtureGenerateLabelDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import { createEventAndTeam, getCaseFiles, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
@@ -27,12 +26,12 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const fileName = 'temporaryAddressDataCorrectionMassAction';
+const fileName = 'labelsDataCorrectionMassAction';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Temporary Address';
-const dataCorrectionTypeDropDown = 'Temporary Address';
+const dataCorrectionTypeDataTest = 'Labels';
+const dataCorrectionTypeDropDown = 'Labels';
 
-describe('#TC1713# - Pre-process a Temporary Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {
+describe('[T28868] Pre-process a Label data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -41,18 +40,17 @@ describe('#TC1713# - Pre-process a Temporary Address data correction file', { ta
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
             // eslint-disable-next-line
-            const resultCreatedMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-            const personIds: string[] = [
-              resultCreatedMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
-              resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
-              resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
+            const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
+            const casefileIds: string[] = [
+              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.id,
+              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile.id,
+              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile.id,
             ];
-            updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
-            const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, personIds);
+            const resultCaseFiles = await getCaseFiles(resultMultipleHousehold.provider, casefileIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
-            cy.wrap(resultPersonsInfo).as('householdMembers');
+            cy.wrap(resultCaseFiles).as('caseFiles');
             cy.login(roleName);
             cy.goTo('mass-actions/data-correction/create');
           });
@@ -64,21 +62,21 @@ describe('#TC1713# - Pre-process a Temporary Address data correction file', { ta
           }
         });
 
-        it('should successfully pre-process a Temporary Address data correction file', function () {
-          const memberHouseholds: Record<string, string> = {
-            [this.householdMembers[0].id]: this.householdMembers[0].etag.replace(/"/g, ''),
-            [this.householdMembers[1].id]: this.householdMembers[1].etag.replace(/"/g, ''),
-            [this.householdMembers[2].id]: this.householdMembers[2].etag.replace(/"/g, ''),
+        it('should successfully pre-process a Label data correction file', function () {
+          const casefiles: Record<string, string> = {
+            [this.caseFiles[0].id]: this.caseFiles[0].etag.replace(/"/g, ''),
+            [this.caseFiles[1].id]: this.caseFiles[1].etag.replace(/"/g, ''),
+            [this.caseFiles[2].id]: this.caseFiles[2].etag.replace(/"/g, ''),
           };
 
-          fixtureGenerateTemporaryAddressDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
+          fixtureGenerateLabelDataCorrectionXlsxFile(casefiles, 'MassActionTable', fileName);
 
           preprocessDataCorrectionFileCanSteps({
             retries: this.test.retries.length,
             dataCorrectionTypeDataTest,
             dataCorrectionTypeDropDown,
             filePath,
-            preprocessedItems: 'household records',
+            preprocessedItems: 'case files',
             roleName,
             householdQuantity,
           });
@@ -95,7 +93,7 @@ describe('#TC1713# - Pre-process a Temporary Address data correction file', { ta
           cy.goTo('mass-actions/data-correction/create');
         });
 
-        it('should not be able to pre-process a Temporary Address data correction file', () => {
+        it('should not be able to pre-process a Label data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

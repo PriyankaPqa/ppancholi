@@ -1,17 +1,17 @@
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
-import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { fixtureGenerateIdentitySetDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
   createEventAndTeam,
+  getPersonsInfo,
   prepareStateMassActionXlsxFile,
   prepareStateMultipleHouseholds,
-  setCaseFileIdentityAuthentication,
+  updatePersonsGender,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { processDataCorrectionFileSteps, updatedIdentityAuthenticationStatus } from './canSteps';
-import { fixtureGenerateAuthenticationDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import { processDataCorrectionFileSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -34,9 +34,9 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const householdQuantity = 3;
-const fileName = 'authenticationDataCorrectionFile';
+const fileName = 'identitySetDataCorrectionMassAction';
 
-describe('#TC1834# - Process an Authentication data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('[T28867] Process an Identity Set data correction file', { tags: ['@household', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -44,26 +44,30 @@ describe('#TC1834# - Process an Authentication data correction file', { tags: ['
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
-            const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
-
-            const caseFiles: ICaseFileEntity[] = [
-              resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile,
-              resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile,
-              resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile,
+            // eslint-disable-next-line
+            const resultCreatedMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
+            const householdMemberIds: string[] = [
+              resultCreatedMultipleHousehold.householdsCreated[0].registrationResponse.household.members[0],
+              resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
+              resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            await setCaseFileIdentityAuthentication(resultMultipleHousehold.provider, caseFiles, updatedIdentityAuthenticationStatus);
-
-            const resultGeneratedXlsxFile = await fixtureGenerateAuthenticationDataCorrectionXlsxFile([caseFiles[0], caseFiles[1], caseFiles[2]], 'MassActionTable', fileName);
-
+            updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
+            const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, householdMemberIds);
+            const memberHouseholds: Record<string, string> = {
+              [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
+              [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
+              [resultPersonsInfo[2].id]: resultPersonsInfo[2].etag.replace(/"/g, ''),
+            };
+            const resultGenerateXlsxFile = await fixtureGenerateIdentitySetDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
-              fileContents: resultGeneratedXlsxFile,
-              massActionType: MassActionDataCorrectionType.DataCorrectionAuthentication,
+              fileContents: resultGenerateXlsxFile,
+              massActionType: MassActionDataCorrectionType.IdentitySet,
               fileName,
               eventId: null,
             };
-            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
+            const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultCreatedMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
+
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
-            cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
@@ -74,13 +78,12 @@ describe('#TC1834# - Process an Authentication data correction file', { tags: ['
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process an Authentication data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records');
+        it('should successfully process a Identity Set data correction file', () => {
+          processDataCorrectionFileSteps(householdQuantity, 'household records');
         });
       });
     }
   });
-
   describe('Cannot Roles', () => {
     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
@@ -88,7 +91,7 @@ describe('#TC1834# - Process an Authentication data correction file', { tags: ['
           cy.login(roleName);
           cy.goTo('mass-actions/data-correction/create');
         });
-        it('should not be able to process an Authentication data correction file', () => {
+        it('should not be able to process a Identity Set data correction file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });
