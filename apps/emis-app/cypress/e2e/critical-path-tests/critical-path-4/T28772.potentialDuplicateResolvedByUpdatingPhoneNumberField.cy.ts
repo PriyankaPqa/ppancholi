@@ -32,7 +32,7 @@ let accessTokenL6 = '';
 const rationale = 'Resolved by the system';
 
 // eslint-disable-next-line
-describe('#TC1883# - Potential duplicate can be resolved by updating any of the field: phone number/Address/FN+LN from household profile', { tags: ['@household'] }, () => {
+describe('[T28772] Potential duplicate can be resolved by updating any of the field: phone number/Address/FN+LN from household profile', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

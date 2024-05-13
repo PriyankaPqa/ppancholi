@@ -1,11 +1,11 @@
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
-import { mockCreateDuplicateHouseholdWithSameAddressRequest } from '@libs/cypress-lib/mocks/household/household';
+import { mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest } from '@libs/cypress-lib/mocks/household/household';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { useProvider } from '../../../provider/provider';
 import { createHousehold } from '../../helpers/prepareState';
 import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
 
-describe('#TC1866# : SELF REG - Potential duplicate records created when individual enters same home Address as an existing EMIS household', { tags: ['@registration'] }, () => {
+describe('[T28787] SELF REG - Potential duplicate records created when individual enters same Phone number as an existing EMIS household', { tags: ['@registration'] }, () => {
   beforeEach(() => {
     cy.then(async () => {
       cy.getToken().then(async (accessToken) => {
@@ -14,19 +14,18 @@ describe('#TC1866# : SELF REG - Potential duplicate records created when individ
         const createdHousehold = await createHousehold(provider, createdEvent);
         cy.wrap(createdEvent.id).as('eventId');
         cy.wrap(createdEvent.name).as('eventName');
-        cy.wrap(createdHousehold.mockCreateHousehold.homeAddress).as('homeAddress');
+        cy.wrap(createdHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number).as('phoneNumber');
         cy.wrap(createdHousehold.mockCreateHousehold.primaryBeneficiary.identitySet).as('personalInfo');
         cy.wrap(createdHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
         cy.wrap(createdHousehold.registrationResponse.household.registrationNumber).as('registrationNumber');
-        cy.wrap(createdHousehold.registrationResponse.household.address.address).as('duplicateHouseholdAddress');
         cy.wrap(provider).as('provider');
         cy.login();
       });
     });
   });
-  it('should create potential duplicate records when entering same home address', function () {
+  it('should create potential duplicate records when entering same phone number', function () {
     cy.then(async () => {
-      const createDuplicateHousehold = mockCreateDuplicateHouseholdWithSameAddressRequest(this.homeAddress, this.eventId);
+      const createDuplicateHousehold = mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest(this.eventId, this.phoneNumber);
       const duplicateHousehold = await this.provider.households.postPublicRegistration(createDuplicateHousehold);
       cy.goTo(`casefile/household/${duplicateHousehold.caseFile.householdId}`);
     });
@@ -37,8 +36,8 @@ describe('#TC1866# : SELF REG - Potential duplicate records created when individ
       registrationNumber: this.registrationNumber,
       caseFileNumber: this.caseFileNumber,
       eventName: this.eventName.translation.en,
-      duplicateHouseholdAddress: this.duplicateHouseholdAddress,
-      potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+      phoneNumber: this.phoneNumber,
+      potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
       roleName: UserRoles.level6,
     });
   });

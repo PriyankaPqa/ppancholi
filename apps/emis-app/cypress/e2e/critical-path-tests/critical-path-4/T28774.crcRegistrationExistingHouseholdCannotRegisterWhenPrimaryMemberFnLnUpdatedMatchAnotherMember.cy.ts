@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1896# - CRC REG existing household- Cannot register to Event when Primary Last Name + First Name + Phone updated to match another member in EMIS', { tags: ['@household'] }, () => {
+describe('[T28774] CRC REG existing household- Cannot register to Event when Primary Last Name + First Name + Phone updated to match another member in EMIS', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

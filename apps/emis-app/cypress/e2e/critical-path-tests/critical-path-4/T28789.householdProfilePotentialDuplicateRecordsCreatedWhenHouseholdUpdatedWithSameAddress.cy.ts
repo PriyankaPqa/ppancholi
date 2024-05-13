@@ -1,9 +1,10 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
+import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps } from './canSteps';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
 const canRoles = [
@@ -27,8 +28,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-// eslint-disable-next-line
-describe('#TC1872# - Household Profile - Potential duplicate records created when Primary member Phone number updated to match that of another EMIS member', { tags: ['@household'] }, () => {
+describe('[T28789] Household Profile - Potential duplicate records created when Home Address updated to match that of another household', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -51,42 +51,56 @@ describe('#TC1872# - Household Profile - Potential duplicate records created whe
         beforeEach(() => {
           cy.then(async function () {
             const resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
-            const resultComparisonHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+            const resultDuplicateHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.homeAddress).as('originalHouseholdHomeAddress');
             cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
             cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
-            cy.wrap(resultComparisonHousehold.mockCreateHousehold.primaryBeneficiary).as('comparisonHouseholdPrimaryBeneficiary');
-            cy.wrap(resultComparisonHousehold.registrationResponse.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
-            cy.wrap(resultComparisonHousehold.registrationResponse.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            cy.wrap(resultDuplicateHousehold.mockCreateHousehold.primaryBeneficiary).as('duplicateHouseholdPrimaryBeneficiary');
+            cy.wrap(resultDuplicateHousehold.registrationResponse.caseFile.caseFileNumber).as('duplicateHouseholdCaseFileNumber');
+            cy.wrap(resultDuplicateHousehold.registrationResponse.household.registrationNumber).as('duplicateHouseholdRegistrationNumber');
             cy.login(roleName);
-            cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
+            cy.goTo(`casefile/household/${resultDuplicateHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should create potential duplicates when crc user registers primary member with same phone number', function () {
+        it('should flag potential duplicates when crc user updates home address to match another household', function () {
           const householdProfilePage = new HouseholdProfilePage();
-          const editHouseholdProfilePage = householdProfilePage.editMemberByIndex(0);
-          editHouseholdProfilePage.fillPhoneNumber(this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number);
-          editHouseholdProfilePage.saveEdit();
 
+          const potentialDuplicateAddressData: IAddressPageFields = {
+            unitNumber: this.originalHouseholdHomeAddress.unitSuite,
+            streetAddress: this.originalHouseholdHomeAddress.streetAddress,
+            municipality: this.originalHouseholdHomeAddress.city,
+            province: 'AB',
+            postalCode: this.originalHouseholdHomeAddress.postalCode,
+          };
+
+          const editHouseholdAddressPage = householdProfilePage.editAddress();
+          editHouseholdAddressPage.fillUpdatedAddressData(potentialDuplicateAddressData, '');
+          editHouseholdAddressPage.fillUnitNumber(potentialDuplicateAddressData);
+          editHouseholdAddressPage.saveUpdatedAddress();
+
+          // asserts value of original household in duplicate household's Manage Duplicate pop up
           potentialDuplicateCreatedSteps({
             firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
             lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
             registrationNumber: this.originalHouseholdRegistrationNumber,
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
-            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
             roleName,
+            caseFileLogIndex: 1,
           });
 
+          // asserts value of duplicate household in original household's Manage Duplicate pop up
           potentialDuplicateCreatedSteps({
-            firstName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.firstName,
-            lastName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.lastName,
-            registrationNumber: this.comparisonHouseholdRegistrationNumber,
-            caseFileNumber: this.comparisonHouseholdCaseFileNumber,
+            firstName: this.duplicateHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.duplicateHouseholdPrimaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.duplicateHouseholdRegistrationNumber,
+            caseFileNumber: this.duplicateHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
-            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
             roleName,
           });
         });
@@ -101,12 +115,12 @@ describe('#TC1872# - Household Profile - Potential duplicate records created whe
           cy.login(roleName);
           cy.goTo('casefile');
         });
-        it('should not be able to create potential duplicates with crc user not able to update phone number', () => {
+        it('should not be able to flag potential duplicates with crc user not able to update home address to match another household', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
           const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
           householdProfilePage.getHouseholdSize().should('be.visible');
-          householdProfilePage.getEditMemberButtons().should('not.exist');
+          householdProfilePage.getEditAddressButton().should('not.exist');
         });
       });
     }

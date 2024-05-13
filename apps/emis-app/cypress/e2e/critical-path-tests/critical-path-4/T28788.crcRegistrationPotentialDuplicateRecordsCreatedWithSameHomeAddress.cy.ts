@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when user registers individual with same Name & DOB as another EMIS member', { tags: ['@household', '@registration'] }, () => {
+describe('[T28788] CRC REG NEW HOUSEHOLD - Potential duplicate records created when user enters same home Address as an existing EMIS household', { tags: ['@household', '@registration'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,19 +55,22 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.eventCreated);
             cy.wrap(result.mockCreateHousehold.primaryBeneficiary).as('primaryBeneficiary');
+            cy.wrap(result.mockCreateHousehold.homeAddress).as('homeAddress');
             cy.wrap(result.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
             cy.wrap(result.registrationResponse.household.registrationNumber).as('registrationNumber');
             cy.login(roleName);
             cy.goTo('registration');
           });
         });
-        it('should flag potential duplicates when crc user registers with same name and dob', function () {
-          const potentialDuplicateMemberData = fixturePrimaryMember(this.test.retries.length, {
-            firstName: this.primaryBeneficiary.identitySet.firstName,
-            lastName: this.primaryBeneficiary.identitySet.lastName,
-            dateOfBirth: this.primaryBeneficiary.identitySet.dateOfBirth,
+        it('should flag potential duplicates when crc user registers with same home address', function () {
+          const potentialDuplicateMemberData = fixturePrimaryMember(this.test.retries.length);
+          const potentialDuplicateAddressData = fixtureAddressData({
+            unitNumber: this.homeAddress.unitSuite,
+            streetAddress: this.homeAddress.streetAddress,
+            municipality: this.homeAddress.city,
+            province: 'AB',
+            postalCode: this.homeAddress.postalCode,
           });
-          const potentialDuplicateAddressData = fixtureAddressData();
 
           crcRegisterPotentialDuplicateSteps({
             eventName: this.eventCreated.name.translation.en,
@@ -82,7 +85,8 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
             registrationNumber: this.registrationNumber,
             caseFileNumber: this.caseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            duplicateHouseholdAddress: this.homeAddress,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
             roleName,
           });
         });
@@ -97,7 +101,7 @@ describe('#TC1868# - CRC REG NEW HOUSEHOLD - Potential duplicates flagged when u
           cy.login(roleName);
           cy.goTo('registration');
         });
-        it('should not be able to flag potential duplicates when crc user registers with same name and dob', () => {
+        it('should not be able to flag potential duplicates when crc user registers with same home address', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

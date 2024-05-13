@@ -1,15 +1,13 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { CaseFileStatus } from '@libs/entities-lib/case-file';
-import { HouseholdStatus } from '@libs/entities-lib/household';
-import { createEventAndTeam, prepareStateHousehold, setCasefileStatus, setHouseholdStatus } from '../../helpers/prepareState';
+import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureAddressData, fixturePrimaryMember } from '../../../fixtures/registration';
 import {
   PotentialDuplicateBasis,
   crcRegisterPotentialDuplicateSteps,
+  potentialDuplicateCreatedSteps,
 } from './canSteps';
-import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -33,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1898# - CRC REG NEW HOUSEHOLD - No potential duplicate records created when register with same LN, FN, Phone, and Address as an Archived household', { tags: ['@household'] }, () => {
+describe('[T28790] CRC REG NEW HOUSEHOLD - Potential duplicates flagged when user registers individual with same Name & DOB as another EMIS member', { tags: ['@household', '@registration'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -56,48 +54,37 @@ describe('#TC1898# - CRC REG NEW HOUSEHOLD - No potential duplicate records crea
         beforeEach(() => {
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.eventCreated);
-            await setCasefileStatus(result.provider, result.registrationResponse.caseFile.id, CaseFileStatus.Archived);
-            await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Archived);
             cy.wrap(result.mockCreateHousehold.primaryBeneficiary).as('primaryBeneficiary');
             cy.wrap(result.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
             cy.wrap(result.registrationResponse.household.registrationNumber).as('registrationNumber');
-            cy.wrap(result.mockCreateHousehold.homeAddress).as('homeAddress');
             cy.login(roleName);
             cy.goTo('registration');
           });
         });
-        it('should not be able to flag a potential duplicates when crc user registers with same LN, FN, Phone, and Address as an Archived household', function () {
+        it('should flag potential duplicates when crc user registers with same name and dob', function () {
           const potentialDuplicateMemberData = fixturePrimaryMember(this.test.retries.length, {
             firstName: this.primaryBeneficiary.identitySet.firstName,
             lastName: this.primaryBeneficiary.identitySet.lastName,
-            phoneNumber: this.primaryBeneficiary.contactInformation.homePhoneNumber.number,
+            dateOfBirth: this.primaryBeneficiary.identitySet.dateOfBirth,
           });
-
-          const potentialDuplicateAddressData = fixtureAddressData({
-            unitNumber: this.homeAddress.unitSuite,
-            streetAddress: this.homeAddress.streetAddress,
-            municipality: this.homeAddress.city,
-            province: 'AB',
-            postalCode: this.homeAddress.postalCode,
-          });
+          const potentialDuplicateAddressData = fixtureAddressData();
 
           crcRegisterPotentialDuplicateSteps({
             eventName: this.eventCreated.name.translation.en,
             roleName,
             potentialDuplicateMemberData,
             potentialDuplicateAddressData,
-            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
           });
 
-          const householdProfilePage = new HouseholdProfilePage();
-          if (roleName === UserRoles.level0) {
-            householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
-            householdProfilePage.getManageDuplicatesButton().should('not.exist');
-            householdProfilePage.getDuplicatesCount().should('eq', '0 potential duplicate(s)');
-          } else {
-          householdProfilePage.getManageDuplicatesButton().should('be.visible');
-          householdProfilePage.getDuplicatesCount().should('eq', '0 potential duplicate(s)');
-          }
+          potentialDuplicateCreatedSteps({
+            firstName: this.primaryBeneficiary.identitySet.firstName,
+            lastName: this.primaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.registrationNumber,
+            caseFileNumber: this.caseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            roleName,
+          });
         });
       });
     }
@@ -110,7 +97,7 @@ describe('#TC1898# - CRC REG NEW HOUSEHOLD - No potential duplicate records crea
           cy.login(roleName);
           cy.goTo('registration');
         });
-        it('should not be able to register new household', () => {
+        it('should not be able to flag potential duplicates when crc user registers with same name and dob', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

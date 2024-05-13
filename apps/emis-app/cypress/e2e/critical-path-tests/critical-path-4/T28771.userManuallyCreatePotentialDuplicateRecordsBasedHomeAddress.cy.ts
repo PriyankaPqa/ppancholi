@@ -1,10 +1,15 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { PotentialDuplicateBasis, makeMemberPrimarySteps, potentialDuplicateCreatedSteps } from './canSteps';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+import { DuplicatedBy } from '../../../pages/manage-duplicates/manageDuplicates.page';
+import {
+  PotentialDuplicateBasis,
+  manualDuplicateCreatedSteps,
+  potentialDuplicateCreatedSteps,
+} from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -12,10 +17,10 @@ const canRoles = [
   UserRoles.level4,
   UserRoles.level3,
   UserRoles.level2,
+  UserRoles.level1,
 ];
 
 const cannotRoles = [
-  UserRoles.level1,
   UserRoles.level0,
   UserRoles.contributor1,
   UserRoles.contributor2,
@@ -27,8 +32,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-// eslint-disable-next-line
-describe('#TC1873# - Make Primary - Potential duplicate records created when Primary Member Name and DOB are updated to match that of another EMIS member.', { tags: ['@household'] }, () => {
+describe('[T28771] User can manually create potential duplicate records based on Home Address', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,48 +59,47 @@ describe('#TC1873# - Make Primary - Potential duplicate records created when Pri
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
             cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
             cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
-            cy.wrap(resultComparisonHousehold.mockCreateHousehold.additionalMembers[0].identitySet).as('comparisonHouseholdNewPrimaryMember');
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.homeAddress).as('originalHouseholdHomeAddress');
+            cy.wrap(resultComparisonHousehold.mockCreateHousehold.primaryBeneficiary).as('comparisonHouseholdPrimaryBeneficiary');
             cy.wrap(resultComparisonHousehold.registrationResponse.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
             cy.wrap(resultComparisonHousehold.registrationResponse.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            cy.wrap(resultComparisonHousehold.mockCreateHousehold.homeAddress).as('comparisonHouseholdHomeAddress');
             cy.login(roleName);
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should create potential duplicate records when crc user makes a member primary with name and dob matching another household', function () {
-          const potentialDuplicateMemberData: IPersonalInfoFields = {
-            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
-            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
-            dateOfBirth: this.originalHouseholdPrimaryBeneficiary.identitySet.dateOfBirth,
-          };
-
-          makeMemberPrimarySteps({
-            roleName,
-            potentialDuplicateMemberData,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
-            makePrimaryMemberFirstName: this.comparisonHouseholdNewPrimaryMember.firstName,
-            makePrimaryMemberLastName: this.comparisonHouseholdNewPrimaryMember.lastName,
+        it('should manually create potential duplicate records based on home address', function () {
+          manualDuplicateCreatedSteps({
+            comparisonHouseholdPrimaryBeneficiary: this.comparisonHouseholdPrimaryBeneficiary,
+            originalHouseholdRegistrationNumber: this.originalHouseholdRegistrationNumber,
+            duplicatedBy: DuplicatedBy.HomeAddress,
           });
 
-          // asserts value of original household in duplicate household's Manage Duplicate pop up where we create a new primary member with name and dob of that of original household
           potentialDuplicateCreatedSteps({
             firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
             lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
             registrationNumber: this.originalHouseholdRegistrationNumber,
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
+            rationale: 'This is a potential duplicate',
+            flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
+            flaggedByUserName: `${getUserName(roleName)}`,
             roleName,
-            caseFileLogIndex: 1,
           });
 
-          // asserts value of duplicate household primary member in original household's Manage Duplicate pop up
           potentialDuplicateCreatedSteps({
-            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
-            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
+            firstName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.lastName,
             registrationNumber: this.comparisonHouseholdRegistrationNumber,
             caseFileNumber: this.comparisonHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.comparisonHouseholdHomeAddress,
+            rationale: 'This is a potential duplicate',
+            flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
+            flaggedByUserName: `${getUserName(roleName)}`,
             roleName,
           });
         });
@@ -111,12 +114,12 @@ describe('#TC1873# - Make Primary - Potential duplicate records created when Pri
           cy.login(roleName);
           cy.goTo('casefile');
         });
-        it('should not be able to create potential duplicates records with crc user not able to make a member primary with name and dob matching another household', () => {
+        it('should not be able to manually create potential duplicate records', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
           const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
-          householdProfilePage.getHouseholdSize().should('be.visible');
-          householdProfilePage.getMakeHouseholdPrimaryButtons().should('not.exist');
+          householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
+          householdProfilePage.getManageDuplicatesButton().should('not.exist');
         });
       });
     }

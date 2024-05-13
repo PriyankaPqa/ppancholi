@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1894# - CRC REG existing household - Potential duplicate record created when Primary Last Name + First Name + DOB updated to match another member in EMIS', { tags: ['@household'] }, () => {
+describe('[T28773] CRC REG existing household - Potential duplicate record created when Primary Last Name + First Name + DOB updated to match another member in EMIS', { tags: ['@household'] }, () => {
   after(function () {
     if (this.provider && this.teamCreated?.id) {
       removeTeamMembersFromTeam(this.teamCreated.id, this.provider);

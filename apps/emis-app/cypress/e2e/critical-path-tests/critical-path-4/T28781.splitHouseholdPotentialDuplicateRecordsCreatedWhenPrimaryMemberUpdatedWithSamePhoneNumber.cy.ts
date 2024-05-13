@@ -1,11 +1,11 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { mockUpdateHouseholdMemberFirstNameAndLastNameRequest } from '@libs/cypress-lib/mocks/household/household';
+import { padNumberWithZeroes } from '@libs/cypress-lib/helpers';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureCreateAddress } from '../../../fixtures/household';
+import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps, splitHouseholdDuplicateHouseholdSteps } from './canSteps';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-import { PotentialDuplicateBasis, splitHouseholdDuplicateHouseholdSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('#TC1875# - Split Household - User cannot split household when Primary Member Phone number updated thereby making Name & Phone number same as another EMIS member', { tags: ['@household'] }, () => {
+describe('[T28781] Split Household - Potential duplicate records created when Primary Member Phone number updated to be the same as another EMIS member', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -53,29 +53,48 @@ describe('#TC1875# - Split Household - User cannot split household when Primary 
           cy.then(async function () {
             const resultOriginalHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
             const resultComparisonHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
-            resultComparisonHousehold.provider.households.updatePersonIdentity(
-              resultComparisonHousehold.registrationResponse.household.members[1],
-              false,
-              mockUpdateHouseholdMemberFirstNameAndLastNameRequest(
-                resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.firstName,
-                resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.identitySet.lastName,
-              ),
-            );
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
+            cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
+            cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary.contactInformation.homePhoneNumber.number).as('originalHouseholdPrimaryBeneficiaryPhoneNumber');
             cy.wrap(resultComparisonHousehold.mockCreateHousehold.additionalMembers[0].identitySet).as('comparisonHouseholdNewPrimaryMember');
             cy.login(roleName);
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should not be able to split household when primary member updated with same name and phone number', function () {
+        it('should create potential duplicate records when crc user splits houeshold with primary member having phone number matching another household', function () {
           splitHouseholdDuplicateHouseholdSteps({
-            roleName,
             eventName: this.eventCreated.name.translation.en,
             originalHouseholdPrimaryBeneficiary: this.originalHouseholdPrimaryBeneficiary,
             splitMemberHouesholdAddress: fixtureCreateAddress(),
             splitMemberPhoneNumber: this.originalHouseholdPrimaryBeneficiaryPhoneNumber,
-            potentialDuplicateBasis: PotentialDuplicateBasis.NameAndDob,
             comparisonHouseholdNewPrimaryMember: this.comparisonHouseholdNewPrimaryMember,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            roleName,
+          });
+
+          potentialDuplicateCreatedSteps({
+            firstName: this.originalHouseholdPrimaryBeneficiary.identitySet.firstName,
+            lastName: this.originalHouseholdPrimaryBeneficiary.identitySet.lastName,
+            registrationNumber: this.originalHouseholdRegistrationNumber,
+            caseFileNumber: this.originalHouseholdCaseFileNumber,
+            eventName: this.eventCreated.name.translation.en,
+            phoneNumber: this.originalHouseholdPrimaryBeneficiaryPhoneNumber,
+            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+            roleName,
+          });
+
+          cy.get('@registrationNumberDuplicateHousehold').then((registrationNumberDuplicateHousehold) => {
+            potentialDuplicateCreatedSteps({
+              firstName: this.comparisonHouseholdNewPrimaryMember.firstName,
+              lastName: this.comparisonHouseholdNewPrimaryMember.lastName,
+              registrationNumber: `${registrationNumberDuplicateHousehold}`,
+              caseFileNumber: `${registrationNumberDuplicateHousehold}-${padNumberWithZeroes(6, this.eventCreated.number)}`,
+              eventName: this.eventCreated.name.translation.en,
+              phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
+              potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
+              roleName,
+            });
           });
         });
       });

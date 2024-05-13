@@ -1,15 +1,12 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { padNumberWithZeroes } from '@libs/cypress-lib/helpers';
+import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
+import { faker } from '@faker-js/faker';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { PotentialDuplicateBasis, potentialDuplicateCreatedSteps, splitHouseholdDuplicateHouseholdSteps } from './canSteps';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-import { DuplicatedBy } from '../../../pages/manage-duplicates/manageDuplicates.page';
-import {
-  PotentialDuplicateBasis,
-  manualDuplicateCreatedSteps,
-  potentialDuplicateCreatedSteps,
-} from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -17,10 +14,10 @@ const canRoles = [
   UserRoles.level4,
   UserRoles.level3,
   UserRoles.level2,
-  UserRoles.level1,
 ];
 
 const cannotRoles = [
+  UserRoles.level1,
   UserRoles.level0,
   UserRoles.contributor1,
   UserRoles.contributor2,
@@ -32,7 +29,8 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1879# - User can manually create potential duplicate records based on Home Phone number', { tags: ['@household'] }, () => {
+// eslint-disable-next-line
+describe('[T28780] Split Household - Potential duplicate records created when Home Address updated to match that of another household', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -59,18 +57,30 @@ describe('#TC1879# - User can manually create potential duplicate records based 
             cy.wrap(resultOriginalHousehold.mockCreateHousehold.primaryBeneficiary).as('originalHouseholdPrimaryBeneficiary');
             cy.wrap(resultOriginalHousehold.registrationResponse.caseFile.caseFileNumber).as('originalHouseholdCaseFileNumber');
             cy.wrap(resultOriginalHousehold.registrationResponse.household.registrationNumber).as('originalHouseholdRegistrationNumber');
-            cy.wrap(resultComparisonHousehold.mockCreateHousehold.primaryBeneficiary).as('comparisonHouseholdPrimaryBeneficiary');
-            cy.wrap(resultComparisonHousehold.registrationResponse.caseFile.caseFileNumber).as('comparisonHouseholdCaseFileNumber');
-            cy.wrap(resultComparisonHousehold.registrationResponse.household.registrationNumber).as('comparisonHouseholdRegistrationNumber');
+            cy.wrap(resultOriginalHousehold.mockCreateHousehold.homeAddress).as('originalHouseholdHomeAddress');
+            cy.wrap(resultComparisonHousehold.mockCreateHousehold.additionalMembers[0].identitySet).as('comparisonHouseholdNewPrimaryMember');
             cy.login(roleName);
             cy.goTo(`casefile/household/${resultComparisonHousehold.registrationResponse.household.id}`);
           });
         });
-        it('should manually create potential duplicate records based on home phone number', function () {
-          manualDuplicateCreatedSteps({
-            comparisonHouseholdPrimaryBeneficiary: this.comparisonHouseholdPrimaryBeneficiary,
-            originalHouseholdRegistrationNumber: this.originalHouseholdRegistrationNumber,
-            duplicatedBy: DuplicatedBy.HomePhoneNumber,
+        it('should create potential duplicate records when crc user splits household with primary member having home address matching another household', function () {
+          const potentialDuplicateAddressData: IAddressPageFields = {
+            unitNumber: this.originalHouseholdHomeAddress.unitSuite,
+            streetAddress: this.originalHouseholdHomeAddress.streetAddress,
+            municipality: this.originalHouseholdHomeAddress.city,
+            province: 'AB',
+            postalCode: this.originalHouseholdHomeAddress.postalCode,
+            tempAddress: 'Remaining In Home',
+          };
+
+          splitHouseholdDuplicateHouseholdSteps({
+            eventName: this.eventCreated.name.translation.en,
+            originalHouseholdPrimaryBeneficiary: this.originalHouseholdPrimaryBeneficiary,
+            splitMemberHouesholdAddress: potentialDuplicateAddressData,
+            splitMemberPhoneNumber: faker.phone.number('5143######'),
+            comparisonHouseholdNewPrimaryMember: this.comparisonHouseholdNewPrimaryMember,
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            roleName,
           });
 
           potentialDuplicateCreatedSteps({
@@ -79,26 +89,22 @@ describe('#TC1879# - User can manually create potential duplicate records based 
             registrationNumber: this.originalHouseholdRegistrationNumber,
             caseFileNumber: this.originalHouseholdCaseFileNumber,
             eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
-            phoneNumber: this.originalHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
-            rationale: 'This is a potential duplicate',
-            flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
-            flaggedByUserName: getUserName(roleName),
+            potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+            duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
             roleName,
           });
 
-          potentialDuplicateCreatedSteps({
-            firstName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.firstName,
-            lastName: this.comparisonHouseholdPrimaryBeneficiary.identitySet.lastName,
-            registrationNumber: this.comparisonHouseholdRegistrationNumber,
-            caseFileNumber: this.comparisonHouseholdCaseFileNumber,
-            eventName: this.eventCreated.name.translation.en,
-            potentialDuplicateBasis: PotentialDuplicateBasis.PhoneNumber,
-            phoneNumber: this.comparisonHouseholdPrimaryBeneficiary.contactInformation.homePhoneNumber.number,
-            rationale: 'This is a potential duplicate',
-            flaggedBy: `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`,
-            flaggedByUserName: getUserName(roleName),
-            roleName,
+          cy.get('@registrationNumberDuplicateHousehold').then((registrationNumberDuplicateHousehold) => {
+            potentialDuplicateCreatedSteps({
+              firstName: this.comparisonHouseholdNewPrimaryMember.firstName,
+              lastName: this.comparisonHouseholdNewPrimaryMember.lastName,
+              registrationNumber: `${registrationNumberDuplicateHousehold}`,
+              caseFileNumber: `${registrationNumberDuplicateHousehold}-${padNumberWithZeroes(6, this.eventCreated.number)}`,
+              eventName: this.eventCreated.name.translation.en,
+              potentialDuplicateBasis: PotentialDuplicateBasis.HomeAddress,
+              duplicateHouseholdAddress: this.originalHouseholdHomeAddress,
+              roleName,
+            });
           });
         });
       });
@@ -112,12 +118,12 @@ describe('#TC1879# - User can manually create potential duplicate records based 
           cy.login(roleName);
           cy.goTo('casefile');
         });
-        it('should not be able to manually create potential duplicate records', () => {
+        it('should not be able to split a household', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
           const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
-          householdProfilePage.getDuplicatesIcon().scrollIntoView().should('be.visible');
-          householdProfilePage.getManageDuplicatesButton().should('not.exist');
+          householdProfilePage.getHouseholdSize().should('be.visible');
+          householdProfilePage.getSplitMemberButtons().should('not.exist');
         });
       });
     }

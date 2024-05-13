@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 const rationale = 'I am re-opening this duplicate';
 
-describe('#TC1882# - User can manually re-open a resolved potential duplicate record', { tags: ['@household'] }, () => {
+describe('[T28770] User can manually re-open a resolved potential duplicate record', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
