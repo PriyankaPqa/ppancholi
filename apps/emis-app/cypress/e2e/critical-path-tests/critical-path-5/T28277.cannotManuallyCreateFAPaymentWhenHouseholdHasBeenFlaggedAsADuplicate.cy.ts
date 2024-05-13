@@ -30,7 +30,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1847# - Cannot create manual FA payment when Household has been flagged as a duplicate', { tags: ['@financial-assistance'] }, () => {
+describe('[T28277] Cannot create manual FA payment when Household has been flagged as a duplicate', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

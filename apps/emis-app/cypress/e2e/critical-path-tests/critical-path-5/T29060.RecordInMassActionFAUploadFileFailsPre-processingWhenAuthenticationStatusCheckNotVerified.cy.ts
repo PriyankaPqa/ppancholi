@@ -2,15 +2,10 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
-import {
-  createEventAndTeam,
-  createProgramWithTableWithItemAndSubItem,
-  prepareStateHousehold,
-  updateValidationOfImpactStatus,
-  } from '../../helpers/prepareState';
+import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
+import { cannotPreProcessFaMassActionSteps } from './steps';
 
 const canRoles = [
   UserRoles.level6,
@@ -33,14 +28,14 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1859# - Mass Action FA upload file passes pre-processing when Validation of Impact status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T29060] Mass Action FA upload file fails pre-processing when Authentication status check not verified', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const eligibilityCriteria: IEligibilityCriteria = {
-        authenticated: false,
-        impacted: true,
+        authenticated: true,
+        impacted: false,
         completedAssessments: false,
         completedAssessmentIds: [],
       };
@@ -73,24 +68,26 @@ describe('#TC1859# - Mass Action FA upload file passes pre-processing when Valid
             cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
             cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
-            const params: IImpactStatusValidation = {
-              method: ImpactValidationMethod.Manual,
-              status: ValidationOfImpactStatus.Impacted,
+            const params: IIdentityAuthentication = {
+              identificationIds: [],
+              method: IdentityAuthenticationMethod.NotApplicable,
+              status: IdentityAuthenticationStatus.NotVerified,
             };
-            await updateValidationOfImpactStatus(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
+            await updateAuthenticationOfIdentity(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
-        it('should successfully upload file and passes pre-processing', function () {
-          massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps({
-            caseFile: this.caseFile,
-            event: this.event,
-            faTable: this.faTable,
-            filePath: 'cypress/downloads/TC1859FaFile.csv',
+        it('should successfully upload file but fail to preprocessing a file', function () {
+          cannotPreProcessFaMassActionSteps({
             programName: this.programName,
+            eventName: this.event.name.translation.en,
+            filePath: 'cypress/downloads/TC1844FaFile.csv',
             retries: this.test.retries.length,
+            errorMessage: 'Case file does not meet program authenticated criteria',
+            financialAssistanceTable: this.faTable,
+            caseFile: this.caseFile,
           });
         });
       });

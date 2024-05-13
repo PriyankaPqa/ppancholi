@@ -2,8 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
-import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
@@ -29,14 +28,14 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1131# - Cannot create manual FA payment when Case File Authentication status check fails (Not Verified)', { tags: ['@financial-assistance'] }, () => {
+describe('[T28274] Cannot create manual FA payment when Case File Validation of Impact status is Undetermined', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const eligibilityCriteria: IEligibilityCriteria = {
-        authenticated: true,
-        impacted: false,
+        authenticated: false,
+        impacted: true,
         completedAssessments: false,
         completedAssessmentIds: [],
       };
@@ -47,12 +46,6 @@ describe('#TC1131# - Cannot create manual FA payment when Case File Authenticati
         { eligibilityCriteria },
       );
       const resultHousehold = await prepareStateHousehold(accessTokenL6, resultCreatedEvent.event);
-      const params: IIdentityAuthentication = {
-        identificationIds: [],
-        method: IdentityAuthenticationMethod.NotApplicable,
-        status: IdentityAuthenticationStatus.NotVerified,
-      };
-      await updateAuthenticationOfIdentity(resultCreatedEvent.provider, resultHousehold.registrationResponse.caseFile.id, params);
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
       cy.wrap(resultCreatedEvent.team).as('teamCreated');
@@ -75,17 +68,17 @@ describe('#TC1131# - Cannot create manual FA payment when Case File Authenticati
           cy.goTo(`casefile/${this.caseFileId}`);
         });
 
-        it('should not be able to manually create financial assistance payment when case file authentication status check fails with Not verified', function () {
+        it('should not be able to manually create financial assistance payment when case file validation of impact status is Undetermined', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
-          caseFileDetailsPage.getIdentityIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-warning');
+          caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-warning');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
-          // eslint-disable-next-line
-          cy.contains('The household does not meet one or more eligibility criteria for the selected program. Please review the eligibility criteria for this program and try again.').should('be.visible');
+          cy.contains('The household does not meet one or more eligibility criteria for the selected program. '
+          + 'Please review the eligibility criteria for this program and try again.').should('be.visible');
         });
       });
     }

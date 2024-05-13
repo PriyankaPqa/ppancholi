@@ -40,7 +40,7 @@ let currentAddress = {} as ICurrentAddress;
 let caseFileCreated = null as ICaseFileEntity;
 const temporaryAddressData = fixtureTemporaryAddress({ checkIn: null, checkOut: null });
 
-describe('#TC1831# - Temporary address can be updated from impacted individuals', { tags: ['@impacted-individuals'] }, () => {
+describe('[T28402] Temporary address can be updated from impacted individuals', { tags: ['@impacted-individuals'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

@@ -26,7 +26,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1848# - Add tag on case file', { tags: ['@case-file'] }, () => {
+describe('[T28273] Add tag on case file', { tags: ['@case-file'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

@@ -2,10 +2,11 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
+import { identificationIdProvided } from '@libs/cypress-lib/helpers';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { cannotPreProcessFaMassActionSteps } from './steps';
+import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
 
 const canRoles = [
   UserRoles.level6,
@@ -28,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1844# - Mass Action FA upload file fails pre-processing when Authentication status check not verified', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T29058] Mass Action FA upload file passes pre-processing when Authentication status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -69,9 +70,12 @@ describe('#TC1844# - Mass Action FA upload file fails pre-processing when Authen
             cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
             const params: IIdentityAuthentication = {
-              identificationIds: [],
-              method: IdentityAuthenticationMethod.NotApplicable,
-              status: IdentityAuthenticationStatus.NotVerified,
+              identificationIds: [{
+                optionItemId: identificationIdProvided.CanadianCitizenshipCard,
+                specifiedOther: null,
+               }],
+              method: IdentityAuthenticationMethod.InPerson,
+              status: IdentityAuthenticationStatus.Passed,
             };
             await updateAuthenticationOfIdentity(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
             cy.login(roleName);
@@ -79,15 +83,14 @@ describe('#TC1844# - Mass Action FA upload file fails pre-processing when Authen
           });
         });
 
-        it('should successfully upload file but fail to preprocessing a file', function () {
-          cannotPreProcessFaMassActionSteps({
-            programName: this.programName,
-            eventName: this.event.name.translation.en,
-            filePath: 'cypress/downloads/TC1844FaFile.csv',
-            retries: this.test.retries.length,
-            errorMessage: 'Case file does not meet program authenticated criteria',
-            financialAssistanceTable: this.faTable,
+        it('should successfully upload file and passes pre-processing', function () {
+          massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps({
             caseFile: this.caseFile,
+            event: this.event,
+            faTable: this.faTable,
+            filePath: 'cypress/downloads/TC1857FaFile.csv',
+            programName: this.programName,
+            retries: this.test.retries.length,
           });
         });
       });

@@ -36,7 +36,7 @@ let currentAddress = {} as ICurrentAddress;
 const mockRemoveMemberFromReceivingAssistanceRationale = 'Mock-string-remove-member-from-receiving-assistance';
 const mockMemberReceivingAssistanceRationale = 'Mock-string-member-receiving-assistance';
 
-describe('#TC1818# - User can toggle off/on receiving assistance', { tags: ['@case-file'] }, () => {
+describe('[T28400] User can toggle off/on receiving assistance', { tags: ['@impacted-individuals'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

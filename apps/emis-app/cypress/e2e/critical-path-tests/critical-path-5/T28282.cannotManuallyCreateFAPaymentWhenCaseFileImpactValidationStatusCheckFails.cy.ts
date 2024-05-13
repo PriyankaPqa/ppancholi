@@ -2,7 +2,8 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold } from '../../helpers/prepareState';
+import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateValidationOfImpactStatus } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
@@ -28,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1130# - Cannot create manual FA payment when Case File Validation of Impact status is Undetermined', { tags: ['@financial-assistance'] }, () => {
+describe('[T28282] Cannot manually create FA payment when Case File Validation of Impact status check fails (Not Impacted)', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -45,12 +46,17 @@ describe('#TC1130# - Cannot create manual FA payment when Case File Validation o
         EFinancialAmountModes.Fixed,
         { eligibilityCriteria },
       );
-      const resultHousehold = await prepareStateHousehold(accessTokenL6, resultCreatedEvent.event);
+      const resultCreateHousehold = await prepareStateHousehold(accessTokenL6, resultCreatedEvent.event);
+      const params: IImpactStatusValidation = {
+        method: ImpactValidationMethod.Manual,
+        status: ValidationOfImpactStatus.NotImpacted,
+      };
+      await updateValidationOfImpactStatus(resultCreatedEvent.provider, resultCreateHousehold.registrationResponse.caseFile.id, params);
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
       cy.wrap(resultCreatedEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
-      cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
+      cy.wrap(resultCreateHousehold.registrationResponse.caseFile.id).as('caseFileId');
     });
   });
 
@@ -68,12 +74,12 @@ describe('#TC1130# - Cannot create manual FA payment when Case File Validation o
           cy.goTo(`casefile/${this.caseFileId}`);
         });
 
-        it('should not be able to manually create financial assistance payment when case file validation of impact status is Undetermined', function () {
+        it('should not be able to manually create financial assistance payment when case file validation of impact status check fails', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
-          caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-warning');
+          caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-error');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
 
-          const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
 
           const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);

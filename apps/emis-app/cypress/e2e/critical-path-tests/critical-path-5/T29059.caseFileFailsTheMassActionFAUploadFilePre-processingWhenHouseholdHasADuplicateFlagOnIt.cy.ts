@@ -1,14 +1,11 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { mockAddTagToCaseFileRequest } from '@libs/cypress-lib/mocks/casefiles/casefile';
 import {
   createEventAndTeam,
-  createProgramWithTableWithItemAndSubItem,
-  prepareStateHousehold,
+  createProgramWithTableWithItemAndSubItem, creatingDuplicateHousehold,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { caseFileTags } from '../../../pages/casefiles/caseFileDetails.page';
 import { cannotPreProcessFaMassActionSteps } from './steps';
 
 const canRoles = [
@@ -32,8 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-// eslint-disable-next-line
-describe('#TC1850# - Confirm that a record cannot be pre-processed in a Mass Action FA file for a Case File that has an Irregular tag on it', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T29059] Fails mass action FA upload file pre-processing when household has a duplicate flag on it', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -41,6 +37,7 @@ describe('#TC1850# - Confirm that a record cannot be pre-processed in a Mass Act
       const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultCreatedEvent.provider, resultCreatedEvent.event.id, EFinancialAmountModes.Fixed);
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
+      cy.wrap(resultCreatedEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
       cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
     });
@@ -57,23 +54,23 @@ describe('#TC1850# - Confirm that a record cannot be pre-processed in a Mass Act
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const resultHouseholdCreated = await prepareStateHousehold(accessTokenL6, this.event);
-            await this.provider.caseFiles.setCaseFileTags(resultHouseholdCreated.registrationResponse.caseFile.id, [mockAddTagToCaseFileRequest(caseFileTags.Irregular)]);
-            cy.wrap(resultHouseholdCreated.registrationResponse.caseFile).as('caseFile');
+            const resultCreateDuplicateHousehold = await creatingDuplicateHousehold(accessTokenL6, this.event, this.provider);
+            const { firstHousehold } = resultCreateDuplicateHousehold;
+            cy.wrap(firstHousehold.registrationResponse.caseFile).as('originalCaseFile');
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
-        it('should fail to pre-process financial assistance mass action for casefile with irregular tag', function () {
+        it('should successfully upload file but fail to preprocessing a file', function () {
           cannotPreProcessFaMassActionSteps({
             programName: this.programName,
             eventName: this.event.name.translation.en,
-            filePath: 'cypress/downloads/TC1850FaFile.csv',
+            filePath: 'cypress/downloads/TC1852FaFile.csv',
             retries: this.test.retries.length,
-            errorMessage: 'Financial assistance cannot be added due to tags',
+            errorMessage: 'Household has potential duplicates',
             financialAssistanceTable: this.faTable,
-            caseFile: this.caseFile,
+            caseFile: this.originalCaseFile,
           });
         });
       });
@@ -87,7 +84,7 @@ describe('#TC1850# - Confirm that a record cannot be pre-processed in a Mass Act
           cy.login(roleName);
           cy.goTo('mass-actions/financial-assistance');
         });
-        it('should not be able to pre-process a financial assistance Mass Action', () => {
+        it('should not be able to do the mass action FA', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

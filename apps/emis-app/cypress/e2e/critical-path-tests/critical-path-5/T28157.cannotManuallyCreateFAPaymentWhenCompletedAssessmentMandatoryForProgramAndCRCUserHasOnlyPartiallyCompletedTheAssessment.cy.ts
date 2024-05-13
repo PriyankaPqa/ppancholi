@@ -36,7 +36,7 @@ let accessTokenL6 = '';
 let caseFileId = '';
 
 describe(
-  '#TC1855# - Cannot manually create FA payment when completed Assessment mandatory for Program and CRC User has only partially completed the Assessment',
+  '[T28157] Cannot manually create FA payment when completed Assessment mandatory for Program and CRC User has only partially completed the Assessment',
   { tags: ['@financial-assistance'] },
   () => {
   before(() => {

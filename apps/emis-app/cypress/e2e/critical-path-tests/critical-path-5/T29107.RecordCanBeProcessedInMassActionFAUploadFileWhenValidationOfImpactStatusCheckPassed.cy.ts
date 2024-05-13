@@ -3,12 +3,14 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
-import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
-import { identificationIdProvided } from '@libs/cypress-lib/helpers';
+import {
+  IImpactStatusValidation,
+  ImpactValidationMethod, ValidationOfImpactStatus,
+} from '@libs/entities-lib/case-file';
 import {
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem, MassActionFinancialAssistanceUploadFileParams,
-  prepareStateMassActionFinancialAssistanceUploadFile, updateAuthenticationOfIdentity, updateProgram,
+  prepareStateMassActionFinancialAssistanceUploadFile, updateProgram, updateValidationOfImpactStatus,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { massActionFinancialAssistanceUploadFilePassesProcessCanSteps } from './canStep';
@@ -37,7 +39,7 @@ const householdQuantity = 1;
 let massFinancialAssistance = {} as IMassActionEntity;
 
 describe(
-  '#TC1967# - Record can be processed in Mass Action FA upload file when Authentication status check passed',
+  '[T29107] Record can be processed Mass Action FA upload file when Validation of Impact status check passed (Impacted)',
   { tags: ['@financial-assistance', '@mass-action'] },
   () => {
     before(() => {
@@ -75,29 +77,25 @@ describe(
               tableId: this.faTable.id,
               programId: this.program.id,
               householdQuantity,
-              filePath: 'cypress/downloads/TC1967FaFile.csv',
+              filePath: 'cypress/downloads/TC1966FaFile.csv',
             };
             const resultMassFinancialAssistance = await prepareStateMassActionFinancialAssistanceUploadFile(massActionFaUploadFileParamData);
             const { responseMassFinancialAssistance, responseCreateHouseholds } = resultMassFinancialAssistance;
             massFinancialAssistance = responseMassFinancialAssistance;
             const caseFileId = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile.id;
             const eligibilityCriteria: IEligibilityCriteria = {
-              authenticated: true,
-              impacted: false,
+              authenticated: false,
+              impacted: true,
               completedAssessments: false,
               completedAssessmentIds: [],
             };
             const updateProgramEntity = new ProgramEntity({ ...this.program, eligibilityCriteria });
             await updateProgram(this.provider, updateProgramEntity);
-            const params: IIdentityAuthentication = {
-              identificationIds: [{
-                optionItemId: identificationIdProvided.CanadianCitizenshipCard,
-                specifiedOther: null,
-              }],
-              method: IdentityAuthenticationMethod.InPerson,
-              status: IdentityAuthenticationStatus.Passed,
+            const params: IImpactStatusValidation = {
+              method: ImpactValidationMethod.Manual,
+              status: ValidationOfImpactStatus.Impacted,
             };
-            await updateAuthenticationOfIdentity(this.provider, caseFileId, params);
+            await updateValidationOfImpactStatus(this.provider, caseFileId, params);
             cy.login(roleName);
             cy.goTo(`mass-actions/financial-assistance/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
           });

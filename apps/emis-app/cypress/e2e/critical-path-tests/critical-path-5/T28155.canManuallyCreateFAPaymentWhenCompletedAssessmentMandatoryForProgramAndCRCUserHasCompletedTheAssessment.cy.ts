@@ -37,7 +37,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 describe(
-'#TC1856# - Can manually create FA payment when completed Assessment mandatory for Program and CRC User has completed the Assessment',
+'[T28155] Can manually create FA payment when completed Assessment mandatory for Program and CRC User has completed the Assessment',
   { tags: ['@financial-assistance'] },
   () => {
     before(() => {

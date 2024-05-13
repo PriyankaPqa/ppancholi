@@ -2,8 +2,12 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
-import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
+import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import {
+  createEventAndTeam,
+  createProgramWithTableWithItemAndSubItem,
+  prepareStateHousehold, updateValidationOfImpactStatus,
+} from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { cannotPreProcessFaMassActionSteps } from './steps';
 
@@ -28,14 +32,15 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1505# - Mass Action FA upload file fails pre-processing when Authentication status check failed', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+// eslint-disable-next-line
+describe('[T29077] Record in Mass Action FA upload file fails pre-processing when Validation of Impact status check fails (Failed)', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
       const eligibilityCriteria: IEligibilityCriteria = {
-        authenticated: true,
-        impacted: false,
+        authenticated: false,
+        impacted: true,
         completedAssessments: false,
         completedAssessmentIds: [],
       };
@@ -64,26 +69,25 @@ describe('#TC1505# - Mass Action FA upload file fails pre-processing when Authen
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(async function () {
-            const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
-            const params: IIdentityAuthentication = {
-              identificationIds: [],
-              method: IdentityAuthenticationMethod.NotApplicable,
-              status: IdentityAuthenticationStatus.Failed,
+            const resultHouseholdCreated = await prepareStateHousehold(accessTokenL6, this.event);
+            cy.wrap(resultHouseholdCreated.registrationResponse.caseFile).as('caseFile');
+            const params: IImpactStatusValidation = {
+              method: ImpactValidationMethod.Manual,
+              status: ValidationOfImpactStatus.NotImpacted,
             };
-            await updateAuthenticationOfIdentity(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
+            await updateValidationOfImpactStatus(this.provider, resultHouseholdCreated.registrationResponse.caseFile.id, params);
             cy.login(roleName);
             cy.goTo('mass-actions/financial-assistance');
           });
         });
 
-        it('should successfully upload file but fail to preprocessing a file', function () {
+        it('should fail to pre-process financial assistance mass action for Case file does not meet program impacted criteria', function () {
           cannotPreProcessFaMassActionSteps({
             programName: this.programName,
             eventName: this.event.name.translation.en,
-            filePath: 'cypress/downloads/TC1505FaFile.csv',
+            filePath: 'cypress/downloads/TC1506FaFile.csv',
             retries: this.test.retries.length,
-            errorMessage: 'Case file does not meet program authenticated criteria',
+            errorMessage: 'Case file does not meet program impacted criteria',
             financialAssistanceTable: this.faTable,
             caseFile: this.caseFile,
           });
@@ -99,7 +103,7 @@ describe('#TC1505# - Mass Action FA upload file fails pre-processing when Authen
           cy.login(roleName);
           cy.goTo('mass-actions/financial-assistance');
         });
-        it('should not be able to do the mass action FA', () => {
+        it('should not be able to pre-process a financial assistance Mass Action', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

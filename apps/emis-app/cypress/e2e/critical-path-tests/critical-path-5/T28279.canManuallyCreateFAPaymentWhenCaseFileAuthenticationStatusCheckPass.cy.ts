@@ -35,7 +35,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1853# -Can create manual FA payment when Case File Authentication status check passes', { tags: ['@financial-assistance'] }, () => {
+describe('[T28279] Can create manual FA payment when Case File Authentication status check passes', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

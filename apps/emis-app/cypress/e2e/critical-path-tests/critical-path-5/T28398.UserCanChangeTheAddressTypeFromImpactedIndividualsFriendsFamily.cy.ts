@@ -1,12 +1,13 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { returnDateInFormat } from '@libs/cypress-lib/helpers';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { CaseFileImpactedIndividualsHomePage } from '../../../pages/casefiles/case-file-impacted-individuals/caseFileImpactedIndividualsHome.page';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { returnDateInFormat } from '@libs/cypress-lib/helpers';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { CaseFileImpactedIndividualsHomePage } from '../../../pages/casefiles/case-file-impacted-individuals/caseFileImpactedIndividualsHome.page';
 import { fixtureTemporaryAddress } from '../../../fixtures/case-management';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
+import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -28,10 +29,10 @@ const cannotRoles = [
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
 let accessTokenL6 = '';
-let firstSubMemberFullName = '';
+let fullName = '';
 const temporaryAddressData = fixtureTemporaryAddress();
 
-describe('#TC1915# - Non primary can change the address type (Friends/Family) from impacted individuals', { tags: ['@impacted-individuals'] }, () => {
+describe('[T28398] User can change the address type from Impacted Individuals. (Friends/Family)', { tags: ['@impacted-individuals'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,13 +56,15 @@ describe('#TC1915# - Non primary can change the address type (Friends/Family) fr
           cy.then(async function () {
             const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
             const { mockCreateHousehold } = resultHousehold;
-            firstSubMemberFullName = `${mockCreateHousehold.additionalMembers[0].identitySet.firstName} ${mockCreateHousehold.additionalMembers[0].identitySet.lastName}`;
+            fullName = `${mockCreateHousehold.primaryBeneficiary.identitySet.firstName} ${mockCreateHousehold.primaryBeneficiary.identitySet.lastName}`;
+            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
+            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
             cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/impactedIndividuals`);
           });
         });
 
-        it('can update non-primary member temporary address from impacted individuals', () => {
+        it('can change the address type from Impacted Individuals', () => {
           const caseFileImpactedIndividualsHomePage = new CaseFileImpactedIndividualsHomePage();
           caseFileImpactedIndividualsHomePage.getPrimaryMemberCard().within(() => {
             caseFileImpactedIndividualsHomePage.getPrimaryMemberLabel().should('be.visible');
@@ -72,35 +75,29 @@ describe('#TC1915# - Non primary can change the address type (Friends/Family) fr
             caseFileImpactedIndividualsHomePage.getEditCurrentTemporaryAddressButton().should('be.enabled');
             caseFileImpactedIndividualsHomePage.getReceivingAssistanceToggle().should('be.checked');
           });
-          const caseFileImpactedIndividualsSubMemberEditAddressPage = caseFileImpactedIndividualsHomePage.goToEditCurrentTemporaryAddressPage(1);
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getEditAddressDialogTitle().should('contain', firstSubMemberFullName);
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getSameCurrentAddressTitle().should(
-            'eq',
-            'Is household member located in the same temporary address as the primary? *',
-            );
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getSameCurrentAddressYes().should('be.checked');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getCancelButton().should('be.enabled');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getSaveButton().should('be.disabled');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getCloseButton().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getSameCurrentAddressNo().first().check({ force: true });
+          const caseFileImpactedIndividualsEditAddressPage = caseFileImpactedIndividualsHomePage.goToEditCurrentTemporaryAddressPage();
+          caseFileImpactedIndividualsEditAddressPage.getEditAddressDialogTitle().should('contain', fullName);
+          caseFileImpactedIndividualsEditAddressPage.getTempAddress().should('string', 'Remaining in home'.trim());
+          caseFileImpactedIndividualsEditAddressPage.getCancelButton().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getSaveButton().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getCloseButton().should('be.visible');
 
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getTempAddress().should('string', 'Temporary address type');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.setTempAddressType('FriendsFamily');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getCheckInInput().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getCheckOutInput().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getTempAddressAutoComplete().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getStreetAddress().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getUnitSuite().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getMunicipality().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getPostalCode().should('be.visible');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getProvince().should('string', 'Province');
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getCountry().should('string', 'Canada');
+          caseFileImpactedIndividualsEditAddressPage.setTempAddressType('FriendsFamily');
+          caseFileImpactedIndividualsEditAddressPage.getCheckInInput().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getCheckOutInput().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getTempAddressAutoComplete().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getStreetAddress().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getUnitSuite().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getMunicipality().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getPostalCode().should('be.visible');
+          caseFileImpactedIndividualsEditAddressPage.getProvince().should('string', 'Province');
+          caseFileImpactedIndividualsEditAddressPage.getCountry().should('string', 'Canada');
 
-          caseFileImpactedIndividualsSubMemberEditAddressPage.fill(temporaryAddressData);
-          caseFileImpactedIndividualsSubMemberEditAddressPage.getSaveButton().click();
+          caseFileImpactedIndividualsEditAddressPage.fill(temporaryAddressData);
+          caseFileImpactedIndividualsEditAddressPage.getSaveButton().click();
 
           caseFileImpactedIndividualsHomePage.refreshUntilImpactedIndividualsCardUpdated(temporaryAddressData.address.streetAddress);
-          caseFileImpactedIndividualsHomePage.getNonPrimaryMemberCard().within(() => {
+          caseFileImpactedIndividualsHomePage.getPrimaryMemberCard().within(() => {
             caseFileImpactedIndividualsHomePage.getCurrentAddressType().should('eq', 'Friends / Family');
             caseFileImpactedIndividualsHomePage.getCurrentAddressStreet().should(
               'eq',
@@ -114,15 +111,31 @@ describe('#TC1915# - Non primary can change the address type (Friends/Family) fr
             caseFileImpactedIndividualsHomePage.getCheckIn().should('eq', returnDateInFormat(temporaryAddressData.checkIn, 'PP'));
             caseFileImpactedIndividualsHomePage.getCheckOut().should('eq', returnDateInFormat(temporaryAddressData.checkOut, 'PP'));
             caseFileImpactedIndividualsHomePage.getIsCrcProvided().should('eq', 'No');
-            caseFileImpactedIndividualsHomePage.getPreviousTemporaryAddressExpandButton().should('be.visible');
           });
+          caseFileImpactedIndividualsHomePage.getPreviousTemporaryAddressExpandButton().click();
+          caseFileImpactedIndividualsHomePage.getPreviousTemporaryAddressRow().within(() => {
+              caseFileImpactedIndividualsHomePage.getCurrentAddressTemplate().should('eq', 'Remaining in home');
+            });
+
           caseFileImpactedIndividualsHomePage.goToCaseFileActivityPage();
           const caseFileActivityHomePage = new CaseFileDetailsPage(); // avoiding dependency cycle error
           caseFileActivityHomePage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Temporary address updated');
           caseFileActivityHomePage.getUserName().should('eq', getUserName(roleName));
           caseFileActivityHomePage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileActivityHomePage.getCaseFileActivityTitles().should('string', 'Impacted individuals edited');
-          caseFileActivityHomePage.getCaseFileActivityBodies().should('string', `${firstSubMemberFullName} - Temporary address updated`);
+          caseFileActivityHomePage.getCaseFileActivityBodies().should('string', `${fullName} - Temporary address updated`);
+
+          caseFileActivityHomePage.goToHouseholdProfilePage();
+          const householdProfilePage = new HouseholdProfilePage(); // avoiding dependency cycle error
+          householdProfilePage.getHouseholdMemberCard().within(() => {
+            householdProfilePage.getCurrentAddressType().should('eq', 'Friends / Family');
+            householdProfilePage.getCurrentAddressStreet().should('eq', `${temporaryAddressData.address.streetAddress}  #${temporaryAddressData.address.unitSuite}`.trim());
+            householdProfilePage.getCurrentAddressLine().should(
+              'eq',
+              `${temporaryAddressData.address.city}, ${temporaryAddressData.address.province}, ${temporaryAddressData.address.postalCode}`,
+            );
+            householdProfilePage.getCurrentAddressCountry().should('eq', temporaryAddressData.address.country);
+          });
         });
       });
     }
@@ -134,11 +147,15 @@ describe('#TC1915# - Non primary can change the address type (Friends/Family) fr
         beforeEach(() => {
           cy.then(async function () {
             const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
+            const { mockCreateHousehold } = resultHousehold;
+            fullName = `${mockCreateHousehold.primaryBeneficiary.identitySet.firstName} ${mockCreateHousehold.primaryBeneficiary.identitySet.lastName}`;
+            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
+            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
             cy.login(roleName);
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/impactedIndividuals`);
           });
         });
-        it('should see the edit address button disabled', () => {
+        it('should see temporary address edit button disabled', () => {
           const caseFileImpactedIndividualsHomePage = new CaseFileImpactedIndividualsHomePage();
           caseFileImpactedIndividualsHomePage.getEditCurrentTemporaryAddressButton().should('be.disabled');
         });

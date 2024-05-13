@@ -42,7 +42,7 @@ const householdQuantity = 1;
 let massFinancialAssistance = {} as IMassActionEntity;
 
 describe(
-  '#TC1965# - Record can be processed in Mass Action FA upload file when Assessment is mandatory and CRC User has completed the Assessment',
+  '[T29103] Record can be processed in Mass Action FA upload file when Assessment is mandatory and CRC User has completed the Assessment',
   { tags: ['@financial-assistance', '@mass-action'] },
   () => {
     before(() => {

@@ -33,7 +33,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1964# - Cannot create manual FA payment when Case File has an Irregular tag on it', { tags: ['@financial-assistance'] }, () => {
+describe('[T28266] Cannot create manual FA payment when Case File has an Irregular tag on it', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

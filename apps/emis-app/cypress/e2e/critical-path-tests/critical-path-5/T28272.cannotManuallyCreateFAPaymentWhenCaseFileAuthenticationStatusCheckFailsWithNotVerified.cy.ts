@@ -2,22 +2,22 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { identificationIdProvided } from '@libs/cypress-lib/helpers';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
+import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 
 const canRoles = [
   UserRoles.level6,
-];
-
-const cannotRoles = [
   UserRoles.level5,
   UserRoles.level4,
   UserRoles.level3,
   UserRoles.level2,
   UserRoles.level1,
+];
+
+const cannotRoles = [
   UserRoles.level0,
   UserRoles.contributor1,
   UserRoles.contributor2,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC1857# - Mass Action FA upload file passes pre-processing when Authentication status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T28272] Cannot create manual FA payment when Case File Authentication status check fails (Not Verified)', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -46,11 +46,18 @@ describe('#TC1857# - Mass Action FA upload file passes pre-processing when Authe
         EFinancialAmountModes.Fixed,
         { eligibilityCriteria },
       );
+      const resultHousehold = await prepareStateHousehold(accessTokenL6, resultCreatedEvent.event);
+      const params: IIdentityAuthentication = {
+        identificationIds: [],
+        method: IdentityAuthenticationMethod.NotApplicable,
+        status: IdentityAuthenticationStatus.NotVerified,
+      };
+      await updateAuthenticationOfIdentity(resultCreatedEvent.provider, resultHousehold.registrationResponse.caseFile.id, params);
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
       cy.wrap(resultCreatedEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
-      cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
+      cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
     });
   });
 
@@ -63,35 +70,22 @@ describe('#TC1857# - Mass Action FA upload file passes pre-processing when Authe
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
-        beforeEach(() => {
-          cy.then(async function () {
-            const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
-            cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
-            const params: IIdentityAuthentication = {
-              identificationIds: [{
-                optionItemId: identificationIdProvided.CanadianCitizenshipCard,
-                specifiedOther: null,
-               }],
-              method: IdentityAuthenticationMethod.InPerson,
-              status: IdentityAuthenticationStatus.Passed,
-            };
-            await updateAuthenticationOfIdentity(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
-            cy.login(roleName);
-            cy.goTo('mass-actions/financial-assistance');
-          });
+        beforeEach(function () {
+          cy.login(roleName);
+          cy.goTo(`casefile/${this.caseFileId}`);
         });
 
-        it('should successfully upload file and passes pre-processing', function () {
-          massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps({
-            caseFile: this.caseFile,
-            event: this.event,
-            faTable: this.faTable,
-            filePath: 'cypress/downloads/TC1857FaFile.csv',
-            programName: this.programName,
-            retries: this.test.retries.length,
-          });
+        it('should not be able to manually create financial assistance payment when case file authentication status check fails with Not verified', function () {
+          const caseFileDetailsPage = new CaseFileDetailsPage();
+          caseFileDetailsPage.getIdentityIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-warning');
+          caseFileDetailsPage.goToFinancialAssistanceHomePage();
+
+          const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+
+          const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
+          addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
+          // eslint-disable-next-line
+          cy.contains('The household does not meet one or more eligibility criteria for the selected program. Please review the eligibility criteria for this program and try again.').should('be.visible');
         });
       });
     }
@@ -100,12 +94,14 @@ describe('#TC1857# - Mass Action FA upload file passes pre-processing when Authe
   describe('Cannot Roles', () => {
     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
-        beforeEach(() => {
+        beforeEach(function () {
           cy.login(roleName);
-          cy.goTo('mass-actions/financial-assistance');
+          cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to do the mass action FA', () => {
-          cy.contains('You do not have permission to access this page').should('be.visible');
+        it('should not be able to access add fa payment button', () => {
+          const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.getSearchField().should('be.visible');
+          financialAssistanceHomePage.getAddFaPaymentButton().should('not.exist');
         });
       });
     }

@@ -1,14 +1,14 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
+import { IEligibilityCriteria } from '@libs/entities-lib/program';
+import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import {
-  addAssessmentToCasefile, CasefileAssessmentParams, completeAndSubmitCasefileAssessmentByCrcUser,
-  createAndUpdateAssessment,
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem,
-  prepareStateHousehold, updateProgram,
-} from '../../helpers/prepareState';
+  prepareStateHousehold,
+  updateValidationOfImpactStatus,
+  } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
 
@@ -33,24 +33,27 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe(
-  '#TC1860# - Mass Action FA upload file passes pre-processing when Assessment is mandatory and CRC user has completed the assessment',
-  { tags: ['@financial-assistance', '@mass-actions'] },
-  () => {
+describe('[T29094] Mass Action FA upload file passes pre-processing when Validation of Impact status check passes', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultCreatedEvent = await createEventAndTeam(accessTokenL6, allRoles);
+      const eligibilityCriteria: IEligibilityCriteria = {
+        authenticated: false,
+        impacted: true,
+        completedAssessments: false,
+        completedAssessmentIds: [],
+      };
       const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(
         resultCreatedEvent.provider,
         resultCreatedEvent.event.id,
         EFinancialAmountModes.Fixed,
+        { eligibilityCriteria },
       );
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
       cy.wrap(resultCreatedEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
-      cy.wrap(resultCreateProgram.program).as('program');
       cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
     });
   });
@@ -70,32 +73,13 @@ describe(
             cy.wrap(resultHousehold.registrationResponse.caseFile).as('caseFile');
             cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
-            const resultAssessment = await createAndUpdateAssessment(this.provider, this.event.id, this.program.id);
-            const eligibilityCriteria: IEligibilityCriteria = {
-              authenticated: false,
-              impacted: false,
-              completedAssessments: true,
-              completedAssessmentIds: [resultAssessment.id],
+            const params: IImpactStatusValidation = {
+              method: ImpactValidationMethod.Manual,
+              status: ValidationOfImpactStatus.Impacted,
             };
-            const updateProgramEntity = new ProgramEntity({ ...this.program, eligibilityCriteria });
-            await updateProgram(this.provider, updateProgramEntity);
-            const resultCreateAssessmentResponse = await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, resultAssessment.id);
-            const completeAndSubmitCasefileAssessmentParamData: CasefileAssessmentParams = {
-              provider: resultHousehold.provider,
-              assessmentResponseId: resultCreateAssessmentResponse.id,
-              casefileId: resultHousehold.registrationResponse.caseFile.id,
-              assessmentFormId: resultAssessment.id,
-            };
-            cy.intercept('PATCH', `**/assessment/assessment-responses/${resultCreateAssessmentResponse.id}/submit`).as('submitAssessment');
-            cy.then(async () => {
-              await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
-            });
-            cy.wait('@submitAssessment', { timeout: 60000 }).then((interception) => {
-              if (interception.response.statusCode === 200) {
-                cy.login(roleName);
-                cy.goTo('mass-actions/financial-assistance');
-              }
-            });
+            await updateValidationOfImpactStatus(this.provider, resultHousehold.registrationResponse.caseFile.id, params);
+            cy.login(roleName);
+            cy.goTo('mass-actions/financial-assistance');
           });
         });
 
@@ -104,7 +88,7 @@ describe(
             caseFile: this.caseFile,
             event: this.event,
             faTable: this.faTable,
-            filePath: 'cypress/downloads/TC1860FaFile.csv',
+            filePath: 'cypress/downloads/TC1859FaFile.csv',
             programName: this.programName,
             retries: this.test.retries.length,
           });
@@ -126,5 +110,4 @@ describe(
       });
     }
   });
-},
-);
+});

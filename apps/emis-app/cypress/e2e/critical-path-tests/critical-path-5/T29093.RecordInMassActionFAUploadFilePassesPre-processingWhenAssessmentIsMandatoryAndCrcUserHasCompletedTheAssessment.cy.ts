@@ -3,14 +3,14 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
 import {
-  addAssessmentToCasefile, CasefileAssessmentParams,
+  addAssessmentToCasefile, CasefileAssessmentParams, completeAndSubmitCasefileAssessmentByCrcUser,
   createAndUpdateAssessment,
   createEventAndTeam,
-  createProgramWithTableWithItemAndSubItem, partiallyCompleteCasefileAssessment,
+  createProgramWithTableWithItemAndSubItem,
   prepareStateHousehold, updateProgram,
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { cannotPreProcessFaMassActionSteps } from './steps';
+import { massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps } from './canStep';
 
 const canRoles = [
   UserRoles.level6,
@@ -34,7 +34,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 describe(
-  '#TC1858# - Mass Action FA upload file fails pre-processing when Assessment is mandatory and CRC user hasnt completed the assessment',
+  '[T29093] Mass Action FA upload file passes pre-processing when Assessment is mandatory and CRC user has completed the assessment',
   { tags: ['@financial-assistance', '@mass-actions'] },
   () => {
   before(() => {
@@ -86,21 +86,27 @@ describe(
               casefileId: resultHousehold.registrationResponse.caseFile.id,
               assessmentFormId: resultAssessment.id,
             };
-            await partiallyCompleteCasefileAssessment(completeAndSubmitCasefileAssessmentParamData);
-            cy.login(roleName);
-            cy.goTo('mass-actions/financial-assistance');
+            cy.intercept('PATCH', `**/assessment/assessment-responses/${resultCreateAssessmentResponse.id}/submit`).as('submitAssessment');
+            cy.then(async () => {
+              await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
+            });
+            cy.wait('@submitAssessment', { timeout: 60000 }).then((interception) => {
+              if (interception.response.statusCode === 200) {
+                cy.login(roleName);
+                cy.goTo('mass-actions/financial-assistance');
+              }
+            });
           });
         });
 
-        it('should successfully upload file but fail to preprocessing a file', function () {
-          cannotPreProcessFaMassActionSteps({
-            programName: this.programName,
-            eventName: this.event.name.translation.en,
-            filePath: 'cypress/downloads/TC1858FaFile.csv',
-            retries: this.test.retries.length,
-            errorMessage: 'Case file does not meet program completed assessments criteria',
-            financialAssistanceTable: this.faTable,
+        it('should successfully upload file and passes pre-processing', function () {
+          massActionFinancialAssistanceUploadFilePassesPreProcessCanSteps({
             caseFile: this.caseFile,
+            event: this.event,
+            faTable: this.faTable,
+            filePath: 'cypress/downloads/TC1860FaFile.csv',
+            programName: this.programName,
+            retries: this.test.retries.length,
           });
         });
       });
