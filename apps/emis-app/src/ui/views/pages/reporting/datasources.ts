@@ -442,12 +442,16 @@ export const potentialDuplicateViewDs : IDatasourceBase = {
     { dataField: 'duplicateCaseFileCreatedOn', dataType: 'datetime', visible: false },
     { dataField: 'matchedMemberFirstName', dataType: 'string', visible: false },
     { dataField: 'matchedMemberLastName', dataType: 'string', visible: false },
+    { dataField: 'matchedMemberFullName', dataType: 'string', visible: false },
+    { dataField: 'matchedMemberIsPrimary', dataType: 'boolean', visible: false },
     { dataField: 'matchedMemberDateOfBirth', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'matchedMemberAge', dataType: 'number', visible: false },
     { dataField: 'matchedDuplicateMemberFirstName', dataType: 'string', visible: false },
     { dataField: 'matchedDuplicateMemberLastName', dataType: 'string', visible: false },
+    { dataField: 'matchedDuplicateMemberFullName', dataType: 'string', visible: false },
     { dataField: 'matchedDuplicateMemberDateOfBirth', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'matchedDuplicateMemberAge', dataType: 'number', visible: false },
+    { dataField: 'matchedDuplicateMemberIsPrimary', dataType: 'boolean', visible: false },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.potentialDuplicateViewDs.${x.dataField}` })),
 };
 
