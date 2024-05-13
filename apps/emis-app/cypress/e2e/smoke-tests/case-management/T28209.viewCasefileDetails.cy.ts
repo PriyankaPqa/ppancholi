@@ -28,7 +28,7 @@ let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 let household = null as ICreateHouseholdRequest;
 
-describe('#TC1032# - View Case File Details', { tags: ['@case-file'] }, () => {
+describe('[T28209] View Case File Details', { tags: ['@case-file'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

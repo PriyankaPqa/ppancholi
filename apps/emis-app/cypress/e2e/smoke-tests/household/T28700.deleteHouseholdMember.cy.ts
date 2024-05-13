@@ -1,14 +1,13 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { IEventEntity } from '@libs/entities-lib/event';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { IEventEntity } from '@libs/entities-lib/event';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-import { fixtureHouseholdMember } from '../../../fixtures/household';
 
 const canRoles = [
   UserRoles.level6,
@@ -34,7 +33,7 @@ let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 let household = null as ICreateHouseholdRequest;
 
-describe('#TC666# - Add Household Member Same Temp Address As Primary', { tags: ['@household'] }, () => {
+describe('[T28700] Delete Household Member', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -65,43 +64,41 @@ describe('#TC666# - Add Household Member Same Temp Address As Primary', { tags: 
             cy.goTo(`casefile/household/${caseFileCreated.householdId}`);
           });
         });
-        it('should successfully add household member with same temp address as primary', function () {
-          const householdSize = this.household.additionalMembers.length + 1; // 1 primary member + additional household members
-          const householdMemberData = fixtureHouseholdMember(this.test.retries.length);
+        it('should successfully delete a household member', function () {
+          const householdSize = this.household.additionalMembers.length + 1;
 
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdSize().should('be.visible').should('have.length', householdSize);
+          householdProfilePage.getHouseholdSize().should('have.length', householdSize);
+          householdProfilePage.getFullNameOfMemberByIndex(1).as('memberToDelete');
+          cy.get('@memberToDelete').then((memberName) => {
+            householdProfilePage.getHouseholdMember(memberName.toString()).should('be.visible');
+          });
+          householdProfilePage.getDeleteMemberButtonByIndex(0).click();
+          cy.contains('Are you sure you want to delete this household member?').should('be.visible');
+          householdProfilePage.getDialogCancelDeleteButton().should('be.visible').click();
+          householdProfilePage.getDialogCancelDeleteButton().should('not.be.visible');
 
-          const addHouseholdMemberPage = householdProfilePage.addNewMember();
-          addHouseholdMemberPage.fill(householdMemberData);
-          addHouseholdMemberPage.assignSameTempAddressAsPrimaryMember();
-          addHouseholdMemberPage.addHouseholdMember();
-
-          householdProfilePage.getHouseholdSize().should('have.length', householdSize + 1);
-
-          if (roleName === UserRoles.level1 || roleName === UserRoles.level0) {
-            householdProfilePage.getMakePrimaryButtons().should('not.exist');
-            householdProfilePage.getEditMemberButtons().eq(5).should('exist');
-            householdProfilePage.getSplitMemberButtons().should('not.exist');
-            householdProfilePage.getDeleteMemberButtonByIndex(4).should('exist');
-          } else {
-            householdProfilePage.getMakePrimaryButtons().eq(4).should('exist');
-            householdProfilePage.getEditMemberButtons().eq(5).should('exist');
-            householdProfilePage.getSplitMemberButtons().eq(4).should('exist');
-            householdProfilePage.getDeleteMemberButtonByIndex(4).should('exist');
-          }
+          householdProfilePage.getDeleteMemberButtonByIndex(0).click();
+          householdProfilePage.getDialogConfirmDeleteButton().should('be.visible').click();
+          cy.contains('Member was successfully removed').should('be.visible');
+          cy.get('@memberToDelete').then((memberName) => {
+            householdProfilePage.getHouseholdMember(memberName.toString()).should('not.exist');
+          });
+          householdProfilePage.getHouseholdSize().should('have.length', householdSize - 1); // confirms that member is deleted.
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
-          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Household member added');
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Household member removed');
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Household member added: ${householdMemberData.firstName} ${householdMemberData.lastName}`);
+          cy.get('@memberToDelete').then((memberName) => {
+            caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Household member removed: ${memberName}`);
+          });
         });
       });
     }
   });
-
   describe('Cannot roles', () => {
      for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
@@ -109,12 +106,12 @@ describe('#TC666# - Add Household Member Same Temp Address As Primary', { tags: 
           cy.login(roleName);
           cy.goTo('casefile');
         });
-        it('should not be able to add household member with same temp address as primary', () => {
+        it('should not be able to delete a household member', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
           const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold(); // re-using a household created for canRoles.
           householdProfilePage.getHouseholdSize().should('be.visible');
-          householdProfilePage.getAddNewMemberButton().should('not.exist');
+          householdProfilePage.getDeleteMemberButtons().should('not.exist');
         });
       });
     }

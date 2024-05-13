@@ -1,10 +1,10 @@
-import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { returnDateInFormat } from '@libs/cypress-lib/helpers';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureLocation } from '../../../fixtures/events';
+import { fixtureCallCentre } from '../../../fixtures/events';
 
 const canRoles = [
   UserRoles.level6,
@@ -25,7 +25,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC165# - Add Event Shelter Location', { tags: ['@event'] }, () => {
+describe('[T28645] Add Event Call Centre', { tags: ['@event'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRoles);
@@ -48,23 +48,24 @@ describe('#TC165# - Add Event Shelter Location', { tags: ['@event'] }, () => {
           cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
-        it('should successfully add event shelter location', function () {
-          const shelterLocationData = fixtureLocation(this.test.retries.length);
+        it('should successfully add event call centre', function () {
+          const callCentreData = fixtureCallCentre(this.test.retries.length);
 
           const eventDetailsPage = new EventDetailsPage();
+          eventDetailsPage.getEventStatus().should('eq', 'Open' || 'eq', 'On hold');
 
-          const addShelterLocationPage = eventDetailsPage.addShelterLocation();
-          addShelterLocationPage.getShelterLocationStatus().should('eq', 'Active');
-          addShelterLocationPage.getShelterLocationCountry().should('eq', 'Canada'); // Canada is default country value
-          addShelterLocationPage.fill(shelterLocationData, roleName);
-          addShelterLocationPage.selectFrenchTab();
-          addShelterLocationPage.fillFrenchShelterLocationName(shelterLocationData.name.translation.fr, roleName);
-          addShelterLocationPage.addNewShelterLocation();
+          const addCallCentrePage = eventDetailsPage.addCallCentre();
+          addCallCentrePage.getCallCentreStatus().should('eq', 'Inactive');
+          addCallCentrePage.fill(callCentreData, roleName);
+          addCallCentrePage.toggleStatus();
+          addCallCentrePage.getCallCentreStatus().should('eq', 'Active');
+          addCallCentrePage.selectFrenchTab();
+          addCallCentrePage.fillFrenchData(callCentreData, roleName);
+          addCallCentrePage.addNewCallCentre();
 
-          cy.contains(`${shelterLocationData.name.translation.en}${roleName}`).should('be.visible');
-          // eslint-disable-next-line
-          cy.contains(`${shelterLocationData.address.streetAddress} ${shelterLocationData.address.city}, ${ECanadaProvinces[shelterLocationData.address.province]}, ${shelterLocationData.address.postalCode}, ${shelterLocationData.address.country}`).should('be.visible');;
-          eventDetailsPage.getShelterLocationStatus().should('eq', 'Active');
+          cy.contains(`${callCentreData.name.translation.en}${roleName}`);
+          eventDetailsPage.getCallCentreStartDate().should('string', returnDateInFormat(callCentreData.startDate.toString(), 'PP'));
+          eventDetailsPage.getCallCentreEndDate().should('string', returnDateInFormat(callCentreData.endDate.toString(), 'PP'));
         });
       });
     }
@@ -77,9 +78,9 @@ describe('#TC165# - Add Event Shelter Location', { tags: ['@event'] }, () => {
           cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
-        it('should not be able to add event shelter location', () => {
+        it('should not be able to add event call centre', () => {
           const eventDetailsPage = new EventDetailsPage();
-          eventDetailsPage.getShelterLocationButton().should('not.exist');
+          eventDetailsPage.getCallCentreButton().should('not.exist');
         });
       });
     }

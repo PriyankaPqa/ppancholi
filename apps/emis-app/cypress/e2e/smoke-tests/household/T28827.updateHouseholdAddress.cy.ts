@@ -2,13 +2,15 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { getToday } from '@libs/cypress-lib/helpers';
+import { fixtureAddress } from '../../../fixtures/household';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-import { fixtureHouseholdMember } from '../../../fixtures/household';
 
 const canRoles = [
   UserRoles.level6,
@@ -34,7 +36,7 @@ let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 let household = null as ICreateHouseholdRequest;
 
-describe('#TC450# - Change/Add primary member info - middle name', { tags: ['@household'] }, () => {
+describe('[T28827] Update Household Address', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -42,13 +44,12 @@ describe('#TC450# - Change/Add primary member info - middle name', { tags: ['@ho
       const { provider, team } = result;
       event = result.event;
       cy.wrap(provider).as('provider');
-      cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');
     });
   });
 
   after(function () {
-    if (this.provider && this.teamCreated?.id) {
+    if (this.teamCreated?.id && this.provider) {
       removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
@@ -66,25 +67,42 @@ describe('#TC450# - Change/Add primary member info - middle name', { tags: ['@ho
             cy.goTo(`casefile/household/${caseFileCreated.householdId}`);
           });
         });
-        it('should successfully change primary member info - middle name', function () {
-          const householdSize = this.household.additionalMembers.length + 1;
-          const householdMemberData = fixtureHouseholdMember(this.test.retries.length);
+        it('should successfully update household address', function () {
+          const addressData = fixtureAddress();
 
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdSize().should('be.visible').should('have.length', householdSize);
 
-          const editHouseholdProfilePage = householdProfilePage.editMemberByIndex(0);
-          editHouseholdProfilePage.fillMiddleName(householdMemberData.middleName);
-          editHouseholdProfilePage.saveEdit();
+          const editHouseholdAddressPage = householdProfilePage.editAddress();
+          editHouseholdAddressPage.getNoFixedHomeAddressCheckbox().should('not.be.checked').and('not.have.attr', 'checked');
+          editHouseholdAddressPage.fillUpdatedAddressData(addressData, roleName); // roleName added in unitNumber to prevent creating potential duplicates.
+          editHouseholdAddressPage.saveUpdatedAddress();
 
-          householdProfilePage.getMemberNameInfoByIndex(0).contains(`Middle name: ${householdMemberData.middleName}`).should('be.visible');
+          cy.contains('The household address has been successfully updated').should('be.visible');
+          cy.contains(`${addressData.unitNumber} ${roleName}-${addressData.streetAddress}`).should('be.visible');
+          cy.contains(`${addressData.municipality}, ${addressData.province}, ${addressData.postalCode}`).should('be.visible');
+
+          const profileHistoryPage = householdProfilePage.goToProfileHistoryPage();
+          profileHistoryPage.refreshUntilHouseholdProfileReady(caseFileCreated.householdId.toString());
+          profileHistoryPage.getHouseholdHistoryEditedBy().should('eq', `${getUserName(roleName)}${getUserRoleDescription(roleName)}`);
+          profileHistoryPage.getHouseholdHistoryChangeDate().should('eq', getToday());
+          profileHistoryPage.getHouseholdHistoryLastAction().should('eq', 'Address information changed');
+
+          profileHistoryPage.getHouseholdHistoryPreviousValue()
+            .should('string', `${this.household.homeAddress.unitSuite}-${this.household.homeAddress.streetAddress}`)
+            .should('string', `${this.household.homeAddress.city}, ${ECanadaProvinces[Number(this.household.homeAddress.province.toString())]}, `
+             + `${this.household.homeAddress.postalCode}`);
+          profileHistoryPage.getHouseholdHistoryNewValue().should('string', `${addressData.unitNumber} ${roleName}-${addressData.streetAddress}`);
+          profileHistoryPage.getHouseholdHistoryNewValue().should('string', `${addressData.municipality}, ${addressData.province}, `
+          + `${addressData.postalCode}, Canada`);
+
+          profileHistoryPage.goToHouseholdProfilePage();
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
-          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Personal information changed');
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Address information changed');
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', 'Personal information changed');
+          caseFileDetailsPage.getCaseFileActivityBodies().should('string', 'Address information changed');
         });
       });
     }
@@ -97,12 +115,12 @@ describe('#TC450# - Change/Add primary member info - middle name', { tags: ['@ho
           cy.login(roleName);
           cy.goTo('casefile');
         });
-        it('should not be able to change primary member info - middle name', () => {
+        it('should not be able to update household address', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
-          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
-          householdProfilePage.getHouseholdSize().should('be.visible'); // positive deterministic event - page landed
-          householdProfilePage.getEditMemberButtons().should('not.exist');
+          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold(); // re-use already created household for canRoles.
+          householdProfilePage.getHouseholdSize().should('be.visible');
+          householdProfilePage.getEditAddressButton().should('not.exist');
         });
       });
     }

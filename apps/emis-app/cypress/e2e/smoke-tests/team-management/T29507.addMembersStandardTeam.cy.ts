@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles } = getRoles(canRoles, cannotRoles
 const canRolesWithPartial = [...partialRole, ...filteredCanRoles];
 const addedRolesValues = [UserRoles.level1, UserRoles.level2];
 
-describe('#TC404# - Add Members To Standard Team', { tags: ['@case-file', '@teams'] }, () => {
+describe('[T29507] Add Members To Standard Team', { tags: ['@case-file', '@teams'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, canRolesWithPartial);

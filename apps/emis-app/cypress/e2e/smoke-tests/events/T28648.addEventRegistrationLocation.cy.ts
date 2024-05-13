@@ -1,10 +1,10 @@
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { returnDateInFormat } from '@libs/cypress-lib/helpers';
+import { fixtureLocation } from '../../../fixtures/events';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureCallCentre } from '../../../fixtures/events';
 
 const canRoles = [
   UserRoles.level6,
@@ -25,7 +25,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC163# - Add Event Call Centre', { tags: ['@event'] }, () => {
+describe('[T28648] Add Event Registration Location', { tags: ['@event'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRoles);
@@ -48,24 +48,23 @@ describe('#TC163# - Add Event Call Centre', { tags: ['@event'] }, () => {
           cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
-        it('should successfully add event call centre', function () {
-          const callCentreData = fixtureCallCentre(this.test.retries.length);
+        it('should successfully add event registration location', function () {
+          const registrationLocationData = fixtureLocation(this.test.retries.length);
 
           const eventDetailsPage = new EventDetailsPage();
-          eventDetailsPage.getEventStatus().should('eq', 'Open' || 'eq', 'On hold');
 
-          const addCallCentrePage = eventDetailsPage.addCallCentre();
-          addCallCentrePage.getCallCentreStatus().should('eq', 'Inactive');
-          addCallCentrePage.fill(callCentreData, roleName);
-          addCallCentrePage.toggleStatus();
-          addCallCentrePage.getCallCentreStatus().should('eq', 'Active');
-          addCallCentrePage.selectFrenchTab();
-          addCallCentrePage.fillFrenchData(callCentreData, roleName);
-          addCallCentrePage.addNewCallCentre();
+          const addRegistrationLocationPage = eventDetailsPage.addRegistrationLocation();
+          addRegistrationLocationPage.getRegistrationLocationStatus().should('eq', 'Active');
+          addRegistrationLocationPage.getRegistrationLocationCountry().should('eq', 'Canada'); // Canada is default country value
+          addRegistrationLocationPage.fill(registrationLocationData, roleName);
+          addRegistrationLocationPage.selectFrenchTab();
+          addRegistrationLocationPage.fillFrenchRegistrationLocationName(registrationLocationData.name.translation.fr, roleName);
+          addRegistrationLocationPage.addNewRegistrationLocation();
 
-          cy.contains(`${callCentreData.name.translation.en}${roleName}`);
-          eventDetailsPage.getCallCentreStartDate().should('string', returnDateInFormat(callCentreData.startDate.toString(), 'PP'));
-          eventDetailsPage.getCallCentreEndDate().should('string', returnDateInFormat(callCentreData.endDate.toString(), 'PP'));
+          cy.contains(`${registrationLocationData.name.translation.en}${roleName}`).should('be.visible');
+          // eslint-disable-next-line
+          cy.contains(`${registrationLocationData.address.streetAddress} ${registrationLocationData.address.city}, ${ECanadaProvinces[registrationLocationData.address.province]}, ${registrationLocationData.address.postalCode}, ${registrationLocationData.address.country}`).should('be.visible');
+          eventDetailsPage.getRegistrationLocationStatus().should('eq', 'Active');
         });
       });
     }
@@ -78,9 +77,9 @@ describe('#TC163# - Add Event Call Centre', { tags: ['@event'] }, () => {
           cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
-        it('should not be able to add event call centre', () => {
+        it('should not be able to add event registration location', () => {
           const eventDetailsPage = new EventDetailsPage();
-          eventDetailsPage.getCallCentreButton().should('not.exist');
+          eventDetailsPage.getRegistrationLocationButton().should('not.exist');
         });
       });
     }

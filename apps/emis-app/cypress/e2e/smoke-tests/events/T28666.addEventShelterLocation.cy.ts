@@ -1,10 +1,10 @@
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureLocation } from '../../../fixtures/events';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { fixtureLocation } from '../../../fixtures/events';
 
 const canRoles = [
   UserRoles.level6,
@@ -25,7 +25,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC164# - Add Event Registration Location', { tags: ['@event'] }, () => {
+describe('[T28666] Add Event Shelter Location', { tags: ['@event'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRoles);
@@ -48,23 +48,23 @@ describe('#TC164# - Add Event Registration Location', { tags: ['@event'] }, () =
           cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
-        it('should successfully add event registration location', function () {
-          const registrationLocationData = fixtureLocation(this.test.retries.length);
+        it('should successfully add event shelter location', function () {
+          const shelterLocationData = fixtureLocation(this.test.retries.length);
 
           const eventDetailsPage = new EventDetailsPage();
 
-          const addRegistrationLocationPage = eventDetailsPage.addRegistrationLocation();
-          addRegistrationLocationPage.getRegistrationLocationStatus().should('eq', 'Active');
-          addRegistrationLocationPage.getRegistrationLocationCountry().should('eq', 'Canada'); // Canada is default country value
-          addRegistrationLocationPage.fill(registrationLocationData, roleName);
-          addRegistrationLocationPage.selectFrenchTab();
-          addRegistrationLocationPage.fillFrenchRegistrationLocationName(registrationLocationData.name.translation.fr, roleName);
-          addRegistrationLocationPage.addNewRegistrationLocation();
+          const addShelterLocationPage = eventDetailsPage.addShelterLocation();
+          addShelterLocationPage.getShelterLocationStatus().should('eq', 'Active');
+          addShelterLocationPage.getShelterLocationCountry().should('eq', 'Canada'); // Canada is default country value
+          addShelterLocationPage.fill(shelterLocationData, roleName);
+          addShelterLocationPage.selectFrenchTab();
+          addShelterLocationPage.fillFrenchShelterLocationName(shelterLocationData.name.translation.fr, roleName);
+          addShelterLocationPage.addNewShelterLocation();
 
-          cy.contains(`${registrationLocationData.name.translation.en}${roleName}`).should('be.visible');
+          cy.contains(`${shelterLocationData.name.translation.en}${roleName}`).should('be.visible');
           // eslint-disable-next-line
-          cy.contains(`${registrationLocationData.address.streetAddress} ${registrationLocationData.address.city}, ${ECanadaProvinces[registrationLocationData.address.province]}, ${registrationLocationData.address.postalCode}, ${registrationLocationData.address.country}`).should('be.visible');
-          eventDetailsPage.getRegistrationLocationStatus().should('eq', 'Active');
+          cy.contains(`${shelterLocationData.address.streetAddress} ${shelterLocationData.address.city}, ${ECanadaProvinces[shelterLocationData.address.province]}, ${shelterLocationData.address.postalCode}, ${shelterLocationData.address.country}`).should('be.visible');;
+          eventDetailsPage.getShelterLocationStatus().should('eq', 'Active');
         });
       });
     }
@@ -77,9 +77,9 @@ describe('#TC164# - Add Event Registration Location', { tags: ['@event'] }, () =
           cy.login(roleName);
           cy.goTo(`events/${this.eventCreated.id}`);
         });
-        it('should not be able to add event registration location', () => {
+        it('should not be able to add event shelter location', () => {
           const eventDetailsPage = new EventDetailsPage();
-          eventDetailsPage.getRegistrationLocationButton().should('not.exist');
+          eventDetailsPage.getShelterLocationButton().should('not.exist');
         });
       });
     }

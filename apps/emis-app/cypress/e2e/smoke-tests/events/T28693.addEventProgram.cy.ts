@@ -24,7 +24,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC323# - Add Event Program', { tags: ['@event'] }, () => {
+describe('[T28693] Add Event Program', { tags: ['@event'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRoles);

@@ -24,7 +24,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC324# - Add Financial Assistance Table to Event', { tags: ['@event', '@financial-assistance'] }, () => {
+describe('[T28685] Add Financial Assistance Table to Event', { tags: ['@event', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team, mockCreateProgram } = await prepareStateEventAndProgram(accessToken.access_token, allRoles);

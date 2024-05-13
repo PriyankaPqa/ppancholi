@@ -24,7 +24,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC1691# - Create a multiple use Assessment form', { tags: ['@event', '@assessments'] }, () => {
+describe('[T28584] Create a multiple use Assessment form', { tags: ['@event', '@assessments'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team, mockCreateProgram } = await prepareStateEventAndProgram(accessToken.access_token, allRoles);

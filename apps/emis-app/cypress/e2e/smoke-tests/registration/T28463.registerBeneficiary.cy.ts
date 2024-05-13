@@ -28,7 +28,7 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-describe('#TC1110# - Register Beneficiary for Event .', { tags: ['@registration'] }, () => {
+describe('[T28463] Register Beneficiary for Event .', { tags: ['@registration'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRoles);

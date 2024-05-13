@@ -32,7 +32,7 @@ let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 let table = null as IFinancialAssistanceTableEntity;
 
-describe('#TC210# -Create a Pre-paid Card Payment Line', { tags: ['@case-file', '@financial-assistance'] }, () => {
+describe('[T28298] Create a Pre-paid Card Payment Line', { tags: ['@case-file', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

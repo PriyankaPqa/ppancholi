@@ -35,7 +35,7 @@ let caseFileCreated2 = null as ICaseFileEntity;
 let caseFileCreated3 = null as ICaseFileEntity;
 const householdQuantity = 3;
 
-describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T29130] Pre-process a Financial Assistance filtered list', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

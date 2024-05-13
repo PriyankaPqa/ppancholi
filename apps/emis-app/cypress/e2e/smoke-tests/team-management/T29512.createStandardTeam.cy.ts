@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 const allRolesWithPartial = [...Object.values(allRoles), ...Object.values(partialRoles)] as UserRoles[];
 
-describe('#TC400# - Create Standard Team', { tags: ['@case-file', '@teams'] }, () => {
+describe('[T29512] Create Standard Team', { tags: ['@case-file', '@teams'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesWithPartial);
