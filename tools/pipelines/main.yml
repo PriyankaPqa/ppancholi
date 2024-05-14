@@ -1,27 +1,28 @@
 parameters:
-  appName: ''
-  packageFeed: ''
-  storage: ''
-  cdnEndpoint: ''
-  cdnProfile: ''
+  appName: ""
+  packageFeed: ""
+  storage: ""
+  cdnEndpoint: ""
+  cdnProfile: ""
   lokalise: true
-  buildCommand: 'build --mode production'
-  lokaliseCommand: 'lokalise --mode production'
-  workingDir: ''
-  distDir: ''
-  isPullRequest: ''
-  nodeJsVersion: ''
-  appVersion: ''
+  buildCommand: "build --mode production"
+  lokaliseCommand: "lokalise --mode production"
+  workingDir: ""
+  distDir: ""
+  isPullRequest: ""
+  nodeJsVersion: ""
+  appVersion: ""
   runE2EStage: true
   parallelJobsSmokeTests: 1
+  verifyPipelinesIds: ""
+  verifyBuildAgeLimit: 3
 
 stages:
-
   # Trigger before the build
-  - template: './stages/pre-build-stage.yml'
+  - template: "./stages/pre-build-stage.yml"
 
   # Build the application and publish the artifact
-  - template: './stages/build-stage.yml'
+  - template: "./stages/build-stage.yml"
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
       lokalise: ${{ parameters.lokalise }}
@@ -33,7 +34,7 @@ stages:
       appVersion: ${{ parameters.appVersion }}
 
   # Run unit tests & component tests
-  - template: './stages/tests-stage.yml'
+  - template: "./stages/tests-stage.yml"
     parameters:
       appName: ${{ parameters.appName }}
       packageFeed: ${{ parameters.packageFeed }}
@@ -44,53 +45,59 @@ stages:
 
   # Run E2E Tests
   - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
-    - stage: 'E2E_Test_Stage'
-      condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
-      displayName: 'E2E Tests'
-      jobs:
-        - template: './jobs/cypress-role-mode.yml'
-          parameters:
-            canMode: 'boundary'
-            cannotMode: 'none'
+      - stage: "E2E_Test_Stage"
+        condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
+        displayName: "E2E Tests"
+        jobs:
+          - template: "./jobs/cypress-role-mode.yml"
+            parameters:
+              canMode: "boundary"
+              cannotMode: "none"
 
-        - template: './jobs/cypress-job.yml'
-          parameters:
-            displayName: 'Run smoke tests'
-            cypressSpec: 'cypress/e2e/smoke-tests/**/*.ts'
-            parallelJobs: ${{ parameters.parallelJobsSmokeTests }}
-            packageFeed: ${{ parameters.packageFeed }}
-            nodeJsVersion: ${{ parameters.nodeJsVersion }}
-            distDir: ${{ parameters.distDir }}
-            workingDir: ${{ parameters.workingDir }}
+          - template: "./jobs/cypress-job.yml"
+            parameters:
+              displayName: "Run smoke tests"
+              cypressSpec: "cypress/e2e/smoke-tests/**/*.ts"
+              parallelJobs: ${{ parameters.parallelJobsSmokeTests }}
+              packageFeed: ${{ parameters.packageFeed }}
+              nodeJsVersion: ${{ parameters.nodeJsVersion }}
+              distDir: ${{ parameters.distDir }}
+              workingDir: ${{ parameters.workingDir }}
 
   # Deploy to temporary environment for manual testing
   - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
-    - template: './stages/deploy-to-temporary-url-stage.yml'
-      parameters:
-        cdnEndpoint: ${{ parameters.cdnEndpoint }}
-        cdnProfile: ${{ parameters.cdnProfile }}
+      - template: "./stages/deploy-to-temporary-url-stage.yml"
+        parameters:
+          cdnEndpoint: ${{ parameters.cdnEndpoint }}
+          cdnProfile: ${{ parameters.cdnProfile }}
 
   # Deploy to DEV automatically or manually depending on E2E stage results
   - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
-    - template: './stages/deploy-to-dev-stage.yml'
-      parameters:
-        storage: ${{ parameters.storage }}
-        cdnEndpoint: ${{ parameters.cdnEndpoint }}
-        cdnProfile: ${{ parameters.cdnProfile }}
+      - template: "./stages/deploy-to-dev-stage.yml"
+        parameters:
+          storage: ${{ parameters.storage }}
+          cdnEndpoint: ${{ parameters.cdnEndpoint }}
+          cdnProfile: ${{ parameters.cdnProfile }}
 
   # Deploy to LAB
   - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
-    - template: './stages/deploy-to-lab-stage.yml'
-      parameters:
-        storage: ${{ parameters.storage }}
-        cdnEndpoint: ${{ parameters.cdnEndpoint }}
-        cdnProfile: ${{ parameters.cdnProfile }}
+      - template: "./stages/deploy-to-lab-stage.yml"
+        parameters:
+          storage: ${{ parameters.storage }}
+          cdnEndpoint: ${{ parameters.cdnEndpoint }}
+          cdnProfile: ${{ parameters.cdnProfile }}
+
+  # Verify test results from nightly build
+  - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
+      - template: "./stages/test-validation-stage.yml"
+        parameters:
+          pipelineIds: ${{ parameters.verifyPipelinesIds }}
+          ageLimit: ${{ parameters.verifyBuildAgeLimit }}
 
   # Deploy to PROD
   - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
-    - template: './stages/deploy-to-prod-stage.yml'
-      parameters:
-        storage: ${{ parameters.storage }}
-        cdnEndpoint: ${{ parameters.cdnEndpoint }}
-        cdnProfile: ${{ parameters.cdnProfile }}
-
+      - template: "./stages/deploy-to-prod-stage.yml"
+        parameters:
+          storage: ${{ parameters.storage }}
+          cdnEndpoint: ${{ parameters.cdnEndpoint }}
+          cdnProfile: ${{ parameters.cdnProfile }}

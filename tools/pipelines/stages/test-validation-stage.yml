@@ -1,0 +1,24 @@
+parameters:
+  - name: ageLimit
+    type: number
+    default: 3 # Default value for ageLimit if not specified
+  - name: pipelineIds
+    type: string
+    default: "300" # Default value for pipelineIds if not specified
+
+stages:
+  - stage: TestValidationStage
+    displayName: "Check Pipelines Results"
+    dependsOn:
+      - Deploy_to_Dev
+      - Deploy_to_Dev_Manual
+    condition: |
+      or(
+        in(dependencies.Deploy_to_Dev.result, 'Succeeded'),
+        in(dependencies.Deploy_to_Dev_Manual.result, 'Succeeded')
+      )
+    jobs:
+      - template: "../jobs/test-validation-job.yml"
+        parameters:
+          ageLimit: ${{parameters.ageLimit}}
+          pipelineIds: ${{parameters.pipelineIds}}

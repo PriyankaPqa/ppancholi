@@ -51,3 +51,5 @@ stages:
     appVersion: $(VITE_VERSION)
     disableCache: $(disableCache)
     parallelJobsSmokeTests: 4
+    verifyPipelinesIds: "300,288" ## Ids of pipeline we want to verify before pushing to PROD
+    verifyBuildAgeLimit: 3
