@@ -43,7 +43,7 @@ const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDropDown = 'Financial Assistance';
 const dataCorrectionTypeDataTest = 'Financial Assistance';
 
-describe('#TC1769# - Pre-process a Financial Assistance data correction file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T28846] Pre-process a Financial Assistance data correction file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

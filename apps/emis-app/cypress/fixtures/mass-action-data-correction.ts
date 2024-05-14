@@ -26,6 +26,8 @@ export const generateRandomFaDataCorrectionData = (faCorrectionData: GenerateRan
   PaymentStatus: 'InProgress',
   CancellationReason: null,
   FinancialAssistancePaymentLinesId: faCorrectionData.FinancialAssistancePaymentLinesId,
+  PaymentLineStatus: null,
+  PaymentLineCancellationReason: null,
   Item: 'Clothing',
   SubItem: 'Winter Clothing',
   Amount: 100,

@@ -60,6 +60,8 @@ export interface IFinancialAssistanceMassActionTemplate {
   FinancialAssistancePaymentLinesId?: string;
   ActualAmount?: number;
   ETag?: string;
+  PaymentLineStatus?: string,
+  PaymentLineCancellationReason?: string,
 }
 
 // properties also act as first row of financial assistance custom file
