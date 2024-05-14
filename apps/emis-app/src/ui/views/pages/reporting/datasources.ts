@@ -232,7 +232,9 @@ export const personViewDs : IDatasourceBase = {
 };
 
 export const personAddressHistoryViewDs : IDatasourceBase = {
-  columns: personViewDs.columns.map((x) => ({
+  columns: ([...personViewDs.columns,
+    { dataField: 'address_EntryIndex', dataType: 'number', visible: false },
+  ] as ExtendedColumn[]).map((x) => ({
     ...x,
     caption: x.dataField.startsWith('address_') || x.dataField.startsWith('shelterLocation') ? `ds.personAddressHistory.${x.dataField}` : x.caption,
   })),
@@ -659,7 +661,7 @@ export const householdMembersDs : IDatasourceSettings = {
 export const householdMembersAddressHistoryDs : IDatasourceSettings = {
   url: 'common/data-providers/household-members-address-history',
   reportingTopic: ReportingTopic.HouseholdMembersAddressHistory,
-  key: { caseFileId: 'Guid', memberId: 'Guid', address_from: 'String' },
+  key: { caseFileId: 'Guid', memberId: 'Guid', address_entryIndex: 'Int32' },
   columns: [
     ...(caseFileViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
     ...(householdViewDs.columns.map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),

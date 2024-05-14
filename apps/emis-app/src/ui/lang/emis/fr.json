@@ -1048,6 +1048,7 @@
     "ds.person.shelterLocationsNameEnFr": "Personne - adr. temp. - centre d'hébergement (an\/fr)",
     "ds.person.shelterLocationsNameFr": "Personne - adr. temp. - centre d'hébergement (fr)",
     "ds.person.updateDate": "Personne - date de mise à jour",
+    "ds.personAddressHistory.address_EntryIndex": "Personne - historique adress. temp. - index",
     "ds.personAddressHistory.address_AddressTypeNameEn": "Personne - historique adress. temp. - type (an)",
     "ds.personAddressHistory.address_AddressTypeNameEnFr": "Personne - historique adr. temp. - type (an\/fr)",
     "ds.personAddressHistory.address_AddressTypeNameFr": "Personne - historique adr. temp. - type (fr)",
