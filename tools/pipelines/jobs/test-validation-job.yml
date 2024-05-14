@@ -1,0 +1,103 @@
+parameters:
+  - name: ageLimit
+    type: number
+    default: 3 # Default value for ageLimit if not specified
+  - name: pipelineIds
+    type: string
+    default: "300" # Default value for pipelineIds if not specified
+
+jobs:
+  - job: waitForValidation
+    displayName: Need manual approval
+    pool: server
+    timeoutInMinutes: 7200 # job times out in 5 days
+    steps:
+      - task: ManualValidation@0
+        timeoutInMinutes: 5760 # task times out in 4 day
+        inputs:
+          notifyUsers: ""
+          instructions: "Please resume to continue the process"
+          onTimeout: "reject"
+
+  - job: TestValidation
+    dependsOn: waitForValidation
+    displayName: "Verifying status of run"
+    variables:
+      ageLimit: ${{ parameters.ageLimit }}
+      pipelineIds: ${{ parameters.pipelineIds }}
+    steps:
+      - powershell: |
+          ## Script which fetch latest build of a pipeline and check its status
+          ## We typically use it to fetch the results of our test automation pipelines
+          ## More information on the endpoint used here https://learn.microsoft.com/en-us/rest/api/azure/devops/build/builds/list?view=azure-devops-rest-7.1#buildqueryorder
+
+          ## To debug locally extract this into a powershell script and use basic AUTH
+          ## Create a Personal Access Token in Azure DevOps and give it Read permission for the Build scope
+          ## $connectionToken = "{PAT}"
+          ## $base64AuthInfo = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes(":$($connectionToken)"))
+          ## $result = Invoke-RestMethod -Uri $url -Method Get -Headers @{Authorization = "Basic $base64AuthInfo" }  
+
+          $project = "EMIS";
+          $organization = "CRC-Tech";
+          $pipelineIds = '$(pipelineIds)'   #Example: "300,525,566"
+          $reason = "schedule"; # This is the way to differentiate our nightly build. The reason is schedule for them
+          $failedCount = 0  # Counter for failed builds
+          $status = 'completed'
+          $ageLimit = $(ageLimit) # in days
+          $pipelineIdsArray = $pipelineIds -split ','
+
+          $timeoutInSeconds = 30  # Adjust the timeout as needed
+          $startTime = Get-Date
+          $result = $null
+
+          $token = "$(System.AccessToken)"
+
+          foreach ($pipelineId in $pipelineIdsArray) {
+            $url = "https://dev.azure.com/CRC-Tech/EMIS/_apis/build/builds?api-version=7.1-preview.7&definitions=$($pipelineId)&statusFilter=$($status)&reasonFilter=schedule&queryOrder=finishTimeDescending&top=1"
+
+            $result = $null
+
+            while ($null -eq $result -and ((Get-Date) - $startTime).TotalSeconds -lt $timeoutInSeconds) {
+              try {
+                $result = Invoke-RestMethod -Uri $url -Method Get -Headers @{Authorization = "Bearer $token" }
+              }
+              catch {
+                Write-Host "Error occurred while making API call"
+              }
+
+              if ($null -eq $result) {
+                Start-Sleep -Seconds 1
+              }
+            }
+
+            if ($null -ne $result) {
+              $latestBuild = $result.value[0]
+              $buildResult = $latestBuild.result
+              $finishTimeUtc = [DateTime]::Parse($latestBuild.finishTime)
+              $timeDifference = (Get-Date) - $finishTimeUtc
+              
+              Write-Output "Build number: $($latestBuild.buildNumber)"
+              Write-Output "Finish time (UTC): $($latestBuild.finishTime)"
+              Write-Output "URL: $($latestBuild.url)"
+              Write-Host "Build Result: $buildResult"
+
+              if ($buildResult -eq "failed" -or $timeDifference.TotalDays -gt $ageLimit) {
+                $failedCount++
+              }
+            }
+            else {
+              Write-Host "Timeout reached for Pipeline ID: $pipelineId. No result received within the specified timeout."
+            }
+          }
+
+          # Check if all pipelines were successful
+          if ($failedCount -ge 1) {
+            Write-Host "Attention: not all pipelines succeeded or are too old (> $($ageLimit) days)"
+            exit 1
+          }
+          else {
+            Write-Host "All pipelines succeeded"
+            exit 0
+          }
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)

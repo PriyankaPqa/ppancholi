@@ -50,3 +50,5 @@ stages:
     nodeJsVersion: $(nodeJsVersion)
     disableCache: $(disableCache)
     parallelJobsSmokeTests: 1
+    verifyPipelinesIds: "287,299" ## Ids of pipeline we want to verify before pushing to PROD
+    verifyBuildAgeLimit: 3
