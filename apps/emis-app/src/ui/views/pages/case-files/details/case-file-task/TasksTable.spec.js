@@ -1,22 +1,21 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import {
-  mockCombinedTaskData,
   mockPersonalTaskEntity,
   mockTaskMetadata,
   mockTeamTaskEntity,
   TaskStatus,
   TaskType,
 } from '@libs/entities-lib/task';
-import { mockOptionItem, mockOptionItems } from '@libs/entities-lib/optionItem';
+import { mockOptionItem, mockOptionItems, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import { mockProvider } from '@/services/provider';
 import routes from '@/constants/routes';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
-import { mockTeamEntities, mockTeamEntity } from '@libs/entities-lib/team';
-import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { mockTeamEntity } from '@libs/entities-lib/team';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
-import { EFilterType } from '@libs/component-lib/types';
+import { EFilterType, EFilterKeyType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
@@ -30,8 +29,11 @@ const localVue = createLocalVue();
 const { pinia, taskStore } = useMockTaskStore();
 const { userStore } = useMockUserStore(pinia);
 const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
+const { teamStore } = useMockTeamStore(pinia);
+
 const services = mockProvider();
 taskStore.getTaskName = jest.fn(() => mockOptionItems());
+taskStore.taskCategories = mockOptionItems();
 userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
 userStore.getUserId = jest.fn(() => 'user-1');
 
@@ -49,7 +51,6 @@ describe('TasksTable.vue', () => {
           personalTaskOnly: false,
           teamTaskOnly: false,
           hasActiveToggle: false,
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
           options: {
             page: 1,
             sortBy: ['Entity/DateAdded'],
@@ -78,7 +79,7 @@ describe('TasksTable.vue', () => {
           metadata: mockTaskMetadata({ id: '1' }),
           pinned: false,
         }],
-
+        assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
         personalTaskOnlyFilter() {
           return {
             or: {
@@ -298,6 +299,7 @@ describe('TasksTable.vue', () => {
           pinia,
           propsData: {
             id: 'mock-case-file-id-1',
+            isInCaseFile: true,
           },
           computed: {
             rawTableData: () => ([{
@@ -324,6 +326,8 @@ describe('TasksTable.vue', () => {
           metadata: {
             ...mockTaskMetadata({ id: '1', userWorkingOnId: 'mock-user-id-1' }),
             userWorkingOnNameWithRole: 'mock-user-name-1 (Mock role)',
+            taskCategory: null,
+            taskName: '',
           },
           pinned: false,
         }]);
@@ -336,6 +340,7 @@ describe('TasksTable.vue', () => {
           pinia,
           propsData: {
             id: 'mock-case-file-id-1',
+            isInCaseFile: true,
           },
           computed: {
             rawTableData: () => ([{
@@ -354,6 +359,50 @@ describe('TasksTable.vue', () => {
           metadata: {
             ...mockTaskMetadata({ id: '1', userWorkingOnId: null }),
             userWorkingOnNameWithRole: 'common.N/A',
+            taskCategory: null,
+            taskName: '',
+          },
+          pinned: false,
+        }]);
+      });
+
+      it('should return the right data for category and task name in metadata', () => {
+        jest.clearAllMocks();
+        const entity = mockTeamTaskEntity({ id: 'team-id-1', name: { optionItemId: 'option-item-id-1' }, category: { optionItemId: 'option-subitem-id-1' } });
+        const taskCategoriesOptionItems = [mockOptionItem(
+          {
+            id: 'option-item-id-1',
+            name: { translation: { en: 'task name' } },
+            subitems: [mockOptionSubItem({ id: 'option-subitem-id-1', name: { translation: { en: 'category name' } } })],
+          },
+        )];
+        taskStore.taskCategories = taskCategoriesOptionItems;
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+            isInCaseFile: true,
+          },
+          computed: {
+            rawTableData: () => ([{
+              entity,
+              metadata: mockTaskMetadata({ id: '1', userWorkingOnId: null }),
+              pinned: false,
+            }]),
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+
+        expect(wrapper.vm.parsedTableData).toEqual([{
+          entity,
+          metadata: {
+            ...mockTaskMetadata({ id: '1', userWorkingOnId: null }),
+            userWorkingOnNameWithRole: 'common.N/A',
+            taskCategory: 'category name',
+            taskName: 'task name',
           },
           pinned: false,
         }]);
@@ -401,8 +450,8 @@ describe('TasksTable.vue', () => {
     describe('customColumns', () => {
       it('should return proper data when is in case File', () => {
         expect(wrapper.vm.customColumns).toEqual({
-          taskName: 'Metadata/Name/Translation/en',
-          taskCategory: 'Metadata/TaskCategoryName/Translation/en',
+          taskName: 'Metadata/TaskName/Translation/en',
+          taskCategory: 'Metadata/Category/Translation/en',
           assignTo: 'Metadata/AssignedTeamName',
           caseFileNumber: 'Metadata/CaseFileNumber',
           isUrgent: 'Entity/IsUrgent',
@@ -429,7 +478,7 @@ describe('TasksTable.vue', () => {
           {
             sortable: true,
             text: 'task.task_table_header.category',
-            value: 'Metadata/TaskCategoryName/Translation/en',
+            value: 'Metadata/Category/Translation/en',
             width: '15%',
           },
           {
@@ -489,7 +538,7 @@ describe('TasksTable.vue', () => {
           {
             sortable: true,
             text: 'task.task_table_header.category',
-            value: 'Metadata/TaskCategoryName/Translation/en',
+            value: 'Metadata/Category/Translation/en',
             width: '15%',
           },
 
@@ -564,6 +613,7 @@ describe('TasksTable.vue', () => {
           {
             key: 'Entity/Name/OptionItemId',
             type: EFilterType.MultiSelect,
+            keyType: EFilterKeyType.Guid,
             label: 'task.create_edit.task_name',
             items: [
               {
@@ -588,7 +638,7 @@ describe('TasksTable.vue', () => {
             items: priorityItems,
           },
           {
-            key: 'Entity/TaskStatus',
+            key: 'Metadata/TaskStatusName/Id',
             type: EFilterType.MultiSelect,
             label: 'task.task_table_header.status',
             items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
@@ -610,6 +660,7 @@ describe('TasksTable.vue', () => {
             disabled: false,
             items: [],
             key: 'Metadata/EventId',
+            keyType: EFilterKeyType.Guid,
             label: 'caseFileTable.filters.eventName',
             loading: false,
             props: {
@@ -624,6 +675,7 @@ describe('TasksTable.vue', () => {
           {
             key: 'Entity/Name/OptionItemId',
             type: EFilterType.MultiSelect,
+            keyType: EFilterKeyType.Guid,
             label: 'task.create_edit.task_name',
             items: [{
               text: 'Flood',
@@ -642,7 +694,7 @@ describe('TasksTable.vue', () => {
             items: priorityItems,
           },
           {
-            key: 'Entity/TaskStatus',
+            key: 'Metadata/TaskStatusName/Id',
             type: EFilterType.MultiSelect,
             label: 'task.task_table_header.status',
             items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
@@ -678,10 +730,10 @@ describe('TasksTable.vue', () => {
           or: {
             Entity: {
               TaskType: {
-                [ITEM_ROOT]: TaskType.Personal,
+                [ITEM_ROOT]: 'Personal',
               },
               CreatedBy: {
-                [ITEM_ROOT]: wrapper.vm.userId,
+                [ITEM_ROOT]: { value: wrapper.vm.userId, type: EFilterKeyType.Guid },
               },
             },
           },
@@ -702,10 +754,34 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.teamTaskOnlyFilter).toEqual({
           or: {
             Entity: {
-              AssignedTeamId: { searchIn_az: ['team-mock-id'] },
+              AssignedTeam: { TeamMembers: { any: { UserId: { value: wrapper.vm.userId, type: 'guid' } } } },
+
             },
           },
         });
+      });
+    });
+
+    describe('assignedTeamsIds', () => {
+      it('should return the right data', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          mocks: {
+            $services: services,
+          },
+          data() {
+            return {
+              combinedTaskStore: { getByIds: jest.fn(() => ({ entity: mockTeamTaskEntity() })) },
+            };
+          },
+          computed: {
+            rawTableData: () => [{ entity: mockTeamTaskEntity() }],
+          } });
+
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.assignedTeamsIds).toEqual([wrapper.vm.rawTableData[0].entity.assignedTeamId]);
       });
     });
   });
@@ -868,48 +944,13 @@ describe('TasksTable.vue', () => {
       });
     });
 
-    describe('getTeamsByEvent', () => {
-      it('should call service getTeamsByEvent and set data properly if is in Case File', async () => {
-        await doMount({
-          propsData: {
-            isInCaseFile: true,
-            caseFile: mockCaseFileEntity({ eventId: 'event-1' }),
-          },
-          computed: {
-            rawTableData: () => mockCombinedTaskData(),
-          },
-        });
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => mockTeamEntities());
-        await wrapper.vm.getTeamsByEvent();
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-1');
-        expect(wrapper.vm.teamsByEvent).toEqual(mockTeamEntities());
-      });
-
-      it('if is not in Case File, should call getTeamsByEvent with all the events id', async () => {
-        jest.clearAllMocks();
-        await doMount({
-          propsData: {
-            isInCaseFile: false,
-            caseFile: mockCaseFileEntity({ eventId: 'event-1' }),
-          },
-          computed: {
-            rawTableData: () => mockCombinedTaskData(),
-          },
-        });
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => mockTeamEntities());
-        await wrapper.vm.getTeamsByEvent();
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id-1');
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id-2');
-      });
-    });
-
     describe('fetchData', () => {
       let params;
 
       beforeEach(() => {
         params = {
           search: 'query',
-          filter: { caseFileId: 'filter' },
+          filter: { foo: 'bar' },
           top: 10,
           skip: 10,
           orderBy: 'name asc',
@@ -930,7 +971,7 @@ describe('TasksTable.vue', () => {
             count: true,
             queryType: 'full',
             searchMode: 'all',
-          });
+          }, null, false, true);
       });
 
       it('should call storage actions with proper parameters when is in case file', async () => {
@@ -938,19 +979,21 @@ describe('TasksTable.vue', () => {
           isInCaseFile: true,
         });
         wrapper.vm.combinedTaskStore.search = jest.fn();
+        wrapper.vm.$route.params.id = 'id-1';
         await wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.combinedTaskStore.search)
           .toHaveBeenCalledWith({
             search: params.search,
-            filter: { caseFileId: 'filter', ...params.filter },
+            filter: { 'Entity/CaseFileId': { type: 'guid', value: 'id-1' },
+              ...params.filter },
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
             queryType: 'full',
             searchMode: 'all',
-          });
+          }, null, false, true);
       });
     });
 
@@ -1126,55 +1169,37 @@ describe('TasksTable.vue', () => {
 
       it('should be true for team task with L1-L5 user if he is assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount(null, true, 1);
-        await wrapper.setData({
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
-        });
+        await doMount({ computed: { assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })] } }, true, 1);
         expect(wrapper.vm.canAction(mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }))).toEqual(true);
       });
 
       it('should be true for team task with contributorIM if he is assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount(null, true, null, UserRoles.contributorIM);
-        await wrapper.setData({
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
-        });
+        await doMount({ computed: { assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })] } }, true, null, UserRoles.contributorIM);
         expect(wrapper.vm.canAction(mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }))).toEqual(true);
       });
 
       it('should be true for team task with contributor3 if he is assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount(null, true, null, UserRoles.contributor3);
-        await wrapper.setData({
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
-        });
+        await doMount({ computed: { assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })] } }, true, null, UserRoles.contributor3);
         expect(wrapper.vm.canAction(mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }))).toEqual(true);
       });
 
       it('should be true for team task with contributorFinance if he is assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount(null, true, null, UserRoles.contributorFinance);
-        await wrapper.setData({
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
-        });
+        await doMount({ computed: { assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })] } }, true, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canAction(mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }))).toEqual(true);
       });
 
       it('should be true for team task with readonly if he is assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount(null, true, null, UserRoles.readonly);
-        await wrapper.setData({
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
-        });
+        await doMount({ computed: { assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })] } }, true, null, UserRoles.readonly);
         expect(wrapper.vm.canAction(mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }))).toEqual(true);
       });
 
       it('should be false for team task with L1-L5 user if he is not assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-2');
-        await doMount(null, true, 1);
-        await wrapper.setData({
-          teamsByEvent: [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
-        });
+        await doMount({ computed: { assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })] } }, true, 1);
         expect(wrapper.vm.canAction(mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }))).toEqual(false);
       });
     });
@@ -1219,7 +1244,7 @@ describe('TasksTable.vue', () => {
       jest.clearAllMocks();
     });
     describe('created', () => {
-      it('should call services fetch data', async () => {
+      it('should call fetchTaskCategories', async () => {
         await doMount({
           propsData: {
             isInCaseFile: true,
@@ -1234,16 +1259,13 @@ describe('TasksTable.vue', () => {
             };
           },
         });
-        wrapper.vm.getTeamsByEvent = jest.fn();
         wrapper.vm.search = jest.fn();
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
-        const options = mockOptionItems();
-        taskStore.getTaskName = jest.fn(() => options);
-        expect(wrapper.vm.getTeamsByEvent).toHaveBeenCalled();
+        expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
       });
 
-      it('should set saveState to ture and call loadState', async () => {
+      it('should set saveState to true and call loadState', async () => {
         await doMount();
         wrapper.vm.loadState = jest.fn();
         const hook = wrapper.vm.$options.created[0];
@@ -1256,13 +1278,14 @@ describe('TasksTable.vue', () => {
 
   describe('watcher', () => {
     describe('rawTableData', () => {
-      it('should fetch userAccountMetadata when rawTableData updated', async () => {
+      it('should fetch userAccountMetadata when rawTableData updated and is in case file', async () => {
         userAccountMetadataStore.fetchByIds = jest.fn();
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
           propsData: {
             id: 'mock-case-file-id-1',
+            isInCaseFile: true,
           },
           data() {
             return {
@@ -1297,85 +1320,31 @@ describe('TasksTable.vue', () => {
         expect(userAccountMetadataStore.fetchByIds).toHaveBeenCalledWith(['mock-user-id-1'], true);
       });
 
-      it('should call getTeamsByEvent only when is not in case file and during the first render', async () => {
+      it('should call useTeamStore only when is not in case file and during the first render', async () => {
         await doMount({
-          propsData: {
-            isInCaseFile: false,
-          },
           data() {
             return {
-              mockTableData: [],
+              mockRawTableData: [{
+                entity: mockTeamTaskEntity({ id: '1', userWorkingOn: null }),
+              }],
             };
           },
           computed: {
             rawTableData: {
-              set(value) {
-                this.mockTableData = value;
-              },
               get() {
-                return this.mockTableData;
+                return this.mockRawTableData;
+              },
+              set(val) {
+                this.mockRawTableData = val;
               },
             },
           },
         });
-        wrapper.vm.getTeamsByEvent = jest.fn();
-        wrapper.vm.rawTableData = mockCombinedTaskData();
-        await wrapper.vm.$nextTick();
-        expect(wrapper.vm.getTeamsByEvent).toHaveBeenCalledTimes(1);
-      });
-
-      it('should not call getTeamsByEvent only when is in case file and during the first render', async () => {
-        await doMount({
-          propsData: {
-            isInCaseFile: true,
-          },
-          data() {
-            return {
-              mockTableData: [],
-            };
-          },
-          computed: {
-            rawTableData: {
-              set(value) {
-                this.mockTableData = value;
-              },
-              get() {
-                return this.mockTableData;
-              },
-            },
-          },
-        });
-        wrapper.vm.getTeamsByEvent = jest.fn();
-        wrapper.vm.rawTableData = mockCombinedTaskData();
-        await wrapper.vm.$nextTick();
-        expect(wrapper.vm.getTeamsByEvent).toHaveBeenCalledTimes(0);
-      });
-
-      it('should not call getTeamsByEvent only when is not in case file but not during the first render', async () => {
-        await doMount({
-          propsData: {
-            isInCaseFile: false,
-          },
-          data() {
-            return {
-              mockTableData: [mockCombinedTaskData()[0]],
-            };
-          },
-          computed: {
-            rawTableData: {
-              set(value) {
-                this.mockTableData = value;
-              },
-              get() {
-                return this.mockTableData;
-              },
-            },
-          },
-        });
-        wrapper.vm.getTeamsByEvent = jest.fn();
-        wrapper.vm.rawTableData = mockCombinedTaskData();
-        await wrapper.vm.$nextTick();
-        expect(wrapper.vm.getTeamsByEvent).toHaveBeenCalledTimes(0);
+        wrapper.vm.rawTableData = [{
+          entity: mockTeamTaskEntity({ id: '2', userWorkingOn: 'mock-user-id-1', assignedTeamId: 'team-id-1' }),
+        }];
+        await flushPromises();
+        expect(teamStore.fetchByIds).toHaveBeenCalledWith(['team-id-1'], true);
       });
     });
   });

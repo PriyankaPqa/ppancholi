@@ -12,7 +12,7 @@ export type Metadata = ITaskMetadata;
 
 const storeId = 'task';
 const entityService = new TaskService(httpClient);
-const metadataService = new TaskMetadataService(httpClient);
+ const metadataService = new TaskMetadataService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
 
 // baseComponents is used as a reference for the extension

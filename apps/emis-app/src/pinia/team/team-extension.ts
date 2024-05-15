@@ -41,7 +41,7 @@ export function getExtensionComponents(
     return res;
   }
 
-    async function addTeamMembers(payload: { teamId: uuid, teamMembers: ITeamMember[] }): Promise<ITeamEntity> {
+  async function addTeamMembers(payload: { teamId: uuid, teamMembers: ITeamMember[] }): Promise<ITeamEntity> {
     try {
       const res = await entityService.addTeamMembers(payload.teamId, payload.teamMembers);
       baseComponents.set(res);
@@ -52,18 +52,30 @@ export function getExtensionComponents(
     }
   }
 
-    async function removeTeamMember(payload: { teamId: uuid, teamMemberId: uuid }): Promise<ITeamEntity> {
+  async function removeTeamMember(payload: { teamId: uuid, teamMemberId: uuid }): Promise<ITeamEntity> {
     // error will be thrown to UI on purpose
     const res = await entityService.removeTeamMember(payload.teamId, payload.teamMemberId);
       baseComponents.set(res);
       return res;
   }
 
-    async function emptyTeam(payload: { teamId: uuid }): Promise<ITeamEntity> {
+  async function emptyTeam(payload: { teamId: uuid }): Promise<ITeamEntity> {
     // error will be thrown to UI on purpose
     const res = await entityService.emptyTeam(payload.teamId);
       baseComponents.set(res);
       return res;
+  }
+
+  async function getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation }
+    : { eventId: uuid, teamIds?:String[], includeInactive?: boolean, isEscalation?: boolean }): Promise<ITeamEntity[]> {
+    try {
+      const res = await entityService.getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation });
+      baseComponents.setAll(res);
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, { eventId }, 'module.teamEntity', 'getTeamsByEvent');
+      return null;
+    }
   }
 
   return {
@@ -74,5 +86,6 @@ export function getExtensionComponents(
     addTeamMembers,
     removeTeamMember,
     emptyTeam,
+    getTeamsByEvent,
   };
 }

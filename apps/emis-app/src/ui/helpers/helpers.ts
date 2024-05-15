@@ -9,7 +9,7 @@ import { DateTypes, dateTypes } from '@/constants/dateTypes';
 import routes from '@/constants/routes';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { Trans } from '../plugins';
 import { VuePlugin } from '../plugins/features';
 
@@ -350,7 +350,7 @@ export default {
    * @param listOption Specific list option, containing {optionItemId, specifiedOther}
    * @returns Localized name of the option item
    */
-  getOptionItemNameFromListOption(optionItems: IOptionItem[], listOption:IListOption): string {
+  getOptionItemNameFromListOption(optionItems: IOptionSubItem[] | IOptionItem[], listOption:IListOption): string {
     if (!listOption || !optionItems?.length) {
       return null;
     }

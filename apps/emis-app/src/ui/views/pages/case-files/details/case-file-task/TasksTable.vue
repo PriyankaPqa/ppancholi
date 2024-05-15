@@ -27,6 +27,7 @@
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filterOptions"
+          :sql-mode="true"
           add-filter-label="tasksTable.filter"
           @open="isInCaseFile ? null : fetchEventsFilter()"
           @update:autocomplete="onAutoCompleteUpdate($event)"
@@ -87,7 +88,7 @@
                 <div class="fw-bold">
                   {{ $t('task.create_edit.due_date') }}
                 </div>
-                <div>{{ helpers.getLocalStringDate(item.entity.dueDate, '', 'PP') }}</div>
+                <div>{{ helpers.getLocalStringDate(item.entity.dueDate, 'Task.dueDate', 'PP') }}</div>
               </v-col>
             </template>
           </v-row>
@@ -102,22 +103,22 @@
             type="button"
             class="rc-link14 font-weight-bold pl-2"
             :data-test="`task-table-task-name-${item.entity.id}`"
-            :to="getTaskDetailsRoute(item.metadata.caseFileId, item.entity.id)">
-            {{ $m(item.metadata.name) }}
+            :to="getTaskDetailsRoute(item.entity.caseFileId, item.entity.id)">
+            {{ item.metadata.taskName }}
           </router-link>
         </div>
       </template>
       <template #[`item.${customColumns.taskCategory}`]="{ item }">
-        <span data-test="task-table-task-category"> {{ item.entity.taskType === TaskType.Personal ? '' : ($m(item.metadata.taskCategoryName) || $t('common.N/A')) }}</span>
+        <span data-test="task-table-task-category"> {{ item.entity.taskType === TaskType.Personal ? '' : (item.metadata.taskCategory || $t('common.N/A')) }}</span>
       </template>
       <template #[`item.${customColumns.assignTo}`]="{ item }">
-        <span data-test="task-table-task-assign-to"> {{ item.metadata.assignedTeamName }}</span>
+        <span data-test="task-table-task-assign-to"> {{ getTeamName(item.entity.assignedTeamId) }}</span>
       </template>
       <template v-if="!isInCaseFile" #[`item.${customColumns.caseFileNumber}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          :data-test="`task-table-case-file-number-link-${item.metadata.caseFileId}`"
-          :to="getCaseFileDetailsRoute(item.metadata.caseFileId)">
+          :data-test="`task-table-case-file-number-link-${item.entity.caseFileId}`"
+          :to="getCaseFileDetailsRoute(item.entity.caseFileId)">
           <span data-test="task-table-case-file-number"> {{ item.metadata.caseFileNumber }}</span>
         </router-link>
       </template>
@@ -171,16 +172,18 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { IdParams, ITaskCombined, ITaskEntity, ITaskMetadata, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { TranslateResult } from 'vue-i18n';
 import helpers from '@/ui/helpers/helpers';
+import helper from '@libs/shared-lib/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useTaskMetadataStore, useTaskStore } from '@/pinia/task/task';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { UserRoles } from '@libs/entities-lib/user';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useUserStore } from '@/pinia/user/user';
+import { useTeamStore } from '@/pinia/team/team';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import isEqual from 'lodash/isEqual';
@@ -189,11 +192,13 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
-import { ITeamEntity } from '@libs/entities-lib/team';
 import { IEntityCombined } from '@libs/entities-lib/base';
+import { ITeamEntity } from '@libs/entities-lib/team';
 
 interface IParsedTaskMetadata extends ITaskMetadata {
-  userWorkingOnNameWithRole: string
+  userWorkingOnNameWithRole?: string,
+  taskName?: string,
+  taskCategory?: string,
 }
 
 type IParsedTaskCombined = IEntityCombined<ITaskEntity, IParsedTaskMetadata>;
@@ -241,10 +246,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       UserRoles,
       FilterKey,
       TaskStatus,
-      teamsByEvent: [] as ITeamEntity[],
       showTaskActionDialog: false,
       actioningTask: null as ITaskEntity,
       actioningEventId: '',
+      sqlSearchMode: true,
       combinedTaskStore: new CombinedStoreFactory<ITaskEntity, ITaskMetadata, IdParams>(useTaskStore(), useTaskMetadataStore()),
     };
   },
@@ -259,10 +264,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         or: {
           Entity: {
             TaskType: {
-              [ITEM_ROOT]: TaskType.Personal,
+              [ITEM_ROOT]: helper.getEnumKeyText(TaskType, TaskType.Personal),
             },
             CreatedBy: {
-              [ITEM_ROOT]: this.userId,
+              [ITEM_ROOT]: { value: this.userId, type: EFilterKeyType.Guid },
             },
           },
         },
@@ -270,11 +275,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     teamTaskOnlyFilter(): Record<string, unknown> {
-      const myTeamsIds = useUserAccountMetadataStore().getById(this.userId).teams.map((t) => (t.teamId));
       return {
         or: {
           Entity: {
-            AssignedTeamId: { searchIn_az: myTeamsIds },
+            AssignedTeam: { TeamMembers: { any: { UserId: { value: this.userId, type: 'guid' } } } },
           },
         },
       };
@@ -304,8 +308,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     customColumns(): Record<string, string> {
       return {
-        taskName: `Metadata/Name/Translation/${this.$i18n.locale}`,
-        taskCategory: `Metadata/TaskCategoryName/Translation/${this.$i18n.locale}`,
+        taskName: `Metadata/TaskName/Translation/${this.$i18n.locale}`,
+        taskCategory: `Metadata/Category/Translation/${this.$i18n.locale}`,
         assignTo: 'Metadata/AssignedTeamName',
         caseFileNumber: 'Metadata/CaseFileNumber',
         isUrgent: 'Entity/IsUrgent',
@@ -393,6 +397,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       const eventFilter = {
           key: 'Metadata/EventId',
           type: EFilterType.Select,
+          keyType: EFilterKeyType.Guid,
           label: this.$t('caseFileTable.filters.eventName') as string,
           items: this.sortedEventsFilter,
           loading: this.eventsFilterLoading,
@@ -410,6 +415,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         {
           key: 'Entity/Name/OptionItemId',
           type: EFilterType.MultiSelect,
+          keyType: EFilterKeyType.Guid,
           label: this.$t('task.create_edit.task_name') as string,
           items: taskNames,
         },
@@ -425,7 +431,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           items: priorityItems,
         },
         {
-          key: 'Entity/TaskStatus',
+          key: 'Metadata/TaskStatusName/Id',
           type: EFilterType.MultiSelect,
           label: this.$t('task.task_table_header.status') as string,
           items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
@@ -456,39 +462,50 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       );
     },
 
-    parsedTableData(): IParsedTaskCombined[] {
+   parsedTableData(): IParsedTaskCombined[] {
+     const taskNameOptionItems = useTaskStore().taskCategories;
+
       return this.rawTableData?.map((d) => {
-        let parsedTaskMetadata: IParsedTaskMetadata;
-        if (d.entity.userWorkingOn) {
-          const userAccountMetadata = useUserAccountMetadataStore().getById(d.entity.userWorkingOn);
-          parsedTaskMetadata = {
-            ...d.metadata,
-            userWorkingOnNameWithRole: `${userAccountMetadata?.displayName} (${this.$m(userAccountMetadata?.roleName) as string})`,
-          };
-        } else {
-          parsedTaskMetadata = {
-            ...d.metadata,
-            userWorkingOnNameWithRole: this.$t('common.N/A') as string,
-          };
+        // taskCategories are subitems of taskNames
+        const taskCategoryOptionItems = taskNameOptionItems?.find((c) => c.id === d.entity.name.optionItemId)?.subitems || [];
+        const taskName = helpers.getOptionItemNameFromListOption(taskNameOptionItems, d.entity.name);
+        const taskCategory = helpers.getOptionItemNameFromListOption(taskCategoryOptionItems, d.entity.category);
+
+        let userWorkingOnNameWithRole = '';
+        if (this.isInCaseFile) {
+          if (d.entity.userWorkingOn) {
+            const userAccountMetadata = useUserAccountMetadataStore().getById(d.entity.userWorkingOn);
+            userWorkingOnNameWithRole = `${userAccountMetadata?.displayName} (${this.$m(userAccountMetadata?.roleName) as string})`;
+          } else {
+            userWorkingOnNameWithRole = this.$t('common.N/A') as string;
+          }
         }
+
         return {
           entity: d.entity,
-          metadata: parsedTaskMetadata,
+          metadata: { ...d.metadata, taskName, taskCategory, userWorkingOnNameWithRole },
           pinned: d.pinned,
         };
       });
+    },
+
+    assignedTeamsIds(): string[] {
+      return [...new Set(this.rawTableData?.map((d) => (d.entity.assignedTeamId)).filter((x) => x))];
+    },
+
+    assignedTeams(): ITeamEntity[] {
+      return useTeamStore().getByIds(this.assignedTeamsIds);
     },
   },
 
   watch: {
     rawTableData: {
       async handler(nextValue, prevValue) {
-        if (!this.isInCaseFile && prevValue.length === 0 && nextValue.length > 0) {
-          await this.getTeamsByEvent();
-        }
-
         if (prevValue && nextValue !== prevValue) {
-          await useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true);
+          await Promise.all([
+            useTeamStore().fetchByIds(this.assignedTeamsIds, true),
+            this.isInCaseFile && useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true),
+        ]);
         }
       },
       deep: true,
@@ -499,10 +516,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     this.saveState = true;
     this.loadState();
     await useTaskStore().fetchTaskCategories();
-    if (this.isInCaseFile) {
-      await this.getTeamsByEvent();
-    }
-    await useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true);
   },
 
   methods: {
@@ -603,36 +616,17 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         return task.createdBy === userId && task.taskStatus === TaskStatus.InProgress;
       }
 
-        // Team task --> condition
+        // Team task --> for these roles, user needs to be part of the assigned team
         if (this.$hasLevel(UserRoles.level1)
           || this.$hasRole(UserRoles.readonly)
           || this.$hasRole(UserRoles.contributor3)
           || this.$hasRole(UserRoles.contributorIM)
           || this.$hasRole(UserRoles.contributorFinance)) {
-          const assignedTeam = this.teamsByEvent?.filter((t) => t.id === task.assignedTeamId)[0];
+          const assignedTeam = this.assignedTeams?.find((t) => t.id === task.assignedTeamId);
           return assignedTeam?.teamMembers.some((m) => m.id === userId);
         }
         // L0, no-role --> false
         return false;
-    },
-
-    async getTeamsByEvent() {
-      if (this.isInCaseFile) {
-        const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);
-        if (teams) {
-          this.teamsByEvent = teams;
-        }
-      } else {
-        const eventIds = [...new Set(this.rawTableData?.map((d) => (d.metadata.eventId)))];
-        const teams = [] as ITeamEntity[];
-        await Promise.all(eventIds.map(async (e) => {
-          const res = await this.$services.teams.getTeamsByEvent(e);
-          if (res) {
-            teams.push(...res);
-          }
-        }));
-        this.teamsByEvent = [...new Set(teams)];
-      }
     },
 
     setActioningTask(item: ITaskCombined) {
@@ -664,22 +658,25 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       this.applyCustomFilter(value, this.personalTaskOnlyFilter);
     },
 
+    getTeamName(assignedTeamId: string): string {
+      return this.assignedTeams.find((t) => t.id === assignedTeamId)?.name;
+    },
+
     async fetchData(params: IAzureSearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.combinedTaskStore.search({
         search: params.search,
-        filter: this.isInCaseFile ? { 'Entity/CaseFileId': this.$route.params.id, ...filterParams } : { ...filterParams },
+        filter: this.isInCaseFile ? { 'Entity/CaseFileId': { value: this.$route.params.id, type: EFilterKeyType.Guid }, ...filterParams } : { ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, false, true);
       return res;
     },
   },
-
 });
 </script>
 

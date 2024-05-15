@@ -39,17 +39,10 @@ describe('>>> Tasks Service', () => {
   });
 
   describe('search', () => {
-    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`case-file/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+    it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/tasks', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/tasksV2', { params, isODataSql: true });
     });
   });
 
@@ -64,8 +57,17 @@ describe('>>> Tasks Service', () => {
     it('should parse data properly', () => {
       const task = mockTeamTaskEntity();
       task.category.optionItemId = null;
+      task.dueDate = '2024-01-10';
       const parseTask = service.parseTaskPayload(task);
       expect(parseTask.category).toEqual(null);
+    });
+
+    it('should parse data properly for date', () => {
+      const task = mockTeamTaskEntity();
+      task.category.optionItemId = null;
+      task.dueDate = '2024-01-10';
+      const parseTask = service.parseTaskPayload(task);
+      expect(parseTask.dueDate).toEqual('2024-01-10T00:00:00.000Z');
     });
 
     it('should not parse data when category optionItemId has value', () => {

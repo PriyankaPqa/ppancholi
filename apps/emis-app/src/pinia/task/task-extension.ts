@@ -7,6 +7,8 @@ import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { Ref, ref } from 'vue';
 import routes from '@/constants/routes';
+import helpers from '@/ui/helpers/helpers';
+
 import { INotificationHelperView } from '@libs/entities-lib/notification';
 
 export function getExtensionComponents(
@@ -99,14 +101,13 @@ export function getExtensionComponents(
       return null;
     }
 
-    const dueDate = task.dueDate ? new Date(task.dueDate) : null;
-    const today = new Date();
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dueDateLocal = task.dueDate ? helpers.getLocalStringDate(task.dueDate, 'Task.dueDate') : null;
+    const today = helpers.getLocalStringDate(new Date(), 'local');
 
     return {
       isUrgent: task.isUrgent,
-      isDueToday: task.taskStatus === TaskStatus.InProgress && dueDate && dueDate.toDateString() === today.toDateString(),
-      isOverdue: task.taskStatus === TaskStatus.InProgress && dueDate && dueDate < startOfDay,
+      isDueToday: task.taskStatus === TaskStatus.InProgress && dueDateLocal && dueDateLocal === today,
+      isOverdue: task.taskStatus === TaskStatus.InProgress && dueDateLocal && dueDateLocal < today,
       icon: task.taskType === TaskType.Personal ? 'mdi-account-check' : '',
       targetLink: {
         name: routes.caseFile.task.details.name,

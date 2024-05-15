@@ -220,13 +220,9 @@ describe('caseFileTask', () => {
       it('should be true for team task with L1-L5 user if he is assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
-          data() {
-            return {
-              assignedTeam: mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
-            };
-          },
           computed: {
             task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+            assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
           },
         }, 1);
         expect(wrapper.vm.canAction).toEqual(true);
@@ -235,13 +231,9 @@ describe('caseFileTask', () => {
       it('should be false for team task with L1-L5 user if he is assigned team member, but task is inactive', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
-          data() {
-            return {
-              assignedTeam: mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }], status: Status.Inactive }),
-            };
-          },
           computed: {
             task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+            assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }], status: Status.Inactive }),
           },
         }, 1);
         expect(wrapper.vm.canAction).toEqual(false);
@@ -250,13 +242,10 @@ describe('caseFileTask', () => {
       it('should be false for team task with L1-L5 user if he is not assigned team member', async () => {
         userStore.getUserId = jest.fn(() => 'user-2');
         await doMount(true, {
-          data() {
-            return {
-              assignedTeam: mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
-            };
-          },
           computed: {
             task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+            assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
+
           },
         }, 1);
         expect(wrapper.vm.canAction).toEqual(false);

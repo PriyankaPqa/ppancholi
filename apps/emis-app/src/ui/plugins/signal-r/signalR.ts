@@ -34,7 +34,7 @@ import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useNotificationStore } from '@/pinia/notification/notification';
-import { useTaskStore, useTaskMetadataStore } from '@/pinia/task/task';
+import { useTaskStore } from '@/pinia/task/task';
 import { INotificationEntity } from '@libs/entities-lib/notification';
 
 export interface IOptions {
@@ -507,12 +507,6 @@ export class SignalR implements ISignalR {
       action: useTaskStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
-      domain: 'case-file',
-      entityName: 'TaskMetadata',
-      action: useTaskMetadataStore().setItemFromOutsideNotification,
-    });
-
     this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'TaskCategory',
@@ -521,7 +515,6 @@ export class SignalR implements ISignalR {
     });
 
     this.watchedPiniaStores.push(useTaskStore());
-    this.watchedPiniaStores.push(useTaskMetadataStore());
   }
 
   private listenForChanges<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T, byUser: boolean)=> void }) {

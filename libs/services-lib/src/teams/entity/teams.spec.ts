@@ -76,7 +76,7 @@ describe('>>> Teams Service', () => {
 
   describe('getTeamsByEvent', () => {
     it('should link to correct URL when there is no params', async () => {
-      await service.getTeamsByEvent('1234');
+      await service.getTeamsByEvent({ eventId: '1234' });
       expect(http.get).toHaveBeenCalledWith(
         'team/search/teamsV2?manageableTeamsOnly=false',
         { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } }, 'Entity/Status': 'Active' } }, isODataSql: true },
@@ -84,7 +84,7 @@ describe('>>> Teams Service', () => {
     });
 
     it('should link to correct URL when include inactive', async () => {
-      await service.getTeamsByEvent('1234', [], true);
+      await service.getTeamsByEvent({ eventId: '1234', includeInactive: true });
       expect(http.get).toHaveBeenCalledWith(
         'team/search/teamsV2?manageableTeamsOnly=false',
         { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } } } }, isODataSql: true },
@@ -92,7 +92,8 @@ describe('>>> Teams Service', () => {
     });
 
     it('should link to correct URL with teamIds', async () => {
-      await service.getTeamsByEvent('1234', ['mock-team-id-1', 'mock-team-id-2']);
+      const teamIds = ['mock-team-id-1, mock-team-id-2'];
+      await service.getTeamsByEvent({ eventId: '1234', teamIds });
       expect(http.get).toHaveBeenCalledWith(
         'team/search/teamsV2?manageableTeamsOnly=false',
         {
@@ -100,7 +101,7 @@ describe('>>> Teams Service', () => {
             filter: {
               Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } },
               'Entity/Status': 'Active',
-              'Entity/Id': { in: ['mock-team-id-1', 'mock-team-id-2'] },
+              'Entity/Id': { in: teamIds },
             },
           },
           isODataSql: true,

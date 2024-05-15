@@ -46,7 +46,7 @@
         <div v-if="showAssignTeamSelect" class=" py-0">
           <v-select-with-validation
             v-model="assignedTeamId"
-            :items="teamsOfEvent"
+            :items="assignableTeams"
             :item-text="(item) => item.name"
             :item-value="(item) => item.id"
             :label="`${$t('task.action.select_team_to_assign')} *`"
@@ -75,6 +75,7 @@ import { ValidationProvider } from 'vee-validate';
 import { VForm } from '@libs/shared-lib/types';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { TranslateResult } from 'vue-i18n';
+import { useTeamStore } from '@/pinia/team/team';
 import { useTaskStore } from '@/pinia/task/task';
 
 interface IActionItem {
@@ -114,7 +115,7 @@ export default Vue.extend({
     return {
       rationale: '',
       actionTaken: null as TaskActionTaken,
-      teamsOfEvent: [] as ITeamEntity[],
+      assignableTeams: [] as ITeamEntity[],
       assignedTeamId: '',
       submitLoading: false,
       loading: false,
@@ -187,7 +188,7 @@ export default Vue.extend({
     if (this.task.taskType === TaskType.Team) {
       try {
         this.loading = true;
-        await this.fetchTeamsOfEvent();
+        await this.getAssignableTeams();
       } finally {
         this.loading = false;
       }
@@ -210,10 +211,10 @@ export default Vue.extend({
       this.submitLoading = false;
     },
 
-    async fetchTeamsOfEvent() {
-      const res = await this.$services.teams.getTeamsByEvent(this.eventId);
+    async getAssignableTeams() {
+      const res = await useTeamStore().getTeamsByEvent({ eventId: this.eventId });
       if (res) {
-        this.teamsOfEvent = res.filter((t) => t.isAssignable);
+        this.assignableTeams = res.filter((t) => t.isAssignable);
       }
     },
 

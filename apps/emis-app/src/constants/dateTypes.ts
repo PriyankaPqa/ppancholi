@@ -30,6 +30,7 @@ export const dateTypes = {
     'HouseholdMemberMetadata.dateOfBirth',
     'ImpactedIndividuals.checkIn',
     'ImpactedIndividuals.checkOut',
+    'Task.dueDate',
   ] as string[],
 
   getType(dateField: string) : DateTypes {

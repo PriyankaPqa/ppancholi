@@ -4,10 +4,11 @@ import { useTaskStore } from '@/pinia/task/task';
 import { TranslateResult } from 'vue-i18n';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useUserStore } from '@/pinia/user/user';
-import { ITaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { ITaskEntity, TaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/entities-lib/base';
+import { useTeamStore } from '@/pinia/team/team';
 
 export default Vue.extend({
   props: {
@@ -25,7 +26,7 @@ export default Vue.extend({
       isWorkingOn: false,
       filterOutHiddenTaskName: true,
       filterOutInactiveTaskNameAndCategory: true,
-      assignedTeam: null as ITeamEntity,
+      localTask: new TaskEntity(),
     };
   },
 
@@ -65,6 +66,10 @@ export default Vue.extend({
       return useUserStore().getUserId();
     },
 
+    assignedTeam(): ITeamEntity {
+      return useTeamStore().getById(this.task.assignedTeamId || this.localTask.assignedTeamId);
+    },
+
     canAction(): boolean {
       if (this.$hasLevel(UserRoles.level6)) {
         return !(this.task.taskType === TaskType.Personal && this.task.taskStatus === TaskStatus.Completed);
@@ -74,13 +79,13 @@ export default Vue.extend({
         return this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.InProgress;
       }
 
-      // Team task
+      // Team task - for these roles, user needs to be part of the assigned team
         if (this.$hasLevel(UserRoles.level1)
           || this.$hasRole(UserRoles.readonly)
           || this.$hasRole(UserRoles.contributor3)
           || this.$hasRole(UserRoles.contributorIM)
           || this.$hasRole(UserRoles.contributorFinance)) {
-          return this.assignedTeam?.teamMembers.some((m) => m.id === this.userId) && this.assignedTeam.status === Status.Active;
+          return this.assignedTeam?.teamMembers?.some((m) => m.id === this.userId) && this.assignedTeam.status === Status.Active;
         }
         // L0, no-role --> false
         return false;

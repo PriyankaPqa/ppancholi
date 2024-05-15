@@ -45,7 +45,9 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     return this.http.patch(`/team/teams/${teamId}/empty-team`);
   }
 
-  async getTeamsByEvent(eventId: uuid, teamIds = [] as string[], includeInactive = false): Promise<ITeamEntity[]> {
+  async getTeamsByEvent({ eventId, teamIds = [], includeInactive = false, isEscalation = false }
+    : { eventId: uuid, teamIds?:String[], includeInactive?: boolean, isEscalation?: boolean })
+  : Promise<ITeamEntity[]> {
     const filter = { Entity: { Events: { any: { Id: { value: eventId, type: 'guid' } } } } } as any;
     const params = { filter } as IAzureSearchParams;
     if (!includeInactive) {
@@ -54,6 +56,10 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     if (teamIds?.length) {
       filter['Entity/Id'] = { in: teamIds };
     }
+    if (isEscalation) {
+      filter['Entity/isEscalation'] = true;
+    }
+
     return (await this.search(params))?.value?.map((t) => t.entity);
   }
 

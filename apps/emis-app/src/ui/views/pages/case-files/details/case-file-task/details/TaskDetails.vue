@@ -119,7 +119,7 @@
               </v-col>
               <v-col>
                 <div data-test="task-details-due-date">
-                  {{ helpers.getLocalStringDate(task.dueDate, '', 'PP') }}
+                  {{ helpers.getLocalStringDate(task.dueDate, 'Task.dueDate', 'PP') }}
                 </div>
               </v-col>
             </v-row>
@@ -174,11 +174,11 @@ import caseFileTask from '@/ui/mixins/caseFileTask';
 import mixins from 'vue-typed-mixins';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
-import { ITeamEntity } from '@libs/entities-lib/team';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 import TaskHistoryDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskHistoryDialog.vue';
 import { GlobalHandler } from '@libs/services-lib/http-client';
+import { useTeamStore } from '@/pinia/team/team';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileTask, caseFileDetail).extend({
@@ -208,7 +208,6 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       showTaskActionDialog: false,
       showTaskHistoryDialog: false,
       loading: false,
-      teamsByEvent: [] as ITeamEntity[],
     };
   },
 
@@ -274,7 +273,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     taskAssignedTo(): string {
       if (this.isTeamTask) {
         return this.task.taskStatus === TaskStatus.Completed
-          ? this.task.taskActionHistories[this.task.taskActionHistories.length - 1].currentTeamName
+          ? this.task.taskActionHistories?.[this.task.taskActionHistories.length - 1]?.currentTeamName
           : this.assignedTeam?.name;
       }
       return this.assignedToPerson as string;
@@ -290,9 +289,9 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 
   watch: {
     'task.assignedTeamId': {
-       handler() {
-        this.assignedTeam = this.teamsByEvent.filter((t) => t.id === this.task.assignedTeamId)[0];
+       handler(newValue) {
         this.isWorkingOn = false;
+        useTeamStore().fetchByIds([newValue], true);
       },
     },
   },
@@ -305,7 +304,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     if (this.isTeamTask) {
       await Promise.all([
         useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
-        this.getTeamsByEventAndStoreAssignedTeam(),
+        useTeamStore().fetch(this.task.assignedTeamId),
       ]);
       this.selectedTaskNameId = this.task.name?.optionItemId;
       this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
@@ -335,13 +334,6 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       });
     },
 
-    async getTeamsByEventAndStoreAssignedTeam() {
-      const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, [], true);
-      if (res) {
-        this.teamsByEvent = res;
-        this.assignedTeam = res.filter((t) => t.id === this.task.assignedTeamId)[0];
-      }
-    },
   },
 });
 </script>

@@ -34,9 +34,9 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/set-action-taken`, { id, caseFileId }), params);
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null):
+  async search(params: IAzureSearchParams):
     Promise<IAzureCombinedSearchResult<ITaskEntityData, ITaskMetadata>> {
-    return this.http.get(`case-file/search/${searchEndpoint ?? 'tasks'}`, { params, isOData: true });
+    return this.http.get('case-file/search/tasksV2', { params, isODataSql: true });
   }
 
   async getByIds(ids: uuid[]): Promise<ITaskEntity[]> {
@@ -56,6 +56,7 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     if (!task?.category?.optionItemId) {
       task.category = null;
     }
+    task.dueDate = task.dueDate ? new Date(task.dueDate).toISOString() : null;
     return { ...task };
   }
 }

@@ -17,7 +17,7 @@ import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
-import { useTaskMetadataStore, useTaskStore } from '@/pinia/task/task';
+import { useTaskStore } from '@/pinia/task/task';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { SignalR } from './signalR';
 
@@ -479,12 +479,6 @@ describe('signalR', () => {
           domain: 'case-file',
           entityName: 'Task',
           action: useTaskStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'case-file',
-          entityName: 'TaskMetadata',
-          action: useTaskMetadataStore().setItemFromOutsideNotification,
         });
     });
 

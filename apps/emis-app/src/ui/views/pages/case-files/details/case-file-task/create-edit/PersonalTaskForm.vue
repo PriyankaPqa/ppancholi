@@ -53,7 +53,6 @@ import mixins from 'vue-typed-mixins';
 import { ITaskEntityData } from '@libs/entities-lib/task';
 import { VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { format } from 'date-fns';
 import VDateFieldWithValidation from '@libs/component-lib/components/atoms/VDateFieldWithValidation.vue';
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
@@ -92,7 +91,7 @@ export default mixins(caseFileTask).extend({
   data() {
       const localPersonalTaskForm = {
         name: this.taskData.name,
-        dueDate: helpers.getLocalStringDate(this.taskData.dueDate, ''),
+        dueDate: helpers.getLocalStringDate(this.taskData.dueDate, 'Task.dueDate'),
         description: this.taskData.description,
       } as ILocalPersonalTaskForm;
       return {
@@ -104,7 +103,7 @@ export default mixins(caseFileTask).extend({
     dueDateRule(): Record<string, unknown> {
       if (this.taskData.dueDate) {
         return {
-          mustBeAfterOrSame: { X: this.taskData.dueDate, Y: format(Date.now(), 'yyyy-MM-dd') },
+          mustBeAfterOrSame: { X: helpers.getLocalStringDate(this.taskData.dueDate, 'Task.dueDate'), Y: helpers.getLocalStringDate(new Date(), 'local') },
         };
       }
       return {};

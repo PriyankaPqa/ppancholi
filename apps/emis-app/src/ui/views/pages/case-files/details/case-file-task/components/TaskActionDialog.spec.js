@@ -4,11 +4,13 @@ import { mockProvider } from '@/services/provider';
 import { mockTeamEntity, mockTeamEvents, mockTeamsDataStandard } from '@libs/entities-lib/team';
 import flushPromises from 'flush-promises';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from './TaskActionDialog.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 const { pinia, taskStore } = useMockTaskStore();
+const { teamStore } = useMockTeamStore(pinia);
 
 describe('TaskActionDialog.vue', () => {
   let wrapper;
@@ -198,18 +200,18 @@ describe('TaskActionDialog.vue', () => {
       });
     });
 
-    describe('fetchTeamsOfEvent', () => {
+    describe('getAssignableTeams', () => {
       it('should call service getTeamsByEvent event id, filter out unassigned teams and set data properly', async () => {
-        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => ([
+        teamStore.getTeamsByEvent = jest.fn(() => ([
           mockTeamsDataStandard({ id: '1', isAssignable: true }),
           mockTeamsDataStandard({ id: '2', isAssignable: false }),
         ]));
         await wrapper.setProps({
           eventId: mockTeamEvents()[0].id,
         });
-        await wrapper.vm.fetchTeamsOfEvent();
-        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith(wrapper.vm.eventId);
-        expect(wrapper.vm.teamsOfEvent).toEqual([mockTeamsDataStandard({ id: '1', isAssignable: true })]);
+        await wrapper.vm.getAssignableTeams();
+        expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: wrapper.vm.eventId });
+        expect(wrapper.vm.assignableTeams).toEqual([mockTeamsDataStandard({ id: '1', isAssignable: true })]);
       });
     });
 
@@ -234,30 +236,30 @@ describe('TaskActionDialog.vue', () => {
 
   describe('lifecycle', () => {
     describe('created', () => {
-      it('should call fetchTeamsOfEvent if taskType is team', async () => {
+      it('should call getAssignableTeams if taskType is team', async () => {
         await wrapper.setProps({
           task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
           eventId: 'mock-id-123',
         });
-        wrapper.vm.fetchTeamsOfEvent = jest.fn();
+        wrapper.vm.getAssignableTeams = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.fetchTeamsOfEvent).toHaveBeenCalled();
+        expect(wrapper.vm.getAssignableTeams).toHaveBeenCalled();
       });
 
-      it('should not call fetchTeamsOfEvent if taskType is personal', async () => {
+      it('should not call getAssignableTeams if taskType is personal', async () => {
         await wrapper.setProps({
           task: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
           eventId: 'mock-id-123',
         });
-        wrapper.vm.fetchTeamsOfEvent = jest.fn();
+        wrapper.vm.getAssignableTeams = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.fetchTeamsOfEvent).not.toHaveBeenCalled();
+        expect(wrapper.vm.getAssignableTeams).not.toHaveBeenCalled();
       });
     });
   });

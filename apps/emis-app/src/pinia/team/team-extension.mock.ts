@@ -5,6 +5,7 @@ export function getMockExtensionComponents() {
   return {
     getTeamsAssignable: jest.fn(() => [entity]),
     getTeamsAssigned: jest.fn(() => [entity]),
+    getTeamsByEvent: jest.fn(() => [entity]),
     createTeam: jest.fn(() => entity),
     editTeam: jest.fn(() => entity),
     addTeamMembers: jest.fn(() => entity),

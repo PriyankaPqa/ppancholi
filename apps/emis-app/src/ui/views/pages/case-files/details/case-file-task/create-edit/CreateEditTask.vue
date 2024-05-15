@@ -129,6 +129,8 @@ import helpers from '@/ui/helpers/helpers';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
+import { useTeamStore } from '@/pinia/team/team';
+import { GlobalHandler } from '@libs/services-lib/http-client';
 
 export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask).extend({
   name: 'CreateEditTask',
@@ -191,7 +193,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       TaskType,
       TaskStatus,
       UserRoles,
-      localTask: new TaskEntity(),
       originalForm: {
         name: null as IListOption,
         category: null as IListOption,
@@ -216,7 +217,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         name: this.localTask.name,
         category: this.localTask.category,
         description: this.localTask.description,
-        dueDate: helpers.getLocalStringDate(this.localTask.dueDate, ''),
+        dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
       });
     },
@@ -251,9 +252,9 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     'task.assignedTeamId': {
-      async handler() {
-        await this.fetchAssignedTeamAndSetTeamId();
+      async handler(newValue) {
         this.isWorkingOn = false;
+        useTeamStore().fetchByIds([newValue], true);
       },
     },
   },
@@ -267,7 +268,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       this.prepareCreateTask();
     }
     if (this.taskType === 'team') {
-      await this.fetchAssignedTeamAndSetTeamId();
+      await this.fetchAssignedTeam();
     }
     this.loading = false;
   },
@@ -286,7 +287,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         name: this.localTask.name,
         category: this.localTask.category,
         description: this.localTask.description,
-        dueDate: helpers.getLocalStringDate(this.localTask.dueDate, ''),
+        dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
       });
     },
@@ -350,25 +351,19 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
 
     prepareCreateTask() {
       const task = new TaskEntity();
-        task.caseFileId = this.id;
-        task.taskType = this.taskType === 'team' ? TaskType.Team : TaskType.Personal;
-        task.taskStatus = TaskStatus.InProgress;
+      task.caseFileId = this.id;
+      task.taskType = this.taskType === 'team' ? TaskType.Team : TaskType.Personal;
+      task.taskStatus = TaskStatus.InProgress;
       this.localTask = task;
     },
 
-    async fetchAssignedTeamAndSetTeamId() {
+    async fetchAssignedTeam() {
       if (!this.isEditMode) {
-        const teamsOfEvent = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
-        if (teamsOfEvent) {
-          this.assignedTeam = teamsOfEvent.filter((t) => t.isEscalation)[0];
-          this.localTask.assignedTeamId = this.assignedTeam?.id;
-        }
+        const escalationTeamRes = await useTeamStore().getTeamsByEvent({ eventId: this.caseFile.eventId, isEscalation: true });
+        this.localTask.assignedTeamId = escalationTeamRes?.[0]?.id;
       } else {
-        const res = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId, [this.task.assignedTeamId]);
-        if (res.length > 0) {
-          this.assignedTeam = res[0];
-          this.localTask.assignedTeamId = this.task.assignedTeamId;
-        }
+        await useTeamStore().fetchByIds([this.task.assignedTeamId], true);
+        this.localTask.assignedTeamId = this.task.assignedTeamId;
       }
     },
 
@@ -379,10 +374,10 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
           if (this.taskType === 'team') {
             this.isWorkingOn = !!this.task.userWorkingOn;
             if (this.isWorkingOn) {
-              useUserAccountMetadataStore().fetch(this.task.userWorkingOn, false);
+              useUserAccountMetadataStore().fetch(this.task.userWorkingOn, GlobalHandler.Partial);
             }
           } else if (this.userId !== this.task.createdBy) {
-              await useUserAccountMetadataStore().fetch(this.task.createdBy, false);
+              await useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial);
             }
         }
     },
