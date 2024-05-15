@@ -2,20 +2,20 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { removeTeamMembersFromTeam } from '../helpers/teams';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   AddFinancialAssistancePaymentParams,
   addFinancialAssistancePayment,
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem,
   prepareStateHousehold,
-  submitFinancialAssistancePayment } from '../helpers/prepareState';
+  submitFinancialAssistancePayment } from '../../helpers/prepareState';
 import {
   GenerateFaDataCorrectionXlsxFileParams,
   GenerateRandomFaDataCorrectionParams,
   fixtureGenerateFaDataCorrectionXlsxFile,
-} from '../../fixtures/mass-action-data-correction';
-import { preprocessDataCorrectionFileCanSteps } from '../critical-path-tests/critical-path-3/canSteps';
+} from '../../../fixtures/mass-action-data-correction';
+import { preprocessDataCorrectionFileCanSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -43,7 +43,7 @@ const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDropDown = 'Financial Assistance';
 const dataCorrectionTypeDataTest = 'Financial Assistance';
 
-describe('#TC1769# - Pre-process a Financial Assistance data correction file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T28846] Pre-process a Financial Assistance data correction file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

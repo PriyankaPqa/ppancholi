@@ -66,6 +66,7 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   baseDetailsMassActionPage.getMassActionType().should('eq', dataCorrectionTypeDropDown);
   baseDetailsMassActionPage.getMassActionDateCreated().should('eq', getToday());
   baseDetailsMassActionPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+  baseDetailsMassActionPage.getBackToMassActionListButton().should('be.visible');
 };
 
 export const processDataCorrectionFileSteps = (householdQuantity: number, processedItems: string) => {
