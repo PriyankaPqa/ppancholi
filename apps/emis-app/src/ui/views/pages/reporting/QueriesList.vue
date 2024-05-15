@@ -326,6 +326,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           description: this.$t('reporting.query.theme.PotentialDuplicates.description'),
         },
         {
+          id: ReportingTopic.AssignedCaseFiles,
+          name: this.$t('reporting.query.theme.AssignedCaseFiles'),
+          description: this.$t('reporting.query.theme.AssignedCaseFiles.description'),
+        },
+      {
           id: ReportingTopic.Documents,
           name: this.$t('reporting.query.theme.Documents'),
           description: this.$t('reporting.query.theme.Documents.description'),

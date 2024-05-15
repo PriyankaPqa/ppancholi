@@ -810,6 +810,24 @@ export const caseFileAuthenticationIdsDs : IDatasourceSettings = {
   ],
 };
 
+export const assignedCaseFilesDs : IDatasourceSettings = {
+  url: 'common/data-providers/assigned-case-files',
+  reportingTopic: ReportingTopic.AssignedCaseFiles,
+  key: { id: 'Guid' },
+  columns: [
+    ...(caseFileViewDs.columns.map((x) => ({ ...x, dataField: `caseFile.${x.dataField}`, visible: x.dataField === 'caseFileNumber' }))),
+    ...(teamDetailViewDS.columns.map((x) => ({ ...x,
+    dataField: `assignedTeamDetail.${x.dataField}`,
+    caption: `ds.assignedTeamDetail.${x.dataField}`,
+    visible: x.dataField === 'name' }))),
+    ...(teamDetailViewDS.columns.map((x) => ({ ...x,
+    dataField: `assignedUserTeamDetail.${x.dataField}`,
+    caption: `ds.assignedUserTeamDetail.${x.dataField}`,
+    visible: x.dataField === 'name' }))),
+    ...(userAccountViewDS.columns.map((x) => ({ ...x, dataField: `userAccount.${x.dataField}`, visible: x.dataField === 'displayName' }))),
+  ],
+};
+
 export const datasources = [
   householdMembersDs,
   householdMembersAddressHistoryDs,
@@ -826,5 +844,6 @@ export const datasources = [
   potentialDuplicateDs,
   teamTaskDs,
   teamTaskHistoryDs,
+  assignedCaseFilesDs,
   documentsDs,
 ];

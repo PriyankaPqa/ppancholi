@@ -214,6 +214,11 @@ describe('QueriesList.vue', () => {
       it('returns data filtered by searchTheme', async () => {
         expect(wrapper.vm.availableThemes).toEqual([
           {
+            id: ReportingTopic.AssignedCaseFiles,
+            name: 'reporting.query.theme.AssignedCaseFiles',
+            description: 'reporting.query.theme.AssignedCaseFiles.description',
+          },
+          {
             id: ReportingTopic.CaseFileActivities,
             name: 'reporting.query.theme.CaseFileActivities',
             description: 'reporting.query.theme.CaseFileActivities.description',
@@ -293,6 +298,7 @@ describe('QueriesList.vue', () => {
             name: 'reporting.query.theme.UsersInTeams',
             description: 'reporting.query.theme.UsersInTeams.description',
           },
+
         ]);
         await wrapper.setData({ searchTheme: 'HouseholdPrimary' });
         expect(wrapper.vm.availableThemes).toEqual([

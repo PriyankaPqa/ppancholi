@@ -45,3 +45,4 @@ registration.privacy_statement.agreeSelf
 registration.privacy_consent
 registration.privacy_consent_updated
 massActions.assessment.create.emailText.label
+reporting.query.theme.CaseFileAssignments.description
