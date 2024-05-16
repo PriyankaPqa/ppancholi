@@ -31,6 +31,9 @@ export enum DataTest {
   dialogApprovalHistoryAction = 'action-item',
   caseFileActivityTab = 'item-text-0',
   pageTitle = 'page-title',
+  paymentLineItemCancelButton = 'paymentLineItem__cancelBtn',
+  cancelledLabel = 'paymentLineItem__cancelled_label',
+  cancellationByText = 'financialPayment_cancellation_by_text',
 }
 
 export class FinancialAssistanceDetailsPage {
@@ -93,6 +96,12 @@ export class FinancialAssistanceDetailsPage {
   private caseFileActivityTab = { selector: DataTest.caseFileActivityTab };
 
   private pageTitle = { selector: DataTest.pageTitle };
+
+  private paymentLineItemCancelButton = { selector: DataTest.paymentLineItemCancelButton };
+
+  private cancelledLabel = { selector: DataTest.cancelledLabel };
+
+  private cancellationByText = { selector: DataTest.cancellationByText };
 
   public getAddPaymentLineButton() {
     return cy.getByDataTest(this.addPaymentLineButton);
@@ -256,5 +265,25 @@ export class FinancialAssistanceDetailsPage {
 
   public getPageTitleElement() {
     return cy.getByDataTest(this.pageTitle);
+  }
+
+  public getPaymentLineItemCancelButton() {
+    return cy.getByDataTest(this.paymentLineItemCancelButton);
+  }
+
+  public getCancelledLabelText() {
+    return cy.getByDataTest(this.cancelledLabel).getAndTrimText();
+  }
+
+  public getGroupCancellationByText() {
+    return cy.getByDataTest(this.cancellationByText).eq(0).getAndTrimText();
+  }
+
+  public getLineCancellationByText() {
+    return cy.getByDataTest(this.cancellationByText).eq(1).getAndTrimText();
+  }
+
+  public getPaymentLineStatusCompleted() {
+    return cy.getByDataTest(this.statusCompleted);
   }
 }

@@ -71,7 +71,7 @@ describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { t
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
-          financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
+          financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(true);
           financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00').should('be.visible');
 
           updatePaymentGroupStatusTo({

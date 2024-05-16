@@ -1,8 +1,11 @@
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { FinancialAssistanceDetailsPage } from 'cypress/pages/financial-assistance-payment/financialAssistanceDetails.page';
-import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { getUserName } from '@libs/cypress-lib/helpers/users';
+import { getToday } from '@libs/cypress-lib/helpers';
+import { UserRoles } from '@libs/entities-lib/user';
 import { IAddNewPaymentLineFields } from '../../../pages/financial-assistance-payment/addNewPaymentLine.page';
+import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 
 export interface PaymentLineCanStepsParams {
   faTable: IFinancialAssistanceTableEntity,
@@ -15,6 +18,7 @@ export interface PaymentLineCanStepsParams {
 export interface PaymentGroupStatusUpdateParam {
   paymentStatus: string,
   paymentModality: string,
+  roleName?: string,
 }
 
 const addPaymentLineCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
@@ -90,7 +94,8 @@ export const paymentLineChequeCanSteps = (params: Partial<PaymentLineCanStepsPar
   financialAssistanceCanSteps(params);
 };
 
-export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: Partial<PaymentGroupStatusUpdateParam>) => {
+// eslint-disable-next-line
+export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality, roleName }: Partial<PaymentGroupStatusUpdateParam>) => {
   const financialAssistanceDetailsPage = new FinancialAssistanceDetailsPage();
   financialAssistanceDetailsPage.selectPaymentLineStatus(paymentStatus);
   if (paymentStatus === 'Cancelled') {
@@ -103,7 +108,7 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: P
       financialAssistanceDetailsPage.getDialogCancelButton().should('be.enabled');
       financialAssistanceDetailsPage.getDialogSubmitButton().click();
     } else {
-      cy.contains(`Are you sure you want to cancel all ${paymentModality} payment lines?`).should('be.visible');
+      cy.contains(`Are you sure you want to cancel all ${paymentModality} payment lines? This action is irreversible.`).should('be.visible');
       financialAssistanceDetailsPage.getDialogConfirmSubmitButton().should('be.enabled');
       financialAssistanceDetailsPage.getDialogConfirmCancelButton().should('be.enabled');
       financialAssistanceDetailsPage.getDialogConfirmSubmitButton().click();
@@ -119,10 +124,21 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: P
   }
 
   if (paymentStatus === 'Cancelled') {
-    financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
+    financialAssistanceDetailsPage.getGroupCancellationByText().should('eq', `Cancelled by: ${getUserName(roleName)} on ${getToday()}`);
+    financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(true);
+    financialAssistanceDetailsPage.getCancelledLabelText().should('eq', 'Cancelled');
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00').should('be.visible');
-  } else {
-    financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('not.have.string', 'line-through');
+  } else if (paymentStatus === 'Completed') {
+    financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
+    if (roleName === UserRoles.contributorFinance) {
+      financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('not.exist');
+    } else {
+      financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('be.visible');
+    }
+  } else if (paymentStatus === 'Issued') {
+    financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
+    financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
+    financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('not.exist');
   }
 };
