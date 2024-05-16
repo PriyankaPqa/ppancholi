@@ -1,6 +1,6 @@
 import { defineConfig } from 'cypress';
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
-import zephyrPlugin from 'cypress-zephyr/dist/plugin';
+import zephyrPlugin from '@libs/cypress-lib/src/reporter/cypress-zephyr/plugin';
 import { initPlugins } from 'cypress-plugin-init';
 import reporterConfig from './cypress-reporter-config';
 

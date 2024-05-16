@@ -30,7 +30,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 
-describe('[T28297] Create Invoice Payment Line', { tags: ['@financial-assistance'] }, () => {
+describe('[T28297] Create Invoice Payment Line.', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

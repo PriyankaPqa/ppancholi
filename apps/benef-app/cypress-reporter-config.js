@@ -21,6 +21,7 @@ const zephyrConfig = {
     name: getTestCycleName(),
     description: 'This is a test cycle created by Cypress automated tests.',
   },
+  mergeSameTestExecutions: true,
 };
 
 const finalConfig = {
@@ -31,8 +32,8 @@ const finalConfig = {
 };
 
 if (zephyrReporter) {
-  reporterEnabled.push('cypress-zephyr');
-  finalConfig.cypressZephyrReporterOptions = zephyrConfig;
+  reporterEnabled.push('../../libs/cypress-lib/src/reporter/cypress-zephyr');
+  finalConfig.libsCypressLibSrcReporterCypressZephyrReporterOptions = zephyrConfig;
 }
 
 module.exports = {
