@@ -28,7 +28,7 @@ before(() => {
   });
 });
 
-describe('#TC1108# : SELF REG - Complete self registration..', { tags: ['@registration'] }, () => {
+describe('[T29226] SELF REG - Complete self registration..', { tags: ['@registration'] }, () => {
   beforeEach(() => {
     cy.then(async () => {
       event = await provider.events.createEvent(mockCreateEvent());

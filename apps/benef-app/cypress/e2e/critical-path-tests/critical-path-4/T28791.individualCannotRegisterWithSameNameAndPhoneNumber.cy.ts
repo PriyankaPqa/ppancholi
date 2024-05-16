@@ -6,7 +6,7 @@ import { useProvider } from '../../../provider/provider';
 import { buildRegistrationUrl } from '../../../support/helpers/urlBuilder';
 import { createHousehold } from '../../../support/helpers/prepareState';
 
-describe('#TC1865# : SELF REG - Individual cannot register when entering same Name & Phone number as an existing EMIS member', { tags: ['@registration'] }, () => {
+describe('[T28791] SELF REG - Individual cannot register when entering same Name & Phone number as an existing EMIS member', { tags: ['@registration'] }, () => {
   beforeEach(() => {
     cy.then(async () => {
       cy.getToken().then(async (accessToken) => {
