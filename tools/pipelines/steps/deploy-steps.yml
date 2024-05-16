@@ -37,7 +37,7 @@ steps:
       inlineScript: |
         az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
 
-  # Maintenance: delete any files that are older than one day
+  # Maintenance: delete any files that are older than 7 day
   # (the file presence is fine, we simply want to stop the container from growing indefinitely)
   - task: AzureCLI@2
     displayName: "Clean Storage Folder"
@@ -46,4 +46,4 @@ steps:
       scriptType: "pscore"
       scriptLocation: "inlineScript"
       inlineScript: |
-        az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment) --if-unmodified-since (Get-Date).AddDays(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mmZ")
+        az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment) --if-unmodified-since (Get-Date).AddDays(-7).ToUniversalTime().ToString("yyyy-MM-ddTHH:mmZ")
