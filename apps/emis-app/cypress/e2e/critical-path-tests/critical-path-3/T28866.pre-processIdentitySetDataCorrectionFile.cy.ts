@@ -28,7 +28,7 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const fileName = 'identitySetDataCorrectionMassAction';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Identity Set';
+const dataCorrectionTypeDataTest = 'DataCorrectionIdentitySet';
 const dataCorrectionTypeDropDown = 'Identity Set';
 
 describe('[T28866] Pre-process a Identity Set data correction file', { tags: ['@household', '@mass-actions'] }, () => {

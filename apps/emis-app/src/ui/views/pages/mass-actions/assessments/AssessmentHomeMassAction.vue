@@ -79,11 +79,10 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   data() {
     return {
       // To be defined to filter on type for the search api (see mixin massActionsTable)
-      massActionTypeData: MassActionType.Assessments,
+      massActionTypeData: MassActionType.Assessment,
       detailsRouteNameData: routes.massActions.assessments.details.name,
       tableTitleData: 'massAction.assessmentTable.title',
       showProcessByList: false,
-      searchEndpointData: 'assessment-mass-actions',
       UserRoles,
     };
   },

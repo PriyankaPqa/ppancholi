@@ -109,7 +109,7 @@ export default Vue.extend({
       };
 
       this.loading = true;
-      const entity = await useMassActionStore().create(MassActionType.Assessments, payload);
+      const entity = await useMassActionStore().create(MassActionType.Assessment, payload);
       this.loading = false;
 
       if (entity) {

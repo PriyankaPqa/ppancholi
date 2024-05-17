@@ -29,10 +29,6 @@ describe('FinancialAssistanceHomeMassAction.vue', () => {
     it('should have proper table title', () => {
       expect(wrapper.vm.tableTitleData).toEqual('massAction.financialAssistanceTable.title');
     });
-
-    it('should have proper search end point', () => {
-      expect(wrapper.vm.searchEndpointData).toEqual('financial-assistance-mass-actions');
-    });
   });
 
   describe('Methods', () => {

@@ -90,7 +90,6 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       detailsRouteNameData: routes.massActions.financialAssistance.details.name,
       tableTitleData: 'massAction.financialAssistanceTable.title',
       showProcessByList: false,
-      searchEndpointData: 'financial-assistance-mass-actions',
       UserRoles,
     };
   },

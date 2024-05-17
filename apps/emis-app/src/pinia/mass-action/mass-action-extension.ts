@@ -52,7 +52,7 @@ export function getExtensionComponents(
       data = await entityService.create(urlSuffix, payload as IMassActionFinancialAssistanceCreatePayload);
     }
 
-    if (massActionType === MassActionType.Assessments) {
+    if (massActionType === MassActionType.Assessment) {
       const urlSuffix = 'assessment-from-list';
       data = await entityService.create(urlSuffix, payload as IMassActionAssessmentCreatePayload);
     }

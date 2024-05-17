@@ -28,7 +28,7 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const fileName = 'labelsDataCorrectionMassAction';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Labels';
+const dataCorrectionTypeDataTest = 'DataCorrectionLabels';
 const dataCorrectionTypeDropDown = 'Labels';
 
 describe('[T28868] Pre-process a Label data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {

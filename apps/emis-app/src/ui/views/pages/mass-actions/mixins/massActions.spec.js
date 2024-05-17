@@ -178,8 +178,8 @@ describe('massActions', () => {
     describe('downloadDataCorrectionTemplate', () => {
       it('should call downloadApiTemplate', () => {
         wrapper.vm.downloadApiTemplate = jest.fn();
-        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
-        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.TemporaryAddress);
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.DataCorrectionTemporaryAddress);
+        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.DataCorrectionTemporaryAddress);
       });
     });
 

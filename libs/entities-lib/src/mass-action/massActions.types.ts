@@ -20,21 +20,21 @@ export enum MassActionType {
   GenerateFundingRequest = 4,
   ImportPaymentStatuses = 5,
   ImportUsers = 6,
-  Assessments = 14,
+  Assessment = 14,
   FinancialAssistanceCustomOptions = 15,
   CaseFileStatus = 16,
-  Communications = 18,
+  Communication = 18,
 }
 
 // this is actually also part of MassActionType!!
 export enum MassActionDataCorrectionType {
-  HomeAddress = 7,
-  Labels = 8,
-  TemporaryAddress = 9,
-  AuthenticationSpecifiedOther = 10,
-  IdentitySet = 11,
-  ContactInformation = 12,
-  FinancialAssistance = 13,
+  DataCorrectionHomeAddress = 7,
+  DataCorrectionLabels = 8,
+  DataCorrectionTemporaryAddress = 9,
+  DataCorrectionAuthenticationSpecifiedOther = 10,
+  DataCorrectionIdentitySet = 11,
+  DataCorrectionContactInformation = 12,
+  DataCorrectionFinancialAssistance = 13,
   DataCorrectionAuthentication = 17,
   DataCorrectionTriage = 19,
 }

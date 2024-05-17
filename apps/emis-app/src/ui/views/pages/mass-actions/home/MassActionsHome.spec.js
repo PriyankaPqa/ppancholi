@@ -163,7 +163,7 @@ describe('MassActionsHome.vue', () => {
     describe('massActionTypes', () => {
       it('should return a list of mass action type translation objects', () => {
         expect(wrapper.vm.massActionTypes.length).toBeGreaterThan(1);
-        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance);
+        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionFinancialAssistance);
         expect(!!maType.text && !!maType.value).toBeTruthy();
       });
 
@@ -171,7 +171,7 @@ describe('MassActionsHome.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
         });
-        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.AuthenticationSpecifiedOther);
+        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther);
         expect(maType).toBeFalsy();
       });
 

@@ -59,7 +59,7 @@ describe('[T28865] Process a Home Address data correction file', { tags: ['@hous
             const resultGeneratedCsvFile = await fixtureGenerateHomeAddressDataCorrectionXlsxFile(households, 'MassActionTable', fileName);
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
               fileContents: resultGeneratedCsvFile,
-              massActionType: MassActionDataCorrectionType.HomeAddress,
+              massActionType: MassActionDataCorrectionType.DataCorrectionHomeAddress,
               fileName,
               eventId: null,
             };

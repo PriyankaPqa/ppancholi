@@ -106,7 +106,7 @@ describe('>>> Mass Action Service', () => {
       const urlSuffix = 'export-communication-records';
       const payload = { filter: 'filter', search: 'search', language: 'en' };
 
-      await service.exportList(MassActionType.Communications, payload);
+      await service.exportList(MassActionType.Communication, payload);
 
       expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
     });
@@ -142,22 +142,15 @@ describe('>>> Mass Action Service', () => {
   });
 
   describe('search', () => {
-    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`case-file/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+    it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/mass-actions', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/mass-actions', { params, isODataSql: true });
     });
   });
 
   test('downloadTemplate should call the endpoint with expected values', async () => {
-    const maType = MassActionDataCorrectionType.FinancialAssistance;
+    const maType = MassActionDataCorrectionType.DataCorrectionFinancialAssistance;
     await service.downloadTemplate(maType);
     expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/templates`, {
       responseType: 'blob',

@@ -62,7 +62,7 @@ describe('[T28869] Process a Label data correction file', { tags: ['@case-file',
 
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
               fileContents: resultGeneratedXlsxFile,
-              massActionType: MassActionDataCorrectionType.Labels,
+              massActionType: MassActionDataCorrectionType.DataCorrectionLabels,
               fileName,
               eventId: null,
             };

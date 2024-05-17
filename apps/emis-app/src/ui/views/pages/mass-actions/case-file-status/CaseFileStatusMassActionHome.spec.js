@@ -32,10 +32,6 @@ describe('CaseFileStatusMassActionHome.vue', () => {
     it('should have proper table title', () => {
       expect(wrapper.vm.tableTitleData).toEqual('massAction.caseFileStatus.title');
     });
-
-    it('should have proper search end point', () => {
-      expect(wrapper.vm.searchEndpointData).toEqual('case-file-status-mass-actions');
-    });
   });
 
   describe('Methods', () => {

@@ -140,7 +140,6 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
     this.detailsRouteNameData = this.detailsRouteName;
     this.tableTitleData = this.tableTitle;
     this.addButtonLabelData = this.addButtonLabel;
-    this.searchEndpointData = this.searchEndpoint;
   },
 
   created() {

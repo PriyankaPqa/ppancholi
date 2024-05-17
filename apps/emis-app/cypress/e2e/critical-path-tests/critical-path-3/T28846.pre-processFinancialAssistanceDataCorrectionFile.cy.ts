@@ -41,7 +41,7 @@ const householdQuantity = 1;
 const fileName = 'faDataCorrectionFile';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
 const dataCorrectionTypeDropDown = 'Financial Assistance';
-const dataCorrectionTypeDataTest = 'Financial Assistance';
+const dataCorrectionTypeDataTest = 'DataCorrectionFinancialAssistance';
 
 describe('[T28846] Pre-process a Financial Assistance data correction file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {

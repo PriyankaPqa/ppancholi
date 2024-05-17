@@ -1,8 +1,8 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
+  MassActionDataCorrectionType, MassActionType,
   MassActionRunStatus, mockCombinedMassAction, mockCombinedMassActions, mockMassActionRun,
 } from '@libs/entities-lib/mass-action';
-import { Status } from '@libs/entities-lib/base';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import { mockServerError } from '@libs/services-lib/http-client';
 import massActionsTable from './massActionsTable';
@@ -25,15 +25,17 @@ describe('massActionsTable', () => {
       localVue,
       pinia,
     });
+    await wrapper.setData({ massActionTypeData: MassActionDataCorrectionType.DataCorrectionAuthentication });
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
 
       });
+      await wrapper.setData({ massActionTypeData: MassActionDataCorrectionType.DataCorrectionAuthentication });
     });
 
     describe('goToDetails', () => {
@@ -84,19 +86,15 @@ describe('massActionsTable', () => {
     describe('fetchData', () => {
       it('should call mass action search with proper params', async () => {
         const params = {
-          search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
+          filter: { someFilter: 'filter' }, top: 10, skip: 10, orderBy: 'name asc',
         };
         wrapper.vm.combinedMassActionStore.search = jest.fn();
-        wrapper.vm.searchEndpointData = 'search-endpoint';
         await wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.combinedMassActionStore.search).toHaveBeenCalledWith({
-          search: params.search,
           filter: {
             ...params.filter,
-            Entity: {
-              Status: Status.Active,
-            },
+            'Entity/Type': { in: ['DataCorrectionAuthentication'] },
           },
           top: params.top,
           skip: params.skip,
@@ -104,7 +102,23 @@ describe('massActionsTable', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        }, wrapper.vm.searchEndpointData);
+        }, null, false, true);
+
+        await wrapper.setData({ massActionTypeData: [MassActionDataCorrectionType.DataCorrectionAuthentication, MassActionType.Assessment] });
+
+        await wrapper.vm.fetchData(params);
+        expect(wrapper.vm.combinedMassActionStore.search).toHaveBeenCalledWith({
+          filter: {
+            ...params.filter,
+            'Entity/Type': { in: ['DataCorrectionAuthentication', 'Assessment'] },
+          },
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+          queryType: 'full',
+          searchMode: 'all',
+        }, null, false, true);
       });
     });
 
@@ -148,12 +162,13 @@ describe('massActionsTable', () => {
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
 
       });
+      await wrapper.setData({ massActionTypeData: MassActionDataCorrectionType.DataCorrectionAuthentication });
     });
 
     describe('tableData', () => {

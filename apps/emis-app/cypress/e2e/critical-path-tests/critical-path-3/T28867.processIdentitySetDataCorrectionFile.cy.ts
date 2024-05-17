@@ -61,7 +61,7 @@ describe('[T28867] Process an Identity Set data correction file', { tags: ['@hou
             const resultGenerateXlsxFile = await fixtureGenerateIdentitySetDataCorrectionXlsxFile(memberHouseholds, 'MassActionTable', fileName);
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
               fileContents: resultGenerateXlsxFile,
-              massActionType: MassActionDataCorrectionType.IdentitySet,
+              massActionType: MassActionDataCorrectionType.DataCorrectionIdentitySet,
               fileName,
               eventId: null,
             };

@@ -80,7 +80,6 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       detailsRouteNameData: routes.massActions.caseFileStatus.details.name,
       tableTitleData: 'massAction.caseFileStatus.title',
       showProcessByList: false,
-      searchEndpointData: 'case-file-status-mass-actions',
       getLocalStringDate: helpers.getLocalStringDate,
     };
   },

@@ -62,7 +62,7 @@ describe('[T28845] Process a Contact Information data correction file', { tags: 
 
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
               fileContents: resultGeneratedXlsxFile,
-              massActionType: MassActionDataCorrectionType.ContactInformation,
+              massActionType: MassActionDataCorrectionType.DataCorrectionContactInformation,
               fileName,
               eventId: null,
             };

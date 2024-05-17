@@ -28,7 +28,7 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const fileName = 'contactInformationDataCorrectionFile';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Contact Information';
+const dataCorrectionTypeDataTest = 'DataCorrectionContactInformation';
 const dataCorrectionTypeDropDown = 'Contact Information';
 
 describe('[T28844] Pre-process a Contact Information data correction file', { tags: ['@household', '@mass-actions'] }, () => {

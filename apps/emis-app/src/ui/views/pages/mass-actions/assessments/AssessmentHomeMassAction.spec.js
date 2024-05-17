@@ -19,7 +19,7 @@ describe('AssessmentHomeMassAction.vue', () => {
     });
 
     it('should have proper mass action type', () => {
-      expect(wrapper.vm.massActionTypeData).toEqual(MassActionType.Assessments);
+      expect(wrapper.vm.massActionTypeData).toEqual(MassActionType.Assessment);
     });
 
     it('should have proper detailsRouteName', () => {
@@ -28,10 +28,6 @@ describe('AssessmentHomeMassAction.vue', () => {
 
     it('should have proper table title', () => {
       expect(wrapper.vm.tableTitleData).toEqual('massAction.assessmentTable.title');
-    });
-
-    it('should have proper search end point', () => {
-      expect(wrapper.vm.searchEndpointData).toEqual('assessment-mass-actions');
     });
   });
 

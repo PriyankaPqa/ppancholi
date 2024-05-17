@@ -14,8 +14,8 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     super(http, API_URL_SUFFIX, CONTROLLER);
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IMassActionEntity, unknown>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
+  async search(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<IMassActionEntity, unknown>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/mass-actions`, { params, isODataSql: true });
   }
 
   async process(id: uuid, runType: MassActionRunType): Promise<IMassActionEntity> {
@@ -54,7 +54,7 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     if (massActionType === MassActionType.FinancialAssistance) {
       urlSuffix = 'export-financial-assistance-records';
     }
-    if (massActionType === MassActionType.Assessments) {
+    if (massActionType === MassActionType.Assessment) {
       urlSuffix = 'export-assessment-records';
     }
     if (massActionType === MassActionType.ExportValidationOfImpactStatus) {
@@ -63,7 +63,7 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     if (massActionType === MassActionType.CaseFileStatus) {
       urlSuffix = 'export-case-file-status-update-records';
     }
-    if (massActionType === MassActionType.Communications) {
+    if (massActionType === MassActionType.Communication) {
       urlSuffix = 'export-communication-records';
     }
     // Remove when EMISV2-3799 is done - Temporary timeout to 10 minutes

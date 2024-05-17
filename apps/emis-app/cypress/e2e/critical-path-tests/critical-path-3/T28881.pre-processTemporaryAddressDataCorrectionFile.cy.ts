@@ -29,7 +29,7 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const fileName = 'temporaryAddressDataCorrectionMassAction';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Temporary Address';
+const dataCorrectionTypeDataTest = 'DataCorrectionTemporaryAddress';
 const dataCorrectionTypeDropDown = 'Temporary Address';
 
 describe('[T28881] Pre-process a Temporary Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {

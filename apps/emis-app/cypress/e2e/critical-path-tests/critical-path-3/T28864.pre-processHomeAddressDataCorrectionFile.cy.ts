@@ -28,7 +28,7 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const fileName = 'homeAddressDataCorrectionMassAction';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Home Address';
+const dataCorrectionTypeDataTest = 'DataCorrectionHomeAddress';
 const dataCorrectionTypeDropDown = 'Home Address';
 
 describe('[T28864] Pre-process a Home Address data correction file', { tags: ['@household', '@mass-actions'] }, () => {

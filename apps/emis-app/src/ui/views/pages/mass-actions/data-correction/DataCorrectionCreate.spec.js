@@ -45,7 +45,7 @@ describe('DataCorrectionCreate.vue', () => {
 
       it('should have events dropdown when financial assistance chosen', async () => {
         await wrapper.setData({
-          selectedType: MassActionDataCorrectionType.FinancialAssistance,
+          selectedType: MassActionDataCorrectionType.DataCorrectionFinancialAssistance,
         });
         expect(wrapper.findDataTest('data-correction-events').exists()).toBe(true);
       });
@@ -95,13 +95,13 @@ describe('DataCorrectionCreate.vue', () => {
 
     const dataCorrectionTypes = [
       null,
-      MassActionDataCorrectionType.HomeAddress,
-      MassActionDataCorrectionType.Labels,
-      MassActionDataCorrectionType.TemporaryAddress,
+      MassActionDataCorrectionType.DataCorrectionHomeAddress,
+      MassActionDataCorrectionType.DataCorrectionLabels,
+      MassActionDataCorrectionType.DataCorrectionTemporaryAddress,
       MassActionDataCorrectionType.DataCorrectionAuthentication,
-      MassActionDataCorrectionType.IdentitySet,
-      MassActionDataCorrectionType.ContactInformation,
-      MassActionDataCorrectionType.FinancialAssistance,
+      MassActionDataCorrectionType.DataCorrectionIdentitySet,
+      MassActionDataCorrectionType.DataCorrectionContactInformation,
+      MassActionDataCorrectionType.DataCorrectionFinancialAssistance,
     ];
 
     describe('massActionTypes', () => {
@@ -116,7 +116,7 @@ describe('DataCorrectionCreate.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
         });
-        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.AuthenticationSpecifiedOther);
+        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther);
         expect(maType).toBeFalsy();
       });
 
@@ -142,26 +142,26 @@ describe('DataCorrectionCreate.vue', () => {
       it('should only require events when data correction type is Financial Assistance', () => {
         dataCorrectionTypes.forEach((t) => {
           wrapper.vm.selectedType = t;
-          expect(wrapper.vm.rules.event.required).toBe(t === MassActionDataCorrectionType.FinancialAssistance);
+          expect(wrapper.vm.rules.event.required).toBe(t === MassActionDataCorrectionType.DataCorrectionFinancialAssistance);
         });
       });
     });
 
     describe('isEventRequired', () => {
       it('should be true when selected type is Financial Assistance', () => {
-        wrapper.vm.selectedType = MassActionDataCorrectionType.FinancialAssistance;
+        wrapper.vm.selectedType = MassActionDataCorrectionType.DataCorrectionFinancialAssistance;
         expect(wrapper.vm.isEventRequired).toBe(true);
       });
 
       it('should be false when selected type is not Financial Assistance', () => {
-        wrapper.vm.selectedType = MassActionDataCorrectionType.HomeAddress;
+        wrapper.vm.selectedType = MassActionDataCorrectionType.DataCorrectionHomeAddress;
         expect(wrapper.vm.isEventRequired).toBe(false);
       });
     });
 
     describe('allowedExtensions', () => {
       it('should be xlsx', () => {
-        wrapper.vm.selectedType = MassActionDataCorrectionType.ContactInformation;
+        wrapper.vm.selectedType = MassActionDataCorrectionType.DataCorrectionContactInformation;
         expect(wrapper.vm.allowedExtensions).toEqual(['xlsx']);
       });
     });
@@ -202,8 +202,8 @@ describe('DataCorrectionCreate.vue', () => {
     describe('generateName', () => {
       it('should generate the proper name', async () => {
         const dateNow = format(new Date(), 'yyyyMMdd HHmmss');
-        await wrapper.setData({ selectedType: MassActionDataCorrectionType.ContactInformation });
-        expect(wrapper.vm.generateName()).toEqual(`enums.MassActionDataCorrectionType.ContactInformation - ${dateNow}`);
+        await wrapper.setData({ selectedType: MassActionDataCorrectionType.DataCorrectionContactInformation });
+        expect(wrapper.vm.generateName()).toEqual(`enums.MassActionDataCorrectionType.DataCorrectionContactInformation - ${dateNow}`);
       });
     });
 
@@ -221,9 +221,9 @@ describe('DataCorrectionCreate.vue', () => {
       it('should add the mass action type to the form', async () => {
         wrapper.vm.$refs.base.upload = jest.fn();
         wrapper.vm.formData.set = jest.fn();
-        await wrapper.setData({ selectedType: MassActionDataCorrectionType.ContactInformation });
+        await wrapper.setData({ selectedType: MassActionDataCorrectionType.DataCorrectionContactInformation });
         await wrapper.vm.onUploadStart();
-        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('massActionType', MassActionDataCorrectionType.ContactInformation);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('massActionType', MassActionDataCorrectionType.DataCorrectionContactInformation);
       });
 
       it('should add the event id to the form if selected', async () => {

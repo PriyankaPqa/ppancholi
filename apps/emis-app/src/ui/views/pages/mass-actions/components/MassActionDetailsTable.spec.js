@@ -77,8 +77,8 @@ describe('MassActionDetailsTable.vue', () => {
     });
 
     it('should return proper text for data correction mass action', () => {
-      doMount(MassActionDataCorrectionType.Labels);
-      expect(wrapper.vm.massActionTypeText).toBe(`enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[MassActionDataCorrectionType.Labels]}`);
+      doMount(MassActionDataCorrectionType.DataCorrectionLabels);
+      expect(wrapper.vm.massActionTypeText).toBe(`enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[MassActionDataCorrectionType.DataCorrectionLabels]}`);
     });
 
     describe('userAccountMetadata', () => {

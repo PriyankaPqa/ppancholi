@@ -86,7 +86,7 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
             const mockRequestParamData: MockCreateMassActionXlsxFileRequestParams = {
               eventId: resultPrepareStateEvent.event.id,
               fileContents: generatedDataCorrectionFileData,
-              massActionType: MassActionDataCorrectionType.FinancialAssistance,
+              massActionType: MassActionDataCorrectionType.DataCorrectionFinancialAssistance,
               fileName,
             };
             const responseMassFinancialAssistance = await prepareStateMassActionXlsxFile(responseCreateHousehold.provider, 'data-correction', mockRequestParamData);

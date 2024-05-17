@@ -64,7 +64,7 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
 
             const mockRequestDataParams: MockCreateMassActionXlsxFileRequestParams = {
               fileContents: resultGeneratedXlsxFile,
-              massActionType: MassActionDataCorrectionType.TemporaryAddress,
+              massActionType: MassActionDataCorrectionType.DataCorrectionTemporaryAddress,
               fileName,
               eventId: null,
             };

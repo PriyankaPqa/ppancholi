@@ -33,7 +33,7 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const fileName = 'authenticationDataCorrectionFile';
 const filePath = `cypress/downloads/${fileName}.xlsx`;
-const dataCorrectionTypeDataTest = 'Data Correction Authentication';
+const dataCorrectionTypeDataTest = 'DataCorrectionAuthentication';
 const dataCorrectionTypeDropDown = 'Authentication';
 
 describe('[T28832] Pre-process a Authentication data correction file', { tags: ['@case-file', '@mass-actions'] }, () => {

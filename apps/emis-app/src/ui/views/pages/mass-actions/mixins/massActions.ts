@@ -13,31 +13,31 @@ export default Vue.extend({
     return {
       showExportValidationImpact: false,
       templateData: {
-        [MassActionDataCorrectionType.ContactInformation]: {
+        [MassActionDataCorrectionType.DataCorrectionContactInformation]: {
           fileName: 'ContactInformationTemplate.csv',
           blobsParts: 'PersonId,PrimarySpokenLanguageSpecifiedOther,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,AlternatePhoneNumberExtension,ETag',
         },
-        [MassActionDataCorrectionType.HomeAddress]: {
+        [MassActionDataCorrectionType.DataCorrectionHomeAddress]: {
           fileName: 'HomeAddressTemplate.csv',
           blobsParts: 'HouseholdId,StreetAddress,UnitSuite,City,ProvinceEn,PostalCode,SpecifiedOtherProvince,Country,ETag',
         },
-        [MassActionDataCorrectionType.AuthenticationSpecifiedOther]: {
+        [MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther]: {
           fileName: 'AuthenticationSpecifiedOtherTemplate.csv',
           blobsParts: 'CaseFileId,AuthenticationSpecifiedOther,ETag',
         },
-        [MassActionDataCorrectionType.Labels]: {
+        [MassActionDataCorrectionType.DataCorrectionLabels]: {
           fileName: 'LabelsTemplate.csv',
           blobsParts: 'CaseFileId,LabelName1,LabelName2,LabelName3,LabelName4,ETag',
         },
-        [MassActionDataCorrectionType.IdentitySet]: {
+        [MassActionDataCorrectionType.DataCorrectionIdentitySet]: {
           fileName: 'IdentitySetTemplate.csv',
           blobsParts: 'PersonId,FirstName,LastName,MiddleName,GenderSpecifiedOther,ETag',
         },
-        [MassActionDataCorrectionType.TemporaryAddress]: {
+        [MassActionDataCorrectionType.DataCorrectionTemporaryAddress]: {
           fileName: 'TemporaryAddressTemplate.csv',
           blobsParts: 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,CrcProvided,CheckIn,CheckOut,ETag',
         },
-        [MassActionDataCorrectionType.FinancialAssistance]: {
+        [MassActionDataCorrectionType.DataCorrectionFinancialAssistance]: {
           fileName: 'FinancialAssistanceTemplate.csv',
           blobsParts: 'TBD,ETag',
         },

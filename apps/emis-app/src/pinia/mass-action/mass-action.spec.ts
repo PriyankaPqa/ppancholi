@@ -166,7 +166,7 @@ describe('>>> Mass Action Store', () => {
         const bComponents = { ...baseComponents, set: jest.fn() };
         const store = createTestStore(bComponents);
         const urlSuffix = 'assessment-from-list';
-        const massActionType = MassActionType.Assessments;
+        const massActionType = MassActionType.Assessment;
         const payload = { name: 'test', description: '' };
         const massAction = mockMassActionEntity();
 

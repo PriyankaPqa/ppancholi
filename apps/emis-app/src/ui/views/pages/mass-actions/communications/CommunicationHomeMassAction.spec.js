@@ -19,7 +19,7 @@ describe('CommunicationHomeMassAction.vue', () => {
     });
 
     it('should have proper mass action type', () => {
-      expect(wrapper.vm.massActionTypeData).toEqual(MassActionType.Communications);
+      expect(wrapper.vm.massActionTypeData).toEqual(MassActionType.Communication);
     });
 
     it('should have proper detailsRouteName', () => {
@@ -28,10 +28,6 @@ describe('CommunicationHomeMassAction.vue', () => {
 
     it('should have proper table title', () => {
       expect(wrapper.vm.tableTitleData).toEqual('massAction.communicationTable.title');
-    });
-
-    it('should have proper search end point', () => {
-      expect(wrapper.vm.searchEndpointData).toEqual('communication-mass-actions');
     });
   });
 

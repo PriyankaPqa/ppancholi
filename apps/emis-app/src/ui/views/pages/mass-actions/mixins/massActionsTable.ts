@@ -3,13 +3,14 @@ import _orderBy from 'lodash/orderBy';
 import { TranslateResult } from 'vue-i18n';
 import {
   IdParams,
-  IMassActionCombined, IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
+  IMassActionCombined, IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, MassActionDataCorrectionType, MassActionRunStatus,
+  MassActionType,
 } from '@libs/entities-lib/mass-action';
 import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
-import { Status } from '@libs/entities-lib/base';
 import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { format, parseISO } from 'date-fns';
+import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default Vue.extend({
 
@@ -22,15 +23,15 @@ export default Vue.extend({
         sortBy: ['Entity/Created'],
         sortDesc: [true],
       },
-      massActionTypeData: null,
+      massActionTypeData: null as MassActionType | MassActionDataCorrectionType | (MassActionDataCorrectionType | MassActionType) [],
       detailsRouteNameData: '',
-      searchEndpointData: '',
       tableTitleData: '',
       addButtonLabelData: '',
       searchResultIds: [],
       itemsCount: 0,
       searchExecutionDate: null as Date,
       combinedMassActionStore: new CombinedStoreFactory<IMassActionEntity, IMassActionMetadata, IdParams>(useMassActionStore(), useMassActionMetadataStore()),
+      sqlSearchMode: true,
     };
   },
 
@@ -116,17 +117,21 @@ export default Vue.extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
-      if (!this.searchEndpointData) {
+      if (!this.massActionTypeData) {
         return null;
       }
 
+      const typeFilter = {
+        'Entity/Type': {
+          in: (typeof this.massActionTypeData === 'object' ? this.massActionTypeData : [this.massActionTypeData])
+            .map((t) => helpers.getEnumKeyText(MassActionType, t) || helpers.getEnumKeyText(MassActionDataCorrectionType, t)),
+        },
+      };
+
       const res = await this.combinedMassActionStore.search({
-        search: params.search,
         filter: {
           ...params.filter as Record<string, unknown>,
-          Entity: {
-            Status: Status.Active,
-          },
+          ...typeFilter,
         },
         top: params.top,
         skip: params.skip,
@@ -134,7 +139,7 @@ export default Vue.extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, this.searchEndpointData);
+      }, null, false, true);
 
       return res;
     },

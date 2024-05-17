@@ -29,8 +29,8 @@ export default mixins(massActionDetails).extend({
   computed: {
     massActionBaseDetailsLabels(): IMassActionBaseDetailsLabels {
       switch (this.massAction.type as MassActionDataCorrectionType) {
-        case MassActionDataCorrectionType.AuthenticationSpecifiedOther:
-        case MassActionDataCorrectionType.Labels:
+        case MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther:
+        case MassActionDataCorrectionType.DataCorrectionLabels:
         case MassActionDataCorrectionType.DataCorrectionAuthentication:
           return {
             preProcessingWaitTitle: '',
@@ -46,7 +46,7 @@ export default mixins(massActionDetails).extend({
             processedSuccessesLabel: 'massAction.processed.title.2',
             processedFailuresLabel: 'massAction.processed.title.3',
           };
-        case MassActionDataCorrectionType.FinancialAssistance:
+        case MassActionDataCorrectionType.DataCorrectionFinancialAssistance:
           return {
             preProcessingWaitTitle: '',
             preProcessingWaitLabelOne: 'massActions.preProcessing.info1',
@@ -76,8 +76,8 @@ export default mixins(massActionDetails).extend({
             processedSuccessesLabel: 'massAction.processed.title.2',
             processedFailuresLabel: 'massAction.processed.title.3',
           };
-        case MassActionDataCorrectionType.HomeAddress:
-        case MassActionDataCorrectionType.IdentitySet:
+        case MassActionDataCorrectionType.DataCorrectionHomeAddress:
+        case MassActionDataCorrectionType.DataCorrectionIdentitySet:
         default:
           return {
             preProcessingWaitTitle: '',

@@ -61,10 +61,10 @@ export default Vue.extend({
         [MassActionType.ImportPaymentStatuses]: 'massActions.type.importPaymentStatus',
         [MassActionType.ImportUsers]: 'massActions.type.importUsers',
         [MassActionType.GenerateFundingRequest]: 'massActions.type.fundingRequest',
-        [MassActionType.Assessments]: 'massActions.type.assessment',
+        [MassActionType.Assessment]: 'massActions.type.assessment',
         [MassActionType.FinancialAssistanceCustomOptions]: 'massAction.financialAssistanceCustomTable.title',
         [MassActionType.CaseFileStatus]: 'massActions.type.caseFileStatus',
-        [MassActionType.Communications]: 'massActions.type.communication',
+        [MassActionType.Communication]: 'massActions.type.communication',
       } as Record<MassActionType, string>,
     };
   },

@@ -39,7 +39,7 @@
               color="primary"
               :loading="exportLoading"
               :disabled="(!filtersOn || tableData.length === 0)"
-              @click="onExport(MassActionType.Assessments)">
+              @click="onExport(MassActionType.Assessment)">
               {{ $t('massAction.common.export') }}
             </v-btn>
           </template>

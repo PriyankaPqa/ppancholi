@@ -69,10 +69,10 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
     massActionTypes() {
       if (!this.$hasFeature(FeatureKeys.DataCorrectionTriage)) {
         return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.AuthenticationSpecifiedOther && m.value !== MassActionDataCorrectionType.DataCorrectionTriage));
+        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther && m.value !== MassActionDataCorrectionType.DataCorrectionTriage));
       }
       return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.AuthenticationSpecifiedOther));
+        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther));
     },
 
     rules(): Record<string, unknown> {
@@ -84,7 +84,7 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
     },
 
     isEventRequired() : boolean {
-      return this.selectedType === MassActionDataCorrectionType.FinancialAssistance;
+      return this.selectedType === MassActionDataCorrectionType.DataCorrectionFinancialAssistance;
     },
 
     allowedExtensions() : string[] {

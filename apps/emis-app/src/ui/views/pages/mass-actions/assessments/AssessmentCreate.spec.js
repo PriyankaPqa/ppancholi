@@ -237,7 +237,7 @@ describe('AssessmentCreate.vue', () => {
         };
         await wrapper.vm.onPost({ name, description });
 
-        expect(massActionStore.create).toHaveBeenCalledWith(MassActionType.Assessments, payload);
+        expect(massActionStore.create).toHaveBeenCalledWith(MassActionType.Assessment, payload);
       });
 
       it('should call onSuccess method with proper parameters', async () => {
