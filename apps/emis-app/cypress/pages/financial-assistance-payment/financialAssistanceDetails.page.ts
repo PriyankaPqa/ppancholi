@@ -286,4 +286,8 @@ export class FinancialAssistanceDetailsPage {
   public getPaymentLineStatusCompleted() {
     return cy.getByDataTest(this.statusCompleted);
   }
+
+  public getPaymentLineStatusInProgress() {
+    return cy.getByDataTest(this.statusInProgress);
+  }
 }

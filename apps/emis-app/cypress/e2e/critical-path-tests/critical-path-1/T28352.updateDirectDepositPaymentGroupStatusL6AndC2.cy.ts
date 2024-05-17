@@ -3,10 +3,10 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { removeTeamMembersFromTeam } from '../helpers/teams';
-import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
-import { FinancialAssistanceHomePage } from '../../pages/financial-assistance-payment/financialAssistanceHome.page';
-import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { updatePaymentGroupStatusTo } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { tags: ['@financial-assistance'] }, () => {
+describe('[T28352] Update Direct Deposit payment group status - L6 and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,7 +55,7 @@ describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { t
               accessTokenL6,
               event: this.event,
               tableId: this.table.id,
-              paymentStatus: PaymentStatus.Cancelled,
+              paymentStatus: PaymentStatus.New,
               paymentModalities: EPaymentModalities.DirectDeposit,
             };
             const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
@@ -66,58 +66,45 @@ describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { t
         });
         it('should successfully update Direct Deposit payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
-          financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(true);
-          financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00').should('be.visible');
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
+          financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
+          financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Inprogress',
+            roleName,
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Inprogress',
+            roleName,
+          });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
+            roleName,
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
             paymentModality: 'direct deposit',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'direct deposit',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
+            roleName,
           });
         });
       });
@@ -130,7 +117,7 @@ describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { t
           accessTokenL6,
           event: this.event,
           tableId: this.table.id,
-          paymentStatus: PaymentStatus.Cancelled,
+          paymentStatus: PaymentStatus.New,
           paymentModalities: EPaymentModalities.DirectDeposit,
         };
         const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
@@ -149,7 +136,7 @@ describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { t
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();
-          financialAssistanceDetailsPage.getPaymentLineStatusIssued().should('not.exist');
+          financialAssistanceDetailsPage.getPaymentLineStatusInProgress().should('not.exist');
         });
       });
     }

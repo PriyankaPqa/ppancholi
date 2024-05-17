@@ -125,6 +125,7 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality, rol
 
   if (paymentStatus === 'Cancelled') {
     financialAssistanceDetailsPage.getGroupCancellationByText().should('eq', `Cancelled by: ${getUserName(roleName)} on ${getToday()}`);
+    financialAssistanceDetailsPage.getLineCancellationByText().should('eq', `Line cancelled by: ${getUserName(roleName)} on ${getToday()}`);
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(true);
     financialAssistanceDetailsPage.getCancelledLabelText().should('eq', 'Cancelled');
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00').should('be.visible');
