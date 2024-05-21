@@ -290,4 +290,8 @@ export class FinancialAssistanceDetailsPage {
   public getPaymentLineStatusInProgress() {
     return cy.getByDataTest(this.statusInProgress);
   }
+
+  public getPaymentLineStatusCancelled() {
+    return cy.getByDataTest(this.statusCancelled);
+  }
 }
