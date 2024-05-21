@@ -24,6 +24,7 @@ import { TaskService } from '@libs/services-lib/task/entity';
 import { PotentialDuplicatesService } from '@libs/services-lib/potential-duplicates/entity';
 import { NotificationsService } from '@libs/services-lib/notifications/entity';
 import { QueriesService } from '@libs/services-lib/queries/entity';
+import { PersonsService } from '@libs/services-lib/persons/entity';
 import { IProvider } from './provider.types';
 
 export const provider = (httpClient = client): IProvider => ({
@@ -38,6 +39,7 @@ export const provider = (httpClient = client): IProvider => ({
   teams: new TeamsService(httpClient),
   programs: new ProgramsService(httpClient),
   publicApi: new PublicService(httpClient),
+  persons: new PersonsService(httpClient),
   households: new HouseholdsService(httpClient),
   financialAssistanceTables: new FinancialAssistanceTablesService(httpClient),
   financialAssistancePaymentsService: new FinancialAssistancePaymentsService(httpClient),

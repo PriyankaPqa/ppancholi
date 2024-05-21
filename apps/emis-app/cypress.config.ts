@@ -23,6 +23,7 @@ export default defineConfig({
         printLogsToConsole: 'onFail', // 'never'
         includeSuccessfulHookLogs: false,
       });
+
       // eslint-disable-next-line global-require
       require('@cypress/grep/src/plugin')(config);
       return initPlugins(on, [cloudPlugin, zephyrPlugin], config);
@@ -35,6 +36,7 @@ export default defineConfig({
        */
       AZURE_CLIENT_ID: process.env.CYPRESS_AZURE_CLIENT_ID,
       AZURE_TENANT_ID: process.env.CYPRESS_AZURE_TENANT_ID,
+      AZURE_DEV_TENANT_ID: process.env.CYPRESS_AZURE_DEV_TENANT_ID,
       AZURE_CLIENT_SECRET: process.env.CYPRESS_AZURE_CLIENT_SECRET,
       MSAL_API_SCOPES: process.env.CYPRESS_MSAL_API_SCOPES,
       // End Azure AD Config

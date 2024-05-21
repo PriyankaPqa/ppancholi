@@ -21,5 +21,5 @@ export interface ICaseNoteEntity extends IEntity {
 
 export type ICaseNoteCombined = IEntityCombined<ICaseNoteEntity, IEntity>;
 
-export type IdParams = uuid;
+export type IdParams = { id: uuid, caseFileId: uuid };
 export type IdMetadataParams = { id: uuid, caseFileId: uuid };

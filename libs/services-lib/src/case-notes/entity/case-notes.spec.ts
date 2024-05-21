@@ -14,10 +14,10 @@ describe('>>> Case Note Service', () => {
 
   describe('addCaseNote', () => {
     it('is linked to the correct URL and params', async () => {
-      const id = 'id';
+      const id = 'some-cf-id';
       const caseNote = mockCaseNoteEntity();
       await service.addCaseNote(id, caseNote);
-      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/case-notes`, {
+      expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/some-cf-id/case-notes', {
         subject: caseNote.subject,
         description: caseNote.description,
         category: {
@@ -33,7 +33,7 @@ describe('>>> Case Note Service', () => {
       const caseNoteId = 'case note id';
       const isPinned = true;
       await service.pinCaseNote(caseFileId, caseNoteId, isPinned);
-      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${caseFileId}/case-notes/${caseNoteId}/pin/${isPinned}`);
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/case-file/case-files/${caseFileId}/case-notes/${caseNoteId}/pin/${isPinned}`);
     });
   });
 
@@ -43,7 +43,7 @@ describe('>>> Case Note Service', () => {
       const caseNoteId = 'case note id';
       const caseNote = mockCaseNoteEntity();
       await service.editCaseNote(caseFileId, caseNoteId, caseNote);
-      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${caseFileId}/case-notes/${caseNoteId}/edit`, {
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/case-file/case-files/${caseFileId}/case-notes/${caseNoteId}/edit`, {
         subject: caseNote.subject,
         description: caseNote.description,
         category: {

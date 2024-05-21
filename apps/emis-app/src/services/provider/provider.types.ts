@@ -26,6 +26,7 @@ import { ITaskService, ITaskServiceMock } from '@libs/services-lib/task/entity';
 import { IPotentialDuplicatesService, IPotentialDuplicatesServiceMock } from '@libs/services-lib/potential-duplicates/entity';
 import { INotificationsService, INotificationsServiceMock } from '@libs/services-lib/notifications/entity';
 import { IQueriesService, IQueriesServiceMock } from '@libs/services-lib/queries/entity';
+import { IPersonsService, IPersonsServiceMock } from '@libs/services-lib/persons/entity';
 
 export interface IProvider {
   approvalTables: IApprovalTablesService,
@@ -40,6 +41,7 @@ export interface IProvider {
   programs: IProgramsService,
   publicApi: IPublicService,
   households: IHouseholdsService,
+  persons: IPersonsService,
   financialAssistanceTables: IFinancialAssistanceTablesService,
   financialAssistancePaymentsService: IFinancialAssistancePaymentsService,
   financialAssistancePaymentsServiceMetadata: IFinancialAssistancePaymentsMetadataService,
@@ -68,6 +70,7 @@ export interface IProviderMock {
   programs: IProgramsServiceMock,
   publicApi: IPublicServiceMock,
   households: IHouseholdsServiceMock,
+  persons: IPersonsServiceMock,
   financialAssistanceTables: IFinancialAssistanceTablesServiceMock,
   financialAssistancePaymentsService: IFinancialAssistancePaymentsServiceMock,
   userAccounts: IUserAccountsServiceMock,
