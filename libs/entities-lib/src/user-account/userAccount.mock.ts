@@ -1,9 +1,21 @@
-import { IListOption } from '@libs/shared-lib/types';
+import { IListOption, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity, mockBaseData, Status } from '../base';
 
 import {
   IUserAccountEntity, IFilter, FilterKey, AccountStatus, IUserAccountMetadata, IUserAccountCombined, IUserProfileQueryResponse, IUserProfileData,
 } from './userAccount.types';
+
+export const mockUserInformation = (force?: Partial<IUserInformation>) : IUserInformation => ({
+    userId: 'test-user-id-123456',
+    userName: 'Mock user name',
+    roleName: {
+      translation: {
+        en: 'System Admin',
+        fr: 'System Admin in french',
+      },
+    },
+    ...force,
+});
 
 export const mockListOption = (force?: Partial<IListOption>) : IListOption => ({
   optionItemId: '341d1526-1567-4188-a673-b8d30f954da8',

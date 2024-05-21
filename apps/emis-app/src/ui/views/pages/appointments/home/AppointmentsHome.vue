@@ -108,24 +108,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { parseISO } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
-import { mockAppointment, IAppointmentEntity } from '@libs/entities-lib/appointments/appointment';
+import { mockAppointment, IAppointment } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
 import { RcDialog } from '@libs/component-lib/components';
 
 const APPOINTMENTS = [
-  mockAppointment({ startDateTime: {
-    dateTime: '2024-01-29T15:00:00.000Z',
-    timeZone: 'America/New_York',
-  },
-  endDateTime: {
-    dateTime: '2024-01-29T16:00:00.000Z',
-    timeZone: 'America/New_York',
-  },
-  serviceName: 'Service Two',
-  customers: [{ ...mockAppointment().customers[0], name: 'Jane Blue' }],
+  mockAppointment({ startDate: '2024-05-15T15:00:00.000Z',
+  endDate: '2024-05-15T16:00:00.000Z',
+  attendeeId: 'Jane Blue',
 }),
-  mockAppointment({ serviceId: 'service-id-2' }),
+  mockAppointment({ serviceOptionId: 'service-id-2' }),
 ];
 
 export interface ICalendarEvent {
@@ -200,12 +192,12 @@ export default Vue.extend({
         return Math.floor((b - a + 1) * Math.random()) + a;
       },
 
-      parseEventsFromAppointments(appointments: IAppointmentEntity[]): ICalendarEvent[] {
+      parseEventsFromAppointments(appointments: IAppointment[]): ICalendarEvent[] {
         return appointments.map((a) => ({
-          name: `${a.serviceName} - ${a.customers[0]?.name}`,
-          start: this.timeZone ? utcToZonedTime(a.startDateTime.dateTime, this.timeZone) : parseISO(a.startDateTime.dateTime),
-          end: this.timeZone ? utcToZonedTime(a.endDateTime.dateTime, this.timeZone) : parseISO(a.endDateTime.dateTime),
-          color: a.serviceId === 'service-id-1' ? 'red' : 'grey',
+          name: a.attendeeId,
+          start: parseISO(a.startDate as string),
+          end: parseISO(a.endDate as string),
+          color: a.serviceOptionId === 'service-id-1' ? 'red' : 'grey',
           timed: true,
         }));
       },
