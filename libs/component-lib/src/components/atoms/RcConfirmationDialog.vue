@@ -61,7 +61,7 @@ export default Vue.extend({
       default: false,
     },
     messages: {
-      type: [String, Array, Object],
+      type: [String, Array],
       default: '',
     },
     submitButtonKey: {
