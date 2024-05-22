@@ -141,5 +141,7 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality, rol
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
     financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('not.exist');
+  } else if (paymentStatus === 'Inprogress') {
+    financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('not.exist');
   }
 };

@@ -3,10 +3,10 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
-import { removeTeamMembersFromTeam } from '../helpers/teams';
-import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
-import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { updatePaymentGroupStatusTo } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: ['@financial-assistance'] }, () => {
+describe('[T28355] Update E-Transfer payment group status- L6 and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -73,36 +73,12 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
           financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'In progress');
 
           updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'E-Transfer',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Sent',
-          });
-
-          updatePaymentGroupStatusTo({
             paymentStatus: 'New',
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Sent',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
@@ -114,7 +90,16 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
           });
 
           updatePaymentGroupStatusTo({
+            paymentStatus: 'Inprogress',
+          });
+
+          updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
+            roleName,
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Sent',
           });
 
           updatePaymentGroupStatusTo({
@@ -122,7 +107,16 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
           });
 
           updatePaymentGroupStatusTo({
+            paymentStatus: 'Sent',
+          });
+
+          updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
+            roleName,
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
           });
 
           updatePaymentGroupStatusTo({
@@ -132,32 +126,7 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
             paymentModality: 'E-Transfer',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'E-Transfer',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'E-Transfer',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
+            roleName,
           });
         });
       });
@@ -179,7 +148,7 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
         cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
       });
     });
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
           cy.login(roleName);
@@ -187,6 +156,8 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
         });
         it('should not be able to update E-Transfer Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
+          financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();
