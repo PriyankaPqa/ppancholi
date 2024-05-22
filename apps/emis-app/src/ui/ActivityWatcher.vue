@@ -1,13 +1,24 @@
 <template>
-  <div />
+  <rc-confirmation-dialog
+    ref="continueConfirm"
+    :show.sync="showLogOutPopup"
+    :title="$t('session_will_expire.title')"
+    :messages="$t('session_will_expire.message', { x: logOutCountdown })"
+    submit-button-key="session_will_expire.submit.label"
+    submit-data-test="submit-continue-session"
+    :show-cancel="false" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { useUserStore } from '@/pinia/user/user';
+import RcConfirmationDialog from '@libs/component-lib/components/atoms/RcConfirmationDialog.vue';
 
 export default Vue.extend({
   name: 'ActivityWatcher',
+  components: {
+    RcConfirmationDialog,
+  },
 
   props: {
     /**
@@ -43,7 +54,7 @@ export default Vue.extend({
     },
 
     /**
-     * Stop watching for activity or inactivity
+     * Is true if we want to log out on inactivity
      */
     stopOnInactivity: {
       type: Boolean,
@@ -52,61 +63,78 @@ export default Vue.extend({
   },
 
   data: () => ({
-    secondsSinceLastActivity: 0,
-    userInactive: false,
+    lastActivityTimeStamp: new Date() as Date,
+    watcher: null as any,
+    logOutTimer: null as any,
+    logOutCountdownTimer: null as any,
+    logOutCountdown: 0,
+    showLogOutPopup: false,
   }),
 
-  watch: {
-    userInactive(inactivity: boolean) {
-      if (inactivity) {
-        this.onInactivity();
-      }
-    },
+  mounted() {
+    if (this.stopOnInactivity) {
+      this.activityWatcher();
+
+      this.activityEvents.forEach((eventName: string) => {
+        document.addEventListener(eventName, this.resetCounter, true);
+      });
+    }
   },
 
-  mounted() {
-    this.activityWatcher();
-
-    this.activityEvents.forEach((eventName: string) => {
-      document.addEventListener(eventName, this.resetCounter, true);
-    });
+  destroyed() {
+    clearInterval(this.watcher);
+    clearInterval(this.logOutCountdownTimer);
+    clearTimeout(this.logOutTimer);
   },
 
   methods: {
     activityWatcher() {
-      this.secondsSinceLastActivity = 0;
+      this.lastActivityTimeStamp = new Date();
 
-      const watcher = setInterval(() => {
-        this.secondsSinceLastActivity += this.checkFrequency;
+      clearInterval(this.watcher);
+      this.watcher = setInterval(() => {
+        const inactivityDuration = Math.floor((new Date().getTime() - this.lastActivityTimeStamp.getTime()) / 1000);
+        const userInactive = inactivityDuration > this.maxInactivity;
+        const userMustBeLoggedOff = inactivityDuration > this.maxInactivity + this.timeBeforeLogOut;
 
-        this.userInactive = this.secondsSinceLastActivity > this.maxInactivity;
+        if (userMustBeLoggedOff) {
+          this.signOut();
+          return;
+        }
 
-        if (this.userInactive && this.stopOnInactivity) {
-          clearInterval(watcher);
+        if (userInactive) {
+          this.onInactivity();
+          clearInterval(this.watcher);
         }
       }, this.checkFrequency * 1000);
     },
 
     resetCounter() {
-      this.secondsSinceLastActivity = 0;
+      this.lastActivityTimeStamp = new Date();
+    },
+
+    startCountdown() {
+      this.logOutCountdown = this.timeBeforeLogOut;
+
+      clearInterval(this.logOutCountdownTimer);
+      this.logOutCountdownTimer = setInterval(() => {
+        this.logOutCountdown -= 1;
+      }, 1000);
     },
 
     async onInactivity() {
       // Will sign out in x seconds
-      const logOutTimer = setTimeout(() => {
+      this.logOutTimer = setTimeout(() => {
         this.signOut();
       }, this.timeBeforeLogOut * 1000);
 
-      const continueSession = await this.$confirm({
-        title: this.$t('session_will_expire.title'),
-        messages: this.$t('session_will_expire.message', { x: this.timeBeforeLogOut }),
-        htmlContent: '',
-        submitActionLabel: this.$t('session_will_expire.submit.label'),
-        showCancelButton: false,
-      });
-
+      this.startCountdown();
+      this.showLogOutPopup = true;
+      const continueSession = await (this.$refs.continueConfirm as InstanceType<typeof RcConfirmationDialog>).open();
       if (continueSession) {
-        clearTimeout(logOutTimer);
+        clearTimeout(this.logOutTimer);
+        clearInterval(this.logOutCountdownTimer);
+        this.showLogOutPopup = false;
         this.activityWatcher();
       }
     },
