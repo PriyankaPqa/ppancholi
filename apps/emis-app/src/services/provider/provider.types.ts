@@ -16,7 +16,6 @@ import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '@libs/
 import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '@libs/services-lib/financial-assistance-tables/entity';
 import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '@libs/services-lib/financial-assistance-payments/entity';
 import { ICaseFilesMetadataService, ICaseFilesMetadataServiceMock } from '@libs/services-lib/case-files/metadata';
-import { IFinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/services-lib/tenantSettings/entity';
 import { IErrorReportingService, IErrorReportingServiceMock } from '@libs/services-lib/error-reporting';
 import { IApprovalTablesService, IApprovalTablesServiceMock } from '@libs/services-lib/approval-tables/entity';
@@ -44,7 +43,6 @@ export interface IProvider {
   persons: IPersonsService,
   financialAssistanceTables: IFinancialAssistanceTablesService,
   financialAssistancePaymentsService: IFinancialAssistancePaymentsService,
-  financialAssistancePaymentsServiceMetadata: IFinancialAssistancePaymentsMetadataService,
   userAccounts: UserAccountsService,
   massActions: IMassActionService;
   tenantSettings: ITenantSettingsService;

@@ -1,4 +1,4 @@
-import { IMultilingual, IUserInformation } from '@libs/shared-lib/types';
+import { IUserInformation } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '../program/program.types';
 import { IAddress } from '../value-objects/address';
 import { IEntity, IEntityCombined } from '../base';
@@ -74,6 +74,10 @@ export interface IGroupingInformation {
   payeeName: string;
 }
 
+export interface IFinancialAssistancePaymentGroups {
+  groups: IFinancialAssistancePaymentGroup[]
+}
+
 export interface IFinancialAssistancePaymentGroup extends IEntity {
   cancellationReason: EPaymentCancellationReason;
   cancellationDate: string | Date;
@@ -122,16 +126,7 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
   approvalStatusHistory?: IApprovalStatusHistory[];
 }
 
-export interface IFinancialAssistancePaymentMetadata extends IEntity {
-  total: number;
-  approvalStatusName: IMultilingual;
-  eventId?: string;
-  eventName? : string;
-  submittedByName?: string;
-  submittedToName?: string;
-}
-
-export type IFinancialAssistancePaymentCombined = IEntityCombined<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata>;
+export type IFinancialAssistancePaymentCombined = IEntityCombined<IFinancialAssistancePaymentEntity, IEntity>;
 
 export interface CreatePaymentGroupServiceRequest {
   modality: EPaymentModalities;

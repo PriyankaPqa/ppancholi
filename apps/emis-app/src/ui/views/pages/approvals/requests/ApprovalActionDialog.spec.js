@@ -1,8 +1,10 @@
 import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
-import { mockCombinedCaseFinancialAssistance, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { mockProvider } from '@/services/provider';
 import { createTestingPinia } from '@pinia/testing';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import Component from './ApprovalActionDialog.vue';
 
 const localVue = createLocalVue();
@@ -10,7 +12,11 @@ const services = mockProvider();
 const pinia = createTestingPinia({ stubActions: false });
 let wrapper;
 
-const FAPayment = mockCombinedCaseFinancialAssistance({ eventId: 'mock-event-id' });
+const FAPayment = {
+  entity: mockCaseFinancialAssistanceEntity(),
+  casefile: mockCaseFileEntity({ eventId: 'mock-event-id' }),
+  event: mockEventEntity({ id: 'mock-event-id' }),
+};
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 
 const doMount = (otherOptions = {}, fullMount = false) => {
@@ -153,7 +159,7 @@ describe('ApprovalActionDialog', () => {
         wrapper.vm.$services.financialAssistancePaymentsService.getNextApprovalGroupRoles = jest.fn(() => ['role-1']);
         wrapper.vm.getUsersByRolesAndEvent = jest.fn();
         await wrapper.vm.fetchRolesAndUsers();
-        expect(wrapper.vm.getUsersByRolesAndEvent).toHaveBeenCalledWith(['role-1'], wrapper.vm.financialAssistancePayment.metadata.eventId);
+        expect(wrapper.vm.getUsersByRolesAndEvent).toHaveBeenCalledWith(['role-1'], 'mock-event-id');
       });
     });
 

@@ -26,7 +26,7 @@ import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -445,13 +445,7 @@ export class SignalR implements ISignalR {
       action: useFinancialAssistancePaymentStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
-      domain: 'finance',
-      entityName: 'FinancialAssistancePaymentMetadata',
-      action: useFinancialAssistancePaymentMetadataStore().setItemFromOutsideNotification,
-    });
     this.watchedPiniaStores.push(useFinancialAssistancePaymentStore());
-    this.watchedPiniaStores.push(useFinancialAssistancePaymentMetadataStore());
   }
 
   private listenForCaseDocumentModuleChanges() {

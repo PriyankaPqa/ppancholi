@@ -11,7 +11,7 @@ import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-act
 import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetadataStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -427,12 +427,6 @@ describe('signalR', () => {
           domain: 'finance',
           entityName: 'FinancialAssistancePayment',
           action: useFinancialAssistancePaymentStore().setItemFromOutsideNotification,
-        });
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'finance',
-          entityName: 'FinancialAssistancePaymentMetadata',
-          action: useFinancialAssistancePaymentMetadataStore().setItemFromOutsideNotification,
         });
     });
 

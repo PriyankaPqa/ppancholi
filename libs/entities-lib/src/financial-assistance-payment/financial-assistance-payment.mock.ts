@@ -7,7 +7,6 @@ import {
   ApprovalStatus,
   PaymentsSummary,
   IFinancialAssistancePaymentCombined,
-  IFinancialAssistancePaymentMetadata,
   ApprovalAction,
 } from './financial-assistance-payment.types';
 import { EPaymentModalities } from '../program';
@@ -105,18 +104,6 @@ export const mockCaseFinancialAssistanceEntity = (force?: Partial<IFinancialAssi
   ...force,
 });
 
-export const mockCaseFinancialAssistanceMetadata = (force? : Partial<IFinancialAssistancePaymentMetadata>) : IFinancialAssistancePaymentMetadata => ({
-  ...mockBaseData(),
-  total: 123,
-  approvalStatusName: {
-    translation: {
-      en: 'approvalStatusNameEn',
-      fr: 'approvalStatusNameFr',
-    },
-  },
-  ...force,
-});
-
 export const mockPaymentSummary = () : PaymentsSummary => ({
   totalAmountCommitted: 121.56,
   totalAmountCompleted: 233.43,
@@ -136,5 +123,5 @@ export const mockCaseFinancialAssistanceEntities = (): IFinancialAssistancePayme
 
 export const mockCombinedCaseFinancialAssistance = (force?: Partial<IFinancialAssistancePaymentEntity>): IFinancialAssistancePaymentCombined => ({
   entity: mockCaseFinancialAssistanceEntity(force),
-  metadata: mockCaseFinancialAssistanceMetadata(force),
+  metadata: null,
 });

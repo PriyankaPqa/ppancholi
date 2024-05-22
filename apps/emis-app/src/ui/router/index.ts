@@ -138,10 +138,11 @@ const authorizationGuard = async (to: Route) => {
 const initializeMSAL = async () => {
   const publicService = new PublicService(httpClient);
   let currentTenant = null;
+  const forceTenant = new URLSearchParams(window.location.search).get('force-tenant') || sessionStorage.getItem('force-tenant');
 
   if ((window.location.host.startsWith('localhost') || window.location.host.startsWith('emis-'))
-      && (new URLSearchParams(window.location.search).get('force-tenant') || sessionStorage.getItem('force-tenant'))) {
-    currentTenant = new URLSearchParams(window.location.search).get('force-tenant') || sessionStorage.getItem('force-tenant');
+      && forceTenant && forceTenant !== 'null') {
+    currentTenant = forceTenant;
     sessionStorage.setItem('force-tenant', currentTenant);
     AuthenticationProvider.setCurrentTenantDomain(currentTenant);
   } else if (!window.location.host.startsWith('localhost')) {

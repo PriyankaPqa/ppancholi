@@ -22,6 +22,7 @@
           :initial-filter="filterState"
           add-filter-label="financialAssistance.filter"
           :count="itemsCount"
+          :sql-mode="true"
           @update:appliedFilter="onApplyFilter">
           <template #toolbarActions>
             <v-btn height="32" color="primary" style="color: white" data-test="financialAssistanceOverview__statsButton" @click="showStats = true">
@@ -48,7 +49,7 @@
 
       <template #[`item.${customColumns.totals}`]="{ item }">
         <div data-test="fap_total" class="amount">
-          {{ item.metadata ? $formatCurrency(item.metadata.total) : '-' }}
+          {{ $formatCurrency(groupTotal(item.entity.groups)) }}
         </div>
       </template>
 
@@ -110,49 +111,6 @@
       </template>
     </rc-data-table>
 
-    <rc-dialog
-      v-if="showSubmitDialog"
-      data-test="submit-dialog"
-      :title="$t('caseFile.financialAssistance.submitDialog.title')"
-      :cancel-action-label="$t('common.cancel')"
-      :submit-action-label="$t('common.submit')"
-      :show.sync="showSubmitDialog"
-      :submit-button-disabled="!selectedItems.length"
-      :max-width="750"
-      @close="showSubmitDialog = false"
-      @cancel="showSubmitDialog = false"
-      @submit="submitSelectedPayments">
-      <div class="row col">
-        {{ $t('caseFile.financialAssistance.submitDialog.message') }}
-      </div>
-      <div class="row list-row-header">
-        <div class="col-auto pa-2">
-          <v-checkbox
-            v-model="itemsToSubmitSelectAll"
-            hide-details
-            class="mt-0" />
-        </div>
-        <div class="col">
-          {{ $t('caseFile.financialAssistance.submitDialog.selectAll') }}
-        </div>
-      </div>
-      <div v-for="fa in itemsToSubmit" :key="fa.entity.id" class="row list-row rc-body14">
-        <div class="col-auto pa-2">
-          <v-checkbox
-            v-model="selectedItems"
-            hide-details
-            class="mt-0"
-            :value="fa.entity.id" />
-        </div>
-        <div class="col fw-bold">
-          {{ fa.entity.name }}
-        </div>
-        <div class="col-auto">
-          {{ $formatCurrency(fa.metadata.total) }}
-        </div>
-      </div>
-    </rc-dialog>
-
     <approval-history-dialog
       v-if="showApprovalHistory"
       :financial-assistance="selectedItem"
@@ -169,7 +127,6 @@
 import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
-  RcDialog,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
@@ -186,12 +143,12 @@ import {
   ApprovalStatus,
   FinancialAssistancePaymentGroup, IdParams,
   IFinancialAssistancePaymentCombined,
-  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PayeeType,
+  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PayeeType,
   PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { Status } from '@libs/entities-lib/base';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -210,7 +167,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     RcDataTable,
     FilterToolbar,
     StatusChip,
-    RcDialog,
     ApprovalHistoryDialog,
     StatisticsDialog,
   },
@@ -218,7 +174,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   data() {
     return {
       FilterKey,
-      allItemsIds: [] as string[],
       searchResultIds: [] as string[],
       count: 0,
       options: {
@@ -235,8 +190,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       getLocalStringDate: helpers.getLocalStringDate,
       containsActiveTables: null as boolean,
       hasRestrictFinancialTags: false,
-      showSubmitDialog: false,
-      selectedItems: [] as string[],
       Status,
       PaymentStatus,
       groupTotal: FinancialAssistancePaymentGroup.total,
@@ -244,10 +197,11 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       selectedItem: null as IFinancialAssistancePaymentEntity,
       showStats: false,
       householdDuplicates: null as IPotentialDuplicateEntity[],
-      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, IdParams>(
+      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, null, IdParams>(
         useFinancialAssistancePaymentStore(),
-        useFinancialAssistancePaymentMetadataStore(),
+        null,
       ),
+      sqlSearchMode: true,
       combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore(), null),
     };
   },
@@ -261,24 +215,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
         },
       );
-    },
-
-    itemsToSubmit() : IFinancialAssistancePaymentCombined[] {
-      return this.combinedFinancialAssistancePaymentStore.getByIds(
-        this.allItemsIds,
-        {
-          onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
-        },
-      ).filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
-    },
-
-    itemsToSubmitSelectAll: {
-      get(): boolean {
-        return this.itemsToSubmit.length === this.selectedItems.length;
-      },
-      set(value: boolean) {
-        this.selectedItems = value ? this.itemsToSubmit.map((e: IFinancialAssistancePaymentCombined) => e.entity.id) : [];
-      },
     },
 
     customColumns(): Record<string, string> {
@@ -387,12 +323,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       await this.initContainsActiveTables();
     }
-    // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
-    // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem
-    const res = await this.combinedFinancialAssistancePaymentStore.search({
-      filter: { 'Entity/CaseFileId': this.caseFileId },
-    });
-    this.allItemsIds = res.ids;
     if (this.canAdd) {
       this.householdDuplicates = await usePotentialDuplicateStore().getDuplicates(this.caseFile.householdId);
     }
@@ -402,15 +332,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     async fetchData(params: IAzureSearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.combinedFinancialAssistancePaymentStore.search({
-        search: params.search,
-        filter: { 'Entity/CaseFileId': this.caseFileId, ...filterParams },
+        filter: { 'Entity/CaseFileId': { value: this.caseFileId, type: EFilterKeyType.Guid }, ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, false, true);
       return res;
     },
 
@@ -494,22 +423,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       if (doDelete) {
         await useFinancialAssistancePaymentStore().deactivate(item.entity.id);
       }
-    },
-
-    async submitSelectedPayments() {
-      this.showSubmitDialog = false;
-      let nbSuccess = 0;
-      for (let i = 0; i < this.selectedItems.length; i += 1) {
-        // we will do each request at a time because validation might conflict between each
-        // eslint-disable-next-line no-await-in-loop
-        if (await useFinancialAssistancePaymentStore().submitFinancialAssistancePayment(this.selectedItems[i])) {
-          nbSuccess += 1;
-        }
-      }
-      if (nbSuccess === this.selectedItems.length) {
-        this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.multipleApprovalSubmitted', { nbSuccess }));
-      }
-      this.selectedItems = [];
     },
 
     getGroupTitle(paymentGroup: IFinancialAssistancePaymentGroup) {

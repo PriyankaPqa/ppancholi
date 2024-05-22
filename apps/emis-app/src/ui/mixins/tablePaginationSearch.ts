@@ -152,9 +152,10 @@ export default Vue.extend({
 
       this.setFilterParams();
 
+      const containsSearchOnly = !this.azureSearchParams?.filter || _isEmpty(this.azureSearchParams.filter);
       this.setSearchParams();
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const res = await (this as any).fetchData(this.azureSearchParams) as IAzureTableSearchResults;
+      const res = await (this as any).fetchData(this.azureSearchParams, containsSearchOnly) as IAzureTableSearchResults;
 
       if (res) {
         this.itemsCount = res.count;

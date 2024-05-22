@@ -92,7 +92,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
 
         expect(tds.wrappers[1].text()).toBe('thl payment');
         expect(tds.wrappers[2].text()).toBe('Apr 6, 2021');
-        expect(tds.wrappers[3].text()).toBe('$123.00');
+        expect(tds.wrappers[3].text()).toBe('$88.00');
         expect(tds.wrappers[4].text()).toBe('enums.ApprovalStatus.New');
       });
 
@@ -281,48 +281,6 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
     });
 
-    describe('itemsToSubmit', () => {
-      it('should filter for new items', async () => {
-        const data = [mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance()];
-        data[1].entity.approvalStatus = 2;
-        await mountWrapper();
-        jest.clearAllMocks();
-        wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds = jest.fn(() => data);
-        await wrapper.vm.$nextTick();
-        expect(wrapper.vm.itemsToSubmit).toEqual([data[0], data[2]]);
-        expect(wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds).toHaveBeenCalledWith(
-          wrapper.vm.allItemsIds,
-          {
-            baseDate: null, onlyActive: true, prependPinnedItems: true, parentId: { caseFileId: 'mock-cf-id' },
-          },
-        );
-      });
-    });
-
-    describe('itemsToSubmitSelectAll', () => {
-      it('sets or remove all selectedItems', async () => {
-        const data = [mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance()];
-        data[0].entity.id = 'id-0';
-        data[1].entity.id = 'id-1';
-        data[2].entity.id = 'id-2';
-        await mountWrapper();
-        wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds = jest.fn(() => data);
-        expect(wrapper.vm.selectedItems).toEqual([]);
-        expect(wrapper.vm.itemsToSubmitSelectAll).toBeFalsy();
-        wrapper.vm.itemsToSubmitSelectAll = true;
-        expect(wrapper.vm.selectedItems).toEqual(['id-0', 'id-1', 'id-2']);
-        expect(wrapper.vm.itemsToSubmitSelectAll).toBeTruthy();
-        wrapper.vm.itemsToSubmitSelectAll = false;
-        expect(wrapper.vm.selectedItems).toEqual([]);
-
-        await wrapper.setData({ selectedItems: ['id-0', 'id-1', 'id-2'] });
-        expect(wrapper.vm.itemsToSubmitSelectAll).toBeTruthy();
-
-        await wrapper.setData({ selectedItems: ['id-0'] });
-        expect(wrapper.vm.itemsToSubmitSelectAll).toBeFalsy();
-      });
-    });
-
     describe('headers', () => {
       it('depends on canEdit and canDelete', async () => {
         await mountWrapper(false, 6, null, {
@@ -404,15 +362,14 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.combinedFinancialAssistancePaymentStore.search).toHaveBeenCalledWith({
-          search: params.search,
-          filter: { 'Entity/CaseFileId': wrapper.vm.id, MyFilter: 'zzz' },
+          filter: { 'Entity/CaseFileId': { value: wrapper.vm.id, type: 'guid' }, MyFilter: 'zzz' },
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        });
+        }, null, false, true);
       });
     });
 
@@ -582,20 +539,6 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
     });
 
-    describe('submitSelectedPayments', () => {
-      it('calls submit for all selected', async () => {
-        await mountWrapper();
-        await wrapper.setData({ selectedItems: ['id-0', 'id-1', 'id-2'] });
-        await wrapper.vm.submitSelectedPayments();
-        expect(financialAssistancePaymentStore.submitFinancialAssistancePayment)
-          .toHaveBeenCalledWith('id-0');
-        expect(financialAssistancePaymentStore.submitFinancialAssistancePayment)
-          .toHaveBeenCalledWith('id-1');
-        expect(financialAssistancePaymentStore.submitFinancialAssistancePayment)
-          .toHaveBeenCalledWith('id-2');
-      });
-    });
-
     describe('checkHasRestrictFinancialTags', () => {
       it('set hasRestrictFinancialTags to true when case file tag with restrict fiancial exist', async () => {
         await mountWrapper();
@@ -623,16 +566,6 @@ describe('FinancialAssistancePaymentsList.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call storage for all items', async () => {
-        await mountWrapper();
-        wrapper.vm.initContainsActiveTables = jest.fn();
-        await wrapper.vm.$nextTick();
-        expect(wrapper.vm.combinedFinancialAssistancePaymentStore.search).toHaveBeenCalledWith(
-          { filter: { 'Entity/CaseFileId': wrapper.vm.id } },
-        );
-        expect(wrapper.vm.allItemsIds).toEqual(['1']);
-      });
-
       it('should not call the method initContainsActiveTables', async () => {
         await mountWrapper(false, null, UserRoles.readonly);
 

@@ -14,7 +14,6 @@ import { CaseFileDocumentsService } from '@libs/services-lib/case-file-documents
 import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
 import { CaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
-import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { MassActionService } from '@libs/services-lib/mass-actions/entity';
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
@@ -43,7 +42,6 @@ export const provider = (httpClient = client): IProvider => ({
   households: new HouseholdsService(httpClient),
   financialAssistanceTables: new FinancialAssistanceTablesService(httpClient),
   financialAssistancePaymentsService: new FinancialAssistancePaymentsService(httpClient),
-  financialAssistancePaymentsServiceMetadata: new FinancialAssistancePaymentsMetadataService(httpClient),
   userAccounts: new UserAccountsService(httpClient),
   massActions: new MassActionService(httpClient),
   tenantSettings: new TenantSettingsService(httpClient),

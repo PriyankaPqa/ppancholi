@@ -1,10 +1,9 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import { defineStore } from 'pinia';
-import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@libs/stores-lib/base';
+import { getMockEntityStoreComponents } from '@libs/stores-lib/base';
 import {
   mockCaseFinancialAssistanceEntities,
   mockCaseFinancialAssistanceEntity,
-  mockCaseFinancialAssistanceMetadata,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { getMockFinancialAssistancePaymentExtensionComponents } from '@/pinia/financial-assistance-payment/financial-assistance-payment-extension.mock';
 
@@ -18,12 +17,8 @@ export const useMockFinancialAssistancePaymentStore = (pinia?: TestingPinia) => 
     ...getMockFinancialAssistancePaymentExtensionComponents(mockCaseFinancialAssistanceEntity()),
   }));
 
-  const useMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-    ...getMockBaseStoreComponents([mockCaseFinancialAssistanceMetadata()]),
-  }));
   return {
     pinia: p,
     financialAssistancePaymentStore: useStore(),
-    financialAssistancePaymentMetadataStore: useMetadataStore(),
   };
 };

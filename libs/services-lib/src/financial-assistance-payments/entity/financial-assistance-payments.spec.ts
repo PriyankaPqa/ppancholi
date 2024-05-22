@@ -139,17 +139,10 @@ describe('>>> Financial assistance payment Service', () => {
   });
 
   describe('search', () => {
-    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      const searchEndpoint = 'mock-endpoint';
-      await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`finance/search/${searchEndpoint}`, { params, isOData: true });
-    });
-
-    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+    it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('finance/search/financial-assistance-payments', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('finance/search/financial-assistance-paymentsV2', { params, isODataSql: true });
     });
   });
 });

@@ -1,13 +1,13 @@
 import { shallowMount, createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { RcDataTable } from '@libs/component-lib/components';
-import { mockCombinedCaseFinancialAssistance, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
-import { Status } from '@libs/entities-lib/base';
+import { mockCombinedCaseFinancialAssistance } from '@libs/entities-lib/financial-assistance-payment';
 import { EFilterType } from '@libs/component-lib/types';
 import { useUserStore } from '@/pinia/user/user';
 
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './ApprovalRequestsTable.vue';
 
 const localVue = createLocalVue();
@@ -17,6 +17,8 @@ let userStore;
 
 const FAPayment = mockCombinedCaseFinancialAssistance();
 const { pinia } = useMockFinancialAssistancePaymentStore();
+const eventStore = useMockEventStore(pinia).eventStore;
+const caseFileStore = useMockCaseFileStore(pinia).caseFileStore;
 
 const doMount = (otherOptions = {}) => {
   const options = {
@@ -49,7 +51,11 @@ describe('ApprovalRequestsTable', () => {
             };
           },
         });
-        expect(wrapper.vm.tableData).toEqual([mockCombinedCaseFinancialAssistance()]);
+        expect(wrapper.vm.tableData).toEqual([{
+          entity: mockCombinedCaseFinancialAssistance().entity,
+          casefile: caseFileStore.getById(),
+          event: eventStore.getById(),
+        }]);
       });
     });
 
@@ -68,20 +74,16 @@ describe('ApprovalRequestsTable', () => {
         });
         expect(wrapper.vm.presetFilter).toEqual({
           or: [
-            { 'Entity/ApprovalStatus': ApprovalStatus.Pending },
+            { 'Entity/ApprovalStatus': 'Pending' },
           ],
-          'Entity/Status': Status.Active,
+          'Entity/Status': 'Active',
           Metadata: {
-            CurrentApprovalGroupRoles: {
-              any: {
-                [ITEM_ROOT]: 'my-role-id',
-              },
-            },
+            CurrentApprovalGroupRoles: { contains: 'my-role-id' },
           },
           not: {
             Entity: {
               SubmittedBy: {
-                UserId: 'my-user-id',
+                UserId: { value: 'my-user-id', type: 'guid' },
               },
             },
           },
@@ -99,20 +101,10 @@ describe('ApprovalRequestsTable', () => {
         });
         expect(wrapper.vm.presetFilter).toEqual({
           or: [
-            { 'Entity/ApprovalStatus': ApprovalStatus.Approved },
+            { 'Entity/ApprovalStatus': 'Approved' },
           ],
-          'Entity/Status': Status.Active,
-          Entity: {
-            ApprovalTableGroupsSnapshots: {
-              any: {
-                Roles: {
-                  any: {
-                    [ITEM_ROOT]: 'my-role-id',
-                  },
-                },
-              },
-            },
-          },
+          'Entity/Status': 'Active',
+          'Entity/ApprovalTableGroupsSnapshotsAsString': { contains: 'my-role-id' },
         });
       });
     });
@@ -127,7 +119,7 @@ describe('ApprovalRequestsTable', () => {
           payment: 'Entity/Name',
           submittedBy: 'Entity/SubmittedBy/UserName',
           submittedTo: 'Entity/SubmittedTo/UserName',
-          event: 'Metadata/EventName/Translation/en',
+          event: 'Metadata/Event/Translation/en',
           submissionStartedDate: 'Entity/SubmissionStartedDate',
           amount: 'Metadata/Total',
           actionable: 'action',
@@ -143,7 +135,7 @@ describe('ApprovalRequestsTable', () => {
           payment: 'Entity/Name',
           submittedBy: 'Entity/SubmittedBy/UserName',
           submittedTo: 'Entity/SubmittedTo/UserName',
-          event: 'Metadata/EventName/Translation/en',
+          event: 'Metadata/Event/Translation/en',
           submissionStartedDate: 'Entity/SubmissionStartedDate',
           amount: 'Metadata/Total',
         });
@@ -264,6 +256,7 @@ describe('ApprovalRequestsTable', () => {
           },
           {
             key: 'Entity/SubmittedBy/UserId',
+            keyType: 'guid',
             type: EFilterType.MultiSelect,
             label: 'approvalRequestsTable.submittedBy',
             items: wrapper.vm.userAccountFilterState.submittedBy.users,
@@ -278,6 +271,7 @@ describe('ApprovalRequestsTable', () => {
           },
           {
             key: 'Entity/SubmittedTo/UserId',
+            keyType: 'guid',
             type: EFilterType.MultiSelect,
             label: 'approvalRequestsTable.submittedTo',
             items: wrapper.vm.userAccountFilterState.submittedTo.users,
@@ -291,7 +285,8 @@ describe('ApprovalRequestsTable', () => {
             },
           },
           {
-            key: 'Metadata/EventId',
+            key: 'Metadata/Event/Id',
+            keyType: 'guid',
             type: EFilterType.Select,
             label: 'approvalRequestsTable.event',
             items: wrapper.vm.sortedEventsFilter,
@@ -543,7 +538,10 @@ describe('ApprovalRequestsTable', () => {
           orderBy: 'name asc',
         };
 
-        wrapper.vm.combinedFinancialAssistancePaymentStore.search = jest.fn();
+        wrapper.vm.combinedFinancialAssistancePaymentStore.search = jest.fn(() => ({
+          ids: ['id-1'],
+          values: [mockCombinedCaseFinancialAssistance({ id: 'id-1', caseFileId: 'cf-id-1' })],
+        }));
         await wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.combinedFinancialAssistancePaymentStore.search)
@@ -556,7 +554,10 @@ describe('ApprovalRequestsTable', () => {
             count: true,
             queryType: 'full',
             searchMode: 'all',
-          }, null, true);
+          }, null, true, true);
+
+        expect(caseFileStore.fetchByIds).toHaveBeenCalledWith(['cf-id-1'], true);
+        expect(eventStore.fetchByIds).toHaveBeenCalledWith(caseFileStore.fetchByIds().map((x) => x.eventId), true);
       });
     });
 
@@ -609,7 +610,7 @@ describe('ApprovalRequestsTable', () => {
           },
         };
         await wrapper.vm.onLoadApprovalFilters(filterFormData);
-        expect(wrapper.vm.onLoadFilter).toHaveBeenCalledWith(filterFormData, 'Metadata/EventId');
+        expect(wrapper.vm.onLoadFilter).toHaveBeenCalledWith(filterFormData, 'Metadata/Event/Id');
       });
 
       it('should call onLoadUserAccountFilters ', async () => {
@@ -684,6 +685,7 @@ describe('ApprovalRequestsTable', () => {
 
       it('displays the correct header values', async () => {
         await wrapper.setProps({ isPendingRequests: true });
+        await wrapper.setData({ searchLoading: false });
         const headers = wrapper.findAll('th');
 
         expect(headers.length)

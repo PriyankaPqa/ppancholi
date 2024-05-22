@@ -336,10 +336,17 @@ describe('tablePaginationSearch.vue', () => {
         expect(wrapper.vm.setSearchParams).toBeCalled();
       });
 
-      it('calls fetchData from the component with correct parameters', async () => {
+      it('calls fetchData from the component with correct parameters - when no additional filter', async () => {
         jest.spyOn(wrapper.vm, 'fetchData');
         await wrapper.vm.search(params);
-        expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.azureSearchParams);
+        expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.azureSearchParams, true);
+      });
+
+      it('calls fetchData from the component with correct parameters - with additional filter', async () => {
+        jest.spyOn(wrapper.vm, 'fetchData');
+        await wrapper.setData({ userFilters: { entity: 'something' } });
+        await wrapper.vm.search(params);
+        expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.azureSearchParams, false);
       });
 
       it('sets searchResultIds with the ids returned', async () => {

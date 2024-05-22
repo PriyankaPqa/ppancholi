@@ -21,6 +21,7 @@
           :initial-filter="filterState"
           :count="itemsCount"
           add-filter-label="approval.requests.filter.title"
+          :sql-mode="true"
           @open="onOpenFilters()"
           @update:appliedFilter="onApplyFilterLocal"
           @update:autocomplete="onAutoCompleteUpdate($event)"
@@ -61,7 +62,7 @@
           class="rc-link14 font-weight-bold"
           :data-test="`approval_requests_case-file-link_${item.entity.caseFileId}`"
           :to="getCaseFileDetailsRoute(item.entity.caseFileId)">
-          {{ item.metadata ? item.metadata.caseFileNumber : '' }}
+          {{ item.casefile ? item.casefile.caseFileNumber : '' }}
         </router-link>
       </template>
 
@@ -88,7 +89,7 @@
 
       <template #[`item.${customColumns.event}`]="{ item }">
         <span :data-test="`associated_event_fa_id_${item.entity.id}`">
-          {{ item.metadata ? $m(item.metadata.eventName) : '' }}
+          {{ item.event ? $m(item.event.name) : '' }}
         </span>
       </template>
 
@@ -100,7 +101,7 @@
 
       <template #[`item.${customColumns.amount}`]="{ item }">
         <div class="text-no-wrap" :data-test="`payment_amount_fa_id_${item.entity.id}`">
-          {{ $formatCurrency(item.metadata.total) }}
+          {{ $formatCurrency(groupTotal(item.entity.groups)) }}
         </div>
       </template>
 
@@ -133,16 +134,15 @@ import mixins from 'vue-typed-mixins';
 import { TranslateResult } from 'vue-i18n';
 import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
-import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
-import { EFilterType, FilterFormData, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, FilterFormData, IFilterSettings } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import {
   ApprovalStatus,
+  FinancialAssistancePaymentGroup,
   IdParams,
   IFinancialAssistancePaymentCombined,
   IFinancialAssistancePaymentEntity,
-  IFinancialAssistancePaymentMetadata,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IAzureSearchParams, IDropdownItem } from '@libs/shared-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -156,13 +156,18 @@ import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useUserStore } from '@/pinia/user/user';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import helper from '@libs/shared-lib/helpers/helpers';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useEventStore } from '@/pinia/event/event';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { IEventEntity } from '@libs/entities-lib/event';
 import ApprovalActionDialog from './ApprovalActionDialog.vue';
 
-interface IMappedPayment extends IFinancialAssistancePaymentCombined {
-  isActionable: boolean;
-  nextRoleGroup: string[];
-  excludedUsers: string[];
+export interface IMappedPayment {
+  entity: IFinancialAssistancePaymentEntity,
+  casefile: ICaseFileEntity,
+  event: IEventEntity,
 }
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccountsFilter).extend({
@@ -213,10 +218,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
           levels: [UserRolesNames.level3, UserRolesNames.level4],
         },
       },
-      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, IdParams>(
+      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, null, IdParams>(
         useFinancialAssistancePaymentStore(),
-        useFinancialAssistancePaymentMetadataStore(),
+        null,
       ),
+      groupTotal: FinancialAssistancePaymentGroup.total,
+      sqlSearchMode: true,
     };
   },
 
@@ -229,41 +236,32 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
       return useUserAccountStore()?.currentUserAccount?.roles[0]?.optionItemId;
     },
 
-    tableData(): IFinancialAssistancePaymentCombined[] {
+    tableData(): IMappedPayment[] {
       return this.combinedFinancialAssistancePaymentStore.getByIds(this.searchResultIds, {
         onlyActive: true,
         prependPinnedItems: false,
         baseDate: this.searchExecutionDate,
+      }).map((f) => {
+        const casefile = useCaseFileStore().getById(f.entity.caseFileId);
+        return {
+          entity: f.entity,
+          casefile,
+          event: useEventStore().getById(casefile?.eventId),
+        };
       });
     },
 
     presetFilter(): Record<string, unknown> {
-      const approvedRequestsFilter = {
-        Entity: {
-          ApprovalTableGroupsSnapshots: {
-            any: {
-              Roles: {
-                any: {
-                  [ITEM_ROOT]: this.myRoleId,
-                },
-              },
-            },
-          },
-        },
-      };
+      const approvedRequestsFilter = { 'Entity/ApprovalTableGroupsSnapshotsAsString': { contains: this.myRoleId } };
 
       const pendingRequestsFilter = {
         Metadata: {
-          CurrentApprovalGroupRoles: {
-            any: {
-              [ITEM_ROOT]: this.myRoleId,
-            },
-          },
+          CurrentApprovalGroupRoles: { contains: this.myRoleId },
         },
         not: {
           Entity: {
             SubmittedBy: {
-              UserId: this.myUserId,
+              UserId: { value: this.myUserId, type: EFilterKeyType.Guid },
             },
           },
         },
@@ -271,19 +269,16 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
 
       return {
         or: [
-          { 'Entity/ApprovalStatus': this.isPendingRequests ? ApprovalStatus.Pending : ApprovalStatus.Approved },
+          { 'Entity/ApprovalStatus': this.isPendingRequests
+            ? helper.getEnumKeyText(ApprovalStatus, ApprovalStatus.Pending) : helper.getEnumKeyText(ApprovalStatus, ApprovalStatus.Approved) },
         ],
-        'Entity/Status': Status.Active,
+        'Entity/Status': helper.getEnumKeyText(Status, Status.Active),
         ...this.isPendingRequests ? pendingRequestsFilter : approvedRequestsFilter,
       };
     },
 
-    submittedToMeFilter(): { 'Entity/SubmittedTo': { UserId: string } } {
-      return {
-        'Entity/SubmittedTo': {
-          UserId: this.myUserId,
-        },
-      };
+    submittedToMeFilter(): Record<string, unknown> {
+      return { 'Entity/SubmittedTo/UserId': { value: this.myUserId, type: EFilterKeyType.Guid } };
     },
 
     customColumns(): Record<string, string> {
@@ -292,7 +287,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
         payment: 'Entity/Name',
         submittedBy: 'Entity/SubmittedBy/UserName',
         submittedTo: 'Entity/SubmittedTo/UserName',
-        event: `Metadata/EventName/Translation/${this.$i18n.locale}`,
+        event: `Metadata/Event/Translation/${this.$i18n.locale}`,
         submissionStartedDate: 'Entity/SubmissionStartedDate',
         amount: 'Metadata/Total',
         ...this.isPendingRequests ? { actionable: 'action' } : {},
@@ -365,6 +360,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
         },
         {
           key: 'Entity/SubmittedBy/UserId',
+          keyType: EFilterKeyType.Guid,
           type: EFilterType.MultiSelect,
           label: this.$t('approvalRequestsTable.submittedBy') as string,
           items: this.userAccountFilterState.submittedBy.users,
@@ -379,6 +375,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
         },
         {
           key: 'Entity/SubmittedTo/UserId',
+          keyType: EFilterKeyType.Guid,
           type: EFilterType.MultiSelect,
           label: this.$t('approvalRequestsTable.submittedTo') as string,
           items: this.userAccountFilterState.submittedTo.users,
@@ -392,7 +389,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
           },
         },
         {
-          key: 'Metadata/EventId',
+          key: 'Metadata/Event/Id',
+          keyType: EFilterKeyType.Guid,
           type: EFilterType.Select,
           label: this.$t('approvalRequestsTable.event') as string,
           items: this.sortedEventsFilter,
@@ -505,11 +503,13 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
       await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: IAzureSearchParams, containsSearchOnly: boolean) {
       this.searchLoading = true;
-      if (_isEmpty(params.filter)) {
-        params.filter = this.presetFilter;
+
+      if (containsSearchOnly) {
+        params.filter = { ...this.presetFilter, ...(params.filter as Record<string, any>) };
       }
+
       const res = await this.combinedFinancialAssistancePaymentStore.search({
         search: params.search,
         filter: params.filter,
@@ -519,7 +519,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, null, true);
+      }, null, true, true);
+
+      const cf = await useCaseFileStore().fetchByIds(res.values.map((f: IFinancialAssistancePaymentCombined) => f.entity.caseFileId), true);
+      await useEventStore().fetchByIds(cf.map((c) => c.eventId), true);
 
       this.searchLoading = false;
       return res;
@@ -550,14 +553,14 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
      * When loading a filter, we need to fetch items in case they are not contained in the initial load (top limitation)
      */
     async onLoadApprovalFilters(filterFormData: FilterFormData) {
-      this.onLoadFilter(filterFormData, 'Metadata/EventId'); // Loading event filter from mixin
+      this.onLoadFilter(filterFormData, 'Metadata/Event/Id'); // Loading event filter from mixin
       this.onLoadUserAccountFilters(filterFormData);
     },
 
     onAutoCompleteUpdate({ filterKey, search, selectedItem }: { filterKey: string, search: string, selectedItem: IDropdownItem | string[] }) {
-      if (search !== (selectedItem as IDropdownItem)?.text && filterKey === 'Metadata/EventId') {
+      if (search !== (selectedItem as IDropdownItem)?.text && filterKey === 'Metadata/Event/Id') {
         this.eventFilterQuery = search;
-      } else if (filterKey !== 'Metadata/EventId') {
+      } else if (filterKey !== 'Metadata/Event/Id') {
         this.onUserAutoCompleteUpdate({ filterKey, search, selectedItem: selectedItem as string[] });
       }
     },

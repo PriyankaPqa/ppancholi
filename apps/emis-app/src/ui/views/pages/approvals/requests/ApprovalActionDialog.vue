@@ -90,7 +90,7 @@
 </template>
 
 <script lang="ts">
-import { ApprovalAction, IApprovalActionPayload, IFinancialAssistancePaymentCombined } from '@libs/entities-lib/financial-assistance-payment';
+import { ApprovalAction, IApprovalActionPayload } from '@libs/entities-lib/financial-assistance-payment';
 import { VForm } from '@libs/shared-lib/types';
 import {
   RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation, VTextAreaWithValidation, MessageBox,
@@ -100,6 +100,7 @@ import {
   IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { IMappedPayment } from './ApprovalRequestsTable.vue';
 
 export default Vue.extend({
   name: 'ApprovalActionDialog',
@@ -112,7 +113,7 @@ export default Vue.extend({
   },
   props: {
     financialAssistancePayment: {
-      type: Object as () => IFinancialAssistancePaymentCombined,
+      type: Object as () => IMappedPayment,
       required: true,
     },
     myRoleId: {
@@ -202,7 +203,7 @@ export default Vue.extend({
         const roles = await this.$services.financialAssistancePaymentsService.getNextApprovalGroupRoles(this.financialAssistancePayment.entity.id);
         if (roles && roles.length) {
           this.nextApprovalGroupRoles = roles;
-          await this.getUsersByRolesAndEvent(roles, this.financialAssistancePayment.metadata.eventId);
+          await this.getUsersByRolesAndEvent(roles, this.financialAssistancePayment.event.id);
         }
       } finally {
         this.loadingUsers = false;

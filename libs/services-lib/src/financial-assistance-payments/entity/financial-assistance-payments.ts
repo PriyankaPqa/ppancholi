@@ -5,6 +5,8 @@ import {
   PaymentsSummary,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { EPaymentCancellationReason, IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { IEntity } from '@libs/entities-lib/src/base';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { IFinancialAssistancePaymentsService, IUpdatePaymentStatusParams } from './financial-assistance-payments.types';
@@ -90,5 +92,10 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
 
   async getNextApprovalGroupRoles(financialAssistanceId: uuid): Promise<uuid[]> {
     return this.http.get(`${this.baseUrl}/${financialAssistanceId}/next-approval-group-roles`);
+  }
+
+  async search(params: IAzureSearchParams):
+    Promise<IAzureCombinedSearchResult<IFinancialAssistancePaymentEntity, IEntity>> {
+    return this.http.get('finance/search/financial-assistance-paymentsV2', { params, isODataSql: true });
   }
 }
