@@ -9,6 +9,7 @@
     :apply-data-test="applyDataTest"
     :show-cancel="showCancel"
     :show-close="showClose"
+    :show-submit="showSubmit"
     :show.sync="show"
     :persistent="true"
     :max-width="maxWidth"
@@ -61,7 +62,7 @@ export default Vue.extend({
       default: false,
     },
     messages: {
-      type: [String, Array],
+      type: [String, Array, Object],
       default: '',
     },
     submitButtonKey: {
@@ -85,6 +86,10 @@ export default Vue.extend({
       default: true,
     },
     showClose: {
+      type: Boolean,
+      default: true,
+    },
+    showSubmit: {
       type: Boolean,
       default: true,
     },

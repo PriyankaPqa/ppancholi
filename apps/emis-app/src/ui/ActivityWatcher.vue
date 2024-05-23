@@ -1,13 +1,26 @@
 <template>
-  <div />
+  <rc-confirmation-dialog
+    ref="continueConfirm"
+    :show.sync="showLogOutPopup"
+    :title="$t('session_will_expire.title')"
+    :messages="$t('session_will_expire.message.inactivity', { x: logOutCountdown })"
+    submit-data-test="submit-continue-session"
+    :show-cancel="false"
+    :show-close="false"
+    :show-submit="false" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { useUserStore } from '@/pinia/user/user';
+import RcConfirmationDialog from '@libs/component-lib/components/atoms/RcConfirmationDialog.vue';
+import { localStorageKeys } from '@/constants/localStorage';
 
 export default Vue.extend({
   name: 'ActivityWatcher',
+  components: {
+    RcConfirmationDialog,
+  },
 
   props: {
     /**
@@ -43,7 +56,7 @@ export default Vue.extend({
     },
 
     /**
-     * Stop watching for activity or inactivity
+     * Is true if we want to log out on inactivity
      */
     stopOnInactivity: {
       type: Boolean,
@@ -52,63 +65,87 @@ export default Vue.extend({
   },
 
   data: () => ({
-    secondsSinceLastActivity: 0,
+    watcher: null as any,
+    logOutTimer: null as any,
+    logOutCountdownTimer: null as any,
+    logOutCountdown: 0,
+    showLogOutPopup: false,
     userInactive: false,
   }),
 
-  watch: {
-    userInactive(inactivity: boolean) {
-      if (inactivity) {
-        this.onInactivity();
-      }
-    },
+  mounted() {
+    if (this.stopOnInactivity) {
+      localStorage.setItem(localStorageKeys.lastActivityTimeStamp.name, new Date().toString());
+      this.activityWatcher();
+
+      this.activityEvents.forEach((eventName: string) => {
+        document.addEventListener(eventName, this.resetCounter, true);
+      });
+    }
   },
 
-  mounted() {
-    this.activityWatcher();
-
-    this.activityEvents.forEach((eventName: string) => {
-      document.addEventListener(eventName, this.resetCounter, true);
-    });
+  destroyed() {
+    clearInterval(this.watcher);
+    clearInterval(this.logOutCountdownTimer);
+    clearTimeout(this.logOutTimer);
   },
 
   methods: {
     activityWatcher() {
-      this.secondsSinceLastActivity = 0;
+      localStorage.setItem(localStorageKeys.lastActivityTimeStamp.name, new Date().toString());
 
-      const watcher = setInterval(() => {
-        this.secondsSinceLastActivity += this.checkFrequency;
+      clearInterval(this.watcher);
+      this.watcher = setInterval(() => {
+        const localStorageTimeStamp = localStorage.getItem(localStorageKeys.lastActivityTimeStamp.name);
+        const lastActivityTimeStamp = localStorageTimeStamp ? new Date(localStorageTimeStamp) : new Date();
+        const inactivityDuration = Math.floor((new Date().getTime() - lastActivityTimeStamp.getTime()) / 1000);
+        this.userInactive = inactivityDuration > this.maxInactivity;
+        const userMustBeLoggedOff = inactivityDuration > this.maxInactivity + this.timeBeforeLogOut;
 
-        this.userInactive = this.secondsSinceLastActivity > this.maxInactivity;
+        if (userMustBeLoggedOff) {
+          this.signOut();
+          return;
+        }
 
-        if (this.userInactive && this.stopOnInactivity) {
-          clearInterval(watcher);
+        if (this.userInactive && !this.showLogOutPopup) {
+          this.onInactivity();
         }
       }, this.checkFrequency * 1000);
     },
 
     resetCounter() {
-      this.secondsSinceLastActivity = 0;
+      localStorage.setItem(localStorageKeys.lastActivityTimeStamp.name, new Date().toString());
+    },
+
+    startCountdown() {
+      this.logOutCountdown = this.timeBeforeLogOut;
+
+      clearInterval(this.logOutCountdownTimer);
+      this.logOutCountdownTimer = setInterval(() => {
+        if (this.logOutCountdown > 0) {
+          this.logOutCountdown -= 1;
+        }
+        if (!this.userInactive) {
+          this.continueSession();
+        }
+      }, 1000);
     },
 
     async onInactivity() {
       // Will sign out in x seconds
-      const logOutTimer = setTimeout(() => {
-        this.signOut();
+      this.logOutTimer = setTimeout(() => {
+          this.signOut();
       }, this.timeBeforeLogOut * 1000);
 
-      const continueSession = await this.$confirm({
-        title: this.$t('session_will_expire.title'),
-        messages: this.$t('session_will_expire.message', { x: this.timeBeforeLogOut }),
-        htmlContent: '',
-        submitActionLabel: this.$t('session_will_expire.submit.label'),
-        showCancelButton: false,
-      });
+      this.startCountdown();
+      this.showLogOutPopup = true;
+    },
 
-      if (continueSession) {
-        clearTimeout(logOutTimer);
-        this.activityWatcher();
-      }
+    continueSession() {
+      clearTimeout(this.logOutTimer);
+      clearInterval(this.logOutCountdownTimer);
+      this.showLogOutPopup = false;
+      this.activityWatcher();
     },
 
     signOut() {

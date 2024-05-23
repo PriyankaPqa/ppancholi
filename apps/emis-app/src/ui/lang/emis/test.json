@@ -3096,6 +3096,7 @@
     "rightmenu.version": "rightmenu.version",
     "searchTable.footer": "searchTable.footer",
     "session_will_expire.message": "session_will_expire.message",
+    "session_will_expire.message.inactivity": "",
     "session_will_expire.submit.label": "session_will_expire.submit.label",
     "session_will_expire.title": "session_will_expire.title",
     "system.public_user_id": "system.public_user_id",

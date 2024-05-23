@@ -26,4 +26,7 @@ export const localStorageKeys = {
   loginHint: {
     name: 'login-hint',
   },
+  lastActivityTimeStamp: {
+    name: 'last-activity-timeStamp',
+  },
 };

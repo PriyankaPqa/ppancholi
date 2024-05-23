@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { useMockUserStore } from '@/pinia/user/user.mock';
+import { localStorageKeys } from '@/constants/localStorage';
 import Component from './ActivityWatcher.vue';
 
 const localVue = createLocalVue();
@@ -7,13 +8,14 @@ const localVue = createLocalVue();
 let wrapper;
 const { pinia, userStore } = useMockUserStore();
 
-const doMount = (maxInactivity = 1) => {
+const doMount = (maxInactivity = 1, forceOptions = {}) => {
   const options = {
     propsData: {
       maxInactivity,
     },
     localVue,
     pinia,
+    ...forceOptions,
   };
 
   wrapper = shallowMount(Component, options);
@@ -23,56 +25,66 @@ describe('ActivityWatcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     doMount();
+    wrapper.vm.$refs.continueConfirm.open = jest.fn();
   });
 
   describe('Methods', () => {
     describe('activityWatcher', () => {
-      it('should set userInactive to false if activity detected before the limit', () => {
+      it('should call signOut if inactivity is beyond limit plus countdown to logout', () => {
+        jest.useFakeTimers();
+        wrapper.vm.signOut = jest.fn();
         wrapper.vm.activityWatcher();
-        expect(wrapper.vm.userInactive).toBe(false);
+        jest.advanceTimersByTime((wrapper.vm.timeBeforeLogOut + wrapper.vm.maxInactivity) * 1000 + 1000);
+        expect(wrapper.vm.signOut).toBeCalled();
       });
 
-      it('should set userInactive to true if not activity detected after the limit', () => {
+      it('should call onInactivity if inactivity is beyond limit', () => {
         jest.useFakeTimers();
+        wrapper.vm.onInactivity = jest.fn();
         wrapper.vm.activityWatcher();
-        jest.advanceTimersByTime(2000);
-        expect(wrapper.vm.userInactive).toBe(true);
+        jest.advanceTimersByTime((wrapper.vm.maxInactivity) * 1000 + 1000);
+        expect(wrapper.vm.onInactivity).toBeCalled();
+      });
+
+      it('should not call anything if is not beyond limit', () => {
+        jest.useFakeTimers();
+        wrapper.vm.onInactivity = jest.fn();
+        wrapper.vm.signOut = jest.fn();
+        wrapper.vm.activityWatcher();
+        jest.advanceTimersByTime(1000);
+        expect(wrapper.vm.onInactivity).not.toBeCalled();
+        expect(wrapper.vm.signOut).not.toBeCalled();
       });
     });
 
     describe('resetCounter', () => {
-      it('should reset counter of last activity', async () => {
-        await wrapper.setData({ secondsSinceLastActivity: 10 });
+      it('should reset timestamp of last activity', async () => {
+        global.localStorage.setItem(localStorageKeys.lastActivityTimeStamp.name, new Date(2024, 2, 1).toString());
+
         wrapper.vm.resetCounter();
-        expect(wrapper.vm.secondsSinceLastActivity).toBe(0);
+        expect(new Date(global.localStorage.getItem(localStorageKeys.lastActivityTimeStamp.name)).setSeconds(0, 0)).toBe((new Date()).setSeconds(0, 0));
       });
     });
 
     describe('onInactivity', () => {
-      it('should display confirmation dialog', async () => {
+      it('should call startCountdown', async () => {
+        wrapper.vm.startCountdown = jest.fn();
         await wrapper.vm.onInactivity();
+        expect(wrapper.vm.startCountdown).toBeCalled();
+      });
 
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
-          htmlContent: '',
-          messages: { key: 'session_will_expire.message', params: [{ x: wrapper.vm.timeBeforeLogOut }] },
-          showCancelButton: false,
-          submitActionLabel: 'session_will_expire.submit.label',
-          title: 'session_will_expire.title',
-        });
+      it('should open the countdown popup ', async () => {
+        await wrapper.vm.onInactivity();
+        expect(wrapper.vm.showLogOutPopup).toBe(true);
       });
 
       it('should sign out if not confirmation from user after X seconds', () => {
         wrapper.vm.signOut = jest.fn();
         jest.useFakeTimers();
+        wrapper.setData({ userInactive: true });
         wrapper.vm.onInactivity();
-        jest.advanceTimersByTime(60000); // 60sec
+        jest.advanceTimersByTime((wrapper.vm.timeBeforeLogOut + 10) * 1000); // 60sec
         expect(wrapper.vm.signOut).toHaveBeenCalledTimes(1);
-      });
-
-      it('should call activity watcher if user wants to continue session', async () => {
-        wrapper.vm.activityWatcher = jest.fn();
-        await wrapper.vm.onInactivity();
-        expect(wrapper.vm.activityWatcher).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -87,13 +99,16 @@ describe('ActivityWatcher', () => {
         expect(wrapper.vm.$signalR.unsubscribeAll).toHaveBeenCalledTimes(1);
       });
     });
-  });
 
-  describe('Watch', () => {
-    it('should call onInactivity if inactivity detected', async () => {
-      wrapper.vm.onInactivity = jest.fn();
-      await wrapper.setData({ userInactive: true });
-      expect(wrapper.vm.onInactivity).toHaveBeenCalledTimes(1);
+    describe('continueSession', () => {
+      it('should call activity watcher and closes the popup', async () => {
+        wrapper.vm.activityWatcher = jest.fn();
+        wrapper.setData({ showLogOutPopup: true });
+
+        await wrapper.vm.continueSession();
+        expect(wrapper.vm.activityWatcher).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.showLogOutPopup).toBeFalsy();
+      });
     });
   });
 
@@ -106,11 +121,23 @@ describe('ActivityWatcher', () => {
       });
     });
 
-    it('should call activityWatcher', () => {
+    it('should call activityWatcher if stopOnInactivity is true', async () => {
       expect(wrapper.vm.activityWatcher).toHaveBeenCalledTimes(1);
     });
 
-    it('should add event listener for all activity events', () => {
+    it('should not call activityWatcher if stopOnInactivity is false', async () => {
+      doMount(1, { propsData: {
+        stopOnInactivity: false,
+        maxInactivity: 1,
+      } });
+      jest.spyOn(wrapper.vm, 'activityWatcher');
+      wrapper.vm.$options.mounted.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(wrapper.vm.activityWatcher).not.toHaveBeenCalled();
+    });
+
+    it('should add event listener for all activity events if stopOnInactivity is true', () => {
       expect(document.addEventListener).toHaveBeenCalledWith('mousedown', wrapper.vm.resetCounter, true);
       expect(document.addEventListener).toHaveBeenCalledWith('mousemove', wrapper.vm.resetCounter, true);
       expect(document.addEventListener).toHaveBeenCalledWith('keydown', wrapper.vm.resetCounter, true);

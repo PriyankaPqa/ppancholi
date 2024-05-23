@@ -3096,6 +3096,7 @@
     "rightmenu.version": "Version",
     "searchTable.footer": "* Last search occurred on {date}",
     "session_will_expire.message": "You will be logged out in {x} seconds",
+    "session_will_expire.message.inactivity": "You will be logged out in {x} seconds if no activity is detected",
     "session_will_expire.submit.label": "Continue session",
     "session_will_expire.title": "Your session is about to expire",
     "system.public_user_id": "Individual",
