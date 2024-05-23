@@ -35,7 +35,7 @@ Cypress.Commands.add('waitForStatusCode', (url, statusCode, timeout?: 5000) => {
     if (interception.response.statusCode === statusCode) {
       cy.log(`Expected ${statusCode} received for ${interception.request.url}`);
     } else {
-      cy.log(`Expected ${statusCode} not received for ${interception.request.url}`);
+      throw Error(`Expected ${statusCode} not received for ${interception.request.url}`);
     }
   });
 });

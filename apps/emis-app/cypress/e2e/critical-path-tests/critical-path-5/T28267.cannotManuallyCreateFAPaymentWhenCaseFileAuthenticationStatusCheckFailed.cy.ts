@@ -79,9 +79,9 @@ describe('[T28267] Cannot create manual FA payment when Case File Authentication
           const caseFileDetailsPage = new CaseFileDetailsPage();
           caseFileDetailsPage.getIdentityIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-error');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
+          cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-
           const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
           // eslint-disable-next-line

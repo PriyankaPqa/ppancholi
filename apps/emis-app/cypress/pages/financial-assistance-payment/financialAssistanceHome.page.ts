@@ -180,7 +180,6 @@ export class FinancialAssistanceHomePage {
 
   public addNewFaPayment() {
     this.getAddFaPaymentButton().should('be.visible');
-    cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
     this.getAddFaPaymentButton().click({ force: true });
     return new AddFinancialAssistancePage();
   }

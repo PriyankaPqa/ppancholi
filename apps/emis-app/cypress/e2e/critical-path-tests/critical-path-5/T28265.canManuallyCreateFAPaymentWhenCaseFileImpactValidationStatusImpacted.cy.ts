@@ -81,7 +81,7 @@ describe('[T28265] Can create manual FA payment when Validation of Impact status
           const caseFileDetailsPage = new CaseFileDetailsPage();
           caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-success');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
-
+          cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
           financialAssistanceHomePage.addNewFaPayment();
 
