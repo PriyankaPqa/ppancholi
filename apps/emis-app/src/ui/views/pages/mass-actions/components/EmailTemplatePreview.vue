@@ -21,6 +21,12 @@
           <div class="rc-body16 fw-bold mb-6 subject">
             {{ $t('common.subject') }}: {{ subject }}
           </div>
+          <div v-if="files.length > 0" class="rc-body16 mb-6 attachments" data-test="email_template_attachments">
+            <strong>{{ $t('common.attached_documents') }}:</strong>
+            <span v-for="file in files" :key="file.name">
+              {{ file.name }} ({{ helpers.formatBytes(file.size) }})
+            </span>
+          </div>
           <!-- eslint is disabled because we purposefully decided to inject html in this -->
           <!-- eslint-disable -->
           <div v-html="messageBody" />
@@ -36,6 +42,7 @@ import Vue from 'vue';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { IEventEntity } from '@libs/entities-lib/event';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'EmailTemplatePreview',
@@ -64,7 +71,7 @@ export default Vue.extend({
     },
     event: {
       type: Object as () => IEventEntity,
-      required: true,
+      default: null as IEventEntity,
     },
     subject: {
       type: String,
@@ -78,13 +85,17 @@ export default Vue.extend({
       type: String,
       default: '',
     },
+    files: {
+      type: Array as () => File[],
+      default: () => [] as Array<File>,
+    },
   },
 
   data() {
     return {
       emailTemplate: null as IMultilingual,
       loading: false,
-      cname: '',
+      helpers,
     };
   },
 
@@ -93,10 +104,12 @@ export default Vue.extend({
       switch (this.emailTemplateKey) {
         case 'MassCommunication':
           return this.emailTemplate.translation[this.languageMode]
+          .replaceAll('href', 'name')
           .replace('-firstname-', this.$t('massAction.common.name') as string)
           .replace('[message]', this.message);
         case 'AssessmentAssigned':
           return this.emailTemplate.translation[this.languageMode]
+          .replaceAll('href', 'name')
           .replace('[firstname]', this.$t('massAction.common.name') as string)
           .replace('[topCustom]', this.message)
           .replace('[custom]', this.secondMessage);
@@ -146,5 +159,10 @@ export default Vue.extend({
   .subject{
     padding: 0 0 15px 0;
     text-align: center;
+  }
+  .attachments{
+    max-width: 600px;
+    min-width: 320px;
+    margin: 0 auto;
   }
 </style>

@@ -213,6 +213,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+::v-deep .ql-editor p{
+  margin-bottom: 1.5em !important;
+}
 .preview{
   text-transform:none;
   background-color: #E6F5FC !important;

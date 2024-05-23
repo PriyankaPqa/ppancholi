@@ -103,7 +103,8 @@
         :language-mode="languageMode"
         :event="formCopy.event"
         :subject="formCopy.messageSubject.translation[languageMode]"
-        :message="formCopy.emailMessage.translation[languageMode]" />
+        :message="formCopy.emailMessage.translation[languageMode]"
+        :files="files" />
     </div>
   </div>
 </template>
@@ -162,6 +163,7 @@ export default Vue.extend({
       toolbarSettings: ui.vueEditorToolbarSettings,
       smsLength: 0,
       showPreview: false,
+      files: [],
       FeatureKeys,
     };
   },
@@ -233,6 +235,7 @@ export default Vue.extend({
     },
 
     fileAdded(files: []) {
+      this.files = files;
       this.$emit('addfile', files);
     },
   },
@@ -240,6 +243,10 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+::v-deep .ql-editor p{
+  margin-bottom: 1.5em !important;
+}
+
 .optionsList__tabContainer {
   background:none;
 }

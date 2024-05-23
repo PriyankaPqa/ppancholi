@@ -26,6 +26,25 @@ const doMount = (otherOptions = {}, fullMount = false) => {
 };
 
 describe('EmailTemplatePreview', () => {
+  describe('Template', () => {
+    describe('Attachments', () => {
+      it('displays when any file', async () => {
+        doMount();
+        await wrapper.setProps({ files: [new File(['foo'], 'file1'), new File(['foo'], 'file2')] });
+        await wrapper.setData({ loading: false });
+        const element = wrapper.findDataTest('email_template_attachments');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('Does not display when no file', async () => {
+        doMount();
+        await wrapper.setData({ loading: false });
+        const element = wrapper.findDataTest('email_template_attachments');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+  });
+
   describe('Watch', () => {
     describe('event', () => {
       it('set email template if event changes', async () => {
