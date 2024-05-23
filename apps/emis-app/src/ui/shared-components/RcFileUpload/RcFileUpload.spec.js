@@ -36,6 +36,7 @@ describe('RcFileUpload.spec', () => {
       test('if file name has special characters, a message will be pushed to errorMessages (comma)', async () => {
         const mockFile = new File(['foo'], 'mockname,');
         doMount(mockFile);
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
@@ -43,6 +44,7 @@ describe('RcFileUpload.spec', () => {
       test('if file name has special characters, a message will be pushed to errorMessages (square brackets)', async () => {
         const mockFile = new File(['foo'], 'mockname[');
         doMount(mockFile);
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
@@ -50,6 +52,7 @@ describe('RcFileUpload.spec', () => {
       test('if file name has special characters, a message will be pushed to errorMessages (question mark)', async () => {
         const mockFile = new File(['foo'], 'mockname?');
         doMount(mockFile);
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
@@ -57,48 +60,49 @@ describe('RcFileUpload.spec', () => {
       test('if file name has special characters, a message will be pushed to errorMessages (equal)', async () => {
         const mockFile = new File(['foo'], 'mockname=');
         doMount(mockFile);
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
 
       test('if file name has no unallowed special characters, errorMessages does not contain the related error message', async () => {
         const mockFile = new File(['foo'], 'mockname');
-        doMount(mockFile);
+        doMount(mockFile); wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).not.toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
 
       test('if file name has no unallowed special characters, errorMessages does not contain the related error message (space)', async () => {
         const mockFile = new File(['foo'], 'mock name');
-        doMount(mockFile);
+        doMount(mockFile); wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).not.toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
 
       test('if file name has no unallowed special characters, errorMessages does not contain the related error message (underscore)', async () => {
         const mockFile = new File(['foo'], 'mock_name');
-        doMount(mockFile);
+        doMount(mockFile); wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).not.toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
 
       test('if file name has no unallowed special characters, errorMessages does not contain the related error message (period)', async () => {
         const mockFile = new File(['foo'], 'mock.name');
-        doMount(mockFile);
+        doMount(mockFile); wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).not.toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
 
       test('if file name has no unallowed special characters, errorMessages does not contain the related error message (dash)', async () => {
         const mockFile = new File(['foo'], 'mock-name');
-        doMount(mockFile);
+        doMount(mockFile); wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).not.toEqual(expect.arrayContaining(['error.file.upload.fileName']));
       });
 
       test('if file has no size, errorMessages will be empty', async () => {
         const mockFile = new File([], 'mock-name');
-        doMount(mockFile);
+        doMount(mockFile); wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages).toEqual([]);
       });
@@ -106,7 +110,7 @@ describe('RcFileUpload.spec', () => {
       test('if file size is not ok, push the right message to messages', async () => {
         const mockFile = new File(['1'], 'mock-name');
         helpers.formatBytes = jest.fn(() => '50 MB');
-        doMount(mockFile);
+        doMount(mockFile); wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         wrapper.vm.isFileSizeOK = jest.fn(() => false);
         await wrapper.vm.checkRules();
         expect(wrapper.vm.errorMessages[0].key).toBe('common.upload.max_file.size');
@@ -120,7 +124,7 @@ describe('RcFileUpload.spec', () => {
             allowedExtensions: ['csv'],
           },
         });
-
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         wrapper.vm.isFileExtensionAuthorized = jest.fn(() => false);
         await wrapper.vm.checkRules();
 
@@ -153,7 +157,7 @@ describe('RcFileUpload.spec', () => {
 
       it('calls checkRules and validate', async () => {
         const mockFile = new File(['foo'], 'mock-name');
-        doMount();
+        doMount(mockFile);
         wrapper.vm.checkRules = jest.fn();
         wrapper.vm.sanitizeFile = jest.fn();
         wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
@@ -164,8 +168,8 @@ describe('RcFileUpload.spec', () => {
       });
 
       it('calls emit with the right payload', async () => {
-        doMount();
         const mockFile = new File(['foo'], 'mock-name');
+        doMount(mockFile);
         wrapper.vm.checkRules = jest.fn();
         wrapper.vm.$refs.fileUpload.validate = jest.fn(() => false);
         wrapper.vm.$emit = jest.fn();
@@ -176,15 +180,13 @@ describe('RcFileUpload.spec', () => {
 
     describe('sanitizeFile', () => {
       it('should return a new file without accent and apostrophe', () => {
-        doMount();
         const fileName = "c'est àéèêîïâêîôûùëiïü.txt";
 
         const file = new File(['foo'], fileName, {
           type: 'text/plain',
         });
-
+        doMount(file);
         const res = wrapper.vm.sanitizeFile(file);
-
         expect(res.name).toEqual('cest aeeeiiaeiouueiiu.txt');
         expect(res.type).toEqual('text/plain');
       });
@@ -192,12 +194,12 @@ describe('RcFileUpload.spec', () => {
 
     describe('addMissingTypeMsg', () => {
       it('should return a new file with force type outlook if file is .msg', () => {
-        doMount();
         const fileName = 'test.msg';
 
         const file = new File(['foo'], fileName, {
           type: '',
         });
+        doMount(file);
 
         const res = wrapper.vm.addMissingTypeMsg(file);
 
@@ -238,7 +240,8 @@ describe('RcFileUpload.spec', () => {
 
     describe('getUniqueFiles', () => {
       it('should return unique files', () => {
-        doMount();
+        const mockFile = new File(['foo'], 'mock-name');
+        doMount(mockFile);
         wrapper.vm.localFiles = [new File(['foo'], 'file1'), new File(['foo'], 'file1'), new File(['foo'], 'file2')];
         const res = wrapper.vm.getUniqueFiles();
         expect(res.length).toEqual(2);
@@ -247,7 +250,8 @@ describe('RcFileUpload.spec', () => {
 
     describe('removeFile', () => {
       it('calls checkRules and getUniqueFiles', () => {
-        doMount();
+        const mockFile = new File(['foo'], 'mock-name');
+        doMount(mockFile);
         wrapper.vm.getUniqueFiles = jest.fn();
         wrapper.vm.checkRules = jest.fn();
         wrapper.vm.removeFile(1);

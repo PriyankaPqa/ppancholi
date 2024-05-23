@@ -68,10 +68,12 @@ describe('>>>> helpers', () => {
 
   describe('getEnumKeysAndText', () => {
     it('should return display and enum keys of the enum in an array', () => {
+      jest.spyOn(i18n, 't').mockImplementation((key) => key);
+
       enum Test {
-        A = 0,
-        Z = 1,
-        B = 3,
+        A = '0',
+        Z = '1',
+        B = '3',
       }
       const res = helpers.getEnumKeysAndText(Test, 'somekeyprefix');
       expect(res).toEqual([
