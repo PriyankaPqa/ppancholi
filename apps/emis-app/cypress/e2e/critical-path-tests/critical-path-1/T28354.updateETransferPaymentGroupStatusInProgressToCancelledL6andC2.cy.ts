@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('[T28354] Update E-Transfer payment group status from In Progress to Cancelled - L6 and C2', { tags: ['@financial-assistance'] }, () => {
+describe('[T28354] Update E-Transfer payment group status from In Progress to Cancelled - L6 and C2.', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

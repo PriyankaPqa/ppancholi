@@ -10,13 +10,13 @@ import { updatePaymentGroupStatusTo } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
+  UserRoles.level5,
+  UserRoles.level4,
+  UserRoles.level3,
   UserRoles.contributor2,
 ];
 
 const cannotRoles = [
-  UserRoles.level5,
-  UserRoles.level4,
-  UserRoles.level3,
   UserRoles.level2,
   UserRoles.level1,
   UserRoles.level0,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('[T28353] Update E-Transfer payment group status from Completed to Cancelled - L6 and C2.', { tags: ['@financial-assistance'] }, () => {
+describe('[T28356] Update E-Transfer payment group status from New to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,7 +55,7 @@ describe('[T28353] Update E-Transfer payment group status from Completed to Canc
               accessTokenL6,
               event: this.event,
               tableId: this.table.id,
-              paymentStatus: PaymentStatus.Completed,
+              paymentStatus: PaymentStatus.New,
               paymentModalities: EPaymentModalities.ETransfer,
             };
             const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
@@ -70,13 +70,7 @@ describe('[T28353] Update E-Transfer payment group status from Completed to Canc
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Completed');
-          if (roleName === UserRoles.contributor2) {
-            financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('not.exist');
-          } else {
-            financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('be.visible');
-          }
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
@@ -95,7 +89,7 @@ describe('[T28353] Update E-Transfer payment group status from Completed to Canc
           accessTokenL6,
           event: this.event,
           tableId: this.table.id,
-          paymentStatus: PaymentStatus.Completed,
+          paymentStatus: PaymentStatus.New,
           paymentModalities: EPaymentModalities.ETransfer,
         };
         const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
@@ -115,7 +109,7 @@ describe('[T28353] Update E-Transfer payment group status from Completed to Canc
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Completed');
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();
           financialAssistanceDetailsPage.getPaymentLineStatusCancelled().should('not.exist');
         });

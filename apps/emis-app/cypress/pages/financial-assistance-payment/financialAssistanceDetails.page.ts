@@ -34,6 +34,7 @@ export enum DataTest {
   paymentLineItemCancelButton = 'paymentLineItem__cancelBtn',
   cancelledLabel = 'paymentLineItem__cancelled_label',
   cancellationByText = 'financialPayment_cancellation_by_text',
+  cancellationReason = 'financialPayment_cancellation_reason',
 }
 
 export class FinancialAssistanceDetailsPage {
@@ -102,6 +103,8 @@ export class FinancialAssistanceDetailsPage {
   private cancelledLabel = { selector: DataTest.cancelledLabel };
 
   private cancellationByText = { selector: DataTest.cancellationByText };
+
+  private cancellationReason = { selector: DataTest.cancellationReason };
 
   public getAddPaymentLineButton() {
     return cy.getByDataTest(this.addPaymentLineButton);
@@ -293,5 +296,13 @@ export class FinancialAssistanceDetailsPage {
 
   public getPaymentLineStatusCancelled() {
     return cy.getByDataTest(this.statusCancelled);
+  }
+
+  public getGroupCancellationReasonText() {
+    return cy.getByDataTest(this.cancellationReason).eq(0).getAndTrimText();
+  }
+
+  public getLineCancellationReasonText() {
+    return cy.getByDataTest(this.cancellationReason).eq(1).getAndTrimText();
   }
 }
