@@ -359,4 +359,18 @@ export default {
     const specifiedOther = listOption?.specifiedOther;
     return specifiedOther ?? this.getMultilingualValue(item?.name);
   },
+
+  isMinorOrMajorVersionBump(currentVersion: string, newVersion: string): boolean {
+    const currentVersionParts = currentVersion?.split('.');
+    const newVersionParts = newVersion?.split('.');
+    if (!currentVersionParts || !newVersionParts) {
+      return false;
+    }
+    if (currentVersionParts.length < 3 || newVersionParts.length < 3 || Number.isNaN(+newVersionParts[0])
+      || Number.isNaN(+currentVersionParts[0]) || Number.isNaN(+currentVersionParts[1]) || Number.isNaN(+newVersionParts[1])) {
+      return false;
+    }
+
+    return +newVersionParts[0] > +currentVersionParts[0] || (newVersionParts[0] === currentVersionParts[0] && +newVersionParts[1] > +currentVersionParts[1]);
+  },
 };

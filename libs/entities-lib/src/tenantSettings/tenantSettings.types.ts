@@ -16,6 +16,7 @@ export enum FeatureKeys {
   DataCorrectionTriage = 'DataCorrectionTriage',
   EmailSendingPreview = 'EmailSendingPreview',
   Lodging = 'Lodging',
+  NoReloadOnNewVersion = 'NoReloadOnNewVersion',
 }
 
 export enum FeatureType {

@@ -279,4 +279,32 @@ describe('>>>> helpers', () => {
       expect(helpers.getOptionItemNameFromListOption(optionItemList, null)).toEqual(null);
     });
   });
+
+  describe('isMinorOrMajorVersionBump', () => {
+    it('returns false if the current and new version do not have the appropriate format', () => {
+      expect(helpers.isMinorOrMajorVersionBump('a', 'b')).toBeFalsy();
+      expect(helpers.isMinorOrMajorVersionBump('1.0', '2.0')).toBeFalsy();
+      expect(helpers.isMinorOrMajorVersionBump('', '')).toBeFalsy();
+      expect(helpers.isMinorOrMajorVersionBump('1.2.3', '1.2.3.5')).toBeFalsy();
+      expect(helpers.isMinorOrMajorVersionBump('1.2.3', 'a.b.c')).toBeFalsy();
+    });
+    it('returns false if the new and current version are the same', () => {
+      expect(helpers.isMinorOrMajorVersionBump('1.2.3', '1.2.3')).toBeFalsy();
+      expect(helpers.isMinorOrMajorVersionBump('1.30.10', '1.30.10')).toBeFalsy();
+    });
+    it('returns false if the new version does not have a minor version bump', () => {
+      expect(helpers.isMinorOrMajorVersionBump('1.0.0', '1.0.1')).toBeFalsy();
+      expect(helpers.isMinorOrMajorVersionBump('1.0.70', '1.0.5')).toBeFalsy();
+      expect(helpers.isMinorOrMajorVersionBump('1.0.5', '1.0.70')).toBeFalsy();
+    });
+    it('returns false if the new version has a higher minor version but a lower major version', () => {
+      expect(helpers.isMinorOrMajorVersionBump('2.0.1', '1.20.1')).toBeFalsy();
+    });
+    it('returns true if the new version has a higher major version ', () => {
+      expect(helpers.isMinorOrMajorVersionBump('1.7.100', '1.15.0')).toBeTruthy();
+    });
+    it('returns true if the new version has a higher minor version ', () => {
+      expect(helpers.isMinorOrMajorVersionBump('5.70.100', '10.15.0')).toBeTruthy();
+    });
+  });
 });

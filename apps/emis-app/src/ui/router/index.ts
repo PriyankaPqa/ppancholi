@@ -12,6 +12,7 @@ import { useUserStore } from '@/pinia/user/user';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
+import helpers from '@/ui/helpers/helpers';
 
 Vue.use(VueRouter);
 
@@ -182,20 +183,32 @@ const checkAppVersion = () => {
     return;
   }
   isCheckingAppVersion = true;
+  const features = useTenantSettingsStore().currentTenantSettings.features;
+  const isVersionFlagOn = !!features?.find((f: IFeatureEntity) => f.key === FeatureKeys.NoReloadOnNewVersion)?.enabled;
+
   setTimeout(() => {
     fetch(`/app-details.json?d=${(new Date()).toISOString()}`)
       .then((response) => response.json())
       .then((json) => {
         const newVersion = json.app_version;
-        if (currentVersion === newVersion) {
+        if (isVersionFlagOn) {
+          const isVersionBump = helpers.isMinorOrMajorVersionBump(currentVersion, newVersion);
+          if (isVersionBump) {
+            // eslint-disable-next-line vue/max-len
+            applicationInsights.trackTrace(`Minor or major version was increased - build version ${currentVersion}, CDN version ${newVersion} -immediate reload necessary`, { }, 'router', 'checkAppVersion');
+            notifyUserRefresh();
+          } else {
+            isCheckingAppVersion = false;
+          }
+        } else if (currentVersion === newVersion) {
           isCheckingAppVersion = false;
         } else if (currentVersion > newVersion) {
           applicationInsights.trackTrace(`Version mismatch, but continuing as build version ${currentVersion} > CDN version ${newVersion}`, { }, 'router', 'checkAppVersion');
           isCheckingAppVersion = false;
         } else {
-          applicationInsights.trackTrace(`Version mismatch - build version ${currentVersion}, CDN version ${newVersion}`, { }, 'router', 'checkAppVersion');
-          notifyUserRefresh();
-        }
+            applicationInsights.trackTrace(`Version mismatch - build version ${currentVersion}, CDN version ${newVersion}`, { }, 'router', 'checkAppVersion');
+            notifyUserRefresh();
+          }
       })
       .catch(() => {
         isCheckingAppVersion = false;
