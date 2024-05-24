@@ -132,6 +132,12 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality, rol
     if (paymentModality === 'E-Transfer') {
       financialAssistanceDetailsPage.getGroupCancellationReasonText().should('eq', 'Reason:  1 - Recipient rejected');
       financialAssistanceDetailsPage.getLineCancellationReasonText().should('eq', 'Reason:  1 - Recipient rejected');
+    } else if (paymentModality === 'invoice') {
+      if (roleName === UserRoles.level6) {
+        financialAssistanceDetailsPage.getPaymentLineItemEditButton().should('be.visible');
+      } else if (roleName === UserRoles.contributorFinance) {
+        financialAssistanceDetailsPage.getPaymentLineItemEditButton().should('be.hidden');
+      }
     }
   } else if (paymentStatus === 'Completed') {
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
