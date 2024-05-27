@@ -68,6 +68,7 @@ describe('[T28865] Process a Home Address data correction file', { tags: ['@hous
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.wrap(resultHouseholdSummary).as('householdsSummary');
+            cy.wrap(resultMassFinancialAssistance.name).as('massActionName');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
@@ -77,8 +78,8 @@ describe('[T28865] Process a Home Address data correction file', { tags: ['@hous
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process a Home Address data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'household records');
+        it('should successfully process a Home Address data correction file', function () {
+          processDataCorrectionFileSteps(householdQuantity, 'household records', this.massActionName);
         });
       });
     }

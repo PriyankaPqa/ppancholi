@@ -86,15 +86,24 @@ describe(
               casefileId: resultHousehold.registrationResponse.caseFile.id,
               assessmentFormId: resultAssessment.id,
             };
-            cy.intercept('PATCH', `**/assessment/assessment-responses/${resultCreateAssessmentResponse.id}/submit`).as('submitAssessment');
-            cy.then(async () => {
-              await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
-            });
-            cy.wait('@submitAssessment', { timeout: 60000 }).then((interception) => {
-              if (interception.response.statusCode === 200) {
+            cy.interceptAndValidateCondition({
+              httpMethod: 'PATCH',
+              url: `**/assessment/assessment-responses/${resultCreateAssessmentResponse.id}/submit`,
+              actionsCallback: () => {
+                cy.then(async () => {
+                  await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
+                });
+              },
+              conditionCallBack: (interception) => (interception.response.statusCode === 200),
+              actionsWhenValidationPassed: () => {
                 cy.login(roleName);
                 cy.goTo('mass-actions/financial-assistance');
-              }
+              },
+              actionsWhenValidationFailed: () => {
+                throw Error(`Failed to submit Assessment ${resultCreateAssessmentResponse.id}`);
+              },
+              timeout: 6000,
+              alias: 'submitAssessment',
             });
           });
         });

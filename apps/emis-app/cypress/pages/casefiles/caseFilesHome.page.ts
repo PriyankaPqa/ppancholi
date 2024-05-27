@@ -36,6 +36,11 @@ export class CaseFilesHomePage {
     return new CaseFileDetailsPage();
   }
 
+  public goToCaseFileDetail(caseFileNumber: string) {
+    cy.getByDataTest({ selector: `${this.caseFileDetailLink.selector}_${caseFileNumber}` }).click();
+    return new CaseFileDetailsPage();
+  }
+
   public getCaseFileTable() {
     return cy.getByDataTest(this.caseFileTable);
   }

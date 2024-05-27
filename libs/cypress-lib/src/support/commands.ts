@@ -1,10 +1,23 @@
 /// <reference types="cypress" />
 /* eslint-disable import/no-duplicates */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Interception } from 'cypress/types/net-stubbing';
 import { ServerAuthorizationTokenResponse } from '@azure/msal-common';
 import { UserRoles } from './msal';
 import './msal';
 import './wait';
 import './ui';
+
+export interface IInterceptAndValidateConditionParams {
+  httpMethod: string;
+  url: string | RegExp;
+  actionsCallback?: () => void;
+  conditionCallBack: (interception: Interception) => boolean;
+  actionsWhenValidationPassed: (interception: Interception) => void;
+  actionsWhenValidationFailed: (interception: Interception) => void;
+  timeout?: number;
+  alias: string;
+}
 
 Cypress.Commands.add('goTo', (url: string, lang = 'en', options = {}) => {
   const newUrl = `${lang}/${url}`;
@@ -29,13 +42,43 @@ Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (url, statusCode, max
   interceptAndRetry();
 });
 
-Cypress.Commands.add('waitForStatusCode', (url, statusCode, timeout?: 5000) => {
-  cy.intercept('GET', url).as('interceptedRequest');
-  cy.wait('@interceptedRequest', { timeout }).then((interception) => {
-    if (interception.response.statusCode === statusCode) {
+Cypress.Commands.add('waitForStatusCode', (url: string | RegExp, statusCode: number, timeout = 5000) => {
+  cy.interceptAndValidateCondition({
+    httpMethod: 'GET',
+    url,
+    conditionCallBack: (interception) => (interception.response.statusCode === statusCode),
+    actionsWhenValidationPassed: (interception) => {
       cy.log(`Expected ${statusCode} received for ${interception.request.url}`);
-    } else {
+    },
+    actionsWhenValidationFailed: (interception) => {
       throw Error(`Expected ${statusCode} not received for ${interception.request.url}`);
+    },
+    timeout,
+    alias: 'interceptedRequest',
+  });
+});
+
+/**
+ * Intercept an API call, then take actions, validation if API response meet condition
+ * @param httpMethod
+ * @param url
+ * @param actionsCallback
+ * @param conditionCallBack
+ * @param actionsWhenValidationPassed
+ * @param actionsWhenValidationFailed
+ * @param timeout
+ * @param alias
+ */
+Cypress.Commands.add('interceptAndValidateCondition', (params: IInterceptAndValidateConditionParams) => {
+  cy.intercept(params.httpMethod, params.url).as(params.alias);
+  if (params.actionsCallback) {
+    params.actionsCallback();
+  }
+  cy.wait(`@${params.alias}`, { timeout: params.timeout }).then((interception) => {
+    if (params.conditionCallBack(interception)) {
+      params.actionsWhenValidationPassed(interception);
+    } else {
+      params.actionsWhenValidationFailed(interception);
     }
   });
 });
@@ -90,6 +133,7 @@ declare global {
       ): Chainable<string>
       waitForStatusCode(url: string | RegExp, statusCode: number, timeout?: number): Chainable<string>,
       shouldHaveCrossedText(shouldBeCrossed: boolean): Chainable<string>
+      interceptAndValidateCondition(params: IInterceptAndValidateConditionParams): Chainable<void>,
     }
   }
 }

@@ -1,6 +1,7 @@
 import { IXlsxTableColumnProperties, generateXlsxFile, removeSpecialCharacters } from '@libs/cypress-lib/helpers';
 import { faker } from '@faker-js/faker';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { PaymentLineStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceMassActionTemplate } from './mass-actions';
 
 export interface GenerateRandomFaDataCorrectionParams {
@@ -10,9 +11,11 @@ export interface GenerateRandomFaDataCorrectionParams {
   FinancialAssistancePaymentGroupId: string;
   FinancialAssistancePaymentLinesId: string;
   ETag: string;
+  PaymentLineStatus?: PaymentLineStatus;
+  PaymentLineCancellationReason?: string;
 }
 
-export const generateRandomFaDataCorrectionData = (faCorrectionData: GenerateRandomFaDataCorrectionParams): IFinancialAssistanceMassActionTemplate => ({
+export const generateRandomFaDataCorrectionData = (faCorrectionData?: GenerateRandomFaDataCorrectionParams): IFinancialAssistanceMassActionTemplate => ({
   CaseFileNumber: faCorrectionData.caseFile.caseFileNumber,
   FinancialAssistancePaymentId: faCorrectionData.FinancialAssistancePaymentId,
   Name: 'Test Mass Action',

@@ -69,7 +69,7 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   baseDetailsMassActionPage.getBackToMassActionListButton().should('be.visible');
 };
 
-export const processDataCorrectionFileSteps = (householdQuantity: number, processedItems: string) => {
+export const processDataCorrectionFileSteps = (householdQuantity: number, processedItems: string, massActionName: string) => {
   const baseDetailsMassActionPage = new BaseDetailsMassAction();
   cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed, false);
   baseDetailsMassActionPage.getMassActionProcessButton().should('be.visible');
@@ -77,10 +77,24 @@ export const processDataCorrectionFileSteps = (householdQuantity: number, proces
   baseDetailsMassActionPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
   baseDetailsMassActionPage.getDialogConfirmCancelButton().should('be.visible');
   baseDetailsMassActionPage.getDialogConfirmSubmitButton().should('be.visible');
-  baseDetailsMassActionPage.confirmProcessing();
-  baseDetailsMassActionPage.getPreProcessingLabelOne().should('eq', `Please wait while the ${processedItems} are being processed.`);
-  baseDetailsMassActionPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed records.');
-  cy.waitForMassActionToBe(MassActionRunStatus.Processed, false);
+  cy.interceptAndValidateCondition({
+    httpMethod: 'POST',
+    url: 'case-file/mass-actions/**/run',
+    actionsCallback: () => {
+      baseDetailsMassActionPage.confirmProcessing();
+      baseDetailsMassActionPage.getPreProcessingLabelOne().should('eq', `Please wait while the ${processedItems} are being processed.`);
+      baseDetailsMassActionPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed records.');
+    },
+    conditionCallBack: (interception) => (interception.response.statusCode === 200),
+    actionsWhenValidationPassed: () => {
+      cy.log('Mass action has been processed successfully.');
+    },
+    actionsWhenValidationFailed: () => {
+      throw Error('Mass action cannot be processed.');
+    },
+    alias: 'MassActionRun',
+  });
+  baseDetailsMassActionPage.waitAndRefreshUntilMassActionStatusUpdated(massActionName, 'Processed');
   baseDetailsMassActionPage.getMassActionStatus().contains('Processed').should('be.visible');
   baseDetailsMassActionPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
     if (quantity === householdQuantity.toString()) {

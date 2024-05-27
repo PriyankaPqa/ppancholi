@@ -4,7 +4,9 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
-import { removeTeamMembersFromTeam } from '../helpers/teams';
+import { getToday } from '@libs/cypress-lib/helpers';
+import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   AddFinancialAssistancePaymentParams,
   addFinancialAssistancePayment,
@@ -13,13 +15,16 @@ import {
   prepareStateHousehold,
   prepareStateMassActionXlsxFile,
   submitFinancialAssistancePayment,
-} from '../helpers/prepareState';
+} from '../../helpers/prepareState';
 import {
   GenerateFaDataCorrectionXlsxFileParams,
   GenerateRandomFaDataCorrectionParams,
-  fixtureGenerateFaDataCorrectionXlsxFile,
-} from '../../fixtures/mass-action-data-correction';
-import { processDataCorrectionFileSteps } from '../critical-path-tests/critical-path-3/canSteps';
+  fixtureGenerateFaDataCorrectionXlsxFile, generateRandomFaDataCorrectionData,
+} from '../../../fixtures/mass-action-data-correction';
+import { processDataCorrectionFileSteps } from '../critical-path-3/canSteps';
+import { BaseDetailsMassAction } from '../../../pages/mass-action/base/baseDetailsMassAction';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -42,10 +47,10 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 const tableName = 'MassActionTable';
-const fileName = 'faDataCorrectionFile';
+const fileName = 'T28847FaDataCorrectionFile';
 const householdQuantity = 1;
 
-describe('#TC1770# - Process a Financial Assistance data correction file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
+describe('[T28847] Process a Financial Assistance data correction file', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -56,7 +61,6 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
             // eslint-disable-next-line
             const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
             const responseCreateHousehold = await prepareStateHousehold(accessTokenL6, resultPrepareStateEvent.event);
-
             const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
               provider: responseCreateHousehold.provider,
               modality: EPaymentModalities.Cheque,
@@ -73,6 +77,8 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
               FinancialAssistanceTableId: resultCreateProgram.table.id,
               FinancialAssistancePaymentGroupId: financialAssistancePayment.groups[0].id,
               FinancialAssistancePaymentLinesId: financialAssistancePayment.groups[0].lines[0].id,
+              PaymentLineStatus: null,
+              PaymentLineCancellationReason: null,
               ETag: getFinancialAssistancePayment.etag,
             };
             const xlsxFileParamData: GenerateFaDataCorrectionXlsxFileParams = {
@@ -81,8 +87,8 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
               tableName,
               fileName,
             };
+            const faDataCorrectionDataObject = generateRandomFaDataCorrectionData(faCorrectionData);
             const generatedDataCorrectionFileData = await fixtureGenerateFaDataCorrectionXlsxFile(xlsxFileParamData);
-
             const mockRequestParamData: MockCreateMassActionXlsxFileRequestParams = {
               eventId: resultPrepareStateEvent.event.id,
               fileContents: generatedDataCorrectionFileData,
@@ -90,6 +96,12 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
               fileName,
             };
             const responseMassFinancialAssistance = await prepareStateMassActionXlsxFile(responseCreateHousehold.provider, 'data-correction', mockRequestParamData);
+            cy.wrap(faDataCorrectionDataObject.Name).as('faDataCorrectionName');
+            cy.wrap(faDataCorrectionDataObject.Amount).as('faDataCorrectionAmount');
+            cy.wrap(faDataCorrectionDataObject.PaymentModality).as('faDataCorrectionPaymentModality');
+            cy.wrap(responseMassFinancialAssistance.name).as('massActionName');
+            cy.wrap(responseCreateHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
+            cy.wrap(financialAssistancePayment.id).as('financialAssistancePaymentId');
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -102,8 +114,31 @@ describe('#TC1770# - Process a Financial Assistance data correction file', { tag
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process a financial assistance data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'financial assistance records');
+        it('should successfully process a financial assistance data correction file', function () {
+          processDataCorrectionFileSteps(householdQuantity, 'financial assistance records', this.massActionName);
+          const baseDetailsMassActionPage = new BaseDetailsMassAction();
+          baseDetailsMassActionPage.getBackToMassActionListButton().should('be.enabled');
+          baseDetailsMassActionPage.getMassActionType().should('eq', 'Financial Assistance');
+          baseDetailsMassActionPage.getMassActionDateCreated().should('eq', getToday());
+          baseDetailsMassActionPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+          cy.goTo('casefile');
+          const caseFilesHomePage = new CaseFilesHomePage();
+          const caseFileDetailsPage = caseFilesHomePage.goToCaseFileDetail(this.caseFileNumber);
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`${this.faDataCorrectionName} was data corrected`);
+          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+          caseFileDetailsPage.getCaseFileActivityTitle(0).should('eq', 'Financial assistance payment updated');
+          caseFileDetailsPage.getCaseFileActivityBody(0).should('eq', `${this.faDataCorrectionName} was data corrected`);
+          caseFileDetailsPage.getCaseFinancialAssistanceSubTag().click();
+          const caseFinancialAssistanceHomePage = new FinancialAssistanceHomePage(); // need this to avoid dependency cycle
+          caseFinancialAssistanceHomePage.getFAPaymentNameById(this.financialAssistancePaymentId).should('eq', this.faDataCorrectionName);
+          caseFinancialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
+          caseFinancialAssistanceHomePage.getFAPaymentAmount().should('eq', `$${this.faDataCorrectionAmount}.00`);
+          caseFinancialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
+          caseFinancialAssistanceHomePage.expandFAPayment();
+          caseFinancialAssistanceHomePage.getFAPaymentGroupTitle().should('string', this.faDataCorrectionPaymentModality);
+          caseFinancialAssistanceHomePage.getFAPaymentGroupTotal().should('eq', `$${this.faDataCorrectionAmount}.00`);
+          caseFinancialAssistanceHomePage.getFAPaymentPaymentStatus().should('eq', 'Status: In progress');
         });
       });
     }

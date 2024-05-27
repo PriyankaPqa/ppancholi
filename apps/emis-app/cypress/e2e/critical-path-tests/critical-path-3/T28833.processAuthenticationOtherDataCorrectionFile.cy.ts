@@ -65,6 +65,7 @@ describe('[T28833] Process an Authentication data correction file', { tags: ['@c
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
+            cy.wrap(resultMassFinancialAssistance.name).as('massActionName');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
@@ -74,8 +75,8 @@ describe('[T28833] Process an Authentication data correction file', { tags: ['@c
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process an Authentication data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records');
+        it('should successfully process an Authentication data correction file', function () {
+          processDataCorrectionFileSteps(householdQuantity, 'case file records', this.massActionName);
         });
       });
     }

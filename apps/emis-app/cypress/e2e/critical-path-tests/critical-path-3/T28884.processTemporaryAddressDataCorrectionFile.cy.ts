@@ -72,6 +72,7 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
+            cy.wrap(resultMassFinancialAssistance.name).as('massActionName');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
@@ -83,8 +84,8 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
           }
         });
 
-        it('should successfully process a Temporary Address data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'household records');
+        it('should successfully process a Temporary Address data correction file', function () {
+          processDataCorrectionFileSteps(householdQuantity, 'household records', this.massActionName);
         });
       });
     }

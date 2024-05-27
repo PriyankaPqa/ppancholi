@@ -98,6 +98,19 @@ export class BaseDetailsMassAction {
     return cy.getByDataTest(this.createdBy).getAndTrimText();
   }
 
+  public waitAndRefreshUntilMassActionStatusUpdated(massActionName: string, status: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        // eslint-disable-next-line
+        visibilityCondition: () => cy.contains(massActionName).should('be.visible').wait(2000),
+        checkCondition: () => Cypress.$("[data-test='chip-text']").text().includes(status),
+      },
+      {
+        errorMsg: 'Unable to get mass action created by',
+      },
+    );
+  }
+
   public getDialogSubmitButton() {
     return cy.getByDataTest(this.dialogSubmit);
   }

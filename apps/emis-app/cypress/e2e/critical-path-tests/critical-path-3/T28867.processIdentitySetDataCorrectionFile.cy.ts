@@ -69,6 +69,7 @@ describe('[T28867] Process an Identity Set data correction file', { tags: ['@hou
 
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
+            cy.wrap(resultMassFinancialAssistance.name).as('massActionName');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
@@ -78,8 +79,8 @@ describe('[T28867] Process an Identity Set data correction file', { tags: ['@hou
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process a Identity Set data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'household records');
+        it('should successfully process a Identity Set data correction file', function () {
+          processDataCorrectionFileSteps(householdQuantity, 'household records', this.massActionName);
         });
       });
     }

@@ -71,6 +71,7 @@ describe('[T28869] Process a Label data correction file', { tags: ['@case-file',
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.wrap(resultCaseFiles).as('caseFiles');
+            cy.wrap(resultMassFinancialAssistance.name).as('massActionName');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
@@ -82,8 +83,8 @@ describe('[T28869] Process a Label data correction file', { tags: ['@case-file',
           }
         });
 
-        it('should successfully process a Label data correction file', () => {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records');
+        it('should successfully process a Label data correction file', function () {
+          processDataCorrectionFileSteps(householdQuantity, 'case file records', this.massActionName);
         });
       });
     }
