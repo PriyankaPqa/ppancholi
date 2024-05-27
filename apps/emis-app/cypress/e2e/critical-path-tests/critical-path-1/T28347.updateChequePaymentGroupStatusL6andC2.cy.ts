@@ -3,10 +3,10 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
-import { removeTeamMembersFromTeam } from '../helpers/teams';
-import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
-import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
+import { updatePaymentGroupStatusTo } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@financial-assistance'] }, () => {
+describe('[T28347] Update Cheque payment group status- L6 and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -55,7 +55,7 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
               accessTokenL6,
               event: this.event,
               tableId: this.table.id,
-              paymentStatus: PaymentStatus.Cancelled,
+              paymentStatus: PaymentStatus.New,
               paymentModalities: EPaymentModalities.Cheque,
             };
             const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
@@ -66,30 +66,19 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
         });
         it('should successfully update Cheque payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
-          financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(true);
-          financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00').should('be.visible');
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'cheque',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'cheque',
           });
 
           updatePaymentGroupStatusTo({
@@ -98,26 +87,7 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
@@ -134,7 +104,7 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
           accessTokenL6,
           event: this.event,
           tableId: this.table.id,
-          paymentStatus: PaymentStatus.Cancelled,
+          paymentStatus: PaymentStatus.New,
           paymentModalities: EPaymentModalities.Cheque,
         };
         const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(addSubmitUpdateFaPaymentParamData);
@@ -150,10 +120,12 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
         });
         it('should not be able to update Cheque Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();
-          financialAssistanceDetailsPage.getPaymentLineStatusIssued().should('not.exist');
+          financialAssistanceDetailsPage.getPaymentLineStatusCompleted().should('not.exist');
         });
       });
     }
