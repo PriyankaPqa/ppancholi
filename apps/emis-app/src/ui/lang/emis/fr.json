@@ -2082,6 +2082,7 @@
     "errors.the-user-does-not-exist": "L’utilisateur n’existe pas.",
     "errors.the-user-does-not-have-the-proper-role": "L'utilisateur n'a pas le bon rôle.",
     "errors.there-are-no-records-to-be-processed": "Il n'y a pas de dossier à traiter.",
+    "errors.there-is-currently-a-pending-tier-2-identity-verification": "Une vérification d'identité de niveau 2 est actuellement en cours",
     "errors.there-is-no-active-approval-table-for-this-program": "Aucun tableau des approbations n'est actif pour ce programme.",
     "errors.there-is-no-escalation-team-for-this-event": "Il n'y a pas d'équipe d'escalade pour cet événement",
     "errors.there-must-be-at-least-one-filter-criteria": "Il doit y avoir au moins un critère de filtre",

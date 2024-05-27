@@ -2082,6 +2082,7 @@
     "errors.the-user-does-not-exist": "errors.the-user-does-not-exist",
     "errors.the-user-does-not-have-the-proper-role": "errors.the-user-does-not-have-the-proper-role",
     "errors.there-are-no-records-to-be-processed": "errors.there-are-no-records-to-be-processed",
+    "errors.there-is-currently-a-pending-tier-2-identity-verification": "",
     "errors.there-is-no-active-approval-table-for-this-program": "errors.there-is-no-active-approval-table-for-this-program",
     "errors.there-is-no-escalation-team-for-this-event": "errors.there-is-no-escalation-team-for-this-event",
     "errors.there-must-be-at-least-one-filter-criteria": "errors.there-must-be-at-least-one-filter-criteria",

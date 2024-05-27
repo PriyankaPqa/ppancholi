@@ -2082,6 +2082,7 @@
     "errors.the-user-does-not-exist": "The user does not exist",
     "errors.the-user-does-not-have-the-proper-role": "The user does not have the proper role",
     "errors.there-are-no-records-to-be-processed": "There are no records to be processed",
+    "errors.there-is-currently-a-pending-tier-2-identity-verification": "There is currently a pending tier 2 identity verification",
     "errors.there-is-no-active-approval-table-for-this-program": "There is no active approval table for this program",
     "errors.there-is-no-escalation-team-for-this-event": "There is no escalation team for this event",
     "errors.there-must-be-at-least-one-filter-criteria": "There must be at least one filter criteria",
