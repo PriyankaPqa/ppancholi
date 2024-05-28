@@ -262,7 +262,10 @@ describe('CommunicationCreate.vue', () => {
         });
         await wrapper.vm.onPost({ name, description });
 
-        expect(wrapper.vm.$refs.base.uploadForm).toHaveBeenCalledWith(wrapper.vm.formData, 'case-file/mass-actions/communication-from-list');
+        expect(wrapper.vm.$refs.base.uploadForm).toHaveBeenCalledWith(
+          wrapper.vm.formData,
+          "case-file/mass-actions/communication-from-listV2?$filter=Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 'Active'",
+        );
       });
 
       it('should call onSuccess method with proper parameters', async () => {

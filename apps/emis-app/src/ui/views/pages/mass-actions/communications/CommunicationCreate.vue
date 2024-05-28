@@ -23,9 +23,10 @@ import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import { IMassActionEntity, MassActionEntity, MassActionCommunicationMethod } from '@libs/entities-lib/mass-action';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { buildQuery } from '@libs/services-lib/odata-query';
 import { IMultilingual } from '@libs/shared-lib/types';
 import utils from '@libs/entities-lib/utils';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { buildQuerySql } from '@libs/services-lib/odata-query-sql';
 import CommunicationDetailsCreate from './CommunicationDetailsCreate.vue';
 
 export interface CommunicationDetailsForm {
@@ -94,13 +95,12 @@ export default Vue.extend({
     async onPost({ name, description }: { name: string; description: string }) {
       const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
 
-      const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
+      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
 
       this.fillEmptyMultilingualFields();
       this.formData.set('name', name);
       this.formData.set('description', description);
       this.formData.set('search', azureSearchParams.search);
-      this.formData.set('filter', `${filter} and Entity/Status eq 1`);
       this.formData.set('eventId', this.details.event.id);
       this.formData.set('method', this.details.method.toString());
       this.formData.set('messageSubject', JSON.stringify(this.details.messageSubject.translation));
@@ -114,7 +114,7 @@ export default Vue.extend({
 
       this.loading = true;
       const base = this.$refs.base as InstanceType<typeof MassActionBaseCreate>;
-      await base.uploadForm(this.formData, 'case-file/mass-actions/communication-from-list');
+      await base.uploadForm(this.formData, `case-file/mass-actions/communication-from-listV2${filter}`);
       if (base.uploadSuccess) {
         const entity = new MassActionEntity(base.response.data as IMassActionEntity);
         if (entity) {
