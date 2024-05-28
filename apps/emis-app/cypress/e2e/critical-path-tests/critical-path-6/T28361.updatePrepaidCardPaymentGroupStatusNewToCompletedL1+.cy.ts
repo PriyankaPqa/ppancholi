@@ -15,12 +15,12 @@ const canRoles = [
   UserRoles.level3,
   UserRoles.level2,
   UserRoles.level1,
+  UserRoles.contributor2,
 ];
 
 const cannotRoles = [
   UserRoles.level0,
   UserRoles.contributor3,
-  UserRoles.contributor2,
   UserRoles.contributor1,
   UserRoles.readonly,
 ];
