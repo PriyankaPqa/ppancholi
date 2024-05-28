@@ -21,6 +21,14 @@ export interface PaymentGroupStatusUpdateParam {
   roleName?: string,
 }
 
+const paymentLineItemEditButtonVisibleForRoles = [
+  UserRoles.level2,
+  UserRoles.level3,
+  UserRoles.level4,
+  UserRoles.level5,
+  UserRoles.level6,
+] as string[];
+
 const addPaymentLineCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
   const addFinancialAssistancePage = new AddFinancialAssistancePage();
   addFinancialAssistancePage.selectTable(params.faTable.name.translation.en);
@@ -142,7 +150,7 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality, rol
   } else if (paymentStatus === 'Completed') {
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
-    if (roleName !== UserRoles.contributorFinance) {
+    if (paymentLineItemEditButtonVisibleForRoles.indexOf(roleName) > -1) {
       financialAssistanceDetailsPage.getPaymentLineItemEditButton().should('be.visible');
     }
     if (roleName === UserRoles.level6) {
