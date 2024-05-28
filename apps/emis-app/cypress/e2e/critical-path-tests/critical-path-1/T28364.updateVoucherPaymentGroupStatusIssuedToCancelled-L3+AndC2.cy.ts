@@ -3,10 +3,10 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { removeTeamMembersFromTeam } from '../helpers/teams';
-import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
-import { FinancialAssistanceHomePage } from '../../pages/financial-assistance-payment/financialAssistanceHome.page';
-import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { updatePaymentGroupStatusTo } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('#TC291# - Update Voucher payment group status from Issued to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
+describe('[T28364] Update Voucher payment group status from Issued to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -75,6 +75,7 @@ describe('#TC291# - Update Voucher payment group status from Issued to Cancelled
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
             paymentModality: 'voucher',
+            roleName,
           });
         });
       });
@@ -106,7 +107,7 @@ describe('#TC291# - Update Voucher payment group status from Issued to Cancelled
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();
-          financialAssistanceDetailsPage.getPaymentLineStatusIssued().should('not.exist');
+          financialAssistanceDetailsPage.getPaymentLineStatusCancelled().should('not.exist');
         });
       });
     }
