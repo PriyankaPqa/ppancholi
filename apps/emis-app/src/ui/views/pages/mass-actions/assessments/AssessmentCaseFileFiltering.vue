@@ -28,6 +28,7 @@
           :filter-key="FilterKey.MassActionAssessment"
           :count="itemsCount"
           :filter-options="filters"
+          :sql-mode="true"
           @update:appliedFilter="onApplyCaseFileFilter"
           @update:autocomplete="onAutoCompleteUpdate($event)"
           @change:autocomplete="onAutoCompleteChange($event)"
@@ -71,35 +72,26 @@
       </template>
 
       <template #[`item.${customColumns.street}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.streetAddress || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.streetAddress || '-' }}
       </template>
 
       <template #[`item.${customColumns.unit}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.unitSuite || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.unitSuite || '-' }}
       </template>
 
       <template #[`item.${customColumns.city}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.city || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.city || '-' }}
       </template>
 
       <template #[`item.${customColumns.province}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && $m(caseFile.metadata.household.address.address.provinceCode)
+        {{ caseFile.metadata.household
+          && $m(caseFile.metadata.household.provinceCode)
           || '-'
         }}
       </template>
 
       <template #[`item.${customColumns.postalCode}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.postalCode
+        {{ caseFile.metadata.household && caseFile.metadata.household.postalCode
           || '-'
         }}
       </template>
@@ -205,11 +197,11 @@ export default mixins(massActionCaseFileFiltering).extend({
         caseFileNumber: 'Entity/CaseFileNumber',
         firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
         lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-        street: 'Metadata/Household/Address/Address/StreetAddress',
-        unit: 'Metadata/Household/Address/Address/Unit',
-        city: 'Metadata/Household/Address/Address/City',
-        province: `Metadata/Household/Address/Address/ProvinceCode/Translation/${this.$i18n.locale}`,
-        postalCode: 'Metadata/Household/Address/Address/PostalCode',
+        street: 'Metadata/Household/StreetAddress',
+        unit: 'Metadata/Household/Unit',
+        city: 'Metadata/Household/City',
+        province: `Metadata/Household/ProvinceCode/Translation/${this.$i18n.locale}`,
+        postalCode: 'Metadata/Household/PostalCode',
         email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
         phoneNumber: 'Metadata/Household/ContactInformation/Phone/',
         preferredLanguage: 'Metadata/PrimaryBeneficiary/ContactInformation/PreferredLanguage',
@@ -299,6 +291,7 @@ export default mixins(massActionCaseFileFiltering).extend({
       return [
         {
           key: 'Entity/EventId',
+          keyType: EFilterKeyType.Guid,
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
           items: this.sortedEventsFilter,
@@ -390,13 +383,7 @@ export default mixins(massActionCaseFileFiltering).extend({
         }
 
         (preparedFilters.and as unknown[]).push({
-          not: {
-            'Metadata/Assessments': {
-              any: {
-                AssessmentFormId: { searchIn_az: assessmentsOnFile.notSearchIn_az },
-              },
-            },
-          },
+          not: { or: assessmentsOnFile.notSearchIn.map((i: string) => ({ 'Metadata/AssessmentsAsString': { contains: i } })) },
         });
 
         delete preparedFilters[this.customColumns.assessmentsOnFile];

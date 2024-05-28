@@ -58,7 +58,7 @@ describe('[T28306] Create Gift Card Payment Line', { tags: ['@financial-assistan
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Gift Card Payment Line', function () {
+        it('should successfully create Gift Card Payment Line.', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,

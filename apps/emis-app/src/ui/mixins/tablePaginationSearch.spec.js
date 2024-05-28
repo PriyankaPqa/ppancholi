@@ -267,7 +267,7 @@ describe('tablePaginationSearch.vue', () => {
         expect(wrapper.vm.azureSearchParams.search).toEqual('((/.*search.*/ OR "\\"search\\"") AND (/.*test.*/ OR "\\"test\\""))');
       });
 
-      it('if sql mode, the search is applied to metadata/searchabletext', () => {
+      it('if sql mode, the search is applied to metadata/searchabletext when no field specified', () => {
         wrapper.vm.sqlSearchMode = true;
         wrapper.vm.userSearchFilters = '';
         wrapper.vm.params.search = 'search test';
@@ -307,6 +307,32 @@ describe('tablePaginationSearch.vue', () => {
                 { 'metadata/searchableText': { contains: 'test' } },
                 { 'metadata/searchableText': { contains: 'filter' } }],
             }],
+          },
+        );
+      });
+
+      it('if sql mode, the search is applied to field specified', () => {
+        wrapper.vm.sqlSearchMode = true;
+        wrapper.vm.userSearchFilters = '';
+        wrapper.vm.params.search = 'search test';
+        wrapper.vm.userSearchFilters = 'filter';
+
+        wrapper.vm.quicksearchField = 'myfield';
+
+        wrapper.vm.setSearchParams();
+
+        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
+        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+          {
+            and: [
+              {},
+              { and: [
+                { myfield: { contains: 'search' } },
+                { myfield: { contains: 'test' } },
+                { myfield: { contains: 'filter' } },
+              ],
+              },
+            ],
           },
         );
       });

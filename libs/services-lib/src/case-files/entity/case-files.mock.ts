@@ -1,5 +1,7 @@
 import {
   mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntities, mockTier2Response, mockTier2Details,
+  mockCaseFileSummary,
+  mockSearchOptimizedResults,
 } from '@libs/entities-lib/case-file';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { mockDomainBaseService } from '../../base';
@@ -19,8 +21,8 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   getCaseFileAssignedCounts: jest.fn(() => mockCaseFileCount()),
   fetchCaseFileDetailedCounts: jest.fn(() => mockCaseFileDetailedCount()),
   assignCaseFile: jest.fn(() => mockCaseFileEntity()),
-  getSummary: jest.fn(() => mockCaseFileEntity()),
-  getAssignedCaseFiles: jest.fn(() => ({ odataContext: '', odataCount: 0, value: [] })),
+  getSummary: jest.fn(() => mockCaseFileSummary()),
+  searchSummaries: jest.fn(() => ({ odataContext: '', odataCount: 1, value: [mockCaseFileSummary()] })),
   getAllCaseFilesRelatedToHouseholdId: jest.fn(() => mockCaseFileEntities()),
   setPersonReceiveAssistance: jest.fn(() => mockCaseFileEntity()),
   tier2ProcessStart: jest.fn(() => mockTier2Response()),
@@ -30,4 +32,5 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   editRecoveryPlan: jest.fn(() => mockCaseFileEntity()),
   getRecentlyViewed: jest.fn(() => ['mock-case-file-id-1', 'mock-case-file-id-2']),
   addRecentlyViewed: jest.fn(() => ['mock-case-file-id-1', 'mock-case-file-id-2']),
+  searchOptimized: jest.fn(() => mockSearchOptimizedResults()),
 });

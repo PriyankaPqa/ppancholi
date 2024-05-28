@@ -314,7 +314,7 @@ describe('signalR', () => {
           entityName: 'CaseFile',
           action: useCaseFileStore().setItemFromOutsideNotification,
         });
-      expect(conn.listenForChanges)
+      expect(conn.listenForChangesMetadataSql)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'CaseFileMetadata',

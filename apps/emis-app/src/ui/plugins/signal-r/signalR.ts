@@ -353,7 +353,7 @@ export class SignalR implements ISignalR {
       action: useCaseFileStore().setItemFromOutsideNotification,
     });
 
-    this.listenForChanges({
+    this.listenForChangesMetadataSql({
       domain: 'case-file',
       entityName: 'CaseFileMetadata',
       action: useCaseFileMetadataStore().setItemFromOutsideNotification,

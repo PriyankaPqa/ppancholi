@@ -1,9 +1,11 @@
-import { ERegistrationMethod, IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
+import { ERegistrationMethod, IAzureSearchParams, IAzureSearchResult, IListOption } from '@libs/shared-lib/types';
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount, IAssignedTeamMembers, ICaseFileMetadata, ITier2Request, ITier2Response, ITier2Details, IRecoveryPlan,
+  ICaseFileDetailedCount, IAssignedTeamMembers, ITier2Request, ITier2Response, ITier2Details, IRecoveryPlan,
+  ICaseFileSummary,
+  SearchOptimizedResults,
 } from '@libs/entities-lib/case-file';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
@@ -38,8 +40,8 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount>;
   fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount>;
   assignCaseFile(id: uuid, payload: { teamMembers: IAssignedTeamMembers[], teams: uuid[] }): Promise<ICaseFileEntity>
-  getSummary(id: uuid): Promise<ICaseFileEntity>;
-  getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
+  getSummary(id: uuid): Promise<ICaseFileSummary>;
+  searchSummaries(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFileSummary>>;
   getAllCaseFilesRelatedToHouseholdId(householdId: uuid): Promise<ICaseFileEntity[]>;
   setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity>;
   tier2ProcessStart(payload: ITier2Request): Promise<ITier2Response>;
@@ -49,6 +51,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   editRecoveryPlan(id: uuid, recoveryPlan: IRecoveryPlan): Promise<ICaseFileEntity>;
   getRecentlyViewed(): Promise<string[]>;
   addRecentlyViewed(caseFileId: string): Promise<string[]>;
+  searchOptimized(params: IAzureSearchParams, includeCaseFile?: boolean, includeCaseFileAndMetadata?: boolean): Promise<SearchOptimizedResults>;
 }
 
 export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity> {
@@ -64,8 +67,8 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   getCaseFileAssignedCounts: jest.Mock<ICaseFileCount>;
   fetchCaseFileDetailedCounts: jest.Mock<ICaseFileDetailedCount>;
   assignCaseFile: jest.Mock<ICaseFileEntity>;
-  getSummary: jest.Mock<ICaseFileEntity>;
-  getAssignedCaseFiles: jest.Mock<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
+  getSummary: jest.Mock<ICaseFileSummary>;
+  searchSummaries: jest.Mock<IAzureSearchResult<ICaseFileSummary>>;
   getAllCaseFilesRelatedToHouseholdId: jest.Mock<ICaseFileEntity[]>;
   setPersonReceiveAssistance: jest.Mock<ICaseFileEntity>;
   tier2ProcessStart: jest.Mock<ITier2Response>;
@@ -75,4 +78,5 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   editRecoveryPlan: jest.Mock<ICaseFileEntity>;
   getRecentlyViewed: jest.Mock<string[]>;
   addRecentlyViewed: jest.Mock<string[]>;
+  searchOptimized: jest.Mock<SearchOptimizedResults>;
 }

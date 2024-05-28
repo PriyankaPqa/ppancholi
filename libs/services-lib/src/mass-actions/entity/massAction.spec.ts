@@ -81,7 +81,7 @@ describe('>>> Mass Action Service', () => {
 
       await service.exportList(MassActionType.FinancialAssistance, payload);
 
-      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}V2${payload.filter}`, payload, { timeout: 600000 });
     });
 
     it('should be linked to correct URL for export validation of impact status mass action', async () => {
@@ -90,7 +90,7 @@ describe('>>> Mass Action Service', () => {
 
       await service.exportList(MassActionType.ExportValidationOfImpactStatus, payload);
 
-      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}V2${payload.filter}`, payload, { timeout: 600000 });
     });
 
     it('should be linked to correct URL for export case file status mass action', async () => {
@@ -99,7 +99,7 @@ describe('>>> Mass Action Service', () => {
 
       await service.exportList(MassActionType.CaseFileStatus, payload);
 
-      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}V2${payload.filter}`, payload, { timeout: 600000 });
     });
 
     it('should be linked to correct URL for communication mass action', async () => {
@@ -108,7 +108,7 @@ describe('>>> Mass Action Service', () => {
 
       await service.exportList(MassActionType.Communication, payload);
 
-      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}V2${payload.filter}`, payload, { timeout: 600000 });
     });
   });
 

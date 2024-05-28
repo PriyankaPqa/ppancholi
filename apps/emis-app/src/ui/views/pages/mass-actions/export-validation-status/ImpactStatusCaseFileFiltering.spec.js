@@ -1,4 +1,4 @@
-import { EFilterType } from '@libs/component-lib/types/FilterTypes';
+import { EFilterType, EFilterKeyType } from '@libs/component-lib/types/FilterTypes';
 import {
   createLocalVue,
   shallowMount,
@@ -42,14 +42,14 @@ describe('ImpactStatusCaseFileFiltering.vue', () => {
           caseFileNumber: 'Entity/CaseFileNumber',
           firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
           lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-          street: 'Metadata/Household/Address/Address/StreetAddress',
-          unitSuite: 'Metadata/Household/Address/Address/UnitSuite',
-          country: 'Metadata/Household/Address/Address/Country',
-          province: 'Metadata/Household/Address/Address/ProvinceCode/Translation/en',
-          city: 'Metadata/Household/Address/Address/City',
-          postalCode: 'Metadata/Household/Address/Address/PostalCode',
-          longitude: 'Metadata/Household/Address/Address/Longitude',
-          latitude: 'Metadata/Household/Address/Address/Latitude',
+          street: 'Metadata/Household/StreetAddress',
+          unitSuite: 'Metadata/Household/UnitSuite',
+          country: 'Metadata/Household/Country',
+          province: 'Metadata/Household/ProvinceCode/Translation/en',
+          city: 'Metadata/Household/City',
+          postalCode: 'Metadata/Household/PostalCode',
+          longitude: 'Metadata/Household/Longitude',
+          latitude: 'Metadata/Household/Latitude',
           validationOfImpact: 'Metadata/ImpactStatusValidationName/Translation/en',
         };
 
@@ -132,6 +132,7 @@ describe('ImpactStatusCaseFileFiltering.vue', () => {
         const expected = [
           {
             key: 'Entity/EventId',
+            keyType: EFilterKeyType.Guid,
             type: EFilterType.Select,
             label: 'caseFileTable.filters.eventName',
             items: wrapper.vm.eventsFilter,

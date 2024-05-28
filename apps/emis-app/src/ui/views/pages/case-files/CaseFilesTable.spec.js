@@ -1,22 +1,42 @@
 import { RcDataTable } from '@libs/component-lib/components';
-import { EFilterType } from '@libs/component-lib/types/FilterTypes';
-import { createLocalVue, mount } from '@/test/testSetup';
+import { EFilterType, EFilterKeyType } from '@libs/component-lib/types/FilterTypes';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
-import { CaseFileStatus, CaseFileTriage, mockCaseFileEntity, mockCaseFileMetadata, mockCombinedCaseFile, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, CaseFileTriage, mockCaseFileEntity, mockCaseFileMetadata,
+  mockSearchOptimizedResults, mockCombinedCaseFile, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockPersonStore } from '@/pinia/person/person.mock';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { mockProvider } from '@/services/provider';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import Component from './CaseFilesTable.vue';
 
 const mockCaseFiles = mockCombinedCaseFiles();
+const mockSearchResults = mockSearchOptimizedResults();
 const { caseFileStore, pinia, caseFileMetadataStore } = useMockCaseFileStore(createTestingPinia({ stubActions: false }));
+const householdStore = useMockHouseholdStore(pinia).householdStore;
+const personStore = useMockPersonStore(pinia).personStore;
+const eventStore = useMockEventStore(pinia).eventStore;
+const services = mockProvider();
+
+const mockHouseholds = [
+  mockHouseholdEntity({ id: mockCaseFiles[0].entity.householdId }), mockHouseholdEntity({ id: 'empty household', primaryBeneficiary: null }),
+];
+householdStore.getByIds = jest.fn(() => mockHouseholds);
+const mockPersons = [mockMember({ id: mockHouseholdEntity().primaryBeneficiary })];
+personStore.getByIds = jest.fn(() => mockPersons);
+
+const mockTableData = mockSearchResults.value.map((x) => ({ ...x.searchItem, entity: x.entity, primaryMemberName: 'some name', eventName: 'event name', recentlyViewed: true }));
 
 const localVue = createLocalVue();
-const services = mockProvider();
+
+caseFileStore.recentlyViewedCaseFileIds = ['mock-id-1'];
 
 describe('CaseFilesTable.vue', () => {
   let wrapper;
@@ -25,18 +45,25 @@ describe('CaseFilesTable.vue', () => {
     id: 'test-id',
   };
 
+  const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
+      localVue,
+      pinia,
+      propsData: { show: true },
+      mocks: {
+        $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
+        $hasRole: (r) => r === hasRole,
+        $services: services,
+      },
+      ...additionalOverwrites,
+    });
+
+    await wrapper.vm.$nextTick();
+  };
+
   describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        pinia,
-        computed: {
-          tableData: () => mockCombinedCaseFiles(),
-        },
-        mocks: {
-          $services: services,
-        },
-      });
+    beforeEach(async () => {
+      await mountWrapper(true, 6, null, { computed: { tableData: () => mockTableData } });
 
       wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => mockCaseFiles);
 
@@ -114,7 +141,7 @@ describe('CaseFilesTable.vue', () => {
       });
 
       test('name redirects to getHouseholdProfileRoute', () => {
-        const link = wrapper.findDataTest('beneficiaryName-link_Ben 2 Test');
+        const link = wrapper.findDataTest('beneficiaryName-link_some name');
         expect(link.props('to'))
           .toEqual({
             name: routes.household.householdProfile.name,
@@ -124,17 +151,8 @@ describe('CaseFilesTable.vue', () => {
     });
 
     describe('isDuplicate', () => {
-      it('renders the filter', () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia: createTestingPinia({ stubActions: false }),
-          computed: {
-            tableData: () => mockCombinedCaseFiles(),
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+      it('renders the filter', async () => {
+        await mountWrapper();
 
         const toggle = wrapper.findDataTest('caseFilesTable__duplicatesOnlySwitch');
         expect(toggle.exists()).toBeTruthy();
@@ -144,13 +162,7 @@ describe('CaseFilesTable.vue', () => {
 
   describe('Watch', () => {
     beforeEach(async () => {
-      wrapper = mount(Component, {
-        localVue,
-        pinia: createTestingPinia({ stubActions: false }),
-        mocks: {
-          $services: services,
-        },
-      });
+      await mountWrapper();
       await wrapper.setData({
         myCaseFiles: false,
         duplicatesOnly: false,
@@ -193,39 +205,21 @@ describe('CaseFilesTable.vue', () => {
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        pinia: createTestingPinia({ stubActions: false }),
-        mocks: {
-          $services: services,
-        },
-      });
+    beforeEach(async () => {
+      await mountWrapper();
       userStore = useUserStore();
       userStore.getUserId = jest.fn(() => 'mock-id');
     });
 
     describe('customColumns', () => {
       it('should return the correct column names', () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia: createTestingPinia({ stubActions: false }),
-          computed: {
-            locale() {
-              return 'en';
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
         const expectedColumns = {
-          caseFileNumber: 'Entity/CaseFileNumber',
-          name: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
-          event: 'Metadata/Event/Name/Translation/en',
-          triage: 'Metadata/TriageName/Translation/en',
-          status: 'Metadata/CaseFileStatusName/Translation/en',
-          created: 'Entity/Created',
+          caseFileNumber: 'SearchItem/CaseFileNumber',
+          name: 'SearchItem/PrimaryBeneficiaryFirstName',
+          event: 'SearchItem/EventNameen',
+          triage: 'SearchItem/CaseFile/Metadata/TriageName/Translation/en',
+          status: 'SearchItem/CaseFile/Metadata/CaseFileStatusName/Translation/en',
+          created: 'SearchItem/Created',
           recentlyViewed: 'RecentlyViewed',
         };
 
@@ -246,78 +240,70 @@ describe('CaseFilesTable.vue', () => {
         expect(wrapper.vm.myCaseFilesFilter)
           .toEqual({
             Entity: {
-              AssignedTeamMembers: {
-                any: {
-                  TeamMembersIds: {
-                    any: {
-                      [ITEM_ROOT]: wrapper.vm.userId,
-                    },
-                  },
-                },
+              AssignedTeamMembersAsString: {
+                contains: wrapper.vm.userId,
               },
             },
           });
       });
     });
 
+    describe('caseFiles', () => {
+      it('calls the getter', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => [mockCombinedCaseFile({ id: 'cf1' }), mockCombinedCaseFile({ id: 'cf2' })]);
+        await wrapper.setData({ searchResultIds: ['some'], caseFilesFromSearch: mockSearchResults.value.map((x) => x.searchItem) });
+        const r = wrapper.vm.caseFiles;
+        expect(wrapper.vm.combinedCaseFileStore.getByIds).toHaveBeenCalledWith(['some'], { baseDate: null, prependPinnedItems: true });
+        expect(JSON.stringify(r)).toEqual(JSON.stringify(mockSearchResults.value.map((x) => ({ ...x.searchItem, entity: x.entity }))));
+      });
+    });
+
+    describe('households', () => {
+      it('calls the getter', async () => {
+        expect(wrapper.vm.households).toEqual(householdStore.getByIds());
+      });
+    });
+
+    describe('persons', () => {
+      it('calls the getter', async () => {
+        expect(wrapper.vm.persons).toEqual(personStore.getByIds());
+      });
+    });
+
     describe('headers', () => {
       it('returns the correct headers data', () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia: createTestingPinia({ stubActions: false }),
-          propsData: {
-            isDashboard: false,
-          },
-
-          computed: {
-            customColumns() {
-              return {
-                caseFileNumber: 'Entity/CaseFileNumber',
-                name: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
-                event: 'Metadata/Event/Name/Translation/en',
-                triage: 'Metadata/TriageName/Translation/en',
-                status: 'Metadata/CaseFileStatusName/Translation/en',
-                created: 'Entity/Created',
-                recentlyViewed: 'RecentlyViewed',
-              };
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
         expect(wrapper.vm.headers)
           .toEqual([
             {
               text: 'caseFileTable.tableHeaders.caseFileNumber',
               sortable: true,
-              value: 'Entity/CaseFileNumber',
+              value: 'SearchItem/CaseFileNumber',
             },
             {
               text: 'caseFilesTable.tableHeaders.name',
               sortable: true,
-              value: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
+              value: 'SearchItem/PrimaryBeneficiaryFirstName',
             },
             {
               text: 'caseFilesTable.tableHeaders.event',
               sortable: true,
-              value: 'Metadata/Event/Name/Translation/en',
+              value: 'SearchItem/EventNameen',
             },
             {
               text: 'caseFilesTable.tableHeaders.triage',
               sortable: true,
-              value: 'Metadata/TriageName/Translation/en',
+              value: 'SearchItem/CaseFile/Metadata/TriageName/Translation/en',
             },
             {
               text: 'caseFilesTable.tableHeaders.status',
               sortable: true,
-              value: 'Metadata/CaseFileStatusName/Translation/en',
+              value: 'SearchItem/CaseFile/Metadata/CaseFileStatusName/Translation/en',
             },
             {
               text: 'caseFilesTable.tableHeaders.createdDate',
               sortable: true,
-              value: 'Entity/Created',
+              value: 'SearchItem/Created',
             },
             {
               sortable: false,
@@ -344,17 +330,8 @@ describe('CaseFilesTable.vue', () => {
     });
 
     describe('tableProps', () => {
-      it('returns the correct object', () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          computed: {
-            tableData: () => mockCombinedCaseFiles(),
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+      it('returns the correct object', async () => {
+        await mountWrapper();
         caseFileStore.searchLoading = false;
         wrapper.vm.search = jest.fn();
         expect(wrapper.vm.tableProps.loading).toEqual(false);
@@ -363,27 +340,22 @@ describe('CaseFilesTable.vue', () => {
     });
 
     describe('filters', () => {
-      it('should have correct filters', () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia: createTestingPinia({ stubActions: false }),
-          mocks: {
-            $services: services,
-          },
-        });
+      it('should have correct filters', async () => {
+        await mountWrapper();
         const expected = [
           {
-            key: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
+            key: 'SearchItem/PrimaryBeneficiaryFirstName',
             type: EFilterType.Text,
             label: 'caseFilesTable.tableHeaders.firstName',
           },
           {
-            key: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
+            key: 'SearchItem/PrimaryBeneficiaryLastName',
             type: EFilterType.Text,
             label: 'caseFilesTable.tableHeaders.lastName',
           },
           {
-            key: 'Entity/EventId',
+            key: 'SearchItem/EventId',
+            keyType: EFilterKeyType.Guid,
             type: EFilterType.Select,
             label: 'caseFileTable.filters.eventName',
             items: wrapper.vm.eventsFilter,
@@ -398,24 +370,24 @@ describe('CaseFilesTable.vue', () => {
             },
           },
           {
-            key: `Metadata/TriageName/Translation/${wrapper.vm.$i18n.locale}`,
+            key: 'SearchItem/CaseFile/Triage',
             type: EFilterType.MultiSelect,
             label: 'caseFileTable.tableHeaders.triage',
-            items: helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage', true),
+            items: helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage', false, true, true),
           },
           {
-            key: 'Entity/Created',
+            key: 'SearchItem/Created',
             type: EFilterType.Date,
             label: 'caseFileTable.filters.createdDate',
           },
           {
-            key: `Metadata/CaseFileStatusName/Translation/${wrapper.vm.$i18n.locale}`,
+            key: 'SearchItem/CaseFile/CaseFileStatus',
             type: EFilterType.MultiSelect,
             label: 'caseFileTable.tableHeaders.status',
-            items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
+            items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', false, true, true),
           },
           {
-            key: 'Metadata/HasPotentialDuplicates',
+            key: 'SearchItem/HasPotentialDuplicates',
             type: EFilterType.Select,
             label: 'caseFilesTable.filters.isDuplicate',
             items: [{
@@ -427,19 +399,19 @@ describe('CaseFilesTable.vue', () => {
             }],
           },
           {
-            key: 'Entity/AssignedTeamMembers',
+            key: 'SearchItem/CaseFile/AssignedTeamMembersAsString',
             type: EFilterType.Select,
             label: 'caseFileTable.filters.isAssigned',
             items: [{
               text: 'common.yes',
-              value: 'arrayNotEmpty',
+              value: 'stringArrayNotEmpty',
             }, {
               text: 'common.no',
-              value: 'arrayEmpty',
+              value: 'stringArrayEmpty',
             }],
           },
           {
-            key: 'Metadata/LastActionDate',
+            key: 'SearchItem/LastActionDate',
             type: EFilterType.Date,
             label: 'caseFileTable.filters.lastActionDate',
           },
@@ -456,45 +428,48 @@ describe('CaseFilesTable.vue', () => {
         caseFileStore.items = [mockCaseFileEntity({ id: '1' }), mockCaseFileEntity({ id: '2' })];
         caseFileMetadataStore.items = [mockCaseFileMetadata({ id: '1' }), mockCaseFileMetadata({ id: '2' })];
         caseFileStore.recentlyViewedCaseFileIds = ['1'];
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          mocks: {
-            $services: services,
-          },
-        });
+        await mountWrapper();
+        const entity = mockCombinedCaseFile({ id: '1' }).entity;
         expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify([
           {
-            entity: mockCombinedCaseFile({ id: '1' }).entity,
-            metadata: {},
+            id: '1',
+            caseFileNumber: entity.caseFileNumber,
+            created: entity.created,
+            eventId: entity.eventId,
+            householdId: entity.householdId,
+            status: entity.status,
             pinned: false,
+            entity: mockCombinedCaseFile({ id: '1' }).entity,
             recentlyViewed: true,
+            primaryMemberName: 'Bob Smith',
+            eventName: 'Gatineau Floods 2021',
           },
           {
-            entity: mockCombinedCaseFile({ id: '2' }).entity,
-            metadata: {},
+            id: '2',
+            caseFileNumber: entity.caseFileNumber,
+            created: entity.created,
+            eventId: entity.eventId,
+            householdId: entity.householdId,
+            status: entity.status,
             pinned: false,
+            entity: mockCombinedCaseFile({ id: '2' }).entity,
             recentlyViewed: false,
+            primaryMemberName: 'Bob Smith',
+            eventName: 'Gatineau Floods 2021',
           },
         ]));
       });
     });
 
     describe('isRecentlyViewedFilter', () => {
-      beforeEach(() => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          mocks: {
-            $services: services,
-          },
-        });
+      beforeEach(async () => {
+        await mountWrapper();
       });
       it('should return empty objet when there is no recently viewed case file', async () => {
         caseFileStore.recentlyViewedCaseFileIds = [];
         expect(wrapper.vm.isRecentlyViewedFilter).toEqual({
           Entity: {
-            Id: '',
+            Id: { value: null, type: EFilterKeyType.Guid },
           },
         });
       });
@@ -505,11 +480,11 @@ describe('CaseFilesTable.vue', () => {
         expect(wrapper.vm.isRecentlyViewedFilter).toEqual({
           or: [
             { Entity: {
-              Id: 'mock-id-1',
+              Id: { value: 'mock-id-1', type: EFilterKeyType.Guid },
             },
             },
             { Entity: {
-              Id: 'mock-id-2',
+              Id: { value: 'mock-id-2', type: EFilterKeyType.Guid },
             },
             },
           ],
@@ -520,18 +495,9 @@ describe('CaseFilesTable.vue', () => {
 
   describe('Methods', () => {
     beforeEach(async () => {
-      wrapper = mount(Component, {
-        localVue,
-        pinia: createTestingPinia({ stubActions: false }),
-        mocks: {
-          $services: services,
-        },
-      });
-
-      wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({
-        ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
-        count: 2,
-      }));
+      await mountWrapper();
+      wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => [mockCombinedCaseFile({ id: 'cf1' }), mockCombinedCaseFile({ id: 'cf2' })]);
+      await wrapper.setData({ searchResultIds: ['some'], caseFilesFromSearch: mockSearchResults.value.map((x) => x.searchItem) });
 
       await wrapper.setData({
         myCaseFiles: false,
@@ -596,7 +562,7 @@ describe('CaseFilesTable.vue', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedCaseFileStore.search)
+        expect(services.caseFiles.searchOptimized)
           .toHaveBeenCalledWith({
             search: params.search,
             filter: params.filter,
@@ -606,13 +572,17 @@ describe('CaseFilesTable.vue', () => {
             count: true,
             queryType: 'full',
             searchMode: 'all',
-          });
+          }, true);
+
+        expect(householdStore.fetchByIds).toHaveBeenCalledWith(['mock-household-id-1', 'mock-household-id-1'], true);
+        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['e70da37e-67cd-4afb-9c36-530c7d8b191f', 'e70da37e-67cd-4afb-9c36-530c7d8b191f'], true);
+        expect(personStore.fetchByIds).toHaveBeenCalledWith(['3fa85f64-5717-4562-b3fc-2c963f66afa6', null], true);
       });
     });
 
     describe('getHouseholdProfileRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles[0]))
+        expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles[0].entity))
           .toEqual({
             name: routes.household.householdProfile.name,
             params: {
@@ -624,7 +594,7 @@ describe('CaseFilesTable.vue', () => {
 
     describe('getCaseFileRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getCaseFileRoute(mockCaseFiles[0]))
+        expect(wrapper.vm.getCaseFileRoute(mockCaseFiles[0].entity))
           .toEqual({
             name: routes.caseFile.activity.name,
             params: {
@@ -778,32 +748,29 @@ describe('CaseFilesTable.vue', () => {
     });
 
     describe('getBeneficiaryName', () => {
-      it('should return first name and last name from case file metadata', () => {
-        const combinedCaseFile = mockCombinedCaseFile();
-        expect(wrapper.vm.getBeneficiaryName(combinedCaseFile)).toEqual('Ben 2 Test');
+      it('should return first name and last name from object when household not loaded', () => {
+        const cf = { ...wrapper.vm.caseFiles[0] };
+        cf.householdId = 'new id';
+        expect(wrapper.vm.getBeneficiaryName(cf)).toEqual('some benef last');
       });
 
-      it('should return Empty household when Identityset is unavailable ', () => {
-        const combinedCaseFile = {
-          entity: {},
-          metadata: {},
-        };
-        expect(wrapper.vm.getBeneficiaryName(combinedCaseFile)).toEqual('caseFilesTable.tableContent.empty_household');
+      it('should return first name and last name from person', () => {
+        const cf = { ...wrapper.vm.caseFiles[0] };
+        expect(wrapper.vm.getBeneficiaryName(cf)).toEqual('Bob Smith');
+      });
+
+      it('should return Empty household when no primary', () => {
+        const cf = { ...wrapper.vm.caseFiles[0] };
+        cf.householdId = 'empty household';
+        expect(wrapper.vm.getBeneficiaryName(cf)).toEqual('caseFilesTable.tableContent.empty_household');
       });
     });
   });
 
   describe('lifecycle', () => {
     describe('created', () => {
-      beforeEach(() => {
-        caseFileStore.recentlyViewedCaseFileIds = [];
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          mocks: {
-            $services: services,
-          },
-        });
+      beforeEach(async () => {
+        await mountWrapper();
       });
       it('should set saveState to true and load State, fetchRecentlyViewed', async () => {
         wrapper.vm.loadState = jest.fn();

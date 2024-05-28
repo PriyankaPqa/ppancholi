@@ -41,6 +41,7 @@ import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { ECurrentAddressTypes, ICreateHouseholdRequest, ICurrentAddress } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { EFilterKeyType } from '@libs/component-lib/types';
 import { linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
@@ -438,7 +439,7 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
       cy.log('Casefile index successfully updated');
     } else if (attempt < maxAttempt) {
       const search = await provider.caseFiles.search({
-        filter: { Entity: { Id: caseFileId } },
+        filter: { Entity: { Id: { value: caseFileId, type: EFilterKeyType.Guid } } },
         top: 1,
       });
       searchResult = search?.value;

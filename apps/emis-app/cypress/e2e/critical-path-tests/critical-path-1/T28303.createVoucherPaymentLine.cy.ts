@@ -58,7 +58,7 @@ describe('[T28303] Create Voucher Payment Line', { tags: ['@financial-assistance
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Voucher Payment Line', function () {
+        it('should successfully create Voucher Payment Line.', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,

@@ -78,8 +78,14 @@ export default {
     return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0)).map((key) => myEnum[key]);
   },
 
+  getEnumKeyText(myEnum: Record<string, unknown>, value: number) {
+    // eslint-disable-next-line radix
+    return Object.keys(myEnum).find((x) => !(parseInt(x, 0) >= 0) && myEnum[x] === value);
+  },
+
   // This function takes am enum in parameters and output a collection with [value: value of enum, text: the translation corresponding to the enum]
-  enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, textToValue = false, sort = true) {
+  // eslint-disable-next-line max-params
+  enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, textToValue = false, sort = true, keyTextToValue = false) {
     const enumKeys = this.getEnumKeys(myEnum);
     const data = [] as Array<{ value: unknown, text: string, dataTest: string }>;
     enumKeys.forEach((val) => {
@@ -87,7 +93,7 @@ export default {
         const text = i18n.t(`${translationPath}.${val}`).toString();
         data.push({ value: text, text, dataTest: val });
       } else {
-        const value = myEnum[val];
+        const value = keyTextToValue ? this.getEnumKeyText(myEnum, myEnum[val] as number) : myEnum[val];
         data.push({ value, text: i18n.t(`${translationPath}.${val}`).toString(), dataTest: val });
       }
     });
@@ -293,7 +299,7 @@ export default {
       const quickSearch = {
         and: items.map((i) => {
           const f = {} as Record<any, any>;
-          f[propName] = { contains: i };
+          f[propName || 'metadata/searchableText'] = { contains: i };
           return f;
         }),
       };

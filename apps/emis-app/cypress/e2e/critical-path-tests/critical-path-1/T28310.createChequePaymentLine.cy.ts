@@ -60,7 +60,7 @@ describe('[T28310] Create Cheque Payment Line.', { tags: ['@financial-assistance
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Cheque Payment Line', function () {
+        it('should successfully create Cheque Payment Line.', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,

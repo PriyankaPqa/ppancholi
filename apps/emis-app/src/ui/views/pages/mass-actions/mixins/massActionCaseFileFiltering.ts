@@ -5,7 +5,7 @@ import { ICaseFileCombined, ICaseFileEntity, ICaseFileMetadata, IdParams } from 
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
-import { buildQuery } from '@libs/services-lib/odata-query';
+import { buildQuerySql } from '@libs/services-lib/odata-query-sql';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
@@ -23,6 +23,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       fetchAllCaseFileLoading: false,
       exportLoading: false,
       combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
+      sqlSearchMode: true,
+      lastFilter: null as IAzureSearchParams,
     };
   },
 
@@ -56,6 +58,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     async fetchData(params: IAzureSearchParams) {
       if (this.filtersOn) {
+        this.lastFilter = { filter: params.filter };
         const res = await this.combinedCaseFileStore.search({
           search: params.search,
           filter: params.filter,
@@ -65,7 +68,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        });
+        }, null, false, true);
         return res;
       }
       return { ids: [], count: 0 };
@@ -74,11 +77,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     async onExport(massActionType: MassActionType) {
       this.exportLoading = true;
 
-      const filter = buildQuery({ filter: this.azureSearchParams.filter }).replace('?$filter=', '');
+      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata(this.lastFilter, true) as any);
 
       const res = await this.$services.massActions.exportList(massActionType, {
-        filter: `${filter} and Entity/Status eq 1`,
-        search: this.azureSearchParams.search,
+        filter,
+        search: null,
         language: this.$i18n.locale,
       });
 

@@ -10,6 +10,7 @@ export default Vue.extend({
   data() {
     return {
       sqlSearchMode: false,
+      quicksearchField: 'metadata/searchableText' as string,
       saveState: false,
       route: this.$route.path,
       azureSearchParams: {
@@ -130,7 +131,7 @@ export default Vue.extend({
           this.azureSearchParams.search = quickSearch;
         }
       } else {
-        const quickSearch = helpers.toQuickSearchSql(`${this.params.search || this.searchTerm || ''} ${this.userSearchFilters || ''}`);
+        const quickSearch = helpers.toQuickSearchSql(`${this.params.search || this.searchTerm || ''} ${this.userSearchFilters || ''}`, this.quicksearchField);
         if (!quickSearch) {
           return;
         }

@@ -48,10 +48,10 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
           caseFileNumber: 'Entity/CaseFileNumber',
           firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
           lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-          street: 'Metadata/Household/Address/Address/StreetAddress',
-          city: 'Metadata/Household/Address/Address/City',
-          province: 'Metadata/Household/Address/Address/ProvinceCode/Translation/en',
-          postalCode: 'Metadata/Household/Address/Address/PostalCode',
+          street: 'Metadata/Household/StreetAddress',
+          city: 'Metadata/Household/City',
+          province: 'Metadata/Household/ProvinceCode/Translation/en',
+          postalCode: 'Metadata/Household/PostalCode',
           email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
           authenticationStatus: 'Metadata/IdentityAuthenticationStatusName/Translation/en',
           validationOfImpact: 'Metadata/ImpactStatusValidationName/Translation/en',
@@ -132,6 +132,7 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
         const expected = [
           {
             key: 'Entity/EventId',
+            keyType: EFilterKeyType.Guid,
             type: EFilterType.Select,
             label: 'caseFileTable.filters.eventName',
             items: wrapper.vm.eventsFilter,
@@ -315,6 +316,32 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
           preparedFilters: {
             and: [
               testFilter,
+            ],
+          },
+          searchFilters: '',
+        });
+      });
+
+      it('should assign appliedProgramIds filter and remove original appliedProgramIds filter', async () => {
+        const testFilter = { notSearchInOnArray: ['filter', 'second'] };
+
+        const preparedFilters = {
+          'Metadata/AppliedProgramIds': testFilter,
+          and: [],
+        };
+
+        wrapper.vm.onApplyFilter = jest.fn();
+
+        await wrapper.vm.onApplyCaseFileFilter({ preparedFilters, searchFilters: '' });
+
+        expect(wrapper.vm.onApplyFilter).toHaveBeenCalledWith({
+          preparedFilters: {
+            and: [
+              {
+                not: {
+                  or: [{ 'Metadata/AppliedProgramIdsAsString': { contains: 'filter' } }, { 'Metadata/AppliedProgramIdsAsString': { contains: 'second' } }],
+                },
+              },
             ],
           },
           searchFilters: '',

@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import { CaseFileStatus, ICaseFileEntity, ICaseFileMetadata } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
-import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -24,10 +24,6 @@ export default Vue.extend({
 
     caseFile(): ICaseFileEntity {
       return useCaseFileStore().getById(this.caseFileId);
-    },
-
-    caseFileMetadata(): ICaseFileMetadata {
-      return useCaseFileMetadataStore().getById(this.caseFileId);
     },
 
     event(): IEventEntity {

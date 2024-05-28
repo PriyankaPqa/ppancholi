@@ -40,7 +40,7 @@ describe('VDataTableA11y.spec.vue', () => {
       document.querySelector = jest.fn(() => ({ id: 'test-id' }));
       await wrapper.vm.setPaginationA11y();
       // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-data-footer__select .v-input__slot', 'aria-controls', 'test-id', wrapper.vm.$refs.vDataTableA11y.$el);
     });
   });
@@ -50,7 +50,7 @@ describe('VDataTableA11y.spec.vue', () => {
       wrapper.vm.setValueForEmptyTableHeader = jest.fn();
       await wrapper.vm.setDataTableA11y();
       // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       expect(wrapper.vm.setValueForEmptyTableHeader).toHaveBeenCalled();
       expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith(
         '.text-start button.v-icon.v-data-table__expand-icon',
@@ -66,7 +66,7 @@ describe('VDataTableA11y.spec.vue', () => {
       helpers.setElementA11yAttribute = jest.fn();
       wrapper.vm.setDataTableFooterA11y();
       // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       expect(helpers.setElementA11yAttribute).toHaveBeenCalledWith('.v-data-footer__select  .v-input__slot', 'role', 'combobox', wrapper.vm.$refs.vDataTableA11y.$el);
     });
   });

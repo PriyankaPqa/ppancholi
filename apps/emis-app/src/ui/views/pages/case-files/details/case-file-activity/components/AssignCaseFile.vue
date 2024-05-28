@@ -126,7 +126,7 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { RcDialog, RcPageLoading, RcDataTable } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { TeamType, ITeamEntity } from '@libs/entities-lib/team';
-import { ICaseFileEntity, IAssignedTeamMembers } from '@libs/entities-lib/case-file';
+import { ICaseFileSummary, IAssignedTeamMembers } from '@libs/entities-lib/case-file';
 import {
   AccountStatus, IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
@@ -174,7 +174,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       required: true,
     },
     caseFile: {
-      type: Object as () => ICaseFileEntity,
+      type: Object as () => ICaseFileSummary,
       required: true,
     },
   },

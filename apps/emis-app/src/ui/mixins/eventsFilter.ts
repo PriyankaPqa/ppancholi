@@ -138,7 +138,7 @@ export default Vue.extend({
       { filterKey, search, selectedItem }:
       { filterKey: string, search: string, selectedItem: IDropdownItem },
     ) {
-      if ((filterKey === 'Entity/EventId' || filterKey === 'Metadata/EventId') && search !== selectedItem?.text) {
+      if ((filterKey === 'Entity/EventId' || filterKey === 'Metadata/EventId' || filterKey === 'SearchItem/EventId') && search !== selectedItem?.text) {
         this.eventFilterQuery = search;
       }
     },
@@ -147,8 +147,8 @@ export default Vue.extend({
      * Triggered when a user click on a filter. Need to be throttle as it is triggered several times. Could not find the reason why.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    throttleOnLoadFilter: _throttle(function func(this:any, filterFormData: FilterFormData) {
-      this.onLoadFilter(filterFormData);
+    throttleOnLoadFilter: _throttle(function func(this:any, filterFormData: FilterFormData, filterKey = 'Entity/EventId') {
+      this.onLoadFilter(filterFormData, filterKey);
     }, 500),
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

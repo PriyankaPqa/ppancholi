@@ -58,7 +58,7 @@ describe('[T28297] Create Invoice Payment Line.', { tags: ['@financial-assistanc
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Invoice Payment Line', function () {
+        it('should successfully create Invoice Payment Line.', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,

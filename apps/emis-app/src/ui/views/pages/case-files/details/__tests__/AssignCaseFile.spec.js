@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockAssignedTeamMembers, mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { mockAssignedTeamMembers, mockCaseFileSummary } from '@libs/entities-lib/case-file';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-lib/team';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
@@ -10,7 +10,7 @@ import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
 
-const mockCaseFile = mockCaseFileEntity();
+const mockCaseFile = mockCaseFileSummary();
 const team = { ...mockTeamEntity(), activeMemberCount: 1 };
 const { pinia, teamStore } = useMockTeamStore();
 const { caseFileStore } = useMockCaseFileStore(pinia);

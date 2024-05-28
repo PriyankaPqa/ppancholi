@@ -29,6 +29,7 @@
           :filter-key="FilterKey.MassActionFinancialAssistance"
           :count="itemsCount"
           :filter-options="filters"
+          :sql-mode="true"
           @update:appliedFilter="onApplyCaseFileFilter"
           @update:autocomplete="onAutoCompleteUpdate($event)"
           @change:autocomplete="onAutoCompleteChange($event)"
@@ -72,29 +73,22 @@
       </template>
 
       <template #[`item.${customColumns.street}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.streetAddress || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.streetAddress || '-' }}
       </template>
 
       <template #[`item.${customColumns.city}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.city || '-' }}
+        {{ caseFile.metadata.household && caseFile.metadata.household.city || '-' }}
       </template>
 
       <template #[`item.${customColumns.province}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && $m(caseFile.metadata.household.address.address.provinceCode)
+        {{ caseFile.metadata.household
+          && $m(caseFile.metadata.household.provinceCode)
           || '-'
         }}
       </template>
 
       <template #[`item.${customColumns.postalCode}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household && caseFile.metadata.household.address
-          && caseFile.metadata.household.address.address
-          && caseFile.metadata.household.address.address.postalCode
+        {{ caseFile.metadata.household && caseFile.metadata.household.postalCode
           || '-'
         }}
       </template>
@@ -168,10 +162,10 @@ export default mixins(massActionCaseFileFiltering).extend({
         caseFileNumber: 'Entity/CaseFileNumber',
         firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
         lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
-        street: 'Metadata/Household/Address/Address/StreetAddress',
-        city: 'Metadata/Household/Address/Address/City',
-        province: `Metadata/Household/Address/Address/ProvinceCode/Translation/${this.$i18n.locale}`,
-        postalCode: 'Metadata/Household/Address/Address/PostalCode',
+        street: 'Metadata/Household/StreetAddress',
+        city: 'Metadata/Household/City',
+        province: `Metadata/Household/ProvinceCode/Translation/${this.$i18n.locale}`,
+        postalCode: 'Metadata/Household/PostalCode',
         email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
         authenticationStatus: `Metadata/IdentityAuthenticationStatusName/Translation/${this.$i18n.locale}`,
         validationOfImpact: `Metadata/ImpactStatusValidationName/Translation/${this.$i18n.locale}`,
@@ -244,6 +238,7 @@ export default mixins(massActionCaseFileFiltering).extend({
       return [
         {
           key: 'Entity/EventId',
+          keyType: EFilterKeyType.Guid,
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
           items: this.sortedEventsFilter,
@@ -379,6 +374,23 @@ export default mixins(massActionCaseFileFiltering).extend({
         (preparedFilters.and as unknown[]).push(emailFilter);
 
         delete preparedFilters[this.customColumns.email];
+      }
+
+      const appliedProgramIds = preparedFilters['Metadata/AppliedProgramIds'] as any;
+
+      // appliedProgramIds on file is a filter where we're looking for all case files that have not been assigned any of the ids
+      // it does not directly translate to our regular filters
+      // this is the real filter for this
+      if (appliedProgramIds) {
+        if (!preparedFilters.and) {
+          preparedFilters.and = [];
+        }
+
+        (preparedFilters.and as unknown[]).push({
+          not: { or: appliedProgramIds.notSearchInOnArray.map((i: string) => ({ 'Metadata/AppliedProgramIdsAsString': { contains: i } })) },
+        });
+
+        delete preparedFilters['Metadata/AppliedProgramIds'];
       }
 
       await this.onApplyFilter({ preparedFilters, searchFilters });

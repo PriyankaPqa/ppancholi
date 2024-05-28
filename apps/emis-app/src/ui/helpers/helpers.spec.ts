@@ -95,6 +95,20 @@ describe('>>>> helpers', () => {
     });
   });
 
+  describe('getEnumKeyText', () => {
+    it('should return the string name of the enum that fits the value', () => {
+      const test = {
+        A: 0,
+        B: 1,
+        SomeMoreValue: 3,
+      };
+      let res = helpers.getEnumKeyText(test, 3);
+      expect(res).toEqual('SomeMoreValue');
+      res = helpers.getEnumKeyText(test, 1);
+      expect(res).toEqual('B');
+    });
+  });
+
   describe('toQuickSearch', () => {
     it('returns with sanitized quickSearch', () => {
       expect(helpers.toQuickSearch('[search')).toEqual('((/.*%5C%5Bsearch.*/ OR "\\"%5C%5Bsearch\\""))');

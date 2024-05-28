@@ -30,7 +30,8 @@ import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import FinancialAssistancePaymentDetailsCreate from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsCreate.vue';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/mass-actions/entity';
-import { buildQuery } from '@libs/services-lib/odata-query';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { buildQuerySql } from '@libs/services-lib/odata-query-sql';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
 
 export interface PaymentDetailsForm {
@@ -91,7 +92,7 @@ export default Vue.extend({
     async onPost({ description }: { description: string }) {
       const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
 
-      const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
+      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
 
       const payload = {
         name: this.makeFormName(),
@@ -103,8 +104,8 @@ export default Vue.extend({
         subCategoryId: this.form.subItem.id,
         paymentModality: this.form.paymentModality,
         amount: this.form.amount,
-        search: azureSearchParams.search,
-        filter: `${filter} and Entity/Status eq 1`,
+        search: null,
+        filter,
       } as IMassActionFinancialAssistanceCreatePayload;
 
       this.loading = true;

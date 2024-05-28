@@ -58,7 +58,7 @@ describe('[T28307] Create Direct Deposit Payment Line.', { tags: ['@financial-as
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Direct Deposit Payment Line', function () {
+        it('should successfully create Direct Deposit Payment Line.', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,

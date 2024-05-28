@@ -58,7 +58,7 @@ describe('[T28309] Create e-transfer payment line', { tags: ['@financial-assista
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create E-Transfer Payment Line', function () {
+        it('should successfully create E-Transfer Payment Line.', function () {
           const canStepsParamData: Partial<PaymentLineCanStepsParams> = {
             faTable: this.table,
             retries: this.test.retries.length,
