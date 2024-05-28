@@ -142,7 +142,9 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality, rol
   } else if (paymentStatus === 'Completed') {
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
-    financialAssistanceDetailsPage.getPaymentLineItemEditButton().should('be.visible');
+    if (roleName !== UserRoles.contributorFinance) {
+      financialAssistanceDetailsPage.getPaymentLineItemEditButton().should('be.visible');
+    }
     if (roleName === UserRoles.level6) {
       financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('be.visible');
     } else {
