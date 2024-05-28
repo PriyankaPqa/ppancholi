@@ -29,6 +29,13 @@ const paymentLineItemEditButtonVisibleForRoles = [
   UserRoles.level6,
 ] as string[];
 
+const paymentModalityShowRelatedNumber = [
+  'prepaid card',
+  'gift card',
+  'voucher',
+  'invoice',
+];
+
 const addPaymentLineCanSteps = (params: Partial<PaymentLineCanStepsParams>) => {
   const addFinancialAssistancePage = new AddFinancialAssistancePage();
   addFinancialAssistancePage.selectTable(params.faTable.name.translation.en);
@@ -148,7 +155,7 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality, rol
   } else if (paymentStatus === 'Completed') {
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().shouldHaveCrossedText(false);
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00').should('be.visible');
-    if (paymentLineItemEditButtonVisibleForRoles.indexOf(roleName) > -1) {
+    if (paymentLineItemEditButtonVisibleForRoles.indexOf(roleName) > -1 && paymentModalityShowRelatedNumber.indexOf(paymentModality) > -1) {
       financialAssistanceDetailsPage.getPaymentLineItemEditButton().should('be.visible');
     }
     if (roleName === UserRoles.level6) {

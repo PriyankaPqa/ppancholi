@@ -64,7 +64,7 @@ describe('[T28354] Update E-Transfer payment group status from In Progress to Ca
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully update E-Transfer payment group status', function () {
+        it('should successfully update E-Transfer payment group status.', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');

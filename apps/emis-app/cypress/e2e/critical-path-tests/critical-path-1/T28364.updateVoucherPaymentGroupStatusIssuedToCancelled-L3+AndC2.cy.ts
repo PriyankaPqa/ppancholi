@@ -29,7 +29,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('[T28364] Update Voucher payment group status from Issued to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
+describe('[T28364] Update Voucher payment group status from Issued to Cancelled- L3+ and C2.', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -64,7 +64,7 @@ describe('[T28364] Update Voucher payment group status from Issued to Cancelled-
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully update Voucher payment group status', function () {
+        it('should successfully update Voucher payment group status.', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');

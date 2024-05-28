@@ -138,8 +138,22 @@ export class HouseholdProfilePage {
   }
 
   public goToCaseFileDetailsPage() {
-    cy.getByDataTest(this.caseFileNumber).click();
-    cy.waitForStatusCode('**/case-file/case-files/*/activities', 200, 50000); // There are many calls done between the click on fetch of activities, ie all fetch from CaseFileDetails + all fetch from CaseFileActivity
+    cy.interceptAndValidateCondition({
+      httpMethod: 'GET',
+      url: '**/case-file/case-files/*/activities',
+      actionsCallback: () => {
+        cy.getByDataTest(this.caseFileNumber).click();
+      },
+      conditionCallBack: (interception) => (interception.response.statusCode === 200),
+      actionsWhenValidationPassed: (interception) => {
+        cy.log(`Expected status 200 received for ${interception.request.url}`);
+      },
+      actionsWhenValidationFailed: (interception) => {
+        throw Error(`Expected status 200 not received for ${interception.request.url}`);
+      },
+      timeout: 50000,
+      alias: 'interceptedRequest',
+    });
     return new CaseFileDetailsPage();
   }
 
