@@ -114,7 +114,7 @@ describe('[T28847] Process a Financial Assistance data correction file', { tags:
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process a financial assistance data correction file', function () {
+        it('should successfully process a financial assistance data correction file.', function () {
           processDataCorrectionFileSteps(householdQuantity, 'financial assistance records', this.massActionName);
           const baseDetailsMassActionPage = new BaseDetailsMassAction();
           baseDetailsMassActionPage.getBackToMassActionListButton().should('be.enabled');

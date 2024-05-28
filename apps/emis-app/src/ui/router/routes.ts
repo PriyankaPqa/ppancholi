@@ -56,7 +56,11 @@ export const routes: Array<RouteConfig> = [
         dashboardStore.initLoading = true;
         const userAccount = await useUserAccountStore().fetchCurrentUserAccount();
         if (userAccount) {
-          await SignalR.instance.buildHubConnection();
+          // @ts-ignore
+          if (!window.Cypress) {
+            // we want to disable the entire connection to SignalR to prevent any SignalR errors in the test automation
+            await SignalR.instance.buildHubConnection();
+          }
         } else {
           helpers.redirectToLoginErrorPage();
         }

@@ -6,13 +6,13 @@ export class SignalRService implements ISignalRService {
   constructor(protected http: IHttpClient) {}
 
   async subscribe(connectionId: string, ids: uuid[]) {
-    const chunkCalls = _chunk(ids, 250).map((chunkIds) => (
-      this.http.post('/hub/subscribe', {
-        entityIds: chunkIds,
-        connectionId,
-      }, { globalHandler: GlobalHandler.Disabled })
-    ));
-    await Promise.all(chunkCalls);
+      const chunkCalls = _chunk(ids, 250).map((chunkIds) => (
+        this.http.post('/hub/subscribe', {
+          entityIds: chunkIds,
+          connectionId,
+        }, { globalHandler: GlobalHandler.Disabled })
+      ));
+      await Promise.all(chunkCalls);
   }
 
   async unsubscribe(connectionId: string, ids: uuid[]) {

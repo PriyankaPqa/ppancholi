@@ -61,9 +61,7 @@ export class SignalR implements ISignalR {
 
   private watchedPiniaStores: { getNewlyCreatedIds: (baseDate: Date) => Array<{ id: uuid, createdOn: number }> }[] = [];
 
-  constructor({
-    service, showConsole,
-  }: IOptions) {
+  constructor({ service, showConsole }: IOptions) {
     this.service = service;
     this.showConsole = showConsole && false;
     this.lastSubscribedIds = [];
