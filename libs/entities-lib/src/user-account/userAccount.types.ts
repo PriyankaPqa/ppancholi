@@ -78,14 +78,15 @@ export interface IRolesData {
   value: string;
 }
 
-export interface IUserAccountEntity extends IEntity, IUserProfileData {
-  displayName?: string;
-  emailAddress?: string;
-  preferredLanguage?: string;
-  givenName?: string;
-  surname?: string;
-  userPrincipalName?: string;
-  phoneNumber?: string;
+export interface IUserAccountEntity extends IEntity {
+  /* These properties are not yet fully filled on new users.  lets say they dont exists.  Use metadata instead */
+  // displayName?: string;
+  // emailAddress?: string;
+  // preferredLanguage?: string;
+  // givenName?: string;
+  // surname?: string;
+  // userPrincipalName?: string;
+  // phoneNumber?: string;
   filters?: Array<IFilter>;
   roles?: Array<IListOption>;
   accessLevels?: AccessLevels;

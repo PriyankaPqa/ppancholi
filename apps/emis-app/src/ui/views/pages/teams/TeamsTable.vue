@@ -99,7 +99,7 @@ import { Status } from '@libs/entities-lib/base';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useUserAccountStore } from '@/pinia/user-account/user-account';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'TeamsTable',
@@ -274,11 +274,11 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   methods: {
     fetchPrimaryUsers: _throttle(async function func(this: { tableData: ITeamCombined[] }) {
-      useUserAccountStore().fetchByIds(this.tableData.map((x) => x.entity.teamMembers.find((t) => t.isPrimaryContact)?.id), true);
+      useUserAccountMetadataStore().fetchByIds(this.tableData.map((x) => x.entity.teamMembers.find((t) => t.isPrimaryContact)?.id), true);
     }, 100),
 
     getPrimaryName(item: ITeamEntity) {
-      return useUserAccountStore().getById(item.teamMembers.find((t) => t.isPrimaryContact)?.id)?.displayName;
+      return useUserAccountMetadataStore().getById(item.teamMembers.find((t) => t.isPrimaryContact)?.id)?.displayName;
     },
 
     goToCreateTeam(item: Record<string, string>) {
