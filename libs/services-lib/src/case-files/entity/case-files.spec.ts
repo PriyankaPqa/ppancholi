@@ -21,11 +21,11 @@ describe('>>> Case File Service', () => {
     it('tier2ProcessStart is linked to the correct URL', async () => {
       const payload = {} as ITier2Request;
       await service.tier2ProcessStart(payload);
-      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public/${payload.id}/start-customer-identity-verification-tier-2`, payload);
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public/${payload.id}/start-customer-identity-verification-tier-2`, payload, { globalHandler: 'Partial' });
     });
   });
 
-  describe('tier2ProcessStart', () => {
+  describe('getTier2Result', () => {
     it('getTier2Result is linked to the correct URL', async () => {
       await service.getTier2Result('someid', true);
       expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/public/customer-identity-verification-tier-2-result/someid?addCaseFileActivity=true`);

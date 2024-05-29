@@ -273,6 +273,21 @@ describe('Tier2Selection.vue', () => {
         });
         expect(wrapper.vm.iframeUrl).toBe('some url');
         expect(registrationStore.tier2State.basicDocumentsOnly).toBeTruthy();
+        expect(registrationStore.tier2State.hasErrors).toBeFalsy();
+      });
+      it('sets an error when already started', async () => {
+        wrapper.vm.$services.caseFiles.tier2ProcessStart = jest.fn(() => {
+          // eslint-disable-next-line @typescript-eslint/no-throw-literal
+          throw { response: { data: { errors: [{ code: 'some other error' }] } } };
+        });
+        await wrapper.vm.tier2ProcessStart();
+        expect(registrationStore.tier2State.hasErrors).toBeFalsy();
+        wrapper.vm.$services.caseFiles.tier2ProcessStart = jest.fn(() => {
+          // eslint-disable-next-line @typescript-eslint/no-throw-literal
+          throw { response: { data: { errors: [{ code: 'errors.there-is-currently-a-pending-tier-2-identity-verification' }] } } };
+        });
+        await wrapper.vm.tier2ProcessStart();
+        expect(registrationStore.tier2State.hasErrors).toBeTruthy();
       });
     });
   });

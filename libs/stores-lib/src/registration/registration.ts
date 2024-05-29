@@ -82,8 +82,8 @@ export function storeFactory({
     const assessmentToComplete = ref(null) as Ref<{ registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity }>;
     const allTabs = ref(_cloneDeep(pTabs)) as Ref<IRegistrationMenuItem[]>;
     const duplicateResult = ref(null) as Ref<ICheckForPossibleDuplicateResponse>;
-    const tier2State = ref({ mustDoTier2: null, completed: false }) as
-      Ref<{ mustDoTier2: boolean, completed: boolean, basicDocumentsOnly?: boolean, status: IdentityAuthenticationStatus }>;
+    const tier2State = ref({ mustDoTier2: null, completed: false, hasErrors: false }) as
+      Ref<{ mustDoTier2: boolean, completed: boolean, basicDocumentsOnly?: boolean, status: IdentityAuthenticationStatus, hasErrors: boolean }>;
     const basicInformationWhenTier2FromEmail = ref(null) as Ref<ITier2Details>;
     const storeShelterLocations = ref([]);
 
@@ -818,6 +818,7 @@ export function storeFactory({
         status: result?.tier2response?.identityAuthenticationStatus,
         completed: result?.tier2response?.processCompleted,
         mustDoTier2: result?.canCompleteTier2,
+        hasErrors: false,
       };
       basicInformationWhenTier2FromEmail.value = result;
 

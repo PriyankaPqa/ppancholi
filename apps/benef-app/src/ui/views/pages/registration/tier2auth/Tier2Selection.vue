@@ -83,7 +83,7 @@ import { useRegistrationStore } from '@/pinia/registration/registration';
 import { VSelectWithValidation, RcPageLoading } from '@libs/component-lib/components';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import helpers from '@libs/entities-lib/helpers';
-import { Tier2GambitScreeningId } from '@libs/shared-lib/types';
+import { IServerError, Tier2GambitScreeningId } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'Tier2Selection',
@@ -106,7 +106,7 @@ export default Vue.extend({
       if (useRegistrationStore().basicInformationWhenTier2FromEmail?.caseFileId) {
         return {
           caseFileId: useRegistrationStore().basicInformationWhenTier2FromEmail.caseFileId,
-          tier1transactionId: useRegistrationStore().basicInformationWhenTier2FromEmail.tier2response.transactionUniqueId,
+          tier1transactionId: useRegistrationStore().basicInformationWhenTier2FromEmail.tier2response?.transactionUniqueId,
           canCompleteTier2: useRegistrationStore().basicInformationWhenTier2FromEmail.canCompleteTier2,
          };
       }
@@ -116,6 +116,10 @@ export default Vue.extend({
         tier1transactionId: useRegistrationStore().registrationResponse.tier1transactionId,
         canCompleteTier2: useRegistrationStore().registrationResponse.mustDoTier2authentication,
         };
+    },
+
+    fullState() : any {
+      return { requiredInformation: this.requiredInformation, tier2State: useRegistrationStore().tier2State };
     },
 
     tier2Ids(): { value: number, text: string }[] {
@@ -145,6 +149,7 @@ export default Vue.extend({
   created() {
     EventHub.$on('tier2ProcessStart', this.tier2ProcessStart);
     EventHub.$on('tier2ProcessReset', this.tier2ProcessReset);
+    this.$appInsights.trackTrace('Gambit tier 2 screen shown', this.fullState, 'Tier2Selection', 'created');
   },
 
   destroyed() {
@@ -163,6 +168,7 @@ export default Vue.extend({
       window.removeEventListener('message', this.onMessage);
       window.addEventListener('message', this.onMessage);
       (this.$refs.iframeObj as any).contentWindow.postMessage(requestObject, '*');
+      this.$appInsights.trackTrace('Gambit tier 2 attachListener to iframe', this.fullState, 'Tier2Selection', 'attachListener');
     },
 
     async onMessage(event: { data: { status: string } }) {
@@ -172,6 +178,7 @@ export default Vue.extend({
     },
 
     async waitForFinalResult() {
+      this.$appInsights.trackTrace('Gambit tier 2 - received completed message from gambit, starting to wait on result', this.fullState, 'Tier2Selection', 'waitForFinalResult');
       useRegistrationStore().submitLoading = true;
       const startTime = new Date().getTime();
       await helpers.timeout(2000);
@@ -201,6 +208,7 @@ export default Vue.extend({
     },
 
     async tier2ProcessReset() {
+      this.$appInsights.trackTrace('Gambit tier 2 reset', this.fullState, 'Tier2Selection', 'tier2ProcessReset');
       this.iframeUrl = '';
 
       window.removeEventListener('message', this.onMessage);
@@ -209,17 +217,29 @@ export default Vue.extend({
     },
 
     async tier2ProcessStart() {
+      this.$appInsights.trackTrace('Gambit tier 2 tier2ProcessStart', this.fullState, 'Tier2Selection', 'tier2ProcessStart');
+
       this.iframeUrl = null;
       useRegistrationStore().tier2State.basicDocumentsOnly = !!this.selectedId;
-      const result = await this.$services.caseFiles.tier2ProcessStart({
-        id: this.requiredInformation.caseFileId,
-        identityVerificationTier1transactionId: this.requiredInformation.tier1transactionId,
-        mainDocumentTypeId: this.selectedId || this.otherIdType,
-        subDocumentTypeId: this.proofAddress,
-        locale: this.$i18n.locale,
-      });
+      try {
+        const result = await this.$services.caseFiles.tier2ProcessStart({
+          id: this.requiredInformation.caseFileId,
+          identityVerificationTier1transactionId: this.requiredInformation.tier1transactionId,
+          mainDocumentTypeId: this.selectedId || this.otherIdType,
+          subDocumentTypeId: this.proofAddress,
+          locale: this.$i18n.locale,
+        });
 
-      this.iframeUrl = result.identityVerificationInfoSubmissionUrl;
+        this.$appInsights.trackTrace(`Gambit tier 2 - url - ${result.identityVerificationInfoSubmissionUrl}`, { ...this.fullState, result }, 'Tier2Selection', 'tier2ProcessStart');
+        this.iframeUrl = result.identityVerificationInfoSubmissionUrl;
+      } catch (error) {
+          this.$appInsights.trackTrace('Gambit tier 2 - error', { ...this.fullState, error }, 'Tier2Selection', 'tier2ProcessStart');
+          const e = (error as IServerError).response?.data?.errors || [];
+          if (e[0]?.code === 'errors.there-is-currently-a-pending-tier-2-identity-verification') {
+            useRegistrationStore().tier2State.hasErrors = true;
+          }
+          this.$toasted.global.error(e[0]?.code ? this.$t(e[0]?.code) : error);
+      }
     },
   },
 });

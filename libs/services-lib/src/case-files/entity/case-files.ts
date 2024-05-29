@@ -7,7 +7,7 @@ import {
 import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult, IListOption } from '@libs/shared-lib/types';
 import { ICaseFileMetadata, ICaseFileSummary, ITier2Details, ITier2Request, ITier2Response, SearchOptimizedResults } from '@libs/entities-lib/src/case-file/case-file.types';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
-import { IHttpClient } from '../../http-client';
+import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { ICaseFileCountByExceptionalAuthentication, ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
 
@@ -124,7 +124,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
   }
 
   async tier2ProcessStart(payload: ITier2Request): Promise<ITier2Response> {
-    return this.http.post(`${this.baseUrl}/public/${payload.id}/start-customer-identity-verification-tier-2`, payload);
+    return this.http.post(`${this.baseUrl}/public/${payload.id}/start-customer-identity-verification-tier-2`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async getTier2Result(id: string, addCaseFileActivity: boolean): Promise<ITier2Response> {

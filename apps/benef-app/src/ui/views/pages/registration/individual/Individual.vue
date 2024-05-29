@@ -43,12 +43,12 @@
                 <!-- buttons are in the individual page for now but we want to move them to the component eventually - we'll use events to communicate -->
                 <v-btn
                   v-if="tier2ProcessStarted"
-                  :disabled="submitLoading"
+                  :disabled="submitLoading || tier2ProcessError"
                   @click="restartAuthentication()">
                   {{ $t('registration.button.select_different_id') }}
                 </v-btn>
                 <v-btn
-                  :disabled="submitLoading"
+                  :disabled="submitLoading || tier2ProcessError"
                   @click="skipAuthentication()">
                   {{ $t('registration.button.skip_authentication') }}
                 </v-btn>
@@ -167,6 +167,9 @@ export default mixins(individual).extend({
     },
     tier2ProcessCompleted(): boolean {
       return useRegistrationStore().tier2State?.completed;
+    },
+    tier2ProcessError(): boolean {
+      return useRegistrationStore().tier2State?.hasErrors;
     },
   },
 

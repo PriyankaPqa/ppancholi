@@ -517,6 +517,7 @@
     "errors.the-type-specified-is-not-an-i-validation-policy-base": "Le type spécifié n'est pas une base de politique de validation I",
     "errors.the-unit-suit-length-is-invalid": "La longueur du numéro de l'appartement ou bureau n'est pas valide",
     "errors.the-unit-suit-should-have-a-value": "L'appartement\/bureau doit avoir une valeur",
+    "errors.there-is-currently-a-pending-tier-2-identity-verification": "Il y a une tentative de vérification en cours",
     "errors.there-are-no-records-to-be-processed": "Il n'y a pas de dossier à traiter.",
     "errors.there-is-currently-a-pending-tier-2-identity-verification": "Une vérification d'identité de niveau 2 est actuellement en cours",
     "errors.there-must-be-at-least-one-filter-criteria": "Il doit y avoir au moins un critère de filtre",
