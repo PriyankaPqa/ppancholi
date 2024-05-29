@@ -109,7 +109,7 @@ describe(
                   maxAttempt: 20,
                   waitTime: 2000,
                   searchCallBack: (provider: any) => (provider.caseFiles.search({
-                  filter: { Entity: { Id: caseFileId } },
+                  filter: { Entity: { Id: { value: caseFileId, type: 'guid' } } },
                   top: 1,
                 })),
                   conditionCallBack: (value: any) => (value.metadata.assessments.length > 0),
