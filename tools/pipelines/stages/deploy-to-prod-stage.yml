@@ -32,7 +32,7 @@ stages:
     dependsOn:
       - TestValidationStage
     condition: |
-      in(dependencies.TestValidationStage.result, 'Failed', 'Canceled', 'Skipped')
+      in(dependencies.TestValidationStage.result, 'Failed', 'Canceled')
     jobs:
       - deployment: "Deploy_WebApp_Prod_Manual"
         displayName: "Deploy WebApp to Prod"
