@@ -136,6 +136,23 @@ describe('DataCorrectionCreate.vue', () => {
         const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionTriage);
         expect(maType).toBeFalsy();
       });
+
+      it('should return DataCorrectionMovePayments when feature flag is on', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.MovePayments],
+        });
+        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionMovePayments);
+        expect(maType).toBeTruthy();
+      });
+
+      it('should not return DataCorrectionMovePayments when feature flag is off', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+        });
+        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionMovePayments);
+        expect(maType).toBeFalsy();
+      });
     });
 
     describe('rules', () => {

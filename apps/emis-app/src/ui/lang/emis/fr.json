@@ -1251,6 +1251,7 @@
     "enums.MassActionDataCorrectionType.DataCorrectionLabels": "Étiquettes",
     "enums.MassActionDataCorrectionType.DataCorrectionTemporaryAddress": "Adresse temporaire",
     "enums.MassActionDataCorrectionType.DataCorrectionTriage": "Classification",
+    "enums.MassActionDataCorrectionType.DataCorrectionMovePayments": "Déplacer les paiements",
     "enums.MassActionDataCorrectionType.FinancialAssistance": "Aide financière",
     "enums.MassActionDataCorrectionType.HomeAddress": "Adresse",
     "enums.MassActionDataCorrectionType.IdentitySet": "Renseignements personnels",
