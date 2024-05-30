@@ -33,7 +33,6 @@ let accessTokenL6 = '';
 const householdQuantity = 3;
 const filePath = 'cypress/downloads/29044MACaseFileStatus.csv';
 
-// eslint-disable-next-line
 describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via Upload File', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
@@ -42,7 +41,6 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
-            // eslint-disable-next-line
             const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
@@ -61,7 +59,7 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
           }
         });
 
-        it('should fail to pre-process financial assistance mass action for Case file does not meet program impacted criteria', function () {
+        it('should be able to pre-process mass action for Case file status update via upload file', function () {
           fixtureGenerateCaseFileStatusCsvFile([this.caseFile1, this.caseFile2, this.caseFile3], filePath);
           const baseMassActionData = fixtureBaseMassAction(this.test.retries.length);
           const massCaseFileStatusData = fixtureNewCaseFileStatus({
@@ -119,9 +117,9 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);
-          cy.goTo('mass-actions/financial-assistance');
+          cy.goTo('mass-actions/case-file-status');
         });
-        it('should not be able to pre-process a financial assistance Mass Action', () => {
+        it('should not be able to pre-process a case file status Mass Action', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });
