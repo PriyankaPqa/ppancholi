@@ -92,7 +92,15 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
           massCaseFileStatusDetailsPage.getMassActionName().should('string', baseMassActionData.name);
           massCaseFileStatusDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
           massCaseFileStatusDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', `${householdQuantity}`.toString());
-          massCaseFileStatusDetailsPage.getMassActionProcessButton().should('be.enabled');
+          massCaseFileStatusDetailsPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
+            if (quantity === householdQuantity.toString()) {
+              massCaseFileStatusDetailsPage.getMassActionProcessButton().should('be.enabled');
+              massCaseFileStatusDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
+            } else {
+              massCaseFileStatusDetailsPage.getMassActionProcessButton().should('be.disabled');
+              massCaseFileStatusDetailsPage.getInvalidCasefilesDownloadButton().should('be.enabled');
+            }
+          });
           massCaseFileStatusDetailsPage.getMassActionType().should('eq', 'Case file status update');
           massCaseFileStatusDetailsPage.getMassActionDateCreated().should('eq', getToday());
           massCaseFileStatusDetailsPage.getMassActionCreatedByd().should('eq', getUserName(roleName));
