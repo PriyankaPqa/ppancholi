@@ -182,25 +182,10 @@ export default mixins(massActions).extend({
     },
 
     massActionTypes(): Array<Record<string, unknown>> {
-      if (!this.$hasFeature(FeatureKeys.DataCorrectionTriage) && !this.$hasFeature(FeatureKeys.MovePayments)) {
-        return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther && m.value !== MassActionDataCorrectionType.DataCorrectionTriage
-        && m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments));
-      }
-
-      if (this.$hasFeature(FeatureKeys.DataCorrectionTriage) && !this.$hasFeature(FeatureKeys.MovePayments)) {
-        return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther
-        && m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments));
-      }
-
-      if (!this.$hasFeature(FeatureKeys.DataCorrectionTriage) && this.$hasFeature(FeatureKeys.MovePayments)) {
-        return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther && m.value !== MassActionDataCorrectionType.DataCorrectionTriage));
-      }
-
       return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther));
+        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther
+        && (this.$hasFeature(FeatureKeys.DataCorrectionTriage) || m.value !== MassActionDataCorrectionType.DataCorrectionTriage)
+        && (this.$hasFeature(FeatureKeys.MovePayments) || m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments)));
     },
   },
 });
