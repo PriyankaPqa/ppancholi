@@ -1,5 +1,5 @@
 import { BaseCreateMassAction } from '../base/baseCreateMassAction';
-import { MassCaseFileStatusDetailsPage } from './massCaseFileStatusDetails.page';
+import { MassCaseFileStatusUpdateDetailsPage } from './massCaseFileStatusUpdateDetails.page';
 
 export enum DataTest {
 eventName = 'case_file_status_details_event_name',
@@ -21,7 +21,7 @@ export interface INewMassCaseFileStatusFields {
   rationale?: string;
 }
 
-export class NewMassCaseFileStatusPage extends BaseCreateMassAction {
+export class NewMassCaseFileStatusUpdatePage extends BaseCreateMassAction {
   private eventName = { selector: DataTest.eventName, type: 'input' };
 
   private caseFileStatus = { selector: DataTest.caseFileStatus };
@@ -81,7 +81,7 @@ export class NewMassCaseFileStatusPage extends BaseCreateMassAction {
 
   public confirmPreprocessing() {
     cy.getByDataTest(this.dialogConfirmSubmit).click();
-    return new MassCaseFileStatusDetailsPage();
+    return new MassCaseFileStatusUpdateDetailsPage();
   }
 
   public getDialogConfirmCancelButton() {

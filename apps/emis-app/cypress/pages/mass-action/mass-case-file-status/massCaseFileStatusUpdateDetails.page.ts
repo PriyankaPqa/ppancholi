@@ -10,7 +10,7 @@ export enum DataTest {
   invalidDownloadButton = 'invalidDownloadButton',
   }
 
-  export class MassCaseFileStatusDetailsPage extends BaseDetailsMassAction {
+  export class MassCaseFileStatusUpdateDetailsPage extends BaseDetailsMassAction {
     private event = { selector: DataTest.event };
 
     private caseFileStatus = { selector: DataTest.caseFileStatus };

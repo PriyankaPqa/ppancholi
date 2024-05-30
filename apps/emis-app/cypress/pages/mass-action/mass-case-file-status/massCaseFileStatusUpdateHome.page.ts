@@ -1,4 +1,4 @@
-import { NewMassCaseFileStatusPage } from './newMassCaseFileStatus.page';
+import { NewMassCaseFileStatusUpdatePage } from './newMassCaseFileStatusUpdate.page';
 
 export enum DataTest {
   createCaseFileStatusMassAction = 'create-case-file-status-mass-action',
@@ -6,7 +6,7 @@ export enum DataTest {
   fileCaseFileStatusMassAction = 'mass-action-case-file-status-add-file',
 }
 
-export class MassCaseFileStatusHomePage {
+export class MassCaseFileStatusUpdateHomePage {
   private createCaseFileStatusMassAction = { selector: DataTest.createCaseFileStatusMassAction, type: 'button' };
 
   private listCaseFileStatusMassAction = { selector: DataTest.listCaseFileStatusMassAction };
@@ -19,6 +19,6 @@ export class MassCaseFileStatusHomePage {
 
   public selectProcessViaFileUpload() {
     cy.getByDataTest(this.fileCaseFileStatusMassAction).click({ force: true });
-    return new NewMassCaseFileStatusPage();
+    return new NewMassCaseFileStatusUpdatePage();
   }
 }

@@ -10,7 +10,7 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
-import { INewMassCaseFileStatusFields } from '../pages/mass-action/mass-case-file-status/newMassCaseFileStatus.page';
+import { INewMassCaseFileStatusFields } from '../pages/mass-action/mass-case-file-status/newMassCaseFileStatusUpdate.page';
 
 export interface GenerateFaCustomOptionsXlsxFileParams {
   caseFiles: ICaseFileEntity[],

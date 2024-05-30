@@ -8,7 +8,7 @@ import {
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureBaseMassAction, fixtureGenerateCaseFileStatusCsvFile, fixtureNewCaseFileStatus } from '../../../fixtures/mass-actions';
-import { MassCaseFileStatusHomePage } from '../../../pages/mass-action/mass-case-file-status/massCaseFileStatusHome.page';
+import { MassCaseFileStatusUpdateHomePage } from '../../../pages/mass-action/mass-case-file-status/massCaseFileStatusUpdateHome.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -69,7 +69,7 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
             reason: 'Deceased',
           });
 
-          const massCaseFileStatusHomePage = new MassCaseFileStatusHomePage();
+          const massCaseFileStatusHomePage = new MassCaseFileStatusUpdateHomePage();
           massCaseFileStatusHomePage.getAddMassCaseFileStatusButton().click();
 
           const newMassCaseFileStatusPage = massCaseFileStatusHomePage.selectProcessViaFileUpload();
