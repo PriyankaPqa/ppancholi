@@ -101,7 +101,7 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
           });
           massCaseFileStatusDetailsPage.getMassActionType().should('eq', 'Case file status update');
           massCaseFileStatusDetailsPage.getMassActionDateCreated().should('eq', getToday());
-          massCaseFileStatusDetailsPage.getMassActionCreatedByd().should('eq', getUserName(roleName));
+          massCaseFileStatusDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
           massCaseFileStatusDetailsPage.getMassActionCaseFileStatusDetailsEvent().should('eq', this.event.name.translation.en);
           massCaseFileStatusDetailsPage.getMassActionCaseFileStatusDetailsCaseFileStatus().should('eq', massCaseFileStatusData.caseFileStatus);
           massCaseFileStatusDetailsPage.getMassActionCaseFileStatusDetailsReason().should('eq', massCaseFileStatusData.reason);

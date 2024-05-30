@@ -84,7 +84,7 @@ export class BaseDetailsMassAction {
     return cy.getByDataTest(this.dateCreated).getAndTrimText();
   }
 
-  public getMassActionCreatedByd() {
+  public getMassActionCreatedBy() {
     return cy.getByDataTest(this.createdBy).getAndTrimText();
   }
 
