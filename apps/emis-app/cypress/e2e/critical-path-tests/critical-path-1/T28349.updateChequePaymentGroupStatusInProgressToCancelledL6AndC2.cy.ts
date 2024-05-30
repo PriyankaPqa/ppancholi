@@ -119,7 +119,7 @@ describe('[T28349] Update Cheque payment group status from In Progress to Cancel
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();
-          financialAssistanceDetailsPage.getPaymentLineItemCancelButton().should('not.exist');
+          financialAssistanceDetailsPage.getPaymentLineStatusCompleted().should('not.exist');
         });
       });
     }
