@@ -10,6 +10,7 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
+import { INewMassCaseFileStatusFields } from '../pages/mass-action/mass-case-file-status/newMassCaseFileStatusUpdate.page';
 
 export interface GenerateFaCustomOptionsXlsxFileParams {
   caseFiles: ICaseFileEntity[],
@@ -28,6 +29,14 @@ export const fixtureNewMassFinancialAssistance = (force?: INewMassFinancialAssis
   item: 'Clothing',
   subItem: 'Winter Clothing',
   paymentAmount: '80.00',
+  ...force,
+});
+
+export const fixtureNewCaseFileStatus = (force?: INewMassCaseFileStatusFields): INewMassCaseFileStatusFields => ({
+  caseFileStatus: 'Open',
+  reason: '',
+  reasonSpecifyOther: '',
+  rationale: 'mock-rationale-string',
   ...force,
 });
 
@@ -99,6 +108,17 @@ export const fixtureGenerateFaCsvFile = (caseFiles: ICaseFileEntity[], Financial
     faData.push(generateRandomFaCustomFileUserData(caseFile, FinancialAssistanceTableId));
   }
   return writeCSVContentToFile(filePath, faData);
+};
+
+export const fixtureGenerateCaseFileStatusCsvFile = (caseFiles: ICaseFileEntity[], filePath: string) => {
+  const caseFileStatusData = [];
+  for (const caseFile of caseFiles) {
+    caseFileStatusData.push({
+      CaseFileNumber: caseFile.caseFileNumber,
+      CaseFileId: caseFile.id,
+    });
+  }
+  return writeCSVContentToFile(filePath, caseFileStatusData);
 };
 
 function extractXlsxRowFromUserData(caseFile: ICaseFileEntity, FinancialAssistanceTableId: string): string[] {
