@@ -72,7 +72,7 @@ describe('[T28960] Pre-process a payment status import file', { tags: ['@financi
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully pre-process a financial assistance data correction file', function () {
+        it('should successfully pre-process a payment status import file', function () {
           const baseMassActionData = fixtureBaseMassAction(this.test.retries.length);
           writeCSVContentToFile(filePath, [{
             PaymentGroupId: this.faPaymentGroupId,
@@ -114,7 +114,7 @@ describe('[T28960] Pre-process a payment status import file', { tags: ['@financi
           cy.login(roleName);
           cy.goTo('mass-actions/import-payment-status');
         });
-        it('should not be able to pre-process a import payment status file', () => {
+        it('should not be able to pre-process a payment status import file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });
