@@ -149,6 +149,32 @@ function updateFile(mode, emis, benef) {
 
   console.log(`File ${file} successfully updated.`);
 }
+
+async function verifyAzureToken() {
+  const url = `${getRepoUrl(azureAPIConfig)}`
+
+  return new Promise((resolve, reject) => {
+    axios.get(url, { headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${Buffer.from(`:${azureAPIConfig.personalAccessToken}`).toString('base64')}`,
+      }, })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("Azure Devops authenticated successfully");
+          resolve(true);
+        } else {
+          console.error(`Azure Devops authentication failed with status code: ${response.status}`);
+          console.error('You may need to renew your Personal Access Token');
+          resolve(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Azure Devops authentication failed:", error.message);
+        console.error('You may need to renew your Personal Access Token');
+        resolve(false);
+      });
+});
+}
 function getRepoUrl(azureConfig) {
   return `https://dev.azure.com/${azureConfig.organization}/${azureConfig.project}/_apis/git/repositories/${azureConfig.repositoryId}`;
 }
@@ -367,38 +393,44 @@ async function filterJiraItemsByStatuses(ids, statuses) {
 const mode = prompt(`Pick you mode (preview: ${Mode.preview}, edit:${Mode.edit}, clean:${Mode.clean}). Note that edit will auto-clean ${jiraStatusCleanTarget} items: `).toString();
 
 if (mode === Mode.preview) {
-  preview();
+    preview();
 } else if (mode === Mode.edit) {
-  verifyJiraAuth().then((jiraOk) => {
-    if (!jiraOk) {
+  verifyAzureToken().then((azureOK) => {
+    if (!azureOK) {
       process.exit(1);
     }
-    preview()
-      .then(([benefArr, emisArr]) => {
-      emisToAdd = prompt("Enter values to add for emis (comma separated): ")
-        .split(",")
-        .filter(v => v !== '');
-
-        filterJiraItemsByStatuses(emisArr, jiraStatusCleanTarget).then((items) => {
-        console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
-        emisToRemove = items;
-        console.log(items)
-      });
-
-      benefToAdd = prompt("Enter values to add for benef (comma separated): ")
-        .split(",")
-        .filter(v => v !== '');
-
-        filterJiraItemsByStatuses(benefArr, jiraStatusCleanTarget).then((items) => {
-          console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
-          benefToRemove = items;
+    verifyJiraAuth().then((jiraOk) => {
+      if (!jiraOk) {
+        process.exit(1);
+      }
+      preview()
+        .then(([benefArr, emisArr]) => {
+        emisToAdd = prompt("Enter values to add for emis (comma separated): ")
+          .split(",")
+          .filter(v => v !== '');
+  
+          filterJiraItemsByStatuses(emisArr, jiraStatusCleanTarget).then((items) => {
+          console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
+          emisToRemove = items;
           console.log(items)
         });
-
-      confirmAndProceed();
-
+  
+        benefToAdd = prompt("Enter values to add for benef (comma separated): ")
+          .split(",")
+          .filter(v => v !== '');
+  
+          filterJiraItemsByStatuses(benefArr, jiraStatusCleanTarget).then((items) => {
+            console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
+            benefToRemove = items;
+            console.log(items)
+          });
+  
+        confirmAndProceed();
+  
+      })
     })
-  })
+  });
+ 
 }
 else if (mode === Mode.clean) {
   verifyJiraAuth().then((jiraOk) => {
