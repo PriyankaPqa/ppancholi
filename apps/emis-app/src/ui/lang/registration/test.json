@@ -518,6 +518,7 @@
     "errors.the-unit-suit-length-is-invalid": "errors.the-unit-suit-length-is-invalid",
     "errors.the-unit-suit-should-have-a-value": "errors.the-unit-suit-should-have-a-value",
     "errors.there-are-no-records-to-be-processed": "errors.there-are-no-records-to-be-processed",
+    "errors.there-is-currently-a-pending-tier-2-identity-verification": "",
     "errors.there-must-be-at-least-one-filter-criteria": "errors.there-must-be-at-least-one-filter-criteria",
     "errors.this-individual-already-exists-in-the-system": "errors.this-individual-already-exists-in-the-system",
     "errors.this-member-is-already-primary-in-the-system": "errors.this-member-is-already-primary-in-the-system",
