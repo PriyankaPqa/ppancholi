@@ -2,16 +2,16 @@ import { BaseCreateMassAction } from '../base/baseCreateMassAction';
 import { MassCaseFileStatusUpdateDetailsPage } from './massCaseFileStatusUpdateDetails.page';
 
 export enum DataTest {
-eventName = 'case_file_status_details_event_name',
-caseFileStatus = 'case_file_status_details_case_file_status',
-reason = 'case_file_status_details_reason',
-rationale = 'case_file_status_details_rationale_input',
-next = 'next',
-dialogTitle = 'dialog-title',
-dialogText = 'message__line_0',
-fileUpload = 'upload-file',
-dialogConfirmCancel = 'cancel-action-dialog-confirmation',
-dialogConfirmSubmit = 'submit-action-dialog-confirmation',
+  eventName = 'case_file_status_details_event_name',
+  caseFileStatus = 'case_file_status_details_case_file_status',
+  reason = 'case_file_status_details_reason',
+  rationale = 'case_file_status_details_rationale_input',
+  next = 'next',
+  dialogTitle = 'dialog-title',
+  dialogText = 'message__line_0',
+  fileUpload = 'upload-file',
+  dialogConfirmCancel = 'cancel-action-dialog-confirmation',
+  dialogConfirmSubmit = 'submit-action-dialog-confirmation',
 }
 
 export interface INewMassCaseFileStatusFields {

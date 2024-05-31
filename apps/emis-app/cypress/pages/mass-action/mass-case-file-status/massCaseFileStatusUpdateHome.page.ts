@@ -1,3 +1,4 @@
+import { BaseMassActionViaFilteredList } from '../base/baseMassActionViaFilteredList';
 import { NewMassCaseFileStatusUpdatePage } from './newMassCaseFileStatusUpdate.page';
 
 export enum DataTest {
@@ -20,5 +21,10 @@ export class MassCaseFileStatusUpdateHomePage {
   public selectProcessViaFileUpload() {
     cy.getByDataTest(this.fileCaseFileStatusMassAction).click({ force: true });
     return new NewMassCaseFileStatusUpdatePage();
+  }
+
+  public selectProcessViaFilteredList() {
+    cy.getByDataTest(this.listCaseFileStatusMassAction).click({ force: true });
+    return new BaseMassActionViaFilteredList();
   }
 }
