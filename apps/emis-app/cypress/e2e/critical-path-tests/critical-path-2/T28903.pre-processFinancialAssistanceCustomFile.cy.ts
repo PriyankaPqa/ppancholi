@@ -86,6 +86,7 @@ describe('[T28903] Pre-process a Financial Assistance custom file', { tags: ['@f
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
+          cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
@@ -101,7 +102,13 @@ describe('[T28903] Pre-process a Financial Assistance custom file', { tags: ['@f
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Mass financial assistance - custom options');
           massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
-          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+          cy.wait('@userAccountMetadata').then((interception) => {
+            if (interception.response.statusCode === 200) {
+              massFinancialAssistanceDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
+            } else {
+              throw Error('Cannot verify roleName');
+            }
+          });
           massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.enabled');
         });
       });

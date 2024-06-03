@@ -120,7 +120,13 @@ describe('[T28847] Process a Financial Assistance data correction file', { tags:
           baseDetailsMassActionPage.getBackToMassActionListButton().should('be.enabled');
           baseDetailsMassActionPage.getMassActionType().should('eq', 'Financial Assistance');
           baseDetailsMassActionPage.getMassActionDateCreated().should('eq', getToday());
-          baseDetailsMassActionPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+          cy.wait('@userAccountMetadata').then((interception) => {
+            if (interception.response.statusCode === 200) {
+              baseDetailsMassActionPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
+            } else {
+              throw Error('Cannot verify roleName');
+            }
+          });
           cy.goTo('casefile');
           const caseFilesHomePage = new CaseFilesHomePage();
           const caseFileDetailsPage = caseFilesHomePage.goToCaseFileDetail(this.caseFileNumber);

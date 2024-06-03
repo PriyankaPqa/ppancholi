@@ -37,7 +37,7 @@ const householdQuantity = 1;
 let massFinancialAssistance = {} as IMassActionEntity;
 
 describe(
-  '[T29102] Record can be processed in Mass Action FA upload file when Authentication status check passed',
+  '[T29102] Record can be processed in Mass Action FA upload file when Authentication status check passed0',
   { tags: ['@financial-assistance', '@mass-action'] },
   () => {
     before(() => {

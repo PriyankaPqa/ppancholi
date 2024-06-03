@@ -39,7 +39,7 @@ const householdQuantity = 1;
 let massFinancialAssistance = {} as IMassActionEntity;
 
 describe(
-  '[T29107] Record can be processed Mass Action FA upload file when Validation of Impact status check passed (Impacted)',
+  '[T29107] Record can be processed Mass Action FA upload file when Validation of Impact status check passed (Impacted).',
   { tags: ['@financial-assistance', '@mass-action'] },
   () => {
     before(() => {

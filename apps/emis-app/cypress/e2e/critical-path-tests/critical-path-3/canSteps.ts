@@ -50,6 +50,7 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   const baseDetailsMassActionPage = newDataCorrectionPage.confirmPreprocessing();
   baseDetailsMassActionPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
   baseDetailsMassActionPage.getPreProcessingLabelTwo().should('eq', `This might take a few minutes, depending on the number of ${preprocessedItems}`);
+  cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
   cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
   baseDetailsMassActionPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
   baseDetailsMassActionPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
@@ -65,7 +66,13 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   baseDetailsMassActionPage.getMassActionDescription().should('eq', baseMassActionData.description);
   baseDetailsMassActionPage.getMassActionType().should('eq', dataCorrectionTypeDropDown);
   baseDetailsMassActionPage.getMassActionDateCreated().should('eq', getToday());
-  baseDetailsMassActionPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+  cy.wait('@userAccountMetadata').then((interception) => {
+    if (interception.response.statusCode === 200) {
+      baseDetailsMassActionPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
+    } else {
+      throw Error('Cannot verify roleName');
+    }
+  });
   baseDetailsMassActionPage.getBackToMassActionListButton().should('be.visible');
 };
 
@@ -94,6 +101,7 @@ export const processDataCorrectionFileSteps = (householdQuantity: number, proces
     },
     alias: 'MassActionRun',
   });
+  cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
   baseDetailsMassActionPage.waitAndRefreshUntilMassActionStatusUpdated(massActionName, 'Processed');
   baseDetailsMassActionPage.getMassActionStatus().contains('Processed').should('be.visible');
   baseDetailsMassActionPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
