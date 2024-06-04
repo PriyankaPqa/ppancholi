@@ -177,15 +177,6 @@ export default Vue.extend({
           roles: [UserRoles.contributorIM],
         },
         {
-          to: routes.appointments.home.name,
-          icon: 'mdi-calendar-check',
-          text: 'appointments.leftMenu.title',
-          test: 'appointments',
-          exact: false,
-          level: UserRoles.level6,
-          feature: FeatureKeys.AppointmentBooking,
-        },
-        {
           to: routes.systemManagement.home.name,
           icon: 'dvr',
           text: 'system_management.leftMenu.title',

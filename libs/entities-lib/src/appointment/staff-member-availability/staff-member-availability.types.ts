@@ -1,5 +1,5 @@
 import { IEntity } from '../../base';
-import { IBookingHour } from '../appointment-program/appointment-program.types';
+import { IDaySchedule } from '../appointment-program/appointment-program.types';
 
 export interface IDateRange {
   start: string | Date;
@@ -10,6 +10,6 @@ export interface IStaffMemberAvailability extends IEntity {
   staffMemberId: uuid;
   appointmentProgramId: uuid;
   useBusinessHours: boolean;
-  defaultBookingHours: IBookingHour[];
+  defaultBookingHours: IDaySchedule[];
   customDateRanges: IDateRange[];
 }

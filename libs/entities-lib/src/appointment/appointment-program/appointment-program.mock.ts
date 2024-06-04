@@ -1,14 +1,14 @@
 import { mockBaseData } from '../../base';
-import { DayOfWeek, IAppointmentProgram, IBookingHour } from './appointment-program.types';
+import { DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
 
-export const mockBookingHour = (force?: Partial<IBookingHour>): IBookingHour => ({
+export const mockBookingHour = (force?: Partial<IDaySchedule>): IDaySchedule => ({
   day: DayOfWeek.Monday,
   timeSlots: [{ start: '9:00 AM', end: '12:00 PM' }, { start: '1:00 PM', end: '5:00 PM' }],
   ...force,
 });
 
-export const mockBookingHours = (force?: IBookingHour): IBookingHour[] => {
-  const hours:IBookingHour[] = [
+export const mockBookingHours = (force?: IDaySchedule): IDaySchedule[] => {
+  const hours:IDaySchedule[] = [
     mockBookingHour({ day: DayOfWeek.Tuesday }),
     mockBookingHour({ day: DayOfWeek.Wednesday }),
     mockBookingHour({ day: DayOfWeek.Thursday }),
