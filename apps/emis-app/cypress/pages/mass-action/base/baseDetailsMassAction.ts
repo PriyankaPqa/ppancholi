@@ -88,6 +88,20 @@ export class BaseDetailsMassAction {
     return cy.getByDataTest(this.createdBy).getAndTrimText();
   }
 
+  public verifyAndGetMassActionCreatedBy(roleName: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        // eslint-disable-next-line
+        visibilityCondition: () => cy.contains('Created by').should('be.visible').wait(2000),
+        checkCondition: () => Cypress.$("[data-test='createdBy']").text().includes(roleName),
+      },
+      {
+        errorMsg: 'Unable to get mass action created by',
+      },
+    );
+    return cy.getByDataTest(this.createdBy).getAndTrimText();
+  }
+
   public waitAndRefreshUntilMassActionStatusUpdated(massActionName: string, status: string) {
     cy.waitAndRefreshUntilConditions(
       {
@@ -96,7 +110,7 @@ export class BaseDetailsMassAction {
         checkCondition: () => Cypress.$("[data-test='chip-text']").text().includes(status),
       },
       {
-        errorMsg: `Unable to verify the status has expected mass action: ${status}`,
+        errorMsg: 'Unable to get mass action created by',
       },
     );
   }

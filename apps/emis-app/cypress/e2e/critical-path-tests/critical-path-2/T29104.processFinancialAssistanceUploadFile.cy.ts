@@ -84,18 +84,11 @@ describe('[T29104] Process a Financial Assistance upload file', { tags: ['@finan
           massFinancialAssistanceDetailsPage.confirmProcessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the case files are being processed.');
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed case files.');
-          cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
           cy.waitForMassActionToBe(MassActionRunStatus.Processed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Financial assistance');
           massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
-          cy.wait('@userAccountMetadata').then((interception) => {
-            if (interception.response.statusCode === 200) {
-              massFinancialAssistanceDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
-            } else {
-              throw Error('Cannot verify roleName');
-            }
-          });
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
             if (quantity === householdQuantity.toString()) {
               massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');

@@ -85,7 +85,6 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
           const massCaseFileStatusDetailsPage = newMassCaseFileStatusPage.confirmPreprocessing();
           massCaseFileStatusDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
           massCaseFileStatusDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
-          cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massCaseFileStatusDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massCaseFileStatusDetailsPage.getMassActionName().should('string', baseMassActionData.name);
@@ -102,13 +101,7 @@ describe('[T29044] Pre-Processed a Mass case file status (Open to Inactive) via 
           });
           massCaseFileStatusDetailsPage.getMassActionType().should('eq', 'Case file status update');
           massCaseFileStatusDetailsPage.getMassActionDateCreated().should('eq', getToday());
-          cy.wait('@userAccountMetadata').then((interception) => {
-            if (interception.response.statusCode === 200) {
-              massCaseFileStatusDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
-            } else {
-              throw Error('Cannot verify roleName');
-            }
-          });
+          massCaseFileStatusDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
           massCaseFileStatusDetailsPage.getMassActionCaseFileStatusDetailsEvent().should('eq', this.event.name.translation.en);
           massCaseFileStatusDetailsPage.getMassActionCaseFileStatusDetailsCaseFileStatus().should('eq', massCaseFileStatusData.caseFileStatus);
           massCaseFileStatusDetailsPage.getMassActionCaseFileStatusDetailsReason().should('eq', massCaseFileStatusData.reason);

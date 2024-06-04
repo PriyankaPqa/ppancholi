@@ -46,11 +46,8 @@ describe('[T28960] Pre-process a payment status import file', { tags: ['@financi
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
-            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(
-              resultPrepareStateEvent.provider,
-              resultPrepareStateEvent.event.id,
-              EFinancialAmountModes.Fixed,
-            );
+            // eslint-disable-next-line
+            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
             const resultHousehold = await prepareStateHousehold(accessTokenL6, resultPrepareStateEvent.event);
 
             const addFinancialAssistancePaymentParamData: AddFinancialAssistancePaymentParams = {
@@ -96,7 +93,6 @@ describe('[T28960] Pre-process a payment status import file', { tags: ['@financi
           const massImportPaymentStatusDetailsPage = newMassImportPaymentStatusPage.confirmPreprocessing();
           massImportPaymentStatusDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
           massImportPaymentStatusDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
-          cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massImportPaymentStatusDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massImportPaymentStatusDetailsPage.getMassActionName().should('string', baseMassActionData.name);
@@ -105,13 +101,7 @@ describe('[T28960] Pre-process a payment status import file', { tags: ['@financi
           massImportPaymentStatusDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');
           massImportPaymentStatusDetailsPage.getMassActionType().should('eq', 'Import payment status');
           massImportPaymentStatusDetailsPage.getMassActionDateCreated().should('eq', getToday());
-          cy.wait('@userAccountMetadata').then((interception) => {
-            if (interception.response.statusCode === 200) {
-              massImportPaymentStatusDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
-            } else {
-              throw Error('Cannot verify roleName');
-            }
-          });
+          massImportPaymentStatusDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massImportPaymentStatusDetailsPage.getBackToMassActionListButton().should('be.visible');
         });
       });

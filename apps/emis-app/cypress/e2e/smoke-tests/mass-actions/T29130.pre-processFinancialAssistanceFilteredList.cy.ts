@@ -96,7 +96,6 @@ describe('[T29130] Pre-process a Financial Assistance filtered list', { tags: ['
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
-          cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionName().should('string', `${this.programName} - ${newMassFinancialAssistanceData.item}`);
@@ -113,13 +112,7 @@ describe('[T29130] Pre-process a Financial Assistance filtered list', { tags: ['
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsItem().should('eq', newMassFinancialAssistanceData.item);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsSubItem().should('eq', newMassFinancialAssistanceData.subItem);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', newMassFinancialAssistanceData.paymentModality.toLowerCase());
-          cy.wait('@userAccountMetadata').then((interception) => {
-            if (interception.response.statusCode === 200) {
-              massFinancialAssistanceDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
-            } else {
-              throw Error('Cannot verify roleName');
-            }
-          });
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', `$${newMassFinancialAssistanceData.paymentAmount}`);
           massFinancialAssistanceDetailsPage.getBackToMassActionListButton().should('be.visible');
         });

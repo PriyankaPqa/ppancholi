@@ -91,20 +91,13 @@ export const massActionFinancialAssistanceUploadFilePassesProcessCanSteps = (par
   massFinancialAssistanceDetailsPage.confirmProcessing();
   massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the case files are being processed.');
   massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed case files.');
-  cy.intercept('GET', 'user-account/user-accounts/metadata/**').as('userAccountMetadata');
-  massFinancialAssistanceDetailsPage.waitAndRefreshUntilMassActionStatusUpdated(params.massFinancialAssistance.name, 'Processed');
+  cy.waitForMassActionToBe(MassActionRunStatus.Processed);
   massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Processed').should('be.visible');
   massFinancialAssistanceDetailsPage.getMassActionProjectedAmount().should('string', `${parseFloat(newMassFinancialAssistanceData.paymentAmount) * params.householdQuantity}.00`);
   massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('string', params.householdQuantity);
   massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Financial assistance');
   massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
-  cy.wait('@userAccountMetadata').then((interception) => {
-    if (interception.response.statusCode === 200) {
-      massFinancialAssistanceDetailsPage.getMassActionCreatedBy().should('eq', getUserName(params.roleName));
-    } else {
-      throw Error('Cannot verify roleName');
-    }
-  });
+  massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(params.roleName)).should('eq', getUserName(params.roleName));
   massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsEvent().should('eq', params.event.name.translation.en);
   massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsTable().should('eq', params.faTable.name.translation.en);
   massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsProgram().should('eq', params.programName);
