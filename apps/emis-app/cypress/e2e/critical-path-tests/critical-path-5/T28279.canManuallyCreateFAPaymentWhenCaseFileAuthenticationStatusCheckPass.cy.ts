@@ -56,6 +56,8 @@ describe('[T28279] Can create manual FA payment when Case File Authentication st
       cy.wrap(resultPrepareStateEvent.event).as('eventCreated');
       cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
+      cy.wrap(resultPrepareStateEvent.event.id).as('eventId');
+      cy.wrap(resultCreateProgram.program.id).as('programId');
     });
   });
 
@@ -87,6 +89,8 @@ describe('[T28279] Can create manual FA payment when Case File Authentication st
           manuallyCreatePrepaidCardFaPaymentCanSteps({
             faTableName: this.faTable.name.translation.en,
             paymentLineData: fixturePrepaidCardPaymentLine(),
+            eventId: this.eventId,
+            programId: this.programId,
           });
         });
       });

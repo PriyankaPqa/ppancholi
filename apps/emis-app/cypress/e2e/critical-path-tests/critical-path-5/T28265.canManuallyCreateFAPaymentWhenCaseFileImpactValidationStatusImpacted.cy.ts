@@ -52,6 +52,8 @@ describe('[T28265] Can create manual FA payment when Validation of Impact status
       cy.wrap(resultCreatedEvent.event).as('event');
       cy.wrap(resultCreatedEvent.team).as('teamCreated');
       cy.wrap(resultCreateProgram.table).as('faTable');
+      cy.wrap(resultCreatedEvent.event.id).as('eventId');
+      cy.wrap(resultCreateProgram.program.id).as('programId');
     });
   });
 
@@ -88,6 +90,8 @@ describe('[T28265] Can create manual FA payment when Validation of Impact status
           manuallyCreatePrepaidCardFaPaymentCanSteps({
             faTableName: this.faTable.name.translation.en,
             paymentLineData: fixturePrepaidCardPaymentLine(),
+            eventId: this.eventId,
+            programId: this.programId,
           });
         });
       });

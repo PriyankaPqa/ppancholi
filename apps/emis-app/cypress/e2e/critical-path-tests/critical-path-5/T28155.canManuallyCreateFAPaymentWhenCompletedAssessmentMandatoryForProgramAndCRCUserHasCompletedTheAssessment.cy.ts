@@ -2,9 +2,11 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
+import { IProvider } from '@/services/provider';
+import { ICaseFileCombined } from '@libs/entities-lib/case-file';
 import {
   addAssessmentToCasefile, CasefileAssessmentParams,
-  completeAndSubmitCasefileAssessment,
+  completeAndSubmitCasefileAssessmentByCrcUser,
   createAndUpdateAssessment,
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem,
@@ -51,9 +53,11 @@ describe(
         );
         cy.wrap(resultCreatedEvent.provider).as('provider');
         cy.wrap(resultCreatedEvent.event).as('event');
+        cy.wrap(resultCreatedEvent.event.id).as('eventId');
         cy.wrap(resultCreatedEvent.team).as('teamCreated');
         cy.wrap(resultCreateProgram.table).as('faTable');
         cy.wrap(resultCreateProgram.program).as('program');
+        cy.wrap(resultCreateProgram.program.id).as('programId');
       });
     });
 
@@ -69,6 +73,7 @@ describe(
           beforeEach(() => {
             cy.then(async function () {
               const resultHousehold = await prepareStateHousehold(accessTokenL6, this.event);
+              const caseFileId = resultHousehold.registrationResponse.caseFile.id;
               const resultAssessment = await createAndUpdateAssessment(this.provider, this.event.id, this.program.id);
               const eligibilityCriteria: IEligibilityCriteria = {
                 authenticated: false,
@@ -85,15 +90,34 @@ describe(
                 casefileId: resultHousehold.registrationResponse.caseFile.id,
                 assessmentFormId: resultAssessment.id,
               };
-              await completeAndSubmitCasefileAssessment(completeAndSubmitCasefileAssessmentParamData);
-              cy.login(roleName);
-              cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/financialAssistance/create`);
+              cy.intercept('PATCH', `**/assessment/assessment-responses/${resultCreateAssessmentResponse.id}/submit`).as('submitAssessment');
+              cy.then(async () => {
+                await completeAndSubmitCasefileAssessmentByCrcUser(completeAndSubmitCasefileAssessmentParamData);
+              });
+              cy.wait('@submitAssessment', { timeout: 60000 }).then(async (interception) => {
+                if (interception.response.statusCode === 200) {
+                  await cy.callSearchUntilMeetCondition({
+                    accessToken: accessTokenL6,
+                    maxAttempt: 20,
+                    waitTime: 2000,
+                    searchCallBack: (provider: IProvider) => (provider.caseFiles.search({
+                      filter: { Entity: { Id: { value: caseFileId, type: 'guid' } } },
+                      top: 1,
+                    })),
+                    conditionCallBack: (value: ICaseFileCombined[]) => (value.find((el) => el.entity.id === caseFileId).metadata.assessments.length > 0),
+                  });
+                  cy.login(roleName);
+                  cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/financialAssistance/create`);
+                }
+              });
             });
           });
           it('should be able to manually create financial assistance payment when required assessment is completed', function () {
             manuallyCreatePrepaidCardFaPaymentCanSteps({
               faTableName: this.faTable.name.translation.en,
               paymentLineData: fixturePrepaidCardPaymentLine(),
+              eventId: this.eventId,
+              programId: this.programId,
             });
           });
         });
