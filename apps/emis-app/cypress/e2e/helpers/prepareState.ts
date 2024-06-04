@@ -128,15 +128,6 @@ export interface IPrepareStateHousehold {
   mockCreateHousehold: ICreateHouseholdRequest,
 }
 
-export interface ICallSearchUntilMeetConditionParams {
-  searchCallBack: (provider: any) => any,
-  conditionCallBack: (value: any) => boolean,
-  accessToken: string,
-  caseFileId: string,
-  maxAttempt: number,
-  waitTime:number,
-}
-
 /**
  * Creates a event, add a team to it, and assign roles to this team
  * @param provider
@@ -832,35 +823,4 @@ export const creatingDuplicateHousehold = async (accessTokenL6: string, event: I
   );
   const duplicateHousehold = await provider.households.postCrcRegistration(createDuplicateHouseholdRequest);
   return { firstHousehold, duplicateHousehold, createDuplicateHouseholdRequest };
-};
-
-/**
- * Search case file until metadata generated properly
- * @param accessToken
- * @param caseFileId
- * @param maxAttempt
- * @param waitTime
- * @param searchCallBack
- * @param conditionCallBack
- */
-export const callSearchUntilMeetCondition = async (params: ICallSearchUntilMeetConditionParams) => {
-  let searchResult = [] as any;
-  let attempt = 0;
-
-  const waitForCaseFileMetadataUpdated = async (): Promise<number> => {
-    if (attempt < params.maxAttempt) {
-      const provider = useProvider(params.accessToken);
-      const search = await params.searchCallBack(provider);
-      searchResult = search?.value;
-      attempt += 1;
-      if (params.conditionCallBack(searchResult[0])) {
-        cy.log('Case file metadata successfully updated');
-        return searchResult;
-      }
-      await helpers.timeout(params.waitTime);
-      return waitForCaseFileMetadataUpdated();
-    }
-    throw new Error(`Failed to search for index after ${params.maxAttempt} retries.`);
-  };
-  return waitForCaseFileMetadataUpdated();
 };

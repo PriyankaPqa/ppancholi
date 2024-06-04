@@ -3,6 +3,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Interception } from 'cypress/types/net-stubbing';
 import { ServerAuthorizationTokenResponse } from '@azure/msal-common';
+import { ICallSearchUntilMeetConditionParams } from '@/support/wait';
 import { UserRoles } from './msal';
 import './msal';
 import './wait';
@@ -134,6 +135,7 @@ declare global {
       waitForStatusCode(url: string | RegExp, statusCode: number, timeout?: number): Chainable<string>,
       shouldHaveCrossedText(shouldBeCrossed: boolean): Chainable<string>
       interceptAndValidateCondition(params: IInterceptAndValidateConditionParams): Chainable<void>,
+      callSearchUntilMeetCondition(params: ICallSearchUntilMeetConditionParams): Promise<any[]>,
     }
   }
 }

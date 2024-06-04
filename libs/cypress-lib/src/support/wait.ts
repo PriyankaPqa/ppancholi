@@ -1,4 +1,15 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useProvider } from '@apps/emis-app/cypress/provider/provider';
 import 'cypress-wait-until';
+import helpers from '@libs/shared-lib/helpers/helpers';
+
+export interface ICallSearchUntilMeetConditionParams {
+  searchCallBack: (provider: any) => any,
+  conditionCallBack: (value: any) => boolean,
+  accessToken: string,
+  maxAttempt: number,
+  waitTime:number,
+}
 
 /**
  * Run a check, and then refresh the page and wait until an element is displayed.
@@ -223,3 +234,38 @@ Cypress.Commands.add(
     waitForConditions();
   },
 );
+
+/**
+ * Call the search endpoint directly to check if meet condition
+ * @param accessToken
+ * @param maxAttempt
+ * @param waitTime
+ * @param searchCallBack
+ * @param conditionCallBack
+ */
+Cypress.Commands.add('callSearchUntilMeetCondition', async (params: ICallSearchUntilMeetConditionParams) => {
+  let searchResult = [] as any;
+  let attempt = 0;
+
+  const waitForSearchEndpointUpdated = async (): Promise<any[]> => {
+    if (attempt < params.maxAttempt) {
+      const provider = useProvider(params.accessToken);
+      const search = await params.searchCallBack(provider);
+      if (search?.value.length > 0) {
+        searchResult = search?.value;
+      } else {
+        attempt += 1;
+        await helpers.timeout(params.waitTime);
+        return waitForSearchEndpointUpdated();
+      }
+      attempt += 1;
+      if (params.conditionCallBack(searchResult[0])) {
+        return searchResult;
+      }
+      await helpers.timeout(params.waitTime);
+      return waitForSearchEndpointUpdated();
+    }
+    throw new Error(`Failed to verify search endpoint data update after ${params.maxAttempt} retries.`);
+  };
+  return waitForSearchEndpointUpdated();
+});

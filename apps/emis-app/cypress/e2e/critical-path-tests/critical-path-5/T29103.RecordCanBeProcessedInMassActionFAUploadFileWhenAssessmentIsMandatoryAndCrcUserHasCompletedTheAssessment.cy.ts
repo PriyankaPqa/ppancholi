@@ -4,7 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
 import {
-  addAssessmentToCasefile, callSearchUntilMeetCondition,
+  addAssessmentToCasefile,
   CasefileAssessmentParams,
   completeAndSubmitCasefileAssessmentByCrcUser,
   createAndUpdateAssessment,
@@ -103,9 +103,8 @@ describe(
             });
             cy.wait('@submitAssessment', { timeout: 60000 }).then(async (interception) => {
               if (interception.response.statusCode === 200) {
-                await callSearchUntilMeetCondition({
+               await cy.callSearchUntilMeetCondition({
                   accessToken: accessTokenL6,
-                  caseFileId,
                   maxAttempt: 20,
                   waitTime: 2000,
                   searchCallBack: (provider: any) => (provider.caseFiles.search({
