@@ -2,6 +2,7 @@
 import { useProvider } from '@apps/emis-app/cypress/provider/provider';
 import 'cypress-wait-until';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { IEntity, IEntityCombined } from '@libs/entities-lib/base';
 
 export interface ICallSearchUntilMeetConditionParams {
   searchCallBack: (provider: any) => any,
@@ -244,10 +245,10 @@ Cypress.Commands.add(
  * @param conditionCallBack
  */
 Cypress.Commands.add('callSearchUntilMeetCondition', async (params: ICallSearchUntilMeetConditionParams) => {
-  let searchResult = [] as any;
+  let searchResult = [] as IEntityCombined<IEntity, IEntity>[];
   let attempt = 0;
 
-  const waitForSearchEndpointUpdated = async (): Promise<any[]> => {
+  const waitForSearchEndpointUpdated = async (): Promise<IEntityCombined<IEntity, IEntity>[]> => {
     if (attempt < params.maxAttempt) {
       const provider = useProvider(params.accessToken);
       const search = await params.searchCallBack(provider);
@@ -259,7 +260,7 @@ Cypress.Commands.add('callSearchUntilMeetCondition', async (params: ICallSearchU
         return waitForSearchEndpointUpdated();
       }
       attempt += 1;
-      if (params.conditionCallBack(searchResult[0])) {
+      if (params.conditionCallBack(searchResult)) {
         return searchResult;
       }
       await helpers.timeout(params.waitTime);

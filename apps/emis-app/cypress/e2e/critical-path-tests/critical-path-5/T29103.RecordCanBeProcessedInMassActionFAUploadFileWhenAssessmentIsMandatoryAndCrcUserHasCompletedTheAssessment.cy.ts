@@ -3,6 +3,10 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
+import { IProvider } from '@/services/provider';
+import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { massActionFinancialAssistanceUploadFilePassesProcessCanSteps } from './canStep';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   addAssessmentToCasefile,
   CasefileAssessmentParams,
@@ -15,8 +19,6 @@ import {
   prepareStateMassActionFinancialAssistanceUploadFileWithoutCreatingHousehold,
   updateProgram,
 } from '../../helpers/prepareState';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { massActionFinancialAssistanceUploadFilePassesProcessCanSteps } from './canStep';
 
 const canRoles = [
   UserRoles.level6,
@@ -107,11 +109,11 @@ describe(
                   accessToken: accessTokenL6,
                   maxAttempt: 20,
                   waitTime: 2000,
-                  searchCallBack: (provider: any) => (provider.caseFiles.search({
+                  searchCallBack: (provider: IProvider) => (provider.caseFiles.search({
                   filter: { Entity: { Id: { value: caseFileId, type: 'guid' } } },
                   top: 1,
                 })),
-                  conditionCallBack: (value: any) => (value.metadata.assessments.length > 0),
+                  conditionCallBack: (value: ICaseFileCombined[]) => (value.find((el) => el.entity.id === caseFileId).metadata.assessments.length > 0),
               });
                 const massActionFaUploadFileParamData: MassActionFinancialAssistanceUploadFileWithoutCreatingHouseholdParams = {
                   event: this.event,

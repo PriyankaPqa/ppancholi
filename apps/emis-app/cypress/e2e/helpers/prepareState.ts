@@ -422,7 +422,7 @@ export const createAndUpdateAssessmentWithAllPossibleComponents = async (provide
 };
 
 // verifies if casefile created is indexed through search and wait
-const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 20, throttle = 2000): Promise<number> => {
+export const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 20, throttle = 2000): Promise<number> => {
   let searchResult = [] as any;
   let attempt = 0;
   const waitForCaseFileIndexToBeUpdated = async (): Promise<number> => {

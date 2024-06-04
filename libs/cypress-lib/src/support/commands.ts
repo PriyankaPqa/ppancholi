@@ -2,6 +2,7 @@
 /* eslint-disable import/no-duplicates */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Interception } from 'cypress/types/net-stubbing';
+import { IEntity, IEntityCombined } from '@libs/entities-lib/base';
 import { ServerAuthorizationTokenResponse } from '@azure/msal-common';
 import { ICallSearchUntilMeetConditionParams } from '@/support/wait';
 import { UserRoles } from './msal';
@@ -171,7 +172,7 @@ declare global {
       waitForStatusCode(url: string | RegExp, statusCode: number, timeout?: number): Chainable<string>,
       shouldHaveCrossedText(shouldBeCrossed: boolean): Chainable<string>
       interceptAndValidateCondition(params: IInterceptAndValidateConditionParams): Chainable<void>,
-      callSearchUntilMeetCondition(params: ICallSearchUntilMeetConditionParams): Promise<any[]>,
+      callSearchUntilMeetCondition(params: ICallSearchUntilMeetConditionParams): Promise<IEntityCombined<IEntity, IEntity>[]>,
       findComponentByName(name: string): Chainable<Vue | null>;
     }
   }
