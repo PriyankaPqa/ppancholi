@@ -84,6 +84,42 @@ Cypress.Commands.add('interceptAndValidateCondition', (params: IInterceptAndVali
   });
 });
 
+/** Example
+ * cy.findComponentByName(componentName).then((component) => {
+    if (component) {
+      expect(component.$data.selectedProgram).to.equal(null);
+    }
+  });
+ */
+Cypress.Commands.add('findComponentByName', (name: string) => {
+  cy.window().then((win) => {
+    const root = (win as any)._app as Vue;
+
+    function searchComponent(component: Vue, name: string): Vue | null {
+      if (component.$options.name === name) {
+        return component;
+      }
+
+      for (const child of component.$children) {
+        const found = searchComponent(child, name);
+        if (found) {
+          return found;
+        }
+      }
+
+      return null;
+    }
+
+    const result = searchComponent(root, name);
+
+    if (result === null) {
+      throw new Error(`Component with name ${name} not found`);
+    }
+
+    return cy.wrap(result);
+  });
+});
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -136,6 +172,7 @@ declare global {
       shouldHaveCrossedText(shouldBeCrossed: boolean): Chainable<string>
       interceptAndValidateCondition(params: IInterceptAndValidateConditionParams): Chainable<void>,
       callSearchUntilMeetCondition(params: ICallSearchUntilMeetConditionParams): Promise<any[]>,
+      findComponentByName(name: string): Chainable<Vue | null>;
     }
   }
 }
