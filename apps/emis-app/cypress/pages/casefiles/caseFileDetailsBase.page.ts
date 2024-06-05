@@ -19,8 +19,8 @@ export enum DataTest {
   recoveryPlanSubTag = 'recovery-plan',
   documentsSubTag = 'documents',
   tasksSubTag = 'tasks',
+  statusSelect = 'statusSelect__chip',
 }
-
 export class CaseFileDetailsBase {
   private backToCaseFileHomeButton = { selector: DataTest.backToCaseFileHomeButton };
 
@@ -61,6 +61,8 @@ export class CaseFileDetailsBase {
   private documentsSubTag = { selector: DataTest.documentsSubTag };
 
   private tasksSubTag = { selector: DataTest.tasksSubTag };
+
+  private statusSelect = { selector: DataTest.statusSelect };
 
   public getBackToCaseFileHomeButton() {
     return cy.getByDataTest(this.backToCaseFileHomeButton);
@@ -156,5 +158,9 @@ export class CaseFileDetailsBase {
 
   public goToFinancialAssistanceHomePage() {
     return cy.getByDataTest(this.caseFinancialAssistanceSubTag).click();
+  }
+
+  public getStatusText() {
+    return cy.getByDataTest(this.statusSelect).getAndTrimText();
   }
 }

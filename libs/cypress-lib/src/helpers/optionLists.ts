@@ -64,3 +64,7 @@ export enum identificationIdProvided {
     CanadianCitizenshipCard = '72b7957c-7091-402e-bf87-25047d10a9a5',
     Other = 'd9c5618e-40df-446c-86d4-19d5d6b37a04',
 }
+
+export enum reasonCaseFileStatusUpdate {
+    Deceased = 'b4623298-cf7a-42e2-939d-f3b1f56a9173',
+}

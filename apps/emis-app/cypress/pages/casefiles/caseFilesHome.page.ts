@@ -6,6 +6,8 @@ export enum DataTest {
   beneficiaryNameLink = 'beneficiaryName-link',
   caseFileDetailLink = 'caseFileDetail-link',
   caseFileTable = 'case-files-table',
+  tableSearch = 'dataTableHeader__search',
+  statusText = 'chip-text',
 }
 
 export class CaseFilesHomePage {
@@ -14,6 +16,8 @@ export class CaseFilesHomePage {
   private caseFileDetailLink = { selector: DataTest.caseFileDetailLink };
 
   private caseFileTable = { selector: DataTest.caseFileTable };
+
+  private statusText = { selector: DataTest.statusText };
 
   public waitUntilBeneficiaryIsDisplayed(primaryBeneficiary: MemberCreateRequest) {
     const beneficiarySelector = { selector: `"${DataTest.beneficiaryNameLink}_${primaryBeneficiary.identitySet.firstName} ${primaryBeneficiary.identitySet.lastName}"`, type: 'a' };
@@ -59,5 +63,13 @@ export class CaseFilesHomePage {
         foundMsg: 'Case File updated',
       },
     );
+  }
+
+  public searchCaseFileTableFor(caseFileNumber: string) {
+    cy.typeAndWaitUntilSearchResultsVisible(caseFileNumber, DataTest.tableSearch, `${DataTest.caseFileDetailLink}_${caseFileNumber}`);
+  }
+
+  public getCaseFileStatus() {
+    return cy.getByDataTestLike(this.statusText).getAndTrimText();
   }
 }
