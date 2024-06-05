@@ -4,6 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
 import { IProvider } from '@/services/provider';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { useProvider } from 'cypress/provider/provider';
 import {
   addAssessmentToCasefile, CasefileAssessmentParams,
   completeAndSubmitCasefileAssessmentByCrcUser,
@@ -97,9 +98,7 @@ describe(
               cy.wait('@submitAssessment', { timeout: 60000 }).then(async (interception) => {
                 if (interception.response.statusCode === 200) {
                   await cy.callSearchUntilMeetCondition({
-                    accessToken: accessTokenL6,
-                    maxAttempt: 20,
-                    waitTime: 2000,
+                    provider: useProvider(accessTokenL6),
                     searchCallBack: (provider: IProvider) => (provider.caseFiles.search({
                       filter: { Entity: { Id: { value: caseFileId, type: 'guid' } } },
                       top: 1,

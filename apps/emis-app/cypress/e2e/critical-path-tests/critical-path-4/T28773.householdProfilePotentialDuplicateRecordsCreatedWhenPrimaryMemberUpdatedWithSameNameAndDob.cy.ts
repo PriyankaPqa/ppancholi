@@ -4,6 +4,7 @@ import { formatDateToMmmDdYyyy, getToday } from '@libs/cypress-lib/helpers';
 import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { IProvider } from '@/services/provider';
 import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { useProvider } from 'cypress/provider/provider';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
@@ -51,9 +52,7 @@ describe('[T28773] CRC REG existing household - Potential duplicate record creat
             const resultSecondaryHouseholdPrimaryEvent = await prepareStateHousehold(accessTokenL6, resultCreatedPrimaryEvent.event);
             const resultCreatedSecondaryEvent = await createEventAndTeam(accessTokenL6, allRoles);
             await cy.callSearchUntilMeetCondition({
-              accessToken: accessTokenL6,
-              maxAttempt: 20,
-              waitTime: 2000,
+              provider: useProvider(accessTokenL6),
               searchCallBack: (provider: IProvider) => (provider.households.search({
                 filter: { Entity: { RegistrationNumber: resultSecondaryHouseholdPrimaryEvent.registrationResponse.household.registrationNumber } },
                 top: 1,

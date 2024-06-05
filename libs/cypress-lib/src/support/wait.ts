@@ -1,5 +1,4 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useProvider } from '@apps/emis-app/cypress/provider/provider';
 import 'cypress-wait-until';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { IEntity, IEntityCombined } from '@libs/entities-lib/base';
@@ -8,8 +7,9 @@ export interface ICallSearchUntilMeetConditionParams {
   searchCallBack: (provider: any) => any,
   conditionCallBack: (value: any) => boolean,
   accessToken: string,
-  maxAttempt: number,
-  waitTime:number,
+  provider: any,
+  maxAttempt?: number,
+  waitTime?:number,
 }
 
 /**
@@ -248,10 +248,17 @@ Cypress.Commands.add('callSearchUntilMeetCondition', async (params: ICallSearchU
   let searchResult = [] as IEntityCombined<IEntity, IEntity>[];
   let attempt = 0;
 
+  if (!params.maxAttempt) {
+    params.maxAttempt = 20;
+  }
+
+  if (!params.waitTime) {
+    params.maxAttempt = 2000;
+  }
+
   const waitForSearchEndpointUpdated = async (): Promise<IEntityCombined<IEntity, IEntity>[]> => {
     if (attempt < params.maxAttempt) {
-      const provider = useProvider(params.accessToken);
-      const search = await params.searchCallBack(provider);
+      const search = await params.searchCallBack(params.provider);
       if (search?.value.length > 0) {
         searchResult = search?.value;
       } else {
