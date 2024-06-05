@@ -67,12 +67,10 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
   computed: {
 
     massActionTypes() {
-      if (!this.$hasFeature(FeatureKeys.DataCorrectionTriage)) {
-        return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther && m.value !== MassActionDataCorrectionType.DataCorrectionTriage));
-      }
       return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther));
+        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther
+        && (this.$hasFeature(FeatureKeys.DataCorrectionTriage) || m.value !== MassActionDataCorrectionType.DataCorrectionTriage)
+        && (this.$hasFeature(FeatureKeys.MovePayments) || m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments)));
     },
 
     rules(): Record<string, unknown> {

@@ -17,6 +17,7 @@ export enum FeatureKeys {
   EmailSendingPreview = 'EmailSendingPreview',
   Lodging = 'Lodging',
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
+  MovePayments = 'MovePayments',
   CaseFileIndividual = 'CaseFileIndividual',
 }
 

@@ -1252,6 +1252,7 @@
     "enums.MassActionDataCorrectionType.DataCorrectionMovePayments": "",
     "enums.MassActionDataCorrectionType.DataCorrectionTemporaryAddress": "enums.MassActionDataCorrectionType.DataCorrectionTemporaryAddress",
     "enums.MassActionDataCorrectionType.DataCorrectionTriage": "enums.MassActionDataCorrectionType.DataCorrectionTriage",
+    "enums.MassActionDataCorrectionType.DataCorrectionMovePayments": "enums.MassActionDataCorrectionType.DataCorrectionMovePayments",
     "enums.MassActionDataCorrectionType.FinancialAssistance": "enums.MassActionDataCorrectionType.FinancialAssistance",
     "enums.MassActionDataCorrectionType.HomeAddress": "enums.MassActionDataCorrectionType.HomeAddress",
     "enums.MassActionDataCorrectionType.IdentitySet": "enums.MassActionDataCorrectionType.IdentitySet",

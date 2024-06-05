@@ -1252,6 +1252,7 @@
     "enums.MassActionDataCorrectionType.DataCorrectionMovePayments": "Move Payments",
     "enums.MassActionDataCorrectionType.DataCorrectionTemporaryAddress": "Temporary Address",
     "enums.MassActionDataCorrectionType.DataCorrectionTriage": "Triage",
+    "enums.MassActionDataCorrectionType.DataCorrectionMovePayments": "Move Payments",
     "enums.MassActionDataCorrectionType.FinancialAssistance": "Financial Assistance",
     "enums.MassActionDataCorrectionType.HomeAddress": "Home Address",
     "enums.MassActionDataCorrectionType.IdentitySet": "Identity Set",
