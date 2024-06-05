@@ -6,6 +6,7 @@
     :show.sync="show"
     content-padding="5"
     content-only-scrolling
+    scroll-anchor-id="templateSchrollAnchor"
     :persistent="true"
     :tooltip-label="$t('common.tooltip_label')"
     :show-submit="false"
@@ -103,6 +104,9 @@ export default Vue.extend({
 
   async mounted() {
     await this.loadSurvey();
+      setTimeout(() => {
+           document.getElementById('templateSchrollAnchor').scrollTo({ top: 0, behavior: 'smooth' });
+    }, 500);
   },
 
   methods: {

@@ -37,6 +37,7 @@
       </div>
     </rc-dialog>
     <assessment-template-preview
+      v-if="showAssessmentPreview"
       :show.sync="showAssessmentPreview"
       :title="$t('massAction.assessment.template.preview.title')"
       :event="event"
