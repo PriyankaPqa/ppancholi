@@ -72,10 +72,12 @@ Cypress.Commands.add('waitForStatusCode', (url: string | RegExp, statusCode: num
  * @param alias
  */
 Cypress.Commands.add('interceptAndValidateCondition', (params: IInterceptAndValidateConditionParams) => {
+  cy.log(`Intercept: ${params.url}`);
   cy.intercept(params.httpMethod, params.url).as(params.alias);
   if (params.actionsCallback) {
     params.actionsCallback();
   }
+  cy.log(`Wait for ${params.url} before ${params.timeout}`);
   cy.wait(`@${params.alias}`, { timeout: params.timeout }).then((interception) => {
     if (params.conditionCallBack(interception)) {
       params.actionsWhenValidationPassed(interception);

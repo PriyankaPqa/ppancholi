@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('[T28265] Can create manual FA payment when Validation of Impact status is Impacted', { tags: ['@financial-assistance'] }, () => {
+describe('[T28265] Can create manual FA payment when Validation of Impact status is Impacted.', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

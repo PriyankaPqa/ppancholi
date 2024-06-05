@@ -180,7 +180,11 @@ export class FinancialAssistanceHomePage {
 
   public addNewFaPayment() {
     this.getAddFaPaymentButton().should('be.visible');
-    this.getAddFaPaymentButton().click({ force: true });
+    this.getAddFaPaymentButton().click();
+  }
+
+  public verifyAndReturnAddFaPaymentPage(): AddFinancialAssistancePage | null {
+    cy.getByDataTest({ selector: 'page-title', type: 'h1' }).contains('Add financial assistance').should('be.visible');
     return new AddFinancialAssistancePage();
   }
 

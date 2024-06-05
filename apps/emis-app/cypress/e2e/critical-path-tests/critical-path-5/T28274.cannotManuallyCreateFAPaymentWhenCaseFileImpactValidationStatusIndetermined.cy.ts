@@ -68,14 +68,15 @@ describe('[T28274] Cannot create manual FA payment when Case File Validation of 
           cy.goTo(`casefile/${this.caseFileId}`);
         });
 
-        it('should not be able to manually create financial assistance payment when case file validation of impact status is Undetermined', function () {
+        it('should not be able to manually create financial assistance payment when case file validation of impact status is Undetermined.', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
           caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-warning');
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
           cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
+          financialAssistanceHomePage.addNewFaPayment();
+          const addFinancialAssistancePage = financialAssistanceHomePage.verifyAndReturnAddFaPaymentPage();
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
           cy.contains('The household does not meet one or more eligibility criteria for the selected program. '
           + 'Please review the eligibility criteria for this program and try again.').should('be.visible');
