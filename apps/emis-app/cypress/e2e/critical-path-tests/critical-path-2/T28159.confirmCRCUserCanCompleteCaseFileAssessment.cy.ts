@@ -67,6 +67,7 @@ describe('[T28159] Confirm that the CRC User can complete a Case File Assessment
         });
         it('should successfully complete a Case File Assessment', function () {
           const assessmentsListPage = new AssessmentsListPage();
+          assessmentsListPage.refreshUntilPendingAssessmentDisplayed();
           verifyPendingCaseFileAssessment(roleName, this.assessmentName);
           cy.wrap(1).then(() => {
             const casefileAssessmentParamData: CasefileAssessmentParams = {

@@ -118,4 +118,18 @@ export class AssessmentsListPage {
       },
     );
   }
+
+  public refreshUntilPendingAssessmentDisplayed() {
+    cy.waitAndRefreshUntilConditions(
+      {
+        // eslint-disable-next-line
+        visibilityCondition: () => cy.contains('Pending assessments').should('be.visible').wait(2000),
+        checkCondition: () => Cypress.$('[data-test=\'start-link\'').length > 0,
+      },
+      {
+        errorMsg: 'Failed to display pending assessment',
+        foundMsg: 'Pending Assessment displayed',
+      },
+    );
+  }
 }
