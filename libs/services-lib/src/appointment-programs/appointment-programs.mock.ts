@@ -1,4 +1,4 @@
-import { mockAppointmentProgram } from '@libs/entities-lib/src/appointment';
+import { mockAppointmentProgram } from '@libs/entities-lib/appointment';
 
 import { mockDomainBaseService } from '../base';
 import { IAppointmentProgramsServiceMock } from './appointment-programs.types';

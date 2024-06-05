@@ -14,7 +14,7 @@ const entityService = new AppointmentProgramsService(httpClient);
 const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService);
 const extensionComponents = getExtensionComponents(baseEntityComponents, entityService);
 
-export const useAppointmentStore = defineStore(`${storeId}-entities`, () => ({
+export const useAppointmentProgramStore = defineStore(`${storeId}-entities`, () => ({
   ...baseEntityComponents,
   ...extensionComponents,
 }));

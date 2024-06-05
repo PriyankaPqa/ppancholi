@@ -1,11 +1,12 @@
+import { NewMassCaseFileStatusUpdatePage } from '../mass-case-file-status/newMassCaseFileStatusUpdate.page';
 import { NewMassFinancialAssistancePage } from '../mass-financial-assistance/newMassFinancialAssistance.page';
 
 export enum DataTest {
-filter = 'filterToolbar__showFilterBtn',
-next = 'dialog-submit-action',
-caseFileTable = 'massAction_caseFile_table',
-eventSelect = 'filterToolbar__input-EntityEventId-select',
-apply = 'dialog-apply-action',
+  filter = 'filterToolbar__showFilterBtn',
+  next = 'dialog-submit-action',
+  caseFileTable = 'massAction_caseFile_table',
+  eventSelect = 'filterToolbar__input-EntityEventId-select',
+  apply = 'dialog-apply-action',
 }
 
 export class BaseMassActionViaFilteredList {
@@ -32,7 +33,12 @@ export class BaseMassActionViaFilteredList {
     return new NewMassFinancialAssistancePage();
   }
 
-  public enterEventName(eventName:string) {
+  public goToNewMassCaseFileStatusUpdatePage() {
+    cy.getByDataTestLike(this.next).click();
+    return new NewMassCaseFileStatusUpdatePage();
+  }
+
+  public enterEventName(eventName: string) {
     cy.searchAndSelect(DataTest.eventSelect, eventName);
   }
 

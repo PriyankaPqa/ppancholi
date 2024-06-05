@@ -52,7 +52,7 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
               resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
               resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
+            await updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, personIds);
             const memberHouseholds: Record<string, string> = {
               [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),

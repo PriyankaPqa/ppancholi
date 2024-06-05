@@ -30,6 +30,7 @@ import {
   mockCreateMassActionDataCorrectionFileRequest,
   MockCreateMassActionXlsxFileRequestParams,
 } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { mockCreateMassCaseFileStatusUpdateRequest } from '@libs/cypress-lib/mocks/mass-actions/massCaseFileStatusUpdate';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities, IProgramEntity, IProgramEntityData } from '@libs/entities-lib/program';
@@ -126,15 +127,6 @@ export interface IPrepareStateHousehold {
   provider: IProvider,
   registrationResponse: IDetailedRegistrationResponse,
   mockCreateHousehold: ICreateHouseholdRequest,
-}
-
-export interface ICallSearchUntilMeetConditionParams {
-  searchCallBack: (provider: any) => any,
-  conditionCallBack: (value: any) => boolean,
-  accessToken: string,
-  caseFileId: string,
-  maxAttempt: number,
-  waitTime:number,
 }
 
 /**
@@ -431,7 +423,7 @@ export const createAndUpdateAssessmentWithAllPossibleComponents = async (provide
 };
 
 // verifies if casefile created is indexed through search and wait
-const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 20, throttle = 2000): Promise<number> => {
+export const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 20, throttle = 2000): Promise<number> => {
   let searchResult = [] as any;
   let attempt = 0;
   const waitForCaseFileIndexToBeUpdated = async (): Promise<number> => {
@@ -863,4 +855,18 @@ export const callSearchUntilMeetCondition = async (params: ICallSearchUntilMeetC
     throw new Error(`Failed to search for index after ${params.maxAttempt} retries.`);
   };
   return waitForCaseFileMetadataUpdated();
+};
+
+/**
+ * Pre Process a Mass Case File Status Update
+ * @param accessToken
+ * @param event
+ */
+export const prepareStatePreProcessMassCaseFileStatusUpdate = async (accessToken: string, event: IEventEntity) => {
+  const provider = useProvider(accessToken);
+  const eventId = event.id;
+  const mockCreateMassCaseFileStatusUpdate = mockCreateMassCaseFileStatusUpdateRequest(event, { eventId });
+  const responseMassCreateMassCaseFileStatusUpdate = await provider.massActions
+  .create(`case-file-status-from-listV2?$filter=Entity/EventId eq ${eventId} and Entity/Status eq 'Active'`, mockCreateMassCaseFileStatusUpdate);
+  return { responseMassCreateMassCaseFileStatusUpdate, mockCreateMassCaseFileStatusUpdate };
 };

@@ -2,6 +2,9 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { formatDateToMmmDdYyyy, getToday } from '@libs/cypress-lib/helpers';
 import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { IProvider } from '@/services/provider';
+import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { useProvider } from 'cypress/provider/provider';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
@@ -48,6 +51,16 @@ describe('[T28773] CRC REG existing household - Potential duplicate record creat
             const resultPrimaryHouseholdPrimaryEvent = await prepareStateHousehold(accessTokenL6, resultCreatedPrimaryEvent.event);
             const resultSecondaryHouseholdPrimaryEvent = await prepareStateHousehold(accessTokenL6, resultCreatedPrimaryEvent.event);
             const resultCreatedSecondaryEvent = await createEventAndTeam(accessTokenL6, allRoles);
+            await cy.callSearchUntilMeetCondition({
+              provider: useProvider(accessTokenL6),
+              searchCallBack: (provider: IProvider) => (provider.households.search({
+                filter: { Entity: { RegistrationNumber: resultSecondaryHouseholdPrimaryEvent.registrationResponse.household.registrationNumber } },
+                top: 1,
+                includeMembers: true,
+                queryType: 'full',
+              })),
+              conditionCallBack: (value: IHouseholdCombined[]) => (value.length > 0),
+            });
             cy.wrap(resultPrimaryHouseholdPrimaryEvent.mockCreateHousehold.primaryBeneficiary.identitySet).as('primaryHouseholdPrimaryBeneficiary');
             cy.wrap(resultPrimaryHouseholdPrimaryEvent.registrationResponse.household.registrationNumber).as('primaryHouseholdRegistrationNumber');
             cy.wrap(resultSecondaryHouseholdPrimaryEvent.registrationResponse.household.registrationNumber).as('secondaryHouseholdRegistrationNumber');
@@ -102,18 +115,22 @@ describe('[T28773] CRC REG existing household - Potential duplicate record creat
           cy.contains('Are you sure you want to associate the household to this event?').should('be.visible');
           associateHouseholdPage.getDialogCancelButton().should('be.visible');
           associateHouseholdPage.getDialogConfirmButton().should('be.visible');
+          cy.intercept('POST', '**/orchestration/orchestration-households/case-file').as('potentialDuplicateHousehold'); // begins interception for potential duplicate household being created
           associateHouseholdPage.goToConfirmationHouseholdAssociationPage();
 
           cy.contains(`${duplicatePrimaryBeneficiaryData.firstName} ${duplicatePrimaryBeneficiaryData.lastName} has been successfully associated to this event`);
           const confirmHouseholdAssociationPage = new ConfirmHouseholdAssociationPage();
+          cy.wait('@potentialDuplicateHousehold').then(async (interception) => {
+            cy.wrap(interception.response.body.caseFile.householdId).as('potentialDuplicateHouseholdId'); // creates alias for potential duplicate household id
+          });
           confirmHouseholdAssociationPage.getRegistrationNumber().should('exist');
           confirmHouseholdAssociationPage.getEventName().should('string', this.secondaryEventCreated.name.translation.en);
           confirmHouseholdAssociationPage.getPrintButton().should('be.visible');
           confirmHouseholdAssociationPage.getNewRegistrationButton().should('be.visible');
 
-          const caseFilesHomePage = confirmHouseholdAssociationPage.goToCaseFiles();
-          caseFilesHomePage.refreshUntilCaseFilesUpdated(`${duplicatePrimaryBeneficiaryData.firstName} ${duplicatePrimaryBeneficiaryData.lastName}`);
-          caseFilesHomePage.goToFirstHouseholdProfile(duplicatePrimaryBeneficiaryData.firstName, duplicatePrimaryBeneficiaryData.lastName);
+          cy.get('@potentialDuplicateHouseholdId').then((potentialDuplicateHouseholdId) => {
+            cy.goTo(`casefile/household/${potentialDuplicateHouseholdId}`);
+          });
 
           assertPotentialDuplicatesSteps({
             firstName: duplicatePrimaryBeneficiaryData.firstName,

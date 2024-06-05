@@ -46,7 +46,7 @@ describe('[T28866] Pre-process a Identity Set data correction file', { tags: ['@
               resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
               resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
+            await updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, householdMemberIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');

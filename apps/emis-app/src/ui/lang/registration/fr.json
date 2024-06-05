@@ -518,6 +518,7 @@
     "errors.the-unit-suit-length-is-invalid": "La longueur du numéro de l'appartement ou bureau n'est pas valide",
     "errors.the-unit-suit-should-have-a-value": "L'appartement\/bureau doit avoir une valeur",
     "errors.there-are-no-records-to-be-processed": "Il n'y a pas de dossier à traiter.",
+    "errors.there-is-currently-a-pending-tier-2-identity-verification": "Une vérification d'identité de niveau 2 est actuellement en cours",
     "errors.there-must-be-at-least-one-filter-criteria": "Il doit y avoir au moins un critère de filtre",
     "errors.this-individual-already-exists-in-the-system": "Cette personne existe déjà dans le système",
     "errors.this-member-is-already-primary-in-the-system": "Cette personne représente déjà le ménage dans le système.",

@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '../../base';
-import { IBookingHour } from '../appointment-program/appointment-program.types';
+import { IDaySchedule } from '../appointment-program/appointment-program.types';
 import { IDateRange, IStaffMemberAvailability } from './staff-member-availability.types';
 
 export class StaffMemberAvailability extends BaseEntity {
@@ -10,7 +10,7 @@ export class StaffMemberAvailability extends BaseEntity {
 
   useBusinessHours: boolean;
 
-  defaultBookingHours: IBookingHour[];
+  defaultBookingHours: IDaySchedule[];
 
   customDateRanges: IDateRange[];
 

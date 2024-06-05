@@ -1,11 +1,14 @@
 import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
 import { mockProvider } from '@/services/provider';
 import { mockEventEntity } from '@libs/entities-lib/event';
+import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import Component from './EmailTemplatePreview.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 const mockEvent = mockEventEntity();
+const mockAssessment = mockAssessmentFormEntity();
+
 let wrapper;
 
 const doMount = (otherOptions = {}, fullMount = false) => {
@@ -73,6 +76,45 @@ describe('EmailTemplatePreview', () => {
         doMount();
         await wrapper.vm.close();
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+    });
+
+    describe('getTarget', () => {
+      it('shows assessment preview', async () => {
+        doMount();
+        const event = {
+          target: {
+            getAttribute: jest.fn(() => '[assessmentlink]'),
+          },
+        };
+        await wrapper.setProps({ assessment: mockAssessment });
+        await wrapper.vm.getTarget(event);
+        expect(wrapper.vm.showAssessmentPreview).toEqual(true);
+      });
+
+      it('No assessment preview when no assessment', async () => {
+        doMount();
+        const event = {
+          target: {
+            getAttribute: jest.fn(() => '[assessmentlink]'),
+          },
+        };
+        wrapper.vm.$toasted.global.info = jest.fn();
+        await wrapper.vm.getTarget(event);
+        expect(wrapper.vm.showAssessmentPreview).toEqual(false);
+        expect(wrapper.vm.$toasted.global.info).toHaveBeenCalledWith(wrapper.vm.$t('massAction.assessment.template.info.needAssessment'));
+      });
+
+      it('No assessment preview when wrong link is clicked', async () => {
+        doMount();
+        const event = {
+          target: {
+            getAttribute: jest.fn(() => 'redcross.ca'),
+          },
+        };
+        await wrapper.setProps({ assessment: mockAssessment });
+        await wrapper.vm.getTarget(event);
+        expect(wrapper.vm.showAssessmentPreview).toEqual(false);
       });
     });
 

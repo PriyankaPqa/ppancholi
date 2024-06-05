@@ -32,6 +32,8 @@ export interface IMassActionFAUploadFilePassesProcessParams {
 export interface ManuallyCreateFaPaymentParams {
   faTableName: string,
   paymentLineData: IAddNewPaymentLineFields,
+  eventId: string,
+  programId: string,
 }
 
 // eslint-disable-next-line max-statements
@@ -113,9 +115,23 @@ export const manuallyCreatePrepaidCardFaPaymentCanSteps = (params: ManuallyCreat
   addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
   addFinancialAssistancePage.getCreateButton().should('be.disabled');
   addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
-  addFinancialAssistancePage.selectTable(params.faTableName);
-  addFinancialAssistancePage.fillDescription('Financial Description Payment');
-  addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
+  cy.interceptAndValidateCondition({
+    httpMethod: 'GET',
+    url: `**/event/events/${params.eventId}/programs/${params.programId}`,
+    actionsCallback: () => {
+      addFinancialAssistancePage.selectTable(params.faTableName);
+      addFinancialAssistancePage.fillDescription('Financial Description Payment');
+    },
+    conditionCallBack: (interception) => (interception.response.statusCode === 200),
+    actionsWhenValidationPassed: () => {
+      addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
+    },
+    actionsWhenValidationFailed: () => {
+      throw Error('Cannot fetch programs');
+    },
+    alias: 'getProgram',
+    timeout: 4000,
+  });
   addFinancialAssistancePage.getCreateButton().should('be.disabled');
   addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
 

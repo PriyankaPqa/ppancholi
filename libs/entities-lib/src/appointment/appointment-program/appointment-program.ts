@@ -2,7 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { IMultilingual } from '@libs/shared-lib/types';
 
 import { BaseEntity } from '../../base';
-import { IAppointmentProgram, IBookingHour } from './appointment-program.types';
+import { IAppointmentProgram, IDaySchedule } from './appointment-program.types';
 
 export class AppointmentProgram extends BaseEntity {
   eventId: uuid;
@@ -11,7 +11,7 @@ export class AppointmentProgram extends BaseEntity {
 
   timeZone: string;
 
-  bookingHours: IBookingHour[];
+  bookingHours: IDaySchedule[];
 
 constructor(data?: IAppointmentProgram) {
   if (data) {

@@ -19,20 +19,26 @@ export enum DayOfWeek {
  */
 
 export interface ITimeSlot {
-  start: string; // TimeOnly
-  end: string; // TimeOnly
+  start: string | Date; // TimeOnly
+  end: string | Date; // TimeOnly
+  startDateTime?: Date | string;
+  endDateTime?: Date | string;
+  startLocalTime?: string;
+  endLocalTime?: string;
 }
 
-export interface IBookingHour {
+export interface IDaySchedule {
   day: DayOfWeek;
   timeSlots: ITimeSlot[];
+  date?: string;
+  custom?: boolean;
 }
 
 export interface IAppointmentProgram extends IEntity {
   eventId: uuid;
   name: IMultilingual;
   timeZone: string;
-  bookingHours: IBookingHour[];
+  bookingHours: IDaySchedule[];
 }
 
 export type IAppointmentProgramCombined = IEntityCombined<IAppointmentProgram, IEntity>;

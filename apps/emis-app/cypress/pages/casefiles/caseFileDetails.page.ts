@@ -7,6 +7,7 @@ export enum DataTest {
   userName = 'caseFileItem__userName',
   roleName = 'caseFileItem__roleName',
   dateCreated = 'caseFileItem__created',
+  roleUserNameSystemAdmin = 'caseFileItem__systemAdmin',
   backButton = 'back-button',
   primaryBeneficiaryName = 'title-left-menu',
   pageTitle = 'page-title',
@@ -57,6 +58,8 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   private impactIconColorValidation = { selector: DataTest.impactIconColorValidation };
 
+  private roleUserNameSystemAdmin = { selector: DataTest.roleUserNameSystemAdmin };
+
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
   }
@@ -71,6 +74,10 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public getRoleName(index = 0) {
     return cy.getByDataTest(this.roleName).eq(index).getAndTrimText();
+  }
+
+  public getRoleNameSystemAdmin() {
+    return cy.getByDataTest(this.roleUserNameSystemAdmin).getAndTrimText();
   }
 
   public getCaseFileActivityLogDate(index = 0) {

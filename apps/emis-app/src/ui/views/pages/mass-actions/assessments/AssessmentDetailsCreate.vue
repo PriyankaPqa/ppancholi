@@ -71,6 +71,7 @@
         :title="$t('massAction.assessment.email.preview.title')"
         :language-mode="languageMode"
         :event="formCopy.event"
+        :assessment="formCopy.assessment"
         :subject="formCopy.emailSubject.translation[languageMode]"
         :message="formCopy.emailTopCustomContent.translation[languageMode]"
         :second-message="formCopy.emailAdditionalDescription.translation[languageMode]" />
