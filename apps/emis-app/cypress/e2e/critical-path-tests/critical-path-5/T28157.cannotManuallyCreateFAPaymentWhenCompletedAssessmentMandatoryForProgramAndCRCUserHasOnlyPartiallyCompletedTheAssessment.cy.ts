@@ -98,7 +98,8 @@ describe(
           cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
 
-          const addFinancialAssistancePage = financialAssistanceHomePage.addNewFaPayment();
+          financialAssistanceHomePage.addNewFaPayment();
+          const addFinancialAssistancePage = financialAssistanceHomePage.verifyAndReturnAddFaPaymentPage();
           addFinancialAssistancePage.getCreateButton().should('be.disabled');
           addFinancialAssistancePage.getCancelButton().should('be.enabled');
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
