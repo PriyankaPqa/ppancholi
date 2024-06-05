@@ -242,7 +242,7 @@ export const splitHouseholdDuplicateHouseholdSteps = (params: SplitHouseholdDupl
   const reviewSplitInformationPage = householdMembersAfterSplitPage.goToReviewSplitInformationPage();
 
   if (params.potentialDuplicateBasis === PotentialDuplicateBasis.PhoneNumber || params.potentialDuplicateBasis === PotentialDuplicateBasis.HomeAddress) {
-    const splitConfirmationPage = reviewSplitInformationPage.goToConfirmationPage();
+    const splitConfirmationPage = reviewSplitInformationPage.goToSplitConfirmationPage();
     splitConfirmationPage.getMessage()
       .should('string', params.comparisonHouseholdNewPrimaryMember.firstName)
       .should('string', params.comparisonHouseholdNewPrimaryMember.lastName)
@@ -254,8 +254,7 @@ export const splitHouseholdDuplicateHouseholdSteps = (params: SplitHouseholdDupl
     splitConfirmationPage.getPrintButton().should('be.visible');
     splitConfirmationPage.closeRegistration();
   } else if (params.potentialDuplicateBasis === PotentialDuplicateBasis.NameAndDob) {
-    const errorConfirmRegistrationPage = reviewSplitInformationPage.goToConfirmationPage();
-    cy.contains('Unable to complete registration').should('be.visible');
+    const errorConfirmRegistrationPage = reviewSplitInformationPage.goToErrorConfirmRegistrationPage();
     errorConfirmRegistrationPage.getErrorTitleDuplicateRegistration().should('eq', 'This individual already exists in the system');
     cy.contains('Please use the household search page to associate the household with this event.').should('be.visible');
     errorConfirmRegistrationPage.getSearchHouseholdButton().should('be.visible');

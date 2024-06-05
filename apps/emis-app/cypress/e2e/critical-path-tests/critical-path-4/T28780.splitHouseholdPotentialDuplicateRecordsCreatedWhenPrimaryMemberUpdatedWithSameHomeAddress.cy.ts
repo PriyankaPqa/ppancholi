@@ -30,7 +30,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('[T28780] Split Household - Potential duplicate records created when Home Address updated to match that of another household', { tags: ['@household'] }, () => {
+describe('[T28780] Split Household - Potential duplicate records created when Home Address updated to match that of another household.', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
