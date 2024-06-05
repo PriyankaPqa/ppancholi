@@ -51,7 +51,7 @@ describe('[T28867] Process an Identity Set data correction file', { tags: ['@hou
               resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
               resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
+            await updatePersonsGender(resultCreatedMultipleHousehold.provider, householdMemberIds);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, householdMemberIds);
             const memberHouseholds: Record<string, string> = {
               [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),

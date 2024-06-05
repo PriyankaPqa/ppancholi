@@ -47,7 +47,7 @@ describe('[T28881] Pre-process a Temporary Address data correction file', { tags
               resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
               resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
+            await updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, personIds);
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
