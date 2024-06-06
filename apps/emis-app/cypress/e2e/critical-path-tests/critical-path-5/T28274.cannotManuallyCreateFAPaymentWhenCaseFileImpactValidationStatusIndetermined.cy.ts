@@ -2,6 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
+import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
@@ -76,7 +77,7 @@ describe('[T28274] Cannot create manual FA payment when Case File Validation of 
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.addNewFaPayment();
-          const addFinancialAssistancePage = financialAssistanceHomePage.verifyAndReturnAddFaPaymentPage();
+          const addFinancialAssistancePage = verifyAndReturnAddFaPaymentPage();
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
           cy.contains('The household does not meet one or more eligibility criteria for the selected program. '
           + 'Please review the eligibility criteria for this program and try again.').should('be.visible');

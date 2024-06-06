@@ -5,6 +5,7 @@ import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program'
 import { IProvider } from '@/services/provider';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
 import { useProvider } from 'cypress/provider/provider';
+import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
 import {
   addAssessmentToCasefile, CasefileAssessmentParams,
   completeAndSubmitCasefileAssessmentByCrcUser,
@@ -112,11 +113,14 @@ describe(
             });
           });
           it('should be able to manually create financial assistance payment when required assessment is completed', function () {
+            const addFinancialAssistancePage = verifyAndReturnAddFaPaymentPage();
+
             manuallyCreatePrepaidCardFaPaymentCanSteps({
               faTableName: this.faTable.name.translation.en,
               paymentLineData: fixturePrepaidCardPaymentLine(),
               eventId: this.eventId,
               programId: this.programId,
+              addFinancialAssistancePage,
             });
           });
         });

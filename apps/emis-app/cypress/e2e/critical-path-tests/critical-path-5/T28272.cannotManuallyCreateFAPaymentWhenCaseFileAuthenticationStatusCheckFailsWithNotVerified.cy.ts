@@ -3,6 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
+import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
@@ -84,7 +85,7 @@ describe('[T28272] Cannot create manual FA payment when Case File Authentication
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.addNewFaPayment();
 
-          const addFinancialAssistancePage = financialAssistanceHomePage.verifyAndReturnAddFaPaymentPage();
+          const addFinancialAssistancePage = verifyAndReturnAddFaPaymentPage();
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
           // eslint-disable-next-line
           cy.contains('The household does not meet one or more eligibility criteria for the selected program. Please review the eligibility criteria for this program and try again.').should('be.visible');

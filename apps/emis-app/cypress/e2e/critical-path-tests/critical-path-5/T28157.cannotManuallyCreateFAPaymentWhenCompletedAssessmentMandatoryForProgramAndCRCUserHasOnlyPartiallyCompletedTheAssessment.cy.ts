@@ -2,6 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
+import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
 import {
   addAssessmentToCasefile, CasefileAssessmentParams,
   createAndUpdateAssessment,
@@ -99,7 +100,7 @@ describe(
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
 
           financialAssistanceHomePage.addNewFaPayment();
-          const addFinancialAssistancePage = financialAssistanceHomePage.verifyAndReturnAddFaPaymentPage();
+          const addFinancialAssistancePage = verifyAndReturnAddFaPaymentPage();
           addFinancialAssistancePage.getCreateButton().should('be.disabled');
           addFinancialAssistancePage.getCancelButton().should('be.enabled');
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);

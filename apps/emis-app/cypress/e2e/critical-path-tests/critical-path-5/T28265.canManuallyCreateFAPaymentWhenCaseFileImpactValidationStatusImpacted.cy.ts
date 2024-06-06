@@ -3,6 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateValidationOfImpactStatus } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
@@ -87,7 +88,7 @@ describe('[T28265] Can create manual FA payment when Validation of Impact status
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
           financialAssistanceHomePage.addNewFaPayment();
 
-          const addFinancialAssistancePage = financialAssistanceHomePage.verifyAndReturnAddFaPaymentPage();
+          const addFinancialAssistancePage = verifyAndReturnAddFaPaymentPage();
 
           manuallyCreatePrepaidCardFaPaymentCanSteps({
             faTableName: this.faTable.name.translation.en,

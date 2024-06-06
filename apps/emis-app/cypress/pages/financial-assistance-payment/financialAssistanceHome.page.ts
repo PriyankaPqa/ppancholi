@@ -1,6 +1,5 @@
 import { FinancialAssistanceDetailsPage } from './financialAssistanceDetails.page';
 import { CaseFileDetailsPage } from '../casefiles/caseFileDetails.page';
-import { AddFinancialAssistancePage } from './addFinancialAssistance.page';
 
 export enum DataTest {
   faPayment = 'fap_link_',
@@ -181,11 +180,6 @@ export class FinancialAssistanceHomePage {
   public addNewFaPayment() {
     this.getAddFaPaymentButton().should('be.visible');
     this.getAddFaPaymentButton().click();
-  }
-
-  public verifyAndReturnAddFaPaymentPage(): AddFinancialAssistancePage | null {
-    cy.getByDataTest({ selector: 'page-title', type: 'h1' }).contains('Add financial assistance').should('be.visible');
-    return new AddFinancialAssistancePage();
   }
 
   public getSearchField() {

@@ -4,6 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { identificationIdProvided } from '@libs/cypress-lib/helpers/optionLists';
+import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
 import { fixturePrepaidCardPaymentLine } from '../../../fixtures/financial-assistance';
 import {
   createProgramWithTableWithItemAndSubItem,
@@ -86,11 +87,13 @@ describe('[T28279] Can create manual FA payment when Case File Authentication st
           });
         });
         it('should be able to manually create financial assistance payment when case file has authentication status check passes', function () {
+          const addFinancialAssistancePage = verifyAndReturnAddFaPaymentPage();
           manuallyCreatePrepaidCardFaPaymentCanSteps({
             faTableName: this.faTable.name.translation.en,
             paymentLineData: fixturePrepaidCardPaymentLine(),
             eventId: this.eventId,
             programId: this.programId,
+            addFinancialAssistancePage,
           });
         });
       });
