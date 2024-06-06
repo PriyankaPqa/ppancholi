@@ -20,7 +20,7 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { ApprovalsPage } from '../../../pages/approvals/approvals.cy';
 
 const canRoles = [
- UserRoles.level4,
+  UserRoles.level4,
 ];
 
 const cannotRoles = [
@@ -106,6 +106,8 @@ describe('[T28120] 2nd Approval Group - Confirm that FINAL approval can be given
           cy.contains('Approval status has been updated').should('be.visible');
           approvalsPage.getActionIconElementUsingPaymentId(this.FAPaymentId).should('have.attr', 'class').and('contains', 'check theme');
           approvalsPage.getApprovedRequestsTab();
+          approvalsPage.getApprovedRequestsTable().should('exist');
+          approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
 
           const financialAssistanceDetailsPage = approvalsPage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'Approved');
@@ -154,7 +156,7 @@ describe('[T28120] 2nd Approval Group - Confirm that FINAL approval can be given
         cy.wrap(resultFAPayment.id).as('FAPaymentId');
       });
     });
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.then(() => {
