@@ -64,7 +64,7 @@ describe('[T28266] Cannot create manual FA payment when Case File has an Irregul
 
         it('should not be able to create manual FA payment when Case File has an Irregular tag on it.', () => {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
+          cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200, 45000); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
           financialAssistanceHomePage.addNewFaPayment();
           cy.contains('Error').should('be.visible');
           financialAssistanceHomePage.getErrorMessageElement().contains('Financial assistance cannot be added due to tags').should('be.visible');

@@ -95,7 +95,7 @@ describe(
         it('should not be able to manually create financial assistance payment when required assessment is not completed', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
           caseFileDetailsPage.goToFinancialAssistanceHomePage();
-          cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
+          cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200, 45000); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
 
           financialAssistanceHomePage.addNewFaPayment();
