@@ -34,6 +34,7 @@ export interface ManuallyCreateFaPaymentParams {
   paymentLineData: IAddNewPaymentLineFields,
   eventId: string,
   programId: string,
+  addFinancialAssistancePage: AddFinancialAssistancePage,
 }
 
 // eslint-disable-next-line max-statements
@@ -111,7 +112,7 @@ export const massActionFinancialAssistanceUploadFilePassesProcessCanSteps = (par
 };
 
 export const manuallyCreatePrepaidCardFaPaymentCanSteps = (params: ManuallyCreateFaPaymentParams) => {
-  const addFinancialAssistancePage = new AddFinancialAssistancePage();
+  const addFinancialAssistancePage = params.addFinancialAssistancePage;
   addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
   addFinancialAssistancePage.getCreateButton().should('be.disabled');
   addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');

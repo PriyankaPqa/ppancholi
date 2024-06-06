@@ -87,11 +87,14 @@ describe('[T28265] Can create manual FA payment when Validation of Impact status
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // creates new object here to avoid dependency cycle
           financialAssistanceHomePage.addNewFaPayment();
 
+          const addFinancialAssistancePage = financialAssistanceHomePage.verifyAndReturnAddFaPaymentPage();
+
           manuallyCreatePrepaidCardFaPaymentCanSteps({
             faTableName: this.faTable.name.translation.en,
             paymentLineData: fixturePrepaidCardPaymentLine(),
             eventId: this.eventId,
             programId: this.programId,
+            addFinancialAssistancePage,
           });
         });
       });
