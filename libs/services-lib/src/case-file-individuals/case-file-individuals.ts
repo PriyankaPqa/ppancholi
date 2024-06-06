@@ -1,10 +1,10 @@
-import { ICaseFileIndividualEntity, IdParams } from '@libs/entities-lib/case-file-individual';
+import { ICaseFileIndividualEntity, IdParams, ReceivingAssistanceDetail } from '@libs/entities-lib/case-file-individual';
 import { IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { ICaseFileIndividualsService } from './case-file-individuals.types';
 
 const API_URL_SUFFIX = 'case-file/case-files/{caseFileId}';
-const ENTITY = 'individuals';
+const ENTITY = 'case-file-individuals';
 
 export class CaseFileIndividualsService extends DomainBaseService<ICaseFileIndividualEntity, IdParams>
   implements ICaseFileIndividualsService {
@@ -14,5 +14,9 @@ export class CaseFileIndividualsService extends DomainBaseService<ICaseFileIndiv
 
   async createCaseFileIndividual(item: ICaseFileIndividualEntity): Promise<ICaseFileIndividualEntity> {
     return this.http.post<ICaseFileIndividualEntity>(this.getItemUrl(`${this.baseUrl}`, item), item);
+  }
+
+  async addReceiveAssistanceDetails(caseFileId: uuid, id: uuid, item: ReceivingAssistanceDetail): Promise<ICaseFileIndividualEntity> {
+    return this.http.patch<ICaseFileIndividualEntity>(this.getItemUrl(`${this.baseUrl}/{id}/add-receive-assistance-details`, { caseFileId, id }), item);
   }
 }

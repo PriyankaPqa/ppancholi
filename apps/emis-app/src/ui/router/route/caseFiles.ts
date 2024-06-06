@@ -29,6 +29,7 @@ const SplitHousehold = () => import('@/ui/views/pages/household/split/SplitHouse
 const MoveHouseholdMembers = () => import('@/ui/views/pages/household/move/MoveHouseholdMembers.vue');
 
 const ImpactedIndividuals = () => import('@/ui/views/pages/case-files/details/case-file-impacted-individuals/ImpactedIndividuals.vue');
+const ImpactedIndividualsV2 = () => import('@/ui/views/pages/case-files/details/case-file-impacted-individualsV2/ImpactedIndividualsV2.vue');
 const CaseFileTaskTable = () => import('@/ui/views/pages/case-files/details/case-file-task/CaseFileTaskTable.vue');
 const CreateEditTask = () => import('@/ui/views/pages/case-files/details/case-file-task/create-edit/CreateEditTask.vue');
 const TaskDetails = () => import('@/ui/views/pages/case-files/details/case-file-task/details/TaskDetails.vue');
@@ -177,6 +178,13 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.impactedIndividuals.home.path,
           name: Routes.caseFile.impactedIndividuals.home.name,
           component: ImpactedIndividuals,
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.impactedIndividuals.homeV2.path,
+          name: Routes.caseFile.impactedIndividuals.homeV2.name,
+          component: ImpactedIndividualsV2,
           meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },

@@ -324,7 +324,7 @@ export default mixins(caseFileDetail).extend({
           {
             text: this.$t('caseFileDetail.menu_impacted_individuals') as string,
             test: 'impacted_individuals',
-            to: routes.caseFile.impactedIndividuals.home.name,
+            to: this.$hasFeature(FeatureKeys.CaseFileIndividual) ? routes.caseFile.impactedIndividuals.homeV2.name : routes.caseFile.impactedIndividuals.home.name,
             exact: false,
           },
           !this.recoveryPlanInvisible && {

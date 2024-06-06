@@ -123,8 +123,7 @@ export const mockShelterData = (): TemporaryAddress => ({
   to: null,
 });
 
-export const mockTemporaryAddress = (force?: TemporaryAddress) : TemporaryAddress => ({
-  ...mockBaseData(),
+export const mockTemporaryAddress = (force?: Partial<TemporaryAddress>) : TemporaryAddress => ({
   ...mockHotelMotelData(),
   ...force,
 });
@@ -137,14 +136,15 @@ export const mockCaseFileIndividualEntity = (force? : Partial<ICaseFileIndividua
     mockReceivingAssistanceDetails(),
   ],
   receivingAssistance: true,
-  currentAddress: mockTemporaryAddress(),
+  currentAddress: mockTemporaryAddress({ from: '2023-05-05T11:11:11.000Z' }),
   temporaryAddressHistory: [
-    mockTemporaryAddress(),
+    mockTemporaryAddress({ from: '2023-05-05T11:11:11.000Z' }),
+    { ...mockOtherData(), from: '2023-05-01T11:11:11.000Z', to: '2023-05-05T11:11:11.000Z' },
   ],
   ...force,
 });
 
 export const mockCaseFileIndividualEntities = () : ICaseFileIndividualEntity[] => [
-  mockCaseFileIndividualEntity({ id: '1' }),
-  mockCaseFileIndividualEntity({ id: '2' }),
+  mockCaseFileIndividualEntity({ id: '1', personId: 'pid-1', caseFileId: 'cfid-1' }),
+  mockCaseFileIndividualEntity({ id: '2', personId: 'pid-2', caseFileId: 'cfid-2' }),
 ];

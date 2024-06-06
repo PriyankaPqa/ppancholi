@@ -5,4 +5,5 @@ import { ICaseFileIndividualsServiceMock } from './case-file-individuals.types';
 export const mockCaseFileIndividualsService = (): ICaseFileIndividualsServiceMock => ({
   ...mockDomainBaseService(mockCaseFileIndividualEntities()),
   createCaseFileIndividual: jest.fn(() => mockCaseFileIndividualEntity()),
+  addReceiveAssistanceDetails: jest.fn(() => mockCaseFileIndividualEntity()),
 });

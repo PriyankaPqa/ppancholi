@@ -185,6 +185,10 @@ const routes = {
         path: 'impactedIndividuals',
         name: 'casefile.impactedIndividuals',
       },
+      homeV2: {
+        path: 'impactedIndividualsV2',
+        name: 'casefile.impactedIndividualsV2',
+      },
     },
     recoveryPlan: {
       create: {
