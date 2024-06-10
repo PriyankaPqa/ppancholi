@@ -1,7 +1,13 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { reasonCaseFileStatusUpdate } from '@libs/cypress-lib/helpers';
+import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createEventAndTeam, prepareStateCreateAndSearchHouseholds, prepareStatePreProcessMassCaseFileStatusUpdate } from '../../helpers/prepareState';
+import {
+  MassActionCaseFileStatusViaUploadFileParams,
+  createEventAndTeam,
+  prepareStateMassActionCaseFileStatusViaUploadFile,
+} from '../../helpers/prepareState';
 import { ProcessMassActionCaseFileStatusUpdateCanSteps, caseFileDetailsPageAssertionSteps } from './canSteps';
 
 const canRoles = [
@@ -23,32 +29,41 @@ const cannotRoles = [
 
 const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, cannotRoles);
 
-const householdQuantity = 3;
 let accessTokenL6 = '';
+const householdQuantity = 3;
 
-describe('[T29049] Processed a Mass Case File status via filtered list', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('[T29047] Processed Mass Case File status(open to inactive) upload file', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
-        beforeEach(function () {
+        beforeEach(() => {
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRoles);
-            cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
-            cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
+            cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.getToken(roleName).then(async (tokenResponse) => {
-              const resultCreateAndSearchHouseholds = await prepareStateCreateAndSearchHouseholds(tokenResponse.access_token, this.event, householdQuantity);
-              const resultPreProcessMassCaseFileStatus = await prepareStatePreProcessMassCaseFileStatusUpdate(tokenResponse.access_token, this.event);
-              cy.wrap(resultPreProcessMassCaseFileStatus.responseMassCreateMassCaseFileStatusUpdate.name).as('massActionName');
-              cy.wrap(resultPreProcessMassCaseFileStatus.responseMassCreateMassCaseFileStatusUpdate.id).as('massActionCaseFileStatusUpdateId');
-              cy.wrap(resultPreProcessMassCaseFileStatus.responseMassCreateMassCaseFileStatusUpdate.status).as('massActionCaseFileStatus');
-              cy.wrap(resultPreProcessMassCaseFileStatus.mockCreateMassCaseFileStatusUpdate.rationale).as('massActionCaseFileStatusUpdateRationale');
-              cy.wrap(resultPreProcessMassCaseFileStatus).as('massActionCaseFileStatus');
-              cy.wrap(resultCreateAndSearchHouseholds.caseFileCreated1.caseFileNumber).as('caseFileNumber1');
+              const massActionCaseFileStatusUploadFileParamData: MassActionCaseFileStatusViaUploadFileParams = {
+                accessToken: tokenResponse.access_token,
+                event: resultPrepareStateEvent.event,
+                householdQuantity,
+                filePath: 'cypress/downloads/caseFileUpdateFile.csv',
+                reason: {
+                  optionItemId: reasonCaseFileStatusUpdate.Deceased,
+                  specifiedOther: null,
+                },
+                rationale: 'it is not Mandatory field',
+                status: CaseFileStatus.Inactive,
+              };
+
+              const resultMassActionCaseFileStatusViaUploadFile = await prepareStateMassActionCaseFileStatusViaUploadFile(massActionCaseFileStatusUploadFileParamData);
+              cy.wrap(massActionCaseFileStatusUploadFileParamData).as('massActionCaseFileStatusUploadFile');
+              cy.wrap(resultMassActionCaseFileStatusViaUploadFile.responseMassCaseFileStatusUpdate).as('responseMassCaseFileStatusUpdate');
+              cy.wrap(resultMassActionCaseFileStatusViaUploadFile.resultCreateHouseholds.caseFileCreated1.caseFileNumber).as('caseFileNumber1');
+              cy.wrap(resultMassActionCaseFileStatusViaUploadFile.responseMassCaseFileStatusUpdate.name).as('massActionName');
               cy.login(roleName);
-              cy.goTo(`mass-actions/case-file-status/details/${resultPreProcessMassCaseFileStatus.responseMassCreateMassCaseFileStatusUpdate.id}`);
+              cy.goTo(`mass-actions/case-file-status/details/${resultMassActionCaseFileStatusViaUploadFile.responseMassCaseFileStatusUpdate.id}`);
             });
           });
         });
@@ -57,10 +72,11 @@ describe('[T29049] Processed a Mass Case File status via filtered list', { tags:
             removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
-        it('should successfully process mass action for case file status update via filtered list', function () {
+        // eslint-disable-next-line
+        it('should successfully process mass action for case file status update via upload file', function () {
           ProcessMassActionCaseFileStatusUpdateCanSteps({
             massActionName: this.massActionName,
-            massActionCaseFileStatusUpdateRationale: this.massActionCaseFileStatusUpdateRationale,
+            massActionCaseFileStatusUpdateRationale: this.massActionCaseFileStatusUploadFile.rationale,
             massActionCaseFileStatusUpdateReason: 'Deceased',
             caseFileStatus: 'Inactive',
             roleName,
@@ -70,7 +86,7 @@ describe('[T29049] Processed a Mass Case File status via filtered list', { tags:
 
           caseFileDetailsPageAssertionSteps({
             caseFileNumber1: this.caseFileNumber1,
-            massActionCaseFileStatusUpdateRationale: this.massActionCaseFileStatusUpdateRationale,
+            massActionCaseFileStatusUpdateRationale: this.massActionCaseFileStatusUploadFile.rationale,
             massActionCaseFileStatusUpdateReason: 'Deceased',
             caseFileStatus: 'Inactive',
             roleName,
@@ -80,7 +96,6 @@ describe('[T29049] Processed a Mass Case File status via filtered list', { tags:
       });
     }
   });
-
   describe('Cannot Roles', () => {
     for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
@@ -88,7 +103,7 @@ describe('[T29049] Processed a Mass Case File status via filtered list', { tags:
           cy.login(roleName);
           cy.goTo('mass-actions/case-file-status');
         });
-        it('should not be able to process mass action case file status update via filtered list', () => {
+        it('should not be able to process mass action for case file status update via upload file', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

@@ -30,19 +30,24 @@ import {
   mockCreateMassActionDataCorrectionFileRequest,
   MockCreateMassActionXlsxFileRequestParams,
 } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
-import { mockCreateMassCaseFileStatusUpdateRequest } from '@libs/cypress-lib/mocks/mass-actions/massCaseFileStatusUpdate';
+import {
+  MockCreateMassCaseFileStatusUpdateFileRequestParams,
+  mockCreateMassCaseFileStatusUpdateFileRequest,
+  mockCreateMassCaseFileStatusUpdateRequest,
+} from '@libs/cypress-lib/mocks/mass-actions/massCaseFileStatusUpdate';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities, IProgramEntity, IProgramEntityData } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
-import { fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
+import { fixtureGenerateCaseFileStatusCsvFile, fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication, IImpactStatusValidation } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { ECurrentAddressTypes, ICreateHouseholdRequest, ICurrentAddress } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { EFilterKeyType } from '@libs/component-lib/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
@@ -127,6 +132,16 @@ export interface IPrepareStateHousehold {
   provider: IProvider,
   registrationResponse: IDetailedRegistrationResponse,
   mockCreateHousehold: ICreateHouseholdRequest,
+}
+
+export interface MassActionCaseFileStatusViaUploadFileParams {
+  accessToken: string,
+  event: IEventEntity,
+  householdQuantity: number,
+  filePath: string,
+  reason: IListOption,
+  rationale: string,
+  status: number,
 }
 
 /**
@@ -475,7 +490,7 @@ export const prepareStateHouseholdMassFinancialAssistance = async (params: Creat
   await searchCasefileAndWait(provider, responseCreateHousehold.registrationResponse.caseFile.id);
   const mockCreateMassFinancialAssistance = mockCreateMassFinancialAssistanceRequest(params.event, { eventId, tableId, programId });
   const responseMassFinancialAssistance = await provider.massActions
-  .create(`financial-assistance-from-listV2?$filter=Entity/EventId eq ${eventId} and Entity/Status eq 'Active'`, mockCreateMassFinancialAssistance);
+    .create(`financial-assistance-from-listV2?$filter=Entity/EventId eq ${eventId} and Entity/Status eq 'Active'`, mockCreateMassFinancialAssistance);
   return { responseMassFinancialAssistance, responseCreateHousehold };
 };
 
@@ -663,7 +678,7 @@ export const prepareStateMassActionFinancialAssistanceUploadFile = async (params
  */
 export const prepareStateMassActionFinancialAssistanceUploadFileWithoutCreatingHousehold = async (
   params: MassActionFinancialAssistanceUploadFileWithoutCreatingHouseholdParams,
-  ) => {
+) => {
   await searchCaseFilesRecursively(params.provider, params.caseFilesList);
   const generatedFaCsvData = fixtureGenerateFaCsvFile(params.caseFilesList, params.tableId, params.filePath);
 
@@ -747,7 +762,7 @@ export const updatePersonsCurrentAddress = async (
     personId,
     false,
     currentAddressCreateRequest,
-    ));
+  ));
   await Promise.all(getUpdatePersonAddressPromises);
   return currentAddressCreateRequest;
 };
@@ -867,6 +882,41 @@ export const prepareStatePreProcessMassCaseFileStatusUpdate = async (accessToken
   const eventId = event.id;
   const mockCreateMassCaseFileStatusUpdate = mockCreateMassCaseFileStatusUpdateRequest(event, { eventId });
   const responseMassCreateMassCaseFileStatusUpdate = await provider.massActions
-  .create(`case-file-status-from-listV2?$filter=Entity/EventId eq ${eventId} and Entity/Status eq 'Active'`, mockCreateMassCaseFileStatusUpdate);
+    .create(`case-file-status-from-listV2?$filter=Entity/EventId eq ${eventId} and Entity/Status eq 'Active'`, mockCreateMassCaseFileStatusUpdate);
   return { responseMassCreateMassCaseFileStatusUpdate, mockCreateMassCaseFileStatusUpdate };
+};
+
+/**
+ * Creates a Mass Case File Status Update using csv file
+ * @param accessToken
+ * @param event
+ * @param householdQuantity
+ * @param filePath
+ * @param reason
+ * @param rationale
+ * @param status
+ */
+export const prepareStateMassActionCaseFileStatusViaUploadFile = async (params: MassActionCaseFileStatusViaUploadFileParams) => {
+  const resultCreateHouseholds = await prepareStateCreateAndSearchHouseholds(params.accessToken, params.event, params.householdQuantity);
+
+  const generatedCaseFileStatusCsvFile = fixtureGenerateCaseFileStatusCsvFile(
+    [
+      resultCreateHouseholds.caseFileCreated1,
+      resultCreateHouseholds.caseFileCreated2,
+      resultCreateHouseholds.caseFileCreated3,
+    ],
+    params.filePath,
+);
+
+  const mockRequestParamData: MockCreateMassCaseFileStatusUpdateFileRequestParams = {
+    eventId: params.event.id,
+    reason: params.reason,
+    rationale: params.rationale,
+    status: params.status,
+    fileContents: generatedCaseFileStatusCsvFile,
+  };
+  const mockCreateMassCaseFileStatusUpdateFile = mockCreateMassCaseFileStatusUpdateFileRequest(mockRequestParamData);
+  // eslint-disable-next-line
+  const responseMassCaseFileStatusUpdate = await resultCreateHouseholds.responseCreateHouseholds.provider.cypress.massAction.createWithFile('case-file-status', mockCreateMassCaseFileStatusUpdateFile);
+  return { responseMassCaseFileStatusUpdate, mockRequestParamData, resultCreateHouseholds };
 };
