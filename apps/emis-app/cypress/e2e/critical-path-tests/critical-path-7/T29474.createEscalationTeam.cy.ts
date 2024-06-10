@@ -5,6 +5,7 @@ import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/u
 import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { TeamsHomePage } from '../../../pages/teams/teamsHome.page';
+import { verifyAndReturnCreateNewTeamPage } from '../../helpers/page';
 
 const canRoles = [
   UserRoles.level6,
@@ -54,7 +55,8 @@ describe('[T29474] Create escalation team', { tags: ['@teams', '@tasks'] }, () =
           teamsHomePage.getCreateTeamButton().click();
           teamsHomePage.getCreateAdHocTeam().should('be.visible');
           teamsHomePage.getCreateStandardTeam().should('be.visible');
-          const createAdHocTeamPage = teamsHomePage.goToCreateAdHocTeamPage();
+          teamsHomePage.goToCreateAdHocTeamPage();
+          const createAdHocTeamPage = verifyAndReturnCreateNewTeamPage();
           createAdHocTeamPage.getTeamIsEscalationCheckbox().should('not.be.checked');
           createAdHocTeamPage.getTeamIsAssignableCheckbox().should('not.be.checked');
           createAdHocTeamPage.getTeamName().getAndTrimText().should('string', 'Team name*');

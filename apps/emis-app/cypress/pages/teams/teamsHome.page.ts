@@ -1,5 +1,4 @@
 import { TeamDetailsPage } from './teamDetails.page';
-import { CreateNewTeamPage } from './createNewTeam.page';
 
 export enum DataTest {
   createTeam = 'create-team-button',
@@ -40,6 +39,5 @@ export class TeamsHomePage {
 
   public goToCreateAdHocTeamPage() {
     this.getCreateAdHocTeam().click();
-    return new CreateNewTeamPage();
   }
 }
