@@ -336,6 +336,8 @@
     "caseFile.referral.resetConsentConfirm.message.individual": "Changing the referral method will remove the individual's original consent.\n\nAre you sure you want to proceed?",
     "caseFile.referral.resetConsentConfirm.title": "Confirm removing consent",
     "caseFile.referral.title": "Referrals",
+    "caseFile.referral.method.Referral": "Referral",
+    "caseFile.referral.method.Warm": "Warm",
     "caseFile.status.Archived": "Archived",
     "caseFile.status.Close": "Closed",
     "caseFile.status.Closed": "Closed",

@@ -64,6 +64,7 @@ import routes from '@/constants/routes';
 import { CaseFileReferralEntity, ICaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { UserRoles } from '@libs/entities-lib/user';
+import { TranslateResult } from 'vue-i18n';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -116,7 +117,7 @@ export default mixins(caseFileDetail).extend({
       return this.$m(status?.name);
     },
 
-    referralData(): Record<string, string>[] {
+    referralData(): Record<string, string | TranslateResult>[] {
       return [
         {
           label: 'caseFile.referral.referralType',
@@ -130,7 +131,7 @@ export default mixins(caseFileDetail).extend({
         },
         {
           label: 'referral.method',
-          data: ReferralMethod[this.referral.method],
+          data: this.$t(`caseFile.referral.method.${ReferralMethod[this.referral.method]}`),
           test: 'method',
         },
       ];

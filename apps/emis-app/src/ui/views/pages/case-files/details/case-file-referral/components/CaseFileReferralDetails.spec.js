@@ -183,7 +183,7 @@ describe('CaseFileReferralDetails', () => {
           },
           {
             label: 'referral.method',
-            data: ReferralMethod[referral.method],
+            data: `caseFile.referral.method.${ReferralMethod[referral.method]}`,
             test: 'method',
           },
         ]);

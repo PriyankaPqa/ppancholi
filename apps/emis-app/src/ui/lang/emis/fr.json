@@ -336,6 +336,8 @@
     "caseFile.referral.resetConsentConfirm.message.individual": "Le changement de la méthode de référence supprimera le consentement initial de la personne.\n\nÊtes-vous sûr de vouloir continuer ?",
     "caseFile.referral.resetConsentConfirm.title": "Confirmer la suppression du consentement",
     "caseFile.referral.title": "Références",
+    "caseFile.referral.method.Referral": "Référence",
+    "caseFile.referral.method.Warm": "Référence accompagnée",
     "caseFile.status.Archived": "Archivé",
     "caseFile.status.Close": "Fermé",
     "caseFile.status.Closed": "Fermé",
