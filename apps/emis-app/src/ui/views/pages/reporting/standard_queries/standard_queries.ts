@@ -85,6 +85,30 @@ export const UsersL5Fr = {
   queryType: QueryType.StandardL5fr,
 } as IQuery;
 
+export const UserListIMEn = {
+  ...UserListL6En,
+  id: 'UserListIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const UserListIMFr = {
+  ...UserListL6Fr,
+  id: 'UserListIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
+export const UserAccessListEMISIMEn = {
+  ...UserAccessListEMISL6En,
+  id: 'UserAccessListEMISIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const UserAccessListEMISIMFr = {
+  ...UserAccessListEMISL6Fr,
+  id: 'UserAccessListEMIS',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
 export const DocumentsL5En = {
   ...DocumentsL6En,
   id: 'DocumentsL5',
@@ -181,6 +205,18 @@ export const ReferralsL4Fr = {
   queryType: QueryType.StandardL4fr,
 } as IQuery;
 
+export const ReferralsIMEn = {
+  ...ReferralsL5En,
+  id: 'ReferralsIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const ReferralsIMFr = {
+  ...ReferralsL5Fr,
+  id: 'ReferralsIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
 export const CaseNotesL5En = {
   ...CaseNotesL6En,
   id: 'CaseNotesL5',
@@ -203,6 +239,54 @@ export const CaseNotesL4Fr = {
   ...CaseNotesL6Fr,
   id: 'CaseNotesL4',
   queryType: QueryType.StandardL4fr,
+} as IQuery;
+
+export const CaseNotesIMEn = {
+  ...CaseNotesL6En,
+  id: 'CaseNotesIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const CaseNotesIMFr = {
+  ...CaseNotesL6Fr,
+  id: 'CaseNotesIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
+export const CaseFileStatusAndActionIMEn = {
+  ...CaseFileStatusAndActionL6En,
+  id: 'CaseFileStatusAndActionIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const CaseFileStatusAndActionIMFr = {
+  ...CaseFileStatusAndActionL6Fr,
+  id: 'CaseFileStatusAndActionIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
+export const HouseholdActivitiesIMEn = {
+  ...HouseholdActivitiesL6En,
+  id: 'HouseholdActivitiesIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const HouseholdActivitiesIMFr = {
+  ...HouseholdActivitiesL6Fr,
+  id: 'HouseholdActivitiesIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
+export const PotentialDuplicatesIMEn = {
+  ...PotentialDuplicatesL6En,
+  id: 'PotentialDuplicatesIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const PotentialDuplicatesIMFr = {
+  ...PotentialDuplicatesL6Fr,
+  id: 'PotentialDuplicatesIM',
+  queryType: QueryType.StandardIMfr,
 } as IQuery;
 
 export const RegistrationByCaseFileL4En = {
@@ -291,6 +375,30 @@ export const PaymentApprovalsIMFr = {
   queryType: QueryType.StandardIMfr,
 } as IQuery;
 
+export const PaymentsIMEn = {
+  ...PaymentsL6En,
+  id: 'PaymentsIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const PaymentsIMFr = {
+  ...PaymentsL6Fr,
+  id: 'PaymentsIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
+export const PaymentLinesIMEn = {
+  ...PaymentLinesL5En,
+  id: 'PaymentLinesIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const PaymentLinesIMFr = {
+  ...PaymentLinesL5Fr,
+  id: 'PaymentLinesIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
 export const AllReports : IQuery[] = [
   ...AllPbiReports,
   LodgingOverviewWithHistoryL6En, LodgingOverviewWithHistoryL6Fr,
@@ -312,17 +420,22 @@ export const AllReports : IQuery[] = [
   DataCorrectionFAL6En, DataCorrectionFAL6Fr,
   IDAuthenticationL6En, IDAuthenticationL6Fr,
   HouseholdActivitiesL6En, HouseholdActivitiesL6Fr,
+  HouseholdActivitiesIMEn, HouseholdActivitiesIMFr,
   RegistrationByBeneficiaryL5En, RegistrationByBeneficiaryL5Fr,
   RegistrationByBeneficiaryL4En, RegistrationByBeneficiaryL4Fr,
   RegistrationByCaseFileL5En, RegistrationByCaseFileL5Fr,
   RegistrationByCaseFileL4En, RegistrationByCaseFileL4Fr,
   ReferralsL5En, ReferralsL5Fr,
   ReferralsL4En, ReferralsL4Fr,
+  ReferralsIMEn, ReferralsIMFr,
   CaseNotesL6En, CaseNotesL6Fr,
   CaseNotesL5En, CaseNotesL5Fr,
   CaseNotesL4En, CaseNotesL4Fr,
+  CaseNotesIMEn, CaseNotesIMFr,
   PaymentLinesL5En, PaymentLinesL5Fr,
+  PaymentLinesIMEn, PaymentLinesIMFr,
   PaymentsL5En, PaymentsL5Fr,
+  PaymentsIMEn, PaymentsIMFr,
   IDAuthenticationL5En, IDAuthenticationL5Fr,
   UsersL5En, UsersL5Fr,
   RegistrationByBeneficiaryIMEn, RegistrationByBeneficiaryIMFr,
@@ -331,11 +444,15 @@ export const AllReports : IQuery[] = [
   ValidationOfImpactIMEn, ValidationOfImpactIMFr,
   PaymentApprovalsIMEn, PaymentApprovalsIMFr,
   CaseFileStatusAndActionL6En, CaseFileStatusAndActionL6Fr,
+  CaseFileStatusAndActionIMEn, CaseFileStatusAndActionIMFr,
   UserListL6En, UserListL6Fr,
+  UserListIMEn, UserListIMFr,
   UserAccessListEMISL6En, UserAccessListEMISL6Fr,
+  UserAccessListEMISIMEn, UserAccessListEMISIMFr,
   DataCorrectionAuthenticationL6En, DataCorrectionAuthenticationL6Fr,
   DataCorrectionContactInformationL6En, DataCorrectionContactInformationL6Fr,
   PotentialDuplicatesL6En, PotentialDuplicatesL6Fr,
+  PotentialDuplicatesIMEn, PotentialDuplicatesIMFr,
   DataCorrectionTriageL6En, DataCorrectionTriageL6Fr,
   TasksL6En, TasksL6Fr,
   TasksL5En, TasksL5Fr,
