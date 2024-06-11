@@ -10,7 +10,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import { faker } from '@faker-js/faker';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
-import { Genders, generateDateOfBirth, getCurrentDateString, getRandomNumber, PreferredLanguages, today } from '../../helpers';
+import { Genders, generateDateOfBirth, generateName, getCurrentDateString, getRandomNumber, PreferredLanguages, today } from '../../helpers';
 
 const mockCurrentAddressCreateRequest = (force?: Partial<ICurrentAddressCreateRequest>): ICurrentAddressCreateRequest => ({
   addressType: ECurrentAddressTypes.RemainingInHome,
@@ -26,9 +26,9 @@ const mockCurrentAddressCreateRequest = (force?: Partial<ICurrentAddressCreateRe
 });
 
 const mockIdentitySetCreateRequest = (force?: Partial<IIdentitySetCreateRequest>): IIdentitySetCreateRequest => ({
-  firstName: `${faker.name.firstName()} - ${getCurrentDateString()}`,
+  firstName: `${generateName('firstName')} - ${getCurrentDateString()}`,
   middleName: '',
-  lastName: faker.name.lastName(),
+  lastName: generateName('lastName'),
   preferredName: '',
   dateOfBirth: generateDateOfBirth(),
   gender: {
@@ -81,8 +81,8 @@ export const mockBaseAddressData = (force?: Partial<IAddressData>): IAddressData
 });
 
 export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdRequest>): ICreateHouseholdRequest => {
-  const firstName = `${faker.name.firstName()}`;
-  const lastName = `${faker.name.lastName()} - ${getCurrentDateString()}-s${getRandomNumber()}`;
+  const firstName = `${generateName('firstName')}`;
+  const lastName = `${generateName('lastName')} - ${getCurrentDateString()}-s${getRandomNumber()}`;
 
   return {
     noFixedHome: false,
@@ -100,7 +100,7 @@ export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdReque
     homeAddress: mockBaseAddressData(),
     eventId: faker.datatype.uuid(),
     consentInformation: {
-      crcUserName: faker.name.fullName(),
+      crcUserName: generateName('fullName'),
       registrationMethod: 2,
       registrationLocationId: null,
       privacyDateTimeConsent: today,
@@ -154,7 +154,7 @@ export const mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest = (eventId:
   return {
     ...mockCreateHouseholdRequest({ eventId }),
     primaryBeneficiary: {
-      identitySet: mockIdentitySetCreateRequest({ firstName: faker.name.firstName(), lastName: faker.name.lastName() }),
+      identitySet: mockIdentitySetCreateRequest({ firstName: generateName('firstName'), lastName: generateName('lastName') }),
       currentAddress: mockCurrentAddressCreateRequest(),
       contactInformation: mockContactInformationCreateRequest({
         homePhoneNumber: {

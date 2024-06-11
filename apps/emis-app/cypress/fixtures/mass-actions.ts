@@ -5,7 +5,8 @@ import {
   formatDate,
   getCurrentDateString,
   getRandomNumber,
-  removeSpecialCharacters } from '@libs/cypress-lib/helpers';
+  removeSpecialCharacters, generateName,
+} from '@libs/cypress-lib/helpers';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
@@ -86,8 +87,8 @@ export const generateRandomFaCustomFileUserData = (caseFile:ICaseFileEntity, Fin
   Amount: 80,
   RelatedNumber: null,
   PayeeType: 'Beneficiary',
-  PayeeName: removeSpecialCharacters(faker.name.fullName()),
-  CareOf: removeSpecialCharacters(faker.name.fullName()),
+  PayeeName: removeSpecialCharacters(generateName('fullName')),
+  CareOf: removeSpecialCharacters(generateName('fullName')),
   Country: 'CA',
   StreetAddress: faker.address.streetAddress(),
   UnitSuite: faker.datatype.number(1000),

@@ -98,3 +98,7 @@ export function padNumberWithZeroes(numLength: number, digits: number | string) 
   const result = precedingZeros + digits;
   return result;
 }
+
+export function generateName(typeOfName: 'firstName' | 'lastName' | 'middleName' | 'fullName') {
+  return faker.name[typeOfName]().replace(/'/g, '');
+}

@@ -3,12 +3,12 @@ import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address
 import { IPersonalInfoFields, PreferredLanguage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { IHouseholdMemberFields } from 'cypress/pages/casefiles/addHouseholdMember.page';
 import { format } from 'date-fns';
-import { removeSpecialCharacters } from '@libs/cypress-lib/helpers';
+import { generateName, removeSpecialCharacters } from '@libs/cypress-lib/helpers';
 import { ICRCPrivacyStatementPageFields, PrivacyRegistrationMethod } from '../pages/registration/crcPrivacyStatement.page';
 
 export const fixturePrivacy = (): ICRCPrivacyStatementPageFields => ({
   privacyRegistrationMethod: PrivacyRegistrationMethod.Phone,
-  userName: removeSpecialCharacters(faker.name.fullName()),
+  userName: removeSpecialCharacters(generateName('fullName')),
 });
 
 export const fixturePrimaryBeneficiary = (): IPersonalInfoFields => ({
@@ -26,9 +26,9 @@ export const fixtureCreateAddress = (): IAddressPageFields => ({
 });
 
 export const fixtureHouseholdMember = (retries: number) : IHouseholdMemberFields => ({
-  firstName: `${removeSpecialCharacters(faker.name.firstName())}-${retries}`,
-  lastName: removeSpecialCharacters(faker.name.lastName()),
-  middleName: removeSpecialCharacters(faker.name.middleName()),
+  firstName: `${removeSpecialCharacters(generateName('firstName'))}-${retries}`,
+  lastName: removeSpecialCharacters(generateName('lastName')),
+  middleName: removeSpecialCharacters(generateName('middleName')),
   gender: faker.helpers.arrayElement(['Female', 'Male']),
   dateOfBirth: format(faker.date.birthdate({ min: 16, max: 100, mode: 'age' }), 'yyyy-MM-dd'),
   indigenousIdentity: faker.helpers.arrayElement(['First Nation', 'Metis', 'Inuit', 'Other']),

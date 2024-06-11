@@ -1,4 +1,4 @@
-import { IXlsxTableColumnProperties, generateXlsxFile, removeSpecialCharacters } from '@libs/cypress-lib/helpers';
+import { IXlsxTableColumnProperties, generateXlsxFile, removeSpecialCharacters, generateName } from '@libs/cypress-lib/helpers';
 import { faker } from '@faker-js/faker';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { PaymentLineStatus } from '@libs/entities-lib/financial-assistance-payment';
@@ -25,7 +25,7 @@ export const generateRandomFaDataCorrectionData = (faCorrectionData?: GenerateRa
   FinancialAssistancePaymentGroupId: faCorrectionData.FinancialAssistancePaymentGroupId,
   PaymentModality: 'Cheque',
   PayeeType: 'Beneficiary',
-  PayeeName: removeSpecialCharacters(faker.name.fullName()),
+  PayeeName: removeSpecialCharacters(generateName('fullName')),
   PaymentStatus: 'InProgress',
   CancellationReason: null,
   FinancialAssistancePaymentLinesId: faCorrectionData.FinancialAssistancePaymentLinesId,
@@ -36,7 +36,7 @@ export const generateRandomFaDataCorrectionData = (faCorrectionData?: GenerateRa
   Amount: 100,
   ActualAmount: null,
   RelatedNumber: null,
-  CareOf: removeSpecialCharacters(faker.name.fullName()),
+  CareOf: removeSpecialCharacters(generateName('fullName')),
   Country: 'CA',
   StreetAddress: faker.address.streetAddress(),
   UnitSuite: faker.datatype.number(1000),
@@ -146,8 +146,8 @@ export interface IIdentitySetDataCorrectionTemplate {
 
 export const generateRandomIdentitySetData = (personId:string, eTag: string): IIdentitySetDataCorrectionTemplate => ({
   PersonId: personId,
-  FirstName: removeSpecialCharacters(faker.name.firstName()),
-  LastName: removeSpecialCharacters(faker.name.lastName()),
+  FirstName: removeSpecialCharacters(generateName('firstName')),
+  LastName: removeSpecialCharacters(generateName('lastName')),
   MiddleName: null,
   GenderSpecifiedOther: 'after mass action data correction',
   ETag: eTag,
