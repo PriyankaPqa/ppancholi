@@ -106,10 +106,8 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import routes from '@/constants/routes';
 
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { AllReports } from './standard_queries/standard_queries';
 import { ReportingPages } from './reportingPages';
-import { DataCorrectionTriageL6En, DataCorrectionTriageL6Fr } from './standard_queries/DataCorrectionTriageL6';
 
 interface IQueryMapped {
   name: string;
@@ -169,11 +167,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (this.queryType === QueryType.Custom) {
         return null;
       }
-      let reports = AllReports.filter((r) => r.queryType === this.queryType);
-      if (!this.$hasFeature(FeatureKeys.DataCorrectionTriage)) {
-        reports = reports.filter((r) => r !== DataCorrectionTriageL6En && r !== DataCorrectionTriageL6Fr);
-      }
-      return reports.map((q) => ({
+      return AllReports.filter((r) => r.queryType === this.queryType).map((q) => ({
         id: q.id,
         theme: this.$t(`reporting.query.theme.${ReportingTopic[q.topic]}`) as string,
         name: q.name,

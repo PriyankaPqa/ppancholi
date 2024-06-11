@@ -69,7 +69,6 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
     massActionTypes() {
       return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
         .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther
-        && (this.$hasFeature(FeatureKeys.DataCorrectionTriage) || m.value !== MassActionDataCorrectionType.DataCorrectionTriage)
         && (this.$hasFeature(FeatureKeys.MovePayments) || m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments)));
     },
 
