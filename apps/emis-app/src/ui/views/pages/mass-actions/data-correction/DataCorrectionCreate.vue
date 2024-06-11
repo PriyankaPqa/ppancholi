@@ -82,7 +82,8 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
     },
 
     isEventRequired() : boolean {
-      return this.selectedType === MassActionDataCorrectionType.DataCorrectionFinancialAssistance;
+      return this.selectedType === MassActionDataCorrectionType.DataCorrectionFinancialAssistance
+             || this.selectedType === MassActionDataCorrectionType.DataCorrectionMovePayments;
     },
 
     allowedExtensions() : string[] {
