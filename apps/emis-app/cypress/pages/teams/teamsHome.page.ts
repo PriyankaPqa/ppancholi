@@ -40,4 +40,8 @@ export class TeamsHomePage {
   public goToCreateAdHocTeamPage() {
     this.getCreateAdHocTeam().click();
   }
+
+  public goToCreateStandardTeamPage() {
+    this.getCreateStandardTeam().click();
+  }
 }
