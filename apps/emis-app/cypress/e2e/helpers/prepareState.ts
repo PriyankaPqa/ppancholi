@@ -88,6 +88,13 @@ export interface AddFinancialAssistancePaymentParams {
   financialAssistanceTableId: string
 }
 
+export interface AddFinancialAssistancePaymentForMultipleCaseFilesParams {
+  provider: IProvider,
+  modality: EPaymentModalities,
+  caseFileIds: string[],
+  financialAssistanceTableId: string
+}
+
 export interface UpdateFinancialAssistancePaymentParams {
   provider: IProvider,
   entityId: string,
@@ -134,6 +141,11 @@ export interface IPrepareStateHousehold {
   mockCreateHousehold: ICreateHouseholdRequest,
 }
 
+export interface SubmitUpdateFaPaymentParams {
+  provider: IProvider,
+  createdFinancialAssistancePaymentId: string,
+  paymentStatus: PaymentStatus,
+}
 export interface MassActionCaseFileStatusViaUploadFileParams {
   accessToken: string,
   event: IEventEntity,
@@ -510,6 +522,29 @@ export const addFinancialAssistancePayment = async (params: AddFinancialAssistan
 };
 
 /**
+ * Adds financial assistance payments to multiple casefiles
+ * @param provider
+ * @param modality
+ * @param caseFileIds
+ * @param financialAssistanceTableId
+ */
+export const addPaymentsForMultipleHouseholds = async (params: AddFinancialAssistancePaymentForMultipleCaseFilesParams) => {
+  const results = await Promise.all(
+    params.caseFileIds.map((caseFileId) => {
+      const addFinancialAssistancePaymentParams = {
+        caseFileId,
+        provider: params.provider,
+        financialAssistanceTableId: params.financialAssistanceTableId,
+        modality: params.modality,
+      };
+      return addFinancialAssistancePayment(addFinancialAssistancePaymentParams)
+        .then((result) => ({ caseFileId, data: result }));
+    }),
+  );
+  return results;
+};
+
+/**
  * Submits financial assistance payment request to approver for decision
  * @param provider
  * @param paymentId
@@ -606,6 +641,24 @@ export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (params: AddS
   };
   await updateFinancialAssistancePayment(updateFinancialAssistancePaymentParamData);
   return { caseFile, submittedFinancialAssistancePayment };
+};
+
+/**
+ * Creates a household, adds financial assistance to a casefile, Submit and updates financial assistance
+ * @param provider
+ * @param createdFinancialAssistancePaymentId
+ * @param paymentStatus
+ */
+export const submitAndUpdateFAPayment = async (params: SubmitUpdateFaPaymentParams) => {
+  const submittedFinancialAssistancePayment = await submitFinancialAssistancePayment(params.provider, params.createdFinancialAssistancePaymentId);
+  const updateFinancialAssistancePaymentParamData: UpdateFinancialAssistancePaymentParams = {
+    provider: params.provider,
+    entityId: submittedFinancialAssistancePayment.id,
+    paymentGroupId: submittedFinancialAssistancePayment.groups[0].id,
+    status: params.paymentStatus,
+  };
+  await updateFinancialAssistancePayment(updateFinancialAssistancePaymentParamData);
+  return { submittedFinancialAssistancePayment };
 };
 
 /**

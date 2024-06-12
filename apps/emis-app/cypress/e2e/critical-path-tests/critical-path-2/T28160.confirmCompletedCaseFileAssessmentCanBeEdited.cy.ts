@@ -110,7 +110,7 @@ describe('[T28160] Confirm that a Completed Case File Assessment can be edited',
         cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('casefileId');
       });
     });
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(function () {
           cy.login(roleName);
