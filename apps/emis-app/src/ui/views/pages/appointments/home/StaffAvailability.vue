@@ -28,6 +28,13 @@
       <v-btn
         small
         color="primary"
+        class="ml-5"
+        @click="showDefaultSchedule = true">
+        DEFAULT SCHEDULE
+      </v-btn>
+      <v-btn
+        small
+        color="primary"
         class="mx-5"
         @click="showCustomSchedule = true">
         CUSTOM SCHEDULE
@@ -114,11 +121,18 @@
     <custom-schedule
       v-if="showCustomSchedule"
       :show.sync="showCustomSchedule"
-      :default-schedule="DEFAULT_SCHEDULE"
+      :default-schedule="localDefaultSchedule"
       :custom-schedule="customSchedule"
       :merged-local-time-schedule="mergedLocalTimeSchedule"
       :program-time-zone="timeZone"
-      :date="rangeStartDate"
+      :range-start-date="rangeStartDate"
+      @reloadSchedule="reloadSchedule" />
+    <default-schedule
+      v-if="showDefaultSchedule"
+      :show.sync="showDefaultSchedule"
+      :default-schedule="localDefaultSchedule"
+      :program-time-zone="timeZone"
+      :range-start-date="rangeStartDate"
       @reloadSchedule="reloadSchedule" />
   </div>
 </template>
@@ -126,13 +140,15 @@
 <script lang="ts">
 import Vue from 'vue';
 import { parseISO, addDays, format } from 'date-fns';
-import { mockAppointment, IAppointment, IDaySchedule, DayOfWeek, IDateRange, ITimeSlot } from '@libs/entities-lib/appointment';
+import { mockAppointment, IAppointment, IDaySchedule, DayOfWeek, IDateRange } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { RcDialog } from '@libs/component-lib/components';
 import _cloneDeep from 'lodash/cloneDeep';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import CustomSchedule from './CustomSchedule.vue';
+import DefaultSchedule from './DefaultSchedule.vue';
+import appointmentHelpers from './appointmentHelpers';
 
 const APPOINTMENTS = [
   mockAppointment({ startDate: '2024-05-15T15:00:00.000Z',
@@ -142,13 +158,15 @@ const APPOINTMENTS = [
   mockAppointment({ serviceOptionId: 'service-id-2' }),
 ];
 
+/** MOCK DATA */
 const DEFAULT_SCHEDULE: IDaySchedule[] = [
-  { day: DayOfWeek.Saturday, timeSlots: [{ start: '03:00', end: '07:00' }, { start: '20:00', end: '23:00' }] },
-  // { day: DayOfWeek.Saturday, timeSlots: [{ start: '20:00', end: '22:00' }] },
+  // { day: DayOfWeek.Sunday, timeSlots: [{ start: '03:00', end: '07:00' }] },
   { day: DayOfWeek.Tuesday, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '13:00', end: '17:00' }] },
   { day: DayOfWeek.Wednesday, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '13:00', end: '17:00' }] },
   { day: DayOfWeek.Thursday, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '13:00', end: '17:00' }] },
   { day: DayOfWeek.Friday, timeSlots: [{ start: '09:00', end: '16:00' }] },
+  // { day: DayOfWeek.Saturday, timeSlots: [{ start: '03:00', end: '07:00' }, { start: '20:00', end: '23:00' }] },
+  // { day: DayOfWeek.Saturday, timeSlots: [{ start: '20:00', end: '00:00' }] },
 ];
 
 const CUSTOM_SCHEDULE: IDateRange[] = [
@@ -160,7 +178,7 @@ const CUSTOM_SCHEDULE: IDateRange[] = [
 //  { end: '2024-05-31T04:00:00.000Z', start: '2024-05-31T02:30:00.000Z' },
 ];
 
-const APPOINTMENT_PROGRAM_TIMEZONE = 'America/Los_Angeles'; // TODO: make timezones enum
+const APPOINTMENT_PROGRAM_TIMEZONE = 'America/Halifax';// 'Europe/London';// 'America/Halifax'; // TODO: make timezones enum
 
 export interface ICalendarEvent {
   name: string,
@@ -185,6 +203,7 @@ export default Vue.extend({
   components: {
     RcDialog,
     CustomSchedule,
+    DefaultSchedule,
   },
   data: () => ({
     focus: '',
@@ -211,21 +230,24 @@ export default Vue.extend({
     timeZone: APPOINTMENT_PROGRAM_TIMEZONE,
     localTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     showCustomSchedule: false,
-    DEFAULT_SCHEDULE,
-    mergedLocalTimeSchedule: {} as Record<number, IDaySchedule>,
+    showDefaultSchedule: false,
     rangeStartDate: '',
-    rangeEndDate: '',
-    clonedDefaultSchedule: {} as Record<number, IDaySchedule>,
+    localDefaultSchedule: {} as Record<number, IDaySchedule>, // the default schedule with hours at the user's local time and datetime at UTC time
+    mergedLocalTimeSchedule: {} as Record<number, IDaySchedule>, // schedule that merges default and custom schedules, with hours at the user's local time
   }),
 
   computed: {
     customSchedule() {
-      return useAppointmentProgramStore().customSchedule || CUSTOM_SCHEDULE;
+      return useAppointmentProgramStore().schedule?.customSchedule || CUSTOM_SCHEDULE || [];
     },
 
+    defaultSchedule() {
+      return useAppointmentProgramStore().schedule?.defaultSchedule || DEFAULT_SCHEDULE;
+    },
   },
 
   watch: {
+    // TODO: remove. Time zone is not supposed to change during the lifecycle of this component
     timeZone(newZone) {
       if (newZone) {
         this.reloadSchedule();
@@ -256,7 +278,6 @@ export default Vue.extend({
         const events = this.parseEventsFromAppointments(this.appointments);
         this.events = events;
         this.rangeStartDate = updateData.start.date;
-        this.rangeEndDate = updateData.end.date;
       },
       getEventColor(event: ICalendarEvent) {
         return event.color;
@@ -316,7 +337,7 @@ export default Vue.extend({
             if ((interval.hour > startHour || (interval.hour === startHour && interval.minute >= startMinute))
             && (interval.hour < endHour || (interval.hour === endHour && interval.minute < endMinute))
           ) {
-               backgroundColor = 'darkblue';
+               backgroundColor = day.custom ? 'green' : 'darkblue';
             }
           });
         }
@@ -324,34 +345,49 @@ export default Vue.extend({
         return { backgroundColor };
       },
 
-      // TODO : move some of these methods into helpers files
-
-    // deep clone the merged local schedule and turn it into an object with the week days as keys,
-    // {0: IDaySchedule for Sunday, 1: IDaySchedule for Monday, etc}
+    // call methods that create a clone of the default schedule,as an object with the keys the week days ({0: schedule for Sunday, 1: schedule for Monday etc})
+    // calculates the datetime for each slot to the time of the week, and sets the hours from the program timezone to the user's local timezone
       calculateDefaultScheduleDates() {
+        // sets the start and end of the default schedule for each day to UTC time, with the dates of the current week
+        const scheduleWithUTCDateTime = this.setUTCTimeToDefaultSchedule(this.defaultSchedule);
+        // set the hours to the user's time zone
+        const scheduleWithLocalHours = appointmentHelpers.setDefaultScheduleToTimeZoneHours(scheduleWithUTCDateTime, 'local');
+        this.localDefaultSchedule = scheduleWithLocalHours;
+      },
+
+      // For each time slot of the default schedule, add a UTC datetime, the date being the date of the current week
+      // (e.g. for week of may 2 to may 8, dates are may 2, may 3, etc)
+      setUTCTimeToDefaultSchedule(defaultSchedule: IDaySchedule[]): Record<number, IDaySchedule> {
+        const localDefaultSchedule = {} as Record<number, IDaySchedule>;
         const programTimeZone = this.timeZone; // TODO get from appointment program timezone
+
         // sets the start and end of the default schedule for each day to UTC time, with the dates of the current week
         (helpers.getEnumValues(DayOfWeek) as number[]).forEach((weekDay) => {
           const date = format(addDays(utcToZonedTime(new Date(this.rangeStartDate), 'UTC'), weekDay), 'yyyy-MM-dd');
 
-          const schedule = DEFAULT_SCHEDULE.find((day) => day.day === weekDay) || {} as IDaySchedule;
+          const schedule = _cloneDeep(defaultSchedule?.find((day) => day.day === weekDay)) || {} as IDaySchedule;
           schedule.date = date;
           schedule.day = schedule.day || weekDay;
 
-          schedule.timeSlots = schedule.timeSlots ? _cloneDeep(schedule.timeSlots).map((slot) => {
+          schedule.timeSlots = schedule.timeSlots ? schedule.timeSlots.map((slot) => {
             slot.startDateTime = zonedTimeToUtc(`${date} ${slot.start}`, programTimeZone).toISOString();
             slot.endDateTime = zonedTimeToUtc(`${date} ${slot.end}`, programTimeZone).toISOString();
+            // if the time slot ends at 0:00, it means the end date time is the next day
+            if (slot.end === '00:00') {
+              slot.endDateTime = addDays(new Date(slot.endDateTime), 1).toISOString();
+            }
+
             return slot;
           }) : [];
 
-          this.clonedDefaultSchedule[weekDay] = schedule;
+          localDefaultSchedule[weekDay] = schedule;
         });
+        return localDefaultSchedule;
       },
 
       calculateMergedSchedule() {
-        const slotsToRecalculate = [] as { slot: ITimeSlot, localMidnight: Date, localNextMidnight: Date }[];
-        Object.keys(this.clonedDefaultSchedule).forEach((scheduleKey) => {
-          const localSchedule = _cloneDeep(this.clonedDefaultSchedule[+scheduleKey]);
+        Object.keys(this.localDefaultSchedule).forEach((scheduleKey) => {
+          const localSchedule = _cloneDeep(this.localDefaultSchedule[+scheduleKey]);
 
           const localMidnight = new Date(`${localSchedule.date} 0:00`);
           const localNextMidnight = new Date(localMidnight.getTime());
@@ -364,117 +400,29 @@ export default Vue.extend({
           if (customDateRanges?.length) {
             localSchedule.timeSlots = [];
             customDateRanges.forEach((slot) => {
-              localSchedule.timeSlots.push({
-                ...slot,
-                startDateTime: slot.start,
-                endDateTime: slot.end,
-              });
+              // If slot start and end are the same time, it means that the custom schedule is represented by no time slots for that day
+              if (slot.start !== slot.end) {
+                localSchedule.timeSlots.push({
+                  ...slot,
+                  startDateTime: slot.start,
+                  endDateTime: slot.end,
+                  start: format(new Date(slot.start), 'HH:mm'),
+                  end: format(new Date(slot.end), 'HH:mm'),
+                });
+              }
             });
             localSchedule.custom = true;
           }
 
-          // the mergedLocalTimeSchedule shoud contain in the timeslots of the default and custom schedule
-          // the start and end time (time only, no date, e.g. "17:00") in local time
-          localSchedule.timeSlots = localSchedule.timeSlots.map((slot) => {
-            slot.start = format(new Date(slot.startDateTime), 'HH:mm');
-            slot.end = format(new Date(slot.endDateTime), 'HH:mm');
-
-            // The timeslot might overflow to the next or previous day because it was set to local time from appointment program timezone,
-            // so we need to recalculate it and move it to the right week day in the local time zone, potentially also split it if only
-            // part of it overflows
-            const isTimeSlotSameDay = new Date(slot.startDateTime) >= localMidnight && new Date(slot.endDateTime) < localNextMidnight;
-            if (!isTimeSlotSameDay) {
-              slotsToRecalculate.push({ slot, localMidnight, localNextMidnight });
-              // We remove the overflowing slot from the list, as we will need recalculate and move it to another day fully or partially (see recalculateDiffentDaySlot)
-              return null;
-            }
-            return slot;
-          }).filter((x) => x);
-
           this.mergedLocalTimeSchedule[localSchedule.day] = localSchedule;
         });
-
-        // we need to run the recalculation after we are out of the loop, because it will add new timeslots to the current lists
-        slotsToRecalculate.forEach((data) => this.recalculateDiffentDaySlot(data));
-      },
-
-      // Recalculate time slots that overflow past midnight a different day (either to previous or next day)
-      recalculateDiffentDaySlot({ slot, localMidnight, localNextMidnight } :{ slot: ITimeSlot, localMidnight: Date, localNextMidnight: Date }) {
-        const isStartInPreviousDay = new Date(slot.startDateTime) < localMidnight;
-        const isEndInPreviousDay = new Date(slot.endDateTime) < localMidnight;
-        const isStartInNextDay = new Date(slot.startDateTime) > localNextMidnight;
-        const isEndInNextDay = new Date(slot.endDateTime) > localNextMidnight;
-        const currentDaySchedule = this.mergedLocalTimeSchedule[localMidnight.getDay()];
-
-        // OtherDay is the new day in which the timeslot overflows, can be before or after the current day (= the day for which we calculate the overflow)
-        // the part of the slot that overflows (or the whole slot, if it overflows entirely), will be added to this day.
-        let otherDay = addDays(utcToZonedTime(localMidnight, 'UTC'), isStartInPreviousDay ? -1 : 1);
-        // We're considering a week from Sunday to Saturday. if the overflow happens outside of the reference week
-        // (e.g. from Saturday to Sunday - which falls into the next week)
-        // we need to move the slot to the beginning of the week (e.g. Sunday of the current week)
-        const isOtherDayInCurrentWeek = format(otherDay, 'yyyy-MM-dd') >= this.rangeStartDate && format(otherDay, 'yyyy-MM-dd') <= this.rangeEndDate;
-        if (!isOtherDayInCurrentWeek) {
-          otherDay = isStartInPreviousDay ? addDays(utcToZonedTime(new Date(this.rangeStartDate), 'UTC'), 6)
-          : addDays(utcToZonedTime(new Date(this.rangeEndDate), 'UTC'), -6);
-        }
-
-        const otherDayString = format(otherDay, 'yyyy-MM-dd');
-        const otherDaySchedule = this.mergedLocalTimeSchedule[otherDay.getDay()];
-
-        //  the slot is entirely in a different day than the reference day (local day localMidnight to localMidnight)
-        if ((isStartInPreviousDay && isEndInPreviousDay) || (isStartInNextDay && isEndInNextDay)) {
-          const newSlot = {
-            ...slot,
-            startDateTime: new Date(`${format(otherDay, 'yyyy-MM-dd')} ${slot.start}`).toISOString(),
-            endDateTime: new Date(`${format(otherDay, 'yyyy-MM-dd')} ${slot.end}`).toISOString(),
-            date: otherDayString,
-          };
-
-          otherDaySchedule.timeSlots.push(newSlot);
-
-          // the slot starts in previous day and ends in current day (local day localMidnight to localMidnight)
-        } else if (isStartInPreviousDay && !isEndInPreviousDay) {
-          // we create a new slot that ends at midnight of previous day and push it to the list of timeslots of that day
-          const newSlot = {
-              ...slot,
-              startDateTime: new Date(`${format(otherDay, 'yyyy-MM-dd')} ${slot.start}`).toISOString(),
-              endDateTime: new Date(`${format(otherDay, 'yyyy-MM-dd')} 0:00`).toISOString(),
-              end: '00:00',
-              date: otherDayString,
-            };
-
-            otherDaySchedule.timeSlots.push(newSlot);
-            // we cut the current slot to start only from midnight
-          currentDaySchedule.timeSlots.push({
-            ...slot,
-            startDateTime: localMidnight.toISOString(),
-            start: '00:00',
-          });
-
-          // the slot starts in current day and ends in next day (local day localMidnight to localMidnight)
-        } else {
-          const newSlot = {
-              ...slot,
-              startDateTime: new Date(`${format(otherDay, 'yyyy-MM-dd')} 0:00`).toISOString(),
-              start: '00:00',
-              endDateTime: new Date(`${format(otherDay, 'yyyy-MM-dd')} ${slot.end}`).toISOString(),
-              date: otherDayString,
-            };
-
-          otherDaySchedule.timeSlots.push(newSlot);
-          currentDaySchedule.timeSlots.push({
-            ...slot,
-            endDateTime: localNextMidnight.toISOString(),
-            end: '00:00',
-          });
-        }
       },
 
       // TODO: for the POC the schedule needs to be reloaded when the dialog closes, but later we will simply reload the data,
       // since the dialogs for default and custom schedule will make Apply/Submit calls to the BE to update the schedule
       reloadSchedule() {
-        this.mergedLocalTimeSchedule = [];
-        // this.clonedDefaultSchedule = DEFAULT_SCHEDULE;
+        this.mergedLocalTimeSchedule = {};
+        this.localDefaultSchedule = {};
         this.calculateDefaultScheduleDates();
         this.calculateMergedSchedule();
       },
