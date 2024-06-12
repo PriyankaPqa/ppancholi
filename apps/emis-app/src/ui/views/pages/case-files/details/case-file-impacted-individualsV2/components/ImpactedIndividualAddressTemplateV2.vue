@@ -4,7 +4,7 @@
       {{ isPreviousTemporaryAddress ? '' : $t('impactedIndividuals.current_temporary_address') }}
     </v-col>
     <v-col cols="3" data-test="current_temporary_address">
-      <current-address-template :current-address="address" hide-title />
+      <current-address-template :current-address="currentAddress" hide-title />
     </v-col>
     <v-col cols="5">
       <div class="d-flex">
@@ -43,6 +43,8 @@ import CurrentAddressTemplate from '@libs/registration-lib/components/review/add
 import { UserRoles } from '@libs/entities-lib/user';
 import helpers from '@/ui/helpers/helpers';
 import { TemporaryAddress } from '@libs/entities-lib/case-file-individual';
+import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
+import { IEventGenericLocation } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'ImpactedIndividualAddressTemplate',
@@ -71,6 +73,11 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    shelterLocationsList: {
+      type: Array as () => IEventGenericLocation[],
+      default: null,
+    },
   },
 
   data() {
@@ -78,6 +85,14 @@ export default Vue.extend({
       UserRoles,
       helpers,
     };
+  },
+
+  computed: {
+    currentAddress(): CurrentAddress {
+      const address = new CurrentAddress(this.address);
+      address.shelterLocation = this.shelterLocationsList.find((s) => s.id === this.address.shelterLocationId);
+      return address;
+    },
   },
 });
 </script>

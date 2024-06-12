@@ -1,6 +1,7 @@
 import { ECanadaProvinces, ERegistrationMethod, ERegistrationMode } from '@libs/shared-lib/types';
 import { IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
 import {
+  CurrentAddress,
   ECurrentAddressTypes,
   IMember,
   IMemberMoveRequest,
@@ -150,11 +151,11 @@ describe('>>> Household Service', () => {
     const currentAddress = mockCampGround();
     await service.updatePersonAddress('123', false, currentAddress);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/current-address`, {
-      currentAddress: service.parseCurrentAddress(currentAddress),
+      currentAddress: CurrentAddress.parseCurrentAddress(currentAddress),
     });
     await service.updatePersonAddress('123', true, currentAddress);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/public/${'123'}/current-address`, {
-      currentAddress: service.parseCurrentAddress(currentAddress),
+      currentAddress: CurrentAddress.parseCurrentAddress(currentAddress),
     });
   });
 
@@ -163,14 +164,14 @@ describe('>>> Household Service', () => {
     await service.updateHomeAddress('123', false, address);
     expect(http.patch).toHaveBeenCalledWith('www.test.com/orchestration/orchestration-households/123/address', {
       address: {
-        address: service.parseAddress(address),
+        address: CurrentAddress.parseAddress(address),
         from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       },
     });
     await service.updateHomeAddress('123', true, address);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/123/address`, {
       address: {
-        address: service.parseAddress(address),
+        address: CurrentAddress.parseAddress(address),
         from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       },
     });
@@ -329,7 +330,7 @@ describe('>>> Household Service', () => {
       const built = service.parseMember(member);
       expect(built).toEqual({
         identitySet: service.parseIdentitySet(member.identitySet),
-        currentAddress: service.parseCurrentAddress(member.currentAddress),
+        currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
         contactInformation: service.parseContactInformation(member.contactInformation),
       });
     });
@@ -340,32 +341,32 @@ describe('>>> Household Service', () => {
       const currentAddress = mockHotelMotel();
 
       currentAddress.addressType = ECurrentAddressTypes.RemainingInHome;
-      expect(service.parseCurrentAddress(currentAddress).address).toBeNull();
+      expect(CurrentAddress.parseCurrentAddress(currentAddress).address).toBeNull();
 
       currentAddress.addressType = ECurrentAddressTypes.Other;
-      expect(service.parseCurrentAddress(currentAddress).address).toBeNull();
+      expect(CurrentAddress.parseCurrentAddress(currentAddress).address).toBeNull();
 
       currentAddress.addressType = ECurrentAddressTypes.Shelter;
-      expect(service.parseCurrentAddress(currentAddress).address).toBeNull();
+      expect(CurrentAddress.parseCurrentAddress(currentAddress).address).toBeNull();
 
       currentAddress.addressType = ECurrentAddressTypes.Unknown;
-      expect(service.parseCurrentAddress(currentAddress).address).toBeNull();
+      expect(CurrentAddress.parseCurrentAddress(currentAddress).address).toBeNull();
 
       currentAddress.addressType = ECurrentAddressTypes.Campground;
-      expect(service.parseCurrentAddress(currentAddress).address).not.toBeNull();
+      expect(CurrentAddress.parseCurrentAddress(currentAddress).address).not.toBeNull();
     });
   });
 
   describe('parseAddress', () => {
     it('should return the correct object', () => {
       const address = mockAddressData();
-      let result = service.parseAddress(address);
+      let result = CurrentAddress.parseAddress(address);
       expect(result).toEqual(address);
 
       address.unitSuite = '';
       address.province = null;
       address.specifiedOtherProvince = 'other province';
-      result = service.parseAddress(address);
+      result = CurrentAddress.parseAddress(address);
       expect(result.unitSuite).toBe(null);
       expect(result.province).toBe(ECanadaProvinces.OT);
       expect(result.specifiedOtherProvince).toBe('other province');
@@ -464,7 +465,7 @@ describe('>>> Household Service', () => {
     });
 
     it('generate homeAddress otherwise', () => {
-      service.parseAddress = jest.fn(() => mockAddressData());
+      CurrentAddress.parseAddress = jest.fn(() => mockAddressData());
       const household = mockHouseholdCreate();
       household.noFixedHome = false;
       const built = service.parseHouseholdPayload(household, null);
@@ -487,7 +488,7 @@ describe('>>> Household Service', () => {
       const built = service.parseAdditionalMember(member);
       expect(built).toEqual({
         identitySet: service.parseIdentitySet(member.identitySet),
-        currentAddress: service.parseCurrentAddress(member.currentAddress),
+        currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
         contactInformation: null,
       });
     });
@@ -502,7 +503,7 @@ describe('>>> Household Service', () => {
         isPrimaryBeneficiary,
         preferredLanguageId: member.contactInformation.preferredLanguage.id,
         memberId: member.id,
-        currentAddress: service.parseCurrentAddress(member.currentAddress),
+        currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
         identitySet: service.parseIdentitySet(member.identitySet),
       });
     });

@@ -1,4 +1,5 @@
-import { ICaseFileIndividualEntity, IdParams, ReceivingAssistanceDetail } from '@libs/entities-lib/case-file-individual';
+import { ICaseFileIndividualEntity, IdParams, ReceivingAssistanceDetail, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
+import { CurrentAddress, ICurrentAddressData } from '@libs/entities-lib/value-objects/current-address';
 import { IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { ICaseFileIndividualsService } from './case-file-individuals.types';
@@ -18,5 +19,14 @@ export class CaseFileIndividualsService extends DomainBaseService<ICaseFileIndiv
 
   async addReceiveAssistanceDetails(caseFileId: uuid, id: uuid, item: ReceivingAssistanceDetail): Promise<ICaseFileIndividualEntity> {
     return this.http.patch<ICaseFileIndividualEntity>(this.getItemUrl(`${this.baseUrl}/{id}/add-receive-assistance-details`, { caseFileId, id }), item);
+  }
+
+  async addTemporaryAddress(caseFileId: uuid, id: uuid, item: ICurrentAddressData): Promise<ICaseFileIndividualEntity> {
+    const payload = CurrentAddress.parseCurrentAddress(item);
+    return this.http.patch<ICaseFileIndividualEntity>(this.getItemUrl(`${this.baseUrl}/{id}/add-temporary-address`, { caseFileId, id }), payload);
+  }
+
+  async editTemporaryAddress(caseFileId: uuid, id: uuid, item: TemporaryAddress): Promise<ICaseFileIndividualEntity> {
+    return this.http.patch<ICaseFileIndividualEntity>(this.getItemUrl(`${this.baseUrl}/{id}/edit-temporary-address`, { caseFileId, id }), item);
   }
 }

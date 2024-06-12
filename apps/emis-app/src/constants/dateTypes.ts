@@ -30,6 +30,8 @@ export const dateTypes = {
     'HouseholdMemberMetadata.dateOfBirth',
     'ImpactedIndividuals.checkIn',
     'ImpactedIndividuals.checkOut',
+    'CaseFileIndividual.checkIn',
+    'CaseFileIndividual.checkOut',
     'Task.dueDate',
   ] as string[],
 

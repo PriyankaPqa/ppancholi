@@ -63,25 +63,27 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
 import uiHelpers from '@/ui/helpers/helpers';
-import { CurrentAddress, IMember } from '@libs/entities-lib/household-create';
+import { IMember } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
 import { i18n } from '@/ui/plugins';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import { localStorageKeys } from '@/constants/localStorage';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
-import { useRegistrationStore } from '@/pinia/registration/registration';
 import { RcDialog } from '@libs/component-lib/components';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
-import { ICaseFileIndividualEntity, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
+import { CaseFileIndividualEntity, ICaseFileIndividualEntity, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
+import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
+import { CurrentAddress, ICurrentAddressData } from '@libs/entities-lib/value-objects/current-address';
+import caseFileDetail from '../../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'ImpactedIndividualsEditAddressDialog',
 
   components: {
@@ -114,11 +116,6 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
-
-    index: {
-      type: Number,
-      default: -1,
-    },
   },
 
   setup() {
@@ -131,11 +128,9 @@ export default Vue.extend({
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VITE_GOOGLE_API_KEY,
-      primaryBeneficiary: {} as IMember,
-      additionalMembers: [] as IMember[],
       submitLoading: false,
-      backupAddress: null as TemporaryAddress,
-      memberClone: null as ICaseFileIndividualEntity,
+      editedAddress: null as CurrentAddress,
+      backupAddress: null as CurrentAddress,
       sameAddress: null,
       changedAddress: false,
       noFixedHome: false,
@@ -143,15 +138,25 @@ export default Vue.extend({
   },
 
   computed: {
-    rules() {
-      return {
-        isSameAddress: { requiredCheckbox: true, oneOf: [false, true] },
-      };
+    individuals(): CaseFileIndividualEntity[] {
+      return useCaseFileIndividualStore().getByCaseFile(this.caseFileId).sort((x) => (this.household?.primaryBeneficiary === x.personId ? -1 : 1))
+        .map((i) => new CaseFileIndividualEntity(i));
     },
 
     shelterLocations(): IEventGenericLocation[] {
       const locations = this.shelterLocationsList || [];
       return locations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active || s.id === this.individual?.currentAddress?.shelterLocationId);
+    },
+
+    primaryAddress(): CurrentAddress {
+      const address = this.individuals.find((x) => this.household?.primaryBeneficiary === x.personId)?.currentAddress;
+      return this.temporaryAddressAsCurrentAddress(address);
+    },
+
+    rules() {
+      return {
+        isSameAddress: { requiredCheckbox: true, oneOf: [false, true] },
+      };
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
@@ -174,24 +179,19 @@ export default Vue.extend({
     },
 
     currentAddressWithFormattedDate(): CurrentAddress {
-      const currentAddress = _cloneDeep(this.memberClone.currentAddress);
-      currentAddress.checkIn = uiHelpers.getLocalStringDate(currentAddress.checkIn, 'ImpactedIndividuals.checkIn');
-      currentAddress.checkOut = uiHelpers.getLocalStringDate(currentAddress.checkOut, 'ImpactedIndividuals.checkOut');
-      return new CurrentAddress(currentAddress);
+      const currentAddress = new CurrentAddress(_cloneDeep(this.editedAddress));
+      currentAddress.checkIn = uiHelpers.getLocalStringDate(currentAddress.checkIn, 'CaseFileIndividual.checkIn');
+      currentAddress.checkOut = uiHelpers.getLocalStringDate(currentAddress.checkOut, 'CaseFileIndividual.checkOut');
+      return currentAddress;
     },
   },
 
   created() {
-    // eslint-disable-next-line no-unsafe-optional-chaining
-    const household = useRegistrationStore().getHouseholdCreate();
-    if (household) {
-      this.primaryBeneficiary = household.primaryBeneficiary;
-      this.additionalMembers = [...household.additionalMembers];
-      this.backupAddress = _cloneDeep(this.individual.currentAddress);
-      /** *************** TODO ***************** */
-      this.sameAddress = _isEqual(this.individual.currentAddress, household.primaryBeneficiary.currentAddress);
-      this.memberClone = _cloneDeep(this.individual);
-      this.noFixedHome = household.noFixedHome;
+    if (this.primaryMember) {
+      this.backupAddress = this.temporaryAddressAsCurrentAddress(this.individual.currentAddress);
+      this.editedAddress = new CurrentAddress(_cloneDeep(this.backupAddress));
+      this.sameAddress = _isEqual(this.editedAddress, this.primaryAddress);
+      this.noFixedHome = this.household?.address?.address === null;
     }
   },
 
@@ -200,21 +200,24 @@ export default Vue.extend({
       this.$emit('update:show', false);
     },
 
+    temporaryAddressAsCurrentAddress(address: TemporaryAddress) : CurrentAddress {
+      const currentAddress = new CurrentAddress(_cloneDeep(address));
+      // find when not found return undefined which is not equal to the default null
+      currentAddress.shelterLocation = this.shelterLocations.find((s) => s.id === address?.shelterLocationId) || null;
+      return currentAddress;
+    },
+
     async submitUpdatedAddress() {
       this.submitLoading = true;
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        // const params = this.isPrimaryMember ? {
-        //   member: this.memberClone, isPrimaryMember: true,
-        // } : {
-        //   member: this.memberClone, isPrimaryMember: false, index: this.index, sameAddress: this.sameAddress,
-        // };
+        const newAddress = _cloneDeep(this.editedAddress) as ICurrentAddressData;
+        newAddress.shelterLocationId = this.editedAddress.shelterLocation?.id;
+        const updatedMember = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, this.individual.id, newAddress);
 
-        // const updatedMember = await useRegistrationStore().updatePersonAddress(params);
-
-        // if (!!updatedMember && this.isPrimaryMember && this.additionalMembers) {
-        //   await this.updateAdditionalMembersWithSameAddress();
-        // }
+        if (!!updatedMember && this.isPrimaryMember && this.individuals.length > 1) {
+          await this.updateAdditionalMembersWithSameAddress(newAddress);
+        }
 
         this.close();
       } else {
@@ -223,32 +226,27 @@ export default Vue.extend({
       }
     },
 
-    // async updateAdditionalMembersWithSameAddress() {
-    //   const promises = [] as Array<Promise<IMember>>;
+    async updateAdditionalMembersWithSameAddress(newAddress: ICurrentAddressData) {
+      const promises = [] as Array<Promise<ICaseFileIndividualEntity>>;
 
-    //   this.additionalMembers.forEach(async (otherMember, index) => {
-    //     if (_isEqual(otherMember.currentAddress, this.backupAddress)) {
-    //       otherMember.setCurrentAddress(this.memberClone.currentAddress);
-    //       promises.push(useRegistrationStore().updatePersonAddress({
-    //         member: otherMember, isPrimaryMember: false, index,
-    //       }) as Promise<IMember>);
-    //     }
-    //   });
-    //   await Promise.all(promises);
-    // },
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    changeSameAddress(sameAddress: boolean) {
-      // return sameAddress ? this.setCurrentAddress(this.primaryBeneficiary.currentAddress) : this.setCurrentAddress(this.backupAddress);
+      const members = this.individuals.filter((i) => i.id !== this.individual.id && _isEqual(this.temporaryAddressAsCurrentAddress(i.currentAddress), this.backupAddress));
+      members.forEach((otherMember) => {
+        promises.push(useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, otherMember.id, newAddress));
+      });
+      await Promise.all(promises);
     },
 
-    setCurrentAddress(form: TemporaryAddress) {
+    changeSameAddress(sameAddress: boolean) {
+      return sameAddress ? this.setCurrentAddress(this.primaryAddress) : this.setCurrentAddress(this.backupAddress);
+    },
+
+    setCurrentAddress(form: CurrentAddress) {
       if (!_isEqual(new CurrentAddress(form), new CurrentAddress(this.backupAddress))) {
         this.changedAddress = true;
       } else {
         this.changedAddress = false;
       }
-      // this.memberClone.setCurrentAddress(form);
+      this.editedAddress = form;
     },
   },
 });

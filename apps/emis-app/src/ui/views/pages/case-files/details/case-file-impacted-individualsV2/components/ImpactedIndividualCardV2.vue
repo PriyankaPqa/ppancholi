@@ -47,6 +47,7 @@
       :pinned-detail="lastReceivingAssistanceChange" />
     <impacted-individual-address-template-v2
       :address="individual.currentAddress"
+      :shelter-locations-list="shelterLocationsList"
       show-edit-button
       :disable-editing="disableEditing"
       @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
@@ -65,17 +66,20 @@
         {{ $t('impactedIndividuals.Previous_temporary_address') }}
       </div>
       <template v-if="showPreviousTemporaryAddress">
-        <div v-for="(address, $index) in reorderedAddressHistory" :key="$index" data-test="previous-address-row">
-          <impacted-individual-address-template-v2 :address="address" is-previous-temporary-address />
+        <div v-for="address in reorderedAddressHistory" :key="address.id" data-test="previous-address-row">
+          <impacted-individual-address-template-v2
+            :address="address"
+            :shelter-locations-list="shelterLocationsList"
+            is-previous-temporary-address />
         </div>
       </template>
     </div>
     <impacted-individuals-edit-address-dialog-v2
       v-if="showEditMemberDialog"
+      :id="individual.caseFileId"
       :show.sync="showEditMemberDialog"
       :individual="individual"
       :member="member"
-      :index="index"
       :is-primary-member="isPrimaryMember"
       :shelter-locations-list="shelterLocationsList" />
 
@@ -124,11 +128,6 @@ export default Vue.extend({
     shelterLocationsList: {
       type: Array as () => IEventGenericLocation[],
       default: null,
-    },
-
-    index: {
-      type: Number,
-      default: -1,
     },
 
     caseFileId: {

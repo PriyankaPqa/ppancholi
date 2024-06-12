@@ -2,15 +2,16 @@ import { utcToZonedTime, format } from 'date-fns-tz';
 import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
 import { HouseholdStatus, IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 import {
-  IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
-  IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
+  IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
+  IIndigenousCommunityData, IMember, ICurrentAddress,
   MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IMemberEntity, IAddress, IValidateEmailResponse,
   IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IHoneyPotIdentitySet,
   ICheckForPossibleDuplicateResponse, ISendOneTimeCodeRegistrationPublicPayload, IVerifyOneTimeCodeRegistrationPublicPayload,
+  CurrentAddress,
 } from '@libs/entities-lib/household-create';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
 import {
-  ECanadaProvinces, ERegistrationMode, IAzureCombinedSearchResult, IAzureSearchParams, IOptionItemData,
+  ERegistrationMode, IAzureCombinedSearchResult, IAzureSearchParams, IOptionItemData,
 } from '@libs/shared-lib/types';
 import { DomainBaseService } from '../../base';
 import { GlobalHandler, IHttpClient, IHttpMock } from '../../http-client';
@@ -91,7 +92,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async updatePersonAddress(id: string, publicMode: boolean, payload: ICurrentAddress): Promise<IMemberEntity> {
     return this.http.patch(`${this.baseApi}/persons/${publicMode ? 'public/' : ''}${id}/current-address`, {
-      currentAddress: this.parseCurrentAddress(payload),
+      currentAddress: CurrentAddress.parseCurrentAddress(payload),
     });
   }
 
@@ -100,7 +101,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       : `${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${id}/address`;
     return this.http.patch(url, {
       address: {
-        address: this.parseAddress(payload),
+        address: CurrentAddress.parseAddress(payload),
         from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       },
     });
@@ -255,7 +256,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       noFixedHome: household.noFixedHome,
       primaryBeneficiary: this.parseMember(household.primaryBeneficiary),
       additionalMembers: household.additionalMembers.map((member) => this.parseAdditionalMember(member)),
-      homeAddress: household.noFixedHome ? null : this.parseAddress(household.homeAddress),
+      homeAddress: household.noFixedHome ? null : CurrentAddress.parseAddress(household.homeAddress),
       eventId,
       consentInformation: household.consentInformation,
       // name is honey pot - it should always be null...
@@ -266,7 +267,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   parseMember(member: IMember): MemberCreateRequest {
     return {
       identitySet: this.parseIdentitySet(member.identitySet),
-      currentAddress: this.parseCurrentAddress(member.currentAddress),
+      currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
       contactInformation: this.parseContactInformation(member.contactInformation),
     };
   }
@@ -274,41 +275,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   parseAdditionalMember(member: IMember): MemberCreateRequest {
     return {
       identitySet: this.parseIdentitySet(member.identitySet),
-      currentAddress: this.parseCurrentAddress(member.currentAddress),
+      currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
       contactInformation: null,
-    };
-  }
-
-  parseCurrentAddress(currentAddress: ICurrentAddress): ICurrentAddressCreateRequest {
-    const noPlaceAddress = currentAddress.addressType === ECurrentAddressTypes.RemainingInHome
-      || currentAddress.addressType === ECurrentAddressTypes.Other
-      || currentAddress.addressType === ECurrentAddressTypes.Shelter
-      || currentAddress.addressType === ECurrentAddressTypes.Unknown;
-
-    return {
-      addressType: currentAddress.addressType,
-      placeNumber: currentAddress.placeNumber,
-      placeName: currentAddress.placeName,
-      shelterLocationId: currentAddress.shelterLocation ? currentAddress.shelterLocation.id : null,
-      address: noPlaceAddress ? null : this.parseAddress(currentAddress.address),
-      from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
-      crcProvided: currentAddress.crcProvided,
-      checkIn: currentAddress.checkIn ? new Date(currentAddress.checkIn).toISOString() : null,
-      checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,
-    };
-  }
-
-  parseAddress(address: IAddressData): IAddressData {
-    return {
-      country: address.country,
-      streetAddress: address.streetAddress,
-      unitSuite: address.unitSuite ? address.unitSuite : null,
-      province: address.province ?? ECanadaProvinces.OT,
-      specifiedOtherProvince: address.specifiedOtherProvince,
-      city: address.city,
-      postalCode: address.postalCode,
-      latitude: address.latitude,
-      longitude: address.longitude,
     };
   }
 
@@ -356,7 +324,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       isPrimaryBeneficiary,
       preferredLanguageId: member.contactInformation.preferredLanguage?.id,
       memberId: member.id,
-      currentAddress: this.parseCurrentAddress(member.currentAddress),
+      currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
       identitySet: isPrimaryBeneficiary ? this.parseIdentitySet(member.identitySet) : null,
     };
   }

@@ -6,4 +6,6 @@ export const mockCaseFileIndividualsService = (): ICaseFileIndividualsServiceMoc
   ...mockDomainBaseService(mockCaseFileIndividualEntities()),
   createCaseFileIndividual: jest.fn(() => mockCaseFileIndividualEntity()),
   addReceiveAssistanceDetails: jest.fn(() => mockCaseFileIndividualEntity()),
+  addTemporaryAddress: jest.fn(() => mockCaseFileIndividualEntity()),
+  editTemporaryAddress: jest.fn(() => mockCaseFileIndividualEntity()),
 });

@@ -8,11 +8,10 @@
     <rc-page-loading v-if="loading" />
     <template v-else>
       V2!!!
-      <div v-for="(individual, index) in individuals" :key="individual.id">
+      <div v-for="individual in individuals" :key="individual.id">
         <impacted-individual-card-v2
           :individual="individual"
           :is-primary-member="household && household.primaryBeneficiary === individual.personId"
-          :index="index"
           :shelter-locations-list="event && event.shelterLocations"
           :case-file-id="caseFileId"
           :data-test="household && household.primaryBeneficiary === individual.personId ? 'primary_impacted_individual_card' : 'non_primary_impacted_individual_card'"

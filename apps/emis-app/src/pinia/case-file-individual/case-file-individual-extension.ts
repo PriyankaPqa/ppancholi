@@ -3,6 +3,7 @@ import { CaseFileIndividualsService, ICaseFileIndividualsServiceMock } from '@li
 import _cloneDeep from 'lodash/cloneDeep';
 import { Status } from '@libs/entities-lib/base';
 import { ICaseFileIndividualEntity, IdParams, ReceivingAssistanceDetail } from '@libs/entities-lib/case-file-individual';
+import { ICurrentAddressData } from '@libs/entities-lib/value-objects/current-address';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<ICaseFileIndividualEntity, IdParams>,
@@ -29,9 +30,18 @@ export function getExtensionComponents(
     return result;
   }
 
+  async function addTemporaryAddress(caseFileId: uuid, id: uuid, item: ICurrentAddressData): Promise<ICaseFileIndividualEntity> {
+    const result = await service.addTemporaryAddress(caseFileId, id, item);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
   return {
     getByCaseFile,
     createIndividual,
     addReceiveAssistanceDetails,
+    addTemporaryAddress,
   };
 }

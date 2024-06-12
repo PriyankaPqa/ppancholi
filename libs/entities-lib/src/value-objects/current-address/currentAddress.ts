@@ -1,8 +1,10 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import { utcToZonedTime, format } from 'date-fns-tz';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { isValidCanadianPostalCode, maxLengthCheck, required } from '../../classValidation';
-import { Address, IAddress } from '../address';
-import { ECurrentAddressTypes, ICurrentAddress, ICurrentAddressData } from './currentAddress.types';
+import { Address, IAddress, IAddressData } from '../address';
+import { ECurrentAddressTypes, ICurrentAddress, ICurrentAddressCreateRequest, ICurrentAddressData } from './currentAddress.types';
 import { IEventGenericLocation } from '../../event';
 
 export class CurrentAddress implements ICurrentAddress {
@@ -167,4 +169,37 @@ export class CurrentAddress implements ICurrentAddress {
     ];
     return addressTypeHasCheckInCheckOut.indexOf(this.addressType) >= 0;
   }
+
+  public static parseCurrentAddress(currentAddress: ICurrentAddressData): ICurrentAddressCreateRequest {
+    const noPlaceAddress = currentAddress.addressType === ECurrentAddressTypes.RemainingInHome
+      || currentAddress.addressType === ECurrentAddressTypes.Other
+      || currentAddress.addressType === ECurrentAddressTypes.Shelter
+      || currentAddress.addressType === ECurrentAddressTypes.Unknown;
+
+    return {
+      addressType: currentAddress.addressType,
+      placeNumber: currentAddress.placeNumber,
+      placeName: currentAddress.placeName,
+      shelterLocationId: currentAddress.shelterLocation ? currentAddress.shelterLocation.id : null,
+      address: noPlaceAddress ? null : this.parseAddress(currentAddress.address),
+      from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
+      crcProvided: currentAddress.crcProvided,
+      checkIn: currentAddress.checkIn ? new Date(currentAddress.checkIn).toISOString() : null,
+      checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,
+    };
   }
+
+  public static parseAddress(address: IAddressData): IAddressData {
+    return {
+      country: address.country,
+      streetAddress: address.streetAddress,
+      unitSuite: address.unitSuite ? address.unitSuite : null,
+      province: address.province ?? ECanadaProvinces.OT,
+      specifiedOtherProvince: address.specifiedOtherProvince,
+      city: address.city,
+      postalCode: address.postalCode,
+      latitude: address.latitude,
+      longitude: address.longitude,
+    };
+  }
+}
