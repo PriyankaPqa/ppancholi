@@ -120,7 +120,7 @@
           </template>
 
           <template #[`item.${customColumns.completionStatus}`]="{ item }">
-            <status-chip status-name="AssessmentResponseCompletionStatus" :status="item.completionStatus" />
+            <status-chip :data-test="`assessmentDetail-status-${item.id}`" status-name="AssessmentResponseCompletionStatus" :status="item.completionStatus" />
           </template>
 
           <template #[`item.${customColumns.actions}`]="{ item }">

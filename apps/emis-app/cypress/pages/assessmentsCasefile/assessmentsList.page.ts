@@ -105,12 +105,12 @@ export class AssessmentsListPage {
     return cy.getByDataTest(this.assessmentDelete);
   }
 
-  public refreshUntilFilledAssessmentUpdated(assessmentId: string) {
+  public refreshUntilFilledAssessmentUpdatedWithStatus(assessmentId: string, expectedCaseFileAssessmentStatus: string) {
     cy.waitAndRefreshUntilConditions(
       {
         // eslint-disable-next-line
         visibilityCondition: () => cy.contains('Pending assessments').should('be.visible').wait(2000),
-        checkCondition: () => Cypress.$(`[data-test='assessmentDetail-link-${assessmentId}']`).length > 0,
+        checkCondition: () => Cypress.$(`[data-test='assessmentDetail-status-${assessmentId}']`).text().includes(expectedCaseFileAssessmentStatus),
       },
       {
         errorMsg: 'Failed to update assessment',

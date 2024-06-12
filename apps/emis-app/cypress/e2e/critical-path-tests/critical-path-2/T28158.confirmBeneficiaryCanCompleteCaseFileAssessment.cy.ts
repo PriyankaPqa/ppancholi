@@ -72,7 +72,7 @@ describe('[T28158] Confirm that Beneficiary can complete a Case File Assessment'
             assessmentFormId: this.assessmentFormId,
           };
           completeAndSubmitCasefileAssessment(casefileAssessmentParamData); // completely respond to assessment as a beneficiary and click on submit
-          assessmentsListPage.refreshUntilFilledAssessmentUpdated(this.casefileAssessmentId);
+          assessmentsListPage.refreshUntilFilledAssessmentUpdatedWithStatus(this.casefileAssessmentId, 'Completed');
           verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
         });
       });

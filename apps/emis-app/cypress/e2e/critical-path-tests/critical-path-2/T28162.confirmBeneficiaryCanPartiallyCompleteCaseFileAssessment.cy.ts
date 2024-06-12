@@ -71,7 +71,7 @@ describe('[T28162] Confirm that the Beneficiary can partially complete a Case Fi
             assessmentFormId: this.assessmentFormId,
           };
           partiallyCompleteCasefileAssessment(casefileAssessmentParamData); // partially respond to assessment as a beneficiary
-          assessmentsListPage.refreshUntilFilledAssessmentUpdated(this.casefileAssessmentId);
+          assessmentsListPage.refreshUntilFilledAssessmentUpdatedWithStatus(this.casefileAssessmentId, 'Partial');
           verifyPartiallyCompletedCaseFileAssessment(roleName, this.casefileAssessmentId);
         });
       });

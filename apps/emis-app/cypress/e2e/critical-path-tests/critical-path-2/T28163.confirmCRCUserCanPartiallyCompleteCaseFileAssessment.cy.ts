@@ -78,7 +78,7 @@ describe('[T28163] Confirm that the CRC User can partially complete a Case File 
             };
             partiallyCompleteCasefileAssessment(casefileAssessmentParamData); // partially respond to assessment as a crc user
           });
-          assessmentsListPage.refreshUntilFilledAssessmentUpdated(this.casefileAssessmentId);
+          assessmentsListPage.refreshUntilFilledAssessmentUpdatedWithStatus(this.casefileAssessmentId, 'Partial');
           verifyPartiallyCompletedCaseFileAssessment(roleName, this.casefileAssessmentId);
         });
       });

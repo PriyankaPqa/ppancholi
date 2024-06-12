@@ -78,7 +78,7 @@ describe('[T28159] Confirm that the CRC User can complete a Case File Assessment
             };
             completeAndSubmitCasefileAssessment(casefileAssessmentParamData); // completely respond to assessment as a CRC user and click on submit
           });
-          assessmentsListPage.refreshUntilFilledAssessmentUpdated(this.casefileAssessmentId);
+          assessmentsListPage.refreshUntilFilledAssessmentUpdatedWithStatus(this.casefileAssessmentId, 'Completed');
           verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
         });
       });
