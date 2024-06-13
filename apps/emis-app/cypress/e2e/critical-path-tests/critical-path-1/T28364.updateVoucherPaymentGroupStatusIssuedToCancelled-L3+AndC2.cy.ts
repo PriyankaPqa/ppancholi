@@ -66,7 +66,7 @@ describe('[T28364] Update Voucher payment group status from Issued to Cancelled-
         });
         it('should successfully update Voucher payment group status.', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(this.FAPaymentId, 'Approved');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
@@ -104,6 +104,8 @@ describe('[T28364] Update Voucher payment group status from Issued to Cancelled-
         });
         it('should not be able to update Voucher payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(this.FAPaymentId, 'Approved');
+          financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();

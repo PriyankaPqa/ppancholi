@@ -66,7 +66,7 @@ describe('[T28357] Update Gift Card payment group Status from Issued to Cancelle
         });
         it('should successfully update Gift Card Payment Group Status from Issued to Cancelled', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(this.FAPaymentId, 'Approved');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
@@ -103,6 +103,8 @@ describe('[T28357] Update Gift Card payment group Status from Issued to Cancelle
         });
         it('should not be able to update Gift Card Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(this.FAPaymentId, 'Approved');
+          financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
           financialAssistanceDetailsPage.getPaymentLineStatusElement().click();

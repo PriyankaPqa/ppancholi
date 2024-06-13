@@ -111,6 +111,7 @@ describe('[T28380] Submit FA payment to an Approver', { tags: ['@approval', '@fi
           financialAssistanceHomePage.getFAPaymentNameById(this.FAPaymentId).should('eq', this.FAPaymentName);
           financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(this.FAPaymentId, 'Pending');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Pending');
           financialAssistanceHomePage.expandFAPayment();
           financialAssistanceHomePage.getFAPaymentGroupTitle().should('eq', 'Voucher');

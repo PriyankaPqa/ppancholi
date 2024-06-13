@@ -66,7 +66,7 @@ describe('[T28361] Update Prepaid card payment group status from New to Complete
         });
         it('should successfully update Prepaid card payment group status from New to Completed.', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(this.FAPaymentId, 'Approved');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

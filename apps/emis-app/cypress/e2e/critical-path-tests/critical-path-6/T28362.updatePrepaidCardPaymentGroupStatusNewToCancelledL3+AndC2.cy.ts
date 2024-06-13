@@ -66,7 +66,7 @@ describe('[T28362] Update Prepaid card payment group status from New to Cancelle
         });
         it('should successfully update Prepaid card payment group status from New to Cancelled', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
-          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(this.FAPaymentId, 'Approved');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

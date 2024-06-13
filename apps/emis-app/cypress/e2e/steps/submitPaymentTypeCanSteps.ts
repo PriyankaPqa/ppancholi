@@ -33,6 +33,7 @@ export const submitPaymentTypeCanSteps = (params: Partial<SubmitPaymentTypeCanSt
   financialAssistanceHomePage.getFAPaymentNameById(params.financialAssistancePayment.id).should('eq', params.financialAssistancePayment.name);
   financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
   financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
+  financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithStatus(params.financialAssistancePayment.id, 'Approved');
   financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
   financialAssistanceHomePage.getApprovalStatusHistoryIcon().should('be.visible');
   financialAssistanceHomePage.expandFAPayment();

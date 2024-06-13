@@ -145,6 +145,20 @@ export class FinancialAssistanceHomePage {
     );
   }
 
+  public refreshUntilFaPaymentDisplayedWithStatus(paymentId: string, expectedPaymentStatus: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => cy.getByDataTest(this.refreshButton).should('be.visible'),
+        checkCondition: () => Cypress.$(`[data-test='approval_status_${paymentId}']`).text().includes(expectedPaymentStatus),
+      },
+      {
+        timeoutInSec: 60,
+        errorMsg: `Unable to display updated FA Payment with status ${expectedPaymentStatus}`,
+        foundMsg: `FA Payment updated with status ${expectedPaymentStatus}`,
+      },
+    );
+  }
+
   public getApprovalHistoryRationaleByIndex(index: number) {
     return cy.getByDataTest(this.dialogApprovalHistoryRationale).eq(index).getAndTrimText();
   }
