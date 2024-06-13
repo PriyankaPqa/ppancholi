@@ -169,12 +169,18 @@ export const crcRegisterPotentialDuplicateSteps = (params: CrcRegisterPotentialD
   const householdMembersPage = addressPage.goToHouseholdMembersPage();
 
   const reviewRegistrationPage = householdMembersPage.goToReviewPage();
+  cy.intercept('POST', '**/orchestration/orchestration-households').as('potentialDuplicateHousehold'); // begins interception for potential duplicate household being created
   reviewRegistrationPage.goToConfirmationPage();
 
   const confirmBeneficiaryRegistrationPage = new ConfirmBeneficiaryRegistrationPage();
   confirmBeneficiaryRegistrationPage.getFullName()
     .should('string', params.potentialDuplicateMemberData.firstName)
     .and('string', params.potentialDuplicateMemberData.lastName);
+
+  cy.wait('@potentialDuplicateHousehold').then(async (interception) => {
+    cy.wrap(interception.response.body.caseFile.householdId).as('potentialDuplicateHouseholdId');
+  });
+
   confirmBeneficiaryRegistrationPage.getMessage().should('string', ' is now registered!');
   confirmBeneficiaryRegistrationPage.getRegistrationNumber().should('exist');
   confirmBeneficiaryRegistrationPage.getEventName().should('string', params.eventName);
@@ -183,7 +189,9 @@ export const crcRegisterPotentialDuplicateSteps = (params: CrcRegisterPotentialD
 
   const caseFilesHomePage = confirmBeneficiaryRegistrationPage.goToCaseFiles();
   caseFilesHomePage.refreshUntilCaseFilesUpdated(`${params.potentialDuplicateMemberData.firstName} ${params.potentialDuplicateMemberData.lastName}`);
-  caseFilesHomePage.goToFirstHouseholdProfile(params.potentialDuplicateMemberData.firstName, params.potentialDuplicateMemberData.lastName);
+  cy.get('@potentialDuplicateHouseholdId').then((potentialDuplicateHouseholdId) => {
+    cy.goTo(`casefile/household/${potentialDuplicateHouseholdId}`);
+  });
 };
 
 export const makeMemberPrimarySteps = (params: MakePrimaryPotentialDuplicateStepsParams) => {
@@ -400,7 +408,7 @@ export const assertPotentialDuplicatesSteps = (params: Partial<PotentialDuplicat
     manageDuplicatesPage.getDuplicateHouseholdCaseFileData()
       .should('string', `Case file number: ${params.caseFileNumber}`)
       .and('string', `Event: ${params.eventName}`);
-      manageDuplicatesPage.getDuplicateName().should('eq', `${params.firstName} ${params.lastName}`);
+    manageDuplicatesPage.getDuplicateName().should('eq', `${params.firstName} ${params.lastName}`);
     manageDuplicatesPage.getDuplicateHistoryStatusByIndex().should('eq', 'Flagged as potential');
     manageDuplicatesPage.getDuplicateHistoryUserByIndex().should('string', 'By: System').and('string', getToday());
     manageDuplicatesPage.getDuplicateHistoryRationaleByIndex().should('eq', 'Rationale: Flagged by the system');

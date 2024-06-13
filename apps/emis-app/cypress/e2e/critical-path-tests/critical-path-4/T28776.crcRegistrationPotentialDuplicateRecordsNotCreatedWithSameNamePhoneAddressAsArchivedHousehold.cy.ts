@@ -33,7 +33,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('[T28776] CRC REG NEW HOUSEHOLD - No potential duplicate records created when register with same LN, FN, Phone, and Address as an Archived household', { tags: ['@household'] }, () => {
+describe('[T28776] CRC REG NEW HOUSEHOLD - No potential duplicate records created when register with same LN, FN, Phone, and Address as an Archived household.', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

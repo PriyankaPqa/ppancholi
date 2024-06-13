@@ -31,7 +31,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 
 // eslint-disable-next-line
-describe('[T28790] CRC REG NEW HOUSEHOLD - Potential duplicates flagged when user registers individual with same Name & DOB as another EMIS member', { tags: ['@household', '@registration'] }, () => {
+describe('[T28790] CRC REG NEW HOUSEHOLD - Potential duplicates flagged when user registers individual with same Name & DOB as another EMIS member.', { tags: ['@household', '@registration'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
