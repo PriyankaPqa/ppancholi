@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { reasonCaseFileStatusUpdate } from '@libs/cypress-lib/helpers';
+import { CaseFileStatusUpdateReason } from '@libs/cypress-lib/helpers';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
@@ -50,7 +50,7 @@ describe('[T29047] Processed Mass Case File status(open to inactive) upload file
                 householdQuantity,
                 filePath: 'cypress/downloads/caseFileUpdateFile.csv',
                 reason: {
-                  optionItemId: reasonCaseFileStatusUpdate.Deceased,
+                  optionItemId: CaseFileStatusUpdateReason.Inactive,
                   specifiedOther: null,
                 },
                 rationale: 'it is not Mandatory field',

@@ -6,12 +6,12 @@ import {
   EFinancialFrequency,
 } from '@libs/entities-lib/financial-assistance';
 import { mockBaseData, Status } from '@libs/entities-lib/base';
-import { itemFinancialAssistance, subItemFinancialAssistance } from '@libs/cypress-lib/helpers';
+import { ItemFinancialAssistance, SubItemFinancialAssistance } from '@libs/cypress-lib/helpers';
 
 // eslint-disable-next-line
 export const mockFinancialAssistanceTableSubItemData = (amountType: EFinancialAmountModes, force?: Partial<IFinancialAssistanceTableSubItemData>) : IFinancialAssistanceTableSubItemData => ({
   subCategory: {
-    optionItemId: subItemFinancialAssistance.winterClothing,
+    optionItemId: SubItemFinancialAssistance.WinterClothing,
     specifiedOther: null,
   },
   maximumAmount: 80,
@@ -24,7 +24,7 @@ export const mockFinancialAssistanceTableSubItemData = (amountType: EFinancialAm
 // eslint-disable-next-line
 export const mockFinancialAssistanceTableItemData = (amountType: EFinancialAmountModes, force?: Partial<IFinancialAssistanceTableItemData>) : IFinancialAssistanceTableItemData => ({
   mainCategory: {
-    optionItemId: itemFinancialAssistance.clothing,
+    optionItemId: ItemFinancialAssistance.Clothing,
     specifiedOther: null,
   },
   subItems: [mockFinancialAssistanceTableSubItemData(amountType)],

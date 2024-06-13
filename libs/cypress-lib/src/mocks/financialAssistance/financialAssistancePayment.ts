@@ -1,4 +1,4 @@
-import { itemFinancialAssistance, subItemFinancialAssistance } from '@libs/cypress-lib/helpers';
+import { ItemFinancialAssistance, SubItemFinancialAssistance } from '@libs/cypress-lib/helpers';
 import {
   ApprovalAction,
   ApprovalStatus,
@@ -18,8 +18,8 @@ import { mockBaseAddressData } from '../household/household';
 export const mockFinancialAssistancePaymentLine = (force?: Partial<IFinancialAssistancePaymentLine>) : IFinancialAssistancePaymentLine => ({
   ...mockBaseData(),
   id: '',
-  mainCategoryId: itemFinancialAssistance.clothing,
-  subCategoryId: subItemFinancialAssistance.winterClothing,
+  mainCategoryId: ItemFinancialAssistance.Clothing,
+  subCategoryId: SubItemFinancialAssistance.WinterClothing,
   documentReceived: false,
   amount: 80.00,
   actualAmount: null,

@@ -2,7 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { identificationIdProvided } from '@libs/cypress-lib/helpers';
+import { IdentificationIdProvided } from '@libs/cypress-lib/helpers';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -71,7 +71,7 @@ describe('[T29058] Mass Action FA upload file passes pre-processing when Authent
             cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
             const params: IIdentityAuthentication = {
               identificationIds: [{
-                optionItemId: identificationIdProvided.CanadianCitizenshipCard,
+                optionItemId: IdentificationIdProvided.CanadianCitizenshipCard,
                 specifiedOther: null,
                }],
               method: IdentityAuthenticationMethod.InPerson,

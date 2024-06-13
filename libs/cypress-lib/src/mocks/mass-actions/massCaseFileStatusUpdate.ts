@@ -1,4 +1,4 @@
-import { getCurrentDateString, getRandomNumber, reasonCaseFileStatusUpdate } from '@libs/cypress-lib/helpers';
+import { CaseFileStatusUpdateReason, getCurrentDateString, getRandomNumber } from '@libs/cypress-lib/helpers';
 import { CaseFileStatus } from '@libs/entities-lib/src/case-file';
 import { IEventEntity } from '@libs/entities-lib/src/event';
 import { IMassActionCaseFileStatusCreatePayload } from '@libs/services-lib/src/mass-actions/entity';
@@ -11,7 +11,7 @@ export const mockCreateMassCaseFileStatusUpdateRequest = (event: IEventEntity, f
   eventId: '',
   status: CaseFileStatus.Inactive,
   reason: {
-    optionItemId: reasonCaseFileStatusUpdate.Deceased,
+    optionItemId: CaseFileStatusUpdateReason.Inactive,
     specifiedOther: null,
   },
   rationale: 'test rationale',

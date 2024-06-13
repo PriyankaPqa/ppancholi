@@ -135,6 +135,16 @@ export const generateRandomLabelData = (casefileId:string, eTag: string): ILabel
   ETag: eTag,
 });
 
+export interface ITriageDataCorrectionTemplate {
+  CaseFileId: string,
+  Triage: string,
+}
+
+export const generateRandomTriageData = (casefileId:string): ITriageDataCorrectionTemplate => ({
+  CaseFileId: casefileId,
+  Triage: 'Tier 2',
+});
+
 export interface IIdentitySetDataCorrectionTemplate {
   PersonId: string,
   FirstName: string,
@@ -379,5 +389,30 @@ function extractTemporaryAddressDataCorrectionColumnNames(memberHouseholds: Reco
 export const fixtureGenerateTemporaryAddressDataCorrectionXlsxFile = (memberHouseholds: Record<string, string>, tableName: string, fileName: string) => {
   const columns = extractTemporaryAddressDataCorrectionColumnNames(memberHouseholds);
   const rows = generateTemporaryAddressDataCorrectionRowsData(memberHouseholds);
+  return generateXlsxFile(columns, rows, tableName, fileName);
+};
+
+function extractTriageDataCorrectionColumnNames(casefiles: Record<string, string>): IXlsxTableColumnProperties[] {
+  const firstCaseFileId = Object.keys(casefiles)[0];
+  const userData = generateRandomTriageData(firstCaseFileId);
+  const columnNames = Object.keys(userData).map((columnName) => ({
+    name: columnName,
+    filterButton: true,
+  }));
+  return columnNames;
+}
+
+function generateTriageDataCorrectionRowsData(casefiles: Record<string, string>): string[][] {
+  const allRowsData: string[][] = [];
+  Object.entries(casefiles).forEach(([caseFileId]) => {
+    const individualRowData = Object.values(generateRandomTriageData(caseFileId));
+    allRowsData.push(individualRowData);
+  });
+  return allRowsData;
+}
+
+export const fixtureGenerateTriageDataCorrectionXlsxFile = (casefiles: Record<string, string>, tableName: string, fileName: string) => {
+  const columns = extractTriageDataCorrectionColumnNames(casefiles);
+  const rows = generateTriageDataCorrectionRowsData(casefiles);
   return generateXlsxFile(columns, rows, tableName, fileName);
 };

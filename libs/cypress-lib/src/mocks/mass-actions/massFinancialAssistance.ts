@@ -1,4 +1,4 @@
-import { getCurrentDateString, getRandomNumber, itemFinancialAssistance, subItemFinancialAssistance } from '@libs/cypress-lib/helpers';
+import { getCurrentDateString, getRandomNumber, ItemFinancialAssistance, SubItemFinancialAssistance } from '@libs/cypress-lib/helpers';
 import { IEventEntity } from '@libs/entities-lib/src/event';
 import { EPaymentModalities } from '@libs/entities-lib/src/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/src/mass-actions/entity';
@@ -9,8 +9,8 @@ export const mockCreateMassFinancialAssistanceRequest = (event: IEventEntity, fo
   eventId: '',
   tableId: '',
   programId: '',
-  mainCategoryId: itemFinancialAssistance.clothing,
-  subCategoryId: subItemFinancialAssistance.winterClothing,
+  mainCategoryId: ItemFinancialAssistance.Clothing,
+  subCategoryId: SubItemFinancialAssistance.WinterClothing,
   paymentModality: EPaymentModalities.Cheque,
   amount: 80.00,
   search: '',
@@ -56,8 +56,8 @@ export const mockCreateMassFinancialAssistanceUploadCsvFileRequest = (params: Mo
   data.append('eventId', params.eventId);
   data.append('tableId', params.tableId);
   data.append('programId', params.programId);
-  data.append('mainCategoryId', itemFinancialAssistance.clothing);
-  data.append('subCategoryId', subItemFinancialAssistance.winterClothing);
+  data.append('mainCategoryId', ItemFinancialAssistance.Clothing);
+  data.append('subCategoryId', SubItemFinancialAssistance.WinterClothing);
   data.append('paymentModality', `${EPaymentModalities.Cheque}`);
   data.append('amount', '80.00');
   data.append('name', `test mass financial assistance- - ${getCurrentDateString()} - s${getRandomNumber()}`);

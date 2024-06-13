@@ -4,7 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
-import { identificationIdProvided } from '@libs/cypress-lib/helpers';
+import { IdentificationIdProvided } from '@libs/cypress-lib/helpers';
 import {
   createEventAndTeam,
   createProgramWithTableWithItemAndSubItem, MassActionFinancialAssistanceUploadFileParams,
@@ -91,7 +91,7 @@ describe(
             await updateProgram(this.provider, updateProgramEntity);
             const params: IIdentityAuthentication = {
               identificationIds: [{
-                optionItemId: identificationIdProvided.CanadianCitizenshipCard,
+                optionItemId: IdentificationIdProvided.CanadianCitizenshipCard,
                 specifiedOther: null,
               }],
               method: IdentityAuthenticationMethod.InPerson,
