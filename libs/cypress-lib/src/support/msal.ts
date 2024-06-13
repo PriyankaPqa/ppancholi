@@ -211,25 +211,35 @@ export const getInjectTokens = (tokenResponse: ServerAuthorizationTokenResponse)
   };
 };
 
-const getTokenIDS = (as = UserRoles.level6) => {
+const getTokenIDS = (as = UserRoles.level6, retries = 5, waitTime = 2000) => {
   const { username } = getCredentials(as as UserRoles);
-  cy.request({
-    method: 'POST',
-    url: Cypress.env('IDS_TOKEN_ENDPOINT'),
-    form: true,
-    body: {
-      grant_type: 'client_credentials_impersonation',
-      client_id: 'cypress',
-      client_secret: Cypress.env('IDS_CLIENT_SECRET'),
-      scope: ['openid profile email emisid'].concat(Cypress.env('IDS_API_SCOPES')).join(' '),
-      username,
-      tid: Cypress.env('AZURE_TENANT_ID'),
-    },
-  }).then((response) => {
-    const tokenResponse = response.body as ServerAuthorizationTokenResponse;
-    tokenResponse.id_token = tokenResponse.access_token;
-    return tokenResponse;
-  });
+
+  const requestToken = (retryCount: number, wait: number): Cypress.Chainable<ServerAuthorizationTokenResponse> => cy.request({
+      method: 'POST',
+      url: Cypress.env('IDS_TOKEN_ENDPOINT'),
+      form: true,
+      failOnStatusCode: false,
+      body: {
+        grant_type: 'client_credentials_impersonation',
+        client_id: 'cypress',
+        client_secret: Cypress.env('IDS_CLIENT_SECRET'),
+        scope: ['openid profile email emisid'].concat(Cypress.env('IDS_API_SCOPES')).join(' '),
+        username,
+        tid: Cypress.env('AZURE_TENANT_ID'),
+      },
+    }).then((response) => {
+      if (response.status === 200) {
+        const tokenResponse = response.body as ServerAuthorizationTokenResponse;
+        tokenResponse.id_token = tokenResponse.access_token;
+        return cy.wrap(tokenResponse);
+      } if (retryCount < retries) {
+        cy.wait(wait);
+        return requestToken(retryCount + 1, wait * 2);
+      }
+        throw new Error(`Failed to get token after ${retries} retries`);
+    });
+
+  return requestToken(0, waitTime);
 };
 
 const getTokenAD = (as = UserRoles.level6) => {
