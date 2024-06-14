@@ -117,7 +117,7 @@
                 </v-icon>
                 {{ $t('task.create_edit.due_date') }}
               </v-col>
-              <v-col>
+              <v-col cols="8">
                 <div data-test="task-details-due-date">
                   {{ helpers.getLocalStringDate(task.dueDate, 'Task.dueDate', 'PP') }}
                 </div>
@@ -128,7 +128,7 @@
               <v-col cols="4" class="font-weight-bold">
                 {{ $t('task.task_details.date_added') }}
               </v-col>
-              <v-col>
+              <v-col cols="8">
                 <div data-test="task-details-date-added">
                   {{ helpers.getLocalStringDate(task.dateAdded, '', 'PP') }}
                 </div>
@@ -139,7 +139,7 @@
               <v-col cols="4" class="font-weight-bold">
                 {{ $t('task.create_edit.task_description') }}
               </v-col>
-              <v-col>
+              <v-col cols="8">
                 <div class="task-details-description">
                   {{ task.description }}
                 </div>
@@ -157,7 +157,7 @@
         {{ $t('task.task_details.back_to_tasks') }}
       </v-btn>
     </template>
-    <task-action-dialog v-if="showTaskActionDialog" :task="task" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
+    <task-action-dialog v-if="showTaskActionDialog" :task-id="taskId" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
     <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
   </rc-page-content>
 </template>

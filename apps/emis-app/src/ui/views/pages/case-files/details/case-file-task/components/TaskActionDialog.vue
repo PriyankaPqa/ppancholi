@@ -10,13 +10,41 @@
       :show-help="false"
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"
-      :min-height="showAssignTeamSelect ? 500 : 360"
+      :min-height="showAssignTeamSelect ? 600 : 360"
       :loading="loading"
       data-test="task-action-dialog"
       @cancel="$emit('update:show', false);"
       @close="$emit('update:show', false);"
       @submit="onSubmit">
       <div class="px-16">
+        <div v-if="task.taskType === TaskType.Team" class="mb-10">
+          <div class="font-weight-bold rc-heading-5">
+            {{ helpers.capitalize($m(selectedTaskName?.name)) }}
+          </div>
+          <div class="creator-info grey-darken-2 rc-body12 mb-3" data-test="task-details-team-task-creator-info">
+            {{ teamTaskCreatorInfo }}
+          </div>
+          <v-row class="justify-center mt-0 rc-body14 px-3">
+            <v-col cols="12" class="border-all border-radius-6 pa-0">
+              <v-row v-if="selectedCategory" class="border-bottom ma-0 px-2">
+                <v-col cols="3" class="font-weight-bold">
+                  {{ $t('task.create_edit.task_category') }}
+                </v-col>
+                <v-col cols="9">
+                  {{ selectedCategory.isOther ? task.category.specifiedOther : $m(selectedCategory.name) }}
+                </v-col>
+              </v-row>
+              <v-row class="ma-0 flex-nowrap flex px-2">
+                <v-col cols="3" class="font-weight-bold">
+                  {{ $t('task.create_edit.task_description') }}
+                </v-col>
+                <v-col cols="9">
+                  {{ task.description }}
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </div>
         <div class="action-select-area mb-8 py-5">
           <validation-provider v-slot="{ errors }" :rules="rules.actionTaken">
             <v-radio-group
@@ -67,16 +95,21 @@
 </template>
 <script lang="ts">
 
-import Vue from 'vue';
 import { RcDialog, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { ITaskEntity, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ValidationProvider } from 'vee-validate';
 import { VForm } from '@libs/shared-lib/types';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { TranslateResult } from 'vue-i18n';
 import { useTeamStore } from '@/pinia/team/team';
 import { useTaskStore } from '@/pinia/task/task';
+import mixins from 'vue-typed-mixins';
+import caseFileTask from '@/ui/mixins/caseFileTask';
+import helpers from '@/ui/helpers/helpers';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
+import { GlobalHandler } from '@libs/services-lib/http-client';
+import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 
 interface IActionItem {
   value: TaskActionTaken;
@@ -84,7 +117,7 @@ interface IActionItem {
   description: TranslateResult | string;
 }
 
-export default Vue.extend({
+export default mixins(caseFileTask).extend({
   name: 'TaskActionDialog',
 
   components: {
@@ -105,8 +138,8 @@ export default Vue.extend({
       default: '',
     },
 
-    task: {
-      type: Object as () => ITaskEntity,
+    taskId: {
+      type: String,
       required: true,
     },
   },
@@ -120,6 +153,7 @@ export default Vue.extend({
       submitLoading: false,
       loading: false,
       TaskType,
+      helpers,
     };
   },
 
@@ -182,13 +216,29 @@ export default Vue.extend({
       const actionAssignTeam = [TaskActionTaken.Assign, TaskActionTaken.ActionCompleted, TaskActionTaken.Reopen];
       return this.task.taskType === TaskType.Team && actionAssignTeam.indexOf(this.actionTaken) >= 0;
     },
+
+    userAccountMetadata(): IUserAccountMetadata {
+      return useUserAccountMetadataStore().getById(this.task.createdBy);
+    },
+
+    teamTaskCreatorInfo(): TranslateResult {
+      const user = ` ${this.userAccountMetadata.displayName}`;
+      const role = ` (${this.$m(this.userAccountMetadata.roleName)})`;
+      let creatorInfo = this.$t('task.task_details.by');
+      creatorInfo += user;
+      creatorInfo += role;
+      return creatorInfo;
+    },
   },
 
   async created() {
     if (this.task.taskType === TaskType.Team) {
       try {
         this.loading = true;
+        await useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial);
         await this.getAssignableTeams();
+        this.selectedTaskNameId = this.task.name?.optionItemId;
+        this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
       } finally {
         this.loading = false;
       }
@@ -232,5 +282,13 @@ export default Vue.extend({
   background-color: var(--v-grey-lighten4);
   border-radius: 4px;
   width: 100%;
+}
+
+.border-bottom {
+  border-bottom: 1px solid var(--v-grey-lighten3);
+}
+
+.border-radius-6 {
+  border-radius: 6px;
 }
 </style>
