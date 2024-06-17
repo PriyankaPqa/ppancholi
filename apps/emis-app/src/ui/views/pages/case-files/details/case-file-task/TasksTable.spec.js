@@ -1104,7 +1104,7 @@ describe('TasksTable.vue', () => {
     describe('setActioningTask', () => {
       it('should set actioning task and event id properly', async () => {
         await wrapper.setData({
-          actioningTask: null,
+          actioningTaskId: '',
           actioningEventId: '',
         });
         const item = {
@@ -1112,7 +1112,7 @@ describe('TasksTable.vue', () => {
           metadata: mockTaskMetadata(),
         };
         wrapper.vm.setActioningTask(item);
-        expect(wrapper.vm.actioningTask).toEqual(mockTeamTaskEntity());
+        expect(wrapper.vm.actioningTaskId).toEqual(mockTeamTaskEntity().id);
         expect(wrapper.vm.actioningEventId).toEqual('mock-event-id-1');
       });
     });

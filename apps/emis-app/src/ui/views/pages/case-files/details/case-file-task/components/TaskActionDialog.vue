@@ -10,23 +10,23 @@
       :show-help="false"
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"
-      :min-height="showAssignTeamSelect ? 600 : 360"
+      :min-height="showAssignTeamSelect ? 500 : 360"
       :loading="loading"
       data-test="task-action-dialog"
       @cancel="$emit('update:show', false);"
       @close="$emit('update:show', false);"
       @submit="onSubmit">
       <div class="px-16">
-        <div v-if="task.taskType === TaskType.Team" class="mb-10">
-          <div class="font-weight-bold rc-heading-5">
-            {{ helpers.capitalize($m(selectedTaskName?.name)) }}
+        <div v-if="task.taskType === TaskType.Team" class="mb-10" data-test="task-action-dialog-team-task-info">
+          <div v-if="selectedTaskName" class="font-weight-bold rc-heading-5">
+            {{ helpers.capitalize($m(selectedTaskName.name)) }}
           </div>
-          <div class="creator-info grey-darken-2 rc-body12 mb-3" data-test="task-details-team-task-creator-info">
+          <div class="creator-info grey-darken-2 rc-body12 mb-3">
             {{ teamTaskCreatorInfo }}
           </div>
           <v-row class="justify-center mt-0 rc-body14 px-3">
             <v-col cols="12" class="border-all border-radius-6 pa-0">
-              <v-row v-if="selectedCategory" class="border-bottom ma-0 px-2">
+              <v-row v-if="selectedCategory" class="border-bottom ma-0 px-2" data-test="task-action-dialog-category">
                 <v-col cols="3" class="font-weight-bold">
                   {{ $t('task.create_edit.task_category') }}
                 </v-col>
