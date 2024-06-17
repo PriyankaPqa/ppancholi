@@ -19,7 +19,7 @@
       <div class="px-0">
         <div v-if="task.taskType === TaskType.Team" class="mb-10" data-test="task-action-dialog-team-task-info">
           <div v-if="selectedTaskName" class="font-weight-bold rc-heading-5">
-            {{ helpers.capitalize($m(selectedTaskName.name)) }}
+            {{ helpers.capitalize(selectedTaskName) }}
           </div>
           <div class="creator-info grey-darken-2 rc-body12 mb-3">
             {{ teamTaskCreatorInfo }}
@@ -31,7 +31,7 @@
                   {{ $t('task.create_edit.task_category') }}
                 </v-col>
                 <v-col cols="9">
-                  {{ selectedCategory.isOther ? task.category.specifiedOther : $m(selectedCategory.name) }}
+                  {{ selectedCategory }}
                 </v-col>
               </v-row>
               <v-row class="ma-0 flex-nowrap flex px-2">
@@ -39,7 +39,7 @@
                   {{ $t('task.create_edit.task_description') }}
                 </v-col>
                 <v-col cols="9">
-                  {{ task.description }}
+                  {{ description }}
                 </v-col>
               </v-row>
             </v-col>
@@ -95,17 +95,16 @@
 </template>
 <script lang="ts">
 
+import Vue from 'vue';
 import { RcDialog, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { ITaskEntity, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ValidationProvider } from 'vee-validate';
 import { VForm } from '@libs/shared-lib/types';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { TranslateResult } from 'vue-i18n';
 import { useTeamStore } from '@/pinia/team/team';
 import { useTaskStore } from '@/pinia/task/task';
-import mixins from 'vue-typed-mixins';
-import caseFileTask from '@/ui/mixins/caseFileTask';
 import helpers from '@/ui/helpers/helpers';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { GlobalHandler } from '@libs/services-lib/http-client';
@@ -117,7 +116,7 @@ interface IActionItem {
   description: TranslateResult | string;
 }
 
-export default mixins(caseFileTask).extend({
+export default Vue.extend({
   name: 'TaskActionDialog',
 
   components: {
@@ -138,7 +137,22 @@ export default mixins(caseFileTask).extend({
       default: '',
     },
 
-    taskId: {
+    task: {
+      type: Object as () => ITaskEntity,
+      required: true,
+    },
+
+    selectedTaskName: {
+      type: String,
+      default: '',
+    },
+
+    selectedCategory: {
+      type: String,
+      default: '',
+    },
+
+    description: {
       type: String,
       required: true,
     },
@@ -237,8 +251,6 @@ export default mixins(caseFileTask).extend({
         this.loading = true;
         await useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial);
         await this.getAssignableTeams();
-        this.selectedTaskNameId = this.task.name?.optionItemId;
-        this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
       } finally {
         this.loading = false;
       }

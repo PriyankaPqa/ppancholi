@@ -98,7 +98,7 @@
                 </v-col>
                 <v-col>
                   <div data-test="task-details-category">
-                    {{ selectedCategory.isOther ? task.category.specifiedOther : $m(selectedCategory.name) }}
+                    {{ displayedCategory }}
                   </div>
                   <div v-if="$m(selectedCategory.description)">
                     <v-icon small class="mr-1 pb-1">
@@ -157,7 +157,14 @@
         {{ $t('task.task_details.back_to_tasks') }}
       </v-btn>
     </template>
-    <task-action-dialog v-if="showTaskActionDialog" :task-id="taskId" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
+    <task-action-dialog
+      v-if="showTaskActionDialog"
+      :task="task"
+      :event-id="caseFile.eventId"
+      :selected-task-name="displayedTaskName"
+      :selected-category="displayedCategory"
+      :description="task.description"
+      :show.sync="showTaskActionDialog" />
     <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
   </rc-page-content>
 </template>
@@ -227,6 +234,10 @@ export default mixins(caseFileTask, caseFileDetail).extend({
         return this.$m(this.selectedTaskName?.name) || '';
       }
       return this.task?.name?.specifiedOther || '';
+    },
+
+    displayedCategory(): string {
+      return this.selectedCategory.isOther ? this.task.category.specifiedOther : this.$m(this.selectedCategory.name);
     },
 
     userAccountMetadata(): IUserAccountMetadata {
