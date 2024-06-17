@@ -16,7 +16,7 @@
       @cancel="$emit('update:show', false);"
       @close="$emit('update:show', false);"
       @submit="onSubmit">
-      <div class="px-16">
+      <div class="px-0">
         <div v-if="task.taskType === TaskType.Team" class="mb-10" data-test="task-action-dialog-team-task-info">
           <div v-if="selectedTaskName" class="font-weight-bold rc-heading-5">
             {{ helpers.capitalize($m(selectedTaskName.name)) }}
@@ -71,7 +71,7 @@
           </validation-provider>
         </div>
 
-        <div v-if="showAssignTeamSelect" class=" py-0">
+        <div v-if="showAssignTeamSelect" class="py-0">
           <v-select-with-validation
             v-model="assignedTeamId"
             :items="assignableTeams"
