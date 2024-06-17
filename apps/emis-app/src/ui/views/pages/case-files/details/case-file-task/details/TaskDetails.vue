@@ -1,8 +1,5 @@
 <template>
-  <rc-page-content
-    :title="title"
-    show-back-button
-    @back="navigateBack">
+  <rc-page-content :title="title">
     <rc-page-loading v-if="loading" />
     <v-row v-else class="justify-center mt-6">
       <v-col cols="12" lg="8">
