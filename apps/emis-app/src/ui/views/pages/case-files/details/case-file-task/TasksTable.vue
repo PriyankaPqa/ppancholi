@@ -163,7 +163,7 @@
     <task-action-dialog
       v-if="showTaskActionDialog"
       :task="actioningTask.entity"
-      :event-id="actioningEventId"
+      :event-id="actioningTask.metadata.eventId"
       :selected-task-name="actioningTask.metadata.taskName"
       :selected-category="actioningTask.metadata.taskCategory"
       :description="actioningTask.entity.description"
@@ -255,7 +255,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       TaskStatus,
       showTaskActionDialog: false,
       actioningTask: null as IParsedTaskCombined,
-      actioningEventId: '',
       sqlSearchMode: true,
       combinedTaskStore: new CombinedStoreFactory<ITaskEntity, ITaskMetadata, IdParams>(useTaskStore(), useTaskMetadataStore()),
     };
@@ -638,7 +637,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     setActioningTask(item: ITaskCombined) {
       this.actioningTask = item;
-      this.actioningEventId = item.metadata.eventId;
       this.showTaskActionDialog = true;
     },
 
