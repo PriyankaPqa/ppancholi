@@ -6,6 +6,7 @@ import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   MassActionCaseFileStatusViaUploadFileParams,
   createEventAndTeam,
+  prepareStateCreateAndSearchHouseholds,
   prepareStateMassActionCaseFileStatusViaUploadFile,
 } from '../../helpers/prepareState';
 import { ProcessMassActionCaseFileStatusUpdateCanSteps, caseFileDetailsPageAssertionSteps } from './canSteps';
@@ -44,10 +45,11 @@ describe('[T29047] Processed Mass Case File status(open to inactive) upload file
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.getToken(roleName).then(async (tokenResponse) => {
+              const resultCreateHouseholds = await prepareStateCreateAndSearchHouseholds(tokenResponse.access_token, resultPrepareStateEvent.event, householdQuantity);
               const massActionCaseFileStatusUploadFileParamData: MassActionCaseFileStatusViaUploadFileParams = {
-                accessToken: tokenResponse.access_token,
+                provider: resultCreateHouseholds.responseCreateHouseholds.provider,
+                caseFiles: [resultCreateHouseholds.caseFileCreated1, resultCreateHouseholds.caseFileCreated2, resultCreateHouseholds.caseFileCreated3],
                 event: resultPrepareStateEvent.event,
-                householdQuantity,
                 filePath: 'cypress/downloads/caseFileUpdateFile.csv',
                 reason: {
                   optionItemId: CaseFileStatusUpdateReason.Inactive,
@@ -60,7 +62,7 @@ describe('[T29047] Processed Mass Case File status(open to inactive) upload file
               const resultMassActionCaseFileStatusViaUploadFile = await prepareStateMassActionCaseFileStatusViaUploadFile(massActionCaseFileStatusUploadFileParamData);
               cy.wrap(massActionCaseFileStatusUploadFileParamData).as('massActionCaseFileStatusUploadFile');
               cy.wrap(resultMassActionCaseFileStatusViaUploadFile.responseMassCaseFileStatusUpdate).as('responseMassCaseFileStatusUpdate');
-              cy.wrap(resultMassActionCaseFileStatusViaUploadFile.resultCreateHouseholds.caseFileCreated1.caseFileNumber).as('caseFileNumber1');
+              cy.wrap(resultCreateHouseholds.caseFileCreated1.caseFileNumber).as('caseFileNumber1');
               cy.wrap(resultMassActionCaseFileStatusViaUploadFile.responseMassCaseFileStatusUpdate.name).as('massActionName');
               cy.login(roleName);
               cy.goTo(`mass-actions/case-file-status/details/${resultMassActionCaseFileStatusViaUploadFile.responseMassCaseFileStatusUpdate.id}`);

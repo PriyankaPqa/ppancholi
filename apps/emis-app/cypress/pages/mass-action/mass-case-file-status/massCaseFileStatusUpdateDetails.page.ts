@@ -46,7 +46,7 @@ export class MassCaseFileStatusUpdateDetailsPage extends BaseDetailsMassAction {
   }
 
   public getErrorMessage() {
-    return cy.getByDataTest(this.errorMessage).invoke('text').then((text) => text);
+    return cy.getByDataTest(this.errorMessage).getAndTrimText();
   }
 
   public clickInvalidDownloadButton() {

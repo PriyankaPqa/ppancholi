@@ -146,10 +146,11 @@ export interface SubmitUpdateFaPaymentParams {
   createdFinancialAssistancePaymentId: string,
   paymentStatus: PaymentStatus,
 }
+
 export interface MassActionCaseFileStatusViaUploadFileParams {
-  accessToken: string,
+  provider: any,
   event: IEventEntity,
-  householdQuantity: number,
+  caseFiles: ICaseFileEntity[],
   filePath: string,
   reason: IListOption,
   rationale: string,
@@ -941,25 +942,23 @@ export const prepareStatePreProcessMassCaseFileStatusUpdate = async (accessToken
 
 /**
  * Creates a Mass Case File Status Update using csv file
- * @param accessToken
+ * @param provider
  * @param event
- * @param householdQuantity
+ * @param caseFiles
  * @param filePath
  * @param reason
  * @param rationale
  * @param status
  */
 export const prepareStateMassActionCaseFileStatusViaUploadFile = async (params: MassActionCaseFileStatusViaUploadFileParams) => {
-  const resultCreateHouseholds = await prepareStateCreateAndSearchHouseholds(params.accessToken, params.event, params.householdQuantity);
-
   const generatedCaseFileStatusCsvFile = fixtureGenerateCaseFileStatusCsvFile(
     [
-      resultCreateHouseholds.caseFileCreated1,
-      resultCreateHouseholds.caseFileCreated2,
-      resultCreateHouseholds.caseFileCreated3,
+      params.caseFiles[0],
+      params.caseFiles[1],
+      params.caseFiles[2],
     ],
     params.filePath,
-);
+  );
 
   const mockRequestParamData: MockCreateMassCaseFileStatusUpdateFileRequestParams = {
     eventId: params.event.id,
@@ -970,6 +969,6 @@ export const prepareStateMassActionCaseFileStatusViaUploadFile = async (params: 
   };
   const mockCreateMassCaseFileStatusUpdateFile = mockCreateMassCaseFileStatusUpdateFileRequest(mockRequestParamData);
   // eslint-disable-next-line
-  const responseMassCaseFileStatusUpdate = await resultCreateHouseholds.responseCreateHouseholds.provider.cypress.massAction.createWithFile('case-file-status', mockCreateMassCaseFileStatusUpdateFile);
-  return { responseMassCaseFileStatusUpdate, mockRequestParamData, resultCreateHouseholds };
+  const responseMassCaseFileStatusUpdate = await params.provider.cypress.massAction.createWithFile('case-file-status', mockCreateMassCaseFileStatusUpdateFile);
+  return { responseMassCaseFileStatusUpdate, mockRequestParamData };
 };
