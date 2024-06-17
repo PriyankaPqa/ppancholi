@@ -163,7 +163,6 @@
       :event-id="caseFile.eventId"
       :selected-task-name="displayedTaskName"
       :selected-category="displayedCategory"
-      :description="task.description"
       :show.sync="showTaskActionDialog" />
     <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
   </rc-page-content>

@@ -166,7 +166,6 @@
       :event-id="actioningTask.metadata.eventId"
       :selected-task-name="actioningTask.metadata.taskName"
       :selected-category="actioningTask.metadata.taskCategory"
-      :description="actioningTask.entity.description"
       :show.sync="showTaskActionDialog" />
   </div>
 </template>

@@ -39,7 +39,7 @@
                   {{ $t('task.create_edit.task_description') }}
                 </v-col>
                 <v-col cols="9">
-                  {{ description }}
+                  {{ task.description }}
                 </v-col>
               </v-row>
             </v-col>
@@ -150,11 +150,6 @@ export default Vue.extend({
     selectedCategory: {
       type: String,
       default: '',
-    },
-
-    description: {
-      type: String,
-      required: true,
     },
   },
 

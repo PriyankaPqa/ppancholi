@@ -28,7 +28,6 @@ describe('TaskActionDialog.vue', () => {
         task: mockTeamTaskEntity({ id: 'mock-task-id' }),
         selectedTaskName: 'mock-task-name',
         selectedCategory: 'mock-task-category',
-        description: 'mock-description-content',
       },
       mocks: {
         $services: services,
