@@ -8,6 +8,8 @@ require('tsconfig-paths').register();
 const { cloudPlugin } = require('cypress-cloud/plugin');
 require('dotenv').config({ path: `${__dirname}/../../.env.local`, override: true });
 
+const zephyrReporter = process.env.ZEPHYR_REPORTER !== 'false';
+
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
   reporterOptions: reporterConfig,
@@ -23,7 +25,10 @@ export default defineConfig({
       });
       // eslint-disable-next-line global-require
       require('@cypress/grep/src/plugin')(config);
-      return initPlugins(on, [cloudPlugin, zephyrPlugin], config);
+      if (zephyrReporter) {
+        return initPlugins(on, [cloudPlugin, zephyrPlugin], config);
+      }
+        return initPlugins(on, [cloudPlugin], config);
     },
     videoUploadOnPasses: false,
     baseUrl: 'http://localhost:8080/',

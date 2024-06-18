@@ -6,6 +6,8 @@ import reporterConfig from './cypress-reporter-config';
 
 const { cloudPlugin } = require('cypress-cloud/plugin');
 
+const zephyrReporter = process.env.ZEPHYR_REPORTER !== 'false';
+
 require('tsconfig-paths').register();
 
 require('dotenv').config({ path: `${__dirname}/../../.env.local`, override: true });
@@ -26,7 +28,10 @@ export default defineConfig({
 
       // eslint-disable-next-line global-require
       require('@cypress/grep/src/plugin')(config);
-      return initPlugins(on, [cloudPlugin, zephyrPlugin], config);
+      if (zephyrReporter) {
+        return initPlugins(on, [cloudPlugin, zephyrPlugin], config);
+      }
+        return initPlugins(on, [cloudPlugin], config);
     },
     videoUploadOnPasses: false,
     baseUrl: 'http://localhost:8080/',
