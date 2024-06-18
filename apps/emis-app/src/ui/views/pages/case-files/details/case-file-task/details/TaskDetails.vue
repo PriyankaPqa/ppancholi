@@ -236,7 +236,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     },
 
     displayedCategory(): string {
-      return this.selectedCategory.isOther ? this.task.category.specifiedOther : this.$m(this.selectedCategory.name);
+      return this.selectedCategory?.isOther ? this.task.category.specifiedOther : this.$m(this.selectedCategory?.name);
     },
 
     userAccountMetadata(): IUserAccountMetadata {

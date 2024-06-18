@@ -134,7 +134,7 @@ export default Vue.extend({
 
     eventId: {
       type: String,
-      default: '',
+      required: true,
     },
 
     task: {
