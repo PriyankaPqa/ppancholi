@@ -23,6 +23,8 @@ import { Status } from '@libs/entities-lib/base';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import flushPromises from 'flush-promises';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
 import Component from './TasksTable.vue';
 
 const localVue = createLocalVue();
@@ -282,6 +284,90 @@ describe('TasksTable.vue', () => {
         }, false);
         const element = wrapper.findDataTest('task-table-case-file-number-link');
         expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('task-action-dialog', () => {
+      it('should pass props EventId from caseFile when it is in case file', async () => {
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
+
+        await doMount({
+          propsData: {
+            id: 'mock-case-file-id-1',
+            isInCaseFile: true,
+            caseFile: mockCaseFileEntity({ eventId: 'event-id-1' }),
+          },
+          data() {
+            return {
+              showTaskActionDialog: true,
+              actioningTask: {
+                entity: mockTeamTaskEntity(),
+                metadata: mockTaskMetadata({
+                  eventId: 'event-id-2',
+                  taskName: 'mock-task-name',
+                  taskCategory: 'mock-category',
+                  userWorkingOnNameWithRole: 'user-name',
+                }),
+              },
+            };
+          },
+          computed: {
+            parsedTableData: () => [
+              {
+                entity: mockTeamTaskEntity(),
+                metadata: mockTaskMetadata({
+                  eventId: 'event-id-2',
+                  taskName: 'mock-task-name',
+                  taskCategory: 'mock-category',
+                  userWorkingOnNameWithRole: 'user-name',
+                }),
+              },
+            ],
+          },
+        });
+        const component = wrapper.findComponent(TaskActionDialog);
+        expect(component.props('eventId')).toEqual('event-id-1');
+      });
+
+      it('should pass props EventId from actioningTask when it is not in case file', async () => {
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
+
+        await doMount({
+          propsData: {
+            id: 'mock-case-file-id-1',
+            isInCaseFile: false,
+            caseFile: mockCaseFileEntity({ eventId: 'event-id-1' }),
+          },
+          data() {
+            return {
+              showTaskActionDialog: true,
+              actioningTask: {
+                entity: mockTeamTaskEntity(),
+                metadata: mockTaskMetadata({
+                  eventId: 'event-id-2',
+                  taskName: 'mock-task-name',
+                  taskCategory: 'mock-category',
+                  userWorkingOnNameWithRole: 'user-name',
+                }),
+              },
+            };
+          },
+          computed: {
+            parsedTableData: () => [
+              {
+                entity: mockTeamTaskEntity(),
+                metadata: mockTaskMetadata({
+                  eventId: 'event-id-2',
+                  taskName: 'mock-task-name',
+                  taskCategory: 'mock-category',
+                  userWorkingOnNameWithRole: 'user-name',
+                }),
+              },
+            ],
+          },
+        });
+        const component = wrapper.findComponent(TaskActionDialog);
+        expect(component.props('eventId')).toEqual('event-id-2');
       });
     });
   });

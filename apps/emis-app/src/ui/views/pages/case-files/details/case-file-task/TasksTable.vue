@@ -163,7 +163,7 @@
     <task-action-dialog
       v-if="showTaskActionDialog"
       :task="actioningTask.entity"
-      :event-id="actioningTask.metadata.eventId"
+      :event-id="isInCaseFile ? caseFile.eventId : actioningTask.metadata.eventId"
       :selected-task-name="actioningTask.metadata.taskName"
       :selected-category="actioningTask.metadata.taskCategory"
       :show.sync="showTaskActionDialog" />
