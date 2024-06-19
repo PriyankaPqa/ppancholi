@@ -47,6 +47,7 @@ export default mixins(massActionDetails).extend({
             processedFailuresLabel: 'massAction.processed.title.3',
           };
         case MassActionDataCorrectionType.DataCorrectionFinancialAssistance:
+        case MassActionDataCorrectionType.DataCorrectionMovePayments:
           return {
             preProcessingWaitTitle: '',
             preProcessingWaitLabelOne: 'massActions.preProcessing.info1',
