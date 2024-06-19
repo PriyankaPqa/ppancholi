@@ -69,7 +69,7 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   baseDetailsMassActionPage.getBackToMassActionListButton().should('be.visible');
 };
 
-export const processDataCorrectionFileSteps = (householdQuantity: number, processedItems: string, massActionName: string) => {
+export const processDataCorrectionFileSteps = (householdQuantity: number, processedItems: string, massActionName: string, processedItemsLabelTwo = 'records') => {
   const baseDetailsMassActionPage = new BaseDetailsMassAction();
   cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed, false);
   baseDetailsMassActionPage.getMassActionProcessButton().should('be.visible');
@@ -83,7 +83,7 @@ export const processDataCorrectionFileSteps = (householdQuantity: number, proces
     actionsCallback: () => {
       baseDetailsMassActionPage.confirmProcessing();
       baseDetailsMassActionPage.getPreProcessingLabelOne().should('eq', `Please wait while the ${processedItems} are being processed.`);
-      baseDetailsMassActionPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed records.');
+      baseDetailsMassActionPage.getPreProcessingLabelTwo().should('eq', `This might take a few minutes depending on the number of processed ${processedItemsLabelTwo}.`);
     },
     conditionCallBack: (interception) => (interception.response.statusCode === 200),
     actionsWhenValidationPassed: () => {
