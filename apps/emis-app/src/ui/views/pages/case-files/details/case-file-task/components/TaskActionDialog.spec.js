@@ -5,12 +5,15 @@ import { mockTeamEntity, mockTeamEvents, mockTeamsDataStandard } from '@libs/ent
 import flushPromises from 'flush-promises';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './TaskActionDialog.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 const { pinia, taskStore } = useMockTaskStore();
 const { teamStore } = useMockTeamStore(pinia);
+const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 
 describe('TaskActionDialog.vue', () => {
   let wrapper;
@@ -22,7 +25,9 @@ describe('TaskActionDialog.vue', () => {
       propsData: {
         show: true,
         eventId: 'mock-event-id-1',
-        task: mockTeamTaskEntity(),
+        task: mockTeamTaskEntity({ id: 'mock-task-id' }),
+        selectedTaskName: 'mock-task-name',
+        selectedCategory: 'mock-task-category',
       },
       mocks: {
         $services: services,
@@ -56,6 +61,37 @@ describe('TaskActionDialog.vue', () => {
         const element = wrapper.findDataTest('action-radio-group');
         await element.vm.$emit('change');
         expect(wrapper.vm.resetForm).toHaveBeenCalled();
+      });
+    });
+
+    describe('task-action-dialog-team-task-info', () => {
+      it('should be displayed if team task', async () => {
+        await doMount();
+        const element = wrapper.findDataTest('task-action-dialog-team-task-info');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be displayed if personal task', async () => {
+        await wrapper.setProps({
+          task: mockPersonalTaskEntity(),
+        });
+        const element = wrapper.findDataTest('task-action-dialog-team-task-info');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('task-action-dialog-category', () => {
+      it('should be displayed if there is selected category', () => {
+        const element = wrapper.findDataTest('task-action-dialog-category');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should be displayed if there is no selected category', async () => {
+        await wrapper.setProps({
+          selectedCategory: '',
+        });
+        const element = wrapper.findDataTest('task-action-dialog-category');
+        expect(element.exists()).toBeFalsy();
       });
     });
   });
@@ -112,7 +148,6 @@ describe('TaskActionDialog.vue', () => {
 
     describe('showAssignTeamSelect', () => {
       it('should return true when taskType is team, taskStatus is InProgress and actionTaken is actions assign to a new team', async () => {
-        await doMount();
         await wrapper.setProps({
           task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
         });
@@ -123,7 +158,6 @@ describe('TaskActionDialog.vue', () => {
       });
 
       it('should return false when taskType is personal', async () => {
-        await doMount();
         await wrapper.setProps({
           task: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
         });
@@ -133,11 +167,9 @@ describe('TaskActionDialog.vue', () => {
         expect(wrapper.vm.showAssignTeamSelect).toEqual(false);
       });
 
-      it('should return true taskStatus is Completed', async () => {
-        await doMount();
+      it('should return true when Reopen is picked', async () => {
         await wrapper.setProps({
-          taskType: 'team',
-          taskStatus: TaskStatus.Completed,
+          task: mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
         });
         await wrapper.setData({
           actionTaken: TaskActionTaken.Reopen,
@@ -146,15 +178,24 @@ describe('TaskActionDialog.vue', () => {
       });
 
       it('should return false actionTaken is not actions assign to a new team', async () => {
-        await doMount();
         await wrapper.setProps({
-          taskType: 'team',
-          taskStatus: TaskStatus.InProgress,
+          task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
         });
         await wrapper.setData({
           actionTaken: TaskActionTaken.TaskCompleted,
         });
         expect(wrapper.vm.showAssignTeamSelect).toEqual(false);
+      });
+    });
+
+    describe('teamTaskCreatorInfo', () => {
+      it('should return proper data', async () => {
+        await doMount(true, {
+          computed: {
+            userAccountMetadata: () => mockUserAccountMetadata({ id: 'mock-id-1' }),
+          },
+        });
+        expect(wrapper.vm.teamTaskCreatorInfo).toEqual('task.task_details.by Jane Smith (System Admin)');
       });
     });
   });
@@ -181,7 +222,7 @@ describe('TaskActionDialog.vue', () => {
         });
         await wrapper.vm.onSubmit();
         expect(taskStore.taskAction).toHaveBeenCalledWith(
-          'mock-team-task-id-1',
+          'mock-task-id',
           'mock-case-file-id-1',
           { actionType: TaskActionTaken.Assign, rationale: 'test-string', teamId: '' },
         );
@@ -236,23 +277,25 @@ describe('TaskActionDialog.vue', () => {
 
   describe('lifecycle', () => {
     describe('created', () => {
-      it('should call getAssignableTeams if taskType is team', async () => {
+      it('should call getAssignableTeams and fetch user account metadata if taskType is team', async () => {
         await wrapper.setProps({
-          task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
           eventId: 'mock-id-123',
+          task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
         });
+        userAccountMetadataStore.fetch = jest.fn();
         wrapper.vm.getAssignableTeams = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
         expect(wrapper.vm.getAssignableTeams).toHaveBeenCalled();
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalled();
       });
 
       it('should not call getAssignableTeams if taskType is personal', async () => {
         await wrapper.setProps({
-          task: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
           eventId: 'mock-id-123',
+          task: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
         });
         wrapper.vm.getAssignableTeams = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {

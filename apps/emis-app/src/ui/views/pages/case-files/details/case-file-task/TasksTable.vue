@@ -160,7 +160,13 @@
         </v-btn>
       </template>
     </rc-data-table>
-    <task-action-dialog v-if="showTaskActionDialog" :task="actioningTask" :event-id="actioningEventId" :show.sync="showTaskActionDialog" />
+    <task-action-dialog
+      v-if="showTaskActionDialog"
+      :task="actioningTask.entity"
+      :event-id="isInCaseFile ? caseFile.eventId : actioningTask.metadata.eventId"
+      :selected-task-name="actioningTask.metadata.taskName"
+      :selected-category="actioningTask.metadata.taskCategory"
+      :show.sync="showTaskActionDialog" />
   </div>
 </template>
 
@@ -247,8 +253,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       FilterKey,
       TaskStatus,
       showTaskActionDialog: false,
-      actioningTask: null as ITaskEntity,
-      actioningEventId: '',
+      actioningTask: null as IParsedTaskCombined,
       sqlSearchMode: true,
       combinedTaskStore: new CombinedStoreFactory<ITaskEntity, ITaskMetadata, IdParams>(useTaskStore(), useTaskMetadataStore()),
     };
@@ -630,8 +635,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     setActioningTask(item: ITaskCombined) {
-      this.actioningTask = item.entity;
-      this.actioningEventId = item.metadata.eventId;
+      this.actioningTask = item;
       this.showTaskActionDialog = true;
     },
 
