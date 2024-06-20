@@ -1103,6 +1103,34 @@ describe('CaseFileActivityListItem.vue', () => {
           });
         });
       });
+
+      describe('makeContentForPaymentMoved', () => {
+        it('returns the correct data when activity type is PaymentMoved and some lines are moved', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.PaymentMoved)[0],
+          });
+
+          const body = wrapper.vm.$t('caseFileActivity.activityList.body.PaymentMoved.SomeLines', { x: 2, y: 'moved payment', c1: 'old case file', c2: 'new case file' });
+
+          expect(wrapper.vm.makeContentForPaymentMoved()).toEqual({
+            title: 'caseFileActivity.activityList.title.PaymentMoved',
+            body,
+          });
+        });
+
+        it('returns the correct data when activity type is PaymentMoved and all lines are moved', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.PaymentMoved)[1],
+          });
+
+          const body = wrapper.vm.$t('caseFileActivity.activityList.body.PaymentMoved.AllLines', { x: -1, y: 'moved payment', c1: 'old case file', c2: 'new case file' });
+
+          expect(wrapper.vm.makeContentForPaymentMoved()).toEqual({
+            title: 'caseFileActivity.activityList.title.PaymentMoved',
+            body,
+          });
+        });
+      });
     });
 
     describe('makeContentForHouseholdSplit', () => {

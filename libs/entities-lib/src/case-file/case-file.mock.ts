@@ -986,6 +986,24 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       activityType: CaseFileActivityType.CommunicationSent,
       details: { massCommunicationName: 'mock-MA-name', personFullName: 'John Doe' },
     },
+    {
+      id: 'mock-activity-id-52',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.PaymentMoved,
+      details: { numberOfPaymentLines: 2, paymentName: 'moved payment', previousCaseFileNumber: 'old case file', newCaseFileNumber: 'new case file' },
+    },
+    {
+      id: 'mock-activity-id-53',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.PaymentMoved,
+      details: { numberOfPaymentLines: -1, paymentName: 'moved payment', previousCaseFileNumber: 'old case file', newCaseFileNumber: 'new case file' },
+    },
   ];
 
   if (type) {
