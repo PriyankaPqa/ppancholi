@@ -182,6 +182,9 @@ export default Vue.extend({
         case CaseFileActivityType.CommunicationSent:
           return this.makeContentForCommunicationSent();
 
+        case CaseFileActivityType.PaymentMoved:
+          return this.makeContentForPaymentMoved();
+
         default:
           return null;
       }
@@ -734,6 +737,19 @@ export default Vue.extend({
       const body = this.$t('caseFileActivity.activityList.body.communicationSent', {
         x: this.item.details.massCommunicationName,
         y: this.item.details.personFullName,
+      });
+
+      return { title, body };
+    },
+
+    makeContentForPaymentMoved(): { title: TranslateResult, body: TranslateResult } {
+      const title = this.$t('caseFileActivity.activityList.title.PaymentMoved');
+      const body = this.$t(this.item.details.numberOfPaymentLines > 0 ? 'caseFileActivity.activityList.body.PaymentMoved.SomeLines'
+                                                                      : 'caseFileActivity.activityList.body.PaymentMoved.AllLines', {
+        x: this.item.details.numberOfPaymentLines,
+        y: this.item.details.paymentName,
+        c1: this.item.details.previousCaseFileNumber,
+        c2: this.item.details.newCaseFileNumber,
       });
 
       return { title, body };
