@@ -2,7 +2,7 @@ import {
   ECanadaProvinces, IListOption, IMultilingual,
 } from '@libs/shared-lib/types';
 
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 import { IAddress, IAddressData } from '../value-objects/address';
 
 /**
@@ -205,7 +205,5 @@ export interface IEventEntity extends IEntity {
    validate(): Array<string> | boolean;
    fillEmptyMultilingualAttributes(): void;
 }
-
-export type IEventCombined = IEntityCombined<IEventEntity, null>;
 
 export type IdParams = uuid;

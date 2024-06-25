@@ -93,7 +93,7 @@ import {
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
 import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';

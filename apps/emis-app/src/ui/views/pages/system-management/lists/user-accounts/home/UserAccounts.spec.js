@@ -8,7 +8,7 @@ import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
@@ -230,7 +230,6 @@ describe('UserAccounts.vue', () => {
     describe('fetchData', () => {
       it('should call search with proper params', () => {
         const params = {
-          search: 'query',
           top: 10,
           skip: 10,
           orderBy: 'name asc',
@@ -241,14 +240,11 @@ describe('UserAccounts.vue', () => {
         wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.combinedUserAccountStore.search).toBeCalledWith({
-          search: params.search,
           filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
       });
     });

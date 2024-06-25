@@ -1,8 +1,6 @@
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { TeamEntity } from './team';
-import {
-  mockTeamMembersData, mockTeamsDataStandard, mockCombinedTeams,
-} from './team.mock';
+import { mockTeamMembersData, mockTeamsDataStandard, mockTeamEntities } from './team.mock';
 import { TeamType, ITeamMember } from './team.types';
 
 const mockTeamData = mockTeamsDataStandard();
@@ -94,8 +92,8 @@ describe('>>> Team', () => {
 
     describe('getPrimaryContact', () => {
       it('should return the primary contact', () => {
-        const team = new TeamEntity(mockCombinedTeams()[0].entity);
-        expect(team.getPrimaryContact()).toEqual(mockCombinedTeams()[0].entity.teamMembers[0]);
+        const team = new TeamEntity(mockTeamEntities()[0]);
+        expect(team.getPrimaryContact()).toEqual(mockTeamEntities()[0].teamMembers[0]);
       });
     });
 
@@ -158,7 +156,7 @@ describe('>>> Team', () => {
       });
 
       test('A primary contact status is required', () => {
-        const team = new TeamEntity(mockCombinedTeams()[0].entity);
+        const team = new TeamEntity(mockTeamEntities()[0]);
 
         team.teamMembers.forEach((t) => {
           t.isPrimaryContact = false;
@@ -168,7 +166,7 @@ describe('>>> Team', () => {
       });
 
       test('Ad-Hoc team can only have one event attached', () => {
-        const team = new TeamEntity(mockCombinedTeams()[1].entity);
+        const team = new TeamEntity(mockTeamEntities()[1]);
         team.eventIds = ['d52d45e8-1973-4d54-91f4-8ec0864f8ff9', 'a52d45e8-1973-4d54-91f4-8ec0864f8ff9'];
         expect(team.validate()).toContain('An ad-hoc team should have one eventId');
 

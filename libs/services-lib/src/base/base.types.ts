@@ -1,5 +1,5 @@
 import { IEntity } from '@libs/entities-lib/base';
-import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { GlobalHandler, IRestResponse } from '../http-client';
 
 export interface IDomainBaseService<T, IdParams> {
@@ -10,7 +10,7 @@ export interface IDomainBaseService<T, IdParams> {
   getByIds(ids: uuid[], route?: string): Promise<T[]>;
   activate(idParams: IdParams): Promise<T>;
   deactivate(idParams: IdParams): Promise<T>;
-  search(params: IAzureSearchParams, searchEndpoint?: string): Promise<IAzureCombinedSearchResult<T, unknown>>;
+  search(params: ISearchParams, searchEndpoint?: string): Promise<ICombinedSearchResult<T, unknown>>;
 }
 
 export interface IDomainBaseServiceMock <T extends IEntity> {
@@ -21,5 +21,5 @@ export interface IDomainBaseServiceMock <T extends IEntity> {
   getByIds: jest.Mock<Array<T>>;
   activate: jest.Mock<T>;
   deactivate: jest.Mock<T>;
-  search: jest.Mock<IAzureCombinedSearchResult<T, unknown>>;
+  search: jest.Mock<ICombinedSearchResult<T, unknown>>;
 }

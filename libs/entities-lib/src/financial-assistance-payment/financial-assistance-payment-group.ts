@@ -1,4 +1,5 @@
-import { BaseEntity, Status } from '../base';
+import { Status } from '@libs/shared-lib/types';
+import { BaseEntity } from '../base';
 import {
   IFinancialAssistancePaymentGroup,
   IGroupingInformation,

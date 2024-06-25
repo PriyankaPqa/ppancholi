@@ -16,7 +16,7 @@ describe('>>> Appointments Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('appointments/search/appointments', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('appointments/search/appointments', { params, isOData: true });
     });
   });
 

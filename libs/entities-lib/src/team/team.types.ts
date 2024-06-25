@@ -1,4 +1,4 @@
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 import { IUserAccountCombined } from '../user-account';
 
 /**
@@ -42,7 +42,5 @@ export interface ITeamEntity extends IEntity {
   validate?(): Array<string> | boolean;
   setEventIds?(eventIds: uuid | uuid[]): void;
 }
-
-export type ITeamCombined = IEntityCombined<ITeamEntity, IEntity>;
 
 export type IdParams = uuid;

@@ -33,10 +33,10 @@
             :items="items"
             :items-per-page="Math.max(items.length, 1)">
             <template #[`item.name`]="{ item }">
-              {{ $m(item.entity.name) }}
+              {{ $m(item.name) }}
             </template>
             <template #[`item.program`]="{ item }">
-              {{ getProgramName(item.entity) }}
+              {{ getProgramName(item) }}
             </template>
             <template #[`item.select`]="{ item }">
               <v-btn
@@ -60,14 +60,11 @@ import Vue from 'vue';
 import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
-import { Status } from '@libs/entities-lib/base';
-import {
-  IAssessmentFormCombined, IAssessmentResponseCreateRequest, AssociationType, IAssessmentFormEntity, IdParams,
-} from '@libs/entities-lib/assessment-template';
+import { Status } from '@libs/shared-lib/types';
+import { IAssessmentResponseCreateRequest, AssociationType, IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { EFilterKeyType } from '@libs/component-lib/types';
 import helper from '@libs/shared-lib/helpers/helpers';
 import { IProgramEntity } from '@libs/entities-lib/program';
@@ -110,7 +107,6 @@ export default Vue.extend({
       search: '',
       searchResultIds: [] as Array<string>,
       loading: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, null, IdParams>(useAssessmentFormStore()),
       programs: [] as IProgramEntity[],
     };
   },
@@ -139,8 +135,8 @@ export default Vue.extend({
       ];
     },
 
-    items() : Array<IAssessmentFormCombined> {
-      return this.combinedFormStore.getByIds(this.searchResultIds, { onlyActive: true });
+    items() : Array<IAssessmentFormEntity> {
+      return useAssessmentFormStore().getByIds(this.searchResultIds, true);
     },
   },
 
@@ -165,7 +161,7 @@ export default Vue.extend({
     },
 
     async doSearch() {
-      const assessments = await this.combinedFormStore.search({
+      const assessments = await useAssessmentFormStore().search({ params: {
         filter: {
           'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid },
           'Entity/Status': helper.getEnumKeyText(Status, Status.Active),
@@ -173,15 +169,15 @@ export default Vue.extend({
           ...helpers.toQuickSearchSql(this.search),
         },
         top: 50,
-        queryType: 'full',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      }, null, false, true);
+      },
+      includeInactiveItems: false });
       this.searchResultIds = assessments.ids;
     },
 
-    async select(item: IAssessmentFormCombined) {
+    async select(item: IAssessmentFormEntity) {
       const response: IAssessmentResponseCreateRequest = {
-        assessmentFormId: item.entity.id, association: { id: this.caseFileId, type: AssociationType.CaseFile },
+        assessmentFormId: item.id, association: { id: this.caseFileId, type: AssociationType.CaseFile },
       };
 
       const result = await useAssessmentResponseStore().create(response);

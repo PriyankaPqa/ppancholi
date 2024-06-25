@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import utils from '../utils';
-import { BaseEntity, Status } from '../base';
+import { BaseEntity } from '../base';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData } from './financial-assistance.types';
 
 export class FinancialAssistanceTableEntity extends BaseEntity implements IFinancialAssistanceTableEntity {

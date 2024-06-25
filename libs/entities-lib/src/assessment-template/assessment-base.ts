@@ -1,7 +1,7 @@
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import utils from '../utils';
-import { BaseEntity, Status } from '../base';
+import { BaseEntity } from '../base';
 import {
   AssessmentFormType, AssessmentFrequencyType, IAssessmentBaseEntity, IAssessmentQuestion, IAssessmentScoringRange, PublishStatus, SurveyJsAssessmentFormState,
 } from './assessment-template.types';

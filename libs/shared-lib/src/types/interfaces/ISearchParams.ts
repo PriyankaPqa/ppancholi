@@ -1,4 +1,4 @@
-export interface IAzureSearchParams {
+export interface ISearchParams {
   filter?: Record<string, unknown> | string;
   search?: string;
   select?: Array<string>;
@@ -7,12 +7,9 @@ export interface IAzureSearchParams {
   top?: number;
   skip?: number;
   count?: boolean;
-  queryType?: string;
-  searchMode?: string;
-  searchFields?: string;
 }
 
-export interface IAzureSearchResult <T> {
+export interface ISearchResult <T> {
   'odataContext'?: string;
   'odataCount'?: number;
   value: Array<T>;
@@ -25,15 +22,15 @@ export interface ICombinedIndex <TEntity, TMetadata> {
   metadata: TMetadata;
 }
 
-export interface IAzureCombinedSearchResult <TEntity, TMetadata> {
+export interface ICombinedSearchResult <TEntity, TMetadata> {
   odataContext?: string;
   odataCount?: number;
   value: Array<ICombinedIndex<TEntity, TMetadata> & { id: uuid, tenantId: uuid }>;
 }
 
-export interface IAzureTableSearchResults {
+export interface ITableSearchResults<T> {
   count: number;
   ids: Array<uuid>;
   date?: Date;
-  values?: any[];
+  values?: T[];
 }

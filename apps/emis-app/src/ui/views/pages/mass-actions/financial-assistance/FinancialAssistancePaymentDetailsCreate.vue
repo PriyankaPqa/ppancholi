@@ -125,7 +125,7 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { IEventEntity, IEventSummary } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { PaymentDetailsForm } from './FinancialAssistanceCreate.vue';

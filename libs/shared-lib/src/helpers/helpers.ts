@@ -1,7 +1,8 @@
 import { parsePhoneNumber } from 'awesome-phonenumber';
 import _chunk from 'lodash/chunk';
 import isEmpty from 'lodash/isEmpty';
-import { IAzureCombinedSearchResult, IAzureSearchResult, IAzureTableSearchResults } from '../types/interfaces/IAzureSearchParams';
+import { Status } from '../types';
+import { ICombinedIndex, ICombinedSearchResult, ISearchParams, ISearchResult, ITableSearchResults } from '../types/interfaces/ISearchParams';
 
 export default {
   /**
@@ -88,7 +89,7 @@ export default {
     }
 
     const idBatches = _chunk(ids, batchSize);
-    const calls = [] as Promise<IAzureTableSearchResults | IAzureCombinedSearchResult<TEntity, TMetadata> | IAzureSearchResult<TEntity>>[];
+    const calls = [] as Promise<ITableSearchResults<ICombinedIndex<TEntity, TMetadata>> | ICombinedSearchResult<TEntity, TMetadata> | ISearchResult<TEntity>>[];
 
     idBatches.forEach((b) => {
       let filter = '' as string | Record<string, unknown>;
@@ -115,23 +116,23 @@ export default {
 
     // Flatten the results arrays
     if (results?.length) {
-      const ids = (results as IAzureTableSearchResults[])[0]?.ids
-      && (results as IAzureTableSearchResults[]).reduce((acc, currentValue) => acc.concat(currentValue.ids), []);
+      const ids = (results as ITableSearchResults<ICombinedIndex<TEntity, TMetadata>>[])[0]?.ids
+      && (results as ITableSearchResults<ICombinedIndex<TEntity, TMetadata>>[]).reduce((acc, currentValue) => acc.concat(currentValue.ids), []);
 
-      const count = (results as IAzureTableSearchResults[])[0]?.count
-      && (results as IAzureTableSearchResults[]).reduce((acc, currentValue) => acc + currentValue.count, 0);
+      const count = (results as ITableSearchResults<ICombinedIndex<TEntity, TMetadata>>[])[0]?.count
+      && (results as ITableSearchResults<ICombinedIndex<TEntity, TMetadata>>[]).reduce((acc, currentValue) => acc + currentValue.count, 0);
 
-      const date = (results as IAzureTableSearchResults[])[0]?.date
-      && (results as IAzureTableSearchResults[])[0].date;
+      const date = (results as ITableSearchResults<ICombinedIndex<TEntity, TMetadata>>[])[0]?.date
+      && (results as ITableSearchResults<ICombinedIndex<TEntity, TMetadata>>[])[0].date;
 
-      const odataContext = (results as IAzureSearchResult<TEntity>[])[0]?.odataContext
-      && (results as IAzureSearchResult<TEntity>[])[0].odataContext;
+      const odataContext = (results as ISearchResult<TEntity>[])[0]?.odataContext
+      && (results as ISearchResult<TEntity>[])[0].odataContext;
 
-      const odataCount = (results as IAzureSearchResult<TEntity>[])[0]?.odataCount
-      && (results as IAzureSearchResult<TEntity>[]).reduce((acc, currentValue) => acc + currentValue.odataCount, 0);
+      const odataCount = (results as ISearchResult<TEntity>[])[0]?.odataCount
+      && (results as ISearchResult<TEntity>[]).reduce((acc, currentValue) => acc + currentValue.odataCount, 0);
 
-      const value = (results as IAzureSearchResult<TEntity>[])[0]?.value
-      && (results as IAzureSearchResult<TEntity>[]).reduce((acc, currentValue) => acc.concat(currentValue.value), []);
+      const value = (results as ISearchResult<TEntity>[])[0]?.value
+      && (results as ISearchResult<TEntity>[]).reduce((acc, currentValue) => acc.concat(currentValue.value), []);
 
       // Return only the keys that do not have a null value
       return {
@@ -181,5 +182,19 @@ export default {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
+  },
+
+   removeInactiveItemsFilterOdata(params: ISearchParams): ISearchParams {
+    const newParams = { ...params };
+    newParams.filter = newParams.filter || {};
+    if (typeof (newParams.filter) === 'string') {
+      newParams.filter = `${newParams.filter} and Entity/Status eq '${this.getEnumKeyText(Status, Status.Active)}'`;
+    } else {
+      newParams.filter = {
+        ...newParams.filter as Record<string, unknown>,
+        'Entity/Status': this.getEnumKeyText(Status, Status.Active),
+      };
+    }
+    return newParams;
   },
 };

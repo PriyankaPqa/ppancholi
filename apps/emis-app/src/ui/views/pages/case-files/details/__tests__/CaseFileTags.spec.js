@@ -6,7 +6,7 @@ import {
   mockOptionItemData,
 } from '@libs/entities-lib/optionItem';
 
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 

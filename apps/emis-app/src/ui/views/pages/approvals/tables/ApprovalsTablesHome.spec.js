@@ -3,14 +3,16 @@ import routes from '@/constants/routes';
 import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './ApprovalTablesHome.vue';
 
 const localVue = createLocalVue();
 let wrapper;
 const { approvalTableStore, pinia } = useMockApprovalTableStore();
+const { programStore } = useMockProgramStore(pinia);
 const table = { entity: mockApprovalTableEntity(), metadata: {}, pinned: false };
 
 const doMount = (otherOptions = {}) => {
@@ -32,9 +34,8 @@ const doMount = (otherOptions = {}) => {
 
   wrapper = shallowMount(Component, options);
 
-  wrapper.vm.combinedApprovalTableStore.search = jest.fn();
-  wrapper.vm.combinedApprovalTableStore.getByIds = jest.fn(() => [table]);
-  wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
+  approvalTableStore.getByIdsWithPinnedItems = jest.fn(() => [table, table]);
+  approvalTableStore.search = jest.fn(() => ({
     ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
     count: mockProgramEntities().length,
   }));
@@ -117,7 +118,6 @@ describe('ApprovalTablesHome.vue', () => {
       it('should call search with proper params', () => {
         doMount();
         const params = {
-          search: 'query',
           top: 10,
           skip: 10,
           orderBy: 'name asc',
@@ -126,34 +126,31 @@ describe('ApprovalTablesHome.vue', () => {
 
         wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedApprovalTableStore.search).toBeCalledWith({
-          search: params.search,
+        expect(approvalTableStore.search).toBeCalledWith({ params: {
           filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, false, true);
+        },
+        includeInactiveItems: false });
       });
     });
 
     describe('fetchPrograms', () => {
-      it('calls combinedProgramStore search', async () => {
+      it('calls  search', async () => {
         doMount();
 
         await wrapper.vm.fetchPrograms();
 
-        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenLastCalledWith({
+        expect(programStore.search).toHaveBeenLastCalledWith({ params: {
           filter: {
             'Entity/EventId': { value: wrapper.vm.eventId, type: EFilterKeyType.Guid },
           },
           count: true,
           orderBy: 'Entity/Name/Translation/en',
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true, true);
+        },
+        includeInactiveItems: true });
       });
     });
   });
@@ -167,7 +164,7 @@ describe('ApprovalTablesHome.vue', () => {
     });
 
     describe('tableData', () => {
-      it('should return getByIds', () => {
+      it('should return getByIdsWithPinnedItems', () => {
         doMount();
         expect(wrapper.vm.tableData).toEqual([table, table]);
       });

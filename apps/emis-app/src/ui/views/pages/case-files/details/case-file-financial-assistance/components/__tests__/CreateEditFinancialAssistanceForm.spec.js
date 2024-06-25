@@ -2,12 +2,12 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import Component from '../CreateEditFinancialAssistanceForm.vue';
 
 const localVue = createLocalVue();
 let financialAssistance = mockCaseFinancialAssistanceEntity();
-const financialAssistanceTables = [mockCombinedFinancialAssistance(), mockCombinedFinancialAssistance()];
+const financialAssistanceTables = [mockFinancialAssistanceTableEntity(), mockFinancialAssistanceTableEntity()];
 const program = mockProgramEntity();
 
 describe('CreateEditFinancialAssistanceForm.vue', () => {

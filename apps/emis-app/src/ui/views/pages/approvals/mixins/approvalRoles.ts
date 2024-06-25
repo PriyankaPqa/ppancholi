@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { UserRolesNames } from '@libs/entities-lib/user';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { IApprovalBaseEntity } from '@libs/entities-lib/approvals/approvals-base';
 
 export default Vue.extend({

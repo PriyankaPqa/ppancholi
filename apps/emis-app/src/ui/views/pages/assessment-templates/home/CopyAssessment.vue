@@ -57,9 +57,8 @@ import Vue from 'vue';
 import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
-import { IAssessmentBaseEntity, IAssessmentTemplateEntity, IdParams } from '@libs/entities-lib/assessment-template';
+import { IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 
 const DEBOUNCE_RATE = 500;
@@ -87,7 +86,6 @@ export default Vue.extend({
       search: '',
       searchResultIds: [] as Array<string>,
       loading: false,
-      combinedTemplateStore: new CombinedStoreFactory <IAssessmentTemplateEntity, null, IdParams>(useAssessmentTemplateStore()),
     };
   },
 
@@ -130,12 +128,12 @@ export default Vue.extend({
     },
 
     async doSearch() {
-      const assessments = await this.combinedTemplateStore.search({
+      const assessments = await useAssessmentTemplateStore().search({ params: {
         filter: helpers.toQuickSearchSql(this.search),
         top: 50,
-        queryType: 'full',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      }, null, false, true);
+      },
+      includeInactiveItems: false });
       this.searchResultIds = assessments.ids;
     },
 

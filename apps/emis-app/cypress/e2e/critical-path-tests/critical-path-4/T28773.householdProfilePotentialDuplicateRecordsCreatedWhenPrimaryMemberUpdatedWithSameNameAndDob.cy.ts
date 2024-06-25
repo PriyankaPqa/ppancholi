@@ -3,7 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { formatDateToMmmDdYyyy, getToday } from '@libs/cypress-lib/helpers';
 import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { IProvider } from '@/services/provider';
-import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { useProvider } from 'cypress/provider/provider';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -57,9 +57,8 @@ describe('[T28773] CRC REG existing household - Potential duplicate record creat
                 filter: { Entity: { RegistrationNumber: resultSecondaryHouseholdPrimaryEvent.registrationResponse.household.registrationNumber } },
                 top: 1,
                 includeMembers: true,
-                queryType: 'full',
               })),
-              conditionCallBack: (value: IHouseholdCombined[]) => (value.length > 0),
+              conditionCallBack: (value: IHouseholdEntity[]) => (value.length > 0),
             });
             cy.wrap(resultPrimaryHouseholdPrimaryEvent.mockCreateHousehold.primaryBeneficiary.identitySet).as('primaryHouseholdPrimaryBeneficiary');
             cy.wrap(resultPrimaryHouseholdPrimaryEvent.registrationResponse.household.registrationNumber).as('primaryHouseholdRegistrationNumber');

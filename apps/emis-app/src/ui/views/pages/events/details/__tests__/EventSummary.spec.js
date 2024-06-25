@@ -14,7 +14,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';

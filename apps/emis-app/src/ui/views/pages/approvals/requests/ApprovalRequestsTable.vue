@@ -21,7 +21,6 @@
           :initial-filter="filterState"
           :count="itemsCount"
           add-filter-label="approval.requests.filter.title"
-          :sql-mode="true"
           @open="onOpenFilters()"
           @update:appliedFilter="onApplyFilterLocal"
           @update:autocomplete="onAutoCompleteUpdate($event)"
@@ -140,22 +139,18 @@ import { FilterKey } from '@libs/entities-lib/user-account';
 import {
   ApprovalStatus,
   FinancialAssistancePaymentGroup,
-  IdParams,
-  IFinancialAssistancePaymentCombined,
   IFinancialAssistancePaymentEntity,
 } from '@libs/entities-lib/financial-assistance-payment';
-import { IAzureSearchParams, IDropdownItem } from '@libs/shared-lib/types';
+import { ISearchParams, IDropdownItem, Status } from '@libs/shared-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
 import { UserRolesNames } from '@libs/entities-lib/user';
 import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useUserStore } from '@/pinia/user/user';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import helper from '@libs/shared-lib/helpers/helpers';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
@@ -218,12 +213,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
           levels: [UserRolesNames.level3, UserRolesNames.level4],
         },
       },
-      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, null, IdParams>(
-        useFinancialAssistancePaymentStore(),
-        null,
-      ),
       groupTotal: FinancialAssistancePaymentGroup.total,
-      sqlSearchMode: true,
+
     };
   },
 
@@ -237,14 +228,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
     },
 
     tableData(): IMappedPayment[] {
-      return this.combinedFinancialAssistancePaymentStore.getByIds(this.searchResultIds, {
-        onlyActive: true,
-        prependPinnedItems: false,
-        baseDate: this.searchExecutionDate,
-      }).map((f) => {
-        const casefile = useCaseFileStore().getById(f.entity.caseFileId);
+      return useFinancialAssistancePaymentStore().getByIds(this.searchResultIds, true)?.map((f) => {
+        const casefile = useCaseFileStore().getById(f.caseFileId);
         return {
-          entity: f.entity,
+          entity: f,
           casefile,
           event: useEventStore().getById(casefile?.eventId),
         };
@@ -503,25 +490,25 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
       await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
     },
 
-    async fetchData(params: IAzureSearchParams, containsSearchOnly: boolean) {
+    async fetchData(params: ISearchParams, containsSearchOnly: boolean) {
       this.searchLoading = true;
 
       if (containsSearchOnly) {
         params.filter = { ...this.presetFilter, ...(params.filter as Record<string, any>) };
       }
 
-      const res = await this.combinedFinancialAssistancePaymentStore.search({
-        search: params.search,
-        filter: params.filter,
-        top: params.top,
-        skip: params.skip,
-        orderBy: params.orderBy,
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true);
+      const res = await useFinancialAssistancePaymentStore().search({
+        params: {
+          filter: params.filter,
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+        },
+        includeInactiveItems: true,
+      });
 
-      const cf = await useCaseFileStore().fetchByIds(res.values.map((f: IFinancialAssistancePaymentCombined) => f.entity.caseFileId), true);
+      const cf = await useCaseFileStore().fetchByIds(res.values?.map((f: IFinancialAssistancePaymentEntity) => f.caseFileId), true);
       await useEventStore().fetchByIds(cf.map((c) => c.eventId), true);
 
       this.searchLoading = false;

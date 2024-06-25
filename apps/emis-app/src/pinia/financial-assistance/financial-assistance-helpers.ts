@@ -6,7 +6,7 @@ import {
 } from '@libs/entities-lib/financial-assistance';
 import { cloneDeep, orderBy } from 'lodash';
 import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 
 export function mapItem(item: IFinancialAssistanceTableItemData, categories: IOptionItem[]): IFinancialAssistanceTableItem {
     const mainCategory = categories.find((category) => category.id === item.mainCategory.optionItemId);

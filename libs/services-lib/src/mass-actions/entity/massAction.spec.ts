@@ -145,7 +145,7 @@ describe('>>> Mass Action Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/mass-actions', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/mass-actions', { params, isOData: true });
     });
   });
 

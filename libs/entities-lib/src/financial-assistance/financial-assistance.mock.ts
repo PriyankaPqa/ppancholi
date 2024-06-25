@@ -1,14 +1,9 @@
-import { mockBaseData, Status } from '../base';
+import { Status } from '@libs/shared-lib/types';
+import { mockBaseData } from '../base';
 import { IOptionItem } from '../optionItem';
 import {
-  EFinancialAmountModes,
-  EFinancialFrequency,
-  IFinancialAssistanceTableCombined,
-  IFinancialAssistanceTableEntity,
-  IFinancialAssistanceTableItem,
-  IFinancialAssistanceTableItemData,
-  IFinancialAssistanceTableSubItem,
-  IFinancialAssistanceTableSubItemData,
+  EFinancialAmountModes, EFinancialFrequency, IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem,
+  IFinancialAssistanceTableItemData, IFinancialAssistanceTableSubItem, IFinancialAssistanceTableSubItemData,
 } from './financial-assistance.types';
 
 export const mockSubItems = (): IFinancialAssistanceTableSubItem[] => [
@@ -267,12 +262,6 @@ export const mockFinancialAssistanceTableEntity = (force = {}): IFinancialAssist
   ],
   ...force,
 });
-
-export const mockCombinedFinancialAssistance = (): IFinancialAssistanceTableCombined => ({
-  entity: mockFinancialAssistanceTableEntity(),
-  metadata: null,
-});
-export const mockCombinedFinancialAssistances = (): IFinancialAssistanceTableCombined[] => ([mockCombinedFinancialAssistance()]);
 
 const categories: IOptionItem[] = [
   {

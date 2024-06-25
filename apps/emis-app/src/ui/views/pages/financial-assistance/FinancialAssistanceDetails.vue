@@ -114,11 +114,11 @@ import {
   IFinancialAssistanceTableSubItem,
 } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
-import { Status } from '@libs/entities-lib/base';
 import { useProgramStore } from '@/pinia/program/program';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
+import { Status } from '@libs/shared-lib/types';
 import { INestedTableHeader } from './create-edit/INestedTableHeader';
 import TooltipFinancialAssistanceCategory from './create-edit/TooltipFinancialAssistanceCategory.vue';
 import ErrorPanel from './create-edit/ErrorPanel.vue';

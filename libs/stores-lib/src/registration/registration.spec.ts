@@ -1,5 +1,5 @@
 import { storeFactory } from '@/registration/registration';
-import { ERegistrationMode } from '@libs/shared-lib/types';
+import { ERegistrationMode, Status } from '@libs/shared-lib/types';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { RegistrationEvent } from '@libs/entities-lib/registration-event';
@@ -26,7 +26,6 @@ import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/inter
 import { mockPublicService } from '@libs/services-lib/public';
 import { mockHouseholdsService } from '@libs/services-lib/households/entity';
 import { IHouseholdEntity, mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
-import { Status } from '@libs/entities-lib/src/base';
 import { PublishStatus } from '@libs/entities-lib/src/assessment-template';
 import { mockCaseFilesService } from '@libs/services-lib/case-files/entity';
 import _cloneDeep from 'lodash/cloneDeep';

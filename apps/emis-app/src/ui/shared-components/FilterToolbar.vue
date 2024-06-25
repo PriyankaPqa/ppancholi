@@ -9,7 +9,6 @@
     :user-filters="userFilters"
     :initial-filter="initialFilter"
     :loading="loading"
-    :sql-mode="sqlMode"
     @save:filter="onSave"
     @load:all="onLoadAll"
     @delete:filter="onDelete"
@@ -31,7 +30,6 @@
 import Vue from 'vue';
 import _set from 'lodash/set';
 import _isArray from 'lodash/isArray';
-import _difference from 'lodash/difference';
 import { RcFilterToolbar } from '@libs/component-lib/components';
 import {
   EFilterKeyType, EFilterOperator, EFilterType, IFilterData, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators,
@@ -79,11 +77,6 @@ export default Vue.extend({
     initialFilter: {
       type: Object as () => IFilter,
       default: () => ({}),
-    },
-
-    sqlMode: {
-      type: Boolean,
-      default: false,
     },
   },
 
@@ -262,78 +255,8 @@ export default Vue.extend({
      * Emits the event when a filter is applied or removed from the table
      */
     async onApplyFilter(filters: IFilterData[], filterState: IFilter) {
-      if (!this.sqlMode) {
-        const searchFilters = filters.filter((f) => f.type === 'text');
-
-        const translatedSearchFilters = this.prepareSearchFilters(searchFilters);
-        const preparedFilters = this.prepareFiltersForOdataQuery(_difference(filters, searchFilters));
-
-        this.$emit('update:appliedFilter', { preparedFilters, searchFilters: translatedSearchFilters }, filterState);
-      } else {
         const preparedFilters = this.prepareFiltersForOdataQuery(filters);
-
         this.$emit('update:appliedFilter', { preparedFilters, searchFilters: '' }, filterState);
-      }
-    },
-
-    /**
-     * Build object to be used by odata-query - Azure search version
-     */
-     translateFilter(filter: IFilterData) {
-      const { key, operator } = filter;
-      const { value } = filter;
-      let newFilter = {} as Record<string, unknown>;
-
-      switch (operator) {
-        case EFilterOperator.Between:
-          _set(newFilter, key, { ge: (value as Array<string | number>)[0], le: (value as Array<string | number>)[1] });
-          break;
-        case EFilterOperator.Equal:
-          newFilter = this.translateEqualOperator(filter);
-          break;
-        case EFilterOperator.NotEqual:
-          if (filter.keyType === EFilterKeyType.Array) {
-            _set(newFilter, key, { notEqualOnArray_az: value });
-          } else {
-            _set(newFilter, `not.${key}`, value);
-          }
-          break;
-        case EFilterOperator.GreaterEqual:
-          _set(newFilter, key, { ge: value });
-          break;
-        case EFilterOperator.GreaterThan:
-          _set(newFilter, key, { gt: value });
-          break;
-        case EFilterOperator.LessThan:
-          _set(newFilter, key, { lt: value });
-          break;
-        case EFilterOperator.LessEqual:
-          _set(newFilter, key, { le: value });
-          break;
-        case EFilterOperator.In:
-          newFilter = this.translateInOperator(filter);
-          break;
-        case EFilterOperator.NotIn:
-          if (filter.keyType === EFilterKeyType.Array) {
-            _set(newFilter, key, { notSearchInOnArray_az: value });
-          } else {
-            _set(newFilter, key, { notSearchIn_az: value });
-          }
-          break;
-        case EFilterOperator.BeginsWith:
-          _set(newFilter, key, { startsWith_az: value });
-          break;
-        case EFilterOperator.Contains:
-          _set(newFilter, key, { contains_az: value });
-          break;
-        case EFilterOperator.DoesNotContain:
-          newFilter.not = {};
-          _set(newFilter, `not.${key}`, { contains_az: value });
-          break;
-        default:
-      }
-
-      return newFilter;
     },
 
     /**
@@ -479,7 +402,7 @@ export default Vue.extend({
       filters.forEach((filter: IFilterData) => {
         this.convertToInteger(filter);
 
-        const translatedFilter = this.sqlMode ? this.translateFilterSql(filter) : this.translateFilter(filter);
+        const translatedFilter = this.translateFilterSql(filter);
         // If filters are linked with a OR they need to be merged with a AND
         // Check the test to understand
 

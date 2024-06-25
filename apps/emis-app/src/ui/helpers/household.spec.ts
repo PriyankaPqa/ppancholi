@@ -3,7 +3,7 @@ import {
   EIndigenousTypes, IMember, mockIndigenousCommunitiesGetData, mockHouseholdCreate, HouseholdCreate,
 } from '@libs/entities-lib/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import libHelpers from '@libs/entities-lib/helpers';
 import householdHelpers from '@/ui/helpers/household';
@@ -174,17 +174,17 @@ describe('householdHelpers', () => {
 
   describe('provinceCodeName', () => {
     it('returns the province code if the province is not other', async () => {
-      const altHousehold = _cloneDeep(mockCombinedHousehold());
-      altHousehold.entity.address.address.province = ECanadaProvinces.QC;
-      expect(householdHelpers.provinceCodeName(altHousehold.entity.address.address)).toEqual('QC');
+      const altHousehold = _cloneDeep(mockHouseholdEntity());
+      altHousehold.address.address.province = ECanadaProvinces.QC;
+      expect(householdHelpers.provinceCodeName(altHousehold.address.address)).toEqual('QC');
     });
 
     it('returns the province other name  if the province is  other', async () => {
-      const altHousehold = _cloneDeep(mockCombinedHousehold());
-      altHousehold.entity.address.address.province = ECanadaProvinces.OT;
-      altHousehold.entity.address.address.specifiedOtherProvince = 'mock-other-province';
+      const altHousehold = _cloneDeep(mockHouseholdEntity());
+      altHousehold.address.address.province = ECanadaProvinces.OT;
+      altHousehold.address.address.specifiedOtherProvince = 'mock-other-province';
 
-      expect(householdHelpers.provinceCodeName(altHousehold.entity.address.address)).toEqual('mock-other-province');
+      expect(householdHelpers.provinceCodeName(altHousehold.address.address)).toEqual('mock-other-province');
     });
   });
 

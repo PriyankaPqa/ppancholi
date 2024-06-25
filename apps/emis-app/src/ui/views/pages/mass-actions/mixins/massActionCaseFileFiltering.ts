@@ -1,8 +1,9 @@
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import _isEmpty from 'lodash/isEmpty';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { ICaseFileCombined, ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib/case-file';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
 import { buildQuerySql } from '@libs/services-lib/odata-query-sql';
@@ -23,8 +24,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       fetchAllCaseFileLoading: false,
       exportLoading: false,
       combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
-      sqlSearchMode: true,
-      lastFilter: null as IAzureSearchParams,
+
+      lastFilter: null as ISearchParams,
     };
   },
 
@@ -56,18 +57,15 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       this.$emit('update:show', false);
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       if (this.filtersOn) {
         this.lastFilter = { filter: params.filter };
         const res = await this.combinedCaseFileStore.search({
-          search: params.search,
           filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
         return res;
       }
@@ -77,7 +75,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     async onExport(massActionType: MassActionType) {
       this.exportLoading = true;
 
-      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata(this.lastFilter, true) as any);
+      const filter = buildQuerySql(sharedHelpers.removeInactiveItemsFilterOdata(this.lastFilter) as any);
 
       const res = await this.$services.massActions.exportList(massActionType, {
         filter,

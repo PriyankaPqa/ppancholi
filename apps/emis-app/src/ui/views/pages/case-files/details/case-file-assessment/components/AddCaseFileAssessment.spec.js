@@ -129,7 +129,7 @@ describe('AddCaseFileAssessment.vue', () => {
     describe('select', () => {
       it('calls create then closes', async () => {
         await mountWrapper();
-        const someObject = { entity: { id: 'newId' } };
+        const someObject = { id: 'newId' };
         wrapper.vm.close = jest.fn();
         await wrapper.vm.select(someObject);
         expect(assessmentResponseStore.create).toHaveBeenCalled();
@@ -149,10 +149,9 @@ describe('AddCaseFileAssessment.vue', () => {
           params: {
             filter: { 'Entity/EventId': { value: 'eventId', type: 'guid' }, 'Entity/Status': 'Active', not: { 'Entity/Id': { in: ['id1', 'id2'] } }, somefilter: 'cleanedUp' },
             top: 50,
-            queryType: 'full',
             orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
           },
-          searchEndpoint: null,
+          includeInactiveItems: false,
         });
       });
     });

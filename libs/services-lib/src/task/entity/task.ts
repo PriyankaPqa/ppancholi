@@ -1,5 +1,5 @@
 import { ITaskEntity, ITaskEntityData, IdParams, ITaskMetadata, ActionTaken } from '@libs/entities-lib/task';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { ITaskService } from './task.types';
 import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -34,9 +34,9 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/set-action-taken`, { id, caseFileId }), params);
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<ITaskEntityData, ITaskMetadata>> {
-    return this.http.get('case-file/search/tasksV2', { params, isODataSql: true });
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<ITaskEntityData, ITaskMetadata>> {
+    return this.http.get('case-file/search/tasksV2', { params, isOData: true });
   }
 
   async getByIds(ids: uuid[]): Promise<ITaskEntity[]> {

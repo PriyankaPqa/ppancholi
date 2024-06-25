@@ -156,7 +156,7 @@ import mixins from 'vue-typed-mixins';
 import { tabs } from '@/pinia/registration/tabs';
 import household from '@/ui/mixins/household';
 import householdResults, { IFormattedHousehold } from '@/ui/mixins/householdResults';
-import { IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { ICombinedIndex, ITableSearchResults } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib/case-file';
@@ -286,7 +286,7 @@ export default mixins(household, householdResults).extend({
           otherApiParameters: [null, false, true],
         });
 
-        const ids = (res as IAzureTableSearchResults)?.ids;
+        const ids = (res as ITableSearchResults<ICombinedIndex<ICaseFileEntity, ICaseFileMetadata>>)?.ids;
         if (ids) {
           this.householdsInEvent = this.combinedCaseFileStore.getByIds(ids).map((cf) => cf.entity.householdId);
         }

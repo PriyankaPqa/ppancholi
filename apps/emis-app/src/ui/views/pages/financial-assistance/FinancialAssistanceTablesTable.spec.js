@@ -2,10 +2,10 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-assistance';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
@@ -14,12 +14,13 @@ import { UserRoles } from '@libs/entities-lib/user';
 import Component from './FinancialAssistanceTablesTable.vue';
 
 const localVue = createLocalVue();
+const mockFinancialAssistanceTables = [mockFinancialAssistanceTableEntity()];
 
 describe('FinancialAssistanceTablesTable.vue', () => {
   let wrapper;
   const pinia = getPiniaForUser(UserRoles.level6);
   const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
-  useMockProgramStore(pinia);
+  const { programStore } = useMockProgramStore(pinia);
 
   describe('Template', () => {
     beforeEach(() => {
@@ -27,11 +28,11 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         localVue,
         pinia,
         computed: {
-          tableData: () => mockCombinedFinancialAssistances(),
+          tableData: () => [mockFinancialAssistanceTableEntity()],
         },
       });
 
-      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+      wrapper.vm.count = mockFinancialAssistanceTables.length;
     });
     describe('data table', () => {
       let dataTable;
@@ -59,11 +60,11 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         localVue,
         pinia,
         computed: {
-          tableData: () => mockCombinedFinancialAssistances(),
+          tableData: () => mockFinancialAssistanceTables,
         },
       });
 
-      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+      wrapper.vm.count = mockFinancialAssistanceTables.length;
     });
     describe('labels', () => {
       it('returns the right labels', () => {
@@ -228,11 +229,11 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         localVue,
         pinia,
         computed: {
-          tableData: () => mockCombinedFinancialAssistances(),
+          tableData: () => mockFinancialAssistanceTables,
         },
       });
 
-      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+      wrapper.vm.count = mockFinancialAssistanceTables.length;
     });
     describe('created', () => {
       it('should call fetchPrograms', async () => {
@@ -253,11 +254,11 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         localVue,
         pinia,
         computed: {
-          tableData: () => mockCombinedFinancialAssistances(),
+          tableData: () => mockFinancialAssistanceTables,
         },
       });
 
-      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+      wrapper.vm.count = mockFinancialAssistanceTables.length;
     });
     describe('fetchData', () => {
       let params;
@@ -280,9 +281,9 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       });
 
       it('should call the store with proper parameters', async () => {
-        wrapper.vm.combinedFinancialAssistanceStore.search = jest.fn();
+        financialAssistanceStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.combinedFinancialAssistanceStore.search).toHaveBeenCalledWith({
+        expect(financialAssistanceStore.search).toHaveBeenCalledWith({ params: {
           filter: {
             'Entity/EventId': { value: 'event id', type: EFilterKeyType.Guid }, someFilter: 'value',
           },
@@ -290,9 +291,8 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true, true);
+        },
+        includeInactiveItems: true });
       });
     });
 
@@ -313,9 +313,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
     describe('goToEdit', () => {
       it('redirects properly', () => {
         const item = {
-          entity: {
-            id: 'fa id',
-          },
+          id: 'fa id',
         };
 
         jest.spyOn(wrapper.vm.$router, 'push').mockImplementation(() => {});
@@ -334,9 +332,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
     describe('getDetailsRoute', () => {
       it('returns correct route', () => {
         const item = {
-          entity: {
-            id: 'fa id',
-          },
+          id: 'fa id',
         };
 
         const result = wrapper.vm.getDetailsRoute(item);
@@ -360,7 +356,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           },
         });
 
-        wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
+        programStore.search = jest.fn(() => ({
           ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
           count: mockProgramEntities().length,
         }));
@@ -369,15 +365,14 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
         await wrapper.vm.fetchPrograms();
 
-        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenLastCalledWith({
+        expect(programStore.search).toHaveBeenLastCalledWith({ params: {
           filter: {
             'Entity/EventId': { value: 'EventId-1', type: EFilterKeyType.Guid },
           },
           count: true,
           orderBy: 'Entity/Name/Translation/en',
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true, true);
+        },
+        includeInactiveItems: true });
       });
     });
   });

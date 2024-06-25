@@ -1,8 +1,9 @@
 import { IMultilingualEnum, IMultilingualWithId, IListOption, IIdMultilingualName,
     IdentityAuthenticationStatus, IdentityAuthenticationMethod, Tier2State,
+    Status,
 } from '@libs/shared-lib/types';
 import { IEventSummary } from '../event';
-import { IEntity, IEntityCombined, Status } from '../base';
+import { IEntity, IEntityCombined } from '../base';
 
 /**
  * Enums

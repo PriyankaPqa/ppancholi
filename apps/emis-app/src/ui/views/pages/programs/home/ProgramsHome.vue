@@ -21,7 +21,6 @@
           :filter-key="FilterKey.EventPrograms"
           :filter-options="filterOptions"
           :initial-filter="filterState"
-          :sql-mode="true"
           add-filter-label="programs.filter"
           :count="itemsCount"
           @update:appliedFilter="onApplyFilter" />
@@ -30,18 +29,18 @@
       <template #[`item.${customColumns.name}`]="{ item: program }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          :data-test="`programDetail-link-${program.entity.id}`"
-          :to="getProgramDetailsRoute(program.entity)">
-          {{ (program.entity && $m(program.entity.name)) || '-' }}
+          :data-test="`programDetail-link-${program.id}`"
+          :to="getProgramDetailsRoute(program)">
+          {{ (program && $m(program.name)) || '-' }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item: program }">
-        <status-chip v-if="(program.entity && program.entity.status)" status-name="Status" :status="program.entity.status" />
+        <status-chip v-if="(program && program.status)" status-name="Status" :status="program.status" />
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item: program }">
-        <v-btn icon :to="getProgramEditRoute(program.entity)" :aria-label="$t('common.edit')" data-test="editProgram-link">
+        <v-btn icon :to="getProgramEditRoute(program)" :aria-label="$t('common.edit')" data-test="editProgram-link">
           <v-icon>
             mdi-pencil
           </v-icon>
@@ -62,15 +61,11 @@ import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-li
 import routes from '@/constants/routes';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, Status } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import {
- IdParams, IProgramCombined, IProgramEntity,
-} from '@libs/entities-lib/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramStore } from '@/pinia/program/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -97,8 +92,6 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [true],
       },
       FilterKey,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
-      sqlSearchMode: true,
     };
   },
 
@@ -151,10 +144,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
     },
 
-    tableData(): IProgramCombined[] {
-      return this.combinedProgramStore.getByIds(
+    tableData(): IProgramEntity[] {
+      return useProgramStore().getByIdsWithPinnedItems(
         this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
+        { baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
       );
     },
 
@@ -181,19 +174,17 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   methods: {
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filter = _isEmpty(params.filter) ? {} : params.filter as Record<string, unknown>;
 
-      const res = await this.combinedProgramStore.search({
-        search: params.search,
+      const res = await useProgramStore().search({ params: {
         filter: { 'Entity/EventId': { value: this.id, type: EFilterKeyType.Guid }, ...filter },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true);
+      },
+      includeInactiveItems: true });
       return res;
     },
 

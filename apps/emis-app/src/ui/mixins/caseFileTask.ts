@@ -7,7 +7,7 @@ import { useUserStore } from '@/pinia/user/user';
 import { ITaskEntity, TaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { UserRoles } from '@libs/entities-lib/user';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useTeamStore } from '@/pinia/team/team';
 
 export default Vue.extend({

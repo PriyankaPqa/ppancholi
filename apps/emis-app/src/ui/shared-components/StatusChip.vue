@@ -22,7 +22,7 @@ import { ApprovalStatus, PaymentStatus } from '@libs/entities-lib/financial-assi
 import { AccountStatus } from '@libs/entities-lib/user-account';
 import { DocumentStatus } from '@libs/entities-lib/case-file-document';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { TaskStatus } from '@libs/entities-lib/task';

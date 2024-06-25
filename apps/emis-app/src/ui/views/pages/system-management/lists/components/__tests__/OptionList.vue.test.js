@@ -3,7 +3,7 @@ import {
   mount,
 } from '@/test/testSetup';
 import { mockOptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import OptionListItem from '@/ui/views/pages/system-management/lists/components/OptionListItem.vue';
 import Component from '../OptionList.vue';

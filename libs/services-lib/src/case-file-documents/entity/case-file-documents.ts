@@ -1,4 +1,4 @@
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { IEntity } from '@libs/entities-lib/base';
 import { IHttpClient } from '../../http-client';
@@ -25,8 +25,8 @@ export class CaseFileDocumentsService extends DomainBaseService<ICaseFileDocumen
     );
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<ICaseFileDocumentEntity, IEntity>> {
-    return this.http.get('case-file/search/documentsV2', { params, isODataSql: true });
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<ICaseFileDocumentEntity, IEntity>> {
+    return this.http.get('case-file/search/documentsV2', { params, isOData: true });
   }
 }

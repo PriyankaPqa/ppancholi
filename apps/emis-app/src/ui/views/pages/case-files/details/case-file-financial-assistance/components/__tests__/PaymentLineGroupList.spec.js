@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from '../PaymentLineGroupList.vue';

@@ -119,7 +119,7 @@ import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { IdParams, IUserAccountEntity, IUserAccountMetadata, UserTeamMember } from '@libs/entities-lib/user-account';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { IAzureSearchParams } from '@libs/shared-lib/src/types';
+import { ISearchParams } from '@libs/shared-lib/src/types';
 
 export default Vue.extend({
   name: 'SelectUsersPopup',
@@ -161,10 +161,6 @@ export default Vue.extend({
     maxNbResults: {
       type: Number,
       default: () => null as Number,
-    },
-    searchFields: {
-      type: String,
-      default: () => null as string,
     },
     levels: {
       type: Array as () => string[],
@@ -270,12 +266,9 @@ export default Vue.extend({
       const rolesId = this.levels?.length ? useUserAccountStore().rolesByLevels(this.levels)?.map((r) => r.id) : null;
 
       const params = {
-        searchFields: this.searchFields,
         top: this.maxNbResults,
         orderBy: 'Metadata/DisplayName',
-        queryType: 'full',
-        searchMode: 'all',
-      } as IAzureSearchParams;
+      } as ISearchParams;
 
       let searchResults;
       if (rolesId?.length) {

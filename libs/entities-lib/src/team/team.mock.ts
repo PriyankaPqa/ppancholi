@@ -1,9 +1,9 @@
 /* eslint-disable max-lines-per-function */
-import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { ISearchResult, Status } from '@libs/shared-lib/types';
 import { IEventEntity } from '../event';
-import { IEntity, mockBaseData, Status } from '../base';
+import { IEntity, mockBaseData } from '../base';
 import {
-  ITeamEntity, ITeamMember, TeamType, ITeamCombined,
+  ITeamEntity, ITeamMember, TeamType,
 } from './team.types';
 
 export const mockTeamEvents = (): IEventEntity[] => [
@@ -74,26 +74,12 @@ export const mockTeamEntities = (force?: Partial<IEntity>) : ITeamEntity[] => ([
   mockTeamsDataAddHoc(force),
 ]);
 
-export const mockCombinedTeams = (): ITeamCombined[] => [
-  {
-    entity: mockTeamsDataStandard(),
-    metadata: null,
-    pinned: false,
-  },
-  {
-    entity: mockTeamsDataAddHoc(),
-    metadata: null,
-    pinned: false,
-  },
-];
-
-export const mockTeamSearchData: IAzureCombinedSearchResult<ITeamEntity, IEntity> = {
+export const mockTeamSearchData: ISearchResult<ITeamEntity> = {
   odataContext: "https://emis-search-dev.search.windows.net/indexes('index-teams')/$metadata#docs(*)",
-  odataCount: mockCombinedTeams().length,
-  value: mockCombinedTeams().map((t) => ({
-    id: t.entity.id,
-    tenantId: t.entity.tenantId,
-    metadata: t.metadata,
-    entity: t.entity,
+  odataCount: mockTeamEntities().length,
+  value: mockTeamEntities().map((t) => ({
+    ...t,
+    id: t.id,
+    tenantId: t.tenantId,
   })),
 };

@@ -31,7 +31,7 @@ describe('>>> UiState Store', () => {
       uiStateStore.setSearchTableState(
         'key3',
         {
-          azureSearchParams: { top: 3 },
+          searchParams: { top: 3 },
           filterState: { filterStateItem: 3 },
           itemsCount: 3,
           options: { optionsItem: 3 },
@@ -49,7 +49,7 @@ describe('>>> UiState Store', () => {
         {
           key: 'key3',
           state: {
-          azureSearchParams: { top: 3 },
+          searchParams: { top: 3 },
           filterState: { filterStateItem: 3 },
           itemsCount: 3,
           options: { optionsItem: 3 },

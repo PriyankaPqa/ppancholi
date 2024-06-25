@@ -1,10 +1,9 @@
 import { shallowMount, createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { RcDataTable } from '@libs/component-lib/components';
-import { mockCombinedCaseFinancialAssistance } from '@libs/entities-lib/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { EFilterType } from '@libs/component-lib/types';
 import { useUserStore } from '@/pinia/user/user';
-
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
@@ -15,10 +14,16 @@ const localVue = createLocalVue();
 let wrapper;
 let userStore;
 
-const FAPayment = mockCombinedCaseFinancialAssistance();
-const { pinia } = useMockFinancialAssistancePaymentStore();
+const FAPayment = mockCaseFinancialAssistanceEntity();
+const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 const eventStore = useMockEventStore(pinia).eventStore;
 const caseFileStore = useMockCaseFileStore(pinia).caseFileStore;
+
+financialAssistancePaymentStore.search = jest.fn(() => ({
+  ids: ['id-1'],
+  count: 1,
+  values: [mockCaseFinancialAssistanceEntity({ id: 'id-1', caseFileId: 'cf-id-1' })],
+}));
 
 const doMount = (otherOptions = {}) => {
   const options = {
@@ -29,6 +34,12 @@ const doMount = (otherOptions = {}) => {
   wrapper = shallowMount(Component, options);
   userStore = useUserStore();
   userStore.getUserId = jest.fn(() => '1234');
+  financialAssistancePaymentStore.getByIds = jest.fn(() => [mockCaseFinancialAssistanceEntity()]);
+  financialAssistancePaymentStore.search = jest.fn(() => ({
+    ids: ['id-1'],
+    count: 1,
+    values: [mockCaseFinancialAssistanceEntity({ id: 'id-1', caseFileId: 'cf-id-1' })],
+  }));
 };
 
 describe('ApprovalRequestsTable', () => {
@@ -42,17 +53,10 @@ describe('ApprovalRequestsTable', () => {
 
     describe('tableData', () => {
       it(' returns the right value', () => {
-        doMount({
-          data() {
-            return {
-              combinedFinancialAssistancePaymentStore: {
-                getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance()]),
-              },
-            };
-          },
-        });
+        financialAssistancePaymentStore.getByIds = jest.fn(() => [mockCaseFinancialAssistanceEntity()]);
+        doMount();
         expect(wrapper.vm.tableData).toEqual([{
-          entity: mockCombinedCaseFinancialAssistance().entity,
+          entity: mockCaseFinancialAssistanceEntity(),
           casefile: caseFileStore.getById(),
           event: eventStore.getById(),
         }]);
@@ -538,23 +542,22 @@ describe('ApprovalRequestsTable', () => {
           orderBy: 'name asc',
         };
 
-        wrapper.vm.combinedFinancialAssistancePaymentStore.search = jest.fn(() => ({
+        financialAssistancePaymentStore.search = jest.fn(() => ({
           ids: ['id-1'],
-          values: [mockCombinedCaseFinancialAssistance({ id: 'id-1', caseFileId: 'cf-id-1' })],
+          count: 1,
+          values: [mockCaseFinancialAssistanceEntity({ id: 'id-1', caseFileId: 'cf-id-1' })],
         }));
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedFinancialAssistancePaymentStore.search)
-          .toHaveBeenCalledWith({
-            search: params.search,
+        expect(financialAssistancePaymentStore.search)
+          .toHaveBeenCalledWith({ params: {
             filter: params.filter,
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
-          }, null, true, true);
+          },
+          includeInactiveItems: true });
 
         expect(caseFileStore.fetchByIds).toHaveBeenCalledWith(['cf-id-1'], true);
         expect(eventStore.fetchByIds).toHaveBeenCalledWith(caseFileStore.fetchByIds().map((x) => x.eventId), true);
@@ -645,14 +648,7 @@ describe('ApprovalRequestsTable', () => {
         pinia,
         computed: {
           mappedPayments: () => [FAPayment],
-        },
-        data() {
-          return {
-            combinedFinancialAssistancePaymentStore: {
-              getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance({ id: 'id-1', caseFileId: 'cf-id-1' })]),
-              search: jest.fn(),
-            },
-          };
+          tableData: () => [{ entity: mockCaseFinancialAssistanceEntity({ id: 'id-1', caseFileId: 'cf-id-1' }), caseFile: null, event: null }],
         },
       });
 

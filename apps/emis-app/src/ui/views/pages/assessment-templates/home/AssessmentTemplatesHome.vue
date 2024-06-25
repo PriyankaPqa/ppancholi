@@ -26,30 +26,29 @@
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filters"
-          :sql-mode="true"
           @update:appliedFilter="onApplyFilter" />
       </template>
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          :data-test="`assessmentDetail-link-${item.entity.id}`"
-          :to="getAssessmentDetailsRoute(item.entity.id)">
-          {{ $m(item.entity.name) }}
+          :data-test="`assessmentDetail-link-${item.id}`"
+          :to="getAssessmentDetailsRoute(item.id)">
+          {{ $m(item.name) }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
-        {{ getProgramName(item.entity) }}
+        {{ getProgramName(item) }}
       </template>
 
       <template #[`item.${customColumns.published}`]="{ item }">
         <div class="publish">
-          {{ $t(`enums.assessmentPublishStatus.${PublishStatus[item.entity.publishStatus]}`) }}
+          {{ $t(`enums.assessmentPublishStatus.${PublishStatus[item.publishStatus]}`) }}
         </div>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
-        <status-chip status-name="Status" :status="item.entity.status" />
+        <status-chip status-name="Status" :status="item.status" />
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
@@ -64,11 +63,11 @@
           </template>
 
           <v-list>
-            <v-list-item @click="getAssessmentEditRoute(item.entity.id)">
+            <v-list-item @click="getAssessmentEditRoute(item.id)">
               {{ $t('assessmentTemplate.editAssessment') }}
             </v-list-item>
 
-            <v-list-item @click="editorMode(item.entity.id)">
+            <v-list-item @click="editorMode(item.id)">
               {{ $t('assessmentTemplate.gotoEditor') }}
             </v-list-item>
           </v-list>
@@ -84,11 +83,11 @@
           </template>
 
           <v-list>
-            <v-list-item @click="copySampleLink(item.entity)">
+            <v-list-item @click="copySampleLink(item)">
               {{ $t('assessmentTemplate.copySampleLink') }}
             </v-list-item>
 
-            <v-list-item @click="duplicateSurvey(item.entity)">
+            <v-list-item @click="duplicateSurvey(item)">
               {{ $t('assessmentTemplate.duplicateSurvey') }}
             </v-list-item>
           </v-list>
@@ -113,22 +112,19 @@ import {
 import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, Status } from '@libs/shared-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import {
- IAssessmentBaseCombined,
+  IAssessmentBaseEntity,
   IAssessmentFormEntity,
   IAssessmentTemplateEntity,
   PublishStatus,
-  IdParams,
 } from '@libs/entities-lib/assessment-template';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 import { useProgramStore } from '@/pinia/program/program';
@@ -167,9 +163,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       programs: [] as { text: string, value: string }[],
       PublishStatus,
       showCopyAssessmentDialog: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, null, IdParams>(useAssessmentFormStore()),
-      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, null, IdParams>(useAssessmentTemplateStore()),
-      sqlSearchMode: true,
     };
   },
 
@@ -279,19 +272,19 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: useAssessmentTemplateStore().searchLoading,
-        itemClass: (item: IAssessmentBaseCombined) => (item.pinned ? 'pinned' : ''),
+        itemClass: (item: IAssessmentBaseEntity) => (item.pinned ? 'pinned' : ''),
       };
     },
 
-    tableData(): IAssessmentBaseCombined[] {
+    tableData(): IAssessmentBaseEntity[] {
       if (this.isFormMode) {
-        return this.combinedFormStore.getByIds(
+        return useAssessmentFormStore().getByIdsWithPinnedItems(
           this.searchResultIds,
-          { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
+          { baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
         );
       }
 
-      return this.combinedTemplateStore.getByIds(
+      return useAssessmentTemplateStore().getByIdsWithPinnedItems(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate },
       );
@@ -382,18 +375,16 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filters = this.isFormMode ? { ...params.filter as Record<string, unknown>, 'Entity/EventId': { value: this.id, type: EFilterKeyType.Guid } } : params.filter;
-      const res = await (this.isFormMode ? this.combinedFormStore : this.combinedTemplateStore).search({
-        search: params.search,
+      const res = await (this.isFormMode ? useAssessmentFormStore() : useAssessmentTemplateStore()).search({ params: {
         filter: filters,
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true);
+      },
+      includeInactiveItems: true });
       return res;
     },
 

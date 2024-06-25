@@ -3,9 +3,7 @@ import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import {
-  mockCombinedEvents, mockCombinedEvent, EResponseLevel, EEventStatus, mockEventEntity,
-} from '@libs/entities-lib/event';
+import { EResponseLevel, EEventStatus, mockEventEntity, mockEventEntities } from '@libs/entities-lib/event';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -14,8 +12,8 @@ import { sub, add } from 'date-fns';
 import Component from './EventsTable.vue';
 
 const localVue = createLocalVue();
-const mockEvents = () => mockCombinedEvents();
-
+const mockEvents = () => mockEventEntities();
+let { eventStore } = useMockEventStore();
 describe('EventsTable.vue', () => {
   let wrapper;
 
@@ -33,7 +31,7 @@ describe('EventsTable.vue', () => {
         },
       });
 
-      wrapper.vm.searchResultIds = mockEvents().map((event) => event.entity.id);
+      wrapper.vm.searchResultIds = mockEvents().map((event) => event.id);
       wrapper.vm.itemsCount = mockEvents().length;
       wrapper.vm.getEventRoute = jest.fn(() => ({
         name: routes.events.summary.name,
@@ -84,7 +82,7 @@ describe('EventsTable.vue', () => {
             },
           });
           wrapper.vm.search = jest.fn();
-          wrapper.vm.searchResultIds = mockEvents().map((event) => event.entity.id);
+          wrapper.vm.searchResultIds = mockEvents().map((event) => event.id);
           wrapper.vm.itemsCount = mockEvents().length;
           dataTable = wrapper.findComponent(RcDataTable);
           expect(dataTable.props('showAddButton')).toBe(false);
@@ -104,7 +102,7 @@ describe('EventsTable.vue', () => {
 
       describe('table elements', () => {
         test('event title redirects to getEventRoute', () => {
-          const link = wrapper.findDataTest(`eventDetail-link_${mockEvents()[0].entity.name.translation.en}`);
+          const link = wrapper.findDataTest(`eventDetail-link_${mockEvents()[0].name.translation.en}`);
           expect(link.props('to')).toEqual({
             name: routes.events.summary.name,
             params: {
@@ -131,7 +129,7 @@ describe('EventsTable.vue', () => {
               tableData: () => mockEvents(),
             },
           });
-          wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
+          wrapper.vm.searchResultIds = mockEvents().map((e) => e.id);
           wrapper.vm.itemsCount = mockEvents().length;
           await wrapper.vm.$nextTick();
           const editButton = wrapper.findDataTest('edit_event');
@@ -149,7 +147,7 @@ describe('EventsTable.vue', () => {
               tableData: () => mockEvents(),
             },
           });
-          wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
+          wrapper.vm.searchResultIds = mockEvents().map((e) => e.id);
           wrapper.vm.itemsCount = mockEvents().length;
           await wrapper.vm.$nextTick();
           const editButton = wrapper.findDataTest('edit_event');
@@ -162,22 +160,25 @@ describe('EventsTable.vue', () => {
   describe('Computed', () => {
     describe('tableData', () => {
       it('should return the correct values', () => {
+        const pinia = getPiniaForUser(UserRoles.level6);
+        const { eventStore } = useMockEventStore(pinia);
+
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           propsData: {
             isDashboard: false,
           },
         });
         wrapper.vm.search = jest.fn();
-        wrapper.vm.combinedEventStore.getByIds = jest.fn(mockCombinedEvents);
-        wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
-        wrapper.vm.itemsCount = mockEvents().length;
+        eventStore.getByIdsWithPinnedItems = jest.fn(() => mockEventEntities());
+        wrapper.vm.searchResultIds = mockEventEntities().map((e) => e.id);
+        wrapper.vm.itemsCount = mockEventEntities().length;
 
-        expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify(mockEvents()));
-        expect(wrapper.vm.combinedEventStore.getByIds).toHaveBeenCalledWith(
+        expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify(mockEventEntities()));
+        expect(eventStore.getByIdsWithPinnedItems).toHaveBeenCalledWith(
           wrapper.vm.searchResultIds,
-          { baseDate: null, prependPinnedItems: true },
+          { baseDate: null },
         );
       });
     });
@@ -365,9 +366,7 @@ describe('EventsTable.vue', () => {
           },
         });
         wrapper.vm.search = jest.fn();
-        const event = mockCombinedEvent({
-          ...mockEventEntity({ schedule: { status: EEventStatus.OnHold } }),
-        });
+        const event = mockEventEntity({ schedule: { status: EEventStatus.OnHold } });
 
         expect(wrapper.vm.canEdit(event)).toBeTruthy();
       });
@@ -386,9 +385,7 @@ describe('EventsTable.vue', () => {
           },
         });
         wrapper.vm.search = jest.fn();
-        const event = mockCombinedEvent({
-          ...mockEventEntity({ schedule: { status: EEventStatus.OnHold } }),
-        });
+        const event = mockEventEntity({ schedule: { status: EEventStatus.OnHold } });
 
         expect(wrapper.vm.canEdit(event)).toBeTruthy();
       });
@@ -407,9 +404,7 @@ describe('EventsTable.vue', () => {
           },
         });
         wrapper.vm.search = jest.fn();
-        const event = mockCombinedEvent({
-          ...mockEventEntity({ schedule: { status: EEventStatus.Closed } }),
-        });
+        const event = mockEventEntity({ schedule: { status: EEventStatus.Closed } });
 
         expect(wrapper.vm.canEdit(event)).toBeFalsy();
       });
@@ -428,9 +423,7 @@ describe('EventsTable.vue', () => {
           },
         });
         wrapper.vm.search = jest.fn();
-        const event = mockCombinedEvent({
-          ...mockEventEntity({ schedule: { status: EEventStatus.Open } }),
-        });
+        const event = mockEventEntity({ schedule: { status: EEventStatus.Open } });
 
         expect(wrapper.vm.canEdit(event)).toBeFalsy();
       });
@@ -439,6 +432,7 @@ describe('EventsTable.vue', () => {
 
   describe('Methods', () => {
     const doMount = (pinia = getPiniaForUser(UserRoles.level6)) => {
+      eventStore = useMockEventStore(pinia).eventStore;
       wrapper = mount(Component, {
         localVue,
         pinia,
@@ -448,7 +442,7 @@ describe('EventsTable.vue', () => {
 
       });
 
-      wrapper.vm.combinedEventStore.search = jest.fn(() => ({
+      eventStore.search = jest.fn(() => ({
         ids: [mockEvents()[0].id, mockEvents()[1].id],
         count: mockEvents().length,
       }));
@@ -468,21 +462,20 @@ describe('EventsTable.vue', () => {
     });
 
     describe('fetchData', () => {
-      it('should call combinedEventStore search with proper parameters', async () => {
+      it('should call EventStore search with proper parameters', async () => {
         const params = {
           filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedEventStore.search).toHaveBeenCalledWith({
+        expect(eventStore.search).toHaveBeenCalledWith({ params: {
           filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, false, true);
+        },
+        includeInactiveItems: false });
       });
     });
 
@@ -491,7 +484,7 @@ describe('EventsTable.vue', () => {
         expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
           name: routes.events.summary.name,
           params: {
-            id: mockEvents()[0].entity.id,
+            id: mockEvents()[0].id,
           },
         });
       });
@@ -539,9 +532,9 @@ describe('EventsTable.vue', () => {
     describe('goToEditEvent', () => {
       it('redirects to the right page', async () => {
         jest.spyOn(wrapper.vm.$router, 'push').mockImplementation(() => {});
-        const mockEvent = mockCombinedEvent();
+        const mockEvent = mockEventEntity();
         await wrapper.vm.goToEditEvent(mockEvent);
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.events.edit.name, params: { id: mockEvent.entity.id } });
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.events.edit.name, params: { id: mockEvent.id } });
       });
     });
   });

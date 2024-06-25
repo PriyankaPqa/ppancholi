@@ -156,20 +156,16 @@ import {
 } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { VForm } from '@libs/shared-lib/types';
+import { VForm, Status } from '@libs/shared-lib/types';
 import { ApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table/approvalTable';
-import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import ApprovalGroupTable from '@/ui/views/pages/approvals/create-edit/ApprovalGroupTable.vue';
 import routes from '@/constants/routes';
 import { ApprovalAggregatedBy, ApprovalBaseEntity, IApprovalBaseEntity } from '@libs/entities-lib/approvals/approvals-base';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import {
-  IApprovalTableEntity, IApprovalTableEntityData, IdParams,
-} from '@libs/entities-lib/approvals/approvals-table';
+import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import _isEqual from 'lodash/isEqual';
@@ -208,7 +204,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
       groupHasChanged: false, // if group is being edited and values have changed
       ApprovalAggregatedBy,
       showNoGroupErr: false,
-      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, null, IdParams>(useApprovalTableStore()),
     };
   },
 
@@ -420,8 +415,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async initTableDataEdit() {
-      const combinedApproval = await this.combinedApprovalTableStore.fetch(this.approvalId);
-      this.approval = new ApprovalTableEntity(combinedApproval?.entity);
+      const approval = await useApprovalTableStore().fetch(this.approvalId);
+      this.approval = new ApprovalTableEntity(approval);
       (this.approval as IApprovalTableEntity).eventId = this.eventId;
       await this.loadProgramsAndEventTables();
       this.createBackupApproval(this.approval as IApprovalTableEntity);

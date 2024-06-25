@@ -29,7 +29,6 @@
         :filter-options="filters"
         :initial-filter="filterState"
         :count="itemsCount"
-        :sql-mode="true"
         add-filter-label="eventsTable.filter.title"
         @update:appliedFilter="onApplyFilter" />
     </template>
@@ -37,26 +36,26 @@
     <template #[`item.${customColumns.name}`]="{ item: event }">
       <router-link
         class="rc-link14 font-weight-bold"
-        :data-test="`eventDetail-link_${ event.entity.name && event.entity.name.translation.en }`"
+        :data-test="`eventDetail-link_${ event.name && event.name.translation.en }`"
         :to="getEventRoute(event)">
-        {{ $m(event.entity.name) }}
+        {{ $m(event.name) }}
       </router-link>
     </template>
 
     <template #[`item.${customColumns.responseLevel}`]="{ item: event }">
-      {{ $t(`enums.ResponseLevel.Level${event.entity.responseDetails.responseLevel}`) }}
+      {{ $t(`enums.ResponseLevel.Level${event.responseDetails.responseLevel}`) }}
     </template>
 
     <template #[`item.${customColumns.openDate}`]="{ item: event }">
-      {{ event.entity.schedule ? getLocalStringDate(event.entity.schedule.openDate, 'EventSchedule.openDate', 'PP') : "" }}
+      {{ event.schedule ? getLocalStringDate(event.schedule.openDate, 'EventSchedule.openDate', 'PP') : "" }}
     </template>
 
     <template #[`item.${customColumns.daysOpen}`]="{ item: event }">
-      {{ getDaysOpen(event.entity.schedule) }}
+      {{ getDaysOpen(event.schedule) }}
     </template>
 
     <template #[`item.${customColumns.eventStatus}`]="{ item: event }">
-      <status-chip status-name="EEventStatus" :status="event.entity.schedule ? event.entity.schedule.status : 0" />
+      <status-chip status-name="EEventStatus" :status="event.schedule ? event.schedule.status : 0" />
     </template>
 
     <template #[`item.editButton`]="{ item }">
@@ -79,21 +78,14 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import {
-  EResponseLevel,
-  EEventStatus,
-  IEventEntity,
-  IEventCombined,
-  IEventSchedule, IdParams,
-} from '@libs/entities-lib/event';
+import { EResponseLevel, EEventStatus, IEventEntity, IEventSchedule } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
 import helpers from '@/ui/helpers/helpers';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useEventStore } from '@/pinia/event/event';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { differenceInDays, format, startOfDay } from 'date-fns';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -127,14 +119,12 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: ['Entity/Schedule/OpenDate'],
         sortDesc: [true],
       },
-      combinedEventStore: new CombinedStoreFactory<IEventEntity, null, IdParams>(useEventStore(), null),
-      sqlSearchMode: true,
     };
   },
 
   computed: {
-    tableData(): IEventCombined[] {
-      return this.combinedEventStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+    tableData(): IEventEntity[] {
+      return useEventStore().getByIdsWithPinnedItems(this.searchResultIds, { baseDate: this.searchExecutionDate });
     },
 
     customColumns(): Record<string, string> {
@@ -214,13 +204,13 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: useEventStore().searchLoading,
-        itemClass: (item: IEventCombined) => (item.pinned ? 'pinned' : ''),
+        itemClass: (item: IEventEntity) => (item.pinned ? 'pinned' : ''),
       };
     },
 
-    canEdit(): (event: IEventCombined) => boolean {
+    canEdit(): (event: IEventEntity) => boolean {
       return (event) => this.$hasLevel(UserRoles.level5)
-      && (event.entity.schedule.status === EEventStatus.Open || event.entity.schedule.status === EEventStatus.OnHold);
+      && (event.schedule.status === EEventStatus.Open || event.schedule.status === EEventStatus.OnHold);
     },
   },
 
@@ -234,24 +224,24 @@ export default mixins(TablePaginationSearchMixin).extend({
       this.$router.push({ name: routes.events.create.name });
     },
 
-    async fetchData(params: IAzureSearchParams) {
-      const res = await this.combinedEventStore.search({
+    async fetchData(params: ISearchParams) {
+      const res = await useEventStore().search({ params: {
         filter: params.filter,
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, false, true);
+      },
+      includeInactiveItems: false });
+
       return res;
     },
 
-    getEventRoute(event: IEventCombined) {
+    getEventRoute(event: IEventEntity) {
       return {
         name: routes.events.summary.name,
         params: {
-          id: event.entity.id,
+          id: event.id,
         },
       };
     },
@@ -281,8 +271,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       return null;
     },
 
-    goToEditEvent(event: IEventCombined) {
-      this.$router.push({ name: routes.events.edit.name, params: { id: event.entity.id } });
+    goToEditEvent(event: IEventEntity) {
+      this.$router.push({ name: routes.events.edit.name, params: { id: event.id } });
     },
 
     getTableName():string {

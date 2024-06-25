@@ -4,7 +4,7 @@ import {
   ICaseFileCount,
   ICaseFileDetailedCount, IAssignedTeamMembers, IRecoveryPlan,
 } from '@libs/entities-lib/case-file';
-import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult, IListOption } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams, ISearchResult, IListOption } from '@libs/shared-lib/types';
 import { ICaseFileMetadata, ICaseFileSummary, ITier2Details, ITier2Request, ITier2Response, SearchOptimizedResults } from '@libs/entities-lib/src/case-file/case-file.types';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { GlobalHandler, IHttpClient } from '../../http-client';
@@ -93,22 +93,22 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign-case-file-teams-and-team-members`, payload);
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>> {
-    return this.http.get(`${this.apiUrlSuffix}/search/case-filesV2`, { params, isODataSql: true });
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>> {
+    return this.http.get(`${this.apiUrlSuffix}/search/case-filesV2`, { params, isOData: true });
   }
 
-  async searchOptimized(params: IAzureSearchParams, includeCaseFile = false, includeCaseFileAndMetadata = false):
+  async searchOptimized(params: ISearchParams, includeCaseFile = false, includeCaseFileAndMetadata = false):
     Promise<SearchOptimizedResults> {
     return this.http.get(
       `${this.apiUrlSuffix}/search/case-files-optimized?includeCaseFile=${includeCaseFile}&includeCaseFileAndMetadata=${includeCaseFileAndMetadata}`,
-      { params, isODataSql: true },
+      { params, isOData: true },
     );
   }
 
   // summaries are available even if you dont have access to the full case file
-  async searchSummaries(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFileSummary>> {
-    return this.http.get(`${this.apiUrlSuffix}/search/casefile-summaries`, { params, isODataSql: true });
+  async searchSummaries(params: ISearchParams): Promise<ISearchResult<ICaseFileSummary>> {
+    return this.http.get(`${this.apiUrlSuffix}/search/casefile-summaries`, { params, isOData: true });
   }
 
   async getSummary(id: uuid): Promise<ICaseFileSummary> {

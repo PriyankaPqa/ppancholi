@@ -99,7 +99,7 @@ import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from 
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import routes from '@/constants/routes';
 import { UserRoles } from '@libs/entities-lib/user';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import { EPaymentModalities } from '@libs/entities-lib/program';

@@ -23,28 +23,27 @@
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filters"
-          :sql-mode="true"
           @update:appliedFilter="onApplyFilter" />
       </template>
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          :data-test="`referralDetail-link-${item.entity.id}`"
-          :to="getReferralDetailsRoute(item.entity.id)">
-          {{ (item.entity && item.entity.name) || '-' }}
+          :data-test="`referralDetail-link-${item.id}`"
+          :to="getReferralDetailsRoute(item.id)">
+          {{ (item && item.name) || '-' }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.refType}`]="{ item }">
-        {{ getReferralType(item.entity) }}
+        {{ getReferralType(item) }}
       </template>
 
       <template #[`item.${customColumns.outcomeStatus}`]="{ item }">
-        {{ getOutcome(item.entity) }}
+        {{ getOutcome(item) }}
       </template>
 
       <template v-if="canEdit" #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn icon :to="getReferralEditRoute(item.entity.id)" :aria-label="$t('common.edit')" data-test="editReferral-link">
+        <v-btn icon :to="getReferralEditRoute(item.id)" :aria-label="$t('common.edit')" data-test="editReferral-link">
           <v-icon>
             mdi-pencil
           </v-icon>
@@ -62,15 +61,14 @@ import {
 import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { ICaseFileReferralCombined, ICaseFileReferralEntity, IdParams } from '@libs/entities-lib/case-file-referral';
+import { ICaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
 import { UserRoles } from '@libs/entities-lib/user';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import caseFileDetail from '../caseFileDetail';
 
 export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
@@ -88,10 +86,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         sortBy: ['Entity/Name'],
         sortDesc: [false],
       },
-      combinedCaseFileReferralStore: new CombinedStoreFactory<ICaseFileReferralEntity, null, IdParams>(
-        useCaseFileReferralStore(),
-      ),
-      sqlSearchMode: true,
     };
   },
 
@@ -179,14 +173,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: useCaseFileReferralStore().searchLoading,
-        itemClass: (item: ICaseFileReferralCombined) => (item.pinned ? 'pinned' : ''),
+        itemClass: (item: ICaseFileReferralEntity) => (item.pinned ? 'pinned' : ''),
       };
     },
 
-    tableData(): ICaseFileReferralCombined[] {
-      return this.combinedCaseFileReferralStore.getByIds(
+    tableData(): ICaseFileReferralEntity[] {
+      return useCaseFileReferralStore().getByIdsWithPinnedItems(
         this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
+        { baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
       );
     },
 
@@ -232,18 +226,16 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       };
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
-      const res = await this.combinedCaseFileReferralStore.search({
-        search: params.search,
+      const res = await useCaseFileReferralStore().search({ params: {
         filter: { 'Entity/CaseFileId': { value: this.$route.params.id, type: EFilterKeyType.Guid }, ...filterParams },
         top: 1000,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, false, true);
+      },
+      includeInactiveItems: false });
       return res;
     },
   },

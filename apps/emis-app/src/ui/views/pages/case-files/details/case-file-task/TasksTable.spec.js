@@ -14,14 +14,14 @@ import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
-import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { EFilterType, EFilterKeyType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { ITEM_ROOT } from '@libs/services-lib/odata-query-sql/odata-query-sql';
 import flushPromises from 'flush-promises';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
@@ -1035,7 +1035,6 @@ describe('TasksTable.vue', () => {
 
       beforeEach(() => {
         params = {
-          search: 'query',
           filter: { foo: 'bar' },
           top: 10,
           skip: 10,
@@ -1049,14 +1048,11 @@ describe('TasksTable.vue', () => {
 
         expect(wrapper.vm.combinedTaskStore.search)
           .toHaveBeenCalledWith({
-            search: params.search,
             filter: params.filter,
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           }, null, false, true);
       });
 
@@ -1077,8 +1073,6 @@ describe('TasksTable.vue', () => {
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           }, null, false, true);
       });
     });

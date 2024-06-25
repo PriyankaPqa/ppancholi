@@ -3,12 +3,11 @@ import {
   EventEntity,
   mockEventEntities,
 } from '@libs/entities-lib/event';
-import { ISearchData } from '@libs/shared-lib/types';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { IHttpMock, mockHttp, GlobalHandler } from '../../http-client';
 import { EventsService } from './events';
 
-export const mockSearchParams: ISearchData = {
+export const mockSearchParams = {
   filter: 'foo',
 };
 
@@ -145,7 +144,7 @@ describe('>>> Events Service', () => {
   test('searchMyEvents is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchMyEvents(params);
-    expect(http.get).toHaveBeenCalledWith('event/search/event-summaries', { params: { filter: 'foo and HasAccess eq true' }, isODataSql: true });
+    expect(http.get).toHaveBeenCalledWith('event/search/event-summaries', { params: { filter: 'foo and HasAccess eq true' }, isOData: true });
   });
 
   test('searchMyEventsById calls the helper callSearchInInBatches with the right params and return the right object', async () => {
@@ -332,7 +331,7 @@ describe('>>> Events Service', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('event/search/eventsV2', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('event/search/eventsV2', { params, isOData: true });
     });
   });
 

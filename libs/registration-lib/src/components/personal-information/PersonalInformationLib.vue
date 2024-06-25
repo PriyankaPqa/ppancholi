@@ -31,9 +31,8 @@
 import Vue, { VueConstructor } from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
 import _debounce from 'lodash/debounce';
-import { Status } from '@libs/entities-lib/base';
+import { Status, IOptionItemData } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
-import { IOptionItemData } from '@libs/shared-lib/types';
 import { ContactInformation, IContactInformation } from '@libs/entities-lib/value-objects/contact-information';
 import {
   IdentitySet, IIdentitySet, IMember, ISplitHousehold,

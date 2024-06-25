@@ -162,8 +162,6 @@ export default Vue.extend({
 
       const params = {
         orderBy: 'Schedule/OpenDate desc',
-        queryType: 'full',
-        searchMode: 'all',
         filter,
         top,
       };

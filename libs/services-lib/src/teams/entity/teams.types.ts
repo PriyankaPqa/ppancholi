@@ -1,7 +1,7 @@
 import {
   ITeamEntity, ITeamMember,
 } from '@libs/entities-lib/team';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/src/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/src/types';
 import { IEntity } from '@libs/entities-lib/src/base';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
@@ -15,8 +15,8 @@ export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid> {
   getTeamsAssigned(caseFileId: uuid): Promise<ITeamEntity[]>;
   getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation } : { eventId: uuid, teamIds?:string[], includeInactive?: boolean, isEscalation?: boolean })
   : Promise<ITeamEntity[]>;
-  search(params: IAzureSearchParams & { manageableTeamsOnly?: boolean },
-    searchEndpoint?: string, manageableTeamsOnly?: boolean):Promise<IAzureCombinedSearchResult<ITeamEntity, IEntity>>;
+  search(params: ISearchParams & { manageableTeamsOnly?: boolean },
+    searchEndpoint?: string, manageableTeamsOnly?: boolean):Promise<ICombinedSearchResult<ITeamEntity, IEntity>>;
 }
 
 export interface ITeamsServiceMock extends IDomainBaseServiceMock<ITeamEntity> {

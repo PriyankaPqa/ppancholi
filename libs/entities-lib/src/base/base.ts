@@ -1,4 +1,5 @@
-import { IEntity, Status } from './base.types';
+import { Status } from '@libs/shared-lib/types';
+import { IEntity } from './base.types';
 
 export class BaseEntity implements IEntity {
   id: uuid;

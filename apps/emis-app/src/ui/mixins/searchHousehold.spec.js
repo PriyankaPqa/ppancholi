@@ -1,6 +1,6 @@
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 const Component = {
@@ -9,7 +9,7 @@ const Component = {
 };
 
 const localVue = createLocalVue();
-const { pinia } = useMockHouseholdStore();
+const { pinia, householdStore } = useMockHouseholdStore();
 
 let wrapper;
 
@@ -31,23 +31,22 @@ describe('searchHousehold', () => {
       });
 
       it('should call search actions with proper parameters', async () => {
-        wrapper.vm.combinedHouseholdStore.search = jest.fn();
         await wrapper.vm.search({});
-        expect(wrapper.vm.combinedHouseholdStore.search).toHaveBeenCalledWith({
+        expect(householdStore.search).toHaveBeenCalledWith({ params: {
           filter: wrapper.vm.filters,
-          queryType: 'full',
           includeMembers: true,
-        }, null, false, true);
+        },
+        includeInactiveItems: false });
       });
 
       it('should set searchResults', async () => {
-        wrapper.vm.combinedHouseholdStore.search = jest.fn(() => ({ ids: ['1'] }));
-        wrapper.vm.combinedHouseholdStore.getByIds = jest.fn(() => [mockCombinedHousehold()]);
+        householdStore.search = jest.fn(() => ({ ids: ['1'] }));
+        householdStore.getByIds = jest.fn(() => [mockHouseholdEntity()]);
         await wrapper.setData({
           searchResults: [],
         });
         await wrapper.vm.search({});
-        expect(wrapper.vm.searchResults).toEqual([mockCombinedHousehold().entity]);
+        expect(wrapper.vm.searchResults).toEqual([mockHouseholdEntity()]);
       });
     });
   });

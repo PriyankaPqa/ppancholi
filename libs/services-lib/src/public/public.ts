@@ -1,4 +1,4 @@
-import { IAzureSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchResult, ISearchParams } from '@libs/shared-lib/types';
 /* eslint-disable no-empty */
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 
@@ -12,7 +12,7 @@ import { IPublicService } from './public.types';
 export class PublicService implements IPublicService {
   constructor(private readonly http: IHttpClient) {}
 
-  async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventSummary>> {
+  async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<ISearchResult<IEventSummary>> {
     return this.http.get('/event/search/event-summaries', {
       params: {
         filter: lang === 'fr'
@@ -20,25 +20,25 @@ export class PublicService implements IPublicService {
           : { 'RegistrationLink/Translation/en': helpersUrl.encodeUrl(registrationLink) },
       },
       containsEncodedURL: true,
-      isODataSql: true,
+      isOData: true,
     });
   }
 
-  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSummary>> {
+  async searchEvents(params: ISearchParams): Promise<ISearchResult<IEventSummary>> {
     return this.http.get('/event/search/event-summaries', {
       params,
       containsEncodedURL: true,
-      isODataSql: true,
+      isOData: true,
     });
   }
 
-  async searchEventsById(ids: string[]): Promise<IAzureSearchResult<IEventSummary>> {
+  async searchEventsById(ids: string[]): Promise<ISearchResult<IEventSummary>> {
     return helpers.callSearchInInBatches({
       searchInFilter: 'Id in({ids})',
       service: this,
       ids,
       api: 'searchEvents',
-    }) as Promise<IAzureSearchResult<IEventSummary>>;
+    }) as Promise<ISearchResult<IEventSummary>>;
   }
 
   async getTenantByEmisDomain(domain: string): Promise<string> {

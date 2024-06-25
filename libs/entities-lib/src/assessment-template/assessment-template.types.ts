@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { IMultilingual } from '@libs/shared-lib/types';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 
 export enum AssessmentFormType {
   AssessmentTemplate = 1,
@@ -154,10 +154,5 @@ export interface IAssessmentTotalSubmissions {
   totalPartialCompleted: number;
   totalAssigned: number;
 }
-
-export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEntity, IEntity>;
-export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IEntity>;
-export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IEntity>;
-export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IEntity>;
 
 export type IdParams = { id: uuid };

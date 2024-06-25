@@ -25,12 +25,11 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
-import { IServerError, VForm } from '@libs/shared-lib/types';
+import { IServerError, VForm, Status } from '@libs/shared-lib/types';
 import { IProgramEntity, ProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { Status } from '@libs/entities-lib/base';
 import { useProgramStore } from '@/pinia/program/program';
 import ProgramForm from './ProgramForm.vue';
 

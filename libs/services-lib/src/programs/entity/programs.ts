@@ -1,5 +1,5 @@
 import { IProgramEntity } from '@libs/entities-lib/program';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/base';
 import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -28,8 +28,8 @@ export class ProgramsService extends DomainBaseService<IProgramEntity, UrlParams
     return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}`, program), program, { globalHandler: GlobalHandler.Partial });
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<IProgramEntity, IEntity>> {
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<IProgramEntity, IEntity>> {
     return this.http.get('event/search/programsV2', { params, isOData: true });
   }
 }

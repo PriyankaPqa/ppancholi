@@ -1,9 +1,7 @@
 import {
   IOptionItemData, EOptionLists, IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
-import { IMultilingual } from '@libs/shared-lib/types';
-
-import { Status } from '@libs/entities-lib/base';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 
 export interface IOptionItemsService {
   getOptionList(target: EOptionLists): Promise<IOptionItemData[]>;

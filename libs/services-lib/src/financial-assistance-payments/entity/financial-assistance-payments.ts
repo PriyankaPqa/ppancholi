@@ -5,7 +5,7 @@ import {
   PaymentsSummary,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { EPaymentCancellationReason, IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -94,8 +94,8 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
     return this.http.get(`${this.baseUrl}/${financialAssistanceId}/next-approval-group-roles`);
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<IFinancialAssistancePaymentEntity, IEntity>> {
-    return this.http.get('finance/search/financial-assistance-paymentsV2', { params, isODataSql: true });
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<IFinancialAssistancePaymentEntity, IEntity>> {
+    return this.http.get('finance/search/financial-assistance-paymentsV2', { params, isOData: true });
   }
 }

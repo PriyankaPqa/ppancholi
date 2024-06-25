@@ -229,7 +229,7 @@ describe('AssessmentCaseFileFiltering.vue', () => {
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.massActions.assessments.create.name,
           query: {
-            azureSearchParams: JSON.stringify(wrapper.vm.azureSearchParams),
+            searchParams: JSON.stringify(wrapper.vm.searchParams),
             mode: MassActionMode.List,
             total: wrapper.vm.itemsCount.toString(),
           },

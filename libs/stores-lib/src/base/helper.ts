@@ -3,7 +3,7 @@ import {
   IOptionItem, IOptionSubItem, OptionItem,
 } from '@libs/entities-lib/optionItem';
 
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 
 export function filterAndSortActiveItems(items: IOptionItem[], filterOutInactive = true, actualValue?: string[] | string) {
   if (!items) {

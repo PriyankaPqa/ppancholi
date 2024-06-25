@@ -2,20 +2,21 @@ import { shallowMount, createLocalVue } from '@/test/testSetup';
 import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './ApprovalDetails.vue';
 
 const localVue = createLocalVue();
-const { pinia } = useMockApprovalTableStore();
+const { pinia, approvalTableStore } = useMockApprovalTableStore();
 const { userAccountStore } = useMockUserAccountStore(pinia);
 
 let wrapper;
 
-const combinedApprovalTable = { entity: mockApprovalTableEntity(), metadata: {}, pinned: false };
-combinedApprovalTable.entity.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
-combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
+const approvalTable = mockApprovalTableEntity();
+approvalTable.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
+approvalTable.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
+approvalTableStore.fetch = jest.fn(() => approvalTable);
 
 const doMount = () => {
   const roles = mockRoles();
@@ -26,8 +27,8 @@ const doMount = () => {
     pinia,
     data: () => ({
       roles,
-      approval: combinedApprovalTable.entity,
-      localApproval: combinedApprovalTable.entity,
+      approval: approvalTable,
+      localApproval: approvalTable,
     }),
     mocks: {
       $route: {
@@ -38,7 +39,6 @@ const doMount = () => {
     },
   };
   wrapper = shallowMount(Component, options);
-  wrapper.vm.combinedApprovalTableStore.fetch = jest.fn(() => combinedApprovalTable);
 };
 
 describe('ApprovalDetails', () => {
@@ -134,17 +134,17 @@ describe('ApprovalDetails', () => {
       it('should fetch the approval table by id', () => {
         doMount();
         wrapper.vm.loadData();
-        expect(wrapper.vm.combinedApprovalTableStore.fetch).toBeCalledWith('approvalId');
+        expect(approvalTableStore.fetch).toBeCalledWith('approvalId');
       });
 
       it('should set approval with entity', () => {
         doMount();
-        expect(wrapper.vm.approval).toEqual(combinedApprovalTable.entity);
+        expect(wrapper.vm.approval).toEqual(approvalTable);
       });
 
       it('should set localApproval with approval', () => {
         doMount();
-        expect(wrapper.vm.localApproval).toEqual(combinedApprovalTable.entity);
+        expect(wrapper.vm.localApproval).toEqual(approvalTable);
       });
 
       it('should fetch and set roles', () => {

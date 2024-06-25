@@ -6,7 +6,7 @@ import axios, {
   AxiosInstance, AxiosResponse,
 } from 'axios';
 import { camelKeys } from 'js-convert-case';
-import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
+import { ISearchParams, IServerError } from '@libs/shared-lib/types';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { localStorageKeys } from '@libs/shared-lib/constants/localStorage';
 // for sql search we use the updated version of original package Odata-query V7.0.6
@@ -16,7 +16,6 @@ import { GlobalHandler,
 } from './httpClient.types';
 import { sanitize932115 } from '../utils/owasp';
 // for azure search
-import { buildQuery } from '../odata-query';
 
 export class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
@@ -201,19 +200,15 @@ export class HttpClient implements IHttpClient {
 
     sanitize932115(request.data);
 
-    if (request.isOData || request.isODataSql) {
+    if (request.isOData) {
       request.paramsSerializer = {
-        serialize: request.isODataSql ? this.serializeParamsSql : this.serializeParams,
+        serialize: this.serializeParamsSql,
       };
     }
     return request;
   }
 
-  private serializeParams(params: IAzureSearchParams) {
-    return buildQuery(params).slice(1).replace('$search', 'search');
-  }
-
-  private serializeParamsSql(params: IAzureSearchParams) {
+  private serializeParamsSql(params: ISearchParams) {
     return buildQuerySql(params as any).slice(1);
   }
 

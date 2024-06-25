@@ -31,7 +31,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('assessment/search/assessment-formsV2', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('assessment/search/assessment-formsV2', { params, isOData: true });
     });
   });
 

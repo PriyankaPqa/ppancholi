@@ -71,6 +71,51 @@ describe('Base Store', () => {
     });
   });
 
+  describe('getByIdsWithPinnedItems', () => {
+    it('should return a list of entities and metadata filtered by the ids', () => {
+      baseStore.setAll(mockUserAccountEntities());
+      const ids = [mockUserAccountEntities()[0].id];
+      const expected = [{ ...mockUserAccountEntities()[0], pinned: false }];
+      expect(baseStore.getByIdsWithPinnedItems(ids)).toEqual(expected);
+    });
+
+    it('returns newlycreated items pinned according to id', () => {
+      baseStore.setAll(mockUserAccountEntities());
+      const ids = [mockUserAccountEntities()[0].id];
+      baseStore.newlyCreatedIds = [{ id: mockUserAccountEntities()[0].id, createdOn: new Date().getTime() }];
+
+      expect(baseStore.getByIdsWithPinnedItems(ids))
+        .toEqual([{ ...mockUserAccountEntities()[0], pinned: true }]);
+
+      expect(baseStore.getByIdsWithPinnedItems([]))
+        .toEqual([{ ...mockUserAccountEntities()[0], pinned: true }]);
+
+      baseStore.newlyCreatedIds = [];
+      expect(baseStore.getByIdsWithPinnedItems(ids))
+        .toEqual([{ ...mockUserAccountEntities()[0], pinned: false }]);
+    });
+
+    it('filters newlycreated items pinned according to parentId', () => {
+      baseStore.setAll(mockUserAccountEntities());
+      const ids: string[] = [];
+      baseStore.newlyCreatedIds = [{ id: mockUserAccountEntities()[0].id, createdOn: new Date().getTime() }];
+      // here we'll fake that tenantId is a parent of mockEntities
+      expect(baseStore.getByIdsWithPinnedItems(ids, { parentId: { tenantId: mockUserAccountEntities()[0].tenantId } }))
+        .toEqual([{ ...mockUserAccountEntities()[0], pinned: true }]);
+
+      expect(baseStore.getByIdsWithPinnedItems(ids, { parentId: { tenantId: 'nope' } as any }))
+        .toEqual([]);
+    });
+
+    it('filters newlycreated items pinned according to parentId when an array is passed', () => {
+      baseStore.setAll(mockUserAccountEntities());
+      const ids: string[] = [];
+      baseStore.newlyCreatedIds = [{ id: mockUserAccountEntities()[0].id, createdOn: new Date().getTime() }];
+      const res = baseStore.getByIdsWithPinnedItems(ids, { parentId: { tenantId: [mockUserAccountEntities()[0].tenantId] } });
+      expect(res).toEqual([{ ...mockUserAccountEntities()[0], pinned: true }]);
+    });
+  });
+
   describe('fetch', () => {
     it('should call get method from the service', () => {
       service.get = jest.fn();
@@ -186,13 +231,13 @@ describe('Base Store', () => {
     // });
   });
 
-  describe('search', () => {
+  describe('combinedSearch', () => {
     it('should call search method from the service', async () => {
       service.search = jest.fn();
       const params = { filter: { Foo: 'foo' } };
       const endpoint = 'bar';
 
-      await baseStore.search({ params, searchEndpoint: endpoint });
+      await baseStore.combinedSearch({ params, searchEndpoint: endpoint });
       expect(service.search).toHaveBeenCalledWith(params, endpoint);
     });
   });

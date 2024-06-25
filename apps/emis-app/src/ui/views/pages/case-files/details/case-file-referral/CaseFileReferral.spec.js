@@ -1,6 +1,4 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockSearchData } from '@libs/entities-lib/case-file-referral';
-
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import routes from '@/constants/routes';
 import Component from './CaseFileReferral.vue';
@@ -210,17 +208,14 @@ describe('CaseFileReferral.vue', () => {
 
     describe('fetchData', () => {
       beforeEach(() => {
-        caseFileReferralStore.search = jest.fn().mockImplementation(() => mockSearchData);
-
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: { id: 'foo' },
-
         });
       });
 
       const params = {
-        search: 'query',
         filter: { 'Entity/CaseFileId': '1' },
         top: 1000,
         skip: 10,
@@ -228,18 +223,16 @@ describe('CaseFileReferral.vue', () => {
       };
 
       it('should call storage actions with proper parameters', async () => {
-        jest.spyOn(wrapper.vm.combinedCaseFileReferralStore, 'search');
+        jest.spyOn(caseFileReferralStore, 'search');
         await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.combinedCaseFileReferralStore.search).toHaveBeenCalledWith({
-          search: 'query',
-          searchMode: 'all',
-          queryType: 'full',
+        expect(caseFileReferralStore.search).toHaveBeenCalledWith({ params: {
           filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-        }, null, false, true);
+        },
+        includeInactiveItems: false });
       });
 
       it('returns the search results', async () => {

@@ -248,10 +248,9 @@
 import Vue, { toRef } from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { VForm } from '@libs/shared-lib/types';
+import { VForm, Status } from '@libs/shared-lib/types';
 import entityUtils from '@libs/entities-lib/utils';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
 import { useOptionListStore } from '@/pinia/option-list/optionList';
 import { useOptionListItem } from './useOptionListItem';
 

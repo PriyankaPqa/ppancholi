@@ -1,5 +1,5 @@
 import { Ref } from 'vue';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams, ITableSearchResults } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/base';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 
@@ -14,6 +14,8 @@ export interface BaseGetters <T extends IEntity> {
   getById: (id: uuid) => T
   getByCriteria: (query: string, searchAll: boolean, searchAmong: string[]) => T[]
   getByIds: (ids: uuid[], onlyActive?: boolean) => T[]
+  getByIdsWithPinnedItems
+  : (ids: uuid[], options?: { onlyActive?: boolean, baseDate?: Date, parentId?: Record<string, unknown> }) => T[]
   getNewlyCreatedIds: (baseDate?: Date) => { id: uuid, createdOn: number }[],
 }
 
@@ -35,5 +37,7 @@ export interface BaseEntityStoreComponents<T extends IEntity, IdParams> extends 
   setSearchLoading: (payload: boolean) => void
   deactivate: (idParams: IdParams) => Promise<T>
   activate: (idParams: IdParams) => Promise<T>
-  search: ({ params, searchEndpoint }: { params: IAzureSearchParams, searchEndpoint?: string }) => Promise<IAzureCombinedSearchResult<T, unknown>>
+  combinedSearch: ({ params, searchEndpoint }: { params: ISearchParams, searchEndpoint?: string }) => Promise<ICombinedSearchResult<T, unknown>>
+  search: ({ params, searchEndpoint, includeInactiveItems, otherSearchEndpointParameters }:
+    { params: ISearchParams, searchEndpoint?: string, includeInactiveItems?: boolean, otherSearchEndpointParameters?: any }) => Promise<ITableSearchResults<T>>
 }

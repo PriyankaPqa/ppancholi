@@ -4,7 +4,7 @@
 import {
   CompletionStatus, IAnsweredQuestion, mockAssessmentFormEntity, mockAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import {
   JsonObject,
 } from 'survey-core';

@@ -64,13 +64,12 @@
 
 <script lang="ts">
 import { FinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
-import { VForm } from '@libs/shared-lib/types';
+import { VForm, Status } from '@libs/shared-lib/types';
 import { RcDialog, VAutocompleteWithValidation, MessageBox } from '@libs/component-lib/components';
 import Vue from 'vue';
 import {
   IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';

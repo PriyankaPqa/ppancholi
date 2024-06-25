@@ -7,7 +7,7 @@ import { defineStore, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { EOptionLists, mockOptionItem, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import _sortBy from 'lodash/sortBy';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import {
   EEventStatus, EventEntity, IEventEntity, mockEventEntities, mockEventEntity, IdParams,
 } from '@libs/entities-lib/event';

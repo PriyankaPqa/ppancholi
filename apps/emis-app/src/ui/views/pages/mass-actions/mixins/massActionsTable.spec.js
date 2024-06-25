@@ -100,8 +100,6 @@ describe('massActionsTable', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
 
         await wrapper.setData({ massActionTypeData: [MassActionDataCorrectionType.DataCorrectionAuthentication, MassActionType.Assessment] });
@@ -116,8 +114,6 @@ describe('massActionsTable', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
       });
     });

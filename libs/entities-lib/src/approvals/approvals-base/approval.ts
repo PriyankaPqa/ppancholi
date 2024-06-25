@@ -1,6 +1,6 @@
-import { IMultilingual } from '@libs/shared-lib/src/types';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import utils from '../../utils';
-import { BaseEntity, Status } from '../../base';
+import { BaseEntity } from '../../base';
 import { ApprovalAggregatedBy, IApprovalBaseEntity, IApprovalBaseEntityData } from './approval.types';
 import { ApprovalGroup, IApprovalGroup } from '../approvals-group';
 

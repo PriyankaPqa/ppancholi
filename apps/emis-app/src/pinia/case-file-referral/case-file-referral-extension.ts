@@ -4,7 +4,7 @@ import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { ref, Ref } from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { ICaseFileReferralEntity, IdParams } from '@libs/entities-lib/case-file-referral';
 
 export function getExtensionComponents(

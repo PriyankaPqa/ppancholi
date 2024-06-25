@@ -7,7 +7,7 @@ import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import routes from '@/constants/routes';
 import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import _sortBy from 'lodash/sortBy';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { mockApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import helpers from '@/ui/helpers/helpers';
 import { mockServerError } from '@libs/services-lib/http-client';
@@ -551,9 +551,9 @@ describe('CreateEditApprovals', () => {
       });
 
       it('should set isActive depending on approvalBaseStatus', async () => {
-        const combinedApproval = { entity: mockApprovalTableEntity({ approvalBaseStatus: Status.Inactive }), metadata: {}, pinned: false };
+        const approval = mockApprovalTableEntity({ approvalBaseStatus: Status.Inactive });
         await doMount(true, true, []);
-        wrapper.vm.combinedApprovalTableStore.fetch = jest.fn(() => combinedApproval);
+        approvalTableStore.fetch = jest.fn(() => approval);
         await wrapper.vm.initTableDataEdit();
         expect(wrapper.vm.isActive).toEqual(false);
       });

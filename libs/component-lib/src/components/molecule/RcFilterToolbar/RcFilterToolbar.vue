@@ -112,11 +112,6 @@ export default Vue.extend({
       type: Object as () => IFilter,
       default: () => ({}),
     },
-
-    sqlMode: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   data() {
@@ -182,11 +177,9 @@ export default Vue.extend({
     getStartOfDay(value: string, dateMode: EDateMode): string | Date {
       const date = this.parseDate(value);
       if (dateMode === EDateMode.ConvertLocalToUtc) {
-        return this.sqlMode ? new Date(date[0], date[1] - 1, date[2], 0, 0, 0, 0)
-          : new Date(date[0], date[1] - 1, date[2], 0, 0, 0, 0).toISOString();
+        return new Date(date[0], date[1] - 1, date[2], 0, 0, 0, 0);
       } if (dateMode === EDateMode.Static) {
-        return this.sqlMode ? new Date(Date.UTC(date[0], date[1] - 1, date[2], 0, 0, 0, 0))
-          : new Date(Date.UTC(date[0], date[1] - 1, date[2], 0, 0, 0, 0)).toISOString();
+        return new Date(Date.UTC(date[0], date[1] - 1, date[2], 0, 0, 0, 0));
       }
       return '';
     },
@@ -194,12 +187,10 @@ export default Vue.extend({
     getEndOfDay(value: string, dateMode: EDateMode): string | Date {
       const date = this.parseDate(value);
       if (dateMode === EDateMode.ConvertLocalToUtc) {
-        return this.sqlMode ? new Date(date[0], date[1] - 1, date[2], 23, 59, 59, 999)
-          : new Date(date[0], date[1] - 1, date[2], 23, 59, 59, 999).toISOString();
+        return new Date(date[0], date[1] - 1, date[2], 23, 59, 59, 999);
       }
       if (dateMode === EDateMode.Static) {
-        return this.sqlMode ? new Date(Date.UTC(date[0], date[1] - 1, date[2], 23, 59, 59, 999))
-         : new Date(Date.UTC(date[0], date[1] - 1, date[2], 23, 59, 59, 999)).toISOString();
+        return new Date(Date.UTC(date[0], date[1] - 1, date[2], 23, 59, 59, 999));
       }
       return '';
     },

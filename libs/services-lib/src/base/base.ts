@@ -1,5 +1,5 @@
 import { IEntity } from '@libs/entities-lib/base';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { GlobalHandler, IHttpClient, IRestResponse } from '../http-client';
 import { IDomainBaseService } from './base.types';
 
@@ -72,7 +72,7 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
     return this.http.delete<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams));
   }
 
-  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<T, unknown>> {
+  async search(params: ISearchParams, searchEndpoint: string = null): Promise<ICombinedSearchResult<T, unknown>> {
     return this.http.get(`${this.apiUrlSuffix}/search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
   }
 

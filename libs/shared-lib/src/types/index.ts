@@ -1,18 +1,19 @@
 import Vue from 'vue';
 
 export type {
-  IAzureSearchParams,
-  IAzureCombinedSearchResult,
-  IAzureSearchResult,
-  IAzureTableSearchResults,
+  ISearchParams,
+  ICombinedSearchResult,
+  ISearchResult,
+  ITableSearchResults,
   ICombinedIndex,
-} from './interfaces/IAzureSearchParams';
+} from './interfaces/ISearchParams';
 
 export { ECanadaProvinces, ECanadaProvincesName } from './enums/ECanadaProvinces';
 export { EOptionItemStatus } from './enums/EOptionItemStatus';
 export { ERegistrationMode } from './enums/ERegistrationMode';
 export { ERegistrationMethod } from './enums/ERegistrationMethod';
 export { IdentityAuthenticationMethod, IdentityAuthenticationStatus, Tier2GambitScreeningId, Tier2State } from './enums/IdentityAuthentication';
+export { Status } from './enums/Status';
 
 export type { IDropdownItem } from './interfaces/IDropdownItem';
 export type { IErrorReport } from './interfaces/IErrorReport';
@@ -23,7 +24,6 @@ export type { INavigationTab } from './interfaces/INavigationTab';
 export type { INavigationTabGroup } from './interfaces/INavigationTabGroup';
 export type { IOptionItemData } from './interfaces/IOptionItemData';
 export type { IRestResponse } from './interfaces/IRestResponse';
-export type { ISearchData } from './interfaces/ISearchData';
 export type { IServerError } from './interfaces/IServerError';
 export type { IUserInformation } from './interfaces/IUserInformation';
 

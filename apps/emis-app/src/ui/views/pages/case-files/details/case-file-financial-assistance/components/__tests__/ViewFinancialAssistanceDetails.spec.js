@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { ApprovalStatus, mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -13,7 +13,7 @@ import Component from '../ViewFinancialAssistanceDetails.vue';
 const localVue = createLocalVue();
 
 let financialAssistance = mockCaseFinancialAssistanceEntity();
-const financialAssistanceTable = mockCombinedFinancialAssistance().entity;
+const financialAssistanceTable = mockFinancialAssistanceTableEntity();
 const program = mockProgramEntity();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;

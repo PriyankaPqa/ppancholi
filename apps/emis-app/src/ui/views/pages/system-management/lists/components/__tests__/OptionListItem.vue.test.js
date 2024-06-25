@@ -7,7 +7,7 @@ import {
 
 import { mockOptionItemData, EOptionLists, mockOptionItem } from '@libs/entities-lib/optionItem';
 import entityUtils from '@libs/entities-lib/utils';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../OptionListItem.vue';
 

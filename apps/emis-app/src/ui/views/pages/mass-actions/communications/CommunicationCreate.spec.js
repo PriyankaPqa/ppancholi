@@ -30,7 +30,7 @@ describe('CommunicationCreate.vue', () => {
 
         $route: {
           query: {
-            azureSearchParams: filtersString,
+            searchParams: filtersString,
             mode: MassActionMode.List,
           },
         },

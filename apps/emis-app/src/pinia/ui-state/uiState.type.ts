@@ -1,7 +1,7 @@
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 
 export interface ItemState {
-  azureSearchParams?: {
+  searchParams?: {
     search?: string,
     skip?: number,
     top?: number,
@@ -11,7 +11,7 @@ export interface ItemState {
   filterState?: unknown;
   itemsCount?: number;
   options?: Record<string, unknown>;
-  params?: IAzureSearchParams & { pageSize?: number, pageIndex?: number, descending?: boolean };
+  params?: ISearchParams & { pageSize?: number, pageIndex?: number, descending?: boolean };
   previousPageIndex?: number;
   searchExecutionDate?: Date;
   searchResultIds?: Array<string>;

@@ -2,7 +2,7 @@ import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import {
   ICreateOptionItemRequest,
 } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 
 import { defineStore } from 'pinia';
 import { getMockOptionListExtensionComponents } from '@/pinia/option-list/optionListExtension.mock';

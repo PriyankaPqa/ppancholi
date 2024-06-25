@@ -10,7 +10,7 @@ import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assist
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();

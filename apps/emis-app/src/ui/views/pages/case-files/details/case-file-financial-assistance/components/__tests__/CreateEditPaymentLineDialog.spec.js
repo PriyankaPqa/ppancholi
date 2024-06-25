@@ -5,7 +5,7 @@ import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGr
 import libHelpers from '@libs/entities-lib/helpers';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
 import { mockAddressData, Address } from '@libs/entities-lib/value-objects/address';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';

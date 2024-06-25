@@ -126,12 +126,11 @@ describe('CopyAssessment.vue', () => {
         await wrapper.vm.doSearch();
         expect(assessmentTemplateStore.search).toHaveBeenCalledWith({
           params: {
-            filter: { 'Entity/Status': 'Active', ...quickSearchSqlObject },
+            filter: { ...quickSearchSqlObject },
             top: 50,
-            queryType: 'full',
             orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
           },
-          searchEndpoint: null,
+          includeInactiveItems: false,
         });
       });
     });

@@ -100,8 +100,6 @@ describe('EventsSelector.vue', () => {
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenLastCalledWith({
           filter: { and: [{ 'Name/Translation/en': { contains: 'test' } }] },
           orderBy: 'Schedule/OpenDate desc',
-          queryType: 'full',
-          searchMode: 'all',
           top: 10,
         });
       });
@@ -110,8 +108,6 @@ describe('EventsSelector.vue', () => {
         await wrapper.vm.fetchEvents('test', 10);
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
           orderBy: 'Schedule/OpenDate desc',
-          queryType: 'full',
-          searchMode: 'all',
           filter: { Schedule: { Status: 'Open' }, and: [{ 'Name/Translation/en': { contains: 'test' } }] },
           top: 10,
         });

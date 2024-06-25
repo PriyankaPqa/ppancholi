@@ -1,5 +1,5 @@
 import { IMultilingual } from '@libs/shared-lib/src/types';
-import { IEntity, IEntityCombined } from '../../base';
+import { IEntity } from '../../base';
 
 /**
  * Enums
@@ -40,7 +40,5 @@ export interface IAppointmentProgram extends IEntity {
   timeZone: string;
   bookingHours: IDaySchedule[];
 }
-
-export type IAppointmentProgramCombined = IEntityCombined<IAppointmentProgram, IEntity>;
 
 export type IdParams = uuid;

@@ -1,5 +1,5 @@
-import { IMultilingual } from '@libs/shared-lib/src/types';
-import { IEntity, IEntityCombined, Status } from '../../base';
+import { IMultilingual, Status } from '@libs/shared-lib/src/types';
+import { IEntity } from '../../base';
 import { IApprovalGroup } from '../approvals-group';
 
 export enum ApprovalAggregatedBy {
@@ -24,5 +24,3 @@ export interface IApprovalBaseEntity extends IApprovalBaseEntityData {
 export interface IApprovalBaseMetadata extends IEntity {
   approvalBaseStatusName: IMultilingual;
 }
-
-export type IApprovalCombined = IEntityCombined<IApprovalBaseEntity, IApprovalBaseMetadata>;

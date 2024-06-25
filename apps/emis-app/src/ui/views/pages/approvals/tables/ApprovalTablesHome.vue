@@ -27,37 +27,36 @@
           :filter-options="filters"
           :initial-filter="filterState"
           :count="itemsCount"
-          :sql-mode="true"
           add-filter-label="approvalsTable.filter.title"
           @update:appliedFilter="onApplyFilter" />
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
         <span data-test="program_name">
-          {{ $m(getProgramName(item.entity.programId)) }}
+          {{ $m(getProgramName(item.programId)) }}
         </span>
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          :data-test="`approval_table_details-link_${item.entity.id}`"
-          :to="getDetailsRoute(item.entity.id)">
-          {{ $m(item.entity.name) }}
+          :data-test="`approval_table_details-link_${item.id}`"
+          :to="getDetailsRoute(item.id)">
+          {{ $m(item.name) }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.approvalBaseStatus}`]="{ item }">
-        <status-chip status-name="Status" :status="item.entity.approvalBaseStatus" />
+        <status-chip status-name="Status" :status="item.approvalBaseStatus" />
       </template>
 
       <template #[`item.actions`]="{ item }">
-        <v-btn icon class="mr-2" data-test="edit_approval_table" :aria-label="$t('common.edit')" @click="goToEdit(item.entity.id)">
+        <v-btn icon class="mr-2" data-test="edit_approval_table" :aria-label="$t('common.edit')" @click="goToEdit(item.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
         </v-btn>
-        <v-btn icon class="mr-2" data-test="delete_approval_table" :aria-label="$t('common.delete')" @click="deleteItem(item.entity.id)">
+        <v-btn icon class="mr-2" data-test="delete_approval_table" :aria-label="$t('common.delete')" @click="deleteItem(item.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -78,16 +77,14 @@ import {
   RcDataTable,
   RcAddButtonWithMenu,
 } from '@libs/component-lib/components';
-import { IApprovalTableCombined, IApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
+import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
 import { EFilterKeyType, EFilterType, IFilterSettings, ITableAddButtonMenuItems } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, Status } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
-import { IProgramEntity, IdParams } from '@libs/entities-lib/program';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import { useProgramStore } from '@/pinia/program/program';
 import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 
@@ -111,9 +108,6 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: [`Metadata/ApprovalBaseStatusName/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
-      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, null, IdParams>(useApprovalTableStore()),
-      sqlSearchMode: true,
     };
   },
 
@@ -169,31 +163,29 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       this.searchLoading = true;
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
-      const res = await this.combinedApprovalTableStore.search({
-        search: params.search,
+      const res = await useApprovalTableStore().search({ params: {
         filter: { 'Entity/EventId': { value: this.$route.params.id, type: EFilterKeyType.Guid }, ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, false, true);
+      },
+      includeInactiveItems: false });
       this.searchLoading = false;
       return res;
     },
 
     async fetchPrograms() {
-      const res = await this.combinedProgramStore.search({
-        filter: { 'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid } },
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
-        orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      }, null, true, true);
+      const res = await useProgramStore().search({ params:
+        {
+          filter: { 'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid } },
+          count: true,
+          orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
+        },
+        includeInactiveItems: true });
 
       if (res) {
         this.programIds = res.ids;
@@ -210,10 +202,9 @@ export default mixins(TablePaginationSearchMixin).extend({
       return useProgramStore().getByIds(this.programIds);
     },
 
-    tableData(): IApprovalTableCombined[] {
-      const res = this.combinedApprovalTableStore.getByIds(this.searchResultIds, {
+    tableData(): IApprovalTableEntityData[] {
+      const res = useApprovalTableStore().getByIdsWithPinnedItems(this.searchResultIds, {
         onlyActive: true,
-        prependPinnedItems: true,
         baseDate: this.searchExecutionDate,
         parentId: { eventId: this.eventId },
       });
@@ -297,7 +288,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: this.searchLoading,
-        itemClass: (item: IApprovalTableCombined) => (item.pinned ? 'pinned' : ''),
+        itemClass: (item: IApprovalTableEntity) => (item.pinned ? 'pinned' : ''),
       };
     },
 

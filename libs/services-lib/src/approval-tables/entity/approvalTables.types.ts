@@ -1,8 +1,7 @@
 import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import { ApprovalAggregatedBy } from '@libs/entities-lib/approvals/approvals-base';
 import { IApprovalGroup, IApprovalGroupDTO } from '@libs/entities-lib/approvals/approvals-group';
-import { Status } from '@libs/entities-lib/base';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface ICreateApprovalTableRequest {

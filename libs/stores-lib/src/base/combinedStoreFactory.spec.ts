@@ -111,25 +111,25 @@ describe('Base Combined Store', () => {
   describe('search', () => {
     it('should call action search with the payload', async () => {
       const params = { filter: { Foo: 'foo' } };
-      entityStoreComponents.search = jest.fn();
+      entityStoreComponents.combinedSearch = jest.fn();
       useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
       await useBaseCombinedStore.search(params, null, true);
-      expect(entityStoreComponents.search).toBeCalledWith({ params, searchEndpoint: null });
+      expect(entityStoreComponents.combinedSearch).toBeCalledWith({ params, searchEndpoint: null });
     });
 
     it('should filter out inactive by default or if specified', async () => {
       const params = { filter: { Foo: 'foo' } };
-      entityStoreComponents.search = jest.fn();
+      entityStoreComponents.combinedSearch = jest.fn();
       useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
-      await useBaseCombinedStore.search(params);
+      await useBaseCombinedStore.search(params, null, null);
 
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null });
+      expect(entityStoreComponents.combinedSearch).toBeCalledWith({ params: { filter: { Foo: 'foo', 'Entity/Status': 'Active' } }, searchEndpoint: null });
 
       jest.clearAllMocks();
 
       await useBaseCombinedStore.search(params, null, false);
 
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null });
+      expect(entityStoreComponents.combinedSearch).toBeCalledWith({ params: { filter: { Foo: 'foo', 'Entity/Status': 'Active' } }, searchEndpoint: null });
 
       jest.clearAllMocks();
 
@@ -137,49 +137,26 @@ describe('Base Combined Store', () => {
 
       await useBaseCombinedStore.search(paramsNoFilter, null, false);
 
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: { 'Entity/Status': 1 } }, searchEndpoint: null });
-    });
-
-    it('should filter out inactive by default or if specified for sql mode', async () => {
-      const params = { filter: { Foo: 'foo' } };
-      entityStoreComponents.search = jest.fn();
-      useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
-      await useBaseCombinedStore.search(params, null, null, true);
-
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: { Foo: 'foo', 'Entity/Status': 'Active' } }, searchEndpoint: null });
-
-      jest.clearAllMocks();
-
-      await useBaseCombinedStore.search(params, null, false, true);
-
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: { Foo: 'foo', 'Entity/Status': 'Active' } }, searchEndpoint: null });
-
-      jest.clearAllMocks();
-
-      const paramsNoFilter = { filter: '' };
-
-      await useBaseCombinedStore.search(paramsNoFilter, null, false, true);
-
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: { 'Entity/Status': 'Active' } }, searchEndpoint: null });
+      expect(entityStoreComponents.combinedSearch).toBeCalledWith({ params: { filter: { 'Entity/Status': 'Active' } }, searchEndpoint: null });
     });
 
     it('should filterout inactives by default or if specified and build the correct filter when the filter is a string', async () => {
       const params = { filter: 'filter string' };
-      entityStoreComponents.search = jest.fn();
+      entityStoreComponents.combinedSearch = jest.fn();
       useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
       await useBaseCombinedStore.search(params);
 
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: 'filter string and Entity/Status eq 1' }, searchEndpoint: null });
+      expect(entityStoreComponents.combinedSearch).toBeCalledWith({ params: { filter: 'filter string and Entity/Status eq \'Active\'' }, searchEndpoint: null });
 
-      await useBaseCombinedStore.search(params, null, null, true);
+      await useBaseCombinedStore.search(params, null, null);
 
-      expect(entityStoreComponents.search).toBeCalledWith({ params: { filter: 'filter string and Entity/Status eq \'Active\'' }, searchEndpoint: null });
+      expect(entityStoreComponents.combinedSearch).toBeCalledWith({ params: { filter: 'filter string and Entity/Status eq \'Active\'' }, searchEndpoint: null });
     });
 
     it('should call commit setAll for both entity and metadata', async () => {
       entityStoreComponents.setAll = jest.fn();
       baseMetadataStoreComponents.setAll = jest.fn();
-      (entityStoreComponents.search as any) = jest.fn(() => Promise.resolve(
+      (entityStoreComponents.combinedSearch as any) = jest.fn(() => Promise.resolve(
         {
           odataContext: 'foo',
           odataCount: 1,
@@ -198,7 +175,7 @@ describe('Base Combined Store', () => {
     });
 
     it('should return a list of ids and the total count of items', async () => {
-      (entityStoreComponents.search as any) = jest.fn(() => Promise.resolve(
+      (entityStoreComponents.combinedSearch as any) = jest.fn(() => Promise.resolve(
         {
           odataContext: 'foo',
           odataCount: 1,

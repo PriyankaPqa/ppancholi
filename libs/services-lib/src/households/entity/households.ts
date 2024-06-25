@@ -11,7 +11,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
 import {
-  ERegistrationMode, IAzureCombinedSearchResult, IAzureSearchParams, IOptionItemData,
+  ERegistrationMode, ICombinedSearchResult, ISearchParams, IOptionItemData,
 } from '@libs/shared-lib/types';
 import { DomainBaseService } from '../../base';
 import { GlobalHandler, IHttpClient, IHttpMock } from '../../http-client';
@@ -159,11 +159,11 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   // eslint-disable-next-line
-  async search(params: IAzureSearchParams & { includePrimary?: boolean, includeMembers?: boolean }, searchEndpoint: string = null, includePrimary: boolean = false, includeMembers: boolean = false)
-  : Promise<IAzureCombinedSearchResult<IHouseholdEntity, null>> {
+  async search(params: ISearchParams & { includePrimary?: boolean, includeMembers?: boolean }, searchEndpoint: string = null, includePrimary: boolean = false, includeMembers: boolean = false)
+  : Promise<ICombinedSearchResult<IHouseholdEntity, null>> {
     return this.http.get(
       `${this.apiUrlSuffix}/search/householdsV2?includePrimary=${params.includePrimary || includePrimary}&includeMembers=${params.includeMembers || includeMembers}`,
-      { params, isODataSql: true },
+      { params, isOData: true },
     );
   }
 

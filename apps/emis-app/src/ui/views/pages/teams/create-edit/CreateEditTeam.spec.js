@@ -10,7 +10,7 @@ import {
 } from '@libs/entities-lib/team';
 
 import { mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';

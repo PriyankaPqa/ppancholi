@@ -6,7 +6,7 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { ApprovalStatus, PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { AccountStatus } from '@libs/entities-lib/user-account';
 import { DocumentStatus } from '@libs/entities-lib/case-file-document';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
 import { HouseholdStatus } from '@libs/entities-lib/household';

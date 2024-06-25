@@ -1,5 +1,5 @@
 import { IListOption } from '@libs/shared-lib/types';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 
 export enum DocumentStatus {
   Current = 1,
@@ -16,5 +16,3 @@ export interface ICaseFileDocumentEntity extends IEntity {
 
   validate(): Array<string> | boolean;
 }
-
-export type ICaseFileDocumentCombined = IEntityCombined<ICaseFileDocumentEntity, IEntity>;

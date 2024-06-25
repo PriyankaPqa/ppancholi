@@ -282,7 +282,6 @@ describe('TeamMembersTable.vue', () => {
           service: wrapper.vm.combinedUserAccountStore,
           ids: ['id-1'],
           searchInFilter: { Entity: { Id: { in: '{ids}' } } },
-          otherOptions: { queryType: 'full', searchMode: 'all' },
           otherApiParameters: [null, false, true],
         });
       });

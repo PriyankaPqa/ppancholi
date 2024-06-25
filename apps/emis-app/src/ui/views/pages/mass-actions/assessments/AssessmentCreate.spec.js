@@ -31,7 +31,7 @@ describe('AssessmentCreate.vue', () => {
 
         $route: {
           query: {
-            azureSearchParams: filtersString,
+            searchParams: filtersString,
             mode: MassActionMode.List,
           },
         },
@@ -259,7 +259,7 @@ describe('AssessmentCreate.vue', () => {
 
             $route: {
               query: {
-                azureSearchParams: filtersString,
+                searchParams: filtersString,
                 mode: MassActionMode.List,
               },
             },

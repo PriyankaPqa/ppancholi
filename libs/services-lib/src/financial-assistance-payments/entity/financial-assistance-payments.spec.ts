@@ -142,7 +142,7 @@ describe('>>> Financial assistance payment Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('finance/search/financial-assistance-paymentsV2', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('finance/search/financial-assistance-paymentsV2', { params, isOData: true });
     });
   });
 });

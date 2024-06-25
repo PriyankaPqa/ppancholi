@@ -68,8 +68,6 @@ export default Vue.extend({
         },
         top,
         orderBy: 'Entity/Schedule/OpenDate desc',
-        queryType: 'full',
-        searchMode: 'all',
       };
 
       const res = await this.$services.events.search(params);

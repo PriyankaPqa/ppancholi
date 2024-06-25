@@ -87,7 +87,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import utils from '@libs/entities-lib/utils';
 import { ui } from '@/constants/ui';

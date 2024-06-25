@@ -19,7 +19,6 @@
           :count="itemsCount"
           :filter-options="filters"
           :initial-filter="filterState"
-          :sql-mode="true"
           add-filter-label="team.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
@@ -35,38 +34,38 @@
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          :data-test="`team_link_${item.entity.id}`"
-          :to="getTeamDetailsRoute(item.entity.id)">
-          {{ item.entity.name }}
+          :data-test="`team_link_${item.id}`"
+          :to="getTeamDetailsRoute(item.id)">
+          {{ item.name }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.type}`]="{ item }">
-        <span data-test="team_type">{{ $t(`enums.TeamType.${TeamType[item.entity.teamType]}`) }}</span>
+        <span data-test="team_type">{{ $t(`enums.TeamType.${TeamType[item.teamType]}`) }}</span>
       </template>
 
       <template #[`item.${customColumns.teamMemberCount}`]="{ item }">
-        <span data-test="team_members">{{ item.entity.teamMembers.length }}</span>
+        <span data-test="team_members">{{ item.teamMembers.length }}</span>
       </template>
 
       <template #[`item.${customColumns.eventCount}`]="{ item }">
-        <span data-test="team_events">{{ item.entity.eventIds.length }}</span>
+        <span data-test="team_events">{{ item.eventIds.length }}</span>
       </template>
 
       <template #[`item.${customColumns.primaryContact}`]="{ item }">
-        <span data-test="team_primary_contact">{{ getPrimaryName(item.entity) }}</span>
+        <span data-test="team_primary_contact">{{ getPrimaryName(item) }}</span>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
         <status-chip
-          v-if="item.entity.status"
+          v-if="item.status"
           data-test="team_status"
-          :status="item.entity.status"
+          :status="item.status"
           status-name="Status" />
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn v-if="$hasLevel(UserRoles.level4)" icon class="mr-2" :aria-label="$t('common.edit')" :data-test="`edit_team_${item.entity.id}`" @click="goToEditTeam(item)">
+        <v-btn v-if="$hasLevel(UserRoles.level4)" icon class="mr-2" :aria-label="$t('common.edit')" :data-test="`edit_team_${item.id}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -86,17 +85,13 @@ import { DataTableHeader } from 'vuetify';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
-import {
-  TeamType, ITeamCombined, ITeamEntity, IdParams,
-} from '@libs/entities-lib/team';
+import { TeamType, ITeamEntity } from '@libs/entities-lib/team';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, Status } from '@libs/shared-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
@@ -138,14 +133,12 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, null, IdParams>(useTeamStore()),
-      sqlSearchMode: true,
     };
   },
 
   computed: {
-    tableData(): ITeamCombined[] {
-      return this.combinedTeamStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+    tableData(): ITeamEntity[] {
+      return useTeamStore().getByIdsWithPinnedItems(this.searchResultIds, { baseDate: this.searchExecutionDate });
     },
 
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
@@ -235,7 +228,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: useTeamStore().searchLoading,
-        itemClass: (item: ITeamCombined) => (item.pinned ? 'pinned' : ''),
+        itemClass: (item: ITeamEntity) => (item.pinned ? 'pinned' : ''),
       };
     },
 
@@ -273,8 +266,8 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   methods: {
-    fetchPrimaryUsers: _throttle(async function func(this: { tableData: ITeamCombined[] }) {
-      useUserAccountMetadataStore().fetchByIds(this.tableData.map((x) => x.entity.teamMembers.find((t) => t.isPrimaryContact)?.id), true);
+    fetchPrimaryUsers: _throttle(async function func(this: { tableData: ITeamEntity[] }) {
+      useUserAccountMetadataStore().fetchByIds(this.tableData.map((x) => x.teamMembers.find((t) => t.isPrimaryContact)?.id), true);
     }, 100),
 
     getPrimaryName(item: ITeamEntity) {
@@ -286,21 +279,21 @@ export default mixins(TablePaginationSearchMixin).extend({
       this.$router.push({ name: routes.teams.create.name, params: { teamType } });
     },
 
-    goToEditTeam(team: ITeamCombined) {
-      const teamType = team.entity.teamType === TeamType.Standard ? 'standard' : 'adhoc';
-      this.$router.push({ name: routes.teams.edit.name, params: { teamType, id: team.entity.id, from: this.$route.name } });
+    goToEditTeam(team: ITeamEntity) {
+      const teamType = team.teamType === TeamType.Standard ? 'standard' : 'adhoc';
+      this.$router.push({ name: routes.teams.edit.name, params: { teamType, id: team.id, from: this.$route.name } });
     },
 
-    async fetchData(params: IAzureSearchParams) {
-      const res = await this.combinedTeamStore.search({
+    async fetchData(params: ISearchParams) {
+      const res = await useTeamStore().search({ params: {
         filter: params.filter,
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true, { manageableTeamsOnly: true });
+      },
+      includeInactiveItems: true,
+      otherSearchEndpointParameters: { manageableTeamsOnly: true } });
       return res;
     },
 

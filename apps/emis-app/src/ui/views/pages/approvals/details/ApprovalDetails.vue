@@ -74,14 +74,13 @@ import { TranslateResult } from 'vue-i18n';
 import { RcPageContent, VDataTableA11y } from '@libs/component-lib/components';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
-import { IApprovalTableEntity, IdParams } from '@libs/entities-lib/approvals/approvals-table';
+import { IApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
 import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import helpers from '@/ui/helpers/helpers';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { ApprovalAggregatedBy } from '@libs/entities-lib/approvals/approvals-base';
 import mixins from 'vue-typed-mixins';
 import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useProgramStore } from '@/pinia/program/program';
@@ -110,7 +109,6 @@ export default mixins(approvalRoles).extend({
       roles: [],
       program: {} as IProgramEntity,
       loading: false,
-      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, null, IdParams>(useApprovalTableStore()),
     };
   },
 
@@ -195,10 +193,10 @@ export default mixins(approvalRoles).extend({
 
     async loadData() {
       this.loading = true;
-      const approvalCombined = await this.combinedApprovalTableStore.fetch(this.approvalId);
+      const approval = await useApprovalTableStore().fetch(this.approvalId);
 
-      if (approvalCombined) {
-        this.approval = approvalCombined.entity as IApprovalTableEntity;
+      if (approval) {
+        this.approval = approval as IApprovalTableEntity;
         this.localApproval = this.approval; // For mixin approvalRoles
 
         this.program = useProgramStore().getById(this.approval.programId);

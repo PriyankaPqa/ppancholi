@@ -44,8 +44,6 @@ describe('eventsFilter', () => {
           },
           top: 10,
           orderBy: 'Entity/Schedule/OpenDate desc',
-          queryType: 'full',
-          searchMode: 'all',
         });
       });
       it('should assign eventsFilter with results ', async () => {
@@ -75,8 +73,6 @@ describe('eventsFilter', () => {
           },
           top: 10,
           orderBy: 'Entity/Schedule/OpenDate desc',
-          queryType: 'full',
-          searchMode: 'all',
         });
       });
     });

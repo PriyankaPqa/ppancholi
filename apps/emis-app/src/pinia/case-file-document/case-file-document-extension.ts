@@ -4,7 +4,7 @@ import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '@libs/
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { ref, Ref } from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
 
 export function getExtensionComponents(

@@ -1,4 +1,4 @@
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import { IEntity } from '@libs/entities-lib/base';
@@ -58,8 +58,8 @@ export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntit
     return this.http.patch(`${this.baseUrl}/${approvalId}/groups/${group.id}`, group.toDto());
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<IApprovalTableEntity, IEntity>> {
-    return this.http.get('finance/search/approval-tablesV2', { params, isODataSql: true });
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<IApprovalTableEntity, IEntity>> {
+    return this.http.get('finance/search/approval-tablesV2', { params, isOData: true });
   }
 }

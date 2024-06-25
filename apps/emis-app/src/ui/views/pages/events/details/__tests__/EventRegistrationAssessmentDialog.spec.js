@@ -6,7 +6,7 @@ import entityUtils from '@libs/entities-lib/utils';
 import { EEventSummarySections } from '@/types';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
-import { mockCombinedAssessmentForms } from '@libs/entities-lib/assessment-template';
+import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 
 import Component from '../components/EventRegistrationAssessmentDialog.vue';
 
@@ -15,7 +15,7 @@ const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 const services = mockProvider();
 
-services.assessmentForms.search = jest.fn(() => ({ value: mockCombinedAssessmentForms() }));
+services.assessmentForms.search = jest.fn(() => ({ value: [{ entity: mockAssessmentFormEntity() }] }));
 
 describe('EventRegistrationAssessmentDialog.vue', () => {
   let wrapper;

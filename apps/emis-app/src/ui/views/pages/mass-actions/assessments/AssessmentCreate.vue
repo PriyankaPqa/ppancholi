@@ -29,7 +29,7 @@ import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { IMassActionAssessmentCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { IMultilingual } from '@libs/shared-lib/types';
 import utils from '@libs/entities-lib/utils';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import AssessmentDetailsCreate from './AssessmentDetailsCreate.vue';
 
 export interface AssessmentDetailsForm {
@@ -91,9 +91,9 @@ export default Vue.extend({
      * Triggered when creating a mass action from a filtered list
      */
     async onPost({ name, description }: { name: string; description: string }) {
-      const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
+      const searchParams = JSON.parse(this.$route.query.searchParams as string);
 
-      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
+      const filter = buildQuerySql(helpers.removeInactiveItemsFilterOdata({ filter: searchParams.filter }) as any);
 
       this.fillEmptyMultilingualFields();
 

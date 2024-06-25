@@ -1,9 +1,8 @@
+import { Status } from '@libs/shared-lib/types';
 import { mockApprovalGroup, mockApprovalGroupData } from '../approvals-group';
-import {
-  ApprovalAggregatedBy, IApprovalBaseEntity, IApprovalBaseEntityData, IApprovalCombined,
-} from './approval.types';
+import { ApprovalAggregatedBy, IApprovalBaseEntity, IApprovalBaseEntityData } from './approval.types';
 import { ApprovalBaseEntity } from './approval';
-import { IEntity, mockBaseData, Status } from '../../base';
+import { mockBaseData } from '../../base';
 
 export const mockBaseApprovalData = (force? : Partial<IApprovalBaseEntityData>): IApprovalBaseEntityData => ({
   ...mockBaseData(),
@@ -32,14 +31,4 @@ export const mockBaseApprovalMetadata = () => ({
 export const mockBaseApprovalMetadatum = () => [
   mockBaseApprovalMetadata(),
   mockBaseApprovalMetadata(),
-];
-
-export const mockCombinedBaseApproval = (force?: Partial<IEntity>): IApprovalCombined => ({
-  entity: new ApprovalBaseEntity(mockBaseApprovalData(force)),
-  metadata: mockBaseApprovalMetadata(),
-});
-
-export const mockCombinedBaseApprovals = (): IApprovalCombined[] => [
-  mockCombinedBaseApproval(),
-  mockCombinedBaseApproval(),
 ];

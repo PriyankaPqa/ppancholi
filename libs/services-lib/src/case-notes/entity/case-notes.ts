@@ -1,6 +1,6 @@
 import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { IEntity } from '@libs/entities-lib/base';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
 
 import { DomainBaseService } from '../../base';
@@ -39,8 +39,8 @@ export class CaseNotesService extends DomainBaseService<ICaseNoteEntity, UrlPara
     });
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<ICaseNoteEntity, IEntity>> {
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<ICaseNoteEntity, IEntity>> {
       return this.http.get('case-file/search/case-notesV2', { params, isOData: true });
   }
 }

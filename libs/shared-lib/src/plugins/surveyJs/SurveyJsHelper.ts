@@ -24,7 +24,7 @@ import {
 import { IColoursEntity } from '@libs/entities-lib/tenantSettings';
 import { SurveyCreator, localization } from 'survey-creator-knockout';
 import { CreatorBase } from 'survey-creator-core';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { IMultilingual } from '../../types';
 import 'survey-core/survey.i18n';
 import 'survey-creator-core/survey-creator-core.i18n';

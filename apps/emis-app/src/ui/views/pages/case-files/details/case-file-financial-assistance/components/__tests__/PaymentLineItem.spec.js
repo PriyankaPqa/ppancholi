@@ -5,7 +5,7 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import { ApprovalStatus, PaymentLineStatus, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import flushPromises from 'flush-promises';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import Component from '../PaymentLineItem.vue';

@@ -171,14 +171,13 @@ import {
   RcTab,
   RcPageContent,
 } from '@libs/component-lib/components';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import entityUtils from '@libs/entities-lib/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
   IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
 import { useOptionListStore } from '@/pinia/option-list/optionList';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';

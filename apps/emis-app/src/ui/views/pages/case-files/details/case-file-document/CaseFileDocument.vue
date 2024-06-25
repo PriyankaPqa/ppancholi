@@ -22,7 +22,6 @@
           :filter-key="FilterKey.Documents"
           :filter-options="filterOptions"
           :initial-filter="filterState"
-          :sql-mode="true"
           add-filter-label="document.filter"
           :count="caseFileDocumentsMapped.length"
           @update:appliedFilter="onApplyFilter" />
@@ -94,17 +93,16 @@ import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { DocumentStatus, ICaseFileDocumentCombined, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
+import { DocumentStatus, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { IdParams, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { UserRoles } from '@libs/entities-lib/user';
 
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { format } from 'date-fns';
 import caseFileDetail from '../caseFileDetail';
 
@@ -135,10 +133,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       tableProps: {
         itemClass: (item: { pinned: boolean }) => (item.pinned ? 'pinned' : ''),
       },
-      combinedCaseFileDocumentStore: new CombinedStoreFactory<ICaseFileDocumentEntity, null, IdParams>(
-        useCaseFileDocumentStore(),
-      ),
-      sqlSearchMode: true,
     };
   },
 
@@ -160,29 +154,26 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     caseFileDocumentsMapped(): caseFileDocumentsMapped[] {
-      const documents = this.combinedCaseFileDocumentStore.getByIds(
+      const documents = useCaseFileDocumentStore().getByIdsWithPinnedItems(
         this.searchResultIds,
         {
-          onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
+          onlyActive: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
         },
       );
       if (!documents) {
         return [];
       }
 
-      return documents.map((document: ICaseFileDocumentCombined) => {
-        const d = document.entity;
-       return {
+      return documents.map((d: ICaseFileDocumentEntity) => ({
         name: d?.name || '-',
         id: d?.id,
         category: helpers.getOptionItemNameFromListOption(useCaseFileDocumentStore().getCategories(false), d?.category),
         documentStatus: d?.documentStatus || '-',
         documentStatusName: d?.documentStatus ? this.$t(`enums.DocumentStatus.${DocumentStatus[d.documentStatus]}`) : '-',
-        created: format(new Date(d.created), 'PP') || '-',
+        created: d?.created ? format(new Date(d.created), 'PP') : '-',
         entity: d,
-        pinned: document.pinned,
-      };
-});
+        pinned: d.pinned,
+      }));
     },
 
     customColumns(): Record<string, string> {
@@ -312,19 +303,19 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   methods: {
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
 
-      const res = await this.combinedCaseFileDocumentStore.search({
-        search: params.search,
+      const res = await useCaseFileDocumentStore().search({
+      params: {
         filter: { 'Entity/CaseFileId': { value: this.caseFileId, type: EFilterKeyType.Guid }, ...filterParams },
         top: 999,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true);
+      },
+      includeInactiveItems: true,
+    });
       return res;
     },
 

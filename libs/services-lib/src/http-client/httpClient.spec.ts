@@ -4,7 +4,6 @@ import Vue from 'vue';
 import { camelKeys } from 'js-convert-case';
 import axios from 'axios';
 import { Toasted } from 'vue-toasted';
-import { buildQuery } from '@/odata-query';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { buildQuerySql } from '@/odata-query-sql';
 import {
@@ -14,7 +13,6 @@ import {
 import * as owasp from '../utils/owasp';
 
 jest.mock('uuid');
-jest.mock('@/odata-query');
 jest.mock('@/odata-query-sql');
 jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');
 
@@ -362,22 +360,6 @@ describe('httpClient', () => {
         expect(res.headers['X-Correlation-ID']).toEqual('uuid-mock');
       });
 
-      it('should define paramsSerializer if Odata', () => {
-        const request = {
-          isOData: true,
-          headers: {
-            common: {
-              'X-Request-ID': '',
-              'X-Correlation-ID': '',
-            },
-          },
-        };
-
-        const res = mockHttpClient.requestHandler(request);
-
-        expect(res.paramsSerializer).toEqual({ serialize: mockHttpClient.serializeParams });
-      });
-
       it('should sanitize932115', () => {
         const request = {
           isOData: true,
@@ -392,18 +374,6 @@ describe('httpClient', () => {
         const spy = jest.spyOn(owasp, 'sanitize932115');
         mockHttpClient.requestHandler(request);
         expect(spy).toBeCalled();
-      });
-    });
-
-    describe('serializeParams', () => {
-      it('builds correct query', () => {
-        const testQuery = '?$search=(something)';
-        (buildQuery as any).mockImplementation(jest.fn(() => testQuery));
-
-        // eslint-disable-next-line no-useless-escape
-        const expectedResult = 'search=(something)';
-
-        expect(mockHttpClient.serializeParams()).toBe(expectedResult);
       });
     });
 

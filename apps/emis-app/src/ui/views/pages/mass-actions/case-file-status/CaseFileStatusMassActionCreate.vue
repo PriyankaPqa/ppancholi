@@ -28,7 +28,7 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { buildQuerySql } from '@libs/services-lib/odata-query-sql';
 import { IMassActionCaseFileStatusCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import CaseFileStatusMassActionCreateDetails from './CaseFileStatusMassActionCreateDetails.vue';
 
 export interface MassActionCaseFileStatusForm {
@@ -73,9 +73,9 @@ export default Vue.extend({
      * Triggered when creating a mass action from a filtered list
      */
     async onPost({ name, description }: { name: string, description: string }) {
-      const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
+      const searchParams = JSON.parse(this.$route.query.searchParams as string);
 
-      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
+      const filter = buildQuerySql(helpers.removeInactiveItemsFilterOdata({ filter: searchParams.filter }) as any);
       const { reason, rationale, status } = this.form;
 
       const payload = {

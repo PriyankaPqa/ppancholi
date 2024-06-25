@@ -56,7 +56,6 @@ describe('EventForm.vue', () => {
     //
     //   eventStore.fetchEventTypes = jest.fn(() => mockOptionItemData());
     //   eventStore.getEventTypes = jest.fn(() => mockOptionItemData());
-    //   eventStore.fetchAll = jest.fn(() => mockCombinedEvents());
     //   eventStore.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
     //   eventStore.fetchRegions = jest.fn(() => mockRegionData());
     //

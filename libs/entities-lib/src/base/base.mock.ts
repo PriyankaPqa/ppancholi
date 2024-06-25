@@ -1,4 +1,5 @@
-import { IEntity, Status } from './base.types';
+import { Status } from '@libs/shared-lib/types';
+import { IEntity } from './base.types';
 
 export const mockBaseData = (force? : Partial<IEntity>): IEntity => ({
   id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',

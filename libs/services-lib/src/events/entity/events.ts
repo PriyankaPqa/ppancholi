@@ -12,7 +12,7 @@ import {
   IEventSummary,
   IRegistrationAssessment,
 } from '@libs/entities-lib/event';
-import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams, ISearchResult } from '@libs/shared-lib/types';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { GlobalHandler, IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -145,23 +145,23 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     return this.http.delete(`${this.baseUrl}/${eventId}/registration-assessment/${registrationId}`);
   }
 
-  async search(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<IEventEntity, null>> {
-    return this.http.get(`${this.apiUrlSuffix}/search/eventsV2`, { params, isODataSql: true });
+  async search(params: ISearchParams): Promise<ICombinedSearchResult<IEventEntity, null>> {
+    return this.http.get(`${this.apiUrlSuffix}/search/eventsV2`, { params, isOData: true });
   }
 
   // events that a user has access to
-  async searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSummary>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/event-summaries`, { params: this.filterForMyEvents(params), isODataSql: true });
+  async searchMyEvents(params: ISearchParams): Promise<ISearchResult<IEventSummary>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/event-summaries`, { params: this.filterForMyEvents(params), isOData: true });
   }
 
-  async searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventSummary>> {
+  async searchMyEventsById(ids: string[]): Promise<ISearchResult<IEventSummary>> {
     return helpers.callSearchInInBatches({
       searchInFilter: 'Id in({ids})',
       service: this,
       ids,
       api: 'searchMyEvents',
       otherApiParameters: [null, false, true],
-    }) as Promise<IAzureSearchResult<IEventSummary>>;
+    }) as Promise<ISearchResult<IEventSummary>>;
   }
 
   async toggleAssessmentsForL0Users(id: uuid, assessmentsForL0usersEnabled: boolean): Promise<IEventEntity> {
@@ -227,7 +227,7 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     };
   }
 
-  private filterForMyEvents(params: IAzureSearchParams, forCombinedEntity = false): IAzureSearchParams {
+  private filterForMyEvents(params: ISearchParams, forCombinedEntity = false): ISearchParams {
     const newParams = { ...params };
     const prefix = forCombinedEntity ? 'Entity/' : '';
     newParams.filter = newParams.filter || {};

@@ -33,7 +33,7 @@ describe('FinancialAssistanceCreate.vue', () => {
       mocks: {
         $route: {
           query: {
-            azureSearchParams: filtersString,
+            searchParams: filtersString,
             mode: MassActionMode.List,
           },
         },
@@ -249,7 +249,7 @@ describe('FinancialAssistanceCreate.vue', () => {
 
             $route: {
               query: {
-                azureSearchParams: filtersString,
+                searchParams: filtersString,
                 mode: MassActionMode.List,
               },
             },

@@ -4,7 +4,7 @@ import {
   shallowMount,
   mount,
 } from '@/test/testSetup';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../OptionListNewItem.vue';
 

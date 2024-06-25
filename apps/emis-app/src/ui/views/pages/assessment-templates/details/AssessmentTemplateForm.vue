@@ -257,12 +257,11 @@ import {
   AssessmentBaseEntity, IAssessmentBaseEntity, IAssessmentFormEntity, PublishStatus, AssessmentTemplateEntity, AssessmentFormEntity,
   AssessmentFrequencyType, IAssessmentScoringRange,
 } from '@libs/entities-lib/assessment-template';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import { IProgramEntity, IdParams } from '@libs/entities-lib/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import _sortBy from 'lodash/sortBy';
 import utils from '@libs/entities-lib/utils';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramStore } from '@/pinia/program/program';
 import { EFilterKeyType } from '@libs/component-lib/types';
 
@@ -310,7 +309,6 @@ export default Vue.extend({
       isSelectedAsProgramEligibilityCriteria: false,
       originalAssessmentFormProgramId: null as string,
       originalAssessmentFormStatus: Status.Active,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
     };
   },
 
@@ -448,17 +446,16 @@ export default Vue.extend({
     async searchPrograms() {
       const form = this.assessmentTemplate as IAssessmentFormEntity;
       if (form.eventId) {
-        const tableData = await this.combinedProgramStore.search({
+        const tableData = await useProgramStore().search({ params: {
           filter: {
             'Entity/EventId': { value: form.eventId, type: EFilterKeyType.Guid },
           },
-        }, null, true, true);
-
+        },
+        includeInactiveItems: true });
         if (!tableData) {
           return;
         }
-        this.programs = this.combinedProgramStore.getByIds(tableData.ids).map((t) => t.entity)
-          .filter((t) => t.status === Status.Active || t.id === form.programId);
+        this.programs = useProgramStore().getByIds(tableData.ids).filter((t) => t.status === Status.Active || t.id === form.programId);
       }
     },
 

@@ -30,7 +30,6 @@ export interface RequestConfig extends AxiosRequestConfig {
   globalHandler?: GlobalHandler;
   noErrorLogging?: boolean;
   isOData?: boolean;
-  isODataSql?: boolean;
   containsEncodedURL?: boolean;
   ignoreJwt?: boolean;
 }

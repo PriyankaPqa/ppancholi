@@ -28,7 +28,6 @@
           :filter-key="FilterKey.MassActionImpactStatuses"
           :count="itemsCount"
           :filter-options="filters"
-          :sql-mode="true"
           add-filter-label="caseFileTable.filter"
           @update:appliedFilter="onApplyFilter"
           @update:autocomplete="onAutoCompleteUpdate($event)"

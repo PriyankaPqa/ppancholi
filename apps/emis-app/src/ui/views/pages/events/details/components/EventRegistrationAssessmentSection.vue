@@ -59,7 +59,7 @@
 import Vue from 'vue';
 import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useEventStore } from '@/pinia/event/event';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';

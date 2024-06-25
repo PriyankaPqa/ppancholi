@@ -216,11 +216,10 @@ import {
 } from '@libs/entities-lib/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { ECanadaProvinces, VForm } from '@libs/shared-lib/types';
+import { ECanadaProvinces, VForm, Status } from '@libs/shared-lib/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { Status } from '@libs/entities-lib/base';
 import { IAddressData } from '@libs/entities-lib/household-create';
 import { i18n } from '@/ui/plugins';
 import caseFileDetail from '../../caseFileDetail';

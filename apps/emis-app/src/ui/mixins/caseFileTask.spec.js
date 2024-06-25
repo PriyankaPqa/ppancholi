@@ -6,7 +6,7 @@ import { useMockUserStore } from '@/pinia/user/user.mock';
 import { mockPersonalTaskEntity, mockTeamTaskEntity, TaskStatus } from '@libs/entities-lib/task';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 

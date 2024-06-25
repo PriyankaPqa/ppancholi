@@ -278,8 +278,6 @@ describe(
             const provider = useProvider(accessTokenL6);
             const searchParams = {
               top: 200,
-              searchMode: 'all',
-              queryType: 'full',
               orderBy: domain.isEntityEndpoint ? 'Id' : 'Entity/Id',
             };
 

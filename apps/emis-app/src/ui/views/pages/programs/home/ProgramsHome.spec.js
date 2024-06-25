@@ -4,7 +4,7 @@ import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 
 import Component from './ProgramsHome.vue';
@@ -32,9 +32,7 @@ describe('ProgramsHome.vue', () => {
           id: 'event-id',
         },
         computed: {
-          tableData: () => ([{
-            entity: mockProgramEntity({ id: 1 }),
-          }]),
+          tableData: () => ([mockProgramEntity({ id: 1 })]),
         },
       });
 
@@ -79,7 +77,7 @@ describe('ProgramsHome.vue', () => {
 
     describe('table elements', () => {
       test('program name redirects to program details', () => {
-        const link = wrapper.findDataTest(`programDetail-link-${wrapper.vm.tableData[0].entity.id}`);
+        const link = wrapper.findDataTest(`programDetail-link-${wrapper.vm.tableData[0].id}`);
         expect(link.props('to')).toEqual({
           name: routes.programs.details.name,
           params: mockParams,
@@ -201,7 +199,7 @@ describe('ProgramsHome.vue', () => {
           },
         });
 
-        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockProgramEntities());
+        programStore.getByIdsWithPinnedItems = jest.fn(() => mockProgramEntities());
         wrapper.vm.searchResultIds = mockProgramEntities().map((e) => e.id);
 
         expect(wrapper.vm.tableData).toEqual(mockProgramEntities());
@@ -231,13 +229,14 @@ describe('ProgramsHome.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'event-id',
         },
 
       });
 
-      wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
+      programStore.search = jest.fn(() => ({
         ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
         count: mockProgramEntities().length,
       }));
@@ -252,11 +251,10 @@ describe('ProgramsHome.vue', () => {
         };
       });
 
-      it('should call combinedProgramStore search with proper parameters', async () => {
+      it('should call programStore search with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenCalledWith({
-          search: params.search,
+        expect(programStore.search).toHaveBeenCalledWith({ params: {
           filter: {
             'Entity/EventId': { value: 'event-id', type: 'guid' },
           },
@@ -264,9 +262,8 @@ describe('ProgramsHome.vue', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true, true);
+        },
+        includeInactiveItems: true });
       });
     });
 

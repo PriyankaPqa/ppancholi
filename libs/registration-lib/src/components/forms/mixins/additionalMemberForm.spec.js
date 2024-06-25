@@ -34,6 +34,9 @@ let wrapper;
 const doMount = (otherOptions = {}) => {
   wrapper = shallowMount(Component, {
     localVue,
+    propsData: {
+      i18n,
+    },
     ...otherOptions,
   });
 };
@@ -72,7 +75,7 @@ describe('additionalMemberForm.spec', () => {
 
     describe('makeCurrentAddressTypeItems', () => {
       it('calls getCurrentAddressTypeItems with the right params and returns the right value', async () => {
-        doMount({ i18n, mocks: { $hasFeature: (f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers } });
+        doMount({ mocks: { $hasFeature: (f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers } });
         const member = { currentAddress: { shelterLocation: { id: 'sl-2' } } };
 
         const result = await wrapper.vm.makeCurrentAddressTypeItems(member);

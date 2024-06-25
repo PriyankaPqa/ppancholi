@@ -25,7 +25,7 @@ import { VSelectWithValidation } from '@libs/component-lib/components';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
 export default Vue.extend({

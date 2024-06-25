@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VForm } from '@libs/shared-lib/types';
+import { VForm, Status } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import { VAutocompleteWithValidation, VTextAreaWithValidation, VSelectWithValidation } from '@libs/component-lib/components';
@@ -84,7 +84,6 @@ import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { HouseholdStatus, IHouseholdEntity } from '@libs/entities-lib/household';
 import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
 import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
-import { Status } from '@libs/entities-lib/base';
 import { IMemberEntity } from '@libs/entities-lib/household-create';
 import { usePersonStore } from '@/pinia/person/person';
 import helper from '@libs/shared-lib/helpers/helpers';
@@ -213,8 +212,6 @@ export default Vue.extend({
             filterForArchivedStatus,
           ],
         },
-        queryType: 'full',
-        searchMode: 'all',
         orderBy: 'Entity/RegistrationNumber',
       };
 

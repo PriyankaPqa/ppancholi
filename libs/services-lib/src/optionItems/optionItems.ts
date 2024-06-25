@@ -1,8 +1,7 @@
 import {
   IOptionItemData, EOptionLists, ICreateOptionItemRequest,
 } from '@libs/entities-lib/optionItem';
-import { IMultilingual } from '@libs/shared-lib/types';
-import { Status } from '@libs/entities-lib/base';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import { IHttpClient } from '../http-client';
 import { IOptionItemsService } from './optionItems.types';
 

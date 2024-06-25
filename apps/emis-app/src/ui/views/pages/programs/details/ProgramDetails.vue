@@ -205,11 +205,10 @@ import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import _sortBy from 'lodash/sortBy';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramStore } from '@/pinia/program/program';
 import { EFilterKeyType } from '@libs/component-lib/types';
 
@@ -239,7 +238,6 @@ export default Vue.extend({
       loading: false,
       financialAssistanceTables: [] as IFinancialAssistanceTableEntity[],
       assessmentIds: [] as string[],
-      combinedFormStore: new CombinedStoreFactory(useAssessmentFormStore()),
       FeatureKeys,
     };
   },
@@ -275,12 +273,12 @@ export default Vue.extend({
       }
 
       this.financialAssistanceTables = await useFinancialAssistanceStore().fetchByProgramId({ programId: this.programId });
-      this.assessmentIds = (await this.combinedFormStore.search({
+      this.assessmentIds = (await useAssessmentFormStore().search({ params: {
         filter: { 'Entity/ProgramId': { value: this.programId, type: EFilterKeyType.Guid } },
         top: 999,
-        queryType: 'full',
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      }, null, true)).ids;
+      },
+      includeInactiveItems: true })).ids;
     } finally {
       this.loading = false;
     }

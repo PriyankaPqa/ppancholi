@@ -3,10 +3,9 @@
 import Vue from 'vue';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 import { useHouseholdStore } from '@/pinia/household/household';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { IdParams, IHouseholdEntity, IHouseholdEntityWithMembers } from '@libs/entities-lib/household';
+import { IHouseholdEntity, IHouseholdEntityWithMembers } from '@libs/entities-lib/household';
 import { parseISO } from 'date-fns';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 import { usePersonStore } from '@/pinia/person/person';
 
 export default Vue.extend({
@@ -15,7 +14,6 @@ export default Vue.extend({
       searchResults: [] as IHouseholdEntity[],
       criteria: {} as IHouseholdSearchCriteria,
       searchLoading: false,
-      combinedHouseholdStore: new CombinedStoreFactory<IHouseholdEntity, null, IdParams>(useHouseholdStore()),
     };
   },
   computed: {
@@ -64,17 +62,19 @@ export default Vue.extend({
       this.criteria = criteria;
       useHouseholdStore().lastSearchResults = [];
 
-      const res = await this.combinedHouseholdStore.search({
+      const res = await useHouseholdStore().search({
+        params: {
         filter: this.filters,
-        queryType: 'full',
         includeMembers: true, // loads members at the same time - returns IHouseholdEntityWithMembers
-      } as IAzureSearchParams, null, false, true);
+      } as ISearchParams,
+      includeInactiveItems: false });
       if (res?.values) {
-        usePersonStore().setAll(res.values.flatMap((x: { entity: IHouseholdEntityWithMembers }) => x.entity.householdMembers?.map((x) => x.person)));
+        usePersonStore().setAll(res.values.flatMap((x: IHouseholdEntityWithMembers) => x.householdMembers?.map((x) => x.person)));
       }
 
       if (res?.ids) {
-        this.searchResults = this.combinedHouseholdStore.getByIds(res.ids).map((x) => x.entity);
+        this.searchResults = useHouseholdStore().getByIds(res.ids);
+
         useHouseholdStore().lastSearchResults = res.ids;
       }
 

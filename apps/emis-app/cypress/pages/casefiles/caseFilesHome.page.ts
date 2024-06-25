@@ -6,7 +6,7 @@ export enum DataTest {
   beneficiaryNameLink = 'beneficiaryName-link',
   caseFileDetailLink = 'caseFileDetail-link',
   caseFileTable = 'case-files-table',
-  tableSearch = 'dataTableHeader__search',
+  search = 'dataTableHeader__search',
   statusText = 'chip-text',
 }
 
@@ -66,7 +66,7 @@ export class CaseFilesHomePage {
   }
 
   public searchCaseFileTableFor(caseFileNumber: string) {
-    cy.typeAndWaitUntilSearchResultsVisible(caseFileNumber, DataTest.tableSearch, `${DataTest.caseFileDetailLink}_${caseFileNumber}`);
+    cy.typeAndWaitUntilSearchResultsVisible(caseFileNumber, DataTest.search, `${DataTest.caseFileDetailLink}_${caseFileNumber}`);
   }
 
   public getCaseFileStatus() {

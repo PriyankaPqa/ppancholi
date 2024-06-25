@@ -18,8 +18,8 @@ import {
 } from '@libs/entities-lib/financial-assistance';
 import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { IProgramEntity } from '@libs/entities-lib/program';
-import { Status } from '@libs/entities-lib/base';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { Status, IMultilingual } from '@libs/shared-lib/types';
+
 import { mapItem, subItemToSubItemData, itemToItemData, prepareItemsArray } from './financial-assistance-helpers';
 
 // eslint-disable-next-line max-lines-per-function

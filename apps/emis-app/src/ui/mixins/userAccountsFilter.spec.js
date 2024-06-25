@@ -86,11 +86,8 @@ describe('userAccountsFilter', () => {
               { 'metadata/searchableText': { contains: 'test' } },
             ],
           },
-          searchFields: 'Metadata/DisplayName',
           top: 10,
           orderBy: 'Metadata/DisplayName',
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
       });
 
@@ -103,10 +100,7 @@ describe('userAccountsFilter', () => {
           otherFilter: 'contains(Metadata/DisplayName, \'test\')',
           otherOptions: {
             top: 10,
-            searchFields: 'Metadata/DisplayName',
-            orderBy: 'Metadata/DisplayName',
-            queryType: 'full',
-            searchMode: 'all' },
+            orderBy: 'Metadata/DisplayName' },
           service: wrapper.vm.combinedUserAccountStore,
           otherApiParameters: [null, false, true],
         });

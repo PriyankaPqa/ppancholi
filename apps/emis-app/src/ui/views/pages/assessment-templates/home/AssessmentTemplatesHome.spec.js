@@ -106,22 +106,22 @@ describe('AssessmentTemplatesHome.vue', () => {
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
 
-        expect(assessmentTemplateStore.getByIds).toHaveBeenCalled();
+        expect(assessmentTemplateStore.getByIdsWithPinnedItems).toHaveBeenCalled();
 
-        const params = assessmentTemplateStore.getByIds.mock.calls[assessmentTemplateStore.getByIds.mock.calls.length - 1];
+        const params = assessmentTemplateStore.getByIdsWithPinnedItems.mock.calls[assessmentTemplateStore.getByIdsWithPinnedItems.mock.calls.length - 1];
         expect(params[0]).toEqual(['abc']);
-        expect(data.length).toBe(assessmentTemplateStore.getByIds().length);
+        expect(data.length).toBe(assessmentTemplateStore.getByIdsWithPinnedItems().length);
       });
 
       it('should call getById  with correct storage for forms', async () => {
         await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
-        expect(assessmentFormStore.getByIds).toHaveBeenCalled();
+        expect(assessmentFormStore.getByIdsWithPinnedItems).toHaveBeenCalled();
 
-        const params = assessmentFormStore.getByIds.mock.calls[assessmentFormStore.getByIds.mock.calls.length - 1];
+        const params = assessmentFormStore.getByIdsWithPinnedItems.mock.calls[assessmentFormStore.getByIdsWithPinnedItems.mock.calls.length - 1];
         expect(params[0]).toEqual(['abc']);
-        expect(data.length).toBe(assessmentFormStore.getByIds().length);
+        expect(data.length).toBe(assessmentFormStore.getByIdsWithPinnedItems().length);
       });
     });
 
@@ -301,7 +301,7 @@ describe('AssessmentTemplatesHome.vue', () => {
 
       beforeEach(() => {
         params = {
-          search: 'query', filter: { MyFilter: 'zzz' }, top: 10, skip: 10, orderBy: 'name asc',
+          filter: { MyFilter: 'zzz' }, top: 10, skip: 10, orderBy: 'name asc',
         };
       });
 
@@ -311,16 +311,13 @@ describe('AssessmentTemplatesHome.vue', () => {
 
         expect(assessmentTemplateStore.search).toHaveBeenCalledWith({
           params: {
-            search: params.search,
             filter: { MyFilter: 'zzz' },
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           },
-          searchEndpoint: null,
+          includeInactiveItems: true,
         });
       });
 
@@ -330,16 +327,13 @@ describe('AssessmentTemplatesHome.vue', () => {
 
         expect(assessmentFormStore.search).toHaveBeenCalledWith({
           params: {
-            search: params.search,
             filter: { MyFilter: 'zzz', 'Entity/EventId': { value: 'abc', type: 'guid' } },
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           },
-          searchEndpoint: null,
+          includeInactiveItems: true,
         });
       });
     });

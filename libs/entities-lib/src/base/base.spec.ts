@@ -1,5 +1,5 @@
+import { Status } from '@libs/shared-lib/types';
 import { BaseEntity, mockBaseData } from './index';
-import { Status } from './base.types';
 
 const mock = mockBaseData();
 

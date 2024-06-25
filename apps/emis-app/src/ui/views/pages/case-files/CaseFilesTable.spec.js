@@ -551,7 +551,6 @@ describe('CaseFilesTable.vue', () => {
 
       beforeEach(() => {
         params = {
-          search: 'query',
           filter: 'filter',
           top: 10,
           skip: 10,
@@ -564,14 +563,11 @@ describe('CaseFilesTable.vue', () => {
 
         expect(services.caseFiles.searchOptimized)
           .toHaveBeenCalledWith({
-            search: params.search,
             filter: params.filter,
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           }, true);
 
         expect(householdStore.fetchByIds).toHaveBeenCalledWith(['mock-household-id-1', 'mock-household-id-1'], true);

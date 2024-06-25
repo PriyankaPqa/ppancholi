@@ -115,7 +115,7 @@ describe('>>>> helpers', () => {
       expect(helpers.toQuickSearch('moépìstöè')).toEqual('((/.*moepistoe.*/ OR "\\"moepistoe\\""))');
     });
 
-    it('sets azureSearchParams.search with quickSearch split by space', () => {
+    it('sets searchParams.search with quickSearch split by space', () => {
       expect(helpers.toQuickSearch('search test')).toEqual('((/.*search.*/ OR "\\"search\\"") AND (/.*test.*/ OR "\\"test\\""))');
     });
   });

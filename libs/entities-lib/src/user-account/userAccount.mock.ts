@@ -1,5 +1,5 @@
-import { IListOption, IUserInformation } from '@libs/shared-lib/types';
-import { IEntity, mockBaseData, Status } from '../base';
+import { IListOption, IUserInformation, Status } from '@libs/shared-lib/types';
+import { IEntity, mockBaseData } from '../base';
 
 import {
   IUserAccountEntity, IFilter, FilterKey, AccountStatus, IUserAccountMetadata, IUserAccountCombined, IUserProfileQueryResponse, IUserProfileData,

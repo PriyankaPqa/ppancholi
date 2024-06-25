@@ -1,10 +1,9 @@
 /* eslint-disable max-lines-per-function */
-import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
-import { mockBaseData, IEntity } from '../base';
+import { ISearchResult } from '@libs/shared-lib/types';
+import { mockBaseData } from '../base';
 import {
   AssessmentFormType, AssessmentFrequencyType, IAssessmentBaseEntity,
-  IAssessmentFormCombined, IAssessmentFormEntity,
-  IAssessmentTemplateEntity,
+  IAssessmentFormEntity, IAssessmentTemplateEntity,
   IAssessmentTotalSubmissions, PublishStatus, SurveyJsAssessmentFormState,
 } from './assessment-template.types';
 
@@ -454,21 +453,8 @@ export const mockAssessmentFormEntities = () : IAssessmentFormEntity[] => [
   mockAssessmentFormEntity({ id: '2' }),
 ];
 
-export const mockCombinedAssessmentForm = (force?: Partial<IEntity>): IAssessmentFormCombined => ({
-  metadata: null,
-  entity: mockAssessmentFormEntity(force),
-});
-
-export const mockCombinedAssessmentForms = (): IAssessmentFormCombined[] => [
-  mockCombinedAssessmentForm({ id: '1' }),
-  mockCombinedAssessmentForm({ id: '2' }),
-  mockCombinedAssessmentForm({ id: '3' }),
-];
-
-export const mockSearchDataForm: IAzureCombinedSearchResult<IAssessmentFormEntity, IEntity> = {
+export const mockSearchDataForm: ISearchResult<IAssessmentFormEntity> = {
   odataContext: 'https://emis-search-dev.search.windows.net/indexes("index-assessment-form")/$metadata#docs(*)',
   odataCount: 3,
-  value: mockCombinedAssessmentForms().map((x) => ({
-    id: x.entity.id, tenantId: x.entity.tenantId, entity: x.entity, metadata: x.metadata,
-  })),
+  value: mockAssessmentFormEntities().map((x) => ({ ...x, id: x.id, tenantId: x.tenantId })),
 };

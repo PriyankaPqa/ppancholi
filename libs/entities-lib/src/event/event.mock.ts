@@ -1,10 +1,9 @@
-import { ECanadaProvinces, IMultilingual, IAzureSearchResult } from '@libs/shared-lib/types';
-import { IEntity, mockBaseData, Status } from '../base';
+import { ECanadaProvinces, ICombinedSearchResult, IMultilingual, ISearchResult, Status } from '@libs/shared-lib/types';
+import { mockBaseData } from '../base';
 import {
   IEventSummary,
   EEventCallCentreStatus,
   EEventStatus,
-  IEventCombined,
   IEventEntity,
   IEventLocation,
   IEventGenericLocation,
@@ -688,28 +687,13 @@ export const mockEventEntities = () : IEventEntity[] => [
   mockEventEntity({ id: '2', eventStatus: EEventStatus.Closed }, 1),
 ];
 
-export const mockCombinedEvent = (force?: Partial<IEntity>, index?: number): IEventCombined => ({
-  entity: mockEventEntity(force, index),
-  metadata: null,
-});
-
-export const mockEmptyCombinedEvent = (force?: Partial<IEntity>): IEventCombined => ({
-  entity: mockEmptyEntity(force),
-  metadata: null,
-});
-
-export const mockCombinedEvents = (): IEventCombined[] => [
-  mockCombinedEvent({ id: '1' }),
-  mockCombinedEvent({ id: '2' }, 1),
-];
-
-export const mockSearchEventEntity = (): IAzureSearchResult<IEventCombined> => ({
+export const mockSearchEventEntity = (): ICombinedSearchResult<IEventEntity, null> => ({
   odataCount: 2,
   odataContext: 'context',
-  value: mockCombinedEvents(),
+  value: [{ entity: mockEventEntity({ id: '1' }), id: '1', metadata: null, tenantId: 't1' }, { entity: mockEventEntity({ id: '2' }, 1), id: '2', metadata: null, tenantId: 't2' }],
 });
 
-export const mockSearchEventSummary = (): IAzureSearchResult<IEventSummary> => ({
+export const mockSearchEventSummary = (): ISearchResult<IEventSummary> => ({
   odataCount: 1,
   odataContext: 'context',
   value: [mockEventSummary()],

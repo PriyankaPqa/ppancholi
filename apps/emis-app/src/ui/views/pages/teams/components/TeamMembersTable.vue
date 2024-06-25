@@ -143,7 +143,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
-import { IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { ICombinedIndex, ITableSearchResults } from '@libs/shared-lib/types';
 
 export interface Result extends IUserAccountCombined {
   isPrimaryContact: boolean;
@@ -362,12 +362,10 @@ export default Vue.extend({
         service: this.combinedUserAccountStore,
         ids: teamMemberIds,
         searchInFilter: { Entity: { Id: { in: '{ids}' } } },
-        otherOptions: { queryType: 'full',
-        searchMode: 'all' },
         otherApiParameters: [null, false, true],
         });
 
-      const ids = (fetchedAssignedUserAccountData as IAzureTableSearchResults)?.ids;
+      const ids = (fetchedAssignedUserAccountData as ITableSearchResults<ICombinedIndex<IUserAccountEntity, IUserAccountMetadata>>)?.ids;
       if (ids) {
         const members = this.combinedUserAccountStore.getByIds(ids);
         this.teamMembers = this.makeMappedMembers(members);

@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from '../CreateEditProgram.vue';
 

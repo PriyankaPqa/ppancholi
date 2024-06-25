@@ -7,7 +7,7 @@ import { useMockProgramStore } from '@/pinia/program/program.mock';
 import routes from '@/constants/routes';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import Component from './FinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();

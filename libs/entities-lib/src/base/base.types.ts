@@ -1,7 +1,4 @@
-export enum Status {
-  Active = 1,
-  Inactive = 2,
-}
+import { Status } from '@libs/shared-lib/types';
 
 export interface IEntity {
   id: uuid;
@@ -13,6 +10,7 @@ export interface IEntity {
   status: Status;
   lastAction: string;
   lastActionCorrelationId: uuid;
+  pinned?: boolean;
 }
 
 export interface IEntityCombined <TEntity extends IEntity, TMetadata extends IEntity> {

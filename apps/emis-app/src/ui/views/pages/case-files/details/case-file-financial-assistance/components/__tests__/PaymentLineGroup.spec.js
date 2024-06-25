@@ -4,7 +4,7 @@ import {
   mockCaseFinancialAssistancePaymentGroups, PaymentStatus, ApprovalStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { UserRoles } from '@libs/entities-lib/user';

@@ -1,5 +1,5 @@
-import { IMultilingual } from '@libs/shared-lib/types';
-import { IEntity, Status } from '../base';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
+import { IEntity } from '../base';
 
 export enum EOptionLists {
   EventTypes = 1,

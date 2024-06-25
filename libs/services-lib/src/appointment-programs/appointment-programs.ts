@@ -1,4 +1,4 @@
-import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
 import { IAppointmentProgram, IdParams } from '@libs/entities-lib/appointment/appointment-program/appointment-program.types';
 import { GlobalHandler, IHttpClient } from '../http-client';
@@ -24,8 +24,8 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
     });
   }
 
-  async search(params: IAzureSearchParams):
-    Promise<IAzureCombinedSearchResult<IAppointmentProgram, IEntity>> {
-    return this.http.get('appointments/search/appointment-programs', { params, isODataSql: true });
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<IAppointmentProgram, IEntity>> {
+    return this.http.get('appointments/search/appointment-programs', { params, isOData: true });
   }
 }

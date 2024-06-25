@@ -1,7 +1,7 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { CaseFileIndividualsService, ICaseFileIndividualsServiceMock } from '@libs/services-lib/case-file-individuals';
 import _cloneDeep from 'lodash/cloneDeep';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { ICaseFileIndividualEntity, IdParams, ReceivingAssistanceDetail } from '@libs/entities-lib/case-file-individual';
 import { ICurrentAddressData } from '@libs/entities-lib/value-objects/current-address';
 

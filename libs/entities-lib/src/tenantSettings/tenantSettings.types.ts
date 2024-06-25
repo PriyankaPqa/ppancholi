@@ -1,6 +1,6 @@
 import { IMultilingual } from '@libs/shared-lib/types/interfaces/IMultilingual';
 
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 
 export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
@@ -63,7 +63,6 @@ export interface IEditColoursRequest {
 
 export interface IEditTenantDetailsRequest extends ITenantDetailsEntityData {}
 
-export type IBrandingCombined = IEntityCombined<IBrandingEntity, never>;
 export interface IFeatureEntity extends IEntity {
   name: IMultilingual;
   description: IMultilingual;
@@ -159,7 +158,5 @@ export interface ICanEnableFeatureRequest extends IMultiTenantFeatureRequest {
 export interface ICanDisableFeatureRequest extends IMultiTenantFeatureRequest {
   canDisable: boolean;
 }
-
-export type ITenantSettingsCombined = IEntityCombined<ITenantSettingsEntity, never>;
 
 export type IdParams = uuid;

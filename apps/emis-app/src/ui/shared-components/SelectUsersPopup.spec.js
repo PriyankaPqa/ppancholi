@@ -217,14 +217,11 @@ describe('SelectUsersPopup.vue', () => {
         await wrapper.vm.fetchFilteredUsers();
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           orderBy: 'Metadata/DisplayName',
-          queryType: 'full',
           filter: {
             and: [
               { 'metadata/searchableText': { contains: 'test' } },
             ],
           },
-          searchFields: null,
-          searchMode: 'all',
           top: null,
         }, null, false, true);
       });
@@ -236,19 +233,16 @@ describe('SelectUsersPopup.vue', () => {
             { 'metadata/searchableText': { contains: 'test' } },
           ],
         }));
-        await wrapper.setProps({ searchFields: 'some field', maxNbResults: 3 });
+        await wrapper.setProps({ maxNbResults: 3 });
 
         await wrapper.vm.fetchFilteredUsers();
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           orderBy: 'Metadata/DisplayName',
-          queryType: 'full',
           filter: {
             and: [
               { 'metadata/searchableText': { contains: 'test' } },
             ],
           },
-          searchFields: 'some field',
-          searchMode: 'all',
           top: 3,
         }, null, false, true);
       });
@@ -256,7 +250,7 @@ describe('SelectUsersPopup.vue', () => {
       it('calls the search endpoint with the right data when role', async () => {
         sharedHelpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
         wrapper.vm.combinedUserAccountStore.search = jest.fn();
-        await wrapper.setProps({ levels: ['l3', 'l4'], searchFields: 'some field', maxNbResults: 3 });
+        await wrapper.setProps({ levels: ['l3', 'l4'], maxNbResults: 3 });
         await wrapper.setData({
           search: 'test',
         });
@@ -268,11 +262,9 @@ describe('SelectUsersPopup.vue', () => {
           ids: ['id-1'],
           searchInFilter: 'Metadata/RoleName/Id in ({ids})',
           otherOptions: {
-            searchFields: 'some field',
             top: 3,
             orderBy: 'Metadata/DisplayName',
-            queryType: 'full',
-            searchMode: 'all' },
+          },
           service: wrapper.vm.combinedUserAccountStore,
           otherFilter: 'contains(Metadata/DisplayName, \'test\')',
           otherApiParameters: [null, false, true],

@@ -1,5 +1,5 @@
 import { IListOption, IUserInformation } from '@libs/shared-lib/types';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 
 export interface ICaseNoteUser {
   id: string,
@@ -18,8 +18,6 @@ export interface ICaseNoteEntity extends IEntity {
 
   validate(): Array<string> | boolean;
 }
-
-export type ICaseNoteCombined = IEntityCombined<ICaseNoteEntity, IEntity>;
 
 export type IdParams = { id: uuid, caseFileId: uuid };
 export type IdMetadataParams = { id: uuid, caseFileId: uuid };

@@ -1,5 +1,5 @@
 import { IUserInformation } from '@libs/shared-lib/src/types';
-import { IEntity, IEntityCombined } from '../../base';
+import { IEntity } from '../../base';
 
 /**
  * Enums
@@ -46,5 +46,3 @@ export interface IAppointment extends IEntity {
   sendConfirmationEmail: boolean;
   appointmentHistory: IAppointmentStatusHistory[];
 }
-
-export type IAppointmentCombined = IEntityCombined<IAppointment, IEntity>;

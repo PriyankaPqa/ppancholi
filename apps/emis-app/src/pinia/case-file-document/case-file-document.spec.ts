@@ -7,7 +7,7 @@ import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { defineStore } from 'pinia';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import _sortBy from 'lodash/sortBy';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 
 const entityService = mockCaseFileDocumentsService();
 const baseComponents = getBaseStoreComponents<ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }>(entityService);

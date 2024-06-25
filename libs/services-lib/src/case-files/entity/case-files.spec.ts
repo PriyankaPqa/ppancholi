@@ -188,7 +188,7 @@ describe('>>> Case File Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/case-filesV2', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/case-filesV2', { params, isOData: true });
     });
   });
 
@@ -210,7 +210,7 @@ describe('>>> Case File Service', () => {
 
       await service.getSummary(id);
 
-      expect(http.get).toHaveBeenCalledWith('case-file/search/casefile-summaries', { params: { filter: { id: { value: id, type: 'guid' } } }, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/casefile-summaries', { params: { filter: { id: { value: id, type: 'guid' } } }, isOData: true });
     });
   });
 
@@ -218,7 +218,7 @@ describe('>>> Case File Service', () => {
     it('is linked to the correct URL and params', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.searchSummaries(params);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/casefile-summaries', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/casefile-summaries', { params, isOData: true });
     });
   });
 

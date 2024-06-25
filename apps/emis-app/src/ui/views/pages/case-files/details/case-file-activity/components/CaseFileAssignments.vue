@@ -50,7 +50,7 @@ import Vue from 'vue';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { ICombinedIndex, ITableSearchResults } from '@libs/shared-lib/types';
 import {
   IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
@@ -151,7 +151,8 @@ export default Vue.extend({
       const allMemberIds = this.caseFile.assignedTeamMembers.reduce((acc, i) => i.teamMembersIds.concat(acc), []);
       const firstMemberIds = allMemberIds.slice(0, 2);
       const filter = `Id in (${firstMemberIds.join(', ')})`;
-      const individualsData: IAzureTableSearchResults = await this.combinedUserAccountStore.search({ filter }, null, false, true);
+      const individualsData: ITableSearchResults<ICombinedIndex<IUserAccountEntity, IUserAccountMetadata>> = await this.combinedUserAccountStore
+      .search({ filter }, null, false, true);
       if (individualsData) {
         const { ids } = individualsData;
         const userAccounts = this.combinedUserAccountStore.getByIds(ids);

@@ -87,12 +87,11 @@
 
 <script lang="ts">
 import Vue, { ref, toRef } from 'vue';
-import { VForm } from '@libs/shared-lib/types';
+import { VForm, Status } from '@libs/shared-lib/types';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import entityUtils from '@libs/entities-lib/utils';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
 import { useOptionListItem } from './useOptionListItem';
 
 export default Vue.extend({

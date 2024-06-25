@@ -1,9 +1,8 @@
 /* eslint-disable max-len, vue/max-len */
-import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
-import { mockBaseData, IEntity } from '../base';
+import { ISearchResult } from '@libs/shared-lib/types';
+import { mockBaseData } from '../base';
 import {
-  CompletionStatus,
-  IAssessmentResponseCombined, IAssessmentResponseEntity,
+  CompletionStatus, IAssessmentResponseEntity,
 } from './assessment-template.types';
 
 export const mockAssessmentResponseEntity = (force?: Partial<IAssessmentResponseEntity>): IAssessmentResponseEntity => ({
@@ -220,21 +219,8 @@ export const mockAssessmentResponseEntities = (): IAssessmentResponseEntity[] =>
   mockAssessmentResponseEntity({ id: '2' }),
 ];
 
-export const mockCombinedAssessmentResponse = (force?: Partial<IEntity>): IAssessmentResponseCombined => ({
-  metadata: null,
-  entity: mockAssessmentResponseEntity(force),
-});
-
-export const mockCombinedAssessmentResponses = (): IAssessmentResponseCombined[] => [
-  mockCombinedAssessmentResponse({ id: '1' }),
-  mockCombinedAssessmentResponse({ id: '2' }),
-  mockCombinedAssessmentResponse({ id: '3' }),
-];
-
-export const mockSearchDataResponse: IAzureCombinedSearchResult<IAssessmentResponseEntity, IEntity> = {
+export const mockSearchDataResponse: ISearchResult<IAssessmentResponseEntity> = {
   odataContext: 'https://emis-search-dev.search.windows.net/indexes("index-assessment-response")/$metadata#docs(*)',
   odataCount: 3,
-  value: mockCombinedAssessmentResponses().map((x) => ({
-    id: x.entity.id, tenantId: x.entity.tenantId, entity: x.entity, metadata: x.metadata,
-  })),
+  value: mockAssessmentResponseEntities().map((x) => ({ ...x, id: x.id, tenantId: x.tenantId })),
 };

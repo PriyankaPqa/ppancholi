@@ -21,7 +21,6 @@
         :count="itemsCount"
         :filter-options="filters"
         :initial-filter="filterState"
-        :sql-mode="true"
         add-filter-label="caseFileTable.filter"
         @open="fetchEventsFilter()"
         @update:appliedFilter="onApplyFilterLocal"
@@ -143,7 +142,7 @@ import isEqual from 'lodash/isEqual';
 import _throttle from 'lodash/throttle';
 import pickBy from 'lodash/pickBy';
 import routes from '@/constants/routes';
-import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { ISearchParams, ITableSearchResults } from '@libs/shared-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileMetadata, IdParams, ICaseFileEntity,
@@ -163,6 +162,7 @@ import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { IMemberEntity } from '@libs/entities-lib/src/value-objects/member';
 import { usePersonStore } from '@/pinia/person/person';
 import { useEventStore } from '@/pinia/event/event';
+import { ICombinedIndex } from '@libs/shared-lib/src/types';
 
 interface CaseFileSearchOptimizedExtended extends CaseFileSearchOptimized {
   entity: ICaseFileEntity;
@@ -209,7 +209,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
       combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
-      sqlSearchMode: true,
+
       quicksearchField: 'SearchItem/SearchableText',
       caseFilesFromSearch: [] as CaseFileSearchOptimized[],
     };
@@ -522,16 +522,13 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       this.recentlyViewedOnly = (state as any)?.isRecentlyViewedFilter || false;
     },
 
-    async fetchData(params: IAzureSearchParams): Promise<IAzureTableSearchResults> {
+    async fetchData(params: ISearchParams): Promise<ITableSearchResults<ICombinedIndex<ICaseFileEntity, ICaseFileMetadata>>> {
       const res = await this.$services.caseFiles.searchOptimized({
-        search: params.search,
         filter: params.filter,
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
       }, true);
 
       const ids = res.value.map((x) => x.searchItem.id);

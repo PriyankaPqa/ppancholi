@@ -28,7 +28,6 @@
           :filter-key="FilterKey.MassActionAssessment"
           :count="itemsCount"
           :filter-options="filters"
-          :sql-mode="true"
           @update:appliedFilter="onApplyCaseFileFilter"
           @update:autocomplete="onAutoCompleteUpdate($event)"
           @change:autocomplete="onAutoCompleteChange($event)"
@@ -360,7 +359,7 @@ export default mixins(massActionCaseFileFiltering).extend({
     async onSubmit() {
       this.$router.push({
         name: routes.massActions.assessments.create.name,
-        query: { azureSearchParams: JSON.stringify(this.azureSearchParams), mode: MassActionMode.List, total: this.itemsCount.toString() },
+        query: { searchParams: JSON.stringify(this.searchParams), mode: MassActionMode.List, total: this.itemsCount.toString() },
       });
 
       this.$emit('update:show', false);

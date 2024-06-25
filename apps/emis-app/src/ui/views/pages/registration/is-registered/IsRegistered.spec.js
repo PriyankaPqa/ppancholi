@@ -1,7 +1,7 @@
 import Vuetify from 'vuetify';
 import { RcDialog } from '@libs/component-lib/components';
 import { mockSplitHousehold } from '@libs/entities-lib/household-create';
-import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   createLocalVue,
   shallowMount,
@@ -81,9 +81,9 @@ describe('IsRegistered.vue', () => {
           },
 
         });
-        await wrapper.setData({ searchResults: [mockCombinedHousehold()] });
+        await wrapper.setData({ searchResults: [mockHouseholdEntity()] });
         const component = wrapper.findComponent(HouseholdResults);
-        expect(component.props().items).toEqual([mockCombinedHousehold()]);
+        expect(component.props().items).toEqual([mockHouseholdEntity()]);
       });
     });
 
@@ -206,12 +206,12 @@ describe('IsRegistered.vue', () => {
     describe('created', () => {
       it('sets results so we can come back on page with results', () => {
         jest.clearAllMocks();
-        wrapper.vm.combinedHouseholdStore.getByIds = jest.fn(() => []);
+        householdStore.getByIds = jest.fn(() => []);
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.combinedHouseholdStore.getByIds).toHaveBeenCalledTimes(1);
+        expect(householdStore.getByIds).toHaveBeenCalledTimes(1);
       });
 
       it('calls filterOutSplitHousehold if isSplitMode is true', () => {

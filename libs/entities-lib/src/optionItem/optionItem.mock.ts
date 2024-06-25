@@ -1,4 +1,5 @@
-import { mockBaseData, Status } from '../base';
+import { Status } from '@libs/shared-lib/types';
+import { mockBaseData } from '../base';
 import {
   IOptionItem, IOptionItemData, IOptionSubItem,
 } from './optionItem.types';

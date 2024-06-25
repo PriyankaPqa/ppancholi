@@ -1,5 +1,5 @@
-import { IListOption, IMultilingual } from '@libs/shared-lib/types';
-import { IEntity, IEntityCombined, Status } from '../base';
+import { IListOption, IMultilingual, Status } from '@libs/shared-lib/types';
+import { IEntity } from '../base';
 import { IOptionItem, IOptionSubItem } from '../optionItem';
 
 export enum EFinancialAmountModes {
@@ -61,7 +61,5 @@ export interface IEditFinancialAssistanceTableRequest extends IEntity {
   status: Status;
   useForLodging: boolean;
 }
-
-export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IEntity>;
 
 export type IdParams = uuid;

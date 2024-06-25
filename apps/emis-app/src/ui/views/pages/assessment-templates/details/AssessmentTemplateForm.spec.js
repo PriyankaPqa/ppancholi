@@ -1,6 +1,6 @@
 import _sortBy from 'lodash/sortBy';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import {
   mockAssessmentFormEntity, mockAssessmentTemplateEntity, PublishStatus, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
@@ -16,8 +16,8 @@ const localVue = createLocalVue();
 
 const assessmentTemplate = mockAssessmentTemplateEntity();
 const assessmentForm = mockAssessmentFormEntity();
+const { pinia, programStore } = useMockProgramStore();
 
-const { pinia } = useMockProgramStore();
 describe('AssessmentTemplateForm.vue', () => {
   let wrapper;
 
@@ -37,11 +37,15 @@ describe('AssessmentTemplateForm.vue', () => {
       ...additionalOverwrites,
     });
 
-    wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
+    programStore.search = jest.fn(() => ({
       ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
       count: mockProgramEntities().length,
     }));
 
+    programStore.getByIds = jest.fn(() => ([
+      mockProgramEntity({ id: '1' }),
+      mockProgramEntity({ id: '2' }),
+    ]));
     await wrapper.vm.$nextTick();
     await flushPromises();
   };
@@ -302,25 +306,19 @@ describe('AssessmentTemplateForm.vue', () => {
     describe('searchPrograms', () => {
       it('should call storage actions with proper parameters', async () => {
         await mountWrapper();
-        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => ([
-          {
-            entity: mockProgramEntity({ id: '1' }),
-          },
-          {
-            entity: mockProgramEntity({ id: '2' }),
-          },
-        ]));
+
         await wrapper.vm.searchPrograms();
 
-        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenCalledWith({
+        expect(programStore.search).toHaveBeenCalledWith({ params: {
           filter: {
             'Entity/EventId': { value: assessmentForm.eventId, type: EFilterKeyType.Guid },
           },
-        }, null, true, true);
+        },
+        includeInactiveItems: true });
 
-        expect(wrapper.vm.combinedProgramStore.getByIds).toHaveBeenCalledWith(['1', '2']);
+        expect(programStore.getByIds).toHaveBeenCalledWith(['1', '2']);
 
-        expect(wrapper.vm.programs).toEqual(wrapper.vm.combinedProgramStore.getByIds().map((t) => t.entity));
+        expect(wrapper.vm.programs).toEqual([mockProgramEntity({ id: '1' }), mockProgramEntity({ id: '2' })]);
       });
     });
 

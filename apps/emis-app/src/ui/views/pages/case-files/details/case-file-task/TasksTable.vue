@@ -27,7 +27,6 @@
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filterOptions"
-          :sql-mode="true"
           add-filter-label="tasksTable.filter"
           @open="isInCaseFile ? null : fetchEventsFilter()"
           @update:autocomplete="onAutoCompleteUpdate($event)"
@@ -190,8 +189,7 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useUserStore } from '@/pinia/user/user';
 import { useTeamStore } from '@/pinia/team/team';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
-import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
+import { ISearchParams } from '@libs/shared-lib/types';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
@@ -200,6 +198,7 @@ import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { IEntityCombined } from '@libs/entities-lib/base';
 import { ITeamEntity } from '@libs/entities-lib/team';
+import { ITEM_ROOT } from '@libs/services-lib/odata-query-sql/odata-query-sql';
 
 interface IParsedTaskMetadata extends ITaskMetadata {
   userWorkingOnNameWithRole?: string,
@@ -254,7 +253,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       TaskStatus,
       showTaskActionDialog: false,
       actioningTask: null as IParsedTaskCombined,
-      sqlSearchMode: true,
       combinedTaskStore: new CombinedStoreFactory<ITaskEntity, ITaskMetadata, IdParams>(useTaskStore(), useTaskMetadataStore()),
     };
   },
@@ -666,17 +664,14 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       return this.assignedTeams.find((t) => t.id === assignedTeamId)?.name;
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.combinedTaskStore.search({
-        search: params.search,
         filter: this.isInCaseFile ? { 'Entity/CaseFileId': { value: this.$route.params.id, type: EFilterKeyType.Guid }, ...filterParams } : { ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
       }, null, false, true);
       return res;
     },

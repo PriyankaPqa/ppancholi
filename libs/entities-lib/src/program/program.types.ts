@@ -1,5 +1,5 @@
 import { IMultilingual } from '@libs/shared-lib/types';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 
 export enum EPaymentModalities {
   ETransfer = 1,
@@ -31,7 +31,5 @@ export interface IProgramEntityData extends IEntity {
 export interface IProgramEntity extends IProgramEntityData {
   fillEmptyMultilingualAttributes(): void;
 }
-
-export type IProgramCombined = IEntityCombined<IProgramEntity, IEntity>;
 
 export type IdParams = { id: string; eventId: string };

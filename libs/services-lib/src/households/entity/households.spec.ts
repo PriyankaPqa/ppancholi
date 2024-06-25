@@ -273,15 +273,15 @@ describe('>>> Household Service', () => {
     it('should call the proper endpoint', async () => {
       let params = { filter: { Foo: 'foo' } } as any;
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=false&includeMembers=false', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=false&includeMembers=false', { params, isOData: true });
 
       params = { filter: { Foo: 'foo' }, includePrimary: true };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=true&includeMembers=false', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=true&includeMembers=false', { params, isOData: true });
 
       params = { filter: { Foo: 'foo' }, includeMembers: true };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=false&includeMembers=true', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('household/search/householdsV2?includePrimary=false&includeMembers=true', { params, isOData: true });
     });
   });
 

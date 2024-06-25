@@ -5,8 +5,9 @@ import {
   EFinancialAmountModes,
   EFinancialFrequency,
 } from '@libs/entities-lib/financial-assistance';
-import { mockBaseData, Status } from '@libs/entities-lib/base';
+import { mockBaseData } from '@libs/entities-lib/base';
 import { ItemFinancialAssistance, SubItemFinancialAssistance } from '@libs/cypress-lib/helpers';
+import { Status } from '@libs/shared-lib/types';
 
 // eslint-disable-next-line
 export const mockFinancialAssistanceTableSubItemData = (amountType: EFinancialAmountModes, force?: Partial<IFinancialAssistanceTableSubItemData>) : IFinancialAssistanceTableSubItemData => ({

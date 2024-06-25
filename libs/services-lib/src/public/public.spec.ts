@@ -18,7 +18,7 @@ describe('>>> Public Service', () => {
     await service.fetchRegistrationEvent('en', 'some link');
     expect(http.get).toHaveBeenCalledWith(
       '/event/search/event-summaries',
-      { params: { filter: { 'RegistrationLink/Translation/en': helpersUrl.encodeUrl('some link') } }, isODataSql: true, containsEncodedURL: true },
+      { params: { filter: { 'RegistrationLink/Translation/en': helpersUrl.encodeUrl('some link') } }, isOData: true, containsEncodedURL: true },
     );
   });
 
@@ -28,7 +28,7 @@ describe('>>> Public Service', () => {
     };
 
     await service.searchEvents(params);
-    expect(http.get).toHaveBeenCalledWith('/event/search/event-summaries', { params, containsEncodedURL: true, isODataSql: true });
+    expect(http.get).toHaveBeenCalledWith('/event/search/event-summaries', { params, containsEncodedURL: true, isOData: true });
   });
 
   test('searchEventsById calls the helper callSearchInInBatches with the right params and return the right object', async () => {

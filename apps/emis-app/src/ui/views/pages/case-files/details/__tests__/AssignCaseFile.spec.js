@@ -316,8 +316,6 @@ describe('AssignCaseFile.vue', () => {
           top: 1,
           skip: 0,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
         expect(result).toEqual({ ids: ['search-id'] });
       });
@@ -347,8 +345,6 @@ describe('AssignCaseFile.vue', () => {
           skip: 10,
           count: true,
           orderBy: 'mock',
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
         expect(result).toEqual({ ids: ['search-id'] });
       });
@@ -386,8 +382,6 @@ describe('AssignCaseFile.vue', () => {
           service: wrapper.vm.combinedUserAccountStore,
           ids: ['id-1', 'id-2', 'id-3'],
           searchInFilter: { Entity: { Id: { in: '{ids}' } } },
-          otherOptions: { queryType: 'full',
-            searchMode: 'all' },
           otherApiParameters: [null, false, true],
         });
         expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['search-id']);

@@ -19,7 +19,6 @@
         :filter-key="filterKey"
         :filter-options="filterOptions"
         :initial-filter="filterState"
-        :sql-mode="true"
         :count="itemsCount"
         add-filter-label="caseNote.filter"
         @update:appliedFilter="onApplyFilter">
@@ -45,12 +44,11 @@
       <case-file-list-wrapper :loading="loading" :empty="caseNotes.length === 0">
         <case-notes-list-item
           v-for="item in caseNotes"
-          :key="item.entity.id"
-          :item="item.entity"
+          :key="item.id"
+          :item="item"
           :readonly="readonly"
           @setIsEdit="isBeingEdited = $event"
-          @pin-case-note="pinCaseNote"
-          @saved="onSaved($event)" />
+          @pin-case-note="pinCaseNote" />
       </case-file-list-wrapper>
     </validation-observer>
   </rc-page-content>
@@ -66,13 +64,12 @@ import _debounce from 'lodash/debounce';
 import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ICaseNoteCombined, ICaseNoteEntity, IdParams } from '@libs/entities-lib/case-note';
+import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, VForm } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { UserRoles } from '@libs/entities-lib/user';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
@@ -91,7 +88,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.$refs.observer.flags.changed) { // add or edit case note
+    if ((this.$refs.observer as VForm).flags.changed) { // add or edit case note
       const leavingConfirmed = await this.$confirm({
         title: this.titleLeave,
         messages: this.messagesLeave,
@@ -118,8 +115,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         pageIndex: 1,
         pageSize: 1000,
       },
-      sqlSearchMode: true,
-      combinedCaseNoteStore: new CombinedStoreFactory<ICaseNoteEntity, null, IdParams>(useCaseNoteStore()),
     };
   },
 
@@ -129,10 +124,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         && !this.readonly;
     },
 
-    caseNotes(): ICaseNoteCombined[] {
-      return this.combinedCaseNoteStore.getByIds(
+    caseNotes(): ICaseNoteEntity[] {
+      return useCaseNoteStore().getByIdsWithPinnedItems(
         this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
+        { baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
       );
     },
 
@@ -190,26 +185,23 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       this.search(this.dataTableParams);
     }, 500),
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filter = _isEmpty(params?.filter) ? {} : params.filter;
-      const res = await this.combinedCaseNoteStore.search(
+      const res = await useCaseNoteStore().search({ params:
         {
           ...params,
           filter: { ...(filter as Record<string, unknown>), 'Entity/CaseFileId': { value: this.caseFileId, type: EFilterKeyType.Guid } },
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
         },
-        null,
-        true,
-      );
+        includeInactiveItems: true });
+
       return res;
     },
 
-    async pinCaseNote(caseNote: ICaseNoteCombined) {
-            await useCaseNoteStore().pinCaseNote({ caseFileId: this.caseFileId, caseNoteId: caseNote.entity.id, isPinned: !caseNote.entity.isPinned });
+    async pinCaseNote(caseNote: ICaseNoteEntity) {
+      await useCaseNoteStore().pinCaseNote({ caseFileId: this.caseFileId, caseNoteId: caseNote.id, isPinned: !caseNote.isPinned });
       // Since back end search has a delay, update case note and sort case note list locally
-      caseNote.entity.isPinned = !caseNote.entity.isPinned;
+      caseNote.isPinned = !caseNote.isPinned;
     },
   },
 });

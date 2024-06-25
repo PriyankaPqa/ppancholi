@@ -78,7 +78,7 @@ describe('>>> Financial assistance table Service', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('finance/search/financial-assistance-tablesV2', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('finance/search/financial-assistance-tablesV2', { params, isOData: true });
     });
   });
 });

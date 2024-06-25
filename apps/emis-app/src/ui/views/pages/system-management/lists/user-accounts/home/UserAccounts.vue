@@ -153,9 +153,8 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import {
   IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import { IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
+import { ISearchParams, IMultilingual, Status } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
@@ -204,7 +203,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       disallowedRoles: [] as IOptionSubItem[], // Roles that a Level5 cannot change
       tableName: 'user-accounts',
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
-      sqlSearchMode: true,
+
     };
   },
 
@@ -338,16 +337,13 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   methods: {
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const res = await this.combinedUserAccountStore.search({
-        search: params.search,
         filter: params.filter,
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
       }, null, false, true);
       return res;
     },

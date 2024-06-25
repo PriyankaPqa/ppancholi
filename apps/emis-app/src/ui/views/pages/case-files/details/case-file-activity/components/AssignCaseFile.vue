@@ -130,9 +130,8 @@ import { ICaseFileSummary, IAssignedTeamMembers } from '@libs/entities-lib/case-
 import {
   AccountStatus, IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import { Status } from '@libs/entities-lib/base';
+import { Status, ISearchParams, ITableSearchResults, ICombinedIndex } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/shared-lib/types';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
@@ -198,7 +197,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
       },
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
-      sqlSearchMode: true,
+
     };
   },
 
@@ -310,11 +309,11 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       return this.fetchUserAccounts(this.currentTeam.id, params);
     },
 
-    async fetchUserAccounts(teamId: string, params: IAzureSearchParams, initialLoad = false): Promise<IAzureTableSearchResults> {
+    async fetchUserAccounts(teamId: string, params: ISearchParams, initialLoad = false): Promise<ITableSearchResults<ICombinedIndex<IUserAccountEntity, IUserAccountMetadata>>> {
       this.loading = true;
       const filter: { Metadata: IIndividualMetaDataSearch, } = {
           Metadata: {
@@ -327,13 +326,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           },
       };
 
-      let callParams: IAzureSearchParams = {
+      let callParams: ISearchParams = {
         filter,
         top: 1,
         skip: 0,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
       };
 
       if (!initialLoad) {
@@ -383,12 +380,10 @@ export default mixins(TablePaginationSearchMixin).extend({
         service: this.combinedUserAccountStore,
         ids: assignedIndividualIds,
         searchInFilter: { Entity: { Id: { in: '{ids}' } } },
-        otherOptions: { queryType: 'full',
-          searchMode: 'all' },
         otherApiParameters: [null, false, true],
       });
 
-      const ids = (fetchedAssignedUserAccountData as IAzureTableSearchResults)?.ids;
+      const ids = (fetchedAssignedUserAccountData as ITableSearchResults<ICombinedIndex<IUserAccountEntity, IUserAccountMetadata>>)?.ids;
       if (ids) {
         return this.combinedUserAccountStore.getByIds(ids);
       }

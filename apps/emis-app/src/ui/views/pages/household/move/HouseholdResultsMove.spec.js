@@ -1,4 +1,4 @@
-import { HouseholdStatus, mockCombinedHouseholds } from '@libs/entities-lib/household';
+import { HouseholdStatus, mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockMember } from '@libs/entities-lib/value-objects/member';
@@ -19,7 +19,7 @@ describe('HouseholdResultsMove.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        items: mockCombinedHouseholds(),
+        items: [mockHouseholdEntity()],
       },
       computed: {
         formattedItems: () => [mockFormattedItem(HouseholdStatus.Open)],
@@ -40,7 +40,7 @@ describe('HouseholdResultsMove.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            items: mockCombinedHouseholds(),
+            items: [mockHouseholdEntity()],
           },
           computed: {
             formattedItems: () => [mockFormattedItem(HouseholdStatus.Closed)],
@@ -58,7 +58,7 @@ describe('HouseholdResultsMove.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          items: mockCombinedHouseholds(),
+          items: [mockHouseholdEntity()],
         },
         computed: {
           activeCaseFiles() {

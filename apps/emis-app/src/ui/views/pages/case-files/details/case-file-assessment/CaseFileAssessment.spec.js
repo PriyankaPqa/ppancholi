@@ -1,12 +1,12 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import {
-  AssessmentFrequencyType, CompletionStatus, PublishStatus, mockCombinedAssessmentResponse,
+  AssessmentFrequencyType, CompletionStatus, PublishStatus, mockAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { createTestingPinia } from '@pinia/testing';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
@@ -207,11 +207,11 @@ describe('CaseFileAssessment.vue', () => {
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.items;
 
-        expect(assessmentResponseStore.getByIds).toHaveBeenCalled();
+        expect(assessmentResponseStore.getByIdsWithPinnedItems).toHaveBeenCalled();
 
-        const params = assessmentResponseStore.getByIds.mock.calls[assessmentResponseStore.getByIds.mock.calls.length - 1];
+        const params = assessmentResponseStore.getByIdsWithPinnedItems.mock.calls[assessmentResponseStore.getByIdsWithPinnedItems.mock.calls.length - 1];
         expect(params[0]).toEqual(['abc']);
-        expect(data.length).toBe(await assessmentResponseStore.getByIds().length);
+        expect(data.length).toBe(await assessmentResponseStore.getByIdsWithPinnedItems().length);
       });
     });
 
@@ -224,7 +224,7 @@ describe('CaseFileAssessment.vue', () => {
         expect(assessmentFormStore.getByIds).toHaveBeenCalled();
 
         const params = assessmentFormStore.getByIds.mock.calls[assessmentFormStore.getByIds.mock.calls.length - 1];
-        expect(params[0]).toEqual(items.map((i) => i.entity.assessmentFormId));
+        expect(params[0]).toEqual(items.map((i) => i.assessmentFormId));
         expect(data.length).toBe(items.length);
       });
     });
@@ -354,8 +354,8 @@ describe('CaseFileAssessment.vue', () => {
       it('returns mapped data', async () => {
         await mountWrapper();
         const form = assessmentFormStore.getByIds()[0];
-        const response = mockCombinedAssessmentResponse({ id: '1' });
-        response.entity.timestamp = new Date('2022-09-09T16:33:11.700Z');
+        const response = mockAssessmentResponseEntity({ id: '1' });
+        response.timestamp = new Date('2022-09-09T16:33:11.700Z');
 
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
           canEdit: false,
@@ -397,10 +397,10 @@ describe('CaseFileAssessment.vue', () => {
         }]);
 
         form.status = Status.Active;
-        response.entity.dateCompleted = new Date('2022-09-09T16:33:11.700Z');
+        response.dateCompleted = new Date('2022-09-09T16:33:11.700Z');
         response.pinned = true;
-        response.entity.id = '2';
-        response.entity.completionStatus = CompletionStatus.Completed;
+        response.id = '2';
+        response.completionStatus = CompletionStatus.Completed;
         form.publishStatus = PublishStatus.Unpublished;
 
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
@@ -506,12 +506,10 @@ describe('CaseFileAssessment.vue', () => {
         await wrapper.vm.fetchAssessments();
         expect(assessmentFormStore.search).toHaveBeenCalledWith({
           params: {
-            filter: { 'Entity/Id': { in: wrapper.vm.items.map((i) => i.entity.assessmentFormId) } },
+            filter: { 'Entity/Id': { in: wrapper.vm.items.map((i) => i.assessmentFormId) } },
             top: 999,
-            queryType: 'full',
-            searchMode: 'all',
           },
-          searchEndpoint: null,
+          includeInactiveItems: true,
         });
       });
     });
@@ -529,10 +527,8 @@ describe('CaseFileAssessment.vue', () => {
             },
             top: 999,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           },
-          searchEndpoint: null,
+          includeInactiveItems: true,
         });
       });
     });

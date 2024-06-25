@@ -114,9 +114,8 @@ import { RcDialog, RcConfirmationDialog, RcTooltip } from '@libs/component-lib/c
 import {
   IOptionItem,
 } from '@libs/entities-lib/optionItem';
-import { IListOption, IIdMultilingualName } from '@libs/shared-lib/types';
+import { IListOption, IIdMultilingualName, Status } from '@libs/shared-lib/types';
 
-import { Status } from '@libs/entities-lib/base';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 interface IListTag extends IIdMultilingualName {

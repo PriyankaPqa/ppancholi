@@ -4,7 +4,7 @@ import { ItemState, IUIStateState } from '@/pinia/ui-state/uiState.type';
 
 export const mockItemStates: ItemState[] = [
   {
-    azureSearchParams: { top: 1 },
+    searchParams: { top: 1 },
     filterState: { filterStateItem: 1 },
     itemsCount: 1,
     options: { optionsItem: 1 },
@@ -16,7 +16,7 @@ export const mockItemStates: ItemState[] = [
     userSearchFilters: 'userSearchFilters1',
   },
   {
-    azureSearchParams: { top: 2 },
+    searchParams: { top: 2 },
     filterState: { filterStateItem: 2 },
     itemsCount: 2,
     options: { optionsItem: 2 },

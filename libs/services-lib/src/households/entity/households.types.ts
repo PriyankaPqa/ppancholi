@@ -17,7 +17,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import { HouseholdStatus, IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
-import { IOptionItemData, IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { IOptionItemData, ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity, IdParams> {
@@ -55,8 +55,8 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getPublicToken(recaptchaToken: string): Promise<string>;
   publicGetHousehold(id: uuid): Promise<IHouseholdEntity>;
   publicGetPerson(id: uuid): Promise<IMemberEntity>;
-  search(params: IAzureSearchParams & { includePrimary?: boolean, includeMembers?: boolean },
-    searchEndpoint?: string, includePrimary?: boolean, includeMembers?: boolean): Promise<IAzureCombinedSearchResult<IHouseholdEntity, unknown>>;
+  search(params: ISearchParams & { includePrimary?: boolean, includeMembers?: boolean },
+    searchEndpoint?: string, includePrimary?: boolean, includeMembers?: boolean): Promise<ICombinedSearchResult<IHouseholdEntity, unknown>>;
 }
 
 export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHouseholdEntity> {

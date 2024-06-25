@@ -353,8 +353,6 @@ export default mixins(TablePaginationSearchMixin).extend({
           service: this.combinedUserAccountStore,
           searchInFilter: { Entity: { Id: { in: '{ids}' } } },
           otherOptions: {
-            queryType: 'full',
-            searchMode: 'all',
           },
           otherApiParameters: [null, false, true],
         });

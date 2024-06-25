@@ -5,7 +5,7 @@ import { defineStore, setActivePinia } from 'pinia';
 import { ICaseFileIndividualEntity, mockCaseFileIndividualEntity, IdParams } from '@libs/entities-lib/case-file-individual';
 import { getExtensionComponents } from '@/pinia/case-file-individual/case-file-individual-extension';
 
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 
 const entityService = mockCaseFileIndividualsService();
 const baseComponents = getBaseStoreComponents<ICaseFileIndividualEntity, IdParams>(entityService);

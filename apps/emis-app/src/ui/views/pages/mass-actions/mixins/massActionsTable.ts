@@ -6,7 +6,7 @@ import {
   IMassActionCombined, IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, MassActionDataCorrectionType, MassActionRunStatus,
   MassActionType,
 } from '@libs/entities-lib/mass-action';
-import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
+import { ISearchParams, IServerError } from '@libs/shared-lib/types';
 import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { format, parseISO } from 'date-fns';
@@ -31,7 +31,7 @@ export default Vue.extend({
       itemsCount: 0,
       searchExecutionDate: null as Date,
       combinedMassActionStore: new CombinedStoreFactory<IMassActionEntity, IMassActionMetadata, IdParams>(useMassActionStore(), useMassActionMetadataStore()),
-      sqlSearchMode: true,
+
     };
   },
 
@@ -116,7 +116,7 @@ export default Vue.extend({
       return this.isPreprocessing(massAction) || this.isPreprocessed(massAction);
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       if (!this.massActionTypeData) {
         return null;
       }
@@ -137,8 +137,6 @@ export default Vue.extend({
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
       }, null, false, true);
 
       return res;

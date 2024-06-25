@@ -74,7 +74,6 @@ describe('massActionCaseFileFiltering.vue', () => {
 
       beforeEach(() => {
         params = {
-          search: 'query',
           filter: 'filter',
           top: 10,
           skip: 10,
@@ -93,14 +92,11 @@ describe('massActionCaseFileFiltering.vue', () => {
 
         expect(wrapper.vm.combinedCaseFileStore.search)
           .toHaveBeenCalledWith({
-            search: params.search,
             filter: params.filter,
             top: params.top,
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           }, null, false, true);
       });
     });

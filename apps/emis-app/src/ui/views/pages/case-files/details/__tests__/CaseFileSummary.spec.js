@@ -77,8 +77,6 @@ describe('CaseFileSummary.vue', () => {
               ] },
             },
           },
-          queryType: 'full',
-          searchMode: 'all',
         }, null, false, true);
         expect(caseFileReferralStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'abcd' });
         expect(caseFileReferralStore.getByCaseFile).toHaveBeenCalledWith('abcd');
@@ -135,8 +133,6 @@ describe('CaseFileSummary.vue', () => {
           service: wrapper.vm.combinedUserAccountStore,
           searchInFilter: { Entity: { Id: { in: '{ids}' } } },
           otherOptions: {
-            queryType: 'full',
-            searchMode: 'all',
           },
           otherApiParameters: [null, false, true],
         });

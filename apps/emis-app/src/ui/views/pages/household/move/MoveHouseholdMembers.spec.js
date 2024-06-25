@@ -1,5 +1,5 @@
 import { mockHouseholdCreate } from '@libs/entities-lib/household-create';
-import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
@@ -14,7 +14,7 @@ import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
-const household = mockCombinedHousehold();
+const household = mockHouseholdEntity();
 const householdCreate = { ...mockHouseholdCreate(), id: 'id-1' };
 
 const { pinia, householdStore } = useMockHouseholdStore();
@@ -30,7 +30,7 @@ describe('MoveHouseholdMembers.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: household.id,
           },
           computed: {
             currentHousehold: () => (householdCreate),
@@ -48,7 +48,7 @@ describe('MoveHouseholdMembers.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: household.id,
           },
           mocks: {
             $services: services,
@@ -88,7 +88,7 @@ describe('MoveHouseholdMembers.vue', () => {
         localVue,
         pinia,
         propsData: {
-          id: household.entity.id,
+          id: household.id,
         },
         computed: {
           currentHousehold() {

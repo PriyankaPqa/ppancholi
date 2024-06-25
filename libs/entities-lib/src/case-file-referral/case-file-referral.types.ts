@@ -1,5 +1,5 @@
 import { IListOption } from '@libs/shared-lib/types';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 
 export enum ReferralMethod {
   Referral = 1,
@@ -23,7 +23,5 @@ export interface ICaseFileReferralEntity extends IEntity {
 
   validate(): Array<string> | boolean;
 }
-
-export type ICaseFileReferralCombined = IEntityCombined<ICaseFileReferralEntity, IEntity>;
 
 export type IdParams = { id: uuid, caseFileId: uuid };

@@ -1,7 +1,7 @@
 import {
   IMassActionEntity, MassActionDataCorrectionType, MassActionRunType, MassActionType,
 } from '@libs/entities-lib/mass-action/massActions.types';
-import { IAzureCombinedSearchResult, IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ISearchParams, IMultilingual } from '@libs/shared-lib/types';
 import { IMassActionExportListPayload, IMassActionService } from './massAction.types';
 import { GlobalHandler, IHttpClient, IRestResponse } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -14,8 +14,8 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     super(http, API_URL_SUFFIX, CONTROLLER);
   }
 
-  async search(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<IMassActionEntity, unknown>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/mass-actions`, { params, isODataSql: true });
+  async search(params: ISearchParams): Promise<ICombinedSearchResult<IMassActionEntity, unknown>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/mass-actions`, { params, isOData: true });
   }
 
   async process(id: uuid, runType: MassActionRunType): Promise<IMassActionEntity> {

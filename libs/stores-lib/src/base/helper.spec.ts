@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IOptionItemData, IOptionSubItem } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { filterAndSortActiveItems, filterAndSortActiveSubItems } from './index';
 
 describe('Base Helper', () => {

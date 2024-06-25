@@ -74,14 +74,13 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
 
 import { EEventSummarySections } from '@/types';
-import { VForm, IMultilingual } from '@libs/shared-lib/types';
+import { VForm, IMultilingual, Status } from '@libs/shared-lib/types';
 import {
   IRegistrationAssessment,
   IEventEntity,
 } from '@libs/entities-lib/event';
 import entityUtils from '@libs/entities-lib/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { Status } from '@libs/entities-lib/base';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import VTextFieldWithValidation from '@libs/component-lib/components/atoms/VTextFieldWithValidation.vue';
 import { useEventStore } from '@/pinia/event/event';

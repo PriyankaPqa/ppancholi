@@ -3,11 +3,10 @@ import { Ref, ref } from 'vue';
 import {
  EOptionLists, ICreateOptionItemRequest, IOptionItem, IOptionSubItem, OptionItem,
 } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
+import { Status, IMultilingual } from '@libs/shared-lib/types';
 import _sortBy from 'lodash/sortBy';
 import _findIndex from 'lodash/findIndex';
 import helpers from '@/ui/helpers/helpers';
-import { IMultilingual } from '@libs/shared-lib/types';
 
 // eslint-disable-next-line max-lines-per-function
 export function getExtensionComponents(

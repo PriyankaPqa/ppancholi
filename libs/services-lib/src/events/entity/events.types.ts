@@ -9,7 +9,7 @@ import {
   IRegistrationAssessment,
   IEventSummary,
 } from '@libs/entities-lib/event';
-import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import { ISearchParams, ISearchResult } from '@libs/shared-lib/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
@@ -45,9 +45,9 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
 
   editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity>;
 
-  searchMyEvents(params: IAzureSearchParams, includeEventsWithoutAccess?: boolean): Promise<IAzureSearchResult<IEventSummary>>;
+  searchMyEvents(params: ISearchParams, includeEventsWithoutAccess?: boolean): Promise<ISearchResult<IEventSummary>>;
 
-  searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventSummary>>;
+  searchMyEventsById(ids: string[]): Promise<ISearchResult<IEventSummary>>;
 
   addRegistrationAssessment(eventId: uuid, payload: IRegistrationAssessment): Promise<IEventEntity>;
 
@@ -84,8 +84,8 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   removeRegistrationAssessment: jest.Mock<IEventEntity>;
   addShelterLocation: jest.Mock<IEventEntity>;
   editShelterLocation: jest.Mock<IEventEntity>;
-  searchMyEvents: jest.Mock<IAzureSearchResult<IEventSummary>>;
-  searchMyEventsById: jest.Mock<IAzureSearchResult<IEventSummary>>;
+  searchMyEvents: jest.Mock<ISearchResult<IEventSummary>>;
+  searchMyEventsById: jest.Mock<ISearchResult<IEventSummary>>;
   toggleAssessmentsForL0Users: jest.Mock<IEventEntity>;
   toggleRegistrationForL0Users: jest.Mock<IEventEntity>;
   toggleAppointmentBookingForL0Users: jest.Mock<IEventEntity>;

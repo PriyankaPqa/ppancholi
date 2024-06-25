@@ -1,7 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockItems, mockSubItems, mockCategories } from '@libs/entities-lib/financial-assistance';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import Component from '../Templates/AddSubItemSubItem.vue';
 
 const localVue = createLocalVue();

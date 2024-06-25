@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockHouseholdEntity, mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
 import { mockProvider } from '@/services/provider';
 import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
@@ -125,7 +125,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
     describe('fetchHouseholds', () => {
       it('calls the search with the right params and saves the result in households', async () => {
         doMount();
-        wrapper.vm.$services.households.search = jest.fn(() => ({ value: [mockCombinedHousehold({ id: '1', registrationNumber: '111' })] }));
+        wrapper.vm.$services.households.search = jest.fn(() => ({ value: [{ entity: mockHouseholdEntity({ id: '1', registrationNumber: '111' }) }] }));
         await wrapper.vm.fetchHouseholds('abc');
         expect(wrapper.vm.$services.households.search).toHaveBeenCalledWith({
           filter: {
@@ -149,8 +149,6 @@ describe('ManageDuplicatesFlagNew.vue', () => {
               },
             ],
           },
-          queryType: 'full',
-          searchMode: 'all',
           orderBy: 'Entity/RegistrationNumber',
         });
 
@@ -162,8 +160,8 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         wrapper.setProps({ householdRegistrationNumber: 'same' });
         wrapper.vm.$services.households.search = jest.fn(() => ({ value:
           [
-            mockCombinedHousehold({ id: '11', registrationNumber: 'different' }),
-            mockCombinedHousehold({ id: '22', registrationNumber: 'same' }),
+            { entity: mockHouseholdEntity({ id: '11', registrationNumber: 'different' }) },
+            { entity: mockHouseholdEntity({ id: '22', registrationNumber: 'same' }) },
           ] }));
 
         await wrapper.vm.fetchHouseholds('abc');

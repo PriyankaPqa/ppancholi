@@ -1,7 +1,8 @@
-import { Status, mockBaseData } from '@libs/entities-lib/src/base';
+import { mockBaseData } from '@libs/entities-lib/src/base';
 import { ApprovalTableEntity, IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import { ApprovalAggregatedBy } from '@libs/entities-lib/src/approvals/approvals-base';
 import { IApprovalGroupData, mockApprovalGroup } from '@libs/entities-lib/src/approvals/approvals-group';
+import { Status } from '@libs/shared-lib/src/types';
 
 export const mockApprovalGroupData = (force? : Partial<IApprovalGroupData>): IApprovalGroupData => ({
   ...mockBaseData(),

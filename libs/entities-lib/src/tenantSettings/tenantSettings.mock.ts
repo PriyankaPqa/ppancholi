@@ -1,4 +1,4 @@
-import { IEntity, mockBaseData } from '../base';
+import { mockBaseData } from '../base';
 import {
   FeatureType,
   IBrandingEntity,
@@ -8,7 +8,6 @@ import {
   IEditTenantDetailsRequest,
   IFeatureEntity,
   ISetDomainsRequest,
-  ITenantSettingsCombined,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
   IConsentStatement,
@@ -229,11 +228,6 @@ export const mockTenantSettingsEntities = () => [
   mockTenantSettingsEntity({ id: '1' }),
   mockTenantSettingsEntity({ id: '2' }),
 ];
-
-export const mockCombinedTenantSettings = (force?: Partial<IEntity>): ITenantSettingsCombined => ({
-  metadata: null as never,
-  entity: mockTenantSettingsEntity(force),
-});
 
 export const mockCreateFeatureRequest = (): ICreateFeatureRequest => ({
   name: {

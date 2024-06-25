@@ -25,8 +25,8 @@ import { IMassActionEntity, MassActionEntity, MassActionCommunicationMethod } fr
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IMultilingual } from '@libs/shared-lib/types';
 import utils from '@libs/entities-lib/utils';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { buildQuerySql } from '@libs/services-lib/odata-query-sql';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import CommunicationDetailsCreate from './CommunicationDetailsCreate.vue';
 
 export interface CommunicationDetailsForm {
@@ -93,14 +93,14 @@ export default Vue.extend({
      * Triggered when creating a mass action from a filtered list
      */
     async onPost({ name, description }: { name: string; description: string }) {
-      const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
+      const searchParams = JSON.parse(this.$route.query.searchParams as string);
 
-      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
+      const filter = buildQuerySql(helpers.removeInactiveItemsFilterOdata({ filter: searchParams.filter }) as any);
 
       this.fillEmptyMultilingualFields();
       this.formData.set('name', name);
       this.formData.set('description', description);
-      this.formData.set('search', azureSearchParams.search);
+      this.formData.set('search', searchParams.search);
       this.formData.set('eventId', this.details.event.id);
       this.formData.set('method', this.details.method.toString());
       this.formData.set('messageSubject', JSON.stringify(this.details.messageSubject.translation));

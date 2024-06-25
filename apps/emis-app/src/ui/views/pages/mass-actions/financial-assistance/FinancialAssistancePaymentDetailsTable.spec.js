@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedMassAction, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, mockProgramEntity } from '@libs/entities-lib/program';
 import { mockEventEntity } from '@libs/entities-lib/event';
-import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockOptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
@@ -45,7 +45,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
     beforeEach(() => {
       doMount(true, {
         event: mockEventEntity(),
-        table: mockCombinedFinancialAssistance(),
+        table: mockFinancialAssistanceTableEntity(),
         program: mockProgramEntity(),
         item: mockOptionItem(),
       });
@@ -61,7 +61,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
           },
           {
             label: 'massActions.financialAssistance.create.table.label',
-            value: mockCombinedFinancialAssistance().entity.name.translation.en,
+            value: mockFinancialAssistanceTableEntity().name.translation.en,
             dataTest: 'table',
             loading: wrapper.vm.tableLoading,
           },

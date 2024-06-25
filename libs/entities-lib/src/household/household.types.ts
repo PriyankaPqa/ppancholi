@@ -1,5 +1,5 @@
 import { IMemberEntity } from '../household-create';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 import { IAddressData } from '../value-objects/address';
 import { IAssessmentResponseEntity } from '../assessment-template';
 import { ICaseFileEntity } from '../case-file';
@@ -40,7 +40,6 @@ export interface IHouseholdCaseFile {
   caseFileStatus: number;
   registeredDate: string | Date;
 }
-export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, null>;
 
 export interface IOustandingPaymentResponse {
   hasOutstandingPayments: boolean;

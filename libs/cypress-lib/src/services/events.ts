@@ -1,5 +1,5 @@
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
-import { IAzureCombinedSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
+import { ICombinedSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
 import { IHttpClient } from '@libs/services-lib/src/http-client';
 
 export class CypressEventsService {
@@ -17,11 +17,9 @@ export class CypressEventsService {
       },
       select: ['Entity/Id'],
       top: 1,
-      queryType: 'full',
-      searchMode: 'all',
     };
 
-    const response = await this.http.get('event/search/events', { params, isOData: true }) as IAzureCombinedSearchResult<IEventEntity, unknown>;
+    const response = await this.http.get('event/search/events', { params, isOData: true }) as ICombinedSearchResult<IEventEntity, unknown>;
     return response.value[0];
   }
 }

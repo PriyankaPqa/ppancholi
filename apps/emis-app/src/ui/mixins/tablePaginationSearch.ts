@@ -3,17 +3,16 @@ import _cloneDeep from 'lodash/cloneDeep';
 import _debounce from 'lodash/debounce';
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
-import { IAzureTableSearchResults, IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 
 export default Vue.extend({
   data() {
     return {
-      sqlSearchMode: false,
       quicksearchField: 'metadata/searchableText' as string,
       saveState: false,
       route: this.$route.path,
-      azureSearchParams: {
+      searchParams: {
         search: '',
         skip: 0,
         top: 0,
@@ -23,7 +22,7 @@ export default Vue.extend({
       previousPageIndex: 0,
       userFilters: null as Record<string, unknown>,
       userSearchFilters: '',
-      params: null as IAzureSearchParams & { pageSize?: number, pageIndex?: number, descending?: boolean },
+      params: null as ISearchParams & { pageSize?: number, pageIndex?: number, descending?: boolean },
       forceSkip: false, // when apply or un-apply user filter
       options: {
         page: 1,
@@ -101,62 +100,51 @@ export default Vue.extend({
           pageIndex,
         } = this.params;
 
-        this.azureSearchParams.skip = this.getSkip;
-        this.azureSearchParams.top = this.getTop;
+        this.searchParams.skip = this.getSkip;
+        this.searchParams.top = this.getTop;
         this.previousPageIndex = pageIndex;
 
         if (orderBy) {
-          this.azureSearchParams.orderBy = this.getOrderBy;
+          this.searchParams.orderBy = this.getOrderBy;
         }
     },
 
     setFilterParams() {
       if (!_isEmpty(this.userFilters)) {
-        this.azureSearchParams.filter = {
+        this.searchParams.filter = {
           and: this.userFilters,
         };
       } else {
-        this.azureSearchParams.filter = '';
+        this.searchParams.filter = '';
       }
     },
 
     setSearchParams() {
-      if (!this.sqlSearchMode) {
-        const quickSearch = helpers.toQuickSearch(this.params.search || this.searchTerm);
-        if (this.userSearchFilters && quickSearch) {
-          this.azureSearchParams.search = `${this.userSearchFilters} AND ${quickSearch}`;
-        } else if (this.userSearchFilters) {
-          this.azureSearchParams.search = `${this.userSearchFilters}`;
-        } else {
-          this.azureSearchParams.search = quickSearch;
-        }
-      } else {
         const quickSearch = helpers.toQuickSearchSql(`${this.params.search || this.searchTerm || ''} ${this.userSearchFilters || ''}`, this.quicksearchField);
         if (!quickSearch) {
           return;
         }
-        this.azureSearchParams.filter = this.azureSearchParams.filter || {};
-        this.azureSearchParams.filter = { and: [
-            this.azureSearchParams.filter,
+        this.searchParams.filter = this.searchParams.filter || {};
+        this.searchParams.filter = { and: [
+            this.searchParams.filter,
             quickSearch,
           ],
         };
-      }
     },
 
     /**
      * Triggered as soon as a parameter of the table has changed (sort, pagination, search)
      */
-    async search(params: IAzureSearchParams) {
+    async search(params: ISearchParams) {
       this.params = params;
       this.setPaginationParams();
 
       this.setFilterParams();
 
-      const containsSearchOnly = !this.azureSearchParams?.filter || _isEmpty(this.azureSearchParams.filter);
+      const containsSearchOnly = !this.searchParams?.filter || _isEmpty(this.searchParams.filter);
       this.setSearchParams();
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const res = await (this as any).fetchData(this.azureSearchParams, containsSearchOnly) as IAzureTableSearchResults;
+      const res = await (this as any).fetchData(this.searchParams, containsSearchOnly);
 
       if (res) {
         this.itemsCount = res.count;
@@ -179,7 +167,7 @@ export default Vue.extend({
 
       const uiStateKey = this.getTableName() + this.route;
       useUiStateStore().setSearchTableState(uiStateKey, _cloneDeep({
-        azureSearchParams: this.azureSearchParams,
+        searchParams: this.searchParams,
         previousPageIndex: this.previousPageIndex,
         userFilters: this.userFilters,
         userSearchFilters: this.userSearchFilters,
@@ -209,7 +197,7 @@ export default Vue.extend({
 
       if (state) {
         state = _cloneDeep(state);
-        this.azureSearchParams = state.azureSearchParams;
+        this.searchParams = state.searchParams;
         this.previousPageIndex = state.previousPageIndex;
         this.userFilters = state.userFilters;
         this.userSearchFilters = state.userSearchFilters;

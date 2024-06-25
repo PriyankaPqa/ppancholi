@@ -2,7 +2,7 @@ import {
   mockOptionItemData, mockSubItem, EOptionLists,
 } from '@libs/entities-lib/optionItem';
 
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { mockCreateOptionPayload } from '@/pinia/option-list/optionList.mock';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';

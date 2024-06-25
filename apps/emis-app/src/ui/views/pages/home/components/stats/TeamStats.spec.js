@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockTeamEntities, mockTeamEvents, mockTeamsDataStandard,
 } from '@libs/entities-lib/team';
-import { mockCombinedEvent } from '@libs/entities-lib/event';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 
 import { mockProvider } from '@/services/provider';
@@ -10,8 +10,8 @@ import Component from './TeamStats.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
-const mockEvent = mockCombinedEvent();
-const { pinia } = useMockTeamStore();
+const mockEvent = mockEventEntity();
+const { pinia, teamStore } = useMockTeamStore();
 
 describe('TeamStats.vue', () => {
   let wrapper;
@@ -104,35 +104,38 @@ describe('TeamStats.vue', () => {
       });
 
       it('should call selectEvent and check for default stats value and call searchteam and filter team based on event id', () => {
-        wrapper.vm.combinedTeamStore.search = jest.fn();
+        teamStore.search = jest.fn();
         wrapper.vm.selectEvent(mockEvent);
         expect(wrapper.vm.teamStats).toStrictEqual({
           countClose: 0, countOpen: 0, countTeamMembers: 0, countTotal: 0,
         });
-        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({
+        expect(teamStore.search).toHaveBeenCalledWith({ params: {
           filter: { Entity: { Events: { any: { Id: { value: wrapper.vm.selectedEventId, type: 'guid' } } } } },
           orderBy: 'Entity/Name asc',
-        }, null, false, true, { manageableTeamsOnly: true });
+        },
+        includeInactiveItems: false,
+        otherSearchEndpointParameters: { manageableTeamsOnly: true } });
       });
 
       it('should filter team based on event id', async () => {
+        teamStore.search = jest.fn(() => mockTeamEntities());
         const eventId = mockTeamEvents()[0].id;
         await wrapper.setData({ selectedEventId: eventId });
-        await wrapper.vm.selectEvent({ entity: { id: eventId } });
+        await wrapper.vm.selectEvent({ id: eventId });
         expect(wrapper.vm.statTeam).toEqual(mockTeamEntities());
       });
 
       it('should not search team if no event selected', async () => {
-        wrapper.vm.combinedTeamStore.search = jest.fn();
+        teamStore.search = jest.fn();
         wrapper.vm.selectedEventId = null;
 
         await wrapper.vm.selectEvent();
 
-        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledTimes(0);
+        expect(teamStore.search).toHaveBeenCalledTimes(0);
       });
 
       it('should clear team information if no event selected', async () => {
-        wrapper.vm.selectedTeam = { entity: [], metadata: {} };
+        wrapper.vm.selectedTeam = {};
         wrapper.vm.teamStats = {
           countTeamMembers: 1,
           countClose: 2,

@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockCombinedTeams } from '@libs/entities-lib/team';
+import { mockTeamEntity } from '@libs/entities-lib/team';
 import flushPromises from 'flush-promises';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 
@@ -8,9 +8,9 @@ import Component from './TeamsTable.vue';
 
 const localVue = createLocalVue();
 
-const team = mockCombinedTeams()[0];
-const teamId = team.entity.id;
-const { pinia } = useMockTeamStore();
+const team = mockTeamEntity();
+const teamId = team.id;
+const { pinia, teamStore } = useMockTeamStore();
 
 describe('TeamsTable.vue', () => {
   let wrapper;
@@ -252,21 +252,21 @@ describe('TeamsTable.vue', () => {
       };
 
       it('should call storage actions with proper parameters', async () => {
-        wrapper.vm.combinedTeamStore.search = jest.fn();
+        teamStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({
-          searchMode: 'all',
-          queryType: 'full',
+        expect(teamStore.search).toHaveBeenCalledWith({ params: {
           filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-        }, null, true, true, { manageableTeamsOnly: true });
+        },
+        includeInactiveItems: true,
+        otherSearchEndpointParameters: { manageableTeamsOnly: true } });
       });
 
       it('returns the search results', async () => {
-        wrapper.vm.combinedTeamStore.search = jest.fn(() => ({
+        teamStore.search = jest.fn(() => ({
           count: 1,
           date: new Date('2023-01-26'),
           ids: [
@@ -284,21 +284,21 @@ describe('TeamsTable.vue', () => {
 
     describe('goToEditTeam', () => {
       it('should redirect to the edit page with proper teamType and id for Standard', async () => {
-        const mockTeam = mockCombinedTeams()[0];
+        const mockTeam = mockTeamEntity();
         wrapper.vm.goToEditTeam(mockTeam);
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-          name: routes.teams.edit.name, params: { teamType: 'standard', id: mockCombinedTeams()[0].entity.id, from: wrapper.vm.$route.name },
+          name: routes.teams.edit.name, params: { teamType: 'standard', id: mockTeamEntity().id, from: wrapper.vm.$route.name },
         });
       });
 
       it('should redirect to the edit page with proper teamType and id for Adhoc', async () => {
-        const mockTeam = mockCombinedTeams()[1];
+        const mockTeam = mockTeamEntity({ teamType: 'adhoc' });
         wrapper.vm.goToEditTeam(mockTeam);
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.teams.edit.name,
-          params: { teamType: 'adhoc', id: mockCombinedTeams()[1].entity.id, from: wrapper.vm.$route.name },
+          params: { teamType: 'adhoc', id: mockTeamEntity().id, from: wrapper.vm.$route.name },
         });
       });
     });

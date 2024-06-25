@@ -155,4 +155,15 @@ describe('helpers', () => {
       expect(helpers.getFormattedPhoneNumber('+15147777', false)).toEqual('+15147777');
     });
   });
+
+  describe('removeInactiveItemsFilterOdata', () => {
+    it('returns the right filter if filter is object', () => {
+      const params = { filter: { Foo: 'foo' } };
+      expect(helpers.removeInactiveItemsFilterOdata(params)).toEqual({ filter: { Foo: 'foo', 'Entity/Status': 'Active' } });
+    });
+    it('returns the right filter if filter is string', () => {
+      const params = { filter: 'filter string' };
+      expect(helpers.removeInactiveItemsFilterOdata(params)).toEqual({ filter: 'filter string and Entity/Status eq \'Active\'' });
+    });
+  });
 });

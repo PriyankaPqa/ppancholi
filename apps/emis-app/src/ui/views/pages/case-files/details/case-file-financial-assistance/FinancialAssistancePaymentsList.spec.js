@@ -2,11 +2,13 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import flushPromises from 'flush-promises';
-import { mockCombinedCaseFinancialAssistance, ApprovalStatus, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntities, ApprovalStatus, ApprovalAction, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { DuplicateStatus, mockPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -20,6 +22,8 @@ const mockCaseFile = mockCaseFileEntity({ id: '1' });
 
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 const { caseFileStore } = useMockCaseFileStore(pinia);
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+financialAssistanceStore.search = jest.fn(() => mockFinancialAssistanceTableEntity());
 
 describe('FinancialAssistancePaymentsList.vue', () => {
   let wrapper;
@@ -40,15 +44,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       },
       data() {
         return {
-          searchResultIds: [mockCombinedCaseFinancialAssistance()].map((e) => e.entity.id),
-          combinedFinancialAssistancePaymentStore: {
-            search: jest.fn(() => ({ ids: ['1'], count: 1 })),
-            getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance()]),
-          },
-          combinedFinancialAssistanceStore: {
-            search: jest.fn(() => ({ ids: ['1'], count: 1 })),
-            getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance()]),
-          },
+          searchResultIds: mockCaseFinancialAssistanceEntities().map((e) => e.id),
         };
       },
       ...additionalOverwrites,
@@ -119,22 +115,25 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       await mountWrapper(true, 6, null, {
         computed: {
           canEdit: () => true,
+          tableData: () => mockCaseFinancialAssistanceEntities(),
         },
       });
-      const entity = wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds()[0];
-      await wrapper.setData({ combinedFinancialAssistancePaymentStore: { getByIds: jest.fn(() => [entity]) } });
+
       expect(wrapper.findDataTest('edit-link').exists()).toBeTruthy();
 
-      entity.entity.approvalStatus = ApprovalStatus.Approved;
-      await wrapper.vm.$nextTick();
-      expect(wrapper.findDataTest('edit-link').exists()).toBeFalsy();
+      await mountWrapper(true, 6, null, {
+        computed: {
+          canEdit: () => true,
+          tableData: () => [mockCaseFinancialAssistanceEntity({ approvalStatus: ApprovalStatus.Approved })],
+        },
+      });
 
-      entity.entity.approvalStatus = ApprovalStatus.New;
-      await wrapper.vm.$nextTick();
+      expect(wrapper.findDataTest('edit-link').exists()).toBeFalsy();
 
       await mountWrapper(true, 6, null, {
         computed: {
           canEdit: () => false,
+          tableData: () => [mockCaseFinancialAssistanceEntity({ approvalStatus: ApprovalStatus.New })],
         },
       });
       expect(wrapper.findDataTest('edit-link').exists()).toBeFalsy();
@@ -144,39 +143,46 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       await mountWrapper(true, 6, null, {
         computed: {
           canDelete: () => true,
+          tableData: () => mockCaseFinancialAssistanceEntities(),
         },
       });
-      const entity = wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds()[0];
-      await wrapper.setData({ combinedFinancialAssistancePaymentStore: { getByIds: jest.fn(() => [entity]) } });
+
       expect(wrapper.findDataTest('delete-link').exists()).toBeTruthy();
 
-      entity.entity.approvalStatus = ApprovalStatus.Approved;
-      await wrapper.vm.$nextTick();
-      expect(wrapper.findDataTest('delete-link').exists()).toBeFalsy();
+      await mountWrapper(true, 6, null, {
+        computed: {
+          canDelete: () => true,
+          tableData: () => [mockCaseFinancialAssistanceEntity({ approvalStatus: ApprovalStatus.Approved })],
+        },
+      });
 
-      entity.entity.approvalStatus = ApprovalStatus.New;
-      await wrapper.vm.$nextTick();
+      expect(wrapper.findDataTest('delete-link').exists()).toBeFalsy();
 
       await mountWrapper(true, 6, null, {
         computed: {
           canDelete: () => false,
+          tableData: () => [mockCaseFinancialAssistanceEntity({ approvalStatus: ApprovalStatus.New })],
         },
       });
+
       expect(wrapper.findDataTest('delete-link').exists()).toBeFalsy();
     });
 
     it('shows history when item is canViewHistory is true', async () => {
-      await mountWrapper(true);
-      const entity = wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds()[0];
-      await wrapper.setData({ combinedFinancialAssistancePaymentStore: { getByIds: jest.fn(() => [entity]) } });
-      expect(wrapper.findDataTest('history-link').exists()).toBeFalsy();
-
-      entity.entity.approvalStatus = ApprovalStatus.Approved;
-      await wrapper.vm.$nextTick();
+      await mountWrapper(true, 6, null, {
+        computed: {
+          tableData: () => [mockCaseFinancialAssistanceEntity({ approvalStatus: ApprovalStatus.Approved, approvalStatusHistory: [{}] })],
+        },
+      });
       expect(wrapper.findDataTest('history-link').exists()).toBeTruthy();
+    });
 
-      entity.entity.approvalStatus = ApprovalStatus.New;
-      await wrapper.vm.$nextTick();
+    it('does not shows history when item is canViewHistory is false', async () => {
+      await mountWrapper(true, 6, null, {
+        computed: {
+          tableData: () => [mockCaseFinancialAssistanceEntity({ approvalStatus: ApprovalStatus.New })],
+        },
+      });
       expect(wrapper.findDataTest('history-link').exists()).toBeFalsy();
     });
   });
@@ -271,13 +277,13 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper();
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
-        expect(wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds).toHaveBeenCalledWith(
+        expect(financialAssistancePaymentStore.getByIdsWithPinnedItems).toHaveBeenCalledWith(
           ['abc'],
           {
-            baseDate: null, onlyActive: true, prependPinnedItems: true, parentId: { caseFileId: 'mock-cf-id' },
+            baseDate: null, onlyActive: true, parentId: { caseFileId: 'mock-cf-id' },
           },
         );
-        expect(data.length).toBe(wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds().length);
+        expect(data.length).toBe(financialAssistancePaymentStore.getByIdsWithPinnedItems().length);
       });
     });
 
@@ -361,29 +367,28 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper();
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedFinancialAssistancePaymentStore.search).toHaveBeenCalledWith({
+        expect(financialAssistancePaymentStore.search).toHaveBeenCalledWith({ params: {
           filter: { 'Entity/CaseFileId': { value: wrapper.vm.id, type: 'guid' }, MyFilter: 'zzz' },
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, false, true);
+        },
+        includeInactiveItems: false });
       });
     });
 
     describe('isModifiable', () => {
       it('returns true if approval status is new', async () => {
         await mountWrapper();
-        const mock = mockCombinedCaseFinancialAssistance();
-        mock.entity.approvalStatus = ApprovalStatus.Approved;
+        const mock = mockCaseFinancialAssistanceEntity();
+        mock.approvalStatus = ApprovalStatus.Approved;
         expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
-        mock.entity.approvalStatus = ApprovalStatus.New;
+        mock.approvalStatus = ApprovalStatus.New;
         expect(wrapper.vm.isModifiable(mock)).toBeTruthy();
-        mock.entity.approvalStatus = ApprovalStatus.Pending;
+        mock.approvalStatus = ApprovalStatus.Pending;
         expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
-        mock.entity.approvalStatus = ApprovalStatus.Declined;
+        mock.approvalStatus = ApprovalStatus.Declined;
         expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
       });
     });
@@ -393,9 +398,9 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper();
         expect(wrapper.vm.selectedItem).toBeNull();
         expect(wrapper.vm.showApprovalHistory).toBeFalsy();
-        const mock = mockCombinedCaseFinancialAssistance();
+        const mock = mockCaseFinancialAssistanceEntity();
         wrapper.vm.showApprovalDialog(mock);
-        expect(wrapper.vm.selectedItem).toBe(mock.entity);
+        expect(wrapper.vm.selectedItem).toBe(mock);
         expect(wrapper.vm.showApprovalHistory).toBeTruthy();
       });
     });
@@ -403,22 +408,22 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     describe('canViewHistory', () => {
       it('checks for all statuses except new', async () => {
         await mountWrapper();
-        const mock = mockCombinedCaseFinancialAssistance();
-        mock.entity.approvalStatus = ApprovalStatus.New;
+        const mock = mockCaseFinancialAssistanceEntity();
+        mock.approvalStatus = ApprovalStatus.New;
         expect(wrapper.vm.canViewHistory(mock)).toBeFalsy();
-        mock.entity.approvalStatus = ApprovalStatus.Pending;
+        mock.approvalStatus = ApprovalStatus.Pending;
         expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
-        mock.entity.approvalStatus = ApprovalStatus.Declined;
+        mock.approvalStatus = ApprovalStatus.Declined;
         expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
-        mock.entity.approvalStatus = ApprovalStatus.Approved;
+        mock.approvalStatus = ApprovalStatus.Approved;
         expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
       });
 
       it('should return true if approval action is ApprovalAction.RequestAdditionalInfo', async () => {
         await mountWrapper();
-        const mock = mockCombinedCaseFinancialAssistance();
-        mock.entity.approvalStatus = ApprovalStatus.New;
-        mock.entity.approvalAction = ApprovalAction.RequestAdditionalInfo;
+        const mock = mockCaseFinancialAssistanceEntity();
+        mock.approvalStatus = ApprovalStatus.New;
+        mock.approvalAction = ApprovalAction.RequestAdditionalInfo;
         expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
       });
     });
@@ -449,7 +454,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
 
     describe('deletePayment', () => {
       it('calls deactivate after confirmation', async () => {
-        const mock = mockCombinedCaseFinancialAssistance();
+        const mock = mockCaseFinancialAssistanceEntity();
         await mountWrapper();
         await wrapper.vm.deletePayment(mock);
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
@@ -457,10 +462,10 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           messages: 'caseFile.financialAssistance.confirm.delete.message',
         });
         expect(financialAssistancePaymentStore.deactivate)
-          .toHaveBeenCalledWith(mock.entity.id);
+          .toHaveBeenCalledWith(mock.id);
       });
       it('doesnt call deactivate if no confirmation', async () => {
-        const mock = mockCombinedCaseFinancialAssistance();
+        const mock = mockCaseFinancialAssistanceEntity();
         await mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deletePayment(mock);

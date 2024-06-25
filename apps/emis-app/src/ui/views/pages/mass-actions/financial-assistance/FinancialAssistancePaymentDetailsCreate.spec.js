@@ -5,13 +5,13 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 import {
-  mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems, mockCategories,
+  mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems, mockCategories,
 } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities, mockProgramEntity } from '@libs/entities-lib/program';
 import { mockOptionItem, mockOptionSubItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from './FinancialAssistancePaymentDetailsCreate.vue';
@@ -144,7 +144,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           form: formCopy,
         },
         computed: {
-          currentFinancialAssistanceTable: () => mockCombinedFinancialAssistance(),
+          currentFinancialAssistanceTable: () => [mockFinancialAssistanceTableEntity()],
         },
       });
 
@@ -191,7 +191,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           form: formCopy,
         },
         computed: {
-          currentFinancialAssistanceTable: () => mockCombinedFinancialAssistance(),
+          currentFinancialAssistanceTable: () => [mockFinancialAssistanceTableEntity()],
         },
       });
 

@@ -155,29 +155,26 @@ import
 {
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableItem,
-  IdParams as FAIdParams,
 } from '@libs/entities-lib/financial-assistance';
 import
 {
   IAssessmentFormEntity,
   IAssessmentResponseEntity,
   AssociationType,
-  CompletionStatus, IdParams,
+  CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { EFilterKeyType } from '@libs/component-lib/types';
-import { VForm } from '@libs/shared-lib/types';
+import { VForm, Status } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
 import SubmitFinancialAssistancePaymentDialog
   from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/SubmitFinancialAssistancePaymentDialog.vue';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useProgramStore } from '@/pinia/program/program';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import helper from '@libs/shared-lib/helpers/helpers';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
@@ -239,8 +236,6 @@ export default mixins(caseFileDetail).extend({
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
       isDeletingPayment: false,
-      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, null, IdParams>(useAssessmentResponseStore()),
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore()),
     };
   },
 
@@ -353,9 +348,10 @@ export default mixins(caseFileDetail).extend({
 
     async searchTables() {
       if (this.caseFile) {
-        const tableData = await this.combinedFinancialAssistanceStore.search({
+        const tableData = await useFinancialAssistanceStore().search({ params: {
           filter: { 'Entity/EventId': { value: this.caseFile.eventId, type: EFilterKeyType.Guid } },
-        }, null, true, true);
+        },
+        includeInactiveItems: true });
         const { ids } = tableData;
 
         this.financialTables = useFinancialAssistanceStore().getByIds(ids)
@@ -609,14 +605,13 @@ export default mixins(caseFileDetail).extend({
         'Entity/Association/Type': helper.getEnumKeyText(AssociationType, AssociationType.CaseFile),
       };
 
-      const res = await this.combinedResponseStore.search({
+      const res = await useAssessmentResponseStore().search({ params: {
         filter: caseFileFilter,
         top: 999,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true);
+      },
+      includeInactiveItems: true });
 
-      this.caseFileAssessmentResponses = useAssessmentResponseStore().getByIds(res.ids);
+      this.caseFileAssessmentResponses = useAssessmentResponseStore().getByIds(res?.ids);
     },
 
     async confirmBeforeLeavingWithoutSubmittingPayment(next: NavigationGuardNext = null, approvalStatus: ApprovalStatus) {

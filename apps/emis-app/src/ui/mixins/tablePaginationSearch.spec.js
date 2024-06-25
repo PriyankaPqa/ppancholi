@@ -53,8 +53,8 @@ describe('tablePaginationSearch.vue', () => {
       expect(wrapper.vm.itemsCount).toEqual(0);
     });
 
-    test('azureSearchParams', () => {
-      expect(wrapper.vm.azureSearchParams).toEqual({
+    test('searchParams', () => {
+      expect(wrapper.vm.searchParams).toEqual({
         search: '',
         skip: 0,
         top: 0,
@@ -178,7 +178,7 @@ describe('tablePaginationSearch.vue', () => {
 
         wrapper.vm.setPaginationParams();
 
-        expect(wrapper.vm.azureSearchParams.skip).toEqual('skip');
+        expect(wrapper.vm.searchParams.skip).toEqual('skip');
       });
 
       it('sets top parameter', () => {
@@ -193,7 +193,7 @@ describe('tablePaginationSearch.vue', () => {
 
         wrapper.vm.setPaginationParams();
 
-        expect(wrapper.vm.azureSearchParams.top).toEqual('top');
+        expect(wrapper.vm.searchParams.top).toEqual('top');
       });
 
       it('sets previousPageIndex', () => {
@@ -203,89 +203,43 @@ describe('tablePaginationSearch.vue', () => {
 
       it('sets orderBy previousPageIndex', () => {
         wrapper.vm.setPaginationParams();
-        expect(wrapper.vm.azureSearchParams.orderBy).toEqual('name asc');
+        expect(wrapper.vm.searchParams.orderBy).toEqual('name asc');
       });
     });
 
     describe('setFilterParams', () => {
-      it('sets azureSearchParams.filter with userFilters', async () => {
+      it('sets searchParams.filter with userFilters', async () => {
         await wrapper.setData({
           userFilters: [{ filter: 'filter' }],
         });
 
         wrapper.vm.setFilterParams();
 
-        expect(wrapper.vm.azureSearchParams.filter).toEqual({
+        expect(wrapper.vm.searchParams.filter).toEqual({
           and: [{ filter: 'filter' }],
         });
       });
     });
 
     describe('setSearchParams', () => {
-      it('sets azureSearchParams.search with userSearchFilters', () => {
-        wrapper.vm.userSearchFilters = 'test';
-
-        wrapper.vm.setSearchParams();
-
-        expect(wrapper.vm.azureSearchParams.search).toEqual('test');
-      });
-
-      it('sets azureSearchParams.search with userSearchFilters and quickSearch', () => {
-        wrapper.vm.userSearchFilters = 'filter';
-        wrapper.vm.params.search = 'search';
-
-        wrapper.vm.setSearchParams();
-
-        expect(wrapper.vm.azureSearchParams.search).toEqual('filter AND ((/.*search.*/ OR "\\"search\\""))');
-      });
-
-      it('sets azureSearchParams.search with userSearchFilters and custom search term if no search from data table', () => {
-        wrapper.vm.userSearchFilters = 'filter';
-        wrapper.vm.params.search = null;
-        wrapper.vm.searchTerm = 'search';
-
-        wrapper.vm.setSearchParams();
-
-        expect(wrapper.vm.azureSearchParams.search).toEqual('filter AND ((/.*search.*/ OR "\\"search\\""))');
-      });
-
-      it('sets azureSearchParams.search with sanitized quickSearch', () => {
-        wrapper.vm.userSearchFilters = '';
-        wrapper.vm.params.search = '[search';
-
-        wrapper.vm.setSearchParams();
-
-        expect(wrapper.vm.azureSearchParams.search).toEqual('((/.*%5C%5Bsearch.*/ OR "\\"%5C%5Bsearch\\""))');
-      });
-
-      it('sets azureSearchParams.search with quickSearch split by space', () => {
-        wrapper.vm.userSearchFilters = '';
-        wrapper.vm.params.search = 'search test';
-
-        wrapper.vm.setSearchParams();
-
-        expect(wrapper.vm.azureSearchParams.search).toEqual('((/.*search.*/ OR "\\"search\\"") AND (/.*test.*/ OR "\\"test\\""))');
-      });
-
       it('if sql mode, the search is applied to metadata/searchabletext when no field specified', () => {
-        wrapper.vm.sqlSearchMode = true;
         wrapper.vm.userSearchFilters = '';
         wrapper.vm.params.search = 'search test';
 
         wrapper.vm.setSearchParams();
 
-        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
-        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+        expect(wrapper.vm.searchParams.search).toBeFalsy();
+        expect(wrapper.vm.searchParams.filter).toEqual(
           { and: [{}, { and: [{ 'metadata/searchableText': { contains: 'search' } }, { 'metadata/searchableText': { contains: 'test' } }] }] },
         );
 
-        wrapper.vm.azureSearchParams.filter = '';
+        wrapper.vm.searchParams.filter = '';
         wrapper.vm.userSearchFilters = 'filter';
 
         wrapper.vm.setSearchParams();
 
-        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
-        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+        expect(wrapper.vm.searchParams.search).toBeFalsy();
+        expect(wrapper.vm.searchParams.filter).toEqual(
           {
             and: [{}, {
               and: [{ 'metadata/searchableText': { contains: 'search' } },
@@ -294,13 +248,13 @@ describe('tablePaginationSearch.vue', () => {
             }],
           },
         );
-        wrapper.vm.azureSearchParams.filter = { someField: 'value' };
+        wrapper.vm.searchParams.filter = { someField: 'value' };
         wrapper.vm.userSearchFilters = 'filter';
 
         wrapper.vm.setSearchParams();
 
-        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
-        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+        expect(wrapper.vm.searchParams.search).toBeFalsy();
+        expect(wrapper.vm.searchParams.filter).toEqual(
           {
             and: [{ someField: 'value' }, {
               and: [{ 'metadata/searchableText': { contains: 'search' } },
@@ -312,7 +266,6 @@ describe('tablePaginationSearch.vue', () => {
       });
 
       it('if sql mode, the search is applied to field specified', () => {
-        wrapper.vm.sqlSearchMode = true;
         wrapper.vm.userSearchFilters = '';
         wrapper.vm.params.search = 'search test';
         wrapper.vm.userSearchFilters = 'filter';
@@ -321,8 +274,8 @@ describe('tablePaginationSearch.vue', () => {
 
         wrapper.vm.setSearchParams();
 
-        expect(wrapper.vm.azureSearchParams.search).toBeFalsy();
-        expect(wrapper.vm.azureSearchParams.filter).toEqual(
+        expect(wrapper.vm.searchParams.search).toBeFalsy();
+        expect(wrapper.vm.searchParams.filter).toEqual(
           {
             and: [
               {},
@@ -365,14 +318,14 @@ describe('tablePaginationSearch.vue', () => {
       it('calls fetchData from the component with correct parameters - when no additional filter', async () => {
         jest.spyOn(wrapper.vm, 'fetchData');
         await wrapper.vm.search(params);
-        expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.azureSearchParams, true);
+        expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.searchParams, true);
       });
 
       it('calls fetchData from the component with correct parameters - with additional filter', async () => {
         jest.spyOn(wrapper.vm, 'fetchData');
         await wrapper.setData({ userFilters: { entity: 'something' } });
         await wrapper.vm.search(params);
-        expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.azureSearchParams, false);
+        expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.searchParams, false);
       });
 
       it('sets searchResultIds with the ids returned', async () => {
@@ -411,7 +364,7 @@ describe('tablePaginationSearch.vue', () => {
         wrapper.setData({ saveState: true });
         wrapper.vm.setState();
         expect(uiStateStore.setSearchTableState).toHaveBeenCalledWith(wrapper.vm.route, _cloneDeep({
-          azureSearchParams: wrapper.vm.azureSearchParams,
+          searchParams: wrapper.vm.searchParams,
           previousPageIndex: wrapper.vm.previousPageIndex,
           userFilters: wrapper.vm.userFilters,
           userSearchFilters: wrapper.vm.userSearchFilters,
@@ -434,7 +387,7 @@ describe('tablePaginationSearch.vue', () => {
     describe('loadState', () => {
       it('calls getSearchTableState when saveState is true', () => {
         uiStateStore.getSearchTableState = jest.fn(() => ({
-          azureSearchParams: 'azureSearchParams',
+          searchParams: 'searchParams',
           previousPageIndex: 'previousPageIndex',
           userFilters: 'userFilters',
           userSearchFilters: 'userSearchFilters',
@@ -448,7 +401,7 @@ describe('tablePaginationSearch.vue', () => {
         wrapper.setData({ saveState: true });
         wrapper.vm.loadState();
         expect(uiStateStore.getSearchTableState).toHaveBeenCalledWith(wrapper.vm.route);
-        expect(wrapper.vm.azureSearchParams).toEqual('azureSearchParams');
+        expect(wrapper.vm.searchParams).toEqual('searchParams');
         expect(wrapper.vm.previousPageIndex).toEqual('previousPageIndex');
         expect(wrapper.vm.userFilters).toEqual('userFilters');
         expect(wrapper.vm.userSearchFilters).toEqual('userSearchFilters');

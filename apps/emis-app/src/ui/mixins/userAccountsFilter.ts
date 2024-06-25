@@ -4,10 +4,11 @@ import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import _throttle from 'lodash/throttle';
 import {
-  IAzureSearchParams, IAzureTableSearchResults, IDropdownItem, IMultilingual,
-} from '@libs/shared-lib/types';
+  ISearchParams, ITableSearchResults, IDropdownItem, IMultilingual,
+ Status,
+ ICombinedIndex } from '@libs/shared-lib/types';
 import { FilterFormData } from '@libs/component-lib/types';
-import { Status } from '@libs/entities-lib/base';
+
 import { IUserAccountCombined } from '@libs/entities-lib/src/user-account/userAccount.types';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -64,12 +65,9 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/default-param-last
     async fetchUsersFilter(query = '', rolesId: Array<string>, top = 6) {
       const params = {
-        searchFields: 'Metadata/DisplayName',
         top,
         orderBy: 'Metadata/DisplayName',
-        queryType: 'full',
-        searchMode: 'all',
-      } as IAzureSearchParams;
+      } as ISearchParams;
 
       let searchResults;
       if (rolesId?.length) {
@@ -93,9 +91,9 @@ export default Vue.extend({
       return [];
     },
 
-    async searchUserAccount(params: IAzureSearchParams) {
+    async searchUserAccount(params: ISearchParams) {
       // eslint-disable-next-line @typescript-eslint/comma-spacing
-      const searchResult: IAzureTableSearchResults = await this.combinedUserAccountStore.search(params, null, false, true);
+      const searchResult: ITableSearchResults<ICombinedIndex<IUserAccountEntity, IUserAccountMetadata>> = await this.combinedUserAccountStore.search(params, null, false, true);
       if (searchResult) {
         return this.combinedUserAccountStore.getByIds(searchResult.ids);
       }

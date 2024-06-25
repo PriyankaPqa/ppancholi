@@ -146,7 +146,7 @@ import {
   IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';

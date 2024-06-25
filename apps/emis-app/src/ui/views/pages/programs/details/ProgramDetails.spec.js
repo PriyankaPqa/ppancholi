@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
@@ -298,10 +298,9 @@ describe('ProgramDetails.vue', () => {
           params: {
             filter: { 'Entity/ProgramId': { value: wrapper.vm.programId, type: 'guid' } },
             top: 999,
-            queryType: 'full',
             orderBy: 'Entity/Name/Translation/en',
           },
-          searchEndpoint: null,
+          includeInactiveItems: true,
         });
         expect(wrapper.vm.assessmentIds).toEqual(assessmentFormStore.search().ids);
       });

@@ -201,7 +201,7 @@ import { EEventStatus, EResponseLevel, EventEntity, IEventAgreement,
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';

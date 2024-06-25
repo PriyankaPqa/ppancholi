@@ -9,9 +9,8 @@ import Vue, { ref, Ref } from 'vue';
 import { IVueI18n, TranslateResult } from 'vue-i18n';
 import {
   EOptionItemStatus, ERegistrationMode, IOptionItemData, IServerError, IdentityAuthenticationStatus,
-} from '@libs/shared-lib/types';
+ Status } from '@libs/shared-lib/types';
 import { RegistrationEvent } from '@libs/entities-lib/registration-event';
-import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import _cloneDeep from 'lodash/cloneDeep';
 import deepmerge from 'deepmerge';

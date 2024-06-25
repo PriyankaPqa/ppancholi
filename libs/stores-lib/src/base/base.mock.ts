@@ -10,6 +10,7 @@ export function getMockBaseStoreComponents(items: Array<unknown>) {
     getById: jest.fn(() => items[0]),
     getByCriteria: jest.fn(() => items),
     getByIds: jest.fn(() => items),
+    getByIdsWithPinnedItems: jest.fn(() => items),
     set: jest.fn(() => items[0]),
     setAll: jest.fn(() => items),
     fetch: jest.fn(() => items[0]),
@@ -27,7 +28,8 @@ export function getMockEntityStoreComponents(items: Array<unknown>) {
     searchLoading: false,
     deactivate: jest.fn(() => items[0]),
     activate: jest.fn(() => items[0]),
-    search: jest.fn(() => ({ ids: ['1'], odataCount: 1, value: [{ entity: { id: '1' }, metadata: { id: '1' } }] })),
+    combinedSearch: jest.fn(() => ({ ids: ['1'], odataCount: 1, value: [{ entity: { id: '1' }, metadata: { id: '1' } }] })),
+    search: jest.fn(() => ({ ids: ['1'], count: 1, value: [{ id: '1' }] })),
     setSearchLoading: jest.fn(),
     setItemFromOutsideNotification: jest.fn(),
   };

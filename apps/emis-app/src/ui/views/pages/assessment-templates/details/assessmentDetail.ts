@@ -2,7 +2,7 @@ import Vue from 'vue';
 import {
   AssessmentBaseEntity, AssessmentTemplateEntity, AssessmentFormEntity, IAssessmentFormEntity, PublishStatus, AssessmentFrequencyType,
 } from '@libs/entities-lib/assessment-template';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';

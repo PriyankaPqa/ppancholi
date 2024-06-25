@@ -14,7 +14,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
-const document = { entity: mockCaseFileDocumentEntity() };
+const document = mockCaseFileDocumentEntity();
 let mockDocumentMapped;
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
@@ -31,13 +31,13 @@ describe('CaseFileDocument.vue', () => {
     caseFileDocumentStore = useMockCaseFileDocumentStore(pinia).caseFileDocumentStore;
 
     mockDocumentMapped = {
-      name: document.entity.name,
-      id: document.entity.id,
+      name: document.name,
+      id: document.id,
       category: options[0].name.translation.en,
-      documentStatus: document.entity.documentStatus,
+      documentStatus: document.documentStatus,
       documentStatusName: 'Current',
       created: 'Jul 2, 2021',
-      entity: document.entity,
+      entity: document,
     };
     wrapper = shallowMount(Component, {
       localVue,
@@ -547,7 +547,8 @@ describe('CaseFileDocument.vue', () => {
     describe('caseFileDocumentsMapped', () => {
       beforeEach(async () => {
         const pinia = useMockCaseFileDocumentStore().pinia;
-        useMockCaseFileStore(pinia);
+
+        caseFileDocumentStore = useMockCaseFileDocumentStore(pinia).caseFileDocumentStore;
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -555,7 +556,7 @@ describe('CaseFileDocument.vue', () => {
             id: 'mock-caseFile-id',
           },
         });
-        wrapper.vm.combinedCaseFileDocumentStore.getByIds = jest.fn(() => [document]);
+        caseFileDocumentStore.getByIdsWithPinnedItems = jest.fn(() => [document]);
 
         helpers.getOptionItemNameFromListOption = jest.fn(() => 'category-name');
       });
@@ -565,22 +566,21 @@ describe('CaseFileDocument.vue', () => {
           searchResultIds: ['mock-id'],
         });
 
-        expect(wrapper.vm.combinedCaseFileDocumentStore.getByIds).toHaveBeenCalledWith(['mock-id'], {
+        expect(caseFileDocumentStore.getByIdsWithPinnedItems).toHaveBeenCalledWith(['mock-id'], {
           onlyActive: true,
-          prependPinnedItems: true,
           baseDate: null,
           parentId: { caseFileId: 'mock-caseFile-id' },
         });
 
         expect(wrapper.vm.caseFileDocumentsMapped).toEqual([
           {
-            name: document.entity.name,
-            id: document.entity.id,
+            name: document.name,
+            id: document.id,
             category: 'category-name',
             created: 'Apr 6, 2021',
-            documentStatus: document.entity.documentStatus,
+            documentStatus: document.documentStatus,
             documentStatusName: 'enums.DocumentStatus.Past',
-            entity: document.entity,
+            entity: document,
           },
         ]);
       });
@@ -666,11 +666,10 @@ describe('CaseFileDocument.vue', () => {
             },
           },
           orderBy: 'Entity/Name asc',
-          search: '',
           skip: 0,
           top: 10,
         };
-        const pinia = useMockCaseFileDocumentStore().pinia;
+        const { caseFileDocumentStore, pinia } = useMockCaseFileDocumentStore();
         useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
@@ -686,13 +685,12 @@ describe('CaseFileDocument.vue', () => {
 
         });
 
-        wrapper.vm.combinedCaseFileDocumentStore.search = jest.fn();
+        caseFileDocumentStore.search = jest.fn();
 
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedCaseFileDocumentStore.search).toHaveBeenCalledWith(
+        expect(caseFileDocumentStore.search).toHaveBeenCalledWith({ params:
           {
-            search: params.search,
             filter: {
               'Entity/CaseFileId': {
                 type: 'guid',
@@ -706,13 +704,8 @@ describe('CaseFileDocument.vue', () => {
             skip: params.skip,
             orderBy: params.orderBy,
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           },
-          null,
-          true,
-          true,
-        );
+        includeInactiveItems: true });
       });
     });
 

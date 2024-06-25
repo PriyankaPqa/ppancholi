@@ -8,7 +8,7 @@ import { ICaseFileReferralEntity, mockCaseFileReferralEntity, IdParams } from '@
 import { getExtensionComponents } from '@/pinia/case-file-referral/case-file-referral-extension';
 import _sortBy from 'lodash/sortBy';
 
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 
 const entityService = mockCaseFileReferralsService();
 const optionsService = mockOptionItemsService();

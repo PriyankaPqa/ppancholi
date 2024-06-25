@@ -1,5 +1,5 @@
 import { i18n } from '@/ui/plugins/i18n';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
 import {
   mockMember,

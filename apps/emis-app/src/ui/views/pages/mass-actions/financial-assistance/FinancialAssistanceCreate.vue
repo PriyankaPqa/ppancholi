@@ -30,9 +30,9 @@ import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import FinancialAssistancePaymentDetailsCreate from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsCreate.vue';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/mass-actions/entity';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { buildQuerySql } from '@libs/services-lib/odata-query-sql';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
+import helpers from '@libs/shared-lib/helpers/helpers';
 
 export interface PaymentDetailsForm {
   event: IEventEntity,
@@ -90,9 +90,9 @@ export default Vue.extend({
      * Triggered when creating a mass action from a filtered list
      */
     async onPost({ description }: { description: string }) {
-      const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
+      const searchParams = JSON.parse(this.$route.query.searchParams as string);
 
-      const filter = buildQuerySql(CombinedStoreFactory.RemoveInactiveItemsFilterOdata({ filter: azureSearchParams.filter }, true) as any);
+      const filter = buildQuerySql(helpers.removeInactiveItemsFilterOdata({ filter: searchParams.filter }) as any);
 
       const payload = {
         name: this.makeFormName(),

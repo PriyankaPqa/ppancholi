@@ -1,7 +1,7 @@
 import { IUserInformation } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '../program/program.types';
 import { IAddress } from '../value-objects/address';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity } from '../base';
 
 /**
  * Enums
@@ -125,8 +125,6 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
   submittedTo?: IUserInformation;
   approvalStatusHistory?: IApprovalStatusHistory[];
 }
-
-export type IFinancialAssistancePaymentCombined = IEntityCombined<IFinancialAssistancePaymentEntity, IEntity>;
 
 export interface CreatePaymentGroupServiceRequest {
   modality: EPaymentModalities;

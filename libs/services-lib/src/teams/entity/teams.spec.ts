@@ -79,7 +79,7 @@ describe('>>> Teams Service', () => {
       await service.getTeamsByEvent({ eventId: '1234' });
       expect(http.get).toHaveBeenCalledWith(
         'team/search/teamsV2?manageableTeamsOnly=false',
-        { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } }, 'Entity/Status': 'Active' } }, isODataSql: true },
+        { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } }, 'Entity/Status': 'Active' } }, isOData: true },
       );
     });
 
@@ -87,7 +87,7 @@ describe('>>> Teams Service', () => {
       await service.getTeamsByEvent({ eventId: '1234', includeInactive: true });
       expect(http.get).toHaveBeenCalledWith(
         'team/search/teamsV2?manageableTeamsOnly=false',
-        { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } } } }, isODataSql: true },
+        { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } } } }, isOData: true },
       );
     });
 
@@ -104,7 +104,7 @@ describe('>>> Teams Service', () => {
               'Entity/Id': { in: teamIds },
             },
           },
-          isODataSql: true,
+          isOData: true,
         },
       );
     });
@@ -114,7 +114,7 @@ describe('>>> Teams Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('team/search/teamsV2?manageableTeamsOnly=false', { params, isODataSql: true });
+      expect(http.get).toHaveBeenCalledWith('team/search/teamsV2?manageableTeamsOnly=false', { params, isOData: true });
     });
   });
 });

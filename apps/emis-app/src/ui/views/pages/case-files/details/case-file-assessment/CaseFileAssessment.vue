@@ -166,18 +166,14 @@ import mixins from 'vue-typed-mixins';
 import { RcDataTable, RcDataTableHeader, RcTooltip } from '@libs/component-lib/components';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, Status } from '@libs/shared-lib/types';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import {
-  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType,
-  IAssessmentResponseCombined, CompletionStatus, PublishStatus, IAssessmentFormEntity,
-  IAssessmentResponseEntity, IdParams,
+  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, CompletionStatus, PublishStatus, IAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
-import { Status } from '@libs/entities-lib/base';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -238,10 +234,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         itemClass: (item: MappedAssessment) => (item.pinned ? 'pinned' : ''),
       },
       showAddPopup: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, null, IdParams>(useAssessmentFormStore()),
-      combinedResponseStore:
-        new CombinedStoreFactory<IAssessmentResponseEntity, null, IdParams>(useAssessmentResponseStore()),
-      sqlSearchMode: true,
     };
   },
 
@@ -254,20 +246,20 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
-    items(): IAssessmentResponseCombined[] {
-      const items = this.combinedResponseStore.getByIds(
+    items(): IAssessmentResponseEntity[] {
+      const items = useAssessmentResponseStore().getByIdsWithPinnedItems(
         this.searchResultIds,
         {
-          onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { 'association.id': this.caseFileId },
+          onlyActive: true, baseDate: this.searchExecutionDate, parentId: { 'association.id': this.caseFileId },
         },
       );
       return items;
     },
 
     assessments(): MappedAssessment[] {
-      const assessments = useAssessmentFormStore().getByIds(this.items?.map((i) => i.entity.assessmentFormId), false);
+      const assessments = useAssessmentFormStore().getByIds(this.items?.map((i) => i.assessmentFormId), false);
       const formAndResponses = this.items.map((r) => ({
-        form: assessments.find((i) => r.entity.assessmentFormId === i.id) || {} as IAssessmentBaseEntity,
+        form: assessments.find((i) => r.assessmentFormId === i.id) || {} as IAssessmentBaseEntity,
         response: r,
       }));
       return this.mapAssessments(formAndResponses);
@@ -388,27 +380,27 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   methods: {
-    mapAssessments(formAndResponses: { form: IAssessmentBaseEntity, response: IAssessmentResponseCombined }[]): MappedAssessment[] {
+    mapAssessments(formAndResponses: { form: IAssessmentBaseEntity, response: IAssessmentResponseEntity }[]): MappedAssessment[] {
       return formAndResponses.map((r) => ({
-        id: r.response.entity.id,
+        id: r.response.id,
         name: this.$m(r.form?.name) as string,
         nameLowerCase: (this.$m(r.form?.name) as string || '').toLowerCase(),
-        dateAssigned: r.response.entity.dateAssigned,
-        dateAssignedFormatted: format(new Date(r.response.entity.dateAssigned), 'PP'),
-        dateModified: r.response.entity.timestamp as Date,
-        dateModifiedFormatted: format(new Date(r.response.entity.timestamp), 'PP'),
+        dateAssigned: r.response.dateAssigned,
+        dateAssignedFormatted: format(new Date(r.response.dateAssigned), 'PP'),
+        dateModified: r.response.timestamp as Date,
+        dateModifiedFormatted: format(new Date(r.response.timestamp), 'PP'),
         // default to crazy date because _orderBy sorts empty differently then normal BE search
-        dateCompleted: r.response.entity.dateCompleted ? new Date(r.response.entity.dateCompleted) : new Date(1950, 0, 1),
-        dateCompletedFormatted: r.response.entity.dateCompleted ? format(new Date(r.response.entity.dateCompleted), 'PP') : '',
-        completionStatus: r.response.entity.completionStatus,
+        dateCompleted: r.response.dateCompleted ? new Date(r.response.dateCompleted) : new Date(1950, 0, 1),
+        dateCompletedFormatted: r.response.dateCompleted ? format(new Date(r.response.dateCompleted), 'PP') : '',
+        completionStatus: r.response.completionStatus,
         formFrequency: r.form?.frequency,
         formId: r.form?.id,
         pinned: r.response.pinned,
         canCopy: !this.readonly && this.$hasLevel(UserRoles.level1) && r.form?.publishStatus === PublishStatus.Published && r.form?.status === Status.Active
-          && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
-        canEdit: !this.readonly && this.$hasLevel(UserRoles.level3) && r.response.entity.completionStatus === CompletionStatus.Completed,
+          && (r.response.completionStatus === CompletionStatus.Pending || r.response.completionStatus === CompletionStatus.Partial),
+        canEdit: !this.readonly && this.$hasLevel(UserRoles.level3) && r.response.completionStatus === CompletionStatus.Completed,
         canLaunch: !this.readonly && this.$hasLevel(UserRoles.level0)
-          && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
+          && (r.response.completionStatus === CompletionStatus.Pending || r.response.completionStatus === CompletionStatus.Partial),
       }));
     },
 
@@ -417,15 +409,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         return;
       }
 
-      await this.combinedFormStore.search({
-        filter: { 'Entity/Id': { in: this.items.map((i) => i.entity.assessmentFormId) || [] } },
+      await useAssessmentFormStore().search({ params: {
+        filter: { 'Entity/Id': { in: this.items.map((i) => i.assessmentFormId) || [] } },
         top: 999,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true);
+      },
+      includeInactiveItems: true });
     },
 
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const caseFileFilter = {
         'Entity/Association/Id': { value: this.caseFileId, type: EFilterKeyType.Guid },
         'Entity/Association/Type': sharedHelpers.getEnumKeyText(AssociationType, AssociationType.CaseFile),
@@ -433,13 +424,12 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       params.filter = caseFileFilter;
 
-      const res = await this.combinedResponseStore.search({
+      const res = await useAssessmentResponseStore().search({ params: {
         filter: params.filter,
         top: 999,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true);
+      },
+      includeInactiveItems: true });
       return res;
     },
 
@@ -487,7 +477,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     async copyLink(item: MappedAssessment) {
-      const assessment = this.items.find((i) => i.entity.id === item.id);
+      const assessment = this.items.find((i) => i.id === item.id);
       const settings = useTenantSettingsStore().currentTenantSettings;
       const primaryBeneficiary = useHouseholdStore().getById(this.caseFile.householdId).primaryBeneficiary;
       const member = await this.$services.households.getPerson(primaryBeneficiary);
@@ -496,7 +486,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       languageCode = languageCode === 'fr' ? 'fr' : 'en';
       // route is benef website's 'assessment/:eventId/:assessmentTemplateId/:assessmentResponseId'
       navigator.clipboard.writeText(
-        `https://${settings.registrationDomain.translation[languageCode]}/${languageCode}/assessment/${this.event.id}/${assessment.entity.assessmentFormId}/${assessment.entity.id}`,
+        `https://${settings.registrationDomain.translation[languageCode]}/${languageCode}/assessment/${this.event.id}/${assessment.assessmentFormId}/${assessment.id}`,
       );
       this.$toasted.global.success(this.$t('assessmentTemplate.copiedLink'));
     },

@@ -28,7 +28,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
       mocks: {
         $route: {
           query: {
-            azureSearchParams: filtersString,
+            searchParams: filtersString,
             mode: MassActionMode.List,
           },
         },
@@ -201,7 +201,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
           mocks: {
             $route: {
               query: {
-                azureSearchParams: filtersString,
+                searchParams: filtersString,
                 mode: MassActionMode.List,
               },
             },

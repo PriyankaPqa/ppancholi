@@ -4,7 +4,6 @@ import {
   HouseholdStatus,
   IDetailedRegistrationResponse,
   IHouseholdCaseFile,
-  IHouseholdCombined,
   IHouseholdEntity,
 } from './household.types';
 /* eslint-disable no-nested-ternary */
@@ -69,16 +68,6 @@ export const mockHouseholdCaseFile = (force?: Partial<IHouseholdCaseFile>): IHou
   registeredDate: '2021-02-02',
   ...force,
 });
-
-export const mockCombinedHousehold = (force?: Partial<IHouseholdEntity>): IHouseholdCombined => ({
-  entity: mockHouseholdEntity(force),
-  metadata: null,
-});
-
-export const mockCombinedHouseholds = (): IHouseholdCombined[] => [
-  mockCombinedHousehold({ id: '1' }),
-  mockCombinedHousehold({ id: '2' }),
-];
 
 export const mockDetailedRegistrationResponse = (): IDetailedRegistrationResponse => (
   JSON.parse(JSON.stringify({

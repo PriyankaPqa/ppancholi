@@ -1,10 +1,10 @@
 import helpers from '@libs/entities-lib/helpers';
-import { IEntity, IEntityCombined, Status } from '@libs/entities-lib/base';
+import { IEntity, IEntityCombined } from '@libs/entities-lib/base';
 import _isEmpty from 'lodash/isEmpty';
 import {
- IAzureSearchParams, IAzureTableSearchResults, ICombinedIndex,
+ ISearchParams, ITableSearchResults, ICombinedIndex,
 } from '@libs/shared-lib/types';
-import helper from '@libs/shared-lib/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import { BaseEntityStoreComponents, BaseStoreComponents } from './base.types';
 
@@ -86,31 +86,17 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     return this.combinedCollections(entities, metadata, pinnedIds);
   }
 
-  static RemoveInactiveItemsFilterOdata(params: IAzureSearchParams, sqlMode?: boolean): IAzureSearchParams {
-    const newParams = { ...params };
-    newParams.filter = newParams.filter || {};
-    if (typeof (newParams.filter) === 'string') {
-      newParams.filter = `${newParams.filter} and Entity/Status eq ${sqlMode ? `'${helper.getEnumKeyText(Status, Status.Active)}'` : Status.Active}`;
-    } else {
-      newParams.filter = {
-        ...newParams.filter as Record<string, unknown>,
-        'Entity/Status': sqlMode ? helper.getEnumKeyText(Status, Status.Active) : Status.Active,
-      };
-    }
-    return newParams;
-  }
-
   // eslint-disable-next-line max-params
-  async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, sqlMode?: boolean, otherSearchEndpointParameters: any = {})
-    : Promise<IAzureTableSearchResults> {
+  async search(params: ISearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean, otherSearchEndpointParameters: any = {})
+    : Promise<ITableSearchResults<ICombinedIndex<TEntity, TMetadata>>> {
     this.storeEntity.setSearchLoading(true);
     let newParams = { ...params, ...otherSearchEndpointParameters };
 
     if (includeInactiveItems !== true) {
-      newParams = CombinedStoreFactory.RemoveInactiveItemsFilterOdata(newParams, sqlMode);
+      newParams = sharedHelpers.removeInactiveItemsFilterOdata(newParams);
     }
 
-    const res = await this.storeEntity.search({
+    const res = await this.storeEntity.combinedSearch({
       params: newParams,
       searchEndpoint,
     });

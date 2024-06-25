@@ -1,4 +1,4 @@
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams } from '@libs/shared-lib/types';
 
 export enum Contributor {
   'IM' = 1,
@@ -6,7 +6,7 @@ export enum Contributor {
   'Three' = 3,
 
 }
-export const mockSearchParams: IAzureSearchParams = {
+export const mockSearchParams: ISearchParams = {
   filter: { Foo: 'foo' },
 };
 

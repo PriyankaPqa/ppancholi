@@ -204,19 +204,21 @@ describe('CaseNote.vue', () => {
     });
 
     describe('caseNotes', () => {
-      let caseFiles = [];
+      let caseNotes = [];
 
       beforeEach(async () => {
         jest.clearAllMocks();
 
-        caseFiles = [
+        caseNotes = [
           mockCaseNoteEntity({ id: '1', isPinned: false, created: '2020-01-02' }),
           mockCaseNoteEntity({ id: '2', isPinned: true, created: '2020-01-01' }),
           mockCaseNoteEntity({ id: '3', isPinned: false, created: '2020-01-03' }),
         ];
+        caseNoteStore.getByIdsWithPinnedItems = jest.fn(() => caseNotes);
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'id',
           },
@@ -229,8 +231,7 @@ describe('CaseNote.vue', () => {
       });
 
       it('calls the getByIds getter and sets the result into caseNotes', () => {
-        wrapper.vm.combinedCaseNoteStore.getByIds = jest.fn(() => caseFiles);
-        expect(wrapper.vm.caseNotes).toEqual([caseFiles[0], caseFiles[1], caseFiles[2]]);
+        expect(wrapper.vm.caseNotes).toEqual([caseNotes[0], caseNotes[1], caseNotes[2]]);
       });
     });
 
@@ -255,8 +256,8 @@ describe('CaseNote.vue', () => {
               return false;
             },
             caseNotes() {
-              return [{ entity: mockCaseNoteEntity({ id: '1', isPinned: false, created: '2020-01-02' }) },
-                { entity: mockCaseNoteEntity({ id: '2', isPinned: true, created: '2020-01-01' }) }];
+              return [mockCaseNoteEntity({ id: '1', isPinned: false, created: '2020-01-02' }),
+                mockCaseNoteEntity({ id: '2', isPinned: true, created: '2020-01-01' })];
             },
           },
         });
@@ -336,10 +337,9 @@ describe('CaseNote.vue', () => {
 
     describe('fetchData', () => {
       it('should call search', async () => {
-        wrapper.vm.combinedCaseNoteStore.search = jest.fn();
+        caseNoteStore.search = jest.fn();
 
         const params = {
-          search: '',
           orderBy: 'Entity/Created',
           descending: true,
           pageIndex: 1,
@@ -348,18 +348,14 @@ describe('CaseNote.vue', () => {
 
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedCaseNoteStore.search).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.combinedCaseNoteStore.search).toHaveBeenLastCalledWith(
+        expect(caseNoteStore.search).toHaveBeenCalledTimes(1);
+        expect(caseNoteStore.search).toHaveBeenLastCalledWith({ params:
           {
             ...params,
             filter: { 'Entity/CaseFileId': { value: 'id', type: EFilterKeyType.Guid } },
             count: true,
-            queryType: 'full',
-            searchMode: 'all',
           },
-          null,
-          true,
-        );
+        includeInactiveItems: true });
       });
     });
 
@@ -368,7 +364,7 @@ describe('CaseNote.vue', () => {
         caseNoteStore.pinCaseNote = jest.fn();
         const { isPinned } = caseNote;
 
-        await wrapper.vm.pinCaseNote({ entity: caseNote });
+        await wrapper.vm.pinCaseNote(caseNote);
 
         expect(caseNoteStore.pinCaseNote).toHaveBeenCalledWith(
           { caseFileId: wrapper.vm.caseFileId, caseNoteId: caseNote.id, isPinned: !isPinned },
@@ -376,15 +372,13 @@ describe('CaseNote.vue', () => {
       });
       it('should update isPinned in case note', async () => {
         const mockCaseNote = {
-          entity: {
-            id: 'id',
-            isPinned: false,
-          },
+          id: 'id',
+          isPinned: false,
         };
 
         await wrapper.vm.pinCaseNote(mockCaseNote);
 
-        expect(mockCaseNote.entity.isPinned).toBe(true);
+        expect(mockCaseNote.isPinned).toBe(true);
       });
     });
   });

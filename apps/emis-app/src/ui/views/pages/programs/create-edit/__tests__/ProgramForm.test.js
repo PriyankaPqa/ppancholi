@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { ProgramEntity } from '@libs/entities-lib/program';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { createTestingPinia } from '@pinia/testing';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';

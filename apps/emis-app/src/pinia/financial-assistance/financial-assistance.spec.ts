@@ -4,7 +4,7 @@ import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockFinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
 import { getExtensionComponents } from '@/pinia/financial-assistance/financial-assistance-extension';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import {
   IdParams,
   EFinancialAmountModes,
@@ -15,7 +15,6 @@ import {
   mockSubItemData,
   mockItems,
   mockSubItems,
-  mockCombinedFinancialAssistance,
 } from '@libs/entities-lib/financial-assistance';
 import { mockOptionItem, mockOptionItems } from '@libs/entities-lib/optionItem';
 import { mapItem, subItemToSubItemData, itemToItemData, prepareItemsArray } from './financial-assistance-helpers';
@@ -316,10 +315,10 @@ describe('Financial assistance payment store', () => {
         removeInactiveItems: true,
       });
 
-      expect(store.id).toEqual(mockCombinedFinancialAssistance().entity.id);
+      expect(store.id).toEqual(mockFinancialAssistanceTableEntity().id);
       expect(store.program).toEqual(mockProgram);
-      expect(store.name).toEqual(mockCombinedFinancialAssistance().entity.name);
-      expect(store.status).toEqual(mockCombinedFinancialAssistance().entity.status);
+      expect(store.name).toEqual(mockFinancialAssistanceTableEntity().name);
+      expect(store.status).toEqual(mockFinancialAssistanceTableEntity().status);
       expect(store.mainItems.length).toEqual(2);
     });
   });

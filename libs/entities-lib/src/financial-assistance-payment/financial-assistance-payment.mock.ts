@@ -1,13 +1,7 @@
 import { mockItems } from '../financial-assistance';
 import { mockBaseData } from '../base';
 import {
-  PaymentStatus,
-  IFinancialAssistancePaymentEntity,
-  IFinancialAssistancePaymentGroup,
-  ApprovalStatus,
-  PaymentsSummary,
-  IFinancialAssistancePaymentCombined,
-  ApprovalAction,
+  PaymentStatus, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, ApprovalStatus, PaymentsSummary, ApprovalAction,
 } from './financial-assistance-payment.types';
 import { EPaymentModalities } from '../program';
 
@@ -120,8 +114,3 @@ export const mockCaseFinancialAssistanceEntities = (): IFinancialAssistancePayme
   mockCaseFinancialAssistanceEntity({ id: '1' }),
   mockCaseFinancialAssistanceEntity({ id: '2', approvalStatus: ApprovalStatus.Approved }, 1),
 ]);
-
-export const mockCombinedCaseFinancialAssistance = (force?: Partial<IFinancialAssistancePaymentEntity>): IFinancialAssistancePaymentCombined => ({
-  entity: mockCaseFinancialAssistanceEntity(force),
-  metadata: null,
-});

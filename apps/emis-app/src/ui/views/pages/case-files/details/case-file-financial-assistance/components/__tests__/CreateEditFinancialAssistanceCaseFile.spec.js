@@ -23,7 +23,7 @@ import {
 } from '@libs/entities-lib/assessment-template';
 import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
-import { Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/shared-lib/types';
 import { mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
@@ -873,10 +873,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
               'Entity/Association/Type': 'CaseFile',
             },
             top: 999,
-            queryType: 'full',
-            searchMode: 'all',
           },
-          searchEndpoint: null,
+          includeInactiveItems: true,
         });
       });
     });

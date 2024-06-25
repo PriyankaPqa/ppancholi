@@ -35,21 +35,21 @@
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          :data-test="`fap_link_${item.entity.id}`"
-          :to="getFapDetailsRoute(item.entity.id)">
-          {{ item.entity.name }}
+          :data-test="`fap_link_${item.id}`"
+          :to="getFapDetailsRoute(item.id)">
+          {{ item.name }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.created}`]="{ item }">
         <span data-test="fap_created" class="text-no-wrap">
-          {{ getLocalStringDate(item.entity.created, 'Entity.created', 'PP') }}
+          {{ getLocalStringDate(item.created, 'Entity.created', 'PP') }}
         </span>
       </template>
 
       <template #[`item.${customColumns.totals}`]="{ item }">
         <div data-test="fap_total" class="amount">
-          {{ $formatCurrency(groupTotal(item.entity.groups)) }}
+          {{ $formatCurrency(groupTotal(item.groups)) }}
         </div>
       </template>
 
@@ -62,11 +62,11 @@
           @click="showApprovalDialog(item)">
           mdi-history
         </v-icon>
-        <status-chip :data-test="`approval_status_${item.entity.id}`" status-name="ApprovalStatus" :status="item.entity.approvalStatus" />
+        <status-chip :data-test="`approval_status_${item.id}`" status-name="ApprovalStatus" :status="item.approvalStatus" />
       </template>
 
       <template #[`item.edit`]="{ item }">
-        <v-btn v-if="isModifiable(item)" icon data-test="edit-link" :aria-label="$t('common.edit')" :to="getFapEditRoute(item.entity.id)">
+        <v-btn v-if="isModifiable(item)" icon data-test="edit-link" :aria-label="$t('common.edit')" :to="getFapEditRoute(item.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -87,7 +87,7 @@
         <td :colspan="headers.length">
           <table class="rc-body10 details-table">
             <tbody>
-              <template v-for="group in item.entity.groups">
+              <template v-for="group in item.groups">
                 <tr v-if="group.status === Status.Active" :key="group.id">
                   <td class="group-col" data-test="caseFile-financialAssistance-expand-groupTitle">
                     {{ getGroupTitle(group) }}
@@ -135,23 +135,19 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, Status } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
   ApprovalAction,
   ApprovalStatus,
-  FinancialAssistancePaymentGroup, IdParams,
-  IFinancialAssistancePaymentCombined,
+  FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PayeeType,
   PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
-import { Status } from '@libs/entities-lib/base';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-import { IFinancialAssistanceTableEntity, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
@@ -185,7 +181,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         itemKey: 'entity.id',
         expandIcon: 'mdi-menu-down',
         loading: false,
-        itemClass: (item: IFinancialAssistancePaymentCombined) => (item.pinned ? 'pinned' : ''),
+        itemClass: (item: IFinancialAssistancePaymentEntity) => (item.pinned ? 'pinned' : ''),
       },
       getLocalStringDate: helpers.getLocalStringDate,
       containsActiveTables: null as boolean,
@@ -197,22 +193,16 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       selectedItem: null as IFinancialAssistancePaymentEntity,
       showStats: false,
       householdDuplicates: null as IPotentialDuplicateEntity[],
-      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, null, IdParams>(
-        useFinancialAssistancePaymentStore(),
-        null,
-      ),
-      sqlSearchMode: true,
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore(), null),
     };
   },
 
   computed: {
 
-    tableData(): IFinancialAssistancePaymentCombined[] {
-      return this.combinedFinancialAssistancePaymentStore.getByIds(
+    tableData(): IFinancialAssistancePaymentEntity[] {
+      return useFinancialAssistancePaymentStore().getByIdsWithPinnedItems(
         this.searchResultIds,
         {
-          onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
+          onlyActive: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
         },
       );
     },
@@ -329,25 +319,25 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   methods: {
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
-      const res = await this.combinedFinancialAssistancePaymentStore.search({
+      const res = await useFinancialAssistancePaymentStore().search({ params: {
         filter: { 'Entity/CaseFileId': { value: this.caseFileId, type: EFilterKeyType.Guid }, ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, false, true);
+      },
+      includeInactiveItems: false });
       return res;
     },
 
     async initContainsActiveTables() {
       if (this.caseFile) {
-        const tableData = await this.combinedFinancialAssistanceStore.search({
+        const tableData = await useFinancialAssistanceStore().search({ params: {
           filter: { 'Entity/EventId': { value: this.caseFile.eventId, type: EFilterKeyType.Guid } },
-        }, null, false, true);
+        },
+        includeInactiveItems: false });
         this.containsActiveTables = !!(tableData?.ids?.length);
       }
     },
@@ -360,18 +350,18 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       }
     },
 
-    showApprovalDialog(item: IFinancialAssistancePaymentCombined) {
-      this.selectedItem = item.entity;
+    showApprovalDialog(item: IFinancialAssistancePaymentEntity) {
+      this.selectedItem = item;
       this.showApprovalHistory = true;
     },
 
-    canViewHistory(item: IFinancialAssistancePaymentCombined): boolean {
-      return (item.entity.approvalStatus !== ApprovalStatus.New || item.entity.approvalAction === ApprovalAction.RequestAdditionalInfo)
-      && !!item.entity.approvalStatusHistory?.length;
+    canViewHistory(item: IFinancialAssistancePaymentEntity): boolean {
+      return (item.approvalStatus !== ApprovalStatus.New || item.approvalAction === ApprovalAction.RequestAdditionalInfo)
+      && !!item.approvalStatusHistory?.length;
     },
 
-    isModifiable(item: IFinancialAssistancePaymentCombined) {
-      return item.entity.approvalStatus === ApprovalStatus.New;
+    isModifiable(item: IFinancialAssistancePaymentEntity) {
+      return item.approvalStatus === ApprovalStatus.New;
     },
 
     routeToCreate() {
@@ -414,14 +404,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       };
     },
 
-    async deletePayment(item: IFinancialAssistancePaymentCombined) {
+    async deletePayment(item: IFinancialAssistancePaymentEntity) {
       const doDelete = await this.$confirm({
         title: this.$t('caseFile.financialAssistance.confirm.delete.title'),
         messages: this.$t('caseFile.financialAssistance.confirm.delete.message'),
       });
 
       if (doDelete) {
-        await useFinancialAssistancePaymentStore().deactivate(item.entity.id);
+        await useFinancialAssistancePaymentStore().deactivate(item.id);
       }
     },
 

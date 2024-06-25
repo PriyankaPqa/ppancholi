@@ -29,26 +29,25 @@
           :filter-options="filters"
           :count="itemsCount"
           :initial-filter="filterState"
-          :sql-mode="true"
           add-filter-label="financialAssistance.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
-        {{ $m(getProgramName(item.entity.programId)) }}
+        {{ $m(getProgramName(item.programId)) }}
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          :data-test="`eventDetail-link-${item.entity.id}`"
+          :data-test="`eventDetail-link-${item.id}`"
           :to="getDetailsRoute(item)">
-          {{ $m(item.entity.name) }}
+          {{ $m(item.name) }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
-        <status-chip status-name="Status" :status="item.entity.status" />
+        <status-chip status-name="Status" :status="item.status" />
       </template>
 
       <template #[`item.editButton`]="{ item }">
@@ -56,7 +55,7 @@
           icon
           class="mr-2"
           :aria-label="$t('common.edit')"
-          :data-test="`edit_financial_assistance_${ item.entity.name && item.entity.name.translation.en }`"
+          :data-test="`edit_financial_assistance_${ item.name && item.name.translation.en }`"
           @click="goToEdit(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
@@ -77,18 +76,15 @@ import { FilterKey } from '@libs/entities-lib/user-account';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { ISearchParams, Status } from '@libs/shared-lib/types';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { IdParams, IProgramEntity } from '@libs/entities-lib/program';
-import { Status } from '@libs/entities-lib/base';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import { useProgramStore } from '@/pinia/program/program';
 import
 {
   IFinancialAssistanceTableEntity,
-  IdParams as FAIdParams, IFinancialAssistanceTableCombined,
 } from '@libs/entities-lib/financial-assistance';
 import { UserRoles } from '@libs/entities-lib/user';
 
@@ -112,9 +108,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       },
       programIds: [],
       UserRoles,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, null, IdParams>(useProgramStore()),
-      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, null, FAIdParams>(useFinancialAssistanceStore(), null),
-      sqlSearchMode: true,
     };
   },
 
@@ -181,17 +174,17 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
     },
 
-    tableData(): IFinancialAssistanceTableCombined[] {
-      return this.combinedFinancialAssistanceStore.getByIds(
+    tableData(): IFinancialAssistanceTableEntity[] {
+      return useFinancialAssistanceStore().getByIdsWithPinnedItems(
         this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.eventId } },
+        { baseDate: this.searchExecutionDate, parentId: { eventId: this.eventId } },
       );
     },
 
     tableProps(): Record<string, unknown> {
       return {
         loading: useFinancialAssistanceStore().searchLoading,
-        itemClass: (item: IFinancialAssistanceTableCombined) => (item.pinned ? 'pinned' : ''),
+        itemClass: (item: IFinancialAssistanceTableEntity) => (item.pinned ? 'pinned' : ''),
       };
     },
 
@@ -228,17 +221,16 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   methods: {
-    async fetchData(params: IAzureSearchParams) {
+    async fetchData(params: ISearchParams) {
       const filterParams = Object.keys(params.filter || {}).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
-      const res = await this.combinedFinancialAssistanceStore.search({
+      const res = await useFinancialAssistanceStore().search({ params: {
         filter: { 'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid }, ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      }, null, true, true);
+      },
+      includeInactiveItems: true });
 
       return res;
     },
@@ -251,30 +243,29 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-    goToEdit(item: IFinancialAssistanceTableCombined) {
+    goToEdit(item: IFinancialAssistanceTableEntity) {
       this.$router.push({
         name: routes.events.financialAssistance.edit.name,
-        params: { faId: item.entity.id },
+        params: { faId: item.id },
       });
     },
 
-    getDetailsRoute(item: IFinancialAssistanceTableCombined) {
+    getDetailsRoute(item: IFinancialAssistanceTableEntity) {
       return {
         name: routes.events.financialAssistance.details.name,
         params: {
-          faId: item.entity.id,
+          faId: item.id,
         },
       };
     },
 
     async fetchPrograms() {
-      const res = await this.combinedProgramStore.search({
+      const res = await useProgramStore().search({ params: {
         filter: { 'Entity/EventId': { value: this.eventId, type: EFilterKeyType.Guid } },
         count: true,
-        queryType: 'full',
-        searchMode: 'all',
-        orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-      }, null, true, true);
+                      orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
+      },
+      includeInactiveItems: true });
 
       if (res) {
         this.programIds = res.ids;
