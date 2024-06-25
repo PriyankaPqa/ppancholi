@@ -184,6 +184,17 @@ export default {
     });
   },
 
+  convertDateStringToDateObject(obj: Record<string, unknown>) {
+  for (const key of Object.keys(obj)) {
+      const value = obj[key];
+      // Check if the value is a valid date string, also check if string has a length of 24 and the end with Z
+      if (typeof value === 'string' && !Number.isNaN(Date.parse(value)) && value.length === 24 && value[23] === 'Z') {
+        obj[key] = new Date(value); // Convert to Date object
+      } else if (typeof value === 'object' && value !== null) {
+        this.convertDateStringToDateObject(value as Record<string, unknown>);
+      }
+  }
+},
    removeInactiveItemsFilterOdata(params: ISearchParams): ISearchParams {
     const newParams = { ...params };
     newParams.filter = newParams.filter || {};

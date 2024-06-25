@@ -91,7 +91,7 @@ export default Vue.extend({
      */
     async onPost({ description }: { description: string }) {
       const searchParams = JSON.parse(this.$route.query.searchParams as string);
-
+      helpers.convertDateStringToDateObject(searchParams);
       const filter = buildQuerySql(helpers.removeInactiveItemsFilterOdata({ filter: searchParams.filter }) as any);
 
       const payload = {

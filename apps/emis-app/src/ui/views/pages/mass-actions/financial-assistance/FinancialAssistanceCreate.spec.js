@@ -13,6 +13,7 @@ import { mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import { format } from 'date-fns';
 
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import Component from './FinancialAssistanceCreate.vue';
 
 const localVue = createLocalVue();
@@ -261,6 +262,39 @@ describe('FinancialAssistanceCreate.vue', () => {
         await wrapper.vm.onPost({ description });
 
         expect(wrapper.vm.onSuccess).toHaveBeenLastCalledWith(mockMassActionEntity());
+      });
+
+      it('should call helper convertDateStringToDateObject with proper parameters', async () => {
+        const description = '';
+        sharedHelpers.convertDateStringToDateObject = jest.fn();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          data() {
+            return {
+              form: {
+                event: mockEventSummary(),
+                table: mockFinancialAssistanceTableEntity(),
+                item: mockOptionItem(),
+                subItem: mockOptionSubItem(),
+                amount: 25,
+                paymentModality: 1,
+              },
+            };
+          },
+          mocks: {
+
+            $route: {
+              query: {
+                searchParams: filtersString,
+                mode: MassActionMode.List,
+              },
+            },
+          },
+        });
+        await wrapper.vm.onPost({ description });
+
+        expect(sharedHelpers.convertDateStringToDateObject).toHaveBeenLastCalledWith(JSON.parse(wrapper.vm.$route.query.searchParams));
       });
     });
 

@@ -9,6 +9,7 @@ import routes from '@/constants/routes';
 import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import Component from './CaseFileStatusMassActionCreate.vue';
 
 const localVue = createLocalVue();
@@ -212,6 +213,37 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
         await wrapper.vm.onPost({ name, description });
 
         expect(wrapper.vm.onSuccess).toHaveBeenLastCalledWith(mockMassActionEntity());
+      });
+
+      it('should call  helper convertDateStringToDateObject with proper parameters', async () => {
+        const description = 'description';
+        const name = 'name';
+        sharedHelpers.convertDateStringToDateObject = jest.fn();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          data() {
+            return {
+              form: {
+                event: mockEventSummary(),
+                reason: { mockOptionItemId: 'option-item-id', specifiedOther: 'other' },
+                rationale: 'rationale',
+                status: 1,
+              },
+            };
+          },
+          mocks: {
+            $route: {
+              query: {
+                searchParams: filtersString,
+                mode: MassActionMode.List,
+              },
+            },
+          },
+        });
+        await wrapper.vm.onPost({ name, description });
+
+        expect(sharedHelpers.convertDateStringToDateObject).toHaveBeenLastCalledWith(JSON.parse(wrapper.vm.$route.query.searchParams));
       });
     });
   });

@@ -11,6 +11,7 @@ import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/enti
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import utils from '@libs/entities-lib/utils';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import Component from './AssessmentCreate.vue';
 
 const localVue = createLocalVue();
@@ -270,6 +271,39 @@ describe('AssessmentCreate.vue', () => {
         await wrapper.vm.onPost({ name, description });
 
         expect(wrapper.vm.onSuccess).toHaveBeenLastCalledWith(mockMassActionEntity());
+      });
+
+      it('should call helper convertDateStringToDateObject method with proper parameters', async () => {
+        const name = 'Mass action';
+        const description = '';
+        sharedHelpers.convertDateStringToDateObject = jest.fn();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          data() {
+            return {
+              details: {
+                event: mockEventSummary(),
+                assessment: mockAssessmentFormEntity(),
+                emailSubject: { translation: { en: 'en', fr: 'fr' } },
+                emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
+                emailTopCustomContent: { translation: { en: 'en top', fr: 'fr top' } },
+              },
+            };
+          },
+          mocks: {
+
+            $route: {
+              query: {
+                searchParams: filtersString,
+                mode: MassActionMode.List,
+              },
+            },
+          },
+        });
+        await wrapper.vm.onPost({ name, description });
+
+        expect(sharedHelpers.convertDateStringToDateObject).toHaveBeenLastCalledWith(JSON.parse(wrapper.vm.$route.query.searchParams));
       });
     });
   });

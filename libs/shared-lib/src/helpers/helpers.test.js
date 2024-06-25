@@ -91,11 +91,13 @@ describe('helpers', () => {
       const ids = ['id1', 'id2', 'id3', 'id4', 'id5'];
       const searchInFilter = { Entity: { Id: { searchIn_az: '{ids}' } } };
       const event1 = { entity: mockEventEntity('id1'), metadata: mockEventEntity('id1') };
-      const service = { mockSearch: jest.fn(() => ({
-        ids: ['r-id-1', 'r-id-2'],
-        value: [event1],
-        count: 15,
-      })) };
+      const service = {
+        mockSearch: jest.fn(() => ({
+          ids: ['r-id-1', 'r-id-2'],
+          value: [event1],
+          count: 15,
+        })),
+      };
       const otherFilter = 'Entity/EventId eq \'id10\'';
       const otherOptions = { top: 999 };
       const batchSize = 3;
@@ -153,6 +155,68 @@ describe('helpers', () => {
 
     test('When value is an invalid phone number, it displays the value untouched', () => {
       expect(helpers.getFormattedPhoneNumber('+15147777', false)).toEqual('+15147777');
+    });
+  });
+
+  describe('convertDateStringToDateObject', () => {
+    it('should convert a Date string into Date object, should not convert a non Date string', () => {
+      const obj = {
+        any: {
+          randomKey1: {
+            lt: '2024-06-20T00:00:00.000Z',
+          },
+          randomKey2: {
+            eq: 'mock-content',
+          },
+        },
+      };
+      helpers.convertDateStringToDateObject(obj);
+      expect(obj).toEqual({
+        any: {
+          randomKey1: {
+            lt: new Date('2024-06-20T00:00:00.000Z'),
+          },
+          randomKey2: {
+            eq: 'mock-content',
+          },
+        },
+      });
+    });
+
+    it('should not convert a Date string if it doesnt have length of 24', () => {
+      const obj = {
+        any: {
+          randomKey1: {
+            lt: '2024-06-20T00:00:00.00Z',
+          },
+        },
+      };
+      helpers.convertDateStringToDateObject(obj);
+      expect(obj).toEqual({
+        any: {
+          randomKey1: {
+            lt: '2024-06-20T00:00:00.00Z',
+          },
+        },
+      });
+    });
+
+    it('should not convert a Date string if it doesnt end with Z', () => {
+      const obj = {
+        any: {
+          randomKey1: {
+            lt: '2024-06-20T00:00:00.000',
+          },
+        },
+      };
+      helpers.convertDateStringToDateObject(obj);
+      expect(obj).toEqual({
+        any: {
+          randomKey1: {
+            lt: '2024-06-20T00:00:00.000',
+          },
+        },
+      });
     });
   });
 

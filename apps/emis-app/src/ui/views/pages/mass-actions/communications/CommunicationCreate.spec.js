@@ -10,6 +10,7 @@ import routes from '@/constants/routes';
 import { MassActionMode, mockMassActionEntity, MassActionCommunicationMethod } from '@libs/entities-lib/mass-action';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import utils from '@libs/entities-lib/utils';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import Component from './CommunicationCreate.vue';
 
 const localVue = createLocalVue();
@@ -289,6 +290,29 @@ describe('CommunicationCreate.vue', () => {
         await wrapper.vm.onPost({ name, description });
 
         expect(wrapper.vm.onSuccess).toHaveBeenLastCalledWith(mockMassActionEntity());
+      });
+
+      it('should call helper convertDateStringToDateObject with proper parameters', async () => {
+        const name = 'Mass action';
+        const description = '';
+        sharedHelpers.convertDateStringToDateObject = jest.fn();
+        doMount(true);
+        wrapper.vm.$refs.base.uploadForm = jest.fn();
+        await wrapper.setData({
+          details: {
+            event: mockEventSummary(),
+            method: MassActionCommunicationMethod.Email,
+            messageSubject: { translation: { en: 'en', fr: 'fr' } },
+            emailMessage: { translation: { en: 'en', fr: 'fr' } },
+            smsMessage: { translation: { en: 'en', fr: 'fr' } },
+          },
+        });
+        wrapper.vm.$refs.base.uploadSuccess = jest.fn(() => true);
+
+        wrapper.vm.$refs.base.response = { data: mockMassActionEntity() };
+        await wrapper.vm.onPost({ name, description });
+
+        expect(sharedHelpers.convertDateStringToDateObject).toHaveBeenLastCalledWith(JSON.parse(wrapper.vm.$route.query.searchParams));
       });
     });
   });
