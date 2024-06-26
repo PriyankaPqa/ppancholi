@@ -8,12 +8,12 @@ import { getUserName } from '@libs/cypress-lib/helpers/users';
 import {
   createEventAndTeam, prepareStateMultipleHouseholds,
   setCasefileStatus, getCaseFiles, prepareStateMassActionXlsxFile,
-} from '../../helpers/prepareState';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { processDataCorrectionFileSteps } from '../critical-path-3/canSteps';
-import { fixtureGenerateTriageDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
-import { BaseDetailsMassAction } from '../../../pages/mass-action/base/baseDetailsMassAction';
-import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+} from '../helpers/prepareState';
+import { removeTeamMembersFromTeam } from '../helpers/teams';
+import { processDataCorrectionFileSteps } from '../critical-path-tests/critical-path-3/canSteps';
+import { fixtureGenerateTriageDataCorrectionXlsxFile } from '../../fixtures/mass-action-data-correction';
+import { BaseDetailsMassAction } from '../../pages/mass-action/base/baseDetailsMassAction';
+import { CaseFilesHomePage } from '../../pages/casefiles/caseFilesHome.page';
 
 const canRoles = [
   UserRoles.level6,

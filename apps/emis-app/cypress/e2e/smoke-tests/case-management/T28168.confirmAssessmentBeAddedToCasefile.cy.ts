@@ -73,8 +73,8 @@
             addAssessmentsPage.getAssessmentsTable().contains('Program').should('be.visible');
             addAssessmentsPage.getAssessmentsTable().contains(`${program.name.translation.en}`).should('be.visible');
             addAssessmentsPage.getAssessmentsTable().contains(`${assessment.name.translation.en}`).should('be.visible');
-            addAssessmentsPage.getAddAssessmentButton().should('be.visible');
-            addAssessmentsPage.getAddAssessmentButton().click();
+            addAssessmentsPage.getAddAssessmentButton(assessment.id).should('be.visible');
+            addAssessmentsPage.getAddAssessmentButton(assessment.id).click();
 
             cy.contains('The assessment was assigned').should('be.visible');
 
