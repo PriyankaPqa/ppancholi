@@ -180,112 +180,24 @@ describe('TaskDetails.vue', () => {
       });
     });
 
-    describe('task-details-team-task-name-description', () => {
-      it('should render task name description when is team task and has description', async () => {
-        await doMount(true, {
-          computed: {
-            isTeamTask: () => true,
-            task: () => mockTeamTaskEntity(),
-            selectedTaskName: () => mockOptionItem({
-              translation: {
-                en: 'This is item 1 description',
-                fr: 'This is item 1 description FR',
-              },
-            }),
-          },
-        });
-        await flushPromises();
-        const element = wrapper.findDataTest('task-details-team-task-name-description');
-        expect(element.exists()).toBeTruthy();
-        expect(element.text()).toEqual('This is item 1 description');
-      });
-
-      it('should not render task name description when is not team task', async () => {
-        await doMount(true, {
-          computed: {
-            isTeamTask: () => false,
-            task: () => mockPersonalTaskEntity(),
-            selectedTaskName: () => mockOptionItem({
-              translation: {
-                en: 'This is item 1 description',
-                fr: 'This is item 1 description FR',
-              },
-            }),
-          },
-        });
-        const element = wrapper.findDataTest('task-details-team-task-name-description');
-        expect(element.exists()).toBeFalsy();
-      });
-
-      it('should not render task name description when is team task but has no description', async () => {
-        await doMount(true, {
-          computed: {
-            isTeamTask: () => true,
-            task: () => mockTeamTaskEntity(),
-            selectedTaskName: () => ({
-              description: {
-                translation: {
-                  en: '',
-                  fr: '',
-                },
-              } }),
-          },
-        });
-        const element = wrapper.findDataTest('task-details-team-task-name-description');
-        expect(element.exists()).toBeFalsy();
-      });
-    });
-
-    describe('task-details-category', () => {
-      it('should be rendered when there is selected category', async () => {
-        await doMount(true, {
-          computed: {
-            isTeamTask: () => true,
-            selectedCategory: () => mockOptionSubItem(),
-          },
-        });
-        await flushPromises();
-        const element = wrapper.findDataTest('task-details-category');
-        expect(element.exists()).toBeTruthy();
-        expect(element.text()).toEqual('case worker 2');
-      });
-
-      it('should render value from specifiedOther when category is other', async () => {
-        await doMount(true, {
-          computed: {
-            isTeamTask: () => true,
-            task: () => mockTeamTaskEntity({
-              category: {
-                optionItemId: 'mock-category-id-1',
-                specifiedOther: 'mock-specified-content',
-              },
-            }),
-            selectedCategory: () => mockOptionSubItem({
-              id: 'mock-category-id-1',
-              isOther: true,
-            }),
-          },
-        });
-        await flushPromises();
-        const element = wrapper.findDataTest('task-details-category');
-        expect(element.exists()).toBeTruthy();
-        expect(element.text()).toEqual('mock-specified-content');
-      });
-    });
-
-    describe('task-details-category-description', () => {
+    describe('task-details-team-task-category-description', () => {
       it('should render task category description when is team task and has description', async () => {
         await doMount(true, {
           computed: {
             isTeamTask: () => true,
             task: () => mockTeamTaskEntity(),
-            selectedCategory: () => mockOptionSubItem(),
+            selectedTaskCategory: () => mockOptionItem({
+              translation: {
+                en: 'This is item 1 description',
+                fr: 'This is item 1 description FR',
+              },
+            }),
           },
         });
         await flushPromises();
-        const element = wrapper.findDataTest('task-details-category-description');
+        const element = wrapper.findDataTest('task-details-team-task-category-description');
         expect(element.exists()).toBeTruthy();
-        expect(element.text()).toEqual('case worker 2 description');
+        expect(element.text()).toEqual('This is item 1 description');
       });
 
       it('should not render task category description when is not team task', async () => {
@@ -293,10 +205,15 @@ describe('TaskDetails.vue', () => {
           computed: {
             isTeamTask: () => false,
             task: () => mockPersonalTaskEntity(),
-            selectedCategory: () => mockOptionSubItem(),
+            selectedTaskCategory: () => mockOptionItem({
+              translation: {
+                en: 'This is item 1 description',
+                fr: 'This is item 1 description FR',
+              },
+            }),
           },
         });
-        const element = wrapper.findDataTest('task-details-category-description');
+        const element = wrapper.findDataTest('task-details-team-task-category-description');
         expect(element.exists()).toBeFalsy();
       });
 
@@ -305,7 +222,7 @@ describe('TaskDetails.vue', () => {
           computed: {
             isTeamTask: () => true,
             task: () => mockTeamTaskEntity(),
-            selectedCategory: () => ({
+            selectedTaskCategory: () => ({
               description: {
                 translation: {
                   en: '',
@@ -314,21 +231,104 @@ describe('TaskDetails.vue', () => {
               } }),
           },
         });
-        const element = wrapper.findDataTest('task-details-category-description');
+        const element = wrapper.findDataTest('task-details-team-task-category-description');
         expect(element.exists()).toBeFalsy();
       });
     });
 
-    describe('task-details-category-section', () => {
-      it('should display category name and description if there is selectedCategory', async () => {
+    describe('task-details-sub-category', () => {
+      it('should be rendered when there is selected sub-category', async () => {
         await doMount(true, {
           computed: {
             isTeamTask: () => true,
-            selectedCategory: () => mockOptionSubItem(),
+            selectedSubCategory: () => mockOptionSubItem(),
           },
         });
         await flushPromises();
-        const element = wrapper.findDataTest('task-details-category-section');
+        const element = wrapper.findDataTest('task-details-sub-category');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toEqual('case worker 2');
+      });
+
+      it('should render value from specifiedOther when sub-category is other', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => true,
+            task: () => mockTeamTaskEntity({
+              subCategory: {
+                optionItemId: 'mock-category-id-1',
+                specifiedOther: 'mock-specified-content',
+              },
+            }),
+            selectedSubCategory: () => mockOptionSubItem({
+              id: 'mock-category-id-1',
+              isOther: true,
+            }),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-sub-category');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toEqual('mock-specified-content');
+      });
+    });
+
+    describe('task-details-sub-category-description', () => {
+      it('should render task sub-category description when is team task and has description', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => true,
+            task: () => mockTeamTaskEntity(),
+            selectedSubCategory: () => mockOptionSubItem(),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-sub-category-description');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toEqual('case worker 2 description');
+      });
+
+      it('should not render task sub-category description when is not team task', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => false,
+            task: () => mockPersonalTaskEntity(),
+            selectedSubCategory: () => mockOptionSubItem(),
+          },
+        });
+        const element = wrapper.findDataTest('task-details-sub-category-description');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('should not render task sub-category description when is team task but has no description', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => true,
+            task: () => mockTeamTaskEntity(),
+            selectedSubCategory: () => ({
+              description: {
+                translation: {
+                  en: '',
+                  fr: '',
+                },
+              } }),
+          },
+        });
+        const element = wrapper.findDataTest('task-details-sub-category-description');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('task-details-sub-category-section', () => {
+      it('should display sub-category name and description if there is selectedCategory', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => true,
+            selectedSubCategory: () => mockOptionSubItem(),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-sub-category-section');
         expect(element.text()).toEqual('task.create_edit.task_category\n'
           + '               \n'
           + '                  case worker 2\n'
@@ -337,15 +337,15 @@ describe('TaskDetails.vue', () => {
           + '                    case worker 2 description');
       });
 
-      it('should not display if there is no selectedCategory', async () => {
+      it('should not display if there is no selectedSubCategory', async () => {
         await doMount(true, {
           computed: {
             isTeamTask: () => true,
-            selectedCategory: () => null,
+            selectedSubCategory: () => null,
           },
         });
         await flushPromises();
-        const element = wrapper.findDataTest('task-details-category-section');
+        const element = wrapper.findDataTest('task-details-sub-category-section');
         expect(element.exists()).toBeFalsy();
       });
     });
@@ -546,8 +546,8 @@ describe('TaskDetails.vue', () => {
       });
     });
 
-    describe('displayedTaskName', () => {
-      it('should return proper task name when is team task', async () => {
+    describe('displayedTaskCategory', () => {
+      it('should return proper task category when is team task', async () => {
         await doMount(true, {
           propsData: {
             id: 'mock-case-file-id-1',
@@ -555,26 +555,26 @@ describe('TaskDetails.vue', () => {
           },
           data() {
             return {
-              selectedTaskNameId: 'mock-id-1',
+              selectedTaskCategoryId: 'mock-id-1',
             };
           },
           computed: {
             task: () => mockTeamTaskEntity({
               id: 'mock-task-id-1',
-              name: { optionItemId: 'mock-id-1' },
+              category: { optionItemId: 'mock-id-1' },
             }),
-            taskNames: () => [mockOptionItem({ id: 'mock-id-1' }), mockOptionItem({ id: 'mock-id-2' })],
+            taskCategories: () => [mockOptionItem({ id: 'mock-id-1' }), mockOptionItem({ id: 'mock-id-2' })],
             isTeamTask: () => true,
             selectedTaskName: () => mockOptionItem({ id: 'mock-id-1' }),
           },
         });
-        expect(wrapper.vm.displayedTaskName).toEqual(wrapper.vm.$m({ translation: {
+        expect(wrapper.vm.displayedTaskCategory).toEqual(wrapper.vm.$m({ translation: {
           en: 'Flood',
           fr: 'Inundation',
         } }));
       });
 
-      it('should return proper task name when is not team task', async () => {
+      it('should return proper task category when is not team task', async () => {
         await doMount(true, {
           propsData: {
             id: 'mock-case-file-id-1',
@@ -582,13 +582,13 @@ describe('TaskDetails.vue', () => {
           },
           data() {
             return {
-              selectedTaskNameId: 'mock-id-1',
+              selectedTaskCategoryId: 'mock-id-1',
             };
           },
           computed: {
             task: () => mockPersonalTaskEntity({
               id: 'mock-task-id-1',
-              name: {
+              category: {
                 optionItemId: 'mock-id-1',
                 specifiedOther: 'personal task name',
               },
@@ -597,7 +597,7 @@ describe('TaskDetails.vue', () => {
           },
         });
         await flushPromises();
-        expect(wrapper.vm.displayedTaskName).toEqual('personal task name');
+        expect(wrapper.vm.displayedTaskCategory).toEqual('personal task name');
       });
     });
 
@@ -1007,8 +1007,8 @@ describe('TaskDetails.vue', () => {
 
       it('should set data properly if is team task', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({
-          name: { optionItemId: 'mock-task-name-1' },
-          category: { optionItemId: 'mock-category-name-1' },
+          category: { optionItemId: 'mock-task-category-1' },
+          subCategory: { optionItemId: 'mock-sub-category-name-1' },
           userWorkingOn: 'mock-user-id-1',
         }));
         await doMount(true, {
@@ -1018,15 +1018,15 @@ describe('TaskDetails.vue', () => {
         });
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
-        expect(wrapper.vm.selectedTaskNameId).toEqual('mock-task-name-1');
-        expect(wrapper.vm.selectedCategoryId).toEqual('mock-category-name-1');
+        expect(wrapper.vm.selectedTaskCategoryId).toEqual('mock-task-category-1');
+        expect(wrapper.vm.selectedSubCategoryId).toEqual('mock-sub-category-name-1');
         expect(wrapper.vm.isWorkingOn).toEqual(true);
       });
 
-      it('should set selectedCategoryId to empty if there is no category', async () => {
+      it('should set selectedSubCategoryId to empty if there is no sub-category', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({
-          name: { optionItemId: 'mock-task-name-1' },
-          category: null,
+          category: { optionItemId: 'mock-task-name-1' },
+          subCategory: null,
         }));
         await doMount(true, {
           computed: {
@@ -1035,7 +1035,7 @@ describe('TaskDetails.vue', () => {
         });
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
-        expect(wrapper.vm.selectedCategoryId).toEqual('');
+        expect(wrapper.vm.selectedSubCategoryId).toEqual('');
       });
 
       it('should set filterOutInactiveTaskNameAndCategory to false', async () => {

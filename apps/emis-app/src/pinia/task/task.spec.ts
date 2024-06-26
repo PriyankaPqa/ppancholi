@@ -91,7 +91,7 @@ describe('Task Store', () => {
       it('returns the sorted types, filter out hidden', () => {
         const store = createTestStore();
         store.taskCategories = [mockOptionItem({ id: '111', isHidden: true }), mockOptionItem({ id: '222', isHidden: false })];
-        const res = store.getTaskName(true, false);
+        const res = store.getTaskCategory(true, false);
         expect(res).toEqual(
           _sortBy(
             [mockOptionItem({ id: '222', isHidden: false })].map((e) => new OptionItem(e)),
@@ -103,7 +103,7 @@ describe('Task Store', () => {
       it('returns the sorted types, with hidden', () => {
         const store = createTestStore();
         store.taskCategories = [mockOptionItem({ id: '111', isHidden: true }), mockOptionItem({ id: '222', isHidden: false })];
-        const res = store.getTaskName(false, false);
+        const res = store.getTaskCategory(false, false);
         expect(res).toEqual(
           _sortBy(
             [mockOptionItem({ id: '111', isHidden: true }), mockOptionItem({ id: '222', isHidden: false })].map((e) => new OptionItem(e)),

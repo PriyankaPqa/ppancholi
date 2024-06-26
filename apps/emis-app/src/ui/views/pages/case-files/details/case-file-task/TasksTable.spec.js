@@ -34,7 +34,7 @@ const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 const { teamStore } = useMockTeamStore(pinia);
 
 const services = mockProvider();
-taskStore.getTaskName = jest.fn(() => mockOptionItems());
+taskStore.getTaskCategory = jest.fn(() => mockOptionItems());
 taskStore.taskCategories = mockOptionItems();
 userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
 userStore.getUserId = jest.fn(() => 'user-1');
@@ -257,10 +257,10 @@ describe('TasksTable.vue', () => {
       });
     });
 
-    describe('task-table-task-name', () => {
+    describe('task-table-task-category', () => {
       it('should be rendered', async () => {
         await doMount({}, false);
-        const element = wrapper.findDataTest(`task-table-task-name-${wrapper.vm.parsedTableData[0].entity.id}`);
+        const element = wrapper.findDataTest(`task-table-task-category-${wrapper.vm.parsedTableData[0].entity.id}`);
         expect(element.exists()).toBeTruthy();
       });
     });
@@ -304,8 +304,8 @@ describe('TasksTable.vue', () => {
                 entity: mockTeamTaskEntity(),
                 metadata: mockTaskMetadata({
                   eventId: 'event-id-2',
-                  taskName: 'mock-task-name',
-                  taskCategory: 'mock-category',
+                  taskCategory: 'mock-task-name',
+                  taskSubCategory: 'mock-category',
                   userWorkingOnNameWithRole: 'user-name',
                 }),
               },
@@ -317,8 +317,8 @@ describe('TasksTable.vue', () => {
                 entity: mockTeamTaskEntity(),
                 metadata: mockTaskMetadata({
                   eventId: 'event-id-2',
-                  taskName: 'mock-task-name',
-                  taskCategory: 'mock-category',
+                  taskCategory: 'mock-task-name',
+                  taskSubCategory: 'mock-category',
                   userWorkingOnNameWithRole: 'user-name',
                 }),
               },
@@ -345,8 +345,8 @@ describe('TasksTable.vue', () => {
                 entity: mockTeamTaskEntity(),
                 metadata: mockTaskMetadata({
                   eventId: 'event-id-2',
-                  taskName: 'mock-task-name',
-                  taskCategory: 'mock-category',
+                  taskCategory: 'mock-task-name',
+                  taskSubCategory: 'mock-category',
                   userWorkingOnNameWithRole: 'user-name',
                 }),
               },
@@ -358,8 +358,8 @@ describe('TasksTable.vue', () => {
                 entity: mockTeamTaskEntity(),
                 metadata: mockTaskMetadata({
                   eventId: 'event-id-2',
-                  taskName: 'mock-task-name',
-                  taskCategory: 'mock-category',
+                  taskCategory: 'mock-task-name',
+                  taskSubCategory: 'mock-category',
                   userWorkingOnNameWithRole: 'user-name',
                 }),
               },
@@ -412,8 +412,8 @@ describe('TasksTable.vue', () => {
           metadata: {
             ...mockTaskMetadata({ id: '1', userWorkingOnId: 'mock-user-id-1' }),
             userWorkingOnNameWithRole: 'mock-user-name-1 (Mock role)',
-            taskCategory: null,
-            taskName: '',
+            taskSubCategory: null,
+            taskCategory: '',
           },
           pinned: false,
         }]);
@@ -445,8 +445,8 @@ describe('TasksTable.vue', () => {
           metadata: {
             ...mockTaskMetadata({ id: '1', userWorkingOnId: null }),
             userWorkingOnNameWithRole: 'common.N/A',
-            taskCategory: null,
-            taskName: '',
+            taskSubCategory: null,
+            taskCategory: '',
           },
           pinned: false,
         }]);
@@ -454,7 +454,7 @@ describe('TasksTable.vue', () => {
 
       it('should return the right data for category and task name in metadata', () => {
         jest.clearAllMocks();
-        const entity = mockTeamTaskEntity({ id: 'team-id-1', name: { optionItemId: 'option-item-id-1' }, category: { optionItemId: 'option-subitem-id-1' } });
+        const entity = mockTeamTaskEntity({ id: 'team-id-1', category: { optionItemId: 'option-item-id-1' }, subCategory: { optionItemId: 'option-subitem-id-1' } });
         const taskCategoriesOptionItems = [mockOptionItem(
           {
             id: 'option-item-id-1',
@@ -487,8 +487,8 @@ describe('TasksTable.vue', () => {
           metadata: {
             ...mockTaskMetadata({ id: '1', userWorkingOnId: null }),
             userWorkingOnNameWithRole: 'common.N/A',
-            taskCategory: 'category name',
-            taskName: 'task name',
+            taskSubCategory: 'category name',
+            taskCategory: 'task name',
           },
           pinned: false,
         }]);
@@ -536,8 +536,8 @@ describe('TasksTable.vue', () => {
     describe('customColumns', () => {
       it('should return proper data when is in case File', () => {
         expect(wrapper.vm.customColumns).toEqual({
-          taskName: 'Metadata/TaskName/Translation/en',
-          taskCategory: 'Metadata/Category/Translation/en',
+          taskCategory: 'Metadata/TaskCategory/Translation/en',
+          taskSubCategory: 'Metadata/SubCategory/Translation/en',
           assignTo: 'Metadata/AssignedTeamName',
           caseFileNumber: 'Metadata/CaseFileNumber',
           isUrgent: 'Entity/IsUrgent',
@@ -558,13 +558,13 @@ describe('TasksTable.vue', () => {
           {
             text: 'task.task_table_header.task',
             sortable: true,
-            value: wrapper.vm.customColumns.taskName,
+            value: wrapper.vm.customColumns.taskCategory,
             width: '25%',
           },
           {
             sortable: true,
             text: 'task.task_table_header.category',
-            value: 'Metadata/Category/Translation/en',
+            value: 'Metadata/SubCategory/Translation/en',
             width: '15%',
           },
           {
@@ -618,13 +618,13 @@ describe('TasksTable.vue', () => {
           {
             text: 'task.task_table_header.task',
             sortable: true,
-            value: wrapper.vm.customColumns.taskName,
+            value: wrapper.vm.customColumns.taskCategory,
             width: '20%',
           },
           {
             sortable: true,
             text: 'task.task_table_header.category',
-            value: 'Metadata/Category/Translation/en',
+            value: 'Metadata/SubCategory/Translation/en',
             width: '15%',
           },
 
@@ -679,10 +679,7 @@ describe('TasksTable.vue', () => {
 
     describe('filterOptions', () => {
       it('should return proper data when is in Case file, including inactive task name', async () => {
-        await wrapper.setProps({
-          isInCaseFile: true,
-        });
-        taskStore.getTaskName = jest.fn(() => [mockOptionItem(), mockOptionItem({
+        taskStore.getTaskCategory = jest.fn(() => [mockOptionItem(), mockOptionItem({
           name: {
             translation: {
               en: 'Fire',
@@ -691,13 +688,16 @@ describe('TasksTable.vue', () => {
           },
           status: Status.Inactive,
         })]);
+        await wrapper.setProps({
+          isInCaseFile: true,
+        });
         const priorityItems = [
           { text: 'common.yes', value: true },
           { text: 'common.no', value: false },
         ];
         expect(wrapper.vm.filterOptions).toEqual([
           {
-            key: 'Entity/Name/OptionItemId',
+            key: 'Entity/Category/OptionItemId',
             type: EFilterType.MultiSelect,
             keyType: EFilterKeyType.Guid,
             label: 'task.create_edit.task_name',
@@ -733,10 +733,11 @@ describe('TasksTable.vue', () => {
       });
 
       it('should return proper data with event filter when is not in Case file', async () => {
+        jest.clearAllMocks();
+        taskStore.getTaskCategory = jest.fn(() => mockOptionItems());
         await wrapper.setProps({
           isInCaseFile: false,
         });
-        taskStore.getTaskName = jest.fn(() => mockOptionItems());
         const priorityItems = [
           { text: 'common.yes', value: true },
           { text: 'common.no', value: false },
@@ -759,7 +760,7 @@ describe('TasksTable.vue', () => {
             type: 'select',
           },
           {
-            key: 'Entity/Name/OptionItemId',
+            key: 'Entity/Category/OptionItemId',
             type: EFilterType.MultiSelect,
             keyType: EFilterKeyType.Guid,
             label: 'task.create_edit.task_name',

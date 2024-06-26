@@ -19,7 +19,7 @@ export function getExtensionComponents(
   const taskCategoriesFetched = ref(false);
   const taskCategories = ref([]) as Ref<IOptionItem[]>;
 
-  function getTaskName(filterOutHidden = true, filterOutInactive = true, actualValue?: string[] | string) {
+  function getTaskCategory(filterOutHidden = true, filterOutInactive = true, actualValue?: string[] | string) {
     const items = filterAndSortActiveItems(taskCategories.value, filterOutInactive, actualValue);
     return filterOutHidden ? items.filter((i) => !i.isHidden) : items;
   }
@@ -31,7 +31,7 @@ export function getExtensionComponents(
       taskCategoriesFetched.value = true;
     }
 
-    return getTaskName();
+    return getTaskCategory();
   }
 
   async function createTask(task: ITaskEntityData) {
@@ -125,7 +125,7 @@ export function getExtensionComponents(
     createTask,
     editTask,
     fetchTaskCategories,
-    getTaskName,
+    getTaskCategory,
     setWorkingOn,
     taskAction,
     getNotificationHelperView,

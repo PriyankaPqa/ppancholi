@@ -28,10 +28,10 @@ export enum ActionTaken {
 }
 
 export interface ITaskEntityData extends IEntity {
-  name: IListOption;
+  category: IListOption;
   caseFileId: string;
   isUrgent: boolean;
-  category: IListOption;
+  subCategory: IListOption;
   description: string;
   assignedTeamId: string;
   taskStatus: TaskStatus;

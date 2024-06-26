@@ -11,7 +11,7 @@ export function getMockExtensionComponents() {
     createTask: jest.fn(() => entity),
     editTask: jest.fn(() => entity),
     fetchTaskCategories: jest.fn(() => options),
-    getTaskName: jest.fn(() => options),
+    getTaskCategory: jest.fn(() => options),
     setWorkingOn: jest.fn(() => entity),
     taskAction: jest.fn(() => entity),
     getNotificationHelperView: jest.fn(() => notificationHelperView),

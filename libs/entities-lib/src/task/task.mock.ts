@@ -129,13 +129,13 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
 const mockBaseTaskEntityData = (force? : Partial<ITaskEntityData>): ITaskEntityData => ({
   ...mockBaseData(),
   id: '',
-  name: {
+  category: {
     optionItemId: '',
     specifiedOther: '',
   },
   caseFileId: 'mock-case-file-id-1',
   isUrgent: false,
-  category: {
+  subCategory: {
     optionItemId: '',
     specifiedOther: '',
   },
@@ -155,11 +155,11 @@ export const mockTeamTaskEntity = (force? : Partial<ITaskEntityData>): ITaskEnti
   ...mockBaseTaskEntityData(),
   id: 'mock-team-task-id-1',
   taskType: TaskType.Team,
-  name: {
+  category: {
     optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
     specifiedOther: '',
   },
-  category: {
+  subCategory: {
     optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
     specifiedOther: '',
   },
@@ -169,11 +169,11 @@ export const mockTeamTaskEntity = (force? : Partial<ITaskEntityData>): ITaskEnti
 export const mockPersonalTaskEntity = (force? : Partial<ITaskEntityData>): ITaskEntityData => ({
   ...mockBaseTaskEntityData(),
   id: 'mock-personal-task-id-1',
-  name: {
+  category: {
     optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
     specifiedOther: '',
   },
-  category: {
+  subCategory: {
     optionItemId: '986192ea-3f7b-4539-8a65-214161aea123',
     specifiedOther: '',
   },

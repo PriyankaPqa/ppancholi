@@ -194,8 +194,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       TaskStatus,
       UserRoles,
       originalForm: {
-        name: null as IListOption,
         category: null as IListOption,
+        subCategory: null as IListOption,
         description: '',
         dueDate: '' as string | Date,
         isUrgent: false,
@@ -214,8 +214,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
 
     isDirty(): boolean {
       return !_isEqual(this.originalForm, {
-        name: this.localTask.name,
         category: this.localTask.category,
+        subCategory: this.localTask.subCategory,
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
@@ -284,8 +284,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
 
     setOriginalData() {
       this.originalForm = _cloneDeep({
-        name: this.localTask.name,
         category: this.localTask.category,
+        subCategory: this.localTask.subCategory,
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,

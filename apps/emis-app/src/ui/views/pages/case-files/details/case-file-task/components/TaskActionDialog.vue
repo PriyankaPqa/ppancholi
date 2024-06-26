@@ -142,12 +142,12 @@ export default Vue.extend({
       required: true,
     },
 
-    selectedTaskName: {
+    selectedTaskCategory: {
       type: String,
       default: '',
     },
 
-    selectedCategory: {
+    selectedSubCategory: {
       type: String,
       default: '',
     },

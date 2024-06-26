@@ -24,7 +24,7 @@ const services = mockProvider();
 describe('CreateEditTask.vue', () => {
   let wrapper;
 
-  taskStore.getTaskName = jest.fn(() => mockOptionItems());
+  taskStore.getTaskCategory = jest.fn(() => mockOptionItems());
   teamStore.getByIds = jest.fn(() => mockTeamEntities());
 
   const doMount = async (shallow = true, otherOptions = {}, level = 6) => {
@@ -42,7 +42,7 @@ describe('CreateEditTask.vue', () => {
       computed: {
         caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
         event: () => mockEventEntity({ id: 'mock-event-id' }),
-        taskNames: () => mockOptionItems(),
+        taskCategories: () => mockOptionItems(),
         assignedTeam: () => mockTeamEntity(),
       },
       mocks: {
@@ -71,7 +71,7 @@ describe('CreateEditTask.vue', () => {
           isEditMode: () => true,
           caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
           event: () => mockEventEntity({ id: 'mock-event-id' }),
-          taskNames: () => mockOptionItems(),
+          taskCategories: () => mockOptionItems(),
         },
       });
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
@@ -85,7 +85,7 @@ describe('CreateEditTask.vue', () => {
           isEditMode: () => true,
           caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
           event: () => mockEventEntity({ id: 'mock-event-id' }),
-          taskNames: () => mockOptionItems(),
+          taskCategories: () => mockOptionItems(),
         },
       });
       wrapper.vm.$confirm = jest.fn(() => true);
@@ -100,7 +100,7 @@ describe('CreateEditTask.vue', () => {
           isEditMode: () => false,
           caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
           event: () => mockEventEntity({ id: 'mock-event-id' }),
-          taskNames: () => mockOptionItems(),
+          taskCategories: () => mockOptionItems(),
         },
       });
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
@@ -133,11 +133,11 @@ describe('CreateEditTask.vue', () => {
       it('should return false if original form data is same as the current form', async () => {
         await wrapper.setData({
           originalForm: {
-            name: {
+            category: {
               optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
               specifiedOther: '',
             },
-            category: {
+            subCategory: {
               optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
               specifiedOther: '',
             },
@@ -153,11 +153,11 @@ describe('CreateEditTask.vue', () => {
       it('should return true if original form data is not same as the current form', async () => {
         await wrapper.setData({
           originalForm: {
-            name: {
+            category: {
               optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
               specifiedOther: '',
             },
-            category: {
+            subCategory: {
               optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
               specifiedOther: '',
             },
@@ -259,7 +259,7 @@ describe('CreateEditTask.vue', () => {
           computed: {
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         await wrapper.setData({
@@ -287,7 +287,7 @@ describe('CreateEditTask.vue', () => {
           computed: {
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => [mockOptionItem({ id: '1', isOther: true, subitems: [] }), mockOptionItem({ id: '2' })],
+            taskCategories: () => [mockOptionItem({ id: '1', isOther: true, subitems: [] }), mockOptionItem({ id: '2' })],
           },
         });
         await wrapper.setData({
@@ -298,7 +298,7 @@ describe('CreateEditTask.vue', () => {
         expectedResult.taskStatus = TaskStatus.InProgress;
         expectedResult.caseFileId = 'mock-case-file-id-1';
         expectedResult.assignedTeamId = '';
-        expectedResult.category = {
+        expectedResult.subCategory = {
           optionItemId: null,
           specifiedOther: null,
         };
@@ -318,7 +318,7 @@ describe('CreateEditTask.vue', () => {
             isEditMode: () => false,
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         teamStore.getTeamsByEvent = jest.fn(() => [
@@ -340,7 +340,7 @@ describe('CreateEditTask.vue', () => {
             task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-id-2' }),
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         teamStore.fetch = jest.fn(() => [
@@ -371,7 +371,7 @@ describe('CreateEditTask.vue', () => {
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
             isEditMode: () => false,
-            taskNames: () => [mockOptionItem({ id: '1', isOther: true }), mockOptionItem({ id: '2' })],
+            taskCategories: () => [mockOptionItem({ id: '1', isOther: true }), mockOptionItem({ id: '2' })],
             assignedTeam: () => null,
           },
         });
@@ -447,7 +447,7 @@ describe('CreateEditTask.vue', () => {
             isEditMode: () => false,
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -467,7 +467,7 @@ describe('CreateEditTask.vue', () => {
             isEditMode: () => true,
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -484,14 +484,14 @@ describe('CreateEditTask.vue', () => {
         });
         wrapper.vm.setOriginalData();
         expect(wrapper.vm.originalForm).toEqual({
-          category: {
+          subCategory: {
             optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
             specifiedOther: '',
           },
           description: 'mock-description',
           dueDate: '',
           isUrgent: false,
-          name: {
+          category: {
             optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
             specifiedOther: '',
           },
@@ -590,7 +590,7 @@ describe('CreateEditTask.vue', () => {
             isEditMode: () => false,
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         taskStore.getTaskName = jest.fn();
@@ -617,7 +617,7 @@ describe('CreateEditTask.vue', () => {
             isEditMode: () => false,
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         wrapper.vm.fetchAssignedTeam = jest.fn();
@@ -643,7 +643,7 @@ describe('CreateEditTask.vue', () => {
             isEditMode: () => true,
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
             event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
+            taskCategories: () => mockOptionItems(),
           },
         });
         wrapper.vm.loadTask = jest.fn();

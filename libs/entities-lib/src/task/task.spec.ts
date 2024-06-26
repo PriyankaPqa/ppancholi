@@ -11,14 +11,14 @@ describe('>>> Task', () => {
       expect(task.id).toBe('***');
     });
 
-    it('should instantiate name', () => {
+    it('should instantiate category', () => {
       const task = new TaskEntity({
         ...mockTaskData,
-        name: {
+        category: {
           optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
           specifiedOther: '',
         } });
-      expect(task.name).toEqual({
+      expect(task.category).toEqual({
         optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
           specifiedOther: '',
       });
@@ -34,15 +34,15 @@ describe('>>> Task', () => {
       expect(task.isUrgent).toBe(true);
     });
 
-    it('should instantiate category', () => {
+    it('should instantiate subCategory', () => {
       const task = new TaskEntity({
         ...mockTaskData,
-        category: {
+        subCategory: {
           optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
           specifiedOther: '',
         },
       });
-      expect(task.category).toEqual(
+      expect(task.subCategory).toEqual(
         {
           optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
           specifiedOther: '',
@@ -98,11 +98,11 @@ describe('>>> Task', () => {
     it('should instantiate properties with proper data when no params', () => {
       const task = new TaskEntity();
       expect(task.id).toBe('');
-      expect(task.name).toEqual({ optionItemId: null, specifiedOther: null });
+      expect(task.category).toEqual({ optionItemId: null, specifiedOther: null });
       expect(task.taskType).toBe(null);
       expect(task.caseFileId).toBe('');
       expect(task.isUrgent).toBe(false);
-      expect(task.category).toEqual({ optionItemId: null, specifiedOther: null });
+      expect(task.subCategory).toEqual({ optionItemId: null, specifiedOther: null });
       expect(task.description).toBe('');
       expect(task.dateAdded).toBe('');
       expect(task.dueDate).toBe('');
