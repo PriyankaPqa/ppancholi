@@ -591,7 +591,12 @@ export default Vue.extend({
         customizeCell(options) {
           options.excelCell.font = { name: 'Arial', size: 12 };
           options.excelCell.alignment = { horizontal: 'left' };
-        },
+          if (options.gridCell.column.dataType === 'date' && (options.gridCell.column as ExtendedColumn).asUtcDate) {
+            if (options.gridCell.value instanceof Date) {
+              options.excelCell.value = helpers.getLocalStringDate(options.gridCell.value, 'Report.Export');
+            }
+          }
+          },
       }).then(() => {
         // called after all the data has been downloaded by the grid
         if (this.exportMode !== 'csv') {

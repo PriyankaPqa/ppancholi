@@ -16,6 +16,7 @@ export const dateTypes = {
   ] as string[],
 
   convertToUtc: [
+    'Report.Export',
   ] as string[],
 
   static: [

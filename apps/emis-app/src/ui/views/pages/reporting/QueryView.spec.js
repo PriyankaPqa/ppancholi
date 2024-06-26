@@ -583,6 +583,102 @@ describe('QueryView.vue', () => {
         await wrapper.vm.onExporting({ });
         expect(exportDataGrid).toHaveBeenCalled();
       });
+
+      it('should format date cells correctly if dateType is date, and asUtcDate', async () => {
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => true) };
+
+        const mockComponent = {};
+        const mockWorksheet = {};
+        const mockExcelCell = {};
+        const mockOptions = {
+          gridCell: {
+            column: { dataType: 'date', asUtcDate: true },
+            value: new Date('2023-06-19T00:00:00Z'),
+          },
+          excelCell: mockExcelCell,
+          worksheet: mockWorksheet,
+        };
+
+        helpers.getLocalStringDate = jest.fn(() => '2023-06-19');
+
+        await wrapper.vm.onExporting({ component: mockComponent }).then(() => {
+          exportDataGrid.mock.calls[0][0].customizeCell(mockOptions);
+
+          expect(helpers.getLocalStringDate).toHaveBeenCalledWith(new Date('2023-06-19T00:00:00Z'), 'Report.Export');
+          expect(mockExcelCell.value).toBe('2023-06-19');
+        });
+      });
+
+      it('should not format date cells correctly if dateType is date, but not asUtcDate', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => true) };
+        const mockComponent = {};
+        const mockWorksheet = {};
+        const mockExcelCell = { value: new Date('2023-06-19T00:00:00Z').toISOString() };
+        const mockOptions = {
+          gridCell: {
+            column: { dataType: 'date', asUtcDate: false },
+            value: new Date('2023-06-19T00:00:00Z'),
+          },
+          excelCell: mockExcelCell,
+          worksheet: mockWorksheet,
+        };
+        helpers.getLocalStringDate = jest.fn();
+
+        await wrapper.vm.onExporting({ component: mockComponent }).then(() => {
+          exportDataGrid.mock.calls[0][0].customizeCell(mockOptions);
+
+          expect(helpers.getLocalStringDate).not.toHaveBeenCalled();
+          expect(mockExcelCell.value).toBe(new Date('2023-06-19T00:00:00Z').toISOString());
+        });
+      });
+
+      it('should not format non-date type cells', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => true) };
+        const mockComponent = {};
+        const mockWorksheet = {};
+        const mockExcelCell = { value: 'random-mock-string' };
+        const mockOptions = {
+          gridCell: {
+            column: { dataType: 'string' },
+            value: 'random-mock-string',
+          },
+          excelCell: mockExcelCell,
+          worksheet: mockWorksheet,
+        };
+        helpers.getLocalStringDate = jest.fn();
+
+        await wrapper.vm.onExporting({ component: mockComponent }).then(() => {
+          exportDataGrid.mock.calls[0][0].customizeCell(mockOptions);
+
+          expect(helpers.getLocalStringDate).not.toHaveBeenCalled();
+          expect(mockExcelCell.value).toBe('random-mock-string');
+        });
+      });
+
+      it('should not format date cells if value is not a Date', async () => {
+        wrapper.vm.$refs.exportDialog = { open: jest.fn(() => true) };
+
+        const mockComponent = {};
+        const mockWorksheet = {};
+        const mockExcelCell = { value: 'random-mock-string' };
+        const mockOptions = {
+          gridCell: {
+            column: { dataType: 'date', asUtcDate: true },
+            value: 'random-mock-string',
+          },
+          excelCell: mockExcelCell,
+          worksheet: mockWorksheet,
+        };
+
+        await wrapper.vm.onExporting({ component: mockComponent }).then(() => {
+          exportDataGrid.mock.calls[0][0].customizeCell(mockOptions);
+
+          expect(helpers.getLocalStringDate).not.toHaveBeenCalled();
+          expect(mockExcelCell.value).toBe('random-mock-string');
+        });
+      });
     });
 
     describe('shareToUsers', () => {
