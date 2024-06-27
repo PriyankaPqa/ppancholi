@@ -32,7 +32,7 @@
             :label="$t('task.create_edit.task_name') + ' *'"
             :disabled="formDisabled"
             data-test="task-category-team-task"
-            @change="setTaskNameIdAndResetForm($event)" />
+            @change="setTaskCategoryIdAndResetForm($event)" />
           <div v-if="selectedTaskCategory && $m(selectedTaskCategory.description)" class="ml-1 mb-4 option-list-description" data-test="task-category-description">
             <v-icon class="mr-1" small>
               mdi-alert-circle
@@ -47,14 +47,14 @@
       <v-row v-if="shouldDisplaySubCategorySelect">
         <v-col cols="6" class="py-1">
           <v-select-with-validation
-            v-model="localTeamTaskForm.category.optionItemId"
+            v-model="localTeamTaskForm.subCategory.optionItemId"
             :items="taskCategories"
             :item-text="(item) => item ? $m(item.name) : ''"
             :item-value="(item) => item ? item.id : ''"
             :rules="rules.teamTaskSubCategory"
             :disabled="formDisabled"
             :label="$t('task.create_edit.task_category') + ' *'"
-            data-test="task-category"
+            data-test="task-sub-category"
             @change="setSubCategoryIdAndResetSpecifiedOther($event)" />
           <div v-if="selectedSubCategory && $m(selectedSubCategory.description)" class="ml-1 mb-4 option-list-description" data-test="task-sub-category-description">
             <v-icon class="mr-1" small>
@@ -196,16 +196,16 @@ export default mixins(caseFileTask).extend({
   },
 
   methods: {
-    setTaskNameIdAndResetForm() {
+    setTaskCategoryIdAndResetForm() {
       this.selectedTaskCategoryId = this.localTeamTaskForm.category.optionItemId;
       this.localTeamTaskForm.description = '';
-      this.localTeamTaskForm.category.optionItemId = null;
-      this.localTeamTaskForm.category.specifiedOther = null;
+      this.localTeamTaskForm.subCategory.optionItemId = null;
+      this.localTeamTaskForm.subCategory.specifiedOther = null;
       this.$emit('reset-form-validation');
     },
 
-    setSubCategoryIdAndResetSpecifiedOther(categoryId: string) {
-      this.selectedSubCategoryId = categoryId;
+    setSubCategoryIdAndResetSpecifiedOther(subCategoryId: string) {
+      this.selectedSubCategoryId = subCategoryId;
       this.localTeamTaskForm.subCategory.specifiedOther = null;
     },
   },

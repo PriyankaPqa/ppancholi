@@ -24,20 +24,20 @@ export default Vue.extend({
       selectedSubCategoryId: '',
       toggleLoading: false,
       isWorkingOn: false,
-      filterOutHiddenTaskName: true,
-      filterOutInactiveTaskNameAndCategory: true,
+      filterOutHiddenTaskCategory: true,
+      filterOutInactiveTaskCategoryAndSubCategory: true,
       localTask: new TaskEntity(),
     };
   },
 
   computed: {
     taskCategories(): IOptionItem[] {
-      return useTaskStore().getTaskCategory(this.filterOutHiddenTaskName, this.filterOutInactiveTaskNameAndCategory, this.selectedTaskCategoryId);
+      return useTaskStore().getTaskCategory(this.filterOutHiddenTaskCategory, this.filterOutInactiveTaskCategoryAndSubCategory, this.selectedTaskCategoryId);
     },
 
     taskSubCategories(): IOptionSubItem[] {
       const sub = this.taskCategories?.find((t) => t?.id === this.selectedTaskCategoryId)?.subitems || [];
-      return useTaskStore().filterAndSortActiveSubItems(sub, this.filterOutInactiveTaskNameAndCategory, this.selectedSubCategoryId);
+      return useTaskStore().filterAndSortActiveSubItems(sub, this.filterOutInactiveTaskCategoryAndSubCategory, this.selectedSubCategoryId);
     },
 
     selectedTaskCategory(): IOptionItem {
