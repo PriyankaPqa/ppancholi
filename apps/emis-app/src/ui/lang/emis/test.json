@@ -3290,7 +3290,6 @@
     "task.create_edit.due_date": "task.create_edit.due_date",
     "task.create_edit.task_category": "task.create_edit.task_category",
     "task.create_edit.task_description": "task.create_edit.task_description",
-    "task.create_edit.task_name": "task.create_edit.task_name",
     "task.create_edit.urgent": "task.create_edit.urgent",
     "task.due_today": "task.due_today",
     "task.edit.title.personal": "task.edit.title.personal",

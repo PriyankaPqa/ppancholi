@@ -28,7 +28,7 @@
             <v-col cols="12" class="border-all border-radius-6 pa-0">
               <v-row v-if="selectedSubCategory" class="border-bottom ma-0 px-2" data-test="task-action-dialog-sub-category">
                 <v-col cols="3" class="font-weight-bold">
-                  {{ $t('task.create_edit.task_category') }}
+                  {{ $t('task.task_sub_category') }}
                 </v-col>
                 <v-col cols="9">
                   {{ selectedSubCategory }}

@@ -29,7 +29,7 @@
             :item-text="(item) => item ? $m(item.name) : null"
             :item-value="(item) => item ? item.id : null"
             :rules="rules.teamTaskCategory"
-            :label="$t('task.create_edit.task_name') + ' *'"
+            :label="$t('task.task_category') + ' *'"
             :disabled="formDisabled"
             data-test="task-category-team-task"
             @change="setTaskCategoryIdAndResetForm($event)" />
@@ -48,12 +48,12 @@
         <v-col cols="6" class="py-1">
           <v-select-with-validation
             v-model="localTeamTaskForm.subCategory.optionItemId"
-            :items="taskCategories"
+            :items="taskSubCategories"
             :item-text="(item) => item ? $m(item.name) : ''"
             :item-value="(item) => item ? item.id : ''"
             :rules="rules.teamTaskSubCategory"
             :disabled="formDisabled"
-            :label="$t('task.create_edit.task_category') + ' *'"
+            :label="$t('task.task_sub_category') + ' *'"
             data-test="task-sub-category"
             @change="setSubCategoryIdAndResetSpecifiedOther($event)" />
           <div v-if="selectedSubCategory && $m(selectedSubCategory.description)" class="ml-1 mb-4 option-list-description" data-test="task-sub-category-description">

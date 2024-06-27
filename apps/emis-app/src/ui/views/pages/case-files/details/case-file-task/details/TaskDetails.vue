@@ -91,7 +91,7 @@
             <template v-if="isTeamTask">
               <v-row v-if="selectedSubCategory" class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-sub-category-section">
                 <v-col cols="4" class="font-weight-bold">
-                  {{ $t('task.create_edit.task_category') }}
+                  {{ $t('task.task_sub_category') }}
                 </v-col>
                 <v-col>
                   <div data-test="task-details-sub-category">
@@ -158,8 +158,8 @@
       v-if="showTaskActionDialog"
       :task="task"
       :event-id="caseFile.eventId"
-      :selected-task-name="displayedTaskCategory"
-      :selected-category="displayedSubCategory"
+      :selected-task-category="displayedTaskCategory"
+      :selected-sub-category="displayedSubCategory"
       :show.sync="showTaskActionDialog" />
     <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
   </rc-page-content>
@@ -305,7 +305,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 
   async created() {
     this.loading = true;
-    this.filterOutInactiveTaskNameAndCategory = false;
+    this.filterOutInactiveTaskCategoryAndSubCategory = false;
     await useTaskStore().fetch({ id: this.taskId, caseFileId: this.id });
     await useTaskStore().fetchTaskCategories();
     if (this.isTeamTask) {

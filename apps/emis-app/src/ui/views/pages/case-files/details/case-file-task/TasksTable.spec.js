@@ -563,7 +563,7 @@ describe('TasksTable.vue', () => {
           },
           {
             sortable: true,
-            text: 'task.task_table_header.category',
+            text: 'task.task_table_header.sub_category',
             value: 'Metadata/SubCategory/Translation/en',
             width: '15%',
           },
@@ -623,7 +623,7 @@ describe('TasksTable.vue', () => {
           },
           {
             sortable: true,
-            text: 'task.task_table_header.category',
+            text: 'task.task_table_header.sub_category',
             value: 'Metadata/SubCategory/Translation/en',
             width: '15%',
           },
@@ -700,7 +700,7 @@ describe('TasksTable.vue', () => {
             key: 'Entity/Category/OptionItemId',
             type: EFilterType.MultiSelect,
             keyType: EFilterKeyType.Guid,
-            label: 'task.create_edit.task_name',
+            label: 'task.task_category',
             items: [
               {
                 text: 'Flood',
@@ -763,7 +763,7 @@ describe('TasksTable.vue', () => {
             key: 'Entity/Category/OptionItemId',
             type: EFilterType.MultiSelect,
             keyType: EFilterKeyType.Guid,
-            label: 'task.create_edit.task_name',
+            label: 'task.task_category',
             items: [{
               text: 'Flood',
               value: '1',

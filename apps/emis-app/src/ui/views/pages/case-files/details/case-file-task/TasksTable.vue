@@ -332,7 +332,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           width: this.isInCaseFile ? '25%' : '20%',
         },
         {
-          text: this.$t('task.task_table_header.category') as string,
+          text: this.$t('task.task_table_header.sub_category') as string,
           sortable: true,
           value: this.customColumns.taskSubCategory,
           width: '15%',
@@ -419,7 +419,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           key: 'Entity/Category/OptionItemId',
           type: EFilterType.MultiSelect,
           keyType: EFilterKeyType.Guid,
-          label: this.$t('task.create_edit.task_name') as string,
+          label: this.$t('task.task_category') as string,
           items: taskCategories,
         },
         {

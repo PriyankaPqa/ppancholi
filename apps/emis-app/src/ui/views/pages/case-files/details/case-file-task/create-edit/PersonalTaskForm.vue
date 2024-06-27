@@ -16,7 +16,7 @@
           <v-text-field-with-validation
             v-model="localPersonalTaskForm.category.specifiedOther"
             :rules="rules.personalTaskCategory"
-            :label="$t('task.create_edit.task_name') + ' *'"
+            :label="$t('task.task_category') + ' *'"
             data-test="task-category-personal-task" />
         </v-col>
       </v-row>

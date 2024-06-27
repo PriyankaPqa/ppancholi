@@ -329,7 +329,7 @@ describe('TaskDetails.vue', () => {
         });
         await flushPromises();
         const element = wrapper.findDataTest('task-details-sub-category-section');
-        expect(element.text()).toEqual('task.create_edit.task_category\n'
+        expect(element.text()).toEqual('task.task_sub_category\n'
           + '               \n'
           + '                  case worker 2\n'
           + '                 \n'

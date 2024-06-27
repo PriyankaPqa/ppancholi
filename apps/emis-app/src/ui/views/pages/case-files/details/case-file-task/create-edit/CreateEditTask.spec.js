@@ -532,7 +532,8 @@ describe('CreateEditTask.vue', () => {
         expect(wrapper.vm.localTask).toEqual(mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }));
       });
 
-      it('should set isWorkingOn properly and call useUserAccountMetadataStore fetch if there is user working on when is team task', async () => {
+      // eslint-disable-next-line vue/max-len
+      it('should set isWorkingOn properly and call useUserAccountMetadataStore fetch if there is user working on, and set selectedCategoryId and selectedSubCategoryId when is team task', async () => {
         jest.clearAllMocks();
         await doMount(true, {
           propsData: {
@@ -552,6 +553,8 @@ describe('CreateEditTask.vue', () => {
         await flushPromises();
         expect(wrapper.vm.isWorkingOn).toEqual(true);
         expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', GlobalHandler.Partial);
+        expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
+        expect(wrapper.vm.selectedSubCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
       });
 
       it('should set call useUserAccountMetadataStore fetch if user is not the creator when is personal task', async () => {
