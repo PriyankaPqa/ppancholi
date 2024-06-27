@@ -1040,11 +1040,11 @@ describe('TaskDetails.vue', () => {
 
       it('should set filterOutInactiveTaskNameAndCategory to false', async () => {
         await wrapper.setData({
-          filterOutInactiveTaskNameAndCategory: () => true,
+          filterOutInactiveTaskCategoryAndSubCategory: () => true,
         });
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
-        expect(wrapper.vm.filterOutInactiveTaskNameAndCategory).toEqual(false);
+        expect(wrapper.vm.filterOutInactiveTaskCategoryAndSubCategory).toEqual(false);
       });
     });
   });
