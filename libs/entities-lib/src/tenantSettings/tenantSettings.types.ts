@@ -13,7 +13,6 @@ export enum FeatureKeys {
   FeatureDashboard = 'FeatureDashboard',
   AppointmentBooking = 'AppointmentBooking',
   RemainingInHomeForAdditionalMembers = 'RemainingInHomeForAdditionalMembers',
-  EmailSendingPreview = 'EmailSendingPreview',
   Lodging = 'Lodging',
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
   MovePayments = 'MovePayments',
