@@ -31,7 +31,6 @@ describe('TeamTaskForm.vue', () => {
   };
   beforeEach(async () => {
     await doMount();
-    taskStore.getTaskName = jest.fn(() => mockOptionItems());
   });
 
   describe('Template', () => {

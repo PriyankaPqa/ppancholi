@@ -466,13 +466,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
    parsedTableData(): IParsedTaskCombined[] {
-     const taskNameOptionItems = useTaskStore().taskCategories;
+     const taskCategoryOptionItems = useTaskStore().taskCategories;
 
       return this.rawTableData?.map((d) => {
-        // taskCategories are subitems of taskNames
-        const taskCategoryOptionItems = taskNameOptionItems?.find((c) => c.id === d.entity.category.optionItemId)?.subitems || [];
-        const taskCategory = helpers.getOptionItemNameFromListOption(taskNameOptionItems, d.entity.category);
-        const taskSubCategory = helpers.getOptionItemNameFromListOption(taskCategoryOptionItems, d.entity.subCategory);
+        const taskSubcategoryOptionItems = taskCategoryOptionItems?.find((c) => c.id === d.entity.category.optionItemId)?.subitems || [];
+        const taskCategory = helpers.getOptionItemNameFromListOption(taskCategoryOptionItems, d.entity.category);
+        const taskSubCategory = helpers.getOptionItemNameFromListOption(taskSubcategoryOptionItems, d.entity.subCategory);
 
         let userWorkingOnNameWithRole = '';
         if (this.isInCaseFile) {

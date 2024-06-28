@@ -596,7 +596,6 @@ describe('CreateEditTask.vue', () => {
             taskCategories: () => mockOptionItems(),
           },
         });
-        taskStore.getTaskName = jest.fn();
         wrapper.vm.prepareCreateTask = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
