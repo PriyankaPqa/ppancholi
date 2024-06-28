@@ -12,7 +12,8 @@ const mockData = mockAppointmentProgram();
           expect(item.eventId).toEqual(mockData.eventId);
           expect(item.name).toEqual(mockData.name);
           expect(item.timeZone).toEqual(mockData.timeZone);
-          expect(item.bookingHours).toEqual(mockData.bookingHours);
+          expect(item.businessHours).toEqual(mockData.businessHours);
+          expect(item.serviceOptions).toEqual(mockData.serviceOptions);
         });
 
         it('should instantiate on empty', () => {
@@ -21,7 +22,8 @@ const mockData = mockAppointmentProgram();
           expect(item.eventId).toEqual(null);
           expect(item.name).toEqual(null);
           expect(item.timeZone).toEqual(null);
-          expect(item.bookingHours).toEqual([]);
+          expect(item.businessHours).toEqual([]);
+          expect(item.serviceOptions).toEqual([]);
         });
       });
     });

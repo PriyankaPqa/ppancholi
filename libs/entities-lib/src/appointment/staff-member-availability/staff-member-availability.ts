@@ -10,7 +10,9 @@ export class StaffMemberAvailability extends BaseEntity {
 
   useBusinessHours: boolean;
 
-  defaultBookingHours: IDaySchedule[];
+  serviceOptionIds: uuid[];
+
+  defaultbusinessHours: IDaySchedule[];
 
   customDateRanges: IDateRange[];
 
@@ -20,14 +22,16 @@ constructor(data?: IStaffMemberAvailability) {
     this.staffMemberId = data?.staffMemberId;
     this.appointmentProgramId = data?.appointmentProgramId;
     this.useBusinessHours = data?.useBusinessHours;
-    this.defaultBookingHours = data?.defaultBookingHours ? _cloneDeep(data.defaultBookingHours) : [];
+    this.serviceOptionIds = data?.serviceOptionIds;
+    this.defaultbusinessHours = data?.defaultbusinessHours ? _cloneDeep(data.defaultbusinessHours) : [];
     this.customDateRanges = data?.customDateRanges ? _cloneDeep(data.customDateRanges) : [];
   } else {
     super();
     this.staffMemberId = null;
     this.appointmentProgramId = null;
     this.useBusinessHours = null;
-    this.defaultBookingHours = [];
+    this.serviceOptionIds = [];
+    this.defaultbusinessHours = [];
     this.customDateRanges = [];
   }
 }

@@ -4,12 +4,9 @@ import {
   createLocalVue,
   shallowMount,
 } from '@/test/testSetup';
-
 import { mockAssessmentFormEntity, mockSearchDataForm } from '@libs/entities-lib/assessment-template';
 import utils from '@libs/entities-lib/utils';
-
 import { mockProvider } from '@/services/provider';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './AssessmentDetailsCreate.vue';
 
 const formCopy = {
@@ -28,10 +25,9 @@ describe('AssessmentDetailsCreate.vue', () => {
 
   describe('Template', () => {
     describe('Preview Button', () => {
-      it('displays when feature flag is on', async () => {
+      it('displays', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.EmailSendingPreview],
           propsData: {
             form: formCopy,
           },
@@ -41,20 +37,6 @@ describe('AssessmentDetailsCreate.vue', () => {
         });
         const element = wrapper.findDataTest('assessment-preview-button');
         expect(element.exists()).toBeTruthy();
-      });
-
-      it('Does not display when feature flag is off', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            form: formCopy,
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-        const element = wrapper.findDataTest('assessment-preview-button');
-        expect(element.exists()).toBeFalsy();
       });
     });
   });

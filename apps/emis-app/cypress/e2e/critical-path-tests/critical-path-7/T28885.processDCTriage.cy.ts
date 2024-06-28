@@ -93,6 +93,7 @@ describe('[T28885] Process DC triage', { tags: ['@case-file', '@mass-actions'] }
           caseFilesHomePage.searchCaseFileTableFor(this.caseFileNumber1);
           const caseFileDetailsPage = caseFilesHomePage.goToCaseFileDetail(this.caseFileNumber1);
           caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('New triage: Tier 2');
+          caseFileDetailsPage.getRoleNameSystemAdmin().should('eq', 'System Admin');
           caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Triage level changed');
           caseFileDetailsPage.getCaseFileActivityBody().should('string', 'New triage: Tier 2');
         });

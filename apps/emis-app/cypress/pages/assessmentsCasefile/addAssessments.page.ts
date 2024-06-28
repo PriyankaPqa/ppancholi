@@ -1,7 +1,7 @@
 export enum DataTest {
   searchInput = 'search-input',
   assessmentTable = 'table',
-  addAssessment = 'select_undefined',
+  addAssessment = 'select_',
 }
 
 export class AddAssessmentsPage {
@@ -19,7 +19,7 @@ export class AddAssessmentsPage {
     return cy.getByDataTestLike(this.assessmentTable);
   }
 
-  public getAddAssessmentButton() {
-    return cy.getByDataTestLike(this.addAssessment);
+  public getAddAssessmentButton(assessmentId: string) {
+    return cy.getByDataTest({ selector: `${this.addAssessment.selector}${assessmentId}` });
   }
 }

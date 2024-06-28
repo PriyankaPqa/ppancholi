@@ -3,6 +3,7 @@ import { IMultilingual } from '@libs/shared-lib/types';
 
 import { BaseEntity } from '../../base';
 import { IAppointmentProgram, IDaySchedule } from './appointment-program.types';
+import { IServiceOption } from '../service-option/service-option.types';
 
 export class AppointmentProgram extends BaseEntity {
   eventId: uuid;
@@ -11,7 +12,9 @@ export class AppointmentProgram extends BaseEntity {
 
   timeZone: string;
 
-  bookingHours: IDaySchedule[];
+  businessHours: IDaySchedule[];
+
+  serviceOptions: IServiceOption[];
 
 constructor(data?: IAppointmentProgram) {
   if (data) {
@@ -19,13 +22,15 @@ constructor(data?: IAppointmentProgram) {
     this.eventId = data?.eventId;
     this.name = data?.name;
     this.timeZone = data?.timeZone;
-    this.bookingHours = data?.bookingHours ? _cloneDeep(data.bookingHours) : [];
+    this.businessHours = data?.businessHours ? _cloneDeep(data.businessHours) : [];
+    this.serviceOptions = data?.serviceOptions ? _cloneDeep(data.serviceOptions) : [];
   } else {
     super();
     this.eventId = null;
     this.name = null;
     this.timeZone = null;
-    this.bookingHours = [];
+    this.businessHours = [];
+    this.serviceOptions = [];
   }
 }
 }

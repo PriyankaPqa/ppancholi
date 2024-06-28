@@ -1,13 +1,14 @@
 import { mockBaseData } from '../../base';
+import { mockServiceOption } from '../service-option/service-option.mock';
 import { DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
 
 export const mockBookingHour = (force?: Partial<IDaySchedule>): IDaySchedule => ({
   day: DayOfWeek.Monday,
-  timeSlots: [{ start: '9:00 AM', end: '12:00 PM' }, { start: '1:00 PM', end: '5:00 PM' }],
+  timeSlots: [{ start: '09:00', end: '12:00' }, { start: '13:00', end: '17:00' }],
   ...force,
 });
 
-export const mockBookingHours = (force?: IDaySchedule): IDaySchedule[] => {
+export const mockbusinessHours = (force?: IDaySchedule): IDaySchedule[] => {
   const hours:IDaySchedule[] = [
     mockBookingHour({ day: DayOfWeek.Tuesday }),
     mockBookingHour({ day: DayOfWeek.Wednesday }),
@@ -23,6 +24,7 @@ export const mockAppointmentProgram = (force? : Partial<IAppointmentProgram>): I
   eventId: 'mock-eventId',
   name: { translation: { en: 'mock-appointment-program-name-en', fr: 'mock-appointment-program-name-fr' } },
   timeZone: 'America/Toronto',
-  bookingHours: mockBookingHours(),
+  businessHours: mockbusinessHours(),
+  serviceOptions: [mockServiceOption()],
   ...force,
 });

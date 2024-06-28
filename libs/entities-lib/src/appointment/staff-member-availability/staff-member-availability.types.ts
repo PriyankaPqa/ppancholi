@@ -10,6 +10,7 @@ export interface IStaffMemberAvailability extends IEntity {
   staffMemberId: uuid;
   appointmentProgramId: uuid;
   useBusinessHours: boolean;
-  defaultBookingHours: IDaySchedule[];
+  serviceOptionIds: uuid[];
+  defaultbusinessHours: IDaySchedule[];
   customDateRanges: IDateRange[];
 }

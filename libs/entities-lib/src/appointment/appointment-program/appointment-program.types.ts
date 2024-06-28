@@ -1,5 +1,6 @@
 import { IMultilingual } from '@libs/shared-lib/src/types';
 import { IEntity } from '../../base';
+import { IServiceOption } from '../service-option/service-option.types';
 
 /**
  * Enums
@@ -38,7 +39,8 @@ export interface IAppointmentProgram extends IEntity {
   eventId: uuid;
   name: IMultilingual;
   timeZone: string;
-  bookingHours: IDaySchedule[];
+  businessHours: IDaySchedule[];
+  serviceOptions: IServiceOption[];
 }
 
 export type IdParams = uuid;

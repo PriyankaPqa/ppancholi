@@ -1,3 +1,5 @@
+import { zonedTimeToUtc } from 'date-fns-tz';
+
 import helpers from './appointmentHelpers';
 
 describe('helpers', () => {
@@ -98,7 +100,7 @@ describe('helpers', () => {
       const nextMidnight = new Date(midnight.getTime());
       nextMidnight.setDate(nextMidnight.getDate() + 1);
 
-      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 0, rangeStartDate: '2024-05-01', fullSchedule: defaultSchedule });
+      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 0, weekStartDate: '2024-05-01', fullSchedule: defaultSchedule });
 
       expect(defaultSchedule).toEqual({
         0: { day: 0, date: '2024-05-01', timeSlots: [] },
@@ -126,7 +128,7 @@ describe('helpers', () => {
       const nextMidnight = new Date(midnight.getTime());
       nextMidnight.setDate(nextMidnight.getDate() + 1);
 
-      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 0, rangeStartDate: '2024-05-01', fullSchedule: defaultSchedule });
+      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 0, weekStartDate: '2024-05-01', fullSchedule: defaultSchedule });
 
       expect(defaultSchedule).toEqual({
         0: { day: 0,
@@ -168,7 +170,7 @@ describe('helpers', () => {
       const nextMidnight = new Date(midnight.getTime());
       nextMidnight.setDate(nextMidnight.getDate() + 1);
 
-      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 1, rangeStartDate: '2024-05-01', fullSchedule: defaultSchedule });
+      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 1, weekStartDate: '2024-05-01', fullSchedule: defaultSchedule });
 
       expect(defaultSchedule).toEqual({
         0: { day: 0,
@@ -210,7 +212,7 @@ describe('helpers', () => {
       const nextMidnight = new Date(midnight.getTime());
       nextMidnight.setDate(nextMidnight.getDate() + 1);
 
-      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 0, rangeStartDate: '2024-05-02', fullSchedule: defaultSchedule });
+      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 0, weekStartDate: '2024-05-02', fullSchedule: defaultSchedule });
 
       expect(defaultSchedule).toEqual({
         0: { day: 0,
@@ -252,7 +254,7 @@ describe('helpers', () => {
       const nextMidnight = new Date(midnight.getTime());
       nextMidnight.setDate(nextMidnight.getDate() + 1);
 
-      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 6, rangeStartDate: '2024-05-02', fullSchedule: defaultSchedule });
+      helpers.recalculateDifferentDaySlot({ slot, midnight, nextMidnight, currentDay: 6, weekStartDate: '2024-05-02', fullSchedule: defaultSchedule });
 
       expect(defaultSchedule).toEqual({
         0: { day: 0,
@@ -338,6 +340,175 @@ describe('helpers', () => {
 
       helpers.setDefaultScheduleToTimeZoneHours(defaultSchedule, 'UTC');
       expect(helpers.recalculateDifferentDaySlot).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('addUTCTimeToDefaultSchedule', () => {
+    it('returns the default schedule as an object, with all week days and the time in UTC ', () => {
+      const defaultSchedule = [{
+        day: 0,
+        timeSlots: [{
+          start: '09:00',
+          end: '12:00',
+        },
+        {
+          start: '13:00',
+          end: '17:00',
+        },
+        ] },
+      ];
+
+      const programTimeZone = 'America/Toronto';
+      const weekStartDate = '2024-05-05';
+
+      const result = helpers.addUTCTimeToDefaultSchedule(defaultSchedule, programTimeZone, weekStartDate);
+
+      expect(result).toEqual({
+        0: {
+          day: 0,
+          date: '2024-05-05',
+          timeSlots: [{
+            startDateTime: zonedTimeToUtc('2024-05-05 09:00', programTimeZone).toISOString(),
+            start: '09:00',
+            endDateTime: zonedTimeToUtc('2024-05-05 12:00', programTimeZone).toISOString(),
+            end: '12:00',
+          },
+          {
+            startDateTime: zonedTimeToUtc('2024-05-05 13:00', programTimeZone).toISOString(),
+            start: '13:00',
+            endDateTime: zonedTimeToUtc('2024-05-05 17:00', programTimeZone).toISOString(),
+            end: '17:00',
+          },
+          ],
+        },
+        1: { day: 1, date: '2024-05-06', timeSlots: [] },
+        2: { day: 2, date: '2024-05-07', timeSlots: [] },
+        3: { day: 3, date: '2024-05-08', timeSlots: [] },
+        4: { day: 4, date: '2024-05-09', timeSlots: [] },
+        5: { day: 5, date: '2024-05-10', timeSlots: [] },
+        6: { day: 6, date: '2024-05-11', timeSlots: [] },
+      });
+    });
+
+    it('sets the right date if the slot ends at midnight ', () => {
+      const defaultSchedule = [{
+        day: 0,
+        timeSlots: [{
+          start: '13:00',
+          end: '00:00',
+        },
+        ] },
+      ];
+
+      const programTimeZone = 'UTC';
+      const weekStartDate = '2024-05-05';
+
+      const result = helpers.addUTCTimeToDefaultSchedule(defaultSchedule, programTimeZone, weekStartDate);
+
+      expect(result).toEqual({
+        0: {
+          day: 0,
+          date: '2024-05-05',
+          timeSlots: [
+            {
+              startDateTime: zonedTimeToUtc('2024-05-05 13:00', programTimeZone).toISOString(),
+              start: '13:00',
+              endDateTime: zonedTimeToUtc('2024-05-06 00:00', programTimeZone).toISOString(),
+              end: '00:00',
+            },
+          ],
+        },
+        1: { day: 1, date: '2024-05-06', timeSlots: [] },
+        2: { day: 2, date: '2024-05-07', timeSlots: [] },
+        3: { day: 3, date: '2024-05-08', timeSlots: [] },
+        4: { day: 4, date: '2024-05-09', timeSlots: [] },
+        5: { day: 5, date: '2024-05-10', timeSlots: [] },
+        6: { day: 6, date: '2024-05-11', timeSlots: [] },
+      });
+    });
+  });
+
+  describe('calculateMergedSchedule', () => {
+    it('returns the right schedule mixing the default and the custom ones', () => {
+      const defaultSchedule = [{
+        day: 0,
+        timeSlots: [
+          {
+            start: '09:00',
+            end: '10:00',
+          },
+        ] },
+      {
+        day: 1,
+        timeSlots: [
+          {
+            start: '09:00',
+            end: '10:00',
+          },
+        ] },
+      ];
+      const customSchedule = [{ start: new Date('2024-05-06 09:00').toISOString(), end: new Date('2024-05-06 12:00').toISOString() }];
+      const programTimeZone = 'UTC';
+      const weekStartDate = '2024-05-05';
+
+      let updatedDefaultSchedule = helpers.addUTCTimeToDefaultSchedule(defaultSchedule, programTimeZone, weekStartDate);
+      updatedDefaultSchedule = helpers.setDefaultScheduleToTimeZoneHours(updatedDefaultSchedule, 'local');
+      const mergedSchedule = helpers.calculateMergedSchedule(updatedDefaultSchedule, customSchedule);
+
+      const timeOffset = new Date().getTimezoneOffset();
+
+      expect(mergedSchedule).toEqual({
+        0: {
+          day: 0,
+          date: '2024-05-05',
+          timeSlots: [
+            {
+              startDateTime: zonedTimeToUtc('2024-05-05 09:00', programTimeZone).toISOString(),
+              start: `0${9 - timeOffset / 60}:00`,
+              endDateTime: zonedTimeToUtc('2024-05-05 10:00', programTimeZone).toISOString(),
+              end: `${timeOffset ? 0 : ''}${10 - timeOffset / 60}:00`,
+            },
+          ],
+        },
+        1: { day: 1,
+          date: '2024-05-06',
+          custom: true,
+          timeSlots: [{
+            startDateTime: new Date('2024-05-06 09:00').toISOString(),
+            start: '09:00',
+            endDateTime: new Date('2024-05-06 12:00').toISOString(),
+            end: '12:00',
+
+          }] },
+        2: { day: 2, date: '2024-05-07', timeSlots: [] },
+        3: { day: 3, date: '2024-05-08', timeSlots: [] },
+        4: { day: 4, date: '2024-05-09', timeSlots: [] },
+        5: { day: 5, date: '2024-05-10', timeSlots: [] },
+        6: { day: 6, date: '2024-05-11', timeSlots: [] },
+      });
+    });
+  });
+
+  describe('calculateSchedule', () => {
+    it('calls addUTCTimeToDefaultSchedule, setDefaultScheduleToTimeZoneHours and calculateMergedSchedule with the right arguments and returns the right result', () => {
+      const programTimeZone = 'UTC';
+      const weekStartDate = '2024-05-05';
+      const defaultSchedule = 'defaultSchedule';
+      const updatedDefaultSchedule = 'updatedDefaultSchedule';
+      const updatedLocalDefaultSchedule = 'updatedLocalDefaultSchedule';
+      const customSchedule = 'customSchedule';
+      const mergedSchedule = 'mergedSchedule';
+      helpers.addUTCTimeToDefaultSchedule = jest.fn(() => updatedDefaultSchedule);
+      helpers.setDefaultScheduleToTimeZoneHours = jest.fn(() => updatedLocalDefaultSchedule);
+      helpers.calculateMergedSchedule = jest.fn(() => mergedSchedule);
+
+      const result = helpers.calculateSchedule(defaultSchedule, customSchedule, programTimeZone, weekStartDate);
+
+      expect(helpers.addUTCTimeToDefaultSchedule).toHaveBeenCalledWith(defaultSchedule, programTimeZone, weekStartDate);
+      expect(helpers.setDefaultScheduleToTimeZoneHours).toHaveBeenCalledWith(updatedDefaultSchedule, 'local');
+      expect(helpers.calculateMergedSchedule).toHaveBeenCalledWith(updatedLocalDefaultSchedule, customSchedule);
+
+      expect(result).toEqual({ scheduleWithLocalHours: updatedLocalDefaultSchedule, mergedSchedule });
     });
   });
 });
