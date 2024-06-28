@@ -1173,6 +1173,8 @@
     "ds.task.lastUpdatedBy": "Task - Updated by",
     "ds.task.taskCategoryEn": "Task - Category (en)",
     "ds.task.taskCategoryFr": "Task - Category (fr)",
+    "ds.task.taskSubCategoryEn": "Task - Sub-category (en)",
+    "ds.task.taskSubCategoryFr": "Task - Sub-category (fr)",
     "ds.task.taskNameEn": "Task - Name (en)",
     "ds.task.taskNameFr": "Task - Name (fr)",
     "ds.task.taskStatusNameEn": "Task - Status (en)",
