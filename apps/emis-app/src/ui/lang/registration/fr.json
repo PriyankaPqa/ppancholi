@@ -614,6 +614,7 @@
     "registration.household_member.edit.title": "Modifier un ou une membre du ménage",
     "registration.household_member.sameAddress": "Est-ce que le ou la membre du ménage se trouve à la même adresse temporaire que le (la) représentant(e) du ménage?",
     "registration.household_member.sameAddress.no.detail": "Si non, l'utilisateur(-trice) doit saisir l'adresse temporaire du ou de la membre du ménage.",
+    "registration.household_member.sameAddress.other.detail": "Un rappel, veuillez vous assurer de mettre à jour les addresses temporaires pour cet individu dans les dossiers actifs",
     "registration.household_member.sameAddress.yes.detail": "Si oui, le ou la membre du ménage se verra attribuer la même adresse temporaire que le (la) représentant(e) du ménage.",
     "registration.household_members.add.label": "Ajouter un nouveau membre",
     "registration.household_members.delete.message": "Voulez-vous vraiment retirer ce ou cette membre?",

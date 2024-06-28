@@ -993,7 +993,12 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
       activityType: CaseFileActivityType.PaymentMoved,
-      details: { numberOfPaymentLines: 2, paymentName: 'moved payment', previousCaseFileNumber: 'old case file', newCaseFileNumber: 'new case file' },
+      details: { numberOfPaymentLines: 2,
+paymentName: 'moved payment',
+previousCaseFileNumber: 'old case file',
+previousCaseFileId: 'id1',
+                 newCaseFileNumber: 'new case file',
+newCaseFileId: 'id1' },
     },
     {
       id: 'mock-activity-id-53',
@@ -1002,7 +1007,12 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
       activityType: CaseFileActivityType.PaymentMoved,
-      details: { numberOfPaymentLines: -1, paymentName: 'moved payment', previousCaseFileNumber: 'old case file', newCaseFileNumber: 'new case file' },
+      details: { numberOfPaymentLines: -1,
+paymentName: 'moved payment',
+previousCaseFileNumber: 'old case file',
+previousCaseFileId: 'id1',
+                 newCaseFileNumber: 'new case file',
+newCaseFileId: 'id1' },
     },
   ];
 
