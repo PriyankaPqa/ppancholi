@@ -144,7 +144,7 @@ describe('CaseFileActivityPaymentMoved.vue', () => {
         await doMount();
 
         expect(wrapper.vm.getCaseFileRoutePreviousCaseFile()).toEqual({
-          name: routes.caseFile.details.name,
+          name: routes.caseFile.activity.name,
           params: { id: item.details.previousCaseFileId },
         });
       });
@@ -155,7 +155,7 @@ describe('CaseFileActivityPaymentMoved.vue', () => {
         await doMount();
 
         expect(wrapper.vm.getCaseFileRouteNewCaseFile()).toEqual({
-          name: routes.caseFile.details.name,
+          name: routes.caseFile.activity.name,
           params: { id: item.details.newCaseFileId },
         });
       });

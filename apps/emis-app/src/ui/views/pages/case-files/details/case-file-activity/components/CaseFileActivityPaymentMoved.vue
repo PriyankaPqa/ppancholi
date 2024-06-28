@@ -1,5 +1,5 @@
 <template>
-  <case-file-list-item-wrapper v-if="itemData" :item="item" :sidebar-icon="icon">
+  <case-file-list-item-wrapper v-if="itemData" :item="item" sidebar-icon="mdi-currency-usd">
     <div slot="content" class="d-flex flex-column" data-test="caseFileActivity-listItem-content">
       <div class="rc-body16 fw-bold" data-test="caseFileActivity-listItem-content-title">
         {{ $t('caseFileActivity.activityList.title.PaymentMoved') }}
@@ -70,7 +70,7 @@ export default Vue.extend({
   methods: {
     getCaseFileRoutePreviousCaseFile() {
       return {
-        name: routes.caseFile.details.name,
+        name: routes.caseFile.activity.name,
         params: {
           id: this.item.details.previousCaseFileId,
         },
@@ -79,7 +79,7 @@ export default Vue.extend({
 
     getCaseFileRouteNewCaseFile() {
       return {
-        name: routes.caseFile.details.name,
+        name: routes.caseFile.activity.name,
         params: {
           id: this.item.details.newCaseFileId,
         },
