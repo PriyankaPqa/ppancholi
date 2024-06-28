@@ -54,7 +54,6 @@
           <vue-editor v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
         </v-col>
         <v-btn
-          v-if="$hasFeature(FeatureKeys.EmailSendingPreview)"
           class="ma-2 preview"
           small
           data-test="assessment-preview-button"
@@ -95,7 +94,6 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import {
   VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import EmailTemplatePreview from '@/ui/views/pages/mass-actions/components/EmailTemplatePreview.vue';
 import { EFilterKeyType } from '@libs/component-lib/types';
 import helper from '@libs/shared-lib/helpers/helpers';
@@ -130,7 +128,6 @@ export default Vue.extend({
       assessments: [] as IAssessmentFormEntity[],
       toolbarSettings: ui.vueEditorToolbarSettings,
       showPreview: false,
-      FeatureKeys,
     };
   },
 

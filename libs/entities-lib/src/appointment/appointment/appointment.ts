@@ -38,6 +38,8 @@ export class Appointment extends BaseEntity {
 
   sendConfirmationEmail: boolean;
 
+  rescheduled: boolean;
+
   appointmentHistory: IAppointmentStatusHistory[];
 
 constructor(data?: IAppointment) {
@@ -59,6 +61,7 @@ constructor(data?: IAppointment) {
     this.notes = data?.notes;
     this.masterAccountEmail = data?.masterAccountEmail;
     this.sendConfirmationEmail = data?.sendConfirmationEmail;
+    this.rescheduled = data?.rescheduled;
     this.appointmentHistory = data?.appointmentHistory ? _cloneDeep(data.appointmentHistory) : null;
   } else {
     super();
@@ -78,6 +81,7 @@ constructor(data?: IAppointment) {
     this.notes = null;
     this.masterAccountEmail = null;
     this.sendConfirmationEmail = null;
+    this.rescheduled = false;
     this.appointmentHistory = [];
   }
 }

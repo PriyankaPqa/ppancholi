@@ -1,13 +1,11 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IListOption, IMultilingual } from '@libs/shared-lib/types';
 
 import { BaseEntity } from '../../base';
-import { IAppointmentModality, IServiceOption } from './service-option.types';
+import { IServiceOption } from './service-option.types';
 
 export class ServiceOption extends BaseEntity {
   name: IMultilingual;
-
-  appointmentProgramId: uuid;
 
   duration: Duration;
 
@@ -15,13 +13,12 @@ export class ServiceOption extends BaseEntity {
 
   emailConfirmationContent: IMultilingual;
 
-  appointmentModalities: IAppointmentModality[];
+  appointmentModalities: IListOption[];
 
   constructor(data?: IServiceOption) {
     if (data) {
       super(data);
       this.name = data?.name;
-      this.appointmentProgramId = data?.appointmentProgramId;
       this.duration = data?.duration;
       this.emailConfirmationSubject = data?.emailConfirmationSubject;
       this.emailConfirmationContent = data?.emailConfirmationContent;
@@ -29,7 +26,6 @@ export class ServiceOption extends BaseEntity {
     } else {
       super();
       this.name = null;
-      this.appointmentProgramId = null;
       this.duration = null;
       this.emailConfirmationSubject = null;
       this.emailConfirmationContent = null;

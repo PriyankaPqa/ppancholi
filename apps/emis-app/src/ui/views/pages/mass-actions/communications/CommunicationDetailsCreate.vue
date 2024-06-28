@@ -85,7 +85,6 @@
           </template>
         </v-col>
         <v-btn
-          v-if="$hasFeature(FeatureKeys.EmailSendingPreview)"
           class="ma-2 preview"
           small
           data-test="communication-preview-button"
@@ -126,7 +125,6 @@ import {
 VTextFieldWithValidation, VTextAreaWithValidation,
 } from '@libs/component-lib/components';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import EmailTemplatePreview from '@/ui/views/pages/mass-actions/components/EmailTemplatePreview.vue';
 import { CommunicationDetailsForm } from './CommunicationCreate.vue';
 
@@ -164,7 +162,6 @@ export default Vue.extend({
       smsLength: 0,
       showPreview: false,
       files: [],
-      FeatureKeys,
     };
   },
 
