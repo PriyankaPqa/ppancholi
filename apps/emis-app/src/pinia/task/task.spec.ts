@@ -87,7 +87,7 @@ describe('Task Store', () => {
       });
     });
 
-    describe('getTaskName', () => {
+    describe('getTaskCategory', () => {
       it('returns the sorted types, filter out hidden', () => {
         const store = createTestStore();
         store.taskCategories = [mockOptionItem({ id: '111', isHidden: true }), mockOptionItem({ id: '222', isHidden: false })];

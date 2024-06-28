@@ -108,7 +108,7 @@ describe('PersonalTaskForm.vue', () => {
         });
       });
 
-      it('should set filterOutHiddenTaskName to false and call fetchTaskCategories', async () => {
+      it('should set filterOutHiddenTaskCategory to false and call fetchTaskCategories', async () => {
         await doMount(true, {
           propsData: {
             taskData: mockPersonalTaskEntity(),

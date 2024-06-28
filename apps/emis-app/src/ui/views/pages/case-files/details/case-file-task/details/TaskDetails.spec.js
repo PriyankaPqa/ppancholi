@@ -565,7 +565,7 @@ describe('TaskDetails.vue', () => {
             }),
             taskCategories: () => [mockOptionItem({ id: 'mock-id-1' }), mockOptionItem({ id: 'mock-id-2' })],
             isTeamTask: () => true,
-            selectedTaskName: () => mockOptionItem({ id: 'mock-id-1' }),
+            selectedTaskCategory: () => mockOptionItem({ id: 'mock-id-1' }),
           },
         });
         expect(wrapper.vm.displayedTaskCategory).toEqual(wrapper.vm.$m({ translation: {
@@ -1038,7 +1038,7 @@ describe('TaskDetails.vue', () => {
         expect(wrapper.vm.selectedSubCategoryId).toEqual('');
       });
 
-      it('should set filterOutInactiveTaskNameAndCategory to false', async () => {
+      it('should set filterOutInactiveTaskCategoryAndSubCategory to false', async () => {
         await wrapper.setData({
           filterOutInactiveTaskCategoryAndSubCategory: () => true,
         });
