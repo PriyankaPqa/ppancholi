@@ -5,7 +5,7 @@ import { AppointmentStatus, IAppointment, IAppointmentStatusHistory } from './ap
   export const mockAppointmentStatusHistory = (force?: Partial<IAppointmentStatusHistory>): IAppointmentStatusHistory => ({
     userInformation: mockUserInformation(),
     dateOfChange: '2024-01-24T16:00:00.000Z',
-    appointmentStatus: AppointmentStatus.Rescheduled,
+    appointmentStatus: AppointmentStatus.Active,
     rationale: 'mock-rationale',
     ...force,
   });
@@ -24,10 +24,11 @@ export const mockAppointment = (force? : Partial<IAppointment>): IAppointment =>
   iCalUID: 'mock-iCalUID',
   seriesMasterId: null,
   staffMemberId: 'mock-staffMemberId',
-  appointmentStatus: AppointmentStatus.Upcoming,
+  appointmentStatus: AppointmentStatus.Active,
   notes: 'mock-notes',
   masterAccountEmail: 'mock-masterAccountEmail',
   sendConfirmationEmail: true,
+  rescheduled: false,
   appointmentHistory: [mockAppointmentStatusHistory()],
   ...force,
 });

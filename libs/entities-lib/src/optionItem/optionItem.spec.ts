@@ -61,5 +61,15 @@ describe('>>> Option Item', () => {
       const optionItem = new OptionItem(mockData);
       expect(optionItem.isHidden).toEqual(mockData.isHidden);
     });
+
+    it('should instantiate isLodging', () => {
+      const optionItem = new OptionItem(mockData);
+      expect(optionItem.isLodging).toEqual(mockData.isLodging);
+    });
+
+    it('should instantiate isOnline', () => {
+      const optionItem = new OptionItem(mockData);
+      expect(optionItem.isOnline).toEqual(mockData.isOnline);
+    });
   });
 });

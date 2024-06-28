@@ -41,6 +41,7 @@ export interface IOptionItemData extends IEntity {
   restrictFinancial: boolean;
   isLodging?: boolean;
   subitems: IOptionSubItem[];
+  isOnline?: boolean;
 }
 
 export interface IOptionItem extends IOptionItemData {}

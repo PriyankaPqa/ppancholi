@@ -5,9 +5,8 @@ import { IEntity } from '../../base';
  * Enums
  */
 export enum AppointmentStatus {
-  Upcoming = 1,
+  Active = 1,
   Cancelled = 2,
-  Rescheduled = 3,
 }
 
 /**
@@ -44,5 +43,6 @@ export interface IAppointment extends IEntity {
   // Account used to create emails in MSGraph
   masterAccountEmail: string;
   sendConfirmationEmail: boolean;
+  rescheduled: boolean;
   appointmentHistory: IAppointmentStatusHistory[];
 }

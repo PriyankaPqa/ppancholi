@@ -24,6 +24,8 @@ export class OptionItem extends BaseEntity implements IOptionItem {
 
   readonly isLodging: boolean;
 
+  readonly isOnline: boolean;
+
   readonly subitems: IOptionSubItem[];
 
   constructor(data: IOptionItemData) {
@@ -36,6 +38,7 @@ export class OptionItem extends BaseEntity implements IOptionItem {
     this.isDefault = data.isDefault;
     this.restrictFinancial = data.restrictFinancial;
     this.isLodging = data.isLodging;
+    this.isOnline = data.isOnline;
     this.subitems = _sortBy(_cloneDeep(data.subitems) || [], 'orderRank');
   }
 }
