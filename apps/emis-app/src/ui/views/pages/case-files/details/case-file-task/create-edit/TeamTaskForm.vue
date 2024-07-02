@@ -44,6 +44,29 @@
         </v-col>
       </v-row>
 
+      <v-row>
+        <v-col class="pb-1">
+          <v-autocomplete-with-validation
+            v-model="selectedFA"
+            background-color="white"
+            cache-items
+            outlined
+            :search-input.sync="search"
+            return-object
+            :items="faPayments"
+            :item-text="getFAName"
+            :loading="loading"
+            async-mode
+            :attach="true"
+            :label="$t('caseFileActivity.activityList.title.FinancialAssistancePayment')"
+            data-test="create-edit-task-FA-select"
+            v-bind="$attrs"
+            clearable
+            @change="$emit('change', $event)"
+            @delete="$emit('delete', $event)" />
+        </v-col>
+      </v-row>
+
       <v-row v-if="shouldDisplaySubCategorySelect">
         <v-col cols="6" class="py-1">
           <v-select-with-validation
@@ -104,6 +127,11 @@ import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
 import { UserRoles } from '@libs/entities-lib/user';
+import { IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { EFilterKeyType } from '@libs/component-lib/types';
+import helpers from '@/ui/helpers/helpers';
+import _debounce from 'lodash/debounce';
 
 interface ILocalTeamTaskForm {
   category: IListOption;
@@ -132,6 +160,11 @@ export default mixins(caseFileTask).extend({
       type: Boolean,
       default: false,
     },
+
+    caseFileId: {
+      type: String,
+      required: true,
+    },
   },
 
   data() {
@@ -144,6 +177,13 @@ export default mixins(caseFileTask).extend({
 
       return {
         localTeamTaskForm,
+        loading: false,
+        faPayments: [] as IFinancialAssistancePaymentEntity[],
+        selectedFA: null as IFinancialAssistancePaymentEntity,
+        search: '',
+        initialNumberOfItems: 6,
+        limitResults: 6,
+        visualDelay: 500,
     };
   },
 
@@ -185,10 +225,15 @@ export default mixins(caseFileTask).extend({
       },
       deep: true,
     },
+
+    search(newVal) {
+      newVal && this.debounceSearch(newVal);
+    },
   },
 
   async created() {
     await useTaskStore().fetchTaskCategories();
+    await this.fetchFAData('', this.initialNumberOfItems);
     if (this.isEditMode) {
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
       this.selectedSubCategoryId = this.taskData.subCategory.optionItemId;
@@ -208,6 +253,47 @@ export default mixins(caseFileTask).extend({
       this.selectedSubCategoryId = subCategoryId;
       this.localTeamTaskForm.subCategory.specifiedOther = null;
     },
+
+    getFAName(item: IFinancialAssistancePaymentEntity): string {
+      if (item?.name) {
+        return item.name;
+      }
+      return '';
+    },
+
+    debounceSearch: _debounce(function func(this: any, query: string) {
+      this.fetchFAData(query, this.limitResults);
+    }, 500),
+
+    async fetchFAData(querySearch = '', top: number) {
+      this.loading = true;
+      const searchParam = helpers.toQuickSearchSql(querySearch, 'Entity/Name');
+
+      const filter = {
+        Entity: {
+          CaseFileId: { value: this.caseFileId, type: EFilterKeyType.Guid },
+        },
+        ...searchParam,
+      } as Record<any, any>;
+
+      const params = {
+        filter,
+        top,
+      };
+
+      const res = await useFinancialAssistancePaymentStore().search({ params, includeInactiveItems: true });
+
+      const resultData = res?.values;
+      this.faPayments = resultData;
+      // if (this.excludedEvent && resultData) {
+      //   this.events = resultData.filter((event) => event.id !== this.excludedEvent);
+      // }
+      // this.$emit('fetch:done', this.events);
+
+      await helpers.timeout(this.visualDelay);
+      this.loading = false;
+    },
+
   },
 });
 </script>

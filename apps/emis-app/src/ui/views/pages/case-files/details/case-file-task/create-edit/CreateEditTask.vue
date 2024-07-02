@@ -7,7 +7,7 @@
             <v-container>
               <team-task-form
                 v-if="taskType === 'team'"
-                :id="id"
+                :case-file-id="id"
                 :task-data.sync="localTask"
                 :is-edit-mode="isEditMode"
                 @reset-form-validation="resetFormValidation()">
