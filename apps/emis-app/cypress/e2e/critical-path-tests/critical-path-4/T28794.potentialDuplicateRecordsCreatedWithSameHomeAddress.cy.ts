@@ -27,6 +27,7 @@ describe('[T28794] SELF REG - Potential duplicate records created when individua
   it('should create potential duplicate records when entering same home address', function () {
     cy.then(async () => {
       const createDuplicateHousehold = mockCreateDuplicateHouseholdWithSameAddressRequest(this.homeAddress, this.eventId);
+      await this.provider.households.getPublicToken();
       const duplicateHousehold = await this.provider.households.postPublicRegistration(createDuplicateHousehold);
       cy.goTo(`casefile/household/${duplicateHousehold.caseFile.householdId}`);
     });
