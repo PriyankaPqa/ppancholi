@@ -13,7 +13,7 @@
           {{ $t('registration.menu.privacy') }}
         </div>
         <validation-observer ref="privacyStatement">
-          <crc-privacy-statement :i18n="i18n" :user="user" :consent-statements="consentStatements" />
+          <crc-privacy-statement :user="user" :consent-statements="consentStatements" />
         </validation-observer>
       </template>
     </template>
@@ -39,7 +39,7 @@
         @cancel="cancelPersonalInformation()"
         @submit="validateEmailAndSubmitPersonalInfo()">
         <template #inline>
-          <personal-information-lib :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" :min-age-registration="minAgeRegistration" is-edit-mode />
+          <personal-information-lib :skip-phone-email-rules="skipPhoneEmailRules" :min-age-registration="minAgeRegistration" is-edit-mode />
         </template>
         <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
       </summary-section>
@@ -67,7 +67,7 @@
         @cancel="cancelAddresses()"
         @submit="submitAddresses()">
         <template #inline>
-          <addresses-lib :i18n="i18n" :disable-autocomplete="disableAutocomplete" is-edit-mode />
+          <addresses-lib :disable-autocomplete="disableAutocomplete" is-edit-mode />
         </template>
         <addresses-template :household="householdCreate" />
       </summary-section>
@@ -118,7 +118,6 @@
           <template #inline>
             <additional-member-form
               :api-key="apiKey"
-              :i18n="i18n"
               :gender-items="genderItems"
               :current-address-type-items="makeCurrentAddressTypeItems(member)"
               :canadian-provinces-items="canadianProvincesItems"
@@ -151,7 +150,6 @@
 
     <add-edit-additional-members-lib
       v-if="showAddAdditionalMember"
-      :i18n="i18n"
       :household-id="householdCreate.id"
       :show.sync="showAddAdditionalMember"
       :disable-autocomplete="disableAutocomplete"
@@ -163,8 +161,6 @@
 
 <script lang="ts">
 import { RcConfirmationDialog, MessageBox } from '@libs/component-lib/components';
-import VueI18n from 'vue-i18n';
-import { VueConstructor } from 'vue';
 import { VForm } from '@libs/registration-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
@@ -190,7 +186,7 @@ import AdditionalMemberForm from '../additional-members/AdditionalMemberForm.vue
 import AdditionalMemberSection from './additional-members/AdditionalMemberSection.vue';
 import AdditionalMemberTemplate from './additional-members/AdditionalMemberTemplate.vue';
 
-const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
+export default mixins(additionalMemberForm).extend({
   name: 'ReviewRegistration',
 
   components: {
@@ -209,10 +205,6 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
   },
 
   props: {
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
     showAgeInReview: {
       type: Boolean,
       default: false,
@@ -491,6 +483,4 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
     },
   },
 });
-
-export default vueComponent;
 </script>

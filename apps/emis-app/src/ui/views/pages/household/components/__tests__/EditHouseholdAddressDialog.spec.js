@@ -4,7 +4,6 @@ import { mockAddress } from '@libs/entities-lib/household-create';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { i18n } from '@/ui/plugins';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
@@ -74,7 +73,7 @@ describe('EditHouseholdAddressDialog.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('should return canadian provinces without other', () => {
-        const expected = libHelpers.getCanadianProvincesWithoutOther(i18n);
+        const expected = libHelpers.getCanadianProvincesWithoutOther(wrapper.vm.$i18n);
         expect(wrapper.vm.canadianProvincesItems).toEqual(expected);
       });
     });

@@ -591,6 +591,7 @@ export function storeFactory({
               householdId: householdCreate.value.id,
               eventId: event.value.id,
               consentInformation: householdCreate.value.consentInformation,
+              individuals: [], // todo in associate story
             }, true);
           } else {
             result = await householdApi.submitRegistration({
@@ -686,11 +687,13 @@ export function storeFactory({
       return result || null;
     }
 
-    async function addAdditionalMember({ householdId, member, sameAddress = false }: { householdId: string; member: IMember; sameAddress?: boolean }): Promise<IHouseholdEntity> {
+    async function addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode }
+      : { householdId: string; member: IMember; sameAddress: boolean, caseFileIndividualMode: boolean }): Promise<IHouseholdEntity> {
       if (sameAddress) {
         member.currentAddress = { ...householdCreate.value.primaryBeneficiary.currentAddress };
       }
-      const res = await householdApi.addMember(householdId, mode === ERegistrationMode.Self, member);
+      const res = caseFileIndividualMode ? (await householdApi.addMemberV2(householdId, mode === ERegistrationMode.Self, member, sameAddress))
+        : (await householdApi.addMember(householdId, mode === ERegistrationMode.Self, member));
       if (res) {
         const newMember = new Member({ ...member, id: res.members[res.members.length - 1] });
         householdCreate.value.addAdditionalMember(newMember, sameAddress);

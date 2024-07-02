@@ -7,7 +7,6 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
-import { i18n } from '@/ui/plugins';
 import { mockProvider } from '@/services/provider';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
@@ -145,7 +144,7 @@ describe('PrimaryMemberDialog', () => {
         expect(wrapper.vm.changedAddress).toBeFalsy();
       });
 
-      it('returns true if the address and the backup address are not the same', async () => {
+      it('returns true if the address and the backup address are not the same if flag is off', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -168,6 +167,30 @@ describe('PrimaryMemberDialog', () => {
         });
 
         expect(wrapper.vm.changedAddress).toBeTruthy();
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          featureList: [FeatureKeys.CaseFileIndividual],
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+            };
+          },
+        });
+
+        await wrapper.setData({
+          backupAddress: {
+            ...householdCreate.primaryBeneficiary.currentAddress,
+            address: { ...householdCreate.primaryBeneficiary.currentAddress.address, unitSuite: '999' },
+          },
+        });
+
+        expect(wrapper.vm.changedAddress).toBeFalsy();
       });
     });
 
@@ -246,7 +269,7 @@ describe('PrimaryMemberDialog', () => {
 
         });
 
-        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(i18n, wrapper.vm.noFixedHome, true, false);
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.noFixedHome, true, false);
       });
     });
 

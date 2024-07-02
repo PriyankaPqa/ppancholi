@@ -111,6 +111,7 @@ import { IEventGenericLocation } from '@libs/entities-lib/event/event.types';
 import helpers from '@/ui/helpers/helpers';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface IMovingAddressSelection {
   sameAddressSelected: boolean;
@@ -274,10 +275,15 @@ export default mixins(searchHousehold, household).extend({
       if (!isValid) {
         helpers.scrollToFirstError('scrollAnchor');
       } else {
-        this.setNewMembers(this.firstHousehold);
-        this.setNewMembers(this.secondHousehold);
+        let response;
+        this.setNewMembers(this.firstHousehold, this.$hasFeature(FeatureKeys.CaseFileIndividual));
+        this.setNewMembers(this.secondHousehold, this.$hasFeature(FeatureKeys.CaseFileIndividual));
         this.submitLoading = true;
-        const response = await this.$services.households.moveMembers(this.firstHousehold, this.secondHousehold);
+        if (!this.$hasFeature(FeatureKeys.CaseFileIndividual)) {
+          response = await this.$services.households.moveMembers(this.firstHousehold, this.secondHousehold);
+        } else {
+          response = await this.$services.households.moveMembersV2(this.firstHousehold, this.secondHousehold);
+        }
         if (response) {
           this.moveSubmitted = true;
         } else {
@@ -287,10 +293,13 @@ export default mixins(searchHousehold, household).extend({
       }
     },
 
-    setNewMembers(household: IMovingHouseholdCreate) {
+    setNewMembers(household: IMovingHouseholdCreate, ignoreAddress: boolean) {
       household.movingAdditionalMembers.forEach((m:IMovingMember) => {
-        m.setCurrentAddress(m.selectedCurrentAddress.sameAddressSelected
-          ? household.primaryBeneficiary.currentAddress : m.selectedCurrentAddress.newAddress);
+        if (!ignoreAddress) {
+          m.setCurrentAddress(m.selectedCurrentAddress.sameAddressSelected
+            ? household.primaryBeneficiary.currentAddress : m.selectedCurrentAddress.newAddress);
+        }
+        m.sameTemporaryAddressAsPrimary = m.selectedCurrentAddress.sameAddressSelected;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { selectedCurrentAddress, ...memberData } = m;
         household.addAdditionalMember(memberData, false);

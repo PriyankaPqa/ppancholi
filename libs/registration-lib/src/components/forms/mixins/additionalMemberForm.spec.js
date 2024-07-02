@@ -3,7 +3,6 @@ import { ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-a
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
-import { i18n } from '@/ui/plugins/i18n';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { createLocalVue, shallowMount } from '../../../test/testSetup';
 import additionalMemberForm from './additionalMemberForm';
@@ -34,9 +33,6 @@ let wrapper;
 const doMount = (otherOptions = {}) => {
   wrapper = shallowMount(Component, {
     localVue,
-    propsData: {
-      i18n,
-    },
     ...otherOptions,
   });
 };
@@ -79,7 +75,7 @@ describe('additionalMemberForm.spec', () => {
         const member = { currentAddress: { shelterLocation: { id: 'sl-2' } } };
 
         const result = await wrapper.vm.makeCurrentAddressTypeItems(member);
-        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.i18n, wrapper.vm.householdCreate.noFixedHome, true, false);
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.householdCreate.noFixedHome, true, false);
 
         expect(result).toEqual(mockAddressTypes);
       });

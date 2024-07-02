@@ -1,5 +1,4 @@
 import { RcDialog } from '@libs/component-lib/src/components';
-import { i18n } from '@/ui/plugins/i18n';
 import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { mockEventSummary } from '@libs/entities-lib/src/event';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -36,7 +35,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         show: true,
         member: mockAdditionalMember(),
         index: -1,
-        i18n,
         householdId,
         disableAutocomplete: false,
       },
@@ -101,7 +99,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
             show: true,
             member: mockAdditionalMember(),
             index: -1,
-            i18n,
             householdId,
             disableAutocomplete: false,
           },
@@ -115,7 +112,7 @@ describe('AddEditAdditionalMembersLib.vue', () => {
           },
         });
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(i18n, wrapper.vm.$registrationStore.householdCreate.noFixedHome, !!wrapper.vm.shelterLocations.length, false);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.$registrationStore.householdCreate.noFixedHome, !!wrapper.vm.shelterLocations.length, false);
       });
       it('returns the right value', async () => {
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers);
@@ -141,7 +138,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
             show: true,
             member: mockAdditionalMember(),
             index: -1,
-            i18n,
             householdId,
             disableAutocomplete: false,
           },
@@ -364,7 +360,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
                 show: true,
                 member,
                 index: 0,
-                i18n,
                 householdId,
                 disableAutocomplete: false,
               },
@@ -394,7 +389,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
                 show: true,
                 member,
                 index: 0,
-                i18n,
                 householdId,
                 disableAutocomplete: false,
               },
@@ -423,7 +417,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
                 show: true,
                 member,
                 index: 0,
-                i18n,
                 householdId,
                 disableAutocomplete: false,
               },

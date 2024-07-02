@@ -116,6 +116,7 @@ import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@libs/entit
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import routes from '@/constants/routes';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'SplitHouseholdDialog',
@@ -160,29 +161,33 @@ export default Vue.extend({
     },
 
     memberInfo(): (member:IMember) => Array<Record<string, unknown>> {
-      return (member:IMember) => [
-        {
-          test: 'date_of_birth',
-          label: 'household.profile.member.date_of_birth',
-          data: this.getBirthDate(member) || '-',
-        },
-        {
-          test: 'gender',
-          label: 'household.profile.member.gender',
-          data: this.getGender(member) || '-',
-        },
-        {
-          test: 'indigenous_identity',
-          primaryMemberOnly: false,
-          label: 'household.profile.member.indigenous_identity',
-          data: this.getIndigenousIdentity(member) || '-',
-        },
-        {
-          test: 'temporary_address',
-          label: 'household.profile.member.temporary_address',
-          customContent: 'address',
-        },
-      ];
+      return (member:IMember) => {
+          const details = [
+          {
+            test: 'date_of_birth',
+            label: 'household.profile.member.date_of_birth',
+            data: this.getBirthDate(member) || '-',
+          },
+          {
+            test: 'gender',
+            label: 'household.profile.member.gender',
+            data: this.getGender(member) || '-',
+          },
+          {
+            test: 'indigenous_identity',
+            primaryMemberOnly: false,
+            label: 'household.profile.member.indigenous_identity',
+            data: this.getIndigenousIdentity(member) || '-',
+          },
+          {
+            test: 'temporary_address',
+            label: 'household.profile.member.temporary_address',
+            customContent: 'address',
+          },
+        ];
+
+        return details.filter((d) => !this.$hasFeature(FeatureKeys.CaseFileIndividual) || d.customContent !== 'address');
+      };
     },
 
     displayName(): (member:IMember)=>string {

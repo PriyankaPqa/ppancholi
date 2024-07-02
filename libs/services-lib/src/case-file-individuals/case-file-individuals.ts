@@ -1,4 +1,4 @@
-import { ICaseFileIndividualEntity, IdParams, ReceivingAssistanceDetail, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
+import { ICaseFileIndividualEntity, IdParams, ReceivingAssistanceDetailCreateRequest, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { CurrentAddress, ICurrentAddressData } from '@libs/entities-lib/value-objects/current-address';
 import { IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
@@ -17,7 +17,7 @@ export class CaseFileIndividualsService extends DomainBaseService<ICaseFileIndiv
     return this.http.post<ICaseFileIndividualEntity>(this.getItemUrl(`${this.baseUrl}`, item), item);
   }
 
-  async addReceiveAssistanceDetails(caseFileId: uuid, id: uuid, item: ReceivingAssistanceDetail): Promise<ICaseFileIndividualEntity> {
+  async addReceiveAssistanceDetails(caseFileId: uuid, id: uuid, item: ReceivingAssistanceDetailCreateRequest): Promise<ICaseFileIndividualEntity> {
     return this.http.patch<ICaseFileIndividualEntity>(this.getItemUrl(`${this.baseUrl}/{id}/add-receive-assistance-details`, { caseFileId, id }), item);
   }
 

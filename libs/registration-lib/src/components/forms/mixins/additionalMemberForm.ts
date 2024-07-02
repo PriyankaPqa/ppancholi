@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueI18n, { TranslateResult } from 'vue-i18n';
+import { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import _debounce from 'lodash/debounce';
@@ -21,10 +21,6 @@ import { localStorageKeys } from '../../../constants/localStorage';
 
 export default Vue.extend({
   props: {
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
   },
 
   setup() {
@@ -60,7 +56,7 @@ export default Vue.extend({
 
     canadianProvincesItems(): Record<string, unknown>[] {
       // eslint-disable-next-line
-      return helpers.getCanadianProvincesWithoutOther((this as any).i18n);
+      return helpers.getCanadianProvincesWithoutOther((this as any).$i18n);
     },
 
     shelterLocations(): IEventGenericLocation[] {
@@ -277,7 +273,12 @@ export default Vue.extend({
 
     makeCurrentAddressTypeItems(m: IMember): Record<string, unknown>[] {
       const hasShelterLocations = !!this.makeShelterLocationsListForMember(m)?.length;
-      return this.getCurrentAddressTypeItems(this.i18n, this.householdCreate?.noFixedHome, hasShelterLocations, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
+      return this.getCurrentAddressTypeItems(
+        this.$i18n,
+        this.householdCreate?.noFixedHome,
+        hasShelterLocations,
+        !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers),
+      );
     },
   },
 });

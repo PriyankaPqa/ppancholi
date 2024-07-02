@@ -10,6 +10,8 @@ import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
 import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
+import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
@@ -427,6 +429,12 @@ describe('Individual.vue', () => {
           householdId: wrapper.vm.household.id,
           eventId: wrapper.vm.event.id,
           consentInformation: wrapper.vm.household.consentInformation,
+          individuals: [wrapper.vm.household.primaryBeneficiary, ...wrapper.vm.household.additionalMembers].filter((m) => m).map((m) => ({
+            personId: m.id,
+            temporaryAddressHistory: [CurrentAddress.parseCurrentAddress(m.currentAddress)],
+            receivingAssistanceDetails: [{ receivingAssistance: true }],
+            membershipStatus: MembershipStatus.Active,
+          })),
         });
       });
       it('should call setRegistrationErrors with an argument if there is no response', async () => {

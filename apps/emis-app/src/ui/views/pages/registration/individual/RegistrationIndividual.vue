@@ -121,6 +121,8 @@ import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/inter
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
+import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
+import { ICaseFileIndividualCreateRequest, MembershipStatus } from '@libs/entities-lib/case-file-individual';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -358,6 +360,12 @@ export default mixins(individual).extend({
         householdId: this.household.id,
         eventId: this.event.id,
         consentInformation: this.household.consentInformation,
+        individuals: [this.household.primaryBeneficiary, ...this.household.additionalMembers].filter((m) => m).map((m) => ({
+          personId: m.id,
+          temporaryAddressHistory: [CurrentAddress.parseCurrentAddress(m.currentAddress)],
+          receivingAssistanceDetails: [{ receivingAssistance: true }],
+          membershipStatus: MembershipStatus.Active,
+        }) as ICaseFileIndividualCreateRequest),
       });
       if (!res) {
         useRegistrationStore().registrationErrors = { name: 'case-file-create-error', message: 'Case file create error' }; // TODO Check in real app the type of errors

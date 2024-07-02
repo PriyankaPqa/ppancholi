@@ -6,7 +6,6 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import routes from '@/constants/routes';
-import { i18n } from '@/ui/plugins';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import Component from './HouseholdCard.vue';
 
@@ -406,7 +405,7 @@ describe('HouseholdCard.vue', () => {
         await wrapper.setData({ showNewAddressDialog: true });
         const mustRemoveRemainingInHome = !wrapper.vm.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers);
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(i18n, wrapper.vm.household.noFixedHome, !!shelterLocations.length, mustRemoveRemainingInHome);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.household.noFixedHome, !!shelterLocations.length, mustRemoveRemainingInHome);
       });
     });
   });

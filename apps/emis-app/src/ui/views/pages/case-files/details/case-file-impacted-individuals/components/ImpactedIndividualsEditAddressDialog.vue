@@ -70,7 +70,6 @@ import helpers from '@libs/entities-lib/helpers';
 import uiHelpers from '@/ui/helpers/helpers';
 import { IMember } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
-import { i18n } from '@/ui/plugins';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import { localStorageKeys } from '@/constants/localStorage';
 import _isEqual from 'lodash/isEqual';
@@ -150,12 +149,12 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.getCanadianProvincesWithoutOther(i18n);
+      return helpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
       const mustRemoveRemainingInHome = !this.isPrimaryMember && !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers);
-      return this.getCurrentAddressTypeItems(i18n, this.noFixedHome, !!this.shelterLocations.length, mustRemoveRemainingInHome);
+      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!this.shelterLocations.length, mustRemoveRemainingInHome);
     },
 
     title(): TranslateResult {

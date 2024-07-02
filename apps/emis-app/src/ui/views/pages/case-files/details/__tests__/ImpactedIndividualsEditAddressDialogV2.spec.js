@@ -5,7 +5,6 @@ import helpers from '@libs/entities-lib/helpers';
 import { ECurrentAddressTypes, mockCampGround, CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
-import { i18n } from '@/ui/plugins';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { mockCaseFileIndividualEntity, mockCaseFileIndividualEntities, mockTemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
@@ -150,7 +149,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(wrapper.vm.$i18n));
       });
     });
 
@@ -159,35 +158,35 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
         doMount(true, { mocks: { $hasFeature: (f) => f !== FeatureKeys.RemainingInHomeForAdditionalMembers } });
 
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(i18n, wrapper.vm.noFixedHome, !!wrapper.vm.shelterLocations.length, false);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.noFixedHome, !!wrapper.vm.shelterLocations.length, false);
       });
 
       it('calls the useAddresses method with the right params when feature flag is off', async () => {
         doMount(true, { mocks: { $hasFeature: (f) => f !== FeatureKeys.RemainingInHomeForAdditionalMembers } });
         await wrapper.setData({ sameAddress: false });
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(i18n, wrapper.vm.noFixedHome, !!wrapper.vm.shelterLocations.length, false);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.noFixedHome, !!wrapper.vm.shelterLocations.length, false);
       });
 
       it('calls the useAddresses method with the right params when feature flag is off and not primary member', async () => {
         doMount(false, { mocks: { $hasFeature: (f) => f !== FeatureKeys.RemainingInHomeForAdditionalMembers } });
         await wrapper.setData({ sameAddress: false });
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(i18n, wrapper.vm.noFixedHome, !!wrapper.vm.shelterLocations.length, true);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.noFixedHome, !!wrapper.vm.shelterLocations.length, true);
       });
 
       it('calls the useAddresses method with the right params when no fixed home', async () => {
         doMount();
         await wrapper.setData({ noFixedHome: true });
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(i18n, true, !!wrapper.vm.shelterLocations.length, false);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, true, !!wrapper.vm.shelterLocations.length, false);
       });
 
       it('calls the useAddresses method with the right params when no shelter locations', async () => {
         doMount();
         await wrapper.setProps({ shelterLocationsList: [] });
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(i18n, wrapper.vm.noFixedHome, false, false);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.noFixedHome, false, false);
       });
 
       it('has the right value', () => {
@@ -297,7 +296,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
           await wrapper.vm.updateAdditionalMembersWithSameAddress(wrapper.vm.editedAddress);
           expect(caseFileIndividualStore.addTemporaryAddress).toHaveBeenCalledTimes(2);
           expect(caseFileIndividualStore.addTemporaryAddress).toHaveBeenCalledWith(wrapper.vm.caseFileId, '1', wrapper.vm.editedAddress);
-          expect(caseFileIndividualStore.addTemporaryAddress).toHaveBeenCalledWith(wrapper.vm.caseFileId, '2', wrapper.vm.editedAddress);
+          expect(caseFileIndividualStore.addTemporaryAddress).toHaveBeenCalledWith(wrapper.vm.caseFileId, '3', wrapper.vm.editedAddress);
         },
       );
     });

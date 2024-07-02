@@ -1,4 +1,3 @@
-import { i18n } from '@/ui/plugins/i18n';
 import { Status } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
 import {
@@ -33,7 +32,6 @@ describe('PersonalInformationLib.vue', () => {
       localVue,
       pinia,
       propsData: {
-        i18n,
         ...otherProps,
       },
       computed: {
@@ -265,7 +263,7 @@ describe('PersonalInformationLib.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(wrapper.vm.$i18n));
       });
     });
 

@@ -1,11 +1,12 @@
 <template>
   <v-sheet
+    v-if="member.status === Status.Active"
     rounded
     outlined
     class="mb-4">
     <div class="px-4 py-2 rc-body18 fw-bold d-flex align-center justify-space-between background">
       <div>
-        <v-icon size="22" class="pr-2 rc-body14" :color="isReceivingAssistance ? 'secondary' : 'grey'">
+        <v-icon size="22" class="pr-2 rc-body14" :color="isReceivingAssistance && individual.membershipStatus === MembershipStatus.Active ? 'secondary' : 'grey'">
           mdi-account
         </v-icon>
         <span data-test="impacted_individual_card_display_name">
@@ -28,6 +29,19 @@
             <span class="text-uppercase"> {{ $t('household.profile.member.primary_member') }} </span>
           </v-chip>
           <v-divider vertical />
+        </template>
+        <template v-if="individual.membershipStatus === MembershipStatus.Removed">
+          <v-chip
+            class="px-2 mr-4"
+            small
+            label
+            color="grey darken-2"
+            outlined
+            data-test="household_profile_member_moved_member_label">
+            <span class="text-uppercase rc-body10">
+              {{ $t('household.profile.member.moved_member') }}
+            </span>
+          </v-chip>
         </template>
         <v-switch
           v-model="isReceivingAssistance"
@@ -96,8 +110,9 @@
 import Vue from 'vue';
 import { IMemberEntity } from '@libs/entities-lib/household-create';
 import { UserRoles } from '@libs/entities-lib/user';
+import { Status } from '@libs/shared-lib/types';
 import { IEventGenericLocation } from '@libs/entities-lib/src/event';
-import { CaseFileIndividualEntity, ReceivingAssistanceDetail, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
+import { CaseFileIndividualEntity, MembershipStatus, ReceivingAssistanceDetail, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { usePersonStore } from '@/pinia/person/person';
 import ImpactedIndividualsRequireRationaleDialogV2 from './ImpactedIndividualsRequireRationaleDialogV2.vue';
 import ImpactedIndividualsCardPinnedRationaleV2 from './ImpactedIndividualsCardPinnedRationaleV2.vue';
@@ -149,6 +164,8 @@ export default Vue.extend({
       showRequireRationaleDialog: false,
       backUpIsReceivingAssistance: false,
       UserRoles,
+      MembershipStatus,
+      Status,
     };
   },
 
@@ -174,6 +191,9 @@ export default Vue.extend({
     },
 
     disableEditing(): boolean {
+      if (this.individual.membershipStatus === MembershipStatus.Removed) {
+        return true;
+      }
       if (this.$hasLevel(UserRoles.level6)) {
         return false;
       }

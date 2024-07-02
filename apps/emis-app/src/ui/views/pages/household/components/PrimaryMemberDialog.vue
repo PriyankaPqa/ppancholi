@@ -21,13 +21,12 @@
             <h3 class="pt-6 pb-3">
               {{ $t('registration.menu.privacy') }}
             </h3>
-            <crc-privacy-statement :i18n="i18n" :registration-locations="registrationLocations" :user="user" />
+            <crc-privacy-statement :registration-locations="registrationLocations" :user="user" />
           </div>
           <h3 v-if="makePrimaryMode" class="py-4">
             {{ $t('registration.menu.personal_info') }}
           </h3>
           <personal-information-lib
-            :i18n="i18n"
             :member-props="member"
             skip-phone-email-rules
             include-inactive-options
@@ -36,17 +35,25 @@
             @setIdentity="setIdentity"
             @setIndigenousIdentity="setIndigenousIdentity"
             @setContactInformation="setContactInformation" />
-          <current-address-form
-            v-if="makePrimaryMode"
-            :shelter-locations="shelterLocations"
-            :canadian-provinces-items="canadianProvincesItems"
-            :current-address-type-items="currentAddressTypeItems"
-            :api-key="apiKey"
-            :current-address="member.currentAddress"
-            :no-fixed-home="false"
-            :disable-autocomplete="!enableAutocomplete"
-            prefix-data-test="tempAddress"
-            @change="setCurrentAddress($event)" />
+          <template v-if="makePrimaryMode">
+            <template v-if="$hasFeature(FeatureKeys.CaseFileIndividual)">
+              <h3>
+                {{ $t('registration.addresses.currentAddress') }}
+              </h3>
+              <span class="font-italic rc-body14">{{ $t('registration.household_member.sameAddress.other.detail') }}</span>
+            </template>
+            <current-address-form
+              v-else
+              :shelter-locations="shelterLocations"
+              :canadian-provinces-items="canadianProvincesItems"
+              :current-address-type-items="currentAddressTypeItems"
+              :api-key="apiKey"
+              :current-address="member.currentAddress"
+              :no-fixed-home="false"
+              :disable-autocomplete="!enableAutocomplete"
+              prefix-data-test="tempAddress"
+              @change="setCurrentAddress($event)" />
+          </template>
         </v-col>
       </v-row>
     </rc-dialog>
@@ -74,7 +81,6 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
-import { i18n } from '@/ui/plugins';
 
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
@@ -123,7 +129,6 @@ export default Vue.extend({
 
   data() {
     return {
-      i18n,
       backupIdentitySet: null as IIdentitySet,
       backupContactInfo: null as IContactInformation,
       backupAddress: null as ICurrentAddress,
@@ -141,11 +146,11 @@ export default Vue.extend({
 
   computed: {
     canadianProvincesItems(): Record<string, unknown>[] {
-      return libHelpers.getCanadianProvincesWithoutOther(i18n);
+      return libHelpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     changedAddress():boolean {
-      return !_isEqual(new CurrentAddress(this.member.currentAddress), new CurrentAddress(this.backupAddress));
+      return !this.$hasFeature(FeatureKeys.CaseFileIndividual) && !_isEqual(new CurrentAddress(this.member.currentAddress), new CurrentAddress(this.backupAddress));
     },
 
     changedIdentitySet():boolean {
@@ -164,7 +169,7 @@ export default Vue.extend({
       const shelterLocationAvailable = this.shelterLocations?.some((s) => s.status === EEventLocationStatus.Active)
                                      || this.member?.currentAddress?.shelterLocation;
 
-      return this.getCurrentAddressTypeItems(i18n, this.noFixedHome, !!shelterLocationAvailable, false);
+      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!shelterLocationAvailable, false);
     },
 
     memberName(): string {

@@ -7,7 +7,6 @@
     actions-padding="2">
     <rc-page-loading v-if="loading" />
     <template v-else>
-      V2!!!
       <div v-for="individual in individuals" :key="individual.id">
         <impacted-individual-card-v2
           :individual="individual"
@@ -22,6 +21,7 @@
 </template>
 
 <script lang="ts">
+import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import mixins from 'vue-typed-mixins';
@@ -53,8 +53,11 @@ export default mixins(caseFileDetail).extend({
     },
 
     individuals(): CaseFileIndividualEntity[] {
-      return useCaseFileIndividualStore().getByCaseFile(this.caseFileId).sort((x) => (this.household?.primaryBeneficiary === x.personId ? -1 : 1))
-        .map((i) => new CaseFileIndividualEntity(i));
+      return _orderBy(
+        useCaseFileIndividualStore().getByCaseFile(this.caseFileId).map((i) => new CaseFileIndividualEntity(i)),
+        [(x) => this.household?.primaryBeneficiary === x.personId, (x) => x.membershipStatus],
+        ['desc', 'asc'],
+      );
     },
   },
 

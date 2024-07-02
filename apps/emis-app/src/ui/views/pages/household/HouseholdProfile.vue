@@ -220,9 +220,9 @@
       :household-id="household.id"
       :index="-1"
       :shelter-locations-list="shelterLocations"
-      :i18n="i18n"
       :disable-autocomplete="!enableAutocomplete"
       submit-changes-to-service
+      :can-set-specific-address="!$hasFeature(FeatureKeys.CaseFileIndividual)"
       @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
 
@@ -325,7 +325,6 @@ export default mixins(household).extend({
 
   data() {
     return {
-      i18n: this.$i18n,
       format,
       loading: true,
       allEvents: [] as IEventSummary[],

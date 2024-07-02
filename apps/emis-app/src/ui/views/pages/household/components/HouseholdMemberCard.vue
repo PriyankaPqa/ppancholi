@@ -142,7 +142,6 @@
 
     <add-edit-additional-members-lib
       v-if="showAdditionalMemberDialog"
-      :i18n="i18n"
       :show="showAdditionalMemberDialog"
       :index="index"
       :member="member"
@@ -299,7 +298,7 @@ export default Vue.extend({
     },
 
     memberInfo(): Array<Record<string, unknown>> {
-      return [
+      const details = [
         {
           primaryMemberOnly: false,
           test: 'name',
@@ -355,6 +354,8 @@ export default Vue.extend({
           customContent: 'address',
         },
       ];
+
+      return details.filter((d) => !this.$hasFeature(FeatureKeys.CaseFileIndividual) || d.customContent !== 'address');
     },
 
     displayName(): string {

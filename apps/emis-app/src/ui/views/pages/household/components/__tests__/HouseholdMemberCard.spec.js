@@ -513,6 +513,16 @@ describe('HouseholdMemberCard.vue', () => {
       });
     });
 
+    describe('memberInfo', () => {
+      it('returns address according to flag', async () => {
+        doMount(false, true, { featureList: [FeatureKeys.CaseFileIndividual] });
+        expect(wrapper.vm.memberInfo.find((d) => d.customContent === 'address')).toBeFalsy();
+
+        doMount();
+        expect(wrapper.vm.memberInfo.find((d) => d.customContent === 'address')).toBeTruthy();
+      });
+    });
+
     describe('isMovedMember', () => {
       it('should return true when there is movedStatus', async () => {
         doMount();

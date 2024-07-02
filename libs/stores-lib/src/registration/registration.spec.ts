@@ -969,9 +969,14 @@ describe('>>> Registration Store', () => {
       const sameAddress = true;
       householdApi.addMember = jest.fn(() => (mockHouseholdEntity()));
 
-      await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress });
+      await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode: false });
 
       expect(householdApi.addMember).toHaveBeenCalledWith(householdId, false, member);
+      expect(householdApi.addMemberV2).not.toHaveBeenCalled();
+
+      await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode: true });
+
+      expect(householdApi.addMemberV2).toHaveBeenCalledWith(householdId, false, member, true);
     });
 
     it('call the mutation after the resolution', async () => {
@@ -986,6 +991,7 @@ describe('>>> Registration Store', () => {
         householdId,
         member,
         sameAddress,
+        caseFileIndividualMode: false,
       });
       expect(useRegistrationStore.householdCreate.additionalMembers[0])
         .toEqual(

@@ -1,5 +1,5 @@
 <template>
-  <review-registration-lib :i18n="i18n" show-age-in-review hide-name :disable-autocomplete="!enableAutocomplete" />
+  <review-registration-lib show-age-in-review hide-name :disable-autocomplete="!enableAutocomplete" />
 </template>
 
 <script lang="ts">
@@ -13,12 +13,6 @@ export default Vue.extend({
 
   components: {
     ReviewRegistrationLib,
-  },
-
-  data() {
-    return {
-      i18n: this.$i18n,
-    };
   },
 
   computed: {

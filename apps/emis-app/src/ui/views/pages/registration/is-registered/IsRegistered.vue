@@ -16,7 +16,7 @@
       @submit="showDetailsDialog = false">
       <v-row justify="center">
         <v-col cols="12" lg="8">
-          <review-registration-lib :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
+          <review-registration-lib show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
             <template #previous-events>
               <previous-events-template :household-id="selectedHouseholdId" />
             </template>
@@ -33,7 +33,6 @@ import { RcDialog } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
-import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
@@ -50,7 +49,6 @@ export default mixins(searchHousehold).extend({
   data() {
     return {
       FeatureKeys,
-      i18n,
       showDetailsDialog: false,
       selectedHouseholdId: '',
     };

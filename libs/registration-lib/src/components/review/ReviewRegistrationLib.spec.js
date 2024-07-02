@@ -10,7 +10,6 @@ import {
   mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member, mockContactInformation, MemberDuplicateStatus,
 } from '@libs/entities-lib/household-create';
 import { mockUserL6 } from '@libs/entities-lib/src/user';
-import { i18n } from '../../ui/plugins/i18n';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
 import Component from './ReviewRegistrationLib.vue';
@@ -33,7 +32,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -80,7 +78,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -124,7 +121,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -182,7 +178,6 @@ describe('ReviewRegistrationLib.vue', () => {
         localVue,
         vuetify,
         propsData: {
-          i18n,
           disableAutocomplete: false,
           user: mockUserL6(),
         },
@@ -390,7 +385,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -471,7 +465,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -578,7 +571,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -659,7 +651,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -880,7 +871,6 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -901,7 +891,6 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -926,7 +915,6 @@ describe('ReviewRegistrationLib.vue', () => {
         localVue,
         vuetify,
         propsData: {
-          i18n,
           disableAutocomplete: false,
           user: mockUserL6(),
         },
@@ -940,7 +928,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -960,7 +947,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -980,7 +966,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -1001,7 +986,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           propsData: {
-            i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
           },
@@ -1043,7 +1027,7 @@ describe('ReviewRegistrationLib.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(wrapper.vm.$i18n));
       });
     });
 
@@ -1086,7 +1070,6 @@ describe('ReviewRegistrationLib.vue', () => {
         localVue,
         vuetify,
         propsData: {
-          i18n,
           disableAutocomplete: false,
           user: mockUserL6(),
         },

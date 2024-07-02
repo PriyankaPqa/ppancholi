@@ -15,7 +15,7 @@
         <span data-test="additionalMember__indigenousIdentity">{{ getIndigenousIdentity }}</span>
       </div>
     </div>
-    <div class="column rc-body14 pt-2 pt-sm-0">
+    <div class="column rc-body14">
       <current-address-template :current-address="member.currentAddress" />
     </div>
   </div>
@@ -88,7 +88,7 @@ export default Vue.extend({
     width: 100%;
     border-top-width: 0px;
     &:first-child {
-      border-radius: 0px 0px 0px 0px;
+      border-radius: 0px 2px 0px 0px;
     }
     &:last-child {
       border-radius: 0px 0px 4px 4px;
@@ -100,17 +100,17 @@ export default Vue.extend({
     border: solid 1px var(--v-grey-lighten2);
     border-top-width: 0px;
     border-radius: 0 0 4px 4px;
-    display: flex;
-    justify-items: center;
-    align-items: baseline;
+    display:flex;
+  }
+
+  .column {
     padding: 16px;
     width: 100%;
-    & > .column {
-      display: flex;
-      width: 100%;
-      flex-direction: column;
-      justify-content: space-evenly;
-    }
   }
+
+  :not(:first-child).column  {
+    border-left: 1px solid var(--v-grey-lighten2);
+  }
+
 }
 </style>

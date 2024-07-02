@@ -53,7 +53,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
-import VueI18n from 'vue-i18n';
 import helpers from '@libs/entities-lib/helpers';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
 import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address';
@@ -73,11 +72,6 @@ export default Vue.extend({
   },
 
   props: {
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
-
     disableAutocomplete: {
       type: Boolean,
       required: true,
@@ -135,11 +129,11 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.getCanadianProvincesWithoutOther(this.i18n);
+      return helpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      return this.getCurrentAddressTypeItems(this.i18n, this.noFixedHome, !!this.shelterLocations.length, false);
+      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!this.shelterLocations.length, false);
     },
 
     shelterLocations(): IEventGenericLocation[] {

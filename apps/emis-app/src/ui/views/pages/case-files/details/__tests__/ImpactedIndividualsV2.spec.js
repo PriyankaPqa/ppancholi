@@ -46,7 +46,7 @@ describe('ImpactedIndividualsV2.vue', () => {
     describe('created', () => {
       it('should fetch and load data', async () => {
         expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'cf-id' });
-        expect(personStore.fetchByIds).toHaveBeenCalledWith(['pid-1', 'pid-2'], true);
+        expect(personStore.fetchByIds).toHaveBeenCalledWith(['pid-1', 'pid-2', 'pid-3'], true);
       });
     });
   });
@@ -73,8 +73,9 @@ describe('ImpactedIndividualsV2.vue', () => {
     });
 
     describe('individuals', () => {
-      it('returns the right data', () => {
-        expect(wrapper.vm.individuals).toEqual(mockCaseFileIndividualEntities());
+      it('returns the right data int the right order (membership status)', () => {
+        const cfi = mockCaseFileIndividualEntities();
+        expect(wrapper.vm.individuals).toEqual([cfi[0], cfi[2], cfi[1]]);
       });
     });
   });
