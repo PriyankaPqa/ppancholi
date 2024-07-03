@@ -33,11 +33,7 @@ export class AddNewAgreementPage {
 
   private addButton = { selector: DataTest.addButton };
 
-  public fill(data: IEventAgreement, roleName: string, lang: Language) {
-    if (data.agreementType) {
-      cy.selectListElementByValue(DataTest.agreementType, data.agreementType);
-    }
-
+  public fillAgreementNameDetails(data: IEventAgreement, roleName: string, lang: Language) {
     const nameTranslation = data.name.translation[lang];
     const detailsTranslation = data.details.translation[lang];
 
@@ -51,6 +47,14 @@ export class AddNewAgreementPage {
       cy.getByDataTest(this.agreementDetails).clear();
       cy.getByDataTest(this.agreementDetails).type(detailsTranslation);
     }
+  }
+
+  public fill(data: IEventAgreement, roleName: string, lang: Language) {
+    if (data.agreementType) {
+      cy.selectListElementByValue(DataTest.agreementType, data.agreementType);
+    }
+
+    this.fillAgreementNameDetails(data, roleName, lang);
 
     if (data.startDate) {
       const { year, month, day } = splitDate(data.startDate.toString());

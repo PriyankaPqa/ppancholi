@@ -51,7 +51,7 @@ describe('[T28636] Add Event Agreement', { tags: ['@event'] }, () => {
           const addNewAgreementPage = eventDetailsPage.addNewAgreement();
           addNewAgreementPage.fill(eventAgreementData, roleName, Language.English);
           addNewAgreementPage.selectTab(Language.French);
-          addNewAgreementPage.fill(eventAgreementData, roleName, Language.French);
+          addNewAgreementPage.fillAgreementNameDetails(eventAgreementData, roleName, Language.French);
 
           addNewAgreementPage.addNewAgreement();
 
