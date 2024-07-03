@@ -3,7 +3,6 @@ import { ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-a
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { createLocalVue, shallowMount } from '../../../test/testSetup';
 import additionalMemberForm from './additionalMemberForm';
 
@@ -71,11 +70,11 @@ describe('additionalMemberForm.spec', () => {
 
     describe('makeCurrentAddressTypeItems', () => {
       it('calls getCurrentAddressTypeItems with the right params and returns the right value', async () => {
-        doMount({ mocks: { $hasFeature: (f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers } });
+        doMount();
         const member = { currentAddress: { shelterLocation: { id: 'sl-2' } } };
 
         const result = await wrapper.vm.makeCurrentAddressTypeItems(member);
-        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.householdCreate.noFixedHome, true, false);
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.householdCreate.noFixedHome, true);
 
         expect(result).toEqual(mockAddressTypes);
       });

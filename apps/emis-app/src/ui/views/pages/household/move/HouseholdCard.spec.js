@@ -4,7 +4,6 @@ import { mockShelterLocations } from '@libs/entities-lib/event/event.mock';
 import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import routes from '@/constants/routes';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import Component from './HouseholdCard.vue';
@@ -398,14 +397,10 @@ describe('HouseholdCard.vue', () => {
               apiKey: 'mock-api-key',
             };
           },
-          mocks: {
-            $hasFeature: (f) => f === FeatureKeys.RemainingInHomeForAdditionalMembers,
-          },
         });
         await wrapper.setData({ showNewAddressDialog: true });
-        const mustRemoveRemainingInHome = !wrapper.vm.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers);
         expect(wrapper.vm.getCurrentAddressTypeItems)
-          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.household.noFixedHome, !!shelterLocations.length, mustRemoveRemainingInHome);
+          .toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.household.noFixedHome, !!shelterLocations.length);
       });
     });
   });

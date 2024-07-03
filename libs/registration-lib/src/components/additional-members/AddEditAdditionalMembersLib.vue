@@ -54,8 +54,8 @@ import {
 import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import { IMember } from '@libs/entities-lib/value-objects/member';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { localStorageKeys } from '../../constants/localStorage';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
@@ -182,7 +182,7 @@ export default Vue.extend({
 
     currentAddressTypeItems(): Record<string, unknown>[] {
       const noFixedHome = this.$registrationStore.householdCreate?.noFixedHome;
-      return this.getCurrentAddressTypeItems(this.$i18n, noFixedHome, !!this.shelterLocations?.length, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
+      return this.getCurrentAddressTypeItems(this.$i18n, noFixedHome, !!this.shelterLocations?.length);
     },
 
     shelterLocations(): IEventGenericLocation[] {

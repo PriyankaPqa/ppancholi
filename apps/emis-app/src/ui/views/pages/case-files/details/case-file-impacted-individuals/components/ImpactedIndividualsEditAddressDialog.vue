@@ -76,7 +76,6 @@ import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { RcDialog } from '@libs/component-lib/components';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
 
@@ -153,8 +152,7 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      const mustRemoveRemainingInHome = !this.isPrimaryMember && !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers);
-      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!this.shelterLocations.length, mustRemoveRemainingInHome);
+      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!this.shelterLocations.length);
     },
 
     title(): TranslateResult {

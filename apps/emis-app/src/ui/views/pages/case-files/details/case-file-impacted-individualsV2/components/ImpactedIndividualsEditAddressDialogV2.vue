@@ -74,7 +74,6 @@ import { localStorageKeys } from '@/constants/localStorage';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@libs/component-lib/components';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
 import { CaseFileIndividualEntity, ICaseFileIndividualEntity, MembershipStatus, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
@@ -163,8 +162,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      const mustRemoveRemainingInHome = !this.isPrimaryMember && !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers);
-      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!this.shelterLocations.length, mustRemoveRemainingInHome);
+      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!this.shelterLocations.length);
     },
 
     title(): TranslateResult {

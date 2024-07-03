@@ -390,7 +390,7 @@ export default Vue.extend({
 
     currentAddressTypeItems(): Record<string, unknown>[] {
       const hasShelters = this.shelterLocations.some((s) => s.status !== EEventLocationStatus.Inactive);
-      return this.getCurrentAddressTypeItems(this.$i18n, this.household.noFixedHome, hasShelters, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
+      return this.getCurrentAddressTypeItems(this.$i18n, this.household.noFixedHome, hasShelters);
     },
 
     movingAdditionalMembers():IMovingMember[] {

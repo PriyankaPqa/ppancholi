@@ -10,7 +10,6 @@ import {
 import { IMember } from '@libs/entities-lib/value-objects/member/index';
 import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address/index';
 import { IOptionItemData } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 import { localStorageKeys } from '../../../constants/localStorage';
@@ -273,12 +272,7 @@ export default Vue.extend({
 
     makeCurrentAddressTypeItems(m: IMember): Record<string, unknown>[] {
       const hasShelterLocations = !!this.makeShelterLocationsListForMember(m)?.length;
-      return this.getCurrentAddressTypeItems(
-        this.$i18n,
-        this.householdCreate?.noFixedHome,
-        hasShelterLocations,
-        !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers),
-      );
+      return this.getCurrentAddressTypeItems(this.$i18n, this.householdCreate?.noFixedHome, hasShelterLocations);
     },
   },
 });

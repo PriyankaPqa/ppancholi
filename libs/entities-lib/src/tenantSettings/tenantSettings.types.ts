@@ -12,7 +12,6 @@ export enum FeatureKeys {
   DataCorrectionPhaseII = 'DataCorrectionPhaseII',
   FeatureDashboard = 'FeatureDashboard',
   AppointmentBooking = 'AppointmentBooking',
-  RemainingInHomeForAdditionalMembers = 'RemainingInHomeForAdditionalMembers',
   Lodging = 'Lodging',
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
   MovePayments = 'MovePayments',
