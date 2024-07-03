@@ -1,4 +1,4 @@
-import { splitDate } from '@libs/cypress-lib/helpers';
+import { Language, splitDate } from '@libs/cypress-lib/helpers';
 import { IMultilingual } from '@libs/shared-lib/types';
 
 export enum DataTest {
@@ -7,6 +7,7 @@ export enum DataTest {
   agreementDetails = 'agreement-details_input',
   startDate = 'agreement-start-date',
   endDate = 'agreement-end-date',
+  englishTab = 'tab-lang-en',
   frenchTab = 'tab-lang-fr',
   addButton = 'dialog-submit-action',
 }
@@ -28,43 +29,47 @@ export class AddNewAgreementPage {
 
   private frenchTab = { selector: DataTest.frenchTab };
 
+  private englishTab = { selector: DataTest.englishTab };
+
   private addButton = { selector: DataTest.addButton };
 
-  public fill(data: IEventAgreement, roleName: string) {
+  public fill(data: IEventAgreement, roleName: string, lang: Language) {
     if (data.agreementType) {
       cy.selectListElementByValue(DataTest.agreementType, data.agreementType);
     }
-    if (data.name.translation.en) {
-      cy.getByDataTest(this.agreementName).type(data.name.translation.en);
+
+    const nameTranslation = data.name.translation[lang];
+    const detailsTranslation = data.details.translation[lang];
+
+    if (nameTranslation) {
+      cy.getByDataTest(this.agreementName).clear();
+      cy.getByDataTest(this.agreementName).type(nameTranslation);
       cy.getByDataTest(this.agreementName).type(roleName);
     }
-    if (data.details.translation.en) {
-      cy.getByDataTest(this.agreementDetails).type(data.details.translation.en);
+
+    if (detailsTranslation) {
+      cy.getByDataTest(this.agreementDetails).clear();
+      cy.getByDataTest(this.agreementDetails).type(detailsTranslation);
     }
+
     if (data.startDate) {
       const { year, month, day } = splitDate(data.startDate.toString());
       cy.setDatePicker(DataTest.startDate, { year, month, day });
     }
+
     if (data.endDate) {
       const { year, month, day } = splitDate(data.endDate.toString());
       cy.setDatePicker(DataTest.endDate, { year, month, day });
     }
   }
 
-  public fillFrenchData(data: IEventAgreement, roleName: string) {
-    if (data.name.translation.fr) {
-      cy.getByDataTest(this.agreementName).clear();
-      cy.getByDataTest(this.agreementName).type(data.name.translation.fr);
-      cy.getByDataTest(this.agreementName).type(roleName);
-    }
-    if (data.details.translation.fr) {
-      cy.getByDataTest(this.agreementDetails).clear();
-      cy.getByDataTest(this.agreementDetails).type(data.details.translation.fr);
-    }
-  }
+  public selectTab(lang: Language) {
+    const tabSelectors = {
+      [Language.English]: this.englishTab,
+      [Language.French]: this.frenchTab,
+    };
 
-  public selectFrenchTab() {
-    cy.getByDataTest(this.frenchTab).click();
+    cy.getByDataTest(tabSelectors[lang]).click();
   }
 
   public addNewAgreement() {

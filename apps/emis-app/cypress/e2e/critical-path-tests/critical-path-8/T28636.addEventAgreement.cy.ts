@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { returnDateInFormat } from '@libs/cypress-lib/helpers';
+import { Language, returnDateInFormat } from '@libs/cypress-lib/helpers';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -49,9 +49,10 @@ describe('[T28636] Add Event Agreement', { tags: ['@event'] }, () => {
           const eventDetailsPage = new EventDetailsPage();
 
           const addNewAgreementPage = eventDetailsPage.addNewAgreement();
-          addNewAgreementPage.fill(eventAgreementData, roleName);
-          addNewAgreementPage.selectFrenchTab();
-          addNewAgreementPage.fillFrenchData(eventAgreementData, roleName);
+          addNewAgreementPage.fill(eventAgreementData, roleName, Language.English);
+          addNewAgreementPage.selectTab(Language.French);
+          addNewAgreementPage.fill(eventAgreementData, roleName, Language.French);
+
           addNewAgreementPage.addNewAgreement();
 
           cy.contains(`${eventAgreementData.name.translation.en}${roleName}`);

@@ -66,11 +66,16 @@ export enum IdentificationIdProvided {
 }
 
 export enum CaseFileStatusUpdateReason {
-  Close = '1a643139-3983-496f-9201-283f01bd5651',
-  Inactive = 'b4623298-cf7a-42e2-939d-f3b1f56a9173',
+    Close = '1a643139-3983-496f-9201-283f01bd5651',
+    Inactive = 'b4623298-cf7a-42e2-939d-f3b1f56a9173',
 }
 
 export enum reasonCaseFileStatusUpdate {
     Deceased = 'b4623298-cf7a-42e2-939d-f3b1f56a9173',
     OperationEnded = 'eb096eee-6af0-4837-874f-4cbca3f70490',
+}
+
+export enum Language {
+    French = 'fr',
+    English = 'en',
 }
