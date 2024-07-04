@@ -95,6 +95,11 @@ describe('>>> Task', () => {
       expect(task.actionTaken).toBe(ActionTaken.Assign);
     });
 
+    it('should instantiate financialAssistancePaymentId', () => {
+      const task = new TaskEntity({ ...mockTaskData, financialAssistancePaymentId: 'mock-fa-payment-1' });
+      expect(task.financialAssistancePaymentId).toBe('mock-fa-payment-1');
+    });
+
     it('should instantiate properties with proper data when no params', () => {
       const task = new TaskEntity();
       expect(task.id).toBe('');
@@ -111,6 +116,7 @@ describe('>>> Task', () => {
       expect(task.userWorkingOn).toBe(null);
       expect(task.actionTaken).toBe(null);
       expect(task.taskActionHistories).toEqual([]);
+      expect(task.financialAssistancePaymentId).toEqual('');
     });
   });
 });

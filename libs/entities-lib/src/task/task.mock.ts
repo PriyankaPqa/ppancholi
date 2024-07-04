@@ -148,6 +148,7 @@ const mockBaseTaskEntityData = (force? : Partial<ITaskEntityData>): ITaskEntityD
   userWorkingOn: '',
   actionTaken: ActionTaken.Assign,
   taskActionHistories: mockTaskActionHistories(),
+  financialAssistancePaymentId: '',
   ...force,
 });
 

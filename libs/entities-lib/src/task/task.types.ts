@@ -41,6 +41,7 @@ export interface ITaskEntityData extends IEntity {
   userWorkingOn: string;
   actionTaken: ActionTaken;
   taskActionHistories: ITaskActionHistory[];
+  financialAssistancePaymentId: string;
 }
 
 export interface ITaskEntity extends ITaskEntityData {

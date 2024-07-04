@@ -4,10 +4,12 @@ import { mockTeamTaskEntity, TaskStatus } from '@libs/entities-lib/task';
 import { mockOptionItem, mockOptionItems, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import flushPromises from 'flush-promises';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from './TeamTaskForm.vue';
 
 const localVue = createLocalVue();
 const { pinia, taskStore } = useMockTaskStore();
+const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 
 describe('TeamTaskForm.vue', () => {
   let wrapper;
@@ -16,6 +18,7 @@ describe('TeamTaskForm.vue', () => {
       localVue,
       pinia,
       propsData: {
+        caseFileId: 'mock-case-file-id-1',
         taskData: mockTeamTaskEntity(),
       },
       computed: {
@@ -285,7 +288,7 @@ describe('TeamTaskForm.vue', () => {
 
   describe('Methods', () => {
     describe('setTaskCategoryIdAndResetForm', () => {
-      it('should reset sub-category and emit event', async () => {
+      it('should reset sub-category, financialAssistancePaymentId and emit event', async () => {
         await wrapper.setProps({
           task: mockTeamTaskEntity({
             category: {
@@ -293,6 +296,7 @@ describe('TeamTaskForm.vue', () => {
               specifiedOther: '123',
             },
             description: 'mock-string',
+            financialAssistancePaymentId: 'mock-id-111',
           }),
         });
         wrapper.vm.setTaskCategoryIdAndResetForm();
@@ -301,6 +305,7 @@ describe('TeamTaskForm.vue', () => {
           specifiedOther: null,
         });
         expect(wrapper.vm.localTeamTaskForm.description).toEqual('');
+        expect(wrapper.vm.localTeamTaskForm.financialAssistancePaymentId).toEqual(null);
         expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
         expect(wrapper.emitted('reset-form-validation')).toBeTruthy();
       });
@@ -325,6 +330,36 @@ describe('TeamTaskForm.vue', () => {
         expect(wrapper.vm.localTeamTaskForm.subCategory.specifiedOther).toEqual(null);
       });
     });
+
+    describe('fetchFaData', () => {
+      it('should ', async () => {
+        financialAssistancePaymentStore.search = jest.fn();
+        await wrapper.vm.fetchFaData('mock-fa-id-1');
+        expect(financialAssistancePaymentStore.search).toHaveBeenCalledWith(
+          {
+            includeInactiveItems: true,
+            params:
+              { filter: { Entity: { CaseFileId: { type: 'guid', value: 'mock-case-file-id-1' } }, and: [{ 'Entity/Name': { contains: 'mock-fa-id-1' } }] }, top: 5,
+              },
+          },
+        );
+      });
+    });
+
+    describe('fetchSelectedFa', () => {
+      it('should ', async () => {
+        await wrapper.setProps({
+          taskData: mockTeamTaskEntity({ financialAssistancePaymentId: 'new-fa-id-1' }),
+        });
+        financialAssistancePaymentStore.search = jest.fn();
+        await wrapper.vm.fetchSelectedFa();
+        expect(financialAssistancePaymentStore.search).toHaveBeenCalledWith(
+          {
+            params: { filter: { Entity: { Id: { type: 'guid', value: 'new-fa-id-1' } } } },
+          },
+        );
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -332,6 +367,7 @@ describe('TeamTaskForm.vue', () => {
       it('should assign data properly', async () => {
         await doMount(true, {
           propsData: {
+            caseFileId: 'mock-case-file-id-1',
             taskData: mockTeamTaskEntity(),
           },
         });
@@ -350,15 +386,18 @@ describe('TeamTaskForm.vue', () => {
           },
           description: 'mock-description',
           isUrgent: false,
+          financialAssistancePaymentId: '',
         });
       });
 
-      it('should call fetchTaskCategories', async () => {
+      it('should call fetchTaskCategories, fetchFaData', async () => {
         await doMount(true, {
           propsData: {
+            caseFileId: 'mock-case-file-id-1',
             taskData: mockTeamTaskEntity(),
           },
         });
+        wrapper.vm.fetchFaData = jest.fn();
         taskStore.fetchTaskCategories = jest.fn();
         taskStore.taskSubCategories = jest.fn(() => []);
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -366,11 +405,13 @@ describe('TeamTaskForm.vue', () => {
         });
         await flushPromises();
         expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
+        expect(wrapper.vm.fetchFaData).toHaveBeenCalled();
       });
 
       it('should set data properly in edit mode', async () => {
         await doMount(true, {
           propsData: {
+            caseFileId: 'mock-case-file-id-1',
             taskData: mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }),
             isEditMode: true,
           },
@@ -381,6 +422,23 @@ describe('TeamTaskForm.vue', () => {
         await flushPromises();
         expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
         expect(wrapper.vm.selectedSubCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
+      });
+
+      it('should set financialAssistancePaymentId data and call fetchSelectedFa in edit mode if there is financialAssistancePaymentId', async () => {
+        await doMount(true, {
+          propsData: {
+            caseFileId: 'mock-case-file-id-1',
+            taskData: mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1', financialAssistancePaymentId: 'mock-id-1' }),
+            isEditMode: true,
+          },
+        });
+        wrapper.vm.fetchSelectedFa = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.localTeamTaskForm.financialAssistancePaymentId).toEqual('mock-id-1');
+        expect(wrapper.vm.fetchSelectedFa).toHaveBeenCalled();
       });
     });
   });

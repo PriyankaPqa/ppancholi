@@ -29,6 +29,8 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
 
   taskActionHistories: ITaskActionHistory[];
 
+  financialAssistancePaymentId: string;
+
   constructor(data?: ITaskEntityData) {
     if (data) {
       super(data);
@@ -45,6 +47,7 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
       this.userWorkingOn = data.userWorkingOn || null;
       this.actionTaken = data.actionTaken;
       this.taskActionHistories = data.taskActionHistories;
+      this.financialAssistancePaymentId = data.financialAssistancePaymentId;
     } else {
       super();
       this.category = { optionItemId: null, specifiedOther: null };
@@ -60,6 +63,7 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
       this.userWorkingOn = null;
       this.actionTaken = null;
       this.taskActionHistories = [];
+      this.financialAssistancePaymentId = '';
     }
   }
 }

@@ -47,14 +47,14 @@
       <v-row>
         <v-col class="pb-1">
           <v-autocomplete-with-validation
-            v-model="selectedFA"
+            v-model="localTeamTaskForm.financialAssistancePaymentId"
             background-color="white"
             cache-items
             outlined
             :search-input.sync="search"
-            return-object
             :items="faPayments"
             :item-text="getFAName"
+            :item-value="(item) => item && item.id"
             :loading="loading"
             async-mode
             :attach="true"
@@ -122,7 +122,7 @@ import caseFileTask from '@/ui/mixins/caseFileTask';
 import mixins from 'vue-typed-mixins';
 import { ITaskEntityData, TaskStatus } from '@libs/entities-lib/task';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
+import { VAutocompleteWithValidation, VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
@@ -132,12 +132,14 @@ import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance
 import { EFilterKeyType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
+import deepmerge from 'deepmerge';
 
 interface ILocalTeamTaskForm {
   category: IListOption;
   subCategory: IListOption;
   description: string;
   isUrgent: boolean;
+  financialAssistancePaymentId: string;
 }
 
 export default mixins(caseFileTask).extend({
@@ -148,6 +150,7 @@ export default mixins(caseFileTask).extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     VTextAreaWithValidation,
+    VAutocompleteWithValidation,
   },
 
   props: {
@@ -173,17 +176,14 @@ export default mixins(caseFileTask).extend({
         subCategory: this.taskData.subCategory,
         description: this.taskData.description,
         isUrgent: this.taskData.isUrgent,
+        financialAssistancePaymentId: this.taskData.financialAssistancePaymentId,
       } as ILocalTeamTaskForm;
 
       return {
         localTeamTaskForm,
         loading: false,
         faPayments: [] as IFinancialAssistancePaymentEntity[],
-        selectedFA: null as IFinancialAssistancePaymentEntity,
         search: '',
-        initialNumberOfItems: 6,
-        limitResults: 6,
-        visualDelay: 500,
     };
   },
 
@@ -213,6 +213,11 @@ export default mixins(caseFileTask).extend({
     formDisabled(): boolean {
       return !this.$hasLevel(UserRoles.level6) && this.taskData.taskStatus === TaskStatus.Completed;
     },
+
+    shouldDisplayFaSelect(): boolean {
+      // TODO need update
+      return this.localTeamTaskForm.category.optionItemId === 'payment-issue-id';
+    },
   },
 
   watch: {
@@ -233,10 +238,14 @@ export default mixins(caseFileTask).extend({
 
   async created() {
     await useTaskStore().fetchTaskCategories();
-    await this.fetchFAData('', this.initialNumberOfItems);
+    await this.fetchFaData('');
     if (this.isEditMode) {
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
       this.selectedSubCategoryId = this.taskData.subCategory.optionItemId;
+      if (this.taskData.financialAssistancePaymentId) {
+        this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
+        await this.fetchSelectedFa();
+      }
     }
   },
 
@@ -246,6 +255,7 @@ export default mixins(caseFileTask).extend({
       this.localTeamTaskForm.description = '';
       this.localTeamTaskForm.subCategory.optionItemId = null;
       this.localTeamTaskForm.subCategory.specifiedOther = null;
+      this.localTeamTaskForm.financialAssistancePaymentId = null;
       this.$emit('reset-form-validation');
     },
 
@@ -262,10 +272,10 @@ export default mixins(caseFileTask).extend({
     },
 
     debounceSearch: _debounce(function func(this: any, query: string) {
-      this.fetchFAData(query, this.limitResults);
+      this.fetchFaData(query, this.limitResults);
     }, 500),
 
-    async fetchFAData(querySearch = '', top: number) {
+    async fetchFaData(querySearch = '') {
       this.loading = true;
       const searchParam = helpers.toQuickSearchSql(querySearch, 'Entity/Name');
 
@@ -278,22 +288,27 @@ export default mixins(caseFileTask).extend({
 
       const params = {
         filter,
-        top,
+        top: 5,
       };
 
       const res = await useFinancialAssistancePaymentStore().search({ params, includeInactiveItems: true });
 
-      const resultData = res?.values;
-      this.faPayments = resultData;
-      // if (this.excludedEvent && resultData) {
-      //   this.events = resultData.filter((event) => event.id !== this.excludedEvent);
-      // }
-      // this.$emit('fetch:done', this.events);
-
-      await helpers.timeout(this.visualDelay);
+      this.faPayments = res?.values;
       this.loading = false;
     },
 
+    async fetchSelectedFa() {
+      const res = await useFinancialAssistancePaymentStore().search({ params: {
+          filter: {
+            Entity: {
+              Id: { value: this.taskData.financialAssistancePaymentId, type: EFilterKeyType.Guid },
+            },
+          },
+        } });
+      if (res?.values) {
+        this.faPayments = deepmerge(res?.values, this.faPayments);
+      }
+    },
   },
 });
 </script>
