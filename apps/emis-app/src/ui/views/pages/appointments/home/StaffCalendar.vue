@@ -53,27 +53,28 @@
         </v-list>
       </v-menu>
     </v-toolbar>
-    <v-calendar
-      ref="calendar"
-      v-model="focus"
-      :weekdays="weekday"
-      :type="type"
-      :events="events"
-      :categories="staffMembers"
-      :category-text="item => item.displayName"
-      category-show-all
-      :event-overlap-mode="'stack'"
-      :event-overlap-threshold="30"
-      :event-color="item => item.color"
-      :event-text-color="item => item.textColor"
-      :interval-style="getIntervalStyle"
-      :interval-minutes="30"
-      :interval-height="20"
-      :first-time="'08:00'"
-      :interval-count="20"
-      @change="getWeekStartDate"
-      @click:event="showEvent" />
-
+    <v-sheet outlined height="500">
+      <v-calendar
+        ref="calendar"
+        v-model="focus"
+        :weekdays="weekday"
+        :type="type"
+        :events="events"
+        :categories="staffMembers"
+        :category-text="item => item.displayName"
+        category-show-all
+        :event-overlap-mode="'stack'"
+        :event-overlap-threshold="30"
+        :event-color="item => item.color"
+        :event-text-color="item => item.textColor"
+        :interval-style="getIntervalStyle"
+        :interval-minutes="30"
+        :interval-height="30"
+        :first-time="'00:00'"
+        :interval-count="48"
+        @change="getWeekStartDate"
+        @click:event="showEvent" />
+    </v-sheet>
     <rc-dialog
       v-if="showDialog"
       :show.sync="showDialog"
@@ -162,6 +163,7 @@ export default Vue.extend({
     helpers,
     timeZone: APPOINTMENT_PROGRAM_TIMEZONE,
     localTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    currentWeekDay: 0,
     weekStartDate: '',
     myAppointmentsOnly: false,
     staffSchedule: [],
@@ -212,6 +214,7 @@ export default Vue.extend({
   async created() {
     await useUserAccountMetadataStore().fetchByIds(this.staffMemberIds, true);
     await this.fetchAttendees();
+    this.calculateStaffSchedules();
   },
 
   methods: {
@@ -231,8 +234,10 @@ export default Vue.extend({
 
     getWeekStartDate(updateData: { start: ICalendarData }) {
       if (this.type === 'category') {
-        this.weekStartDate = format(addDays(utcToZonedTime(new Date(updateData.start.date), 'UTC'), -updateData.start.weekday), 'yyyy-MM-dd');
+        this.currentWeekDay = updateData.start.weekday;
+        this.weekStartDate = format(addDays(utcToZonedTime(new Date(updateData.start.date), 'UTC'), -this.currentWeekDay), 'yyyy-MM-dd');
       }
+      this.scrollToFirstScheduleHour();
     },
 
     parseEventsFromAppointments(appointments: IAppointment[]): ICalendarEvent[] {
@@ -284,6 +289,16 @@ export default Vue.extend({
       return { backgroundColor };
     },
 
+    // There is an issue with v-calendar scrollToTime method for type category  https://github.com/vuetifyjs/vuetify/issues/14589
+    async scrollToTime(time:string) {
+      const y = this.$refs.calendar.timeToY(time);
+      if (y === false || !this.$refs.calendar) {
+        return;
+      }
+      await this.$nextTick();
+      this.$refs.calendar.$el.scrollTop = y;
+    },
+
     fetchAttendees() {
       const personIds = this.appointments.map((a) => a.attendeeId);
       usePersonStore().fetchByIds(personIds, true);
@@ -296,6 +311,21 @@ export default Vue.extend({
         id: av.staffMemberId,
         schedule: appointmentHelpers.calculateSchedule(av.defaultbusinessHours, av.customDateRanges, this.timeZone, this.weekStartDate).mergedSchedule,
       }));
+
+      this.scrollToFirstScheduleHour();
+    },
+
+    async scrollToFirstScheduleHour() {
+      if (this.type === 'category') {
+        const firstHour = (this.staffSchedule.map((s) => s.schedule[this.currentWeekDay].timeSlots?.[0]?.start).filter((x) => x)).sort()[0] || '09:00';
+        await this.$nextTick();
+        this.scrollToTime(firstHour);
+      } else if (this.type === 'week') {
+        const firstHour = '09:00'; // TODO get first hour from business default schedule or follow story AC
+        // const firstHour = (this.staffSchedule.map((s) => Object.keys(s.schedule).map((day) => s.schedule[day].timeSlots?.[0]?.start).filter((x) => x)).flat()).sort()[0] || '09:00';
+        await this.$nextTick();
+        this.$refs.calendar.scrollToTime(firstHour);
+      }
     },
 
   },
