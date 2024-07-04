@@ -44,7 +44,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row v-if="selectedTaskCategory && selectedTaskCategory.isRelatedToFinancialAssistance">
         <v-col class="pb-1">
           <v-autocomplete-with-validation
             v-model="localTeamTaskForm.financialAssistancePaymentId"
@@ -212,11 +212,6 @@ export default mixins(caseFileTask).extend({
 
     formDisabled(): boolean {
       return !this.$hasLevel(UserRoles.level6) && this.taskData.taskStatus === TaskStatus.Completed;
-    },
-
-    shouldDisplayFaSelect(): boolean {
-      // TODO need update
-      return this.localTeamTaskForm.category.optionItemId === 'payment-issue-id';
     },
   },
 

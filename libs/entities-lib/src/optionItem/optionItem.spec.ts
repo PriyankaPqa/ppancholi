@@ -71,5 +71,10 @@ describe('>>> Option Item', () => {
       const optionItem = new OptionItem(mockData);
       expect(optionItem.isOnline).toEqual(mockData.isOnline);
     });
+
+    it('should instantiate isOnline', () => {
+      const optionItem = new OptionItem(mockData);
+      expect(optionItem.isRelatedToFinancialAssistance).toEqual(mockData.isRelatedToFinancialAssistance);
+    });
   });
 });

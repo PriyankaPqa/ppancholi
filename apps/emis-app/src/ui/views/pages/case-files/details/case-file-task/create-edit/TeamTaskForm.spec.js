@@ -183,6 +183,30 @@ describe('TeamTaskForm.vue', () => {
         expect(element.exists()).toBeFalsy();
       });
     });
+
+    describe('create-edit-task-FA-select', () => {
+      it('should render when selectedTaskCategory isRelatedToFinancialAssistance is true', async () => {
+        await doMount(true, {
+          computed: {
+            selectedTaskCategory: () => mockOptionItem({ isRelatedToFinancialAssistance: true }),
+          },
+        });
+
+        const element = wrapper.findDataTest('create-edit-task-FA-select');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not render when selectedTaskCategory isRelatedToFinancialAssistance is false', async () => {
+        await doMount(true, {
+          computed: {
+            selectedTaskCategory: () => mockOptionItem({ isRelatedToFinancialAssistance: false }),
+          },
+        });
+
+        const element = wrapper.findDataTest('create-edit-task-FA-select');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Computed', () => {
