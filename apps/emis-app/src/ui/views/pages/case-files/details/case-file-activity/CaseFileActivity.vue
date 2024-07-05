@@ -119,6 +119,7 @@ import AssignCaseFile from './components/AssignCaseFile.vue';
 import CaseFileAssignments from './components/CaseFileAssignments.vue';
 import caseFileDetail from '../caseFileDetail';
 import CaseFileActivityDuplicateUpdated from './components/CaseFileActivityDuplicateUpdated.vue';
+import CaseFileActivityPaymentMoved from './components/CaseFileActivityPaymentMoved.vue';
 
 export default mixins(caseFileDetail, caseFileActivity).extend({
   name: 'CaseFileActivity',
@@ -134,6 +135,7 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     AssignCaseFile,
     CaseFileAssignments,
     CaseFileActivityDuplicateUpdated,
+    CaseFileActivityPaymentMoved,
     VSelectA11y,
   },
   props: {
@@ -217,6 +219,11 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
         if (item.activityType === CaseFileActivityType.HouseholdPotentialDuplicateUpdated) {
           return 'CaseFileActivityDuplicateUpdated';
         }
+
+        if (item.activityType === CaseFileActivityType.PaymentMoved) {
+          return 'CaseFileActivityPaymentMoved';
+        }
+
         return 'CaseFileActivityListItem';
     },
 
