@@ -231,15 +231,16 @@ export default Vue.extend({
           ok = !!await useRegistrationStore().updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
         }
 
+        if (ok && this.changedAddress) {
+          ok = !!await this.submitAddressUpdate();
+        }
+
         if (ok && this.makePrimaryMode) {
           const household = useRegistrationStore().getHouseholdCreate();
           ok = !!await this.$services.households.makePrimary(household.id, this.member.id, household.consentInformation);
           useRegistrationStore().isPrivacyAgreed = false;
         }
 
-        if (ok && this.changedAddress) {
-          ok = !!await this.submitAddressUpdate();
-        }
         this.$emit('close');
       } else {
         this.submitLoading = false;
