@@ -495,5 +495,15 @@ describe('TeamTaskForm.vue', () => {
         });
       });
     });
+
+    describe('search', () => {
+      it('should call debounceSearch', async () => {
+        wrapper.vm.debounceSearch = jest.fn();
+        await wrapper.setData({
+          search: 'new-search',
+        });
+        expect(wrapper.vm.debounceSearch).toHaveBeenCalledWith('new-search');
+      });
+    });
   });
 });
