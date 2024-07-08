@@ -2,6 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { AddCallCentrePage } from './addCallCentre.page';
 import { AddShelterLocationPage } from './addShelterLocation.page';
 import { AddRegistrationLocationPage } from './addRegistrationLocation.page';
+import { AddNewAgreementPage } from './addNewAgreement.page';
 
 export enum DataTest {
   eventName = 'title-left-menu',
@@ -31,6 +32,12 @@ export enum DataTest {
   shelterLocationName = 'event-shelter-location-section-name',
   shelterLocationAddress = 'event-shelter-location-section-address',
   shelterLocationStatus = 'event-shelter-location-section-status',
+  addAgreement = 'add-section-button-Agreement',
+  agreementName = 'event-agreement-section-name-0',
+  agreementStartDate = 'event-agreement-section-start-date-0',
+  agreementEndDate = 'event-agreement-section-end-date-0',
+  agreementType = 'event-agreement-section-type-0',
+  agreementDetails = 'event-agreement-section-details-0',
 }
 
 export class EventDetailsPage {
@@ -87,6 +94,18 @@ export class EventDetailsPage {
   private shelterLocationAddress = { selector: DataTest.shelterLocationAddress };
 
   private shelterLocationStatus = { selector: DataTest.shelterLocationStatus };
+
+  private addAgreement = { selector: DataTest.addAgreement };
+
+  private agreementName = { selector: DataTest.agreementName };
+
+  private agreementStartDate = { selector: DataTest.agreementStartDate };
+
+  private agreementEndDate = { selector: DataTest.agreementEndDate };
+
+  private agreementType = { selector: DataTest.agreementType };
+
+  private agreementDetails = { selector: DataTest.agreementDetails };
 
   public copyLink() {
     cy.getByDataTest(this.eventLink)
@@ -220,5 +239,34 @@ export class EventDetailsPage {
 
   public getShelterLocationButton() {
     return cy.getByDataTest(this.addNewShelterLocation);
+  }
+
+  public addNewAgreement() {
+    cy.getByDataTest(this.addAgreement).click();
+    return new AddNewAgreementPage();
+  }
+
+  public getAgreementName(index = 0) {
+    return cy.getByDataTestLike(this.agreementName).eq(index).getAndTrimText();
+  }
+
+  public getAgreementStartDate(index = 0) {
+    return cy.getByDataTestLike(this.agreementStartDate).eq(index).getAndTrimText();
+  }
+
+  public getAgreementEndDate(index = 0) {
+    return cy.getByDataTestLike(this.agreementEndDate).eq(index).getAndTrimText();
+  }
+
+  public getAgreementType(index = 0) {
+    return cy.getByDataTestLike(this.agreementType).eq(index).getAndTrimText();
+  }
+
+  public getAgreementDetails(index = 0) {
+    return cy.getByDataTestLike(this.agreementDetails).eq(index).getAndTrimText();
+  }
+
+  public getAddNewAgreementButton() {
+    return cy.getByDataTest(this.addAgreement);
   }
 }
