@@ -1046,6 +1046,18 @@ describe('TaskDetails.vue', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.filterOutInactiveTaskCategoryAndSubCategory).toEqual(false);
       });
+
+      it('should call fetchSelectedFinancialAssistancePaymentAndSetName if there is financialAssistancePaymentId', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ financialAssistancePaymentId: 'mock-fa-payment-id-123' }),
+          },
+        });
+        wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName = jest.fn();
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName).toHaveBeenCalled();
+      });
     });
   });
 

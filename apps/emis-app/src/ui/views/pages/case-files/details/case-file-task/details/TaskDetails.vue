@@ -89,6 +89,17 @@
 
           <div class="task-details-container mt-4 mx-13 py-2 rc-body14">
             <template v-if="isTeamTask">
+              <v-row v-if="task.financialAssistancePaymentId" class="border-bottom ma-0 px-2" data-test="task-action-dialog-sub-category">
+                <v-col cols="4" class="font-weight-bold">
+                  {{ $t('caseFileActivity.activityList.title.FinancialAssistancePayment') }}
+                </v-col>
+                <v-col cols="8">
+                  <span>
+                    {{ financialAssistancePaymentName }}
+                  </span>
+                </v-col>
+              </v-row>
+
               <v-row v-if="selectedSubCategory" class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-sub-category-section">
                 <v-col cols="4" class="font-weight-bold">
                   {{ $t('task.task_sub_category') }}
@@ -156,10 +167,11 @@
     </template>
     <task-action-dialog
       v-if="showTaskActionDialog"
-      :task="task"
+      :task-id="task.id"
       :event-id="caseFile.eventId"
-      :selected-task-category="displayedTaskCategory"
-      :selected-sub-category="displayedSubCategory"
+      :selected-task-category-name="displayedTaskCategory"
+      :selected-sub-category-name="displayedSubCategory"
+      :financial-assistance-payment-name-prop="financialAssistancePaymentName"
       :show.sync="showTaskActionDialog" />
     <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
   </rc-page-content>
@@ -312,6 +324,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       await Promise.all([
         useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
         useTeamStore().fetch(this.task.assignedTeamId),
+        this.task.financialAssistancePaymentId && this.fetchSelectedFinancialAssistancePaymentAndSetName(),
       ]);
       this.selectedTaskCategoryId = this.task.category?.optionItemId;
       this.selectedSubCategoryId = this.task.subCategory ? this.task.subCategory.optionItemId : '';

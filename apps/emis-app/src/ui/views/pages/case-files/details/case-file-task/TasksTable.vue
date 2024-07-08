@@ -161,10 +161,10 @@
     </rc-data-table>
     <task-action-dialog
       v-if="showTaskActionDialog"
-      :task="actioningTask.entity"
+      :task-id="actioningTask.entity.id"
       :event-id="isInCaseFile ? caseFile.eventId : actioningTask.metadata.eventId"
-      :selected-task-category="actioningTask.metadata.taskCategory"
-      :selected-sub-category="actioningTask.metadata.taskSubCategory"
+      :selected-task-category-name="actioningTask.metadata.taskCategory"
+      :selected-sub-category-name="actioningTask.metadata.taskSubCategory"
       :show.sync="showTaskActionDialog" />
   </div>
 </template>

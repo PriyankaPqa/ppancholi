@@ -101,9 +101,9 @@
       </rc-page-content>
       <task-action-dialog
         v-if="showTaskActionDialog"
-        :task="task"
-        :selected-task-category="displayedTaskCategory"
-        :selected-sub-category="displayedSubCategory"
+        :task-id="task.id"
+        :selected-task-category-name="displayedTaskCategory"
+        :selected-sub-category-name="displayedSubCategory"
         :event-id="caseFile.eventId"
         :show.sync="showTaskActionDialog" />
     </page-template>

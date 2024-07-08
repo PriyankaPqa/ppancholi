@@ -52,7 +52,7 @@
             cache-items
             outlined
             :search-input.sync="search"
-            :items="faPayments"
+            :items="financialAssistancePayments"
             :item-text="getFAName"
             :item-value="(item) => item && item.id"
             :loading="loading"
@@ -182,7 +182,7 @@ export default mixins(caseFileTask).extend({
       return {
         localTeamTaskForm,
         loading: false,
-        faPayments: [] as IFinancialAssistancePaymentEntity[],
+        financialAssistancePayments: [] as IFinancialAssistancePaymentEntity[],
         search: '',
     };
   },
@@ -233,13 +233,13 @@ export default mixins(caseFileTask).extend({
 
   async created() {
     await useTaskStore().fetchTaskCategories();
-    await this.fetchFaData('');
+    await this.fetchFinancialAssistancePaymentData('');
     if (this.isEditMode) {
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
       this.selectedSubCategoryId = this.taskData.subCategory.optionItemId;
       if (this.taskData.financialAssistancePaymentId) {
         this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
-        await this.fetchSelectedFa();
+        await this.fetchSelectedFinancialAssistancePaymentEntity();
       }
     }
   },
@@ -267,10 +267,10 @@ export default mixins(caseFileTask).extend({
     },
 
     debounceSearch: _debounce(function func(this: any, query: string) {
-      this.fetchFaData(query, this.limitResults);
+      this.fetchFinancialAssistancePaymentData(query, this.limitResults);
     }, 500),
 
-    async fetchFaData(querySearch = '') {
+    async fetchFinancialAssistancePaymentData(querySearch = '') {
       this.loading = true;
       const searchParam = helpers.toQuickSearchSql(querySearch, 'Entity/Name');
 
@@ -288,11 +288,11 @@ export default mixins(caseFileTask).extend({
 
       const res = await useFinancialAssistancePaymentStore().search({ params, includeInactiveItems: true });
 
-      this.faPayments = res?.values;
+      this.financialAssistancePayments = res?.values;
       this.loading = false;
     },
 
-    async fetchSelectedFa() {
+    async fetchSelectedFinancialAssistancePaymentEntity() {
       const res = await useFinancialAssistancePaymentStore().search({ params: {
           filter: {
             Entity: {
@@ -301,7 +301,7 @@ export default mixins(caseFileTask).extend({
           },
         } });
       if (res?.values) {
-        this.faPayments = deepmerge(res?.values, this.faPayments);
+        this.financialAssistancePayments = deepmerge(res?.values, this.financialAssistancePayments);
       }
     },
   },

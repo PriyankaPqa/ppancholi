@@ -9,6 +9,8 @@ import { ITeamEntity } from '@libs/entities-lib/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/shared-lib/types';
 import { useTeamStore } from '@/pinia/team/team';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 export default Vue.extend({
   props: {
@@ -27,6 +29,7 @@ export default Vue.extend({
       filterOutHiddenTaskCategory: true,
       filterOutInactiveTaskCategoryAndSubCategory: true,
       localTask: new TaskEntity(),
+      financialAssistancePaymentName: '',
     };
   },
 
@@ -126,6 +129,19 @@ export default Vue.extend({
         } else {
           this.isWorkingOn = true;
         }
+      }
+    },
+
+    async fetchSelectedFinancialAssistancePaymentAndSetName() {
+      const res = await useFinancialAssistancePaymentStore().search({ params: {
+          filter: {
+            Entity: {
+              Id: { value: this.task?.financialAssistancePaymentId, type: EFilterKeyType.Guid },
+            },
+          },
+        } });
+      if (res?.values) {
+        this.financialAssistancePaymentName = res?.values[0]?.name;
       }
     },
   },

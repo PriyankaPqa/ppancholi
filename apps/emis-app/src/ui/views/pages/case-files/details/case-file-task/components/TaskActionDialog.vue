@@ -18,27 +18,37 @@
       @submit="onSubmit">
       <div class="px-0">
         <div v-if="task.taskType === TaskType.Team" class="mb-10" data-test="task-action-dialog-team-task-info">
-          <div v-if="selectedTaskCategory" class="font-weight-bold rc-heading-5">
-            {{ helpers.capitalize(selectedTaskCategory) }}
+          <div v-if="selectedTaskCategoryName" class="font-weight-bold rc-heading-5">
+            {{ helpers.capitalize(selectedTaskCategoryName) }}
           </div>
           <div class="creator-info grey-darken-2 rc-body12 mb-3">
             {{ teamTaskCreatorInfo }}
           </div>
           <v-row class="justify-center mt-0 rc-body14 px-3">
             <v-col cols="12" class="border-all border-radius-6 pa-0">
-              <v-row v-if="selectedSubCategory" class="border-bottom ma-0 px-2" data-test="task-action-dialog-sub-category">
-                <v-col cols="3" class="font-weight-bold">
+              <v-row v-if="task.financialAssistancePaymentId" class="border-bottom ma-0 px-2" data-test="task-action-dialog-sub-category">
+                <v-col cols="4" class="font-weight-bold">
+                  {{ $t('caseFileActivity.activityList.title.FinancialAssistancePayment') }}
+                </v-col>
+                <v-col cols="8">
+                  <span>
+                    {{ financialAssistancePaymentName }}
+                  </span>
+                </v-col>
+              </v-row>
+              <v-row v-if="selectedSubCategoryName" class="border-bottom ma-0 px-2" data-test="task-action-dialog-sub-category">
+                <v-col cols="4" class="font-weight-bold">
                   {{ $t('task.task_sub_category') }}
                 </v-col>
-                <v-col cols="9">
-                  {{ selectedSubCategory }}
+                <v-col cols="8">
+                  {{ selectedSubCategoryName }}
                 </v-col>
               </v-row>
               <v-row class="ma-0 flex-nowrap flex px-2">
-                <v-col cols="3" class="font-weight-bold">
+                <v-col cols="4" class="font-weight-bold">
                   {{ $t('task.create_edit.task_description') }}
                 </v-col>
-                <v-col cols="9">
+                <v-col cols="8">
                   {{ task.description }}
                 </v-col>
               </v-row>
@@ -95,10 +105,9 @@
 </template>
 <script lang="ts">
 
-import Vue from 'vue';
 import { RcDialog, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { ITaskEntity, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ValidationProvider } from 'vee-validate';
 import { VForm } from '@libs/shared-lib/types';
 import { ITeamEntity } from '@libs/entities-lib/team';
@@ -109,6 +118,8 @@ import helpers from '@/ui/helpers/helpers';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import caseFileTask from '@/ui/mixins/caseFileTask';
+import mixins from 'vue-typed-mixins';
 
 interface IActionItem {
   value: TaskActionTaken;
@@ -116,7 +127,7 @@ interface IActionItem {
   description: TranslateResult | string;
 }
 
-export default Vue.extend({
+export default mixins(caseFileTask).extend({
   name: 'TaskActionDialog',
 
   components: {
@@ -137,17 +148,17 @@ export default Vue.extend({
       required: true,
     },
 
-    task: {
-      type: Object as () => ITaskEntity,
-      required: true,
-    },
-
-    selectedTaskCategory: {
+    financialAssistancePaymentNameProp: {
       type: String,
       default: '',
     },
 
-    selectedSubCategory: {
+    selectedTaskCategoryName: {
+      type: String,
+      default: '',
+    },
+
+    selectedSubCategoryName: {
       type: String,
       default: '',
     },
@@ -242,10 +253,14 @@ export default Vue.extend({
 
   async created() {
     if (this.task.taskType === TaskType.Team) {
+      this.financialAssistancePaymentName = this.financialAssistancePaymentNameProp;
       try {
         this.loading = true;
-        await useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial);
-        await this.getAssignableTeams();
+        await Promise.all([
+          useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
+          this.getAssignableTeams(),
+          !this.financialAssistancePaymentName && this.task.financialAssistancePaymentId && this.fetchSelectedFinancialAssistancePaymentAndSetName(),
+        ]);
       } finally {
         this.loading = false;
       }
