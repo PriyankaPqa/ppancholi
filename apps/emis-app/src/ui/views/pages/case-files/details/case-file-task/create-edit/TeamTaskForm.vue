@@ -132,7 +132,6 @@ import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance
 import { EFilterKeyType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
-import deepmerge from 'deepmerge';
 
 interface ILocalTeamTaskForm {
   category: IListOption;
@@ -233,13 +232,13 @@ export default mixins(caseFileTask).extend({
 
   async created() {
     await useTaskStore().fetchTaskCategories();
-    await this.fetchFinancialAssistancePaymentData('');
+    await this.fetchFAPayments('');
     if (this.isEditMode) {
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
       this.selectedSubCategoryId = this.taskData.subCategory.optionItemId;
-      if (this.taskData.financialAssistancePaymentId) {
-        this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
-        await this.fetchSelectedFinancialAssistancePaymentEntity();
+      this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
+      if (this.taskData.financialAssistancePaymentId && !this.financialAssistancePayments?.some((fa) => fa.id === this.taskData.financialAssistancePaymentId)) {
+        await this.fetchSelectedFAPayment();
       }
     }
   },
@@ -267,10 +266,10 @@ export default mixins(caseFileTask).extend({
     },
 
     debounceSearch: _debounce(function func(this: any, query: string) {
-      this.fetchFinancialAssistancePaymentData(query, this.limitResults);
+      this.fetchFAPayments(query);
     }, 500),
 
-    async fetchFinancialAssistancePaymentData(querySearch = '') {
+    async fetchFAPayments(querySearch = '') {
       this.loading = true;
       const searchParam = helpers.toQuickSearchSql(querySearch, 'Entity/Name');
 
@@ -292,16 +291,10 @@ export default mixins(caseFileTask).extend({
       this.loading = false;
     },
 
-    async fetchSelectedFinancialAssistancePaymentEntity() {
-      const res = await useFinancialAssistancePaymentStore().search({ params: {
-          filter: {
-            Entity: {
-              Id: { value: this.taskData.financialAssistancePaymentId, type: EFilterKeyType.Guid },
-            },
-          },
-        } });
-      if (res?.values) {
-        this.financialAssistancePayments = deepmerge(res?.values, this.financialAssistancePayments);
+    async fetchSelectedFAPayment() {
+      const res = await useFinancialAssistancePaymentStore().fetch(this.taskData.financialAssistancePaymentId);
+      if (res) {
+        this.financialAssistancePayments.push(res);
       }
     },
   },

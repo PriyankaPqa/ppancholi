@@ -167,7 +167,7 @@
     </template>
     <task-action-dialog
       v-if="showTaskActionDialog"
-      :task-id="task.id"
+      :task-id="taskId"
       :event-id="caseFile.eventId"
       :selected-task-category-name="displayedTaskCategory"
       :selected-sub-category-name="displayedSubCategory"
@@ -324,7 +324,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       await Promise.all([
         useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
         useTeamStore().fetch(this.task.assignedTeamId),
-        this.task.financialAssistancePaymentId && this.fetchSelectedFinancialAssistancePaymentAndSetName(),
+        this.task.financialAssistancePaymentId && this.fetchSelectedFAPaymentAndSetName(),
       ]);
       this.selectedTaskCategoryId = this.task.category?.optionItemId;
       this.selectedSubCategoryId = this.task.subCategory ? this.task.subCategory.optionItemId : '';

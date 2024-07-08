@@ -321,7 +321,7 @@ describe('caseFileTask', () => {
       });
     });
 
-    describe('fetchSelectedFinancialAssistancePaymentAndSetName', () => {
+    describe('fetchSelectedFAPaymentAndSetName', () => {
       it('should call FinancialAssistancePayment search and set the name of the fa payment', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ financialAssistancePaymentId: 'mock-fa-payment-id-123' }));
         await doMount(true, {
@@ -329,11 +329,11 @@ describe('caseFileTask', () => {
             task: () => mockTeamTaskEntity({ financialAssistancePaymentId: 'mock-fa-payment-id-123' }),
           },
         });
-        financialAssistancePaymentStore.search.mockResolvedValueOnce({ values: [mockCaseFinancialAssistanceEntity({ name: 'mock-fa-payment-name' })] });
+        financialAssistancePaymentStore.fetch.mockResolvedValueOnce(mockCaseFinancialAssistanceEntity({ name: 'mock-fa-payment-name' }));
         await flushPromises();
 
-        await wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName();
-        expect(financialAssistancePaymentStore.search).toHaveBeenCalledWith({ params: { filter: { Entity: { Id: { type: 'guid', value: 'mock-fa-payment-id-123' } } } } });
+        await wrapper.vm.fetchSelectedFAPaymentAndSetName();
+        expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith('mock-fa-payment-id-123');
         expect(wrapper.vm.financialAssistancePaymentName).toEqual('mock-fa-payment-name');
       });
     });

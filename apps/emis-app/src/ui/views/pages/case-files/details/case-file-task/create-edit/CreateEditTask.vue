@@ -101,7 +101,7 @@
       </rc-page-content>
       <task-action-dialog
         v-if="showTaskActionDialog"
-        :task-id="task.id"
+        :task-id="taskId"
         :selected-task-category-name="displayedTaskCategory"
         :selected-sub-category-name="displayedSubCategory"
         :event-id="caseFile.eventId"
@@ -184,11 +184,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       type: String,
       default: '',
     },
-
-    taskId: {
-      type: String,
-      default: '',
-    },
   },
 
     data() {
@@ -205,6 +200,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         description: '',
         dueDate: '' as string | Date,
         isUrgent: false,
+        financialAssistancePaymentId: '',
       },
     };
   },
@@ -225,6 +221,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
+        financialAssistancePaymentId: this.localTask.financialAssistancePaymentId,
       });
     },
 
@@ -306,6 +303,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
+        financialAssistancePaymentId: this.localTask.financialAssistancePaymentId,
       });
     },
 

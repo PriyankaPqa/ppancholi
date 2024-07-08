@@ -322,7 +322,7 @@ describe('TaskActionDialog.vue', () => {
         expect(wrapper.vm.getAssignableTeams).not.toHaveBeenCalled();
       });
 
-      it('should set financialAssistancePaymentName from prop and do not call fetchSelectedFinancialAssistancePaymentAndSetName', async () => {
+      it('should set financialAssistancePaymentName from prop and do not call fetchSelectedFAPaymentAndSetName', async () => {
         await doMount({
           computed: {
             task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
@@ -331,16 +331,16 @@ describe('TaskActionDialog.vue', () => {
         await wrapper.setProps({
           financialAssistancePaymentNameProp: 'mock-fa-name',
         });
-        wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName = jest.fn();
+        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
         expect(wrapper.vm.financialAssistancePaymentName).toEqual('mock-fa-name');
-        expect(wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName).not.toHaveBeenCalled();
+        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).not.toHaveBeenCalled();
       });
 
-      it('should call fetchSelectedFinancialAssistancePaymentAndSetName if there is no fa name from prop, and there is financialAssistancePaymentId', async () => {
+      it('should call fetchSelectedFAPaymentAndSetName if there is no fa name from prop, and there is financialAssistancePaymentId', async () => {
         await doMount({
           computed: {
             task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress, financialAssistancePaymentId: 'mock-fa-id-123' }),
@@ -349,15 +349,15 @@ describe('TaskActionDialog.vue', () => {
         await wrapper.setProps({
           financialAssistancePaymentNameProp: '',
         });
-        wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName = jest.fn();
+        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName).toHaveBeenCalled();
+        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).toHaveBeenCalled();
       });
 
-      it('should not call fetchSelectedFinancialAssistancePaymentAndSetName if there is no fa name from prop, and there is no financialAssistancePaymentId', async () => {
+      it('should not call fetchSelectedFAPaymentAndSetName if there is no fa name from prop, and there is no financialAssistancePaymentId', async () => {
         await doMount({
           computed: {
             task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress, financialAssistancePaymentId: '' }),
@@ -366,12 +366,12 @@ describe('TaskActionDialog.vue', () => {
         await wrapper.setProps({
           financialAssistancePaymentNameProp: '',
         });
-        wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName = jest.fn();
+        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.fetchSelectedFinancialAssistancePaymentAndSetName).not.toHaveBeenCalled();
+        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).not.toHaveBeenCalled();
       });
     });
   });

@@ -10,7 +10,6 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/shared-lib/types';
 import { useTeamStore } from '@/pinia/team/team';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-import { EFilterKeyType } from '@libs/component-lib/types';
 
 export default Vue.extend({
   props: {
@@ -132,16 +131,10 @@ export default Vue.extend({
       }
     },
 
-    async fetchSelectedFinancialAssistancePaymentAndSetName() {
-      const res = await useFinancialAssistancePaymentStore().search({ params: {
-          filter: {
-            Entity: {
-              Id: { value: this.task?.financialAssistancePaymentId, type: EFilterKeyType.Guid },
-            },
-          },
-        } });
-      if (res?.values) {
-        this.financialAssistancePaymentName = res?.values[0]?.name;
+    async fetchSelectedFAPaymentAndSetName() {
+      const res = await useFinancialAssistancePaymentStore().fetch(this.task?.financialAssistancePaymentId);
+      if (res) {
+        this.financialAssistancePaymentName = res.name;
       }
     },
   },
