@@ -4,6 +4,7 @@ import { getRandomNumber } from '@libs/cypress-lib/helpers';
 import { EEventCallCentreStatus, IEventCallCentre, IEventGenericLocation } from '@libs/entities-lib/event';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
+import { IRegistrationAssessment } from 'cypress/pages/events/addAssessment.page';
 import { EventStatus, ICreateEventFields } from '../pages/events/createEvent.page';
 import { IAddNewProgramFields } from '../pages/programs/addNewEventProgram.page';
 import { IFinancialAssistanceTableData } from '../pages/financialAssistance/createFinancialAssistanceTable.page';
@@ -138,4 +139,20 @@ export const fixtureApprovalTable = (retries: number): IApprovalTableData => ({
   userRole: 'Director of Operations',
   minimumAmount: '10,000.00',
   maximumAmount: '50,000.00',
+});
+
+export const fixtureEventAssessment = (retries: number) : IRegistrationAssessment => ({
+  sectionTitle: {
+    translation: {
+      en: `My Assessment title - retry${retries} - `,
+      fr: `C'est le grand cours - retry${retries} - `,
+    },
+  },
+  description: {
+    translation: {
+      en: 'This is my entered description',
+      fr: "C'est cours est va amusant",
+    },
+  },
+  assessment: '',
 });

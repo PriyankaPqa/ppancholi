@@ -45,6 +45,7 @@
               <v-col cols="12" class="pb-0">
                 <v-text-field-with-validation
                   v-model="sectionTitle.translation[languageMode]"
+                  :data-test="'registrationAssessment-title'"
                   :label="$t('eventSummary.registrationAssessment.sectionTitle') + '*'"
                   :rules="rules.sectionTitle" />
               </v-col>
@@ -57,6 +58,7 @@
                   rows="3"
                   clearable
                   :label="$t('eventSummary.registrationAssessment.description')"
+                  :data-test="'registrationAssessment-description'"
                   :rules="rules.details"
                   @click:clear="clearDescription()" />
               </v-col>
