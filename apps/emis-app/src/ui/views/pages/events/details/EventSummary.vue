@@ -163,7 +163,9 @@
           :can-add="canEditConsentSection"
           @click-add-button="onSectionAdd($event)" />
         <event-summary-section-body v-slot="{ item }" :items="[consentStatement]">
-          <div class="fw-bold">
+          <div
+            class="fw-bold"
+            data-test="consent-statement-section-name">
             {{ item }}
           </div>
         </event-summary-section-body>

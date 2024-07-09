@@ -4,6 +4,7 @@ import { AddShelterLocationPage } from './addShelterLocation.page';
 import { AddRegistrationLocationPage } from './addRegistrationLocation.page';
 import { AddAssessmentPage } from './addAssessment.page';
 import { AddNewAgreementPage } from './addNewAgreement.page';
+import { SelectStatementPage } from './selectStatement.page';
 
 export enum DataTest {
   eventName = 'title-left-menu',
@@ -48,6 +49,9 @@ export enum DataTest {
   agreementEndDate = 'event-agreement-section-end-date-0',
   agreementType = 'event-agreement-section-type-0',
   agreementDetails = 'event-agreement-section-details-0',
+  addEventConsentStatement = 'add-section-button-EventConsent',
+  consentStatement = 'consent-statement-section-name',
+  eventConsentSectionTitle = 'event-summary-section-title-EventConsent',
 }
 
 export class EventDetailsPage {
@@ -134,6 +138,12 @@ export class EventDetailsPage {
   private agreementType = { selector: DataTest.agreementType };
 
   private agreementDetails = { selector: DataTest.agreementDetails };
+
+  private addEventConsentStatement = { selector: DataTest.addEventConsentStatement };
+
+  private consentStatement = { selector: DataTest.consentStatement };
+
+  private eventConsentSectionTitle = { selector: DataTest.eventConsentSectionTitle };
 
   public copyLink() {
     cy.getByDataTest(this.eventLink)
@@ -333,5 +343,22 @@ export class EventDetailsPage {
 
   public getAddNewAgreementButton() {
     return cy.getByDataTest(this.addAgreement);
+  }
+
+  public getSelectConsentStatementButton() {
+    return cy.getByDataTest(this.addEventConsentStatement);
+  }
+
+  public addStatement() {
+    cy.getByDataTest(this.addEventConsentStatement).click();
+    return new SelectStatementPage();
+  }
+
+  public getConsentStatementSectionTitleElement() {
+    return cy.getByDataTest(this.eventConsentSectionTitle);
+  }
+
+  public getConsentStatementDetails() {
+    return cy.getByDataTest(this.consentStatement).getAndTrimText();
   }
 }
