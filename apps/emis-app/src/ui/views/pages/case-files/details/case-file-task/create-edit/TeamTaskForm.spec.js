@@ -385,6 +385,21 @@ describe('TeamTaskForm.vue', () => {
         await wrapper.vm.fetchSelectedFAPayment();
         expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith('new-fa-id-1');
       });
+
+      it('should not call fetch if the entity is already fetched', async () => {
+        jest.clearAllMocks();
+        await wrapper.setProps({
+          taskData: mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1', financialAssistancePaymentId: 'mock-id-1' }),
+          isEditMode: true,
+        });
+        await wrapper.setData({
+          financialAssistancePayments: [mockCaseFinancialAssistanceEntity({ id: 'mock-id-1' })],
+        });
+        await flushPromises();
+        financialAssistancePaymentStore.fetch = jest.fn();
+        await wrapper.vm.fetchSelectedFAPayment();
+        expect(financialAssistancePaymentStore.fetch).not.toHaveBeenCalled();
+      });
     });
   });
 
@@ -434,23 +449,7 @@ describe('TeamTaskForm.vue', () => {
         expect(wrapper.vm.fetchFAPayments).toHaveBeenCalled();
       });
 
-      it('should set data properly in edit mode', async () => {
-        await doMount(true, {
-          propsData: {
-            caseFileId: 'mock-case-file-id-1',
-            taskData: mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }),
-            isEditMode: true,
-          },
-        });
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-        expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
-        expect(wrapper.vm.selectedSubCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
-      });
-
-      it('should set financialAssistancePaymentId data and call fetchSelectedFAPayment in edit mode if there is financialAssistancePaymentId', async () => {
+      it('should set data properly and call fetchSelectedFAPayment in edit mode', async () => {
         await doMount(true, {
           propsData: {
             caseFileId: 'mock-case-file-id-1',
@@ -463,25 +462,10 @@ describe('TeamTaskForm.vue', () => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
+        expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
+        expect(wrapper.vm.selectedSubCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
         expect(wrapper.vm.localTeamTaskForm.financialAssistancePaymentId).toEqual('mock-id-1');
         expect(wrapper.vm.fetchSelectedFAPayment).toHaveBeenCalled();
-      });
-
-      it('should not call fetchSelectedFAPayment if the entity is already fetched', async () => {
-        jest.clearAllMocks();
-        await wrapper.setProps({
-          taskData: mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1', financialAssistancePaymentId: 'mock-id-1' }),
-          isEditMode: true,
-        });
-        await wrapper.setData({
-          financialAssistancePayments: [mockCaseFinancialAssistanceEntity({ id: 'mock-id-1' })],
-        });
-        await flushPromises();
-        wrapper.vm.fetchSelectedFAPayment = jest.fn();
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.fetchSelectedFAPayment).not.toHaveBeenCalled();
       });
     });
   });

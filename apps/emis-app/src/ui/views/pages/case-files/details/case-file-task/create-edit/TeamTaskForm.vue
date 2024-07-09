@@ -237,9 +237,7 @@ export default mixins(caseFileTask).extend({
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
       this.selectedSubCategoryId = this.taskData.subCategory.optionItemId;
       this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
-      if (this.taskData.financialAssistancePaymentId && !this.financialAssistancePayments?.some((fa) => fa.id === this.taskData.financialAssistancePaymentId)) {
-        await this.fetchSelectedFAPayment();
-      }
+      await this.fetchSelectedFAPayment();
     }
   },
 
@@ -292,9 +290,11 @@ export default mixins(caseFileTask).extend({
     },
 
     async fetchSelectedFAPayment() {
-      const res = await useFinancialAssistancePaymentStore().fetch(this.taskData.financialAssistancePaymentId);
-      if (res) {
-        this.financialAssistancePayments.push(res);
+      if (this.taskData.financialAssistancePaymentId && !this.financialAssistancePayments?.some((fa) => fa.id === this.taskData.financialAssistancePaymentId)) {
+        const res = await useFinancialAssistancePaymentStore().fetch(this.taskData.financialAssistancePaymentId);
+        if (res) {
+          this.financialAssistancePayments.push(res);
+        }
       }
     },
   },
