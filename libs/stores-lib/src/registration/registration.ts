@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import {
+  CurrentAddress,
+  ECurrentAddressTypes,
   EIndigenousTypes, HouseholdCreate, IAddressData, ICheckForPossibleDuplicateResponse, IHouseholdCreateData,
   IIdentitySet, IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
 } from '@libs/entities-lib/household-create';
@@ -23,6 +25,7 @@ import libHelpers from '@libs/entities-lib/helpers';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import { ICaseFilesService, ICaseFilesServiceMock } from '@libs/services-lib/case-files/entity';
 import { ITier2Details } from '@libs/entities-lib/src/case-file';
+import { ICaseFileIndividualCreateRequest, MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import {
   additionalMembersValid,
   addressesValid,
@@ -587,11 +590,18 @@ export function storeFactory({
       try {
         if (mode === ERegistrationMode.Self) {
           if (householdCreate.value.id) {
+            const individuals = [householdCreate.value.primaryBeneficiary, ...householdCreate.value.additionalMembers].map((m) => ({
+                membershipStatus: MembershipStatus.Active,
+                personId: m.id,
+                temporaryAddressHistory: [CurrentAddress.parseCurrentAddress(m.currentAddress)],
+                receivingAssistanceDetails: [{ receivingAssistance: true }],
+              })) as ICaseFileIndividualCreateRequest[];
+
             result = await caseFileApi.createCaseFile({
               householdId: householdCreate.value.id,
               eventId: event.value.id,
               consentInformation: householdCreate.value.consentInformation,
-              individuals: [], // todo in associate story
+              individuals,
             }, true);
           } else {
             result = await householdApi.submitRegistration({
@@ -687,12 +697,12 @@ export function storeFactory({
       return result || null;
     }
 
-    async function addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode }
-      : { householdId: string; member: IMember; sameAddress: boolean, caseFileIndividualMode: boolean }): Promise<IHouseholdEntity> {
+    async function addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode, sendSameAddressToService }
+      : { householdId: string; member: IMember; sameAddress: boolean, caseFileIndividualMode: boolean, sendSameAddressToService: boolean }): Promise<IHouseholdEntity> {
       if (sameAddress) {
         member.currentAddress = { ...householdCreate.value.primaryBeneficiary.currentAddress };
       }
-      const res = caseFileIndividualMode ? (await householdApi.addMemberV2(householdId, mode === ERegistrationMode.Self, member, sameAddress))
+      const res = caseFileIndividualMode ? (await householdApi.addMemberV2(householdId, mode === ERegistrationMode.Self, member, sendSameAddressToService && sameAddress))
         : (await householdApi.addMember(householdId, mode === ERegistrationMode.Self, member));
       if (res) {
         const newMember = new Member({ ...member, id: res.members[res.members.length - 1] });
@@ -797,11 +807,19 @@ export function storeFactory({
       };
     }
 
-    async function loadHousehold(householdId: string): Promise<HouseholdCreate> {
+    async function loadHousehold(householdId: string, caseFileIndividualMode: boolean): Promise<HouseholdCreate> {
       try {
         const consentInformation = householdCreate.value.consentInformation;
         const household = mode === ERegistrationMode.CRC ? await householdApi.get(householdId) : await householdApi.publicGetHousehold(householdId);
         setHouseholdCreate(await buildHouseholdCreateData(household));
+        if (caseFileIndividualMode) {
+          householdCreate.value.primaryBeneficiary.currentAddress = new CurrentAddress();
+          householdCreate.value.primaryBeneficiary.currentAddress.reset(ECurrentAddressTypes.Unknown);
+          householdCreate.value.additionalMembers.forEach((a) => {
+            a.currentAddress = new CurrentAddress();
+            a.currentAddress.reset(ECurrentAddressTypes.Unknown);
+          });
+        }
         householdCreate.value.primaryBeneficiary.contactInformation.emailValidatedByBackend = true;
         householdCreate.value.consentInformation = consentInformation;
         return householdCreate.value;

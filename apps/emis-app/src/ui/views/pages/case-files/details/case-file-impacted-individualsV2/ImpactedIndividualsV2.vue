@@ -21,13 +21,9 @@
 </template>
 
 <script lang="ts">
-import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import mixins from 'vue-typed-mixins';
-import { CaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
-import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
-import { usePersonStore } from '@/pinia/person/person';
 import caseFileDetail from '../caseFileDetail';
 import ImpactedIndividualCardV2 from './components/ImpactedIndividualCardV2.vue';
 
@@ -51,21 +47,6 @@ export default mixins(caseFileDetail).extend({
       const caseFileStatusReadOnly = [CaseFileStatus.Closed, CaseFileStatus.Archived, CaseFileStatus.Inactive];
       return caseFileStatusReadOnly.indexOf(this.caseFile.caseFileStatus) > -1;
     },
-
-    individuals(): CaseFileIndividualEntity[] {
-      return _orderBy(
-        useCaseFileIndividualStore().getByCaseFile(this.caseFileId).map((i) => new CaseFileIndividualEntity(i)),
-        [(x) => this.household?.primaryBeneficiary === x.personId, (x) => x.membershipStatus],
-        ['desc', 'asc'],
-      );
-    },
-  },
-
-  async created() {
-    this.loading = true;
-    const individuals = await useCaseFileIndividualStore().fetchAll({ caseFileId: this.caseFileId });
-    await usePersonStore().fetchByIds(individuals.map((i) => i.personId), true);
-    this.loading = false;
   },
 });
 </script>

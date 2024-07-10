@@ -2493,6 +2493,7 @@
     "household.profile.member.make_primary.missing_info": "Impossible de désigner {name} comme représentant(e) du ménage puisque certains renseignements requis sont manquants (voir ci-dessous).",
     "household.profile.member.middle_name": "Deuxième prénom",
     "household.profile.member.moved_member": "Membre déménagé",
+    "impactedIndividuals.removed": "Inactif",
     "household.profile.member.phone_numbers": "Numéros de téléphone",
     "household.profile.member.phone_numbers.alternate": "Autre",
     "household.profile.member.phone_numbers.extension": "Poste",

@@ -155,14 +155,15 @@ export default Vue.extend({
     },
 
     displayedItems():IActivityItem[] {
-      const processedData = this.handleMoveActivity(this.activityItemsData);
+      const processedData = this.handleMoveActivity(this.activityItemsData)
+        .filter((a) => a.activityType !== HouseholdActivityType.TempAddressEdited || !this.$hasFeature(this.$featureKeys.CaseFileIndividual));
       const activityItems = processedData.length ? processedData.map((i: IHouseholdActivity) => new HouseholdActivity(i)) : [];
 
       const items = activityItems.map((i) => ({
         ...i,
         activityName: this.$t(i.getActivityName()) as string,
-        templateData: i.getTemplateData(false, this.$i18n),
-        templatePreviousData: i.getTemplateData(true, this.$i18n),
+        templateData: i.getTemplateData(false, this.$i18n, !this.$hasFeature(this.$featureKeys.CaseFileIndividual)),
+        templatePreviousData: i.getTemplateData(true, this.$i18n, !this.$hasFeature(this.$featureKeys.CaseFileIndividual)),
         // eslint-disable-next-line no-nested-ternary
         userName: i.user?.id === system.public_user_id ? this.$t('system.public_user_id') : (
           i.user?.id === system.system_user_id ? this.$t('system.system_user_id') : i.user?.name

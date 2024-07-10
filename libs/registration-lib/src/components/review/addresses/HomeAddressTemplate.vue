@@ -1,6 +1,6 @@
 <template>
   <div class="rc-body14 pr-sm-3">
-    <div class="rc-body14 fw-bold">
+    <div v-if="!hideTitle" class="rc-body14 fw-bold">
       {{ $t('registration.addresses.homeAddress') }}
     </div>
     <template v-if="!noHomeAddress">
@@ -32,6 +32,11 @@ export default Vue.extend({
     address: {
       type: Object as () => IAddress,
       required: true,
+    },
+
+    hideTitle: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

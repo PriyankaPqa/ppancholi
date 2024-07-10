@@ -342,6 +342,7 @@
     "caseFile.status.Close": "Closed",
     "caseFile.status.Closed": "Closed",
     "caseFile.status.Inactive": "Inactive",
+    "impactedIndividuals.removed": "Inactive",
     "caseFile.status.Open": "Open",
     "caseFile.tags.AddSelected": "Add selected",
     "caseFile.tags.AddTag": "Add tag",

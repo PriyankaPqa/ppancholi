@@ -1,52 +1,56 @@
 <template>
   <v-row no-gutters class="d-flex flex-column">
-    <v-col cols="12" class="pb-0">
-      <div class="rc-heading-5">
-        {{ $t('registration.addresses.homeAddress') }}
-        <v-tooltip bottom>
-          <template #activator="{ on }">
-            <v-btn small class="ml-1" icon :aria-label="$t('tooltip.home_address')" data-test="pageContent__opeHelp" v-on="on">
-              <v-icon small>
-                mdi-help-circle-outline
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('tooltip.home_address') }}</span>
-        </v-tooltip>
-      </div>
-    </v-col>
-    <v-col cols="12" class="pb-6">
-      <v-row no-gutters>
-        <v-checkbox-with-validation
-          v-model="noFixedHome"
-          data-test="address__noFixedHomeAddress"
-          :label="`${$t('registration.addresses.noFixedHomeAddress')}`" />
-      </v-row>
-    </v-col>
+    <template v-if="showHomeAddress">
+      <v-col v-if="showCurrentAddress" cols="12" class="pb-0">
+        <div class="rc-heading-5">
+          {{ $t('registration.addresses.homeAddress') }}
+          <v-tooltip bottom>
+            <template #activator="{ on }">
+              <v-btn small class="ml-1" icon :aria-label="$t('tooltip.home_address')" data-test="pageContent__opeHelp" v-on="on">
+                <v-icon small>
+                  mdi-help-circle-outline
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('tooltip.home_address') }}</span>
+          </v-tooltip>
+        </div>
+      </v-col>
+      <v-col cols="12" class="pb-6">
+        <v-row no-gutters>
+          <v-checkbox-with-validation
+            v-model="noFixedHome"
+            data-test="address__noFixedHomeAddress"
+            :label="`${$t('registration.addresses.noFixedHomeAddress')}`" />
+        </v-row>
+      </v-col>
 
-    <template v-if="!noFixedHome">
-      <address-form
-        :api-key="apiKey"
-        :canadian-provinces-items="canadianProvincesItems"
-        prefix-data-test="address"
-        :home-address="homeAddress"
-        :disable-autocomplete="disableAutocomplete"
-        :is-edit-mode="isEditMode"
-        @change="setHomeAddress($event)" />
+      <template v-if="!noFixedHome">
+        <address-form
+          :api-key="apiKey"
+          :canadian-provinces-items="canadianProvincesItems"
+          prefix-data-test="address"
+          :home-address="homeAddress"
+          :disable-autocomplete="disableAutocomplete"
+          :is-edit-mode="isEditMode"
+          @change="setHomeAddress($event)" />
+      </template>
     </template>
-
-    <validation-observer ref="currentAddress" slim>
-      <current-address-form
-        :shelter-locations="shelterLocations"
-        :canadian-provinces-items="canadianProvincesItems"
-        :current-address-type-items="currentAddressTypeItems"
-        :api-key="apiKey"
-        :current-address="currentAddress"
-        :no-fixed-home="noFixedHome"
-        :disable-autocomplete="disableAutocomplete"
-        prefix-data-test="tempAddress"
-        @change="setCurrentAddress($event)" />
-    </validation-observer>
+    <template v-if="showCurrentAddress">
+      <validation-observer ref="currentAddress" slim>
+        <current-address-form
+          :hide-title="!showHomeAddress"
+          :shelter-locations="shelterLocations"
+          :canadian-provinces-items="canadianProvincesItems"
+          :current-address-type-items="currentAddressTypeItems"
+          :api-key="apiKey"
+          :current-address="currentAddress"
+          :no-fixed-home="noFixedHome"
+          :disable-autocomplete="disableAutocomplete"
+          prefix-data-test="tempAddress"
+          @change="setCurrentAddress($event)" />
+      </validation-observer>
+    </template>
   </v-row>
 </template>
 
@@ -80,6 +84,16 @@ export default Vue.extend({
     isEditMode: {
       type: Boolean,
       default: false,
+    },
+
+    showCurrentAddress: {
+      type: Boolean,
+      default: true,
+    },
+
+    showHomeAddress: {
+      type: Boolean,
+      default: true,
     },
   },
 

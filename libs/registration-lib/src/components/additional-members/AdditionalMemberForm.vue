@@ -1,17 +1,19 @@
 <template>
   <v-row no-gutters class="d-flex flex-column">
-    <identity-form
-      :form="member.identitySet"
-      prefix-data-test="additionalMember"
-      :gender-items="genderItems"
-      @change="$emit('identity-change', $event)" />
-    <indigenous-identity-form
-      :indigenous-communities-items="indigenousCommunitiesItems"
-      :indigenous-types-items="indigenousTypesItems"
-      :loading="loading"
-      :form="member.identitySet"
-      prefix-data-test="additionalMember"
-      @change="$emit('indigenous-identity-change', $event)" />
+    <template v-if="showIdentitySection">
+      <identity-form
+        :form="member.identitySet"
+        prefix-data-test="additionalMember"
+        :gender-items="genderItems"
+        @change="$emit('identity-change', $event)" />
+      <indigenous-identity-form
+        :indigenous-communities-items="indigenousCommunitiesItems"
+        :indigenous-types-items="indigenousTypesItems"
+        :loading="loading"
+        :form="member.identitySet"
+        prefix-data-test="additionalMember"
+        @change="$emit('indigenous-identity-change', $event)" />
+    </template>
     <v-row v-if="!hideEditTemporaryAddress" class="grey-container pa-2 pb-0">
       <v-col class="pt-4 px-4">
         <div class="rc-body16 fw-bold">
@@ -148,6 +150,12 @@ export default Vue.extend({
       type: Boolean,
       default: true,
     },
+
+    showIdentitySection: {
+      type: Boolean,
+      default: true,
+    },
+
   },
 
   data() {

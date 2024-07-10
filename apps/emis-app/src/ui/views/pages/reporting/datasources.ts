@@ -222,7 +222,6 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'address_CheckIn', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'address_CheckOut', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'address_CrcProvided', dataType: 'boolean', visible: false },
-    { dataField: 'address_EventId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
@@ -232,9 +231,7 @@ export const personViewDs : IDatasourceBase = {
 };
 
 export const personAddressHistoryViewDs : IDatasourceBase = {
-  columns: ([...personViewDs.columns,
-    { dataField: 'address_EntryIndex', dataType: 'number', visible: false },
-  ] as ExtendedColumn[]).map((x) => ({
+  columns: ([...personViewDs.columns] as ExtendedColumn[]).map((x) => ({
     ...x,
     caption: x.dataField.startsWith('address_') || x.dataField.startsWith('shelterLocation') ? `ds.personAddressHistory.${x.dataField}` : x.caption,
   })),

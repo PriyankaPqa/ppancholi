@@ -33,7 +33,15 @@ export default Vue.extend({
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VITE_GOOGLE_API_KEY,
 
-      additionalMembers: [],
+      additionalMembers: [] as {
+        personalInfoEdit: boolean,
+        tempAddressEdit: boolean,
+        backupIdentity: IIdentitySet,
+        backupTempAddress: ICurrentAddress,
+        sameAddress: boolean,
+        backupSameAddress: boolean,
+        loading: boolean,
+      }[],
       showAdditionalMemberDelete: false,
       indexAdditionalMember: -1,
     };
@@ -118,43 +126,74 @@ export default Vue.extend({
     buildAdditionalMembersState() {
       const membersCount = this.householdCreate.additionalMembers.length;
       this.additionalMembers = [...new Array(membersCount)].map((_, index) => ({
-        inlineEdit: false,
-        backup: null,
+        personalInfoEdit: false,
+        tempAddressEdit: false,
+        backupIdentity: null,
+        backupTempAddress: null,
         loading: false,
         sameAddress: _isEqual(this.additionalMembersCopy[index].currentAddress, this.householdCreate.primaryBeneficiary.currentAddress),
         backupSameAddress: _isEqual(this.additionalMembersCopy[index].currentAddress, this.householdCreate.primaryBeneficiary.currentAddress),
       }));
     },
 
-    editAdditionalMember(index: number) {
+    editAdditionalMember(index: number, section?: string) {
       this.indexAdditionalMember = index;
-      this.additionalMembers[index].backup = _cloneDeep(this.householdCreate.additionalMembers[index]);
-      this.additionalMembers[index].inlineEdit = true;
-      this.additionalMembers[index].backupSameAddress = this.additionalMembers[index].sameAddress;
-      this.$registrationStore.increaseInlineEditCounter();
-    },
+      if (section !== 'personalInfo') {
+        this.additionalMembers[index].backupIdentity = this.additionalMembers[index].backupIdentity || _cloneDeep(this.householdCreate.additionalMembers[index].identitySet);
+        this.additionalMembers[index].backupTempAddress = _cloneDeep(this.householdCreate.additionalMembers[index].currentAddress);
+        this.additionalMembers[index].tempAddressEdit = true;
+        this.additionalMembers[index].backupSameAddress = this.additionalMembers[index].sameAddress;
+        this.$registrationStore.increaseInlineEditCounter();
+      }
 
-    cancelAdditionalMember(index: number) {
-      if (this.additionalMembers[index].inlineEdit) {
-        this.additionalMembers[index].inlineEdit = false;
-        this.additionalMembers[index].sameAddress = this.additionalMembers[index].backupSameAddress;
-        this.$registrationStore.decreaseInlineEditCounter();
-        this.$registrationStore.householdCreate.editAdditionalMember(this.additionalMembers[index].backup, index, this.additionalMembers[index].backupSameAddress);
+      if (section !== 'tempAddress') {
+        this.additionalMembers[index].backupIdentity = _cloneDeep(this.householdCreate.additionalMembers[index].identitySet);
+        this.additionalMembers[index].backupTempAddress = this.additionalMembers[index].backupTempAddress
+          || _cloneDeep(this.householdCreate.additionalMembers[index].currentAddress);
+          this.additionalMembers[index].personalInfoEdit = true;
+        if (this.additionalMembers[index].backupSameAddress == null) {
+          this.additionalMembers[index].backupSameAddress = this.additionalMembers[index].sameAddress;
+        }
+        this.$registrationStore.increaseInlineEditCounter();
       }
     },
 
-    async submitAdditionalMember(index: number) {
+    cancelAdditionalMember(index: number, section?: string) {
+      const member = _cloneDeep(this.additionalMembersCopy[index]);
+      if (section !== 'personalInfo' && this.additionalMembers[index].tempAddressEdit) {
+        this.additionalMembers[index].tempAddressEdit = false;
+        this.$registrationStore.decreaseInlineEditCounter();
+        member.currentAddress = this.additionalMembers[index].backupTempAddress;
+        this.additionalMembers[index].sameAddress = this.additionalMembers[index].backupSameAddress;
+        this.$registrationStore.householdCreate.editAdditionalMember(member, index, this.additionalMembers[index].sameAddress);
+      }
+      if (section !== 'tempAddress' && this.additionalMembers[index].personalInfoEdit) {
+        this.additionalMembers[index].personalInfoEdit = false;
+        this.$registrationStore.decreaseInlineEditCounter();
+        member.identitySet = this.additionalMembers[index].backupIdentity;
+        this.$registrationStore.householdCreate.editAdditionalMember(member, index, this.additionalMembers[index].sameAddress);
+      }
+    },
+
+    async submitAdditionalMember(index: number, section?: string) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const isValid = await ((this.$refs[`additionalMember_${index}`] as any)[0]).validate();
       if (isValid) {
         // Not watcher on this form to mutate so we need to do it here
         this.$registrationStore.householdCreate.editAdditionalMember(this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress);
 
-        if (this.applySavesRightAway) {
+        if (this.applySavesRightAway && section !== 'tempAddress') {
           await this.updateMember(index);
         }
-        this.additionalMembers[index].inlineEdit = false;
-        this.$registrationStore.decreaseInlineEditCounter();
+
+        if (section !== 'personalInfo') {
+          this.additionalMembers[index].tempAddressEdit = false;
+          this.$registrationStore.decreaseInlineEditCounter();
+        }
+        if (section !== 'tempAddress') {
+          this.additionalMembers[index].personalInfoEdit = false;
+          this.$registrationStore.decreaseInlineEditCounter();
+        }
       } else {
         helpers.scrollToFirstError('app');
       }
@@ -170,22 +209,20 @@ export default Vue.extend({
         { identitySet: member.identitySet, contactInformation: member.contactInformation },
       );
       if (!resIdentity) {
-        this.$registrationStore.householdCreate.editAdditionalMember(this.additionalMembers[index].backup, index, !this.additionalMembers[index].sameAddress);
+        member.identitySet = this.additionalMembers[index].backupIdentity;
+        this.$registrationStore.householdCreate.editAdditionalMember(member, index, !this.additionalMembers[index].sameAddress);
         this.additionalMembers[index].loading = false;
         return;
       }
       this.$toasted.global.success(this.$t('registration.identity.updated'));
 
-      if (this.isNewMemberCurrentAddress(index)) {
+      if (!this.$hasFeature(this.$featureKeys.CaseFileIndividual) && this.isNewMemberCurrentAddress(index)) {
         const resAddress = await this.$services.households.updatePersonAddress(member.id, !this.$registrationStore.isCRCRegistration(), member.currentAddress);
 
         if (!resAddress) {
-          const backUpWithUpdatedIdentity = {
-            ...this.additionalMembers[index].backup,
-            identitySet: member.identitySet,
-          };
+          member.currentAddress = this.additionalMembers[index].backupTempAddress;
           this.additionalMembers[index].sameAddress = !this.additionalMembers[index].sameAddress;
-          this.$registrationStore.householdCreate.editAdditionalMember(backUpWithUpdatedIdentity, index, !this.additionalMembers[index].sameAddress);
+          this.$registrationStore.householdCreate.editAdditionalMember(member, index, !this.additionalMembers[index].sameAddress);
           this.additionalMembers[index].loading = false;
           return;
         }
@@ -260,7 +297,7 @@ export default Vue.extend({
     },
 
     isNewMemberCurrentAddress(index: number): boolean {
-      return !_isEqual(this.householdCreate.additionalMembers[index].currentAddress, this.additionalMembers[index].backup.currentAddress);
+      return !_isEqual(this.householdCreate.additionalMembers[index].currentAddress, this.additionalMembers[index].backupTempAddress);
     },
 
     makeShelterLocationsListForMember(m: IMember) {

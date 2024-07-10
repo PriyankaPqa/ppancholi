@@ -98,6 +98,11 @@ export default Vue.extend({
       default: false,
     },
 
+    sendSameAddressToService: {
+      type: Boolean,
+      default: true,
+    },
+
     disableAutocomplete: {
       type: Boolean,
       required: true,
@@ -241,6 +246,7 @@ export default Vue.extend({
             householdId: this.householdId,
             member: this.memberClone,
             sameAddress: this.sameAddress,
+            sendSameAddressToService: this.sendSameAddressToService,
             caseFileIndividualMode: this.$hasFeature(this.$featureKeys.CaseFileIndividual),
           });
         } else {

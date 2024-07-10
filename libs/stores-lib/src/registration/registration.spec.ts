@@ -969,12 +969,12 @@ describe('>>> Registration Store', () => {
       const sameAddress = true;
       householdApi.addMember = jest.fn(() => (mockHouseholdEntity()));
 
-      await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode: false });
+      await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode: false, sendSameAddressToService: true });
 
       expect(householdApi.addMember).toHaveBeenCalledWith(householdId, false, member);
       expect(householdApi.addMemberV2).not.toHaveBeenCalled();
 
-      await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode: true });
+      await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress, caseFileIndividualMode: true, sendSameAddressToService: true });
 
       expect(householdApi.addMemberV2).toHaveBeenCalledWith(householdId, false, member, true);
     });
@@ -992,6 +992,7 @@ describe('>>> Registration Store', () => {
         member,
         sameAddress,
         caseFileIndividualMode: false,
+        sendSameAddressToService: true,
       });
       expect(useRegistrationStore.householdCreate.additionalMembers[0])
         .toEqual(
@@ -1347,7 +1348,7 @@ describe('>>> Registration Store', () => {
       useRegistrationStore.householdCreate.consentInformation = consent;
       useRegistrationStore.householdCreate.primaryBeneficiary.contactInformation.emailValidatedByBackend = false;
 
-      const result = await useRegistrationStore.loadHousehold('someid');
+      const result = await useRegistrationStore.loadHousehold('someid', false);
       expect(householdApi.publicGetHousehold).toHaveBeenCalledWith('someid');
       expect(result).toEqual(useRegistrationStore.householdCreate);
       expect(result.consentInformation).toBe(consent);

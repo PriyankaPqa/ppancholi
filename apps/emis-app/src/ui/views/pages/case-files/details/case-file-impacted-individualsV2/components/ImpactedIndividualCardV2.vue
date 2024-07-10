@@ -3,7 +3,8 @@
     v-if="member.status === Status.Active"
     rounded
     outlined
-    class="mb-4">
+    class="mb-4"
+    :class="{ 'disabled-table': individual.membershipStatus !== MembershipStatus.Active }">
     <div class="px-4 py-2 rc-body18 fw-bold d-flex align-center justify-space-between background">
       <div>
         <v-icon size="22" class="pr-2 rc-body14" :color="isReceivingAssistance && individual.membershipStatus === MembershipStatus.Active ? 'secondary' : 'grey'">
@@ -39,7 +40,7 @@
             outlined
             data-test="household_profile_member_moved_member_label">
             <span class="text-uppercase rc-body10">
-              {{ $t('household.profile.member.moved_member') }}
+              {{ $t('impactedIndividuals.removed') }}
             </span>
           </v-chip>
         </template>
@@ -223,5 +224,9 @@ export default Vue.extend({
 <style scoped lang="scss">
 .background {
   background: var(--v-grey-lighten4);
+}
+
+.disabled-table ::v-deep * {
+  color: var(--v-grey-darken2) !important;
 }
 </style>

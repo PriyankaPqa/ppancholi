@@ -381,12 +381,14 @@ describe('Individual.vue', () => {
         wrapper.vm.$registrationStore.loadHousehold = jest.fn();
 
         const details = { householdId: 'someId', verificationCode: 'someCode' };
+        jest.clearAllMocks();
 
         await wrapper.vm.loadHousehold(details);
 
         expect(wrapper.vm.jump).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$registrationStore.loadHousehold).toHaveBeenCalledWith(details);
+        expect(wrapper.vm.$registrationStore.loadHousehold).toHaveBeenCalledWith(details, false);
+        expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith(wrapper.vm.$featureKeys.CaseFileIndividual);
       });
     });
 

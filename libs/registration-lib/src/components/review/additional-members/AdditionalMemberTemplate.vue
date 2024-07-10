@@ -1,7 +1,7 @@
 <template>
-  <div class="information-container">
-    <div class="column rc-body14">
-      <div class="rc-body14 fw-bold">
+  <div :class="reviewMode ? '' : 'information-container'">
+    <div :class="reviewMode ? 'rc-body14' : 'column rc-body14'">
+      <div v-if="!reviewMode" class="rc-body14 fw-bold">
         {{ $t('registration.menu.personal_info') }}
       </div>
       <div data-test="additionalMember__birthdate">
@@ -15,7 +15,7 @@
         <span data-test="additionalMember__indigenousIdentity">{{ getIndigenousIdentity }}</span>
       </div>
     </div>
-    <div class="column rc-body14">
+    <div v-if="!reviewMode" class="column rc-body14">
       <current-address-template :current-address="member.currentAddress" />
     </div>
   </div>
@@ -37,6 +37,10 @@ export default Vue.extend({
     member: {
       type: Object as () => IMember,
       required: true,
+    },
+    reviewMode: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

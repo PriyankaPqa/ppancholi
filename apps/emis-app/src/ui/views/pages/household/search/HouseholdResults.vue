@@ -163,6 +163,7 @@ import { ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { format, utcToZonedTime } from 'date-fns-tz';
+import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
@@ -305,6 +306,14 @@ export default mixins(household, householdResults).extend({
         this.detailsId = household.id;
 
         const householdCreateData = await this.fetchHouseholdCreate(household.id);
+        if (this.$hasFeature(this.$featureKeys.CaseFileIndividual)) {
+          householdCreateData.primaryBeneficiary.currentAddress = new CurrentAddress();
+          householdCreateData.primaryBeneficiary.currentAddress.reset(ECurrentAddressTypes.Unknown);
+          householdCreateData.additionalMembers.forEach((a) => {
+            a.currentAddress = new CurrentAddress();
+            a.currentAddress.reset(ECurrentAddressTypes.Unknown);
+          });
+        }
         useRegistrationStore().setHouseholdCreate(householdCreateData);
       } finally {
         this.detailsLoading = false;

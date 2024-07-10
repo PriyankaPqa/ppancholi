@@ -348,7 +348,7 @@ export default mixins(individual).extend({
     },
 
     async loadHousehold(householdId: string) {
-      await useRegistrationStore().loadHousehold(householdId);
+      await useRegistrationStore().loadHousehold(householdId, this.$hasFeature(this.$featureKeys.CaseFileIndividual));
       await this.jump(this.allTabs.findIndex((x) => x.id === 'review'));
       this.disableOtherTabs(this.currentTabIndex, false);
     },

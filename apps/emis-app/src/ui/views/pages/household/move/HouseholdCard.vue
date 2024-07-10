@@ -165,7 +165,7 @@
             </v-col>
           </v-row>
 
-          <v-row no-gutters class="rc-body14 mb-1">
+          <v-row v-if="m.selectedCurrentAddress || !$hasFeature($featureKeys.CaseFileIndividual)" no-gutters class="rc-body14 mb-1">
             <v-col cols="5">
               <span class="fw-bold"> {{ $t('household.move.card.temporaryAddress') }} </span>
             </v-col>

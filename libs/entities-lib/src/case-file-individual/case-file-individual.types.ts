@@ -38,7 +38,7 @@ export interface ICaseFileIndividualEntity extends IEntity {
 
 export interface ReceivingAssistanceDetailCreateRequest {
   receivingAssistance: boolean;
-  rationale: string;
+  rationale?: string;
 }
 
 export interface ICaseFileIndividualCreateRequest {
