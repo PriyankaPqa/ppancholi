@@ -500,7 +500,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         if (prevValue && nextValue !== prevValue) {
           await Promise.all([
             useTeamStore().fetchByIds(this.assignedTeamsIds, true),
-            this.isInCaseFile && useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true),
+            useUserAccountMetadataStore().fetchByIds(this.rawTableData?.map((d) => (d.entity.userWorkingOn)), true),
         ]);
         }
       },

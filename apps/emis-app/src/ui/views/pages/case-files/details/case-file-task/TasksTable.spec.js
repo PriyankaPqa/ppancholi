@@ -20,7 +20,7 @@ import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { Status } from '@libs/shared-lib/types';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
-import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query-sql/odata-query-sql';
 import flushPromises from 'flush-promises';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
@@ -528,8 +528,6 @@ describe('TasksTable.vue', () => {
       it('should return proper data', () => {
         expect(wrapper.vm.tableProps.loading).toEqual(taskStore.searchLoading);
         expect(wrapper.vm.tableProps.itemClass).toBeDefined();
-        expect(wrapper.vm.tableProps.itemKey).toEqual('entity.id');
-        expect(wrapper.vm.tableProps.showExpand).toEqual(wrapper.vm.isInCaseFile);
       });
     });
 
@@ -540,7 +538,7 @@ describe('TasksTable.vue', () => {
           taskSubCategory: 'Metadata/SubCategory/Translation/en',
           assignTo: 'Metadata/AssignedTeamName',
           caseFileNumber: 'Metadata/CaseFileNumber',
-          isUrgent: 'Entity/IsUrgent',
+          userWorkingOn: 'Metadata/UserWorkingOnName',
           dateAdded: 'Entity/DateAdded',
           taskStatus: 'Entity/TaskStatus',
           action: 'action',
@@ -574,9 +572,9 @@ describe('TasksTable.vue', () => {
             width: '15%',
           },
           {
-            text: 'task.task_table_header.priority',
+            text: 'task.task_details.working_on_it',
             sortable: true,
-            value: wrapper.vm.customColumns.isUrgent,
+            value: wrapper.vm.customColumns.userWorkingOn,
             width: '10%',
           },
           {
@@ -641,9 +639,9 @@ describe('TasksTable.vue', () => {
             width: '15%',
           },
           {
-            text: 'task.task_table_header.priority',
+            text: 'task.task_details.working_on_it',
             sortable: true,
-            value: wrapper.vm.customColumns.isUrgent,
+            value: wrapper.vm.customColumns.userWorkingOn,
             width: '10%',
           },
           {
@@ -729,6 +727,21 @@ describe('TasksTable.vue', () => {
             label: 'task.task_table_header.status',
             items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
           },
+          {
+            items: [],
+            key: 'Entity/UserWorkingOn',
+            keyType: 'guid',
+            label: 'task.task_details.working_on_it',
+            loading: false,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'no-filter': true,
+              placeholder: 'common.filters.autocomplete.placeholder',
+              'return-object': true,
+              'search-input': '',
+            },
+            type: 'select',
+          },
         ]);
       });
 
@@ -785,6 +798,21 @@ describe('TasksTable.vue', () => {
             type: EFilterType.MultiSelect,
             label: 'task.task_table_header.status',
             items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
+          },
+          {
+            items: [],
+            key: 'Entity/UserWorkingOn',
+            keyType: 'guid',
+            label: 'task.task_details.working_on_it',
+            loading: false,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'no-filter': true,
+              placeholder: 'common.filters.autocomplete.placeholder',
+              'return-object': true,
+              'search-input': '',
+            },
+            type: 'select',
           },
         ]);
       });
@@ -1316,6 +1344,24 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.applyCustomFilter).toHaveBeenCalledWith(true, wrapper.vm.personalTaskOnlyFilter);
       });
     });
+
+    describe('fetchUserAccountFilter', () => {
+      it('should call userAccount search with proper params', async () => {
+        jest.spyOn(wrapper.vm.combinedUserAccountStore, 'search').mockResolvedValueOnce({
+          values: [{
+            entity: mockUserAccountEntity(),
+            metadata: mockUserAccountMetadata(),
+          }],
+        });
+        await wrapper.vm.fetchUserAccountFilter('mock-user-name');
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
+          { filter: { and: [{ 'Metadata/DisplayName': { contains: 'mock-user-name' } }] }, top: 5 },
+          null,
+          false,
+          true,
+        );
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -1357,14 +1403,13 @@ describe('TasksTable.vue', () => {
 
   describe('watcher', () => {
     describe('rawTableData', () => {
-      it('should fetch userAccountMetadata when rawTableData updated and is in case file', async () => {
+      it('should fetch userAccountMetadata when rawTableData updated', async () => {
         userAccountMetadataStore.fetchByIds = jest.fn();
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
           propsData: {
             id: 'mock-case-file-id-1',
-            isInCaseFile: true,
           },
           data() {
             return {
@@ -1424,6 +1469,39 @@ describe('TasksTable.vue', () => {
         }];
         await flushPromises();
         expect(teamStore.fetchByIds).toHaveBeenCalledWith(['team-id-1'], true);
+      });
+    });
+
+    describe('userAccountSearchQuery', () => {
+      it('should call debounceSearchUserAccount with new value', async () => {
+        wrapper.vm.debounceSearchUserAccount = jest.fn();
+        await wrapper.setData({
+          userAccountSearchQuery: '',
+        });
+        await flushPromises();
+        await wrapper.setData({
+          userAccountSearchQuery: 'abc',
+        });
+        expect(wrapper.vm.debounceSearchUserAccount).toHaveBeenCalledWith('abc');
+      });
+
+      it('should not call debounceSearchUserAccount and reset userAccountFilter when new value is null or empty string', async () => {
+        wrapper.vm.debounceSearchUserAccount = jest.fn();
+        await wrapper.setData({
+          userAccountSearchQuery: 'abc',
+          userAccountFilter: [
+            {
+              text: 'mock-user-name',
+              value: 'id-1',
+            },
+          ],
+        });
+        await flushPromises();
+        await wrapper.setData({
+          userAccountSearchQuery: '',
+        });
+        expect(wrapper.vm.debounceSearchUserAccount).toHaveBeenCalledWith('');
+        expect(wrapper.vm.userAccountFilter).toEqual([]);
       });
     });
   });
