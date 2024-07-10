@@ -5,7 +5,7 @@ import {
 } from '@/test/testSetup';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from './ReviewRegistration.vue';
 
 const localVue = createLocalVue();
@@ -14,8 +14,13 @@ const vuetify = new Vuetify();
 
 const { pinia } = useMockRegistrationStore();
 const tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
-describe('ReviewRegistrationLib.vue', () => {
-  let wrapper;
+describe('ReviewRegistration.vue', () => {
+  let wrapper = shallowMount(Component, { localVue,
+    stubs: {
+      'previous-events-template': {
+        template: '<div />',
+      },
+    } });
 
   describe('Computed', () => {
     describe('enableAutocomplete', () => {
@@ -23,7 +28,7 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
-          featureList: [FeatureKeys.AddressAutoFill],
+          featureList: [wrapper.vm.$featureKeys.AddressAutoFill],
           stubs: {
             'previous-events-template': {
               template: '<div />',

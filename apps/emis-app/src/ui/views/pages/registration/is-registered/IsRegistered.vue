@@ -37,7 +37,7 @@ import PreviousEventsTemplate from '@/ui/views/pages/registration/review/Previou
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
 import searchHousehold from '@/ui/mixins/searchHousehold';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
 
@@ -48,7 +48,6 @@ export default mixins(searchHousehold).extend({
   },
   data() {
     return {
-      FeatureKeys,
       showDetailsDialog: false,
       selectedHouseholdId: '',
     };
@@ -62,7 +61,7 @@ export default mixins(searchHousehold).extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 

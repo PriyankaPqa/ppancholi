@@ -45,7 +45,7 @@ import Vue from 'vue';
 import { VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import helpers from '@libs/entities-lib/helpers';
 import { ERegistrationMethod } from '@libs/shared-lib/types';
-import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 
 import { EEventLocationStatus, IEventGenericLocation, IEventSummary } from '@libs/entities-lib/event';
 import { IEventGenericLocationWithEventName } from '@libs/entities-lib/household-create';
@@ -91,7 +91,6 @@ export default Vue.extend({
 
   data() {
     return {
-      FeatureKeys,
       privacyRegistrationLocation: null as IEventGenericLocation,
     };
   },

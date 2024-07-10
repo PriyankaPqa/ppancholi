@@ -13,6 +13,7 @@ declare module 'vue/types/vue' {
     $toasted: Toasted;
     $appInsights: typeof applicationInsights;
     $hasFeature: (feature: FeatureKeys) => boolean;
+    $featureKeys: typeof FeatureKeys;
     $confirm: ({
       title, messages, htmlContent, submitActionLabel, cancelActionLabel, showCancelButton,
     }: {

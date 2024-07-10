@@ -20,7 +20,6 @@ import Vue from 'vue';
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import { IMassActionEntity, MassActionMode, MassActionRunType } from '@libs/entities-lib/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'ImportUsersCreate',
@@ -42,7 +41,7 @@ export default Vue.extend({
 
   computed: {
     allowedExtensions() : string[] {
-     return this.$hasFeature(FeatureKeys.UseIdentityServer)
+     return this.$hasFeature(this.$featureKeys.UseIdentityServer)
         ? ['xlsx']
         : ['csv'];
     },

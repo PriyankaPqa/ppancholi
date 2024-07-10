@@ -5,7 +5,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from './SplitHouseholdDialog.vue';
 
 const localVue = createLocalVue();
@@ -128,7 +128,7 @@ describe('SplitHouseholdDialog', () => {
 
     describe('memberInfo', () => {
       it('returns address according to flag', async () => {
-        doMount({ featureList: [FeatureKeys.CaseFileIndividual] });
+        doMount({ featureList: [wrapper.vm.$featureKeys.CaseFileIndividual] });
         expect(wrapper.vm.memberInfo(wrapper.vm.newPrimaryMember).find((d) => d.customContent === 'address')).toBeFalsy();
 
         doMount();

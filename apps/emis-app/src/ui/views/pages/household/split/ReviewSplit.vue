@@ -6,8 +6,6 @@
 import Vue from 'vue';
 import ReviewRegistrationLib from '@libs/registration-lib/components/review/ReviewRegistrationLib.vue';
 
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-
 export default Vue.extend({
   name: 'ReviewSplit',
 
@@ -17,7 +15,7 @@ export default Vue.extend({
 
   computed: {
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 });

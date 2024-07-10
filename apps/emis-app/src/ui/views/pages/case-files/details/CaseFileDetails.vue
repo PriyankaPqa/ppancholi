@@ -155,7 +155,7 @@ import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/en
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -199,7 +199,6 @@ export default mixins(caseFileDetail).extend({
       loading: false,
       showVerifyIdentityDialog: false,
       showImpact: false,
-      FeatureKeys,
       isDuplicate: null as boolean,
     };
   },
@@ -324,7 +323,7 @@ export default mixins(caseFileDetail).extend({
           {
             text: this.$t('caseFileDetail.menu_impacted_individuals') as string,
             test: 'impacted_individuals',
-            to: this.$hasFeature(FeatureKeys.CaseFileIndividual) ? routes.caseFile.impactedIndividuals.homeV2.name : routes.caseFile.impactedIndividuals.home.name,
+            to: this.$hasFeature(this.$featureKeys.CaseFileIndividual) ? routes.caseFile.impactedIndividuals.homeV2.name : routes.caseFile.impactedIndividuals.home.name,
             exact: false,
           },
           !this.recoveryPlanInvisible && {
@@ -338,7 +337,7 @@ export default mixins(caseFileDetail).extend({
             to: routes.caseFile.documents.home.name,
             exact: false,
           },
-          this.$hasFeature(FeatureKeys.TaskManagement) && taskTab,
+          this.$hasFeature(this.$featureKeys.TaskManagement) && taskTab,
         ];
 
         return tabs.filter((t) => t);

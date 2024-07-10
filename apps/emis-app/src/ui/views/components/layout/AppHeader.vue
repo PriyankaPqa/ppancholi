@@ -82,7 +82,7 @@ import Vue from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
-import { IBrandingEntity, FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
@@ -103,7 +103,6 @@ export default Vue.extend({
     return {
       showGeneralHelp: false,
       routes,
-      FeatureKeys,
       maxUnreadCount: MAX_UNREAD_COUNT,
     };
   },
@@ -135,7 +134,7 @@ export default Vue.extend({
     },
 
     hasFeatureDisplayNotificationCenter(): boolean {
-      return this.$hasFeature(FeatureKeys.DisplayNotificationCenter);
+      return this.$hasFeature(this.$featureKeys.DisplayNotificationCenter);
     },
 
     unreadNotificationCount(): string {

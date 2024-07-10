@@ -42,7 +42,6 @@ import { VCheckboxWithValidation, RcDialog } from '@libs/component-lib/component
 
 import { IReferralConsentInformation } from '@libs/entities-lib/case-file-referral';
 import { VForm } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
@@ -67,7 +66,6 @@ export default Vue.extend({
 
   data() {
     return {
-      FeatureKeys,
       localConsentInfo: _cloneDeep(this.referralConsentInformation) as IReferralConsentInformation,
       consentChecked: this.referralConsentInformation?.dateTimeConsent != null,
     };

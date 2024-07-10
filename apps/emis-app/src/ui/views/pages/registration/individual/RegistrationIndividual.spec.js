@@ -9,7 +9,7 @@ import { useMockRegistrationStore } from '@libs/stores-lib/registration/registra
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
 import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import Component from './RegistrationIndividual.vue';
@@ -584,14 +584,14 @@ describe('Individual.vue', () => {
             associationMode: () => true,
           },
           {},
-          [FeatureKeys.AddressAutoFill],
+          [wrapper.vm.$featureKeys.AddressAutoFill],
         );
         expect(wrapper.vm.enableAutocomplete).toBe(true);
         doMount(true, {
           currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           associationMode: () => true,
         });
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });

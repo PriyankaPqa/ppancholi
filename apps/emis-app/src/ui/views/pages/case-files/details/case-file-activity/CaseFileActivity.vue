@@ -103,7 +103,7 @@ import { RcPageContent, RcPageLoading, RcTooltip, VSelectA11y } from '@libs/comp
 import { CaseFileActivityType, CaseFileTriage, ICaseFileActivity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import entityUtils from '@libs/entities-lib/utils';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
@@ -149,7 +149,6 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
   },
   data() {
     return {
-      FeatureKeys,
       showLabelsDialog: false,
       loading: false,
       saving: false,

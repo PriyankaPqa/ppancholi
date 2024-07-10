@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { FeatureKeys, mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
+import { mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import {
   createLocalVue,
   mount,
@@ -67,7 +67,7 @@ describe('AppHeader.vue', () => {
           localVue,
           pinia: getPiniaForUser(UserRoles.level0),
           vuetify,
-          featureList: [FeatureKeys.L0Access],
+          featureList: [wrapper.vm.$featureKeys.L0Access],
           mocks: {
             $route: {
               name: routes.events.home.name,
@@ -266,9 +266,9 @@ describe('AppHeader.vue', () => {
 
       describe('Notifications icon', () => {
         it('is shown when the feature flag is on', () => {
-          const wrapper = mount(Component, {
+          wrapper = mount(Component, {
             localVue,
-            featureList: [FeatureKeys.DisplayNotificationCenter],
+            featureList: [wrapper.vm.$featureKeys.DisplayNotificationCenter],
             pinia,
             vuetify,
             mocks: {
@@ -297,9 +297,9 @@ describe('AppHeader.vue', () => {
           expect(button.exists()).toBe(false);
         });
         it('shows the unread count badge when there are unread items', () => {
-          const wrapper = mount(Component, {
+          wrapper = mount(Component, {
             localVue,
-            featureList: [FeatureKeys.DisplayNotificationCenter],
+            featureList: [wrapper.vm.$featureKeys.DisplayNotificationCenter],
             pinia,
             vuetify,
             computed: {
@@ -319,9 +319,9 @@ describe('AppHeader.vue', () => {
           expect(badge.text()).toEqual('1');
         });
         it('hides the unread count badge when there are no unread items', () => {
-          const wrapper = mount(Component, {
+          wrapper = mount(Component, {
             localVue,
-            featureList: [FeatureKeys.DisplayNotificationCenter],
+            featureList: [wrapper.vm.$featureKeys.DisplayNotificationCenter],
             pinia,
             vuetify,
             computed: {
@@ -377,9 +377,9 @@ describe('AppHeader.vue', () => {
 
       test('Clicking on the Notifications button calls handleNotificationCenter', async () => {
         // feature must be on
-        const wrapper = mount(Component, {
+        wrapper = mount(Component, {
           localVue,
-          featureList: [FeatureKeys.DisplayNotificationCenter],
+          featureList: [wrapper.vm.$featureKeys.DisplayNotificationCenter],
           pinia,
           vuetify,
           mocks: {

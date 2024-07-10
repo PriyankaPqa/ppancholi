@@ -36,7 +36,7 @@
             @setIndigenousIdentity="setIndigenousIdentity"
             @setContactInformation="setContactInformation" />
           <template v-if="makePrimaryMode">
-            <template v-if="$hasFeature(FeatureKeys.CaseFileIndividual)">
+            <template v-if="$hasFeature($featureKeys.CaseFileIndividual)">
               <h3>
                 {{ $t('registration.addresses.currentAddress') }}
               </h3>
@@ -77,7 +77,7 @@ import libHelpers from '@libs/entities-lib/helpers';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
@@ -140,7 +140,6 @@ export default Vue.extend({
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VITE_GOOGLE_API_KEY,
-      FeatureKeys,
     };
   },
 
@@ -150,7 +149,7 @@ export default Vue.extend({
     },
 
     changedAddress():boolean {
-      return !this.$hasFeature(FeatureKeys.CaseFileIndividual) && !_isEqual(new CurrentAddress(this.member.currentAddress), new CurrentAddress(this.backupAddress));
+      return !this.$hasFeature(this.$featureKeys.CaseFileIndividual) && !_isEqual(new CurrentAddress(this.member.currentAddress), new CurrentAddress(this.backupAddress));
     },
 
     changedIdentitySet():boolean {
@@ -169,7 +168,7 @@ export default Vue.extend({
       const shelterLocationAvailable = this.shelterLocations?.some((s) => s.status === EEventLocationStatus.Active)
                                      || this.member?.currentAddress?.shelterLocation;
 
-      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!shelterLocationAvailable, false);
+      return this.getCurrentAddressTypeItems(this.$i18n, this.noFixedHome, !!shelterLocationAvailable);
     },
 
     memberName(): string {
@@ -188,7 +187,7 @@ export default Vue.extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
 
     user(): IUser {

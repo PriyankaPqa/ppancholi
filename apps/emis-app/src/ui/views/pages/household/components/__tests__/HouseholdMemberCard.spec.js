@@ -10,7 +10,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
 import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import Component from '../HouseholdMemberCard.vue';
 
@@ -447,7 +447,7 @@ describe('HouseholdMemberCard.vue', () => {
           },
           pinia: getPiniaForUser(UserRoles.level1),
         });
-        await wrapper.setFeature(FeatureKeys.L0Access, false);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.L0Access, false);
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
       it('returns false if the user has a different role', () => {
@@ -504,18 +504,18 @@ describe('HouseholdMemberCard.vue', () => {
     describe('enableAutocomplete', () => {
       it('return correct value', async () => {
         doMount();
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.AddressAutoFill, true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
         doMount();
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });
 
     describe('memberInfo', () => {
       it('returns address according to flag', async () => {
-        doMount(false, true, { featureList: [FeatureKeys.CaseFileIndividual] });
+        doMount(false, true, { featureList: [wrapper.vm.$featureKeys.CaseFileIndividual] });
         expect(wrapper.vm.memberInfo.find((d) => d.customContent === 'address')).toBeFalsy();
 
         doMount();

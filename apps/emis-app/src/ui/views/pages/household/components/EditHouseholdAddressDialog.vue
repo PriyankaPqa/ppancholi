@@ -49,7 +49,7 @@ import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
 
@@ -110,7 +110,7 @@ export default Vue.extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 

@@ -11,7 +11,7 @@ import {
 } from '@libs/entities-lib/mass-action';
 import { format } from 'date-fns';
 import { mockProvider } from '@/services/provider';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from './DataCorrectionCreate.vue';
 
 const localVue = createLocalVue();
@@ -123,7 +123,7 @@ describe('DataCorrectionCreate.vue', () => {
       it('should return DataCorrectionMovePayments when feature flag is on', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.MovePayments],
+          featureList: [wrapper.vm.$featureKeys.MovePayments],
         });
         const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionMovePayments);
         expect(maType).toBeTruthy();

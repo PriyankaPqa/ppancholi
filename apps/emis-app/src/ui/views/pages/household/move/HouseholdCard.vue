@@ -186,7 +186,7 @@
                       :disabled="i === 0"
                       :data-test="`household_move_same_address_${m.identitySet.firstName}_${m.identitySet.lastName}`" />
                     <v-radio
-                      v-if="!$hasFeature(FeatureKeys.CaseFileIndividual)"
+                      v-if="!$hasFeature($featureKeys.CaseFileIndividual)"
                       :label=" $t('household.move.new_address')"
                       :value="0"
                       :data-test="`household_move_new_address_${m.identitySet.firstName}_${m.identitySet.lastName}`"
@@ -196,7 +196,7 @@
                       :label=" $t('registration.addresses.temporaryAddressTypes.Other')"
                       :value="0"
                       :data-test="`household_move_unknown_address_${m.identitySet.firstName}_${m.identitySet.lastName}`" />
-                    <div v-if="$hasFeature(FeatureKeys.CaseFileIndividual)" class="font-italic rc-body14">
+                    <div v-if="$hasFeature($featureKeys.CaseFileIndividual)" class="font-italic rc-body14">
                       {{ $t('registration.household_member.sameAddress.other.detail') }}
                     </div>
                   </v-radio-group>
@@ -271,7 +271,7 @@ import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 
@@ -341,7 +341,6 @@ export default Vue.extend({
       selectedMember: null as IMovingMember,
       newAddress: null as ICurrentAddress,
       CurrentAddress,
-      FeatureKeys,
     };
   },
 
@@ -356,7 +355,7 @@ export default Vue.extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
 
     // The main beneficiary must be first

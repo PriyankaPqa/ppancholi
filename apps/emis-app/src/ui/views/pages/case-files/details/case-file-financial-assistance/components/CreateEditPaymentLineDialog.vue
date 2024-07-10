@@ -219,7 +219,7 @@ import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces, VForm, Status } from '@libs/shared-lib/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { IAddressData } from '@libs/entities-lib/household-create';
 import caseFileDetail from '../../caseFileDetail';
 
@@ -405,7 +405,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 

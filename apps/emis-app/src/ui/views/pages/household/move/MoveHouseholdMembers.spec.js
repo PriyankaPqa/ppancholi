@@ -10,7 +10,7 @@ import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.v
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 import { mockProvider } from '@/services/provider';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -409,7 +409,7 @@ describe('MoveHouseholdMembers.vue', () => {
       });
 
       it('should call setNewMembers and the household service moveMembersV2 if form is  valid and flag is on', async () => {
-        mount({ featureList: [FeatureKeys.CaseFileIndividual] });
+        mount({ featureList: [wrapper.vm.$featureKeys.CaseFileIndividual] });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.setNewMembers = jest.fn();
         wrapper.vm.$services.households.moveMembers = jest.fn(() => {});
@@ -459,7 +459,7 @@ describe('MoveHouseholdMembers.vue', () => {
         originHousehold.addAdditionalMember = jest.fn(() => {});
         memberLeft.setCurrentAddress = jest.fn(() => {});
 
-        mount({ featureList: [FeatureKeys.CaseFileIndividual] });
+        mount({ featureList: [wrapper.vm.$featureKeys.CaseFileIndividual] });
         wrapper.vm.setNewMembers(originHousehold, true);
         expect(memberLeft.setCurrentAddress).not.toHaveBeenCalled();
         expect(originHousehold.addAdditionalMember).toHaveBeenCalledTimes(1);

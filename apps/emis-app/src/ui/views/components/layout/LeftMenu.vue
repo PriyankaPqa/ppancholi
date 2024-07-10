@@ -55,7 +55,6 @@ import routes from '@/constants/routes';
 import { ui } from '@/constants/ui';
 import { INavigationTab } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { ClickOutside } from 'vuetify/es5/directives';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
@@ -186,7 +185,7 @@ export default Vue.extend({
         },
       ];
 
-      if (this.$hasFeature(FeatureKeys.TaskManagement)) {
+      if (this.$hasFeature(this.$featureKeys.TaskManagement)) {
         tabs.splice(7, 0, tasksTab);
       }
 

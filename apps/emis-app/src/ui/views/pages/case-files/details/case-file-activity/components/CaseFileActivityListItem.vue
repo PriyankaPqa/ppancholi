@@ -31,7 +31,7 @@ import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment'
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useEventStore } from '@/pinia/event/event';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import helpers from '@/ui/helpers/helpers';
 
 export interface IAssignInfo {
@@ -56,11 +56,7 @@ export default Vue.extend({
       required: true,
     },
   },
-  data() {
-    return {
-      FeatureKeys,
-    };
-  },
+
   computed: {
     // eslint-disable-next-line
     content(): {title: TranslateResult, body: TranslateResult} {

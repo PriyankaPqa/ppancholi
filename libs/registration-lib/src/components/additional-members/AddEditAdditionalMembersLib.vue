@@ -55,7 +55,7 @@ import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-addres
 import { IMember } from '@libs/entities-lib/value-objects/member';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { localStorageKeys } from '../../constants/localStorage';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
@@ -241,7 +241,7 @@ export default Vue.extend({
             householdId: this.householdId,
             member: this.memberClone,
             sameAddress: this.sameAddress,
-            caseFileIndividualMode: this.$hasFeature(FeatureKeys.CaseFileIndividual),
+            caseFileIndividualMode: this.$hasFeature(this.$featureKeys.CaseFileIndividual),
           });
         } else {
           this.$registrationStore.householdCreate.addAdditionalMember(this.memberClone, this.sameAddress);

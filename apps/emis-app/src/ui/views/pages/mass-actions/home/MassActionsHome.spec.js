@@ -5,7 +5,7 @@ import {
 import routes from '@/constants/routes';
 import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -178,7 +178,7 @@ describe('MassActionsHome.vue', () => {
       it('should return DataCorrectionMovePayments when feature flag is on', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.MovePayments],
+          featureList: [wrapper.vm.$featureKeys.MovePayments],
         });
         const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionMovePayments);
         expect(maType).toBeTruthy();

@@ -25,7 +25,7 @@ import Vue from 'vue';
 import sanitizeHtml from 'sanitize-html';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
 import { utcToZonedTime, format } from 'date-fns-tz';
-import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'PrivacyStatement',
@@ -46,7 +46,7 @@ export default Vue.extend({
   },
 
   data() {
-    return { FeatureKeys, sanitizeHtml };
+    return { sanitizeHtml };
   },
 
   computed: {

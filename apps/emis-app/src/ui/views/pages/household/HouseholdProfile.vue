@@ -222,7 +222,7 @@
       :shelter-locations-list="shelterLocations"
       :disable-autocomplete="!enableAutocomplete"
       submit-changes-to-service
-      :can-set-specific-address="!$hasFeature(FeatureKeys.CaseFileIndividual)"
+      :can-set-specific-address="!$hasFeature($featureKeys.CaseFileIndividual)"
       @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
 
@@ -265,7 +265,7 @@ import householdHelpers from '@/ui/helpers/household';
 import { EEventLocationStatus, IEventGenericLocation, IEventSummary } from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { IMultilingual } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -333,7 +333,6 @@ export default mixins(household).extend({
       disabledAddMembers: false,
       showEditAddress: false,
       showProfileHistory: false,
-      FeatureKeys,
       showHouseholdStatusDialog: false,
       newStatus: null as HouseholdStatus,
       activityItemsData: [] as IHouseholdActivity[],
@@ -448,7 +447,7 @@ export default mixins(household).extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
 
     eventNames(): Record<string, IMultilingual> {

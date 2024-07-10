@@ -116,7 +116,6 @@ import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@libs/entit
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import routes from '@/constants/routes';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'SplitHouseholdDialog',
@@ -186,7 +185,7 @@ export default Vue.extend({
           },
         ];
 
-        return details.filter((d) => !this.$hasFeature(FeatureKeys.CaseFileIndividual) || d.customContent !== 'address');
+        return details.filter((d) => !this.$hasFeature(this.$featureKeys.CaseFileIndividual) || d.customContent !== 'address');
       };
     },
 

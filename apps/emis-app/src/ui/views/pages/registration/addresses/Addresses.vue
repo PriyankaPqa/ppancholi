@@ -5,7 +5,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import AddressesLib from '@libs/registration-lib/components/addresses/AddressesLib.vue';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -15,7 +14,7 @@ export default Vue.extend({
 
   computed: {
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 });

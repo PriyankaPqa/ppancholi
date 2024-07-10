@@ -37,7 +37,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import { IInformationFromBeneficiarySearch } from '@/types/interfaces/IInformationFromBeneficiarySearch';
 import _cloneDeep from 'lodash/cloneDeep';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
@@ -89,10 +89,6 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
-  },
-
-  data() {
-    return { FeatureKeys };
   },
 
   computed: {

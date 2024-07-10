@@ -134,7 +134,6 @@ import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import SelectUsersPopup from '@/ui/shared-components/SelectUsersPopup.vue';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
   IAssignedCaseFileCountByTeam, IUserAccountEntity, IUserAccountMetadata, UserTeamMember,
 } from '@libs/entities-lib/user-account';
@@ -219,7 +218,6 @@ export default Vue.extend({
       clickedMember: null as ITeamMemberAsUser,
       removeLoading: false,
       loading: true,
-      FeatureKeys,
       teamMembers: [] as ITeamMemberAsUser[],
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
     };

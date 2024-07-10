@@ -8,7 +8,6 @@ import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../EditHouseholdAddressDialog.vue';
 
 const localVue = createLocalVue();
@@ -120,7 +119,7 @@ describe('EditHouseholdAddressDialog.vue', () => {
 
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
-        doMount(false, [FeatureKeys.AddressAutoFill]);
+        doMount(false, [wrapper.vm.$featureKeys.AddressAutoFill]);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
         doMount(false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);

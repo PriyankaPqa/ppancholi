@@ -113,7 +113,7 @@ import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegis
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 import { IEventSummary, IRegistrationAssessment } from '@libs/entities-lib/event';
@@ -215,7 +215,7 @@ export default mixins(individual).extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
 
     registrationAssessment(): IRegistrationAssessment {

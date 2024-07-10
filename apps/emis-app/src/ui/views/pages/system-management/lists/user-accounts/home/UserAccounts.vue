@@ -159,7 +159,6 @@ import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { UserRolesNames, UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'UserAccounts',
@@ -217,7 +216,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     hasFeatureUseIdentityServer(): boolean {
-      return this.$hasFeature(FeatureKeys.UseIdentityServer);
+      return this.$hasFeature(this.$featureKeys.UseIdentityServer);
     },
 
     menuItems(): Array<Record<string, string>> {
@@ -349,7 +348,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     addUser(item: Record<string, string> = null) {
-      if (!this.$hasFeature(FeatureKeys.UseIdentityServer)) {
+      if (!this.$hasFeature(this.$featureKeys.UseIdentityServer)) {
         this.showAddEmisUserDialog = true;
         return;
       }

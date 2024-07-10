@@ -151,7 +151,7 @@ import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validat
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { Address } from '@libs/entities-lib/value-objects/address';
 import { useAutocomplete } from '@libs/registration-lib/components/forms/mixins/useAutocomplete';
 
@@ -230,7 +230,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         },
         city: {
           required: true,
-          max: MAX_LENGTH_MD,
+          max: MAX_LENGTH_SM,
         },
         province: {
           required: this.isCanada,
@@ -275,7 +275,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 

@@ -57,7 +57,7 @@ import VueI18n from 'vue-i18n';
 import _isEmpty from 'lodash/isEmpty';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { IServerError } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 import { IMultilingual } from '@libs/shared-lib/src/types';
 
@@ -79,12 +79,6 @@ const vueComponent: VueConstructor = Vue.extend({
       type: Boolean,
       required: false,
     },
-  },
-
-  data() {
-    return {
-      FeatureKeys,
-    };
   },
 
   computed: {

@@ -111,7 +111,6 @@ import { IEventGenericLocation } from '@libs/entities-lib/event/event.types';
 import helpers from '@/ui/helpers/helpers';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface IMovingAddressSelection {
   sameAddressSelected: boolean;
@@ -276,10 +275,10 @@ export default mixins(searchHousehold, household).extend({
         helpers.scrollToFirstError('scrollAnchor');
       } else {
         let response;
-        this.setNewMembers(this.firstHousehold, this.$hasFeature(FeatureKeys.CaseFileIndividual));
-        this.setNewMembers(this.secondHousehold, this.$hasFeature(FeatureKeys.CaseFileIndividual));
+        this.setNewMembers(this.firstHousehold, this.$hasFeature(this.$featureKeys.CaseFileIndividual));
+        this.setNewMembers(this.secondHousehold, this.$hasFeature(this.$featureKeys.CaseFileIndividual));
         this.submitLoading = true;
-        if (!this.$hasFeature(FeatureKeys.CaseFileIndividual)) {
+        if (!this.$hasFeature(this.$featureKeys.CaseFileIndividual)) {
           response = await this.$services.households.moveMembers(this.firstHousehold, this.secondHousehold);
         } else {
           response = await this.$services.households.moveMembersV2(this.firstHousehold, this.secondHousehold);

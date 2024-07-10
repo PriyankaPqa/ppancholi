@@ -314,7 +314,7 @@ export default Vue.extend({
         },
         city: {
           required: this.currentAddress.requiresCity(),
-          max: MAX_LENGTH_MD,
+          max: MAX_LENGTH_SM,
         },
         postalCode: {
           max: MAX_LENGTH_SM,
