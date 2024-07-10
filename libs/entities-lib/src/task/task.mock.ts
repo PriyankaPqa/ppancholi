@@ -196,6 +196,12 @@ export const mockTaskMetadata = (force? : Partial<ITaskMetadata>): ITaskMetadata
   assignedTeamName: 'mock-team-name-1',
   userWorkingOnId: 'mock-user-id-1',
   userWorkingOnName: 'mock-user-name-1',
+  userWorkingOnRole: {
+    translation: {
+      en: 'system admin en',
+      fr: 'system admin fr',
+    },
+  },
   caseFileId: 'mock-case-file-id-1',
   ...force,
 });

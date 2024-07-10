@@ -69,30 +69,6 @@
         </filter-toolbar>
       </template>
 
-      <template v-if="isInCaseFile" #expanded-item="{ item }">
-        <!-- Custom content to show when a row is expanded -->
-        <td :colspan="headers.length + 1 ">
-          <v-row class="pl-8 mb-1" data-test="task-table-expanded-row">
-            <template v-if="item.entity.taskType === TaskType.Team">
-              <v-col cols="2">
-                <div class="fw-bold">
-                  {{ $t("task.task_details.working_on_it") }}
-                </div>
-                <div> {{ item.metadata.userWorkingOnNameWithRole }} </div>
-              </v-col>
-            </template>
-
-            <template v-else>
-              <v-col cols="2">
-                <div class="fw-bold">
-                  {{ $t('task.create_edit.due_date') }}
-                </div>
-                <div>{{ helpers.getLocalStringDate(item.entity.dueDate, 'Task.dueDate', 'PP') }}</div>
-              </v-col>
-            </template>
-          </v-row>
-        </td>
-      </template>
       <template #[`item.${customColumns.taskCategory}`]="{ item }">
         <div :class="{ 'ml-4': !isInCaseFile }">
           <v-icon class="adjust-margin" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
@@ -105,6 +81,9 @@
             :to="getTaskDetailsRoute(item.entity.caseFileId, item.entity.id)">
             {{ item.metadata.taskCategory }}
           </router-link>
+          <div class="pl-2">
+            <span class="rc-red-text font-weight-bold"> {{ item.entity.isUrgent ? $t('task.create_edit.urgent') : '' }}</span>
+          </div>
         </div>
       </template>
       <template #[`item.${customColumns.taskSubCategory}`]="{ item }">
@@ -113,6 +92,9 @@
       <template #[`item.${customColumns.assignTo}`]="{ item }">
         <span data-test="task-table-task-assign-to"> {{ getTeamName(item.entity.assignedTeamId) }}</span>
       </template>
+      <template #[`item.${customColumns.userWorkingOn}`]="{ item }">
+        <span data-test="task-table-user-working-on">  {{ item.metadata.userWorkingOnNameWithRole }}</span>
+      </template>
       <template v-if="!isInCaseFile" #[`item.${customColumns.caseFileNumber}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
@@ -120,9 +102,6 @@
           :to="getCaseFileDetailsRoute(item.entity.caseFileId)">
           <span data-test="task-table-case-file-number"> {{ item.metadata.caseFileNumber }}</span>
         </router-link>
-      </template>
-      <template #[`item.${customColumns.isUrgent}`]="{ item }">
-        <span class="rc-red-text font-weight-bold"> {{ item.entity.isUrgent ? $t('task.create_edit.urgent') : '' }}</span>
       </template>
       <template #[`item.${customColumns.dateAdded}`]="{ item }">
         <span data-test="task-table-date-added"> {{ helpers.getLocalStringDate(item.entity.dateAdded, '', 'PP') }}</span>
@@ -183,22 +162,23 @@ import { useTaskMetadataStore, useTaskStore } from '@/pinia/task/task';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { UserRoles } from '@libs/entities-lib/user';
 import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
-import { FilterKey } from '@libs/entities-lib/user-account';
+import { FilterKey, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useUserStore } from '@/pinia/user/user';
 import { useTeamStore } from '@/pinia/team/team';
-import { ISearchParams } from '@libs/shared-lib/types';
+import { IDropdownItem, ISearchParams } from '@libs/shared-lib/types';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import TaskActionDialog from '@/ui/views/pages/case-files/details/case-file-task/components/TaskActionDialog.vue';
-import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { IEntityCombined } from '@libs/entities-lib/base';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query-sql/odata-query-sql';
+import _debounce from 'lodash/debounce';
 
 interface IParsedTaskMetadata extends ITaskMetadata {
   userWorkingOnNameWithRole?: string,
@@ -254,6 +234,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       showTaskActionDialog: false,
       actioningTask: null as IParsedTaskCombined,
       combinedTaskStore: new CombinedStoreFactory<ITaskEntity, ITaskMetadata, IdParams>(useTaskStore(), useTaskMetadataStore()),
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
+      userAccountSearchQuery: '',
+      userAccountFilter: [],
     };
   },
 
@@ -304,8 +287,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       return {
         loading: useTaskStore().searchLoading,
         itemClass: (item: ITaskCombined) => (item.pinned ? 'pinned' : ''),
-        itemKey: 'entity.id',
-        showExpand: this.isInCaseFile,
       };
     },
 
@@ -314,8 +295,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         taskCategory: `Metadata/TaskCategory/Translation/${this.$i18n.locale}`,
         taskSubCategory: `Metadata/SubCategory/Translation/${this.$i18n.locale}`,
         assignTo: 'Metadata/AssignedTeamName',
+        userWorkingOn: 'Metadata/UserWorkingOnName',
         caseFileNumber: 'Metadata/CaseFileNumber',
-        isUrgent: 'Entity/IsUrgent',
         dateAdded: 'Entity/DateAdded',
         taskStatus: 'Entity/TaskStatus',
         action: 'action',
@@ -344,9 +325,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           width: '15%',
         },
         {
-          text: this.$t('task.task_table_header.priority') as string,
+          text: this.$t('task.task_details.working_on_it') as string,
           sortable: true,
-          value: this.customColumns.isUrgent,
+          value: this.customColumns.userWorkingOn,
           width: '10%',
         },
         {
@@ -439,6 +420,21 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           label: this.$t('task.task_table_header.status') as string,
           items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
         },
+        {
+          key: 'Entity/UserWorkingOn',
+          type: EFilterType.Select,
+          keyType: EFilterKeyType.Guid,
+          label: this.$t('task.task_details.working_on_it') as string,
+          items: this.userAccountFilter,
+          loading: useUserAccountStore().searchLoading,
+          props: {
+            'no-data-text': !this.userAccountSearchQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.userAccountSearchQuery,
+            'no-filter': true,
+            'return-object': true,
+            placeholder: this.$t('common.filters.autocomplete.placeholder'),
+    },
+        },
       ];
       if (!this.isInCaseFile) {
         filters.unshift(eventFilter);
@@ -474,14 +470,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         const taskSubCategory = helpers.getOptionItemNameFromListOption(taskSubcategoryOptionItems, d.entity.subCategory);
 
         let userWorkingOnNameWithRole = '';
-        if (this.isInCaseFile) {
           if (d.entity.userWorkingOn) {
             const userAccountMetadata = useUserAccountMetadataStore().getById(d.entity.userWorkingOn);
             userWorkingOnNameWithRole = `${userAccountMetadata?.displayName} (${this.$m(userAccountMetadata?.roleName) as string})`;
           } else {
             userWorkingOnNameWithRole = this.$t('common.N/A') as string;
           }
-        }
 
         return {
           entity: d.entity,
@@ -511,6 +505,15 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         }
       },
       deep: true,
+    },
+
+    userAccountSearchQuery(newVal) {
+      if (newVal !== null) {
+        this.debounceSearchUserAccount(newVal);
+      }
+      if (newVal === null || newVal.trim().length === 0) {
+        this.userAccountFilter = [];
+      }
     },
   },
 
@@ -673,6 +676,43 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         count: true,
       }, null, false, true);
       return res;
+    },
+
+    debounceSearchUserAccount: _debounce(function func(this: any, query: string) {
+      if (query.trim().length > 0) {
+        this.fetchUserAccountFilter(query);
+      }
+    }, 500),
+
+    async fetchUserAccountFilter(querySearch: string) {
+        const searchParam = helpers.toQuickSearchSql(querySearch, 'Metadata/DisplayName');
+
+        const filter = {
+          ...searchParam,
+        } as Record<any, any>;
+
+        const params = {
+          filter,
+          top: 5,
+        };
+
+        const res = await this.combinedUserAccountStore.search(params, null, false, true);
+        this.userAccountFilter = res?.values.map((e) => ({
+          text: e.metadata.displayName,
+          value: e.id,
+        }));
+    },
+
+    onAutoCompleteUpdate(
+      { filterKey, search, selectedItem }:
+        { filterKey: string, search: string, selectedItem: IDropdownItem },
+    ) {
+      if ((filterKey === 'Entity/EventId' || filterKey === 'Metadata/EventId' || filterKey === 'SearchItem/EventId') && search !== selectedItem?.text) {
+        this.eventFilterQuery = search;
+      }
+      if ((filterKey === 'Entity/UserWorkingOn' && search !== selectedItem?.text)) {
+        this.userAccountSearchQuery = search;
+      }
     },
   },
 });

@@ -1,4 +1,4 @@
-import { IListOption, IUserInformation } from '@libs/shared-lib/types';
+import { IListOption, IMultilingual, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export enum TaskType {
@@ -62,6 +62,8 @@ export interface ITaskActionHistory {
 export interface ITaskMetadata extends IEntity {
   caseFileNumber: string;
   eventId: uuid;
+  userWorkingOnName: string;
+  userWorkingOnRole: IMultilingual;
 }
 
 export type ITaskCombined = IEntityCombined<ITaskEntity, ITaskMetadata>;
