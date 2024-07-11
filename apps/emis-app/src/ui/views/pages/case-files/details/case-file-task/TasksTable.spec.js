@@ -493,6 +493,47 @@ describe('TasksTable.vue', () => {
           pinned: false,
         }]);
       });
+
+      it('should set userWorkingOnNameWithRole - when task is completed', async () => {
+        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+            isInCaseFile: true,
+          },
+          computed: {
+            rawTableData: () => ([{
+              entity: mockTeamTaskEntity({ id: '1', userWorkingOn: '', taskStatus: TaskStatus.Completed }),
+              metadata: mockTaskMetadata({ id: '1', userWorkingOnId: '' }),
+              pinned: false,
+            }]),
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata({
+          displayName: 'mock-user-name-1',
+          roleName: {
+            translation: {
+              en: 'Mock role',
+              fr: 'Mock role fr',
+            },
+          },
+        }));
+        expect(wrapper.vm.parsedTableData).toEqual([{
+          entity: mockTeamTaskEntity({ id: '1', userWorkingOn: '', taskStatus: TaskStatus.Completed }),
+          metadata: {
+            ...mockTaskMetadata({ id: '1', userWorkingOnId: '' }),
+            userWorkingOnNameWithRole: '-',
+            taskSubCategory: null,
+            taskCategory: '',
+          },
+          pinned: false,
+        }]);
+      });
     });
 
     describe('labels', () => {
@@ -554,7 +595,7 @@ describe('TasksTable.vue', () => {
         });
         expect(wrapper.vm.headers).toEqual([
           {
-            text: 'task.task_table_header.task',
+            text: 'task.task_category',
             sortable: true,
             value: wrapper.vm.customColumns.taskCategory,
             width: '25%',
@@ -614,7 +655,7 @@ describe('TasksTable.vue', () => {
         });
         expect(wrapper.vm.headers).toEqual([
           {
-            text: 'task.task_table_header.task',
+            text: 'task.task_category',
             sortable: true,
             value: wrapper.vm.customColumns.taskCategory,
             width: '20%',

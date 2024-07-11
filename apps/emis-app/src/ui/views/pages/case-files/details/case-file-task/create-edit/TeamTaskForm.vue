@@ -235,7 +235,7 @@ export default mixins(caseFileTask).extend({
     await this.fetchFAPayments('');
     if (this.isEditMode) {
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
-      this.selectedSubCategoryId = this.taskData.subCategory.optionItemId;
+      this.selectedSubCategoryId = this.taskData.subCategory ? this.taskData.subCategory.optionItemId : '';
       this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
       await this.fetchSelectedFAPayment();
     }
