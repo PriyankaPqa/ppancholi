@@ -259,7 +259,7 @@ export default mixins(caseFileTask).extend({
         await Promise.all([
           useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
           this.getAssignableTeams(),
-          !this.financialAssistancePaymentName && this.task.financialAssistancePaymentId && this.fetchSelectedFAPaymentAndSetName(),
+          !this.financialAssistancePaymentName && this.task?.financialAssistancePaymentId && this.fetchSelectedFAPaymentAndSetName(),
         ]);
       } finally {
         this.loading = false;

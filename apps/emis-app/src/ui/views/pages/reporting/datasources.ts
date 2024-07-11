@@ -244,6 +244,7 @@ export const taskViewDS : IDatasourceBase = {
     { dataField: 'closedDate', dataType: 'datetime', visible: false },
     { dataField: 'description', dataType: 'string' },
     { dataField: 'isUrgent', dataType: 'boolean', visible: false },
+    { dataField: 'financialAssistancePaymentName', dataType: 'string' },
     { dataField: 'assignedTeamName', dataType: 'string' },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
