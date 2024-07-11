@@ -19,7 +19,7 @@ describe('PersonalTaskForm.vue', () => {
         taskData: mockPersonalTaskEntity(),
       },
       computed: {
-        taskNames: () => mockOptionItems(),
+        taskCategories: () => mockOptionItems(),
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
@@ -57,7 +57,7 @@ describe('PersonalTaskForm.vue', () => {
         jest.clearAllMocks();
         await doMount(true, {
           computed: {
-            taskNames: () => [mockOptionItem({ id: 'mock-item-id', isOther: true, subitems: [] })],
+            taskCategories: () => [mockOptionItem({ id: 'mock-item-id', isOther: true, subitems: [] })],
           },
         });
         await wrapper.setProps({
@@ -65,7 +65,7 @@ describe('PersonalTaskForm.vue', () => {
         });
 
         const updatedForm = {
-          name: {
+          category: {
             optionItemId: 'mock-item-id',
             specifiedOther: '',
           },
@@ -91,7 +91,7 @@ describe('PersonalTaskForm.vue', () => {
             taskData: mockPersonalTaskEntity(),
           },
           computed: {
-            taskNames: () => [mockOptionItem({ id: 'mock-item-id', isHidden: true, isOther: true, subitems: [] })],
+            taskCategories: () => [mockOptionItem({ id: 'mock-item-id', isHidden: true, isOther: true, subitems: [] })],
           },
         });
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -99,7 +99,7 @@ describe('PersonalTaskForm.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.localPersonalTaskForm).toEqual({
-          name: {
+          category: {
             optionItemId: 'mock-item-id',
             specifiedOther: '',
           },
@@ -108,7 +108,7 @@ describe('PersonalTaskForm.vue', () => {
         });
       });
 
-      it('should set filterOutHiddenTaskName to false and call fetchTaskCategories', async () => {
+      it('should set filterOutHiddenTaskCategory to false and call fetchTaskCategories', async () => {
         await doMount(true, {
           propsData: {
             taskData: mockPersonalTaskEntity(),
@@ -120,7 +120,7 @@ describe('PersonalTaskForm.vue', () => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.filterOutHiddenTaskName).toEqual(false);
+        expect(wrapper.vm.filterOutHiddenTaskCategory).toEqual(false);
         expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
       });
     });

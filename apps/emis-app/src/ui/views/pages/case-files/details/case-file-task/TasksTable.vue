@@ -93,7 +93,7 @@
           </v-row>
         </td>
       </template>
-      <template #[`item.${customColumns.taskName}`]="{ item }">
+      <template #[`item.${customColumns.taskCategory}`]="{ item }">
         <div :class="{ 'ml-4': !isInCaseFile }">
           <v-icon class="adjust-margin" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
             mdi-account-check
@@ -101,14 +101,14 @@
           <router-link
             type="button"
             class="rc-link14 font-weight-bold pl-2"
-            :data-test="`task-table-task-name-${item.entity.id}`"
+            :data-test="`task-table-task-category-${item.entity.id}`"
             :to="getTaskDetailsRoute(item.entity.caseFileId, item.entity.id)">
-            {{ item.metadata.taskName }}
+            {{ item.metadata.taskCategory }}
           </router-link>
         </div>
       </template>
-      <template #[`item.${customColumns.taskCategory}`]="{ item }">
-        <span data-test="task-table-task-category"> {{ item.entity.taskType === TaskType.Personal ? '' : (item.metadata.taskCategory || $t('common.N/A')) }}</span>
+      <template #[`item.${customColumns.taskSubCategory}`]="{ item }">
+        <span data-test="task-table-task-sub-category"> {{ item.entity.taskType === TaskType.Personal ? '' : (item.metadata.taskSubCategory || $t('common.N/A')) }}</span>
       </template>
       <template #[`item.${customColumns.assignTo}`]="{ item }">
         <span data-test="task-table-task-assign-to"> {{ getTeamName(item.entity.assignedTeamId) }}</span>
@@ -163,8 +163,8 @@
       v-if="showTaskActionDialog"
       :task="actioningTask.entity"
       :event-id="isInCaseFile ? caseFile.eventId : actioningTask.metadata.eventId"
-      :selected-task-name="actioningTask.metadata.taskName"
-      :selected-category="actioningTask.metadata.taskCategory"
+      :selected-task-category="actioningTask.metadata.taskCategory"
+      :selected-sub-category="actioningTask.metadata.taskSubCategory"
       :show.sync="showTaskActionDialog" />
   </div>
 </template>
@@ -202,8 +202,8 @@ import { ITEM_ROOT } from '@libs/services-lib/odata-query-sql/odata-query-sql';
 
 interface IParsedTaskMetadata extends ITaskMetadata {
   userWorkingOnNameWithRole?: string,
-  taskName?: string,
   taskCategory?: string,
+  taskSubCategory?: string,
 }
 
 type IParsedTaskCombined = IEntityCombined<ITaskEntity, IParsedTaskMetadata>;
@@ -311,8 +311,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     customColumns(): Record<string, string> {
       return {
-        taskName: `Metadata/TaskName/Translation/${this.$i18n.locale}`,
-        taskCategory: `Metadata/Category/Translation/${this.$i18n.locale}`,
+        taskCategory: `Metadata/TaskCategory/Translation/${this.$i18n.locale}`,
+        taskSubCategory: `Metadata/SubCategory/Translation/${this.$i18n.locale}`,
         assignTo: 'Metadata/AssignedTeamName',
         caseFileNumber: 'Metadata/CaseFileNumber',
         isUrgent: 'Entity/IsUrgent',
@@ -326,15 +326,15 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     headers(): Array<DataTableHeader> {
       const headersList = [
         {
-          text: this.$t('task.task_table_header.task') as string,
+          text: this.$t('task.task_category') as string,
           sortable: true,
-          value: this.customColumns.taskName,
+          value: this.customColumns.taskCategory,
           width: this.isInCaseFile ? '25%' : '20%',
         },
         {
-          text: this.$t('task.task_table_header.category') as string,
+          text: this.$t('task.task_table_header.sub_category') as string,
           sortable: true,
-          value: this.customColumns.taskCategory,
+          value: this.customColumns.taskSubCategory,
           width: '15%',
         },
         {
@@ -392,7 +392,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     filterOptions(): Array<IFilterSettings> {
-      const taskNames = useTaskStore().getTaskName(true, false).map((t: IOptionItem) => ({ text: this.$m(t.name), value: t.id }));
+      const taskCategories = useTaskStore().getTaskCategory(true, false).map((t: IOptionItem) => ({ text: this.$m(t.name), value: t.id }));
       const priorityItems = [
         { text: this.$t('common.yes') as string, value: true },
         { text: this.$t('common.no') as string, value: false },
@@ -416,11 +416,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
       const filters = [
         {
-          key: 'Entity/Name/OptionItemId',
+          key: 'Entity/Category/OptionItemId',
           type: EFilterType.MultiSelect,
           keyType: EFilterKeyType.Guid,
-          label: this.$t('task.create_edit.task_name') as string,
-          items: taskNames,
+          label: this.$t('task.task_category') as string,
+          items: taskCategories,
         },
         {
           key: 'Entity/DateAdded',
@@ -466,13 +466,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
    parsedTableData(): IParsedTaskCombined[] {
-     const taskNameOptionItems = useTaskStore().taskCategories;
+     const taskCategoryOptionItems = useTaskStore().taskCategories;
 
       return this.rawTableData?.map((d) => {
-        // taskCategories are subitems of taskNames
-        const taskCategoryOptionItems = taskNameOptionItems?.find((c) => c.id === d.entity.name.optionItemId)?.subitems || [];
-        const taskName = helpers.getOptionItemNameFromListOption(taskNameOptionItems, d.entity.name);
+        const taskSubcategoryOptionItems = taskCategoryOptionItems?.find((c) => c.id === d.entity.category.optionItemId)?.subitems || [];
         const taskCategory = helpers.getOptionItemNameFromListOption(taskCategoryOptionItems, d.entity.category);
+        const taskSubCategory = helpers.getOptionItemNameFromListOption(taskSubcategoryOptionItems, d.entity.subCategory);
 
         let userWorkingOnNameWithRole = '';
         if (this.isInCaseFile) {
@@ -486,7 +485,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
         return {
           entity: d.entity,
-          metadata: { ...d.metadata, taskName, taskCategory, userWorkingOnNameWithRole },
+          metadata: { ...d.metadata, taskSubCategory, taskCategory, userWorkingOnNameWithRole },
           pinned: d.pinned,
         };
       });

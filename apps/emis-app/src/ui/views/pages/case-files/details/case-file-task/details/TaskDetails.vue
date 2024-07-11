@@ -6,7 +6,7 @@
         <v-container>
           <v-row class="px-16 mb-5 justify-space-between flex-nowrap">
             <div class="font-weight-bold rc-heading-5">
-              {{ helpers.capitalize(displayedTaskName) }}
+              {{ helpers.capitalize(displayedTaskCategory) }}
             </div>
             <div class="d-flex align-center">
               <template v-if="isTeamTask && task.isUrgent">
@@ -33,11 +33,11 @@
             <div class="creator-info px-13 grey-darken-2 rc-body12" data-test="task-details-team-task-creator-info">
               {{ teamTaskCreatorInfo }}
             </div>
-            <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 rc-grey-text rc-body14">
+            <div v-if="selectedTaskCategory && $m(selectedTaskCategory.description)" class="px-13 mt-2 rc-grey-text rc-body14">
               <v-icon small class="mr-1 pb-1">
                 mdi-alert-circle
               </v-icon>
-              <span data-test="task-details-team-task-name-description"> {{ $m(selectedTaskName.description) }} </span>
+              <span data-test="task-details-team-task-category-description"> {{ $m(selectedTaskCategory.description) }} </span>
             </div>
           </template>
 
@@ -89,19 +89,19 @@
 
           <div class="task-details-container mt-4 mx-13 py-2 rc-body14">
             <template v-if="isTeamTask">
-              <v-row v-if="selectedCategory" class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-category-section">
+              <v-row v-if="selectedSubCategory" class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-sub-category-section">
                 <v-col cols="4" class="font-weight-bold">
-                  {{ $t('task.create_edit.task_category') }}
+                  {{ $t('task.task_sub_category') }}
                 </v-col>
                 <v-col>
-                  <div data-test="task-details-category">
-                    {{ displayedCategory }}
+                  <div data-test="task-details-sub-category">
+                    {{ displayedSubCategory }}
                   </div>
-                  <div v-if="$m(selectedCategory.description)">
+                  <div v-if="$m(selectedSubCategory.description)">
                     <v-icon small class="mr-1 pb-1">
                       mdi-alert-circle
                     </v-icon>
-                    <span data-test="task-details-category-description"> {{ $m(selectedCategory.description) }}</span>
+                    <span data-test="task-details-sub-category-description"> {{ $m(selectedSubCategory.description) }}</span>
                   </div>
                 </v-col>
               </v-row>
@@ -158,8 +158,8 @@
       v-if="showTaskActionDialog"
       :task="task"
       :event-id="caseFile.eventId"
-      :selected-task-name="displayedTaskName"
-      :selected-category="displayedCategory"
+      :selected-task-category="displayedTaskCategory"
+      :selected-sub-category="displayedSubCategory"
       :show.sync="showTaskActionDialog" />
     <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
   </rc-page-content>
@@ -225,15 +225,15 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       return this.task.taskType === TaskType.Team;
     },
 
-    displayedTaskName(): string {
+    displayedTaskCategory(): string {
       if (this.isTeamTask) {
-        return this.$m(this.selectedTaskName?.name) || '';
+        return this.$m(this.selectedTaskCategory?.name) || '';
       }
-      return this.task?.name?.specifiedOther || '';
+      return this.task?.category?.specifiedOther || '';
     },
 
-    displayedCategory(): string {
-      return this.selectedCategory?.isOther ? this.task.category.specifiedOther : this.$m(this.selectedCategory?.name);
+    displayedSubCategory(): string {
+      return this.selectedSubCategory?.isOther ? this.task.subCategory.specifiedOther : this.$m(this.selectedSubCategory?.name);
     },
 
     userAccountMetadata(): IUserAccountMetadata {
@@ -305,7 +305,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 
   async created() {
     this.loading = true;
-    this.filterOutInactiveTaskNameAndCategory = false;
+    this.filterOutInactiveTaskCategoryAndSubCategory = false;
     await useTaskStore().fetch({ id: this.taskId, caseFileId: this.id });
     await useTaskStore().fetchTaskCategories();
     if (this.isTeamTask) {
@@ -313,8 +313,8 @@ export default mixins(caseFileTask, caseFileDetail).extend({
         useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
         useTeamStore().fetch(this.task.assignedTeamId),
       ]);
-      this.selectedTaskNameId = this.task.name?.optionItemId;
-      this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
+      this.selectedTaskCategoryId = this.task.category?.optionItemId;
+      this.selectedSubCategoryId = this.task.subCategory ? this.task.subCategory.optionItemId : '';
       this.isWorkingOn = !!this.task.userWorkingOn;
       if (this.isWorkingOn) {
         await useUserAccountMetadataStore().fetch(this.task.userWorkingOn, GlobalHandler.Partial);

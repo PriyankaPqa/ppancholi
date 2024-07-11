@@ -56,15 +56,15 @@ describe('>>> Tasks Service', () => {
   describe('parseTaskPayload', () => {
     it('should parse data properly', () => {
       const task = mockTeamTaskEntity();
-      task.category.optionItemId = null;
+      task.subCategory.optionItemId = null;
       task.dueDate = '2024-01-10';
       const parseTask = service.parseTaskPayload(task);
-      expect(parseTask.category).toEqual(null);
+      expect(parseTask.subCategory).toEqual(null);
     });
 
     it('should parse data properly for date', () => {
       const task = mockTeamTaskEntity();
-      task.category.optionItemId = null;
+      task.subCategory.optionItemId = null;
       task.dueDate = '2024-01-10';
       const parseTask = service.parseTaskPayload(task);
       expect(parseTask.dueDate).toEqual('2024-01-10T00:00:00.000Z');
@@ -72,9 +72,9 @@ describe('>>> Tasks Service', () => {
 
     it('should not parse data when category optionItemId has value', () => {
       const task = mockTeamTaskEntity();
-      task.category.optionItemId = 'mock-id';
+      task.subCategory.optionItemId = 'mock-id';
       const parseTask = service.parseTaskPayload(task);
-      expect(parseTask.category.optionItemId).toEqual('mock-id');
+      expect(parseTask.subCategory.optionItemId).toEqual('mock-id');
     });
   });
 });

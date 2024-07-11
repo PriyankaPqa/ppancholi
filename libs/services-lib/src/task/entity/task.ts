@@ -53,8 +53,8 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
   /** Private methods * */
 
   parseTaskPayload(task: ITaskEntityData): ITaskEntityData {
-    if (!task?.category?.optionItemId) {
-      task.category = null;
+    if (!task?.subCategory?.optionItemId) {
+      task.subCategory = null;
     }
     task.dueDate = task.dueDate ? new Date(task.dueDate).toISOString() : null;
     return { ...task };

@@ -20,32 +20,32 @@ export default Vue.extend({
 
   data() {
     return {
-      selectedTaskNameId: '',
-      selectedCategoryId: '',
+      selectedTaskCategoryId: '',
+      selectedSubCategoryId: '',
       toggleLoading: false,
       isWorkingOn: false,
-      filterOutHiddenTaskName: true,
-      filterOutInactiveTaskNameAndCategory: true,
+      filterOutHiddenTaskCategory: true,
+      filterOutInactiveTaskCategoryAndSubCategory: true,
       localTask: new TaskEntity(),
     };
   },
 
   computed: {
-    taskNames(): IOptionItem[] {
-      return useTaskStore().getTaskName(this.filterOutHiddenTaskName, this.filterOutInactiveTaskNameAndCategory, this.selectedTaskNameId);
+    taskCategories(): IOptionItem[] {
+      return useTaskStore().getTaskCategory(this.filterOutHiddenTaskCategory, this.filterOutInactiveTaskCategoryAndSubCategory, this.selectedTaskCategoryId);
     },
 
-    taskCategories(): IOptionSubItem[] {
-      const sub = this.taskNames?.find((t) => t?.id === this.selectedTaskNameId)?.subitems || [];
-      return useTaskStore().filterAndSortActiveSubItems(sub, this.filterOutInactiveTaskNameAndCategory, this.selectedCategoryId);
+    taskSubCategories(): IOptionSubItem[] {
+      const sub = this.taskCategories?.find((t) => t?.id === this.selectedTaskCategoryId)?.subitems || [];
+      return useTaskStore().filterAndSortActiveSubItems(sub, this.filterOutInactiveTaskCategoryAndSubCategory, this.selectedSubCategoryId);
     },
 
-    selectedTaskName(): IOptionItem {
-      return this.taskNames?.filter((t) => t.id === this.selectedTaskNameId)[0];
+    selectedTaskCategory(): IOptionItem {
+      return this.taskCategories?.filter((t) => t.id === this.selectedTaskCategoryId)[0];
     },
 
-    selectedCategory(): IOptionSubItem {
-      return this.taskCategories.filter((t) => t.id === this.selectedCategoryId)[0];
+    selectedSubCategory(): IOptionSubItem {
+      return this.taskSubCategories.filter((t) => t.id === this.selectedSubCategoryId)[0];
     },
 
     task(): ITaskEntity {

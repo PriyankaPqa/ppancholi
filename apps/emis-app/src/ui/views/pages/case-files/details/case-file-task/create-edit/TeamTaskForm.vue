@@ -24,56 +24,56 @@
       <v-row>
         <v-col class="pb-1">
           <v-select-with-validation
-            v-model="localTeamTaskForm.name.optionItemId"
-            :items="taskNames"
-            :item-text="(item) => item ? $m(item.name) : null"
-            :item-value="(item) => item ? item.id : null"
-            :rules="rules.teamTaskName"
-            :label="$t('task.create_edit.task_name') + ' *'"
-            :disabled="formDisabled"
-            data-test="task-name-team-task"
-            @change="setTaskNameIdAndResetForm($event)" />
-          <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="ml-1 mb-4 option-list-description" data-test="task-name-description">
-            <v-icon class="mr-1" small>
-              mdi-alert-circle
-            </v-icon>
-            <span>
-              {{ $m(selectedTaskName.description) }}
-            </span>
-          </div>
-        </v-col>
-      </v-row>
-
-      <v-row v-if="shouldDisplayCategorySelect">
-        <v-col cols="6" class="py-1">
-          <v-select-with-validation
             v-model="localTeamTaskForm.category.optionItemId"
             :items="taskCategories"
-            :item-text="(item) => item ? $m(item.name) : ''"
-            :item-value="(item) => item ? item.id : ''"
+            :item-text="(item) => item ? $m(item.name) : null"
+            :item-value="(item) => item ? item.id : null"
             :rules="rules.teamTaskCategory"
+            :label="$t('task.task_category') + ' *'"
             :disabled="formDisabled"
-            :label="$t('task.create_edit.task_category') + ' *'"
-            data-test="task-category"
-            @change="setCategoryIdAndResetSpecifiedOther($event)" />
-          <div v-if="selectedCategory && $m(selectedCategory.description)" class="ml-1 mb-4 option-list-description" data-test="task-category-description">
+            data-test="task-category-team-task"
+            @change="setTaskCategoryIdAndResetForm($event)" />
+          <div v-if="selectedTaskCategory && $m(selectedTaskCategory.description)" class="ml-1 mb-4 option-list-description" data-test="task-category-description">
             <v-icon class="mr-1" small>
               mdi-alert-circle
             </v-icon>
             <span>
-              {{ $m(selectedCategory.description) }}
+              {{ $m(selectedTaskCategory.description) }}
             </span>
           </div>
         </v-col>
       </v-row>
 
-      <v-row v-if="selectedCategory && selectedCategory.isOther">
+      <v-row v-if="shouldDisplaySubCategorySelect">
+        <v-col cols="6" class="py-1">
+          <v-select-with-validation
+            v-model="localTeamTaskForm.subCategory.optionItemId"
+            :items="taskSubCategories"
+            :item-text="(item) => item ? $m(item.name) : ''"
+            :item-value="(item) => item ? item.id : ''"
+            :rules="rules.teamTaskSubCategory"
+            :disabled="formDisabled"
+            :label="$t('task.task_sub_category') + ' *'"
+            data-test="task-sub-category"
+            @change="setSubCategoryIdAndResetSpecifiedOther($event)" />
+          <div v-if="selectedSubCategory && $m(selectedSubCategory.description)" class="ml-1 mb-4 option-list-description" data-test="task-sub-category-description">
+            <v-icon class="mr-1" small>
+              mdi-alert-circle
+            </v-icon>
+            <span>
+              {{ $m(selectedSubCategory.description) }}
+            </span>
+          </div>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="selectedSubCategory && selectedSubCategory.isOther">
         <v-col cols="6" class="py-2">
           <v-text-field-with-validation
-            v-model="localTeamTaskForm.category.specifiedOther"
+            v-model="localTeamTaskForm.subCategory.specifiedOther"
             :label="`${$t('common.pleaseSpecify')} *`"
             rows="1"
-            :rules="rules.specifyOtherCategory"
+            :rules="rules.specifyOtherSubCategory"
             :disabled="formDisabled"
             data-test="task-specified-other" />
         </v-col>
@@ -106,8 +106,8 @@ import { useTaskStore } from '@/pinia/task/task';
 import { UserRoles } from '@libs/entities-lib/user';
 
 interface ILocalTeamTaskForm {
-  name: IListOption;
   category: IListOption;
+  subCategory: IListOption;
   description: string;
   isUrgent: boolean;
 }
@@ -136,8 +136,8 @@ export default mixins(caseFileTask).extend({
 
   data() {
       const localTeamTaskForm = {
-        name: this.taskData.name,
         category: this.taskData.category,
+        subCategory: this.taskData.subCategory,
         description: this.taskData.description,
         isUrgent: this.taskData.isUrgent,
       } as ILocalTeamTaskForm;
@@ -148,23 +148,23 @@ export default mixins(caseFileTask).extend({
   },
 
   computed: {
-    shouldDisplayCategorySelect(): boolean {
-      return !!this.localTeamTaskForm.name.optionItemId && this.taskCategories?.length !== 0;
+    shouldDisplaySubCategorySelect(): boolean {
+      return !!this.localTeamTaskForm.category.optionItemId && this.taskSubCategories?.length !== 0;
     },
 
     rules(): Record<string, unknown> {
       return {
-        teamTaskName: {
+        teamTaskCategory: {
           required: true,
         },
-        teamTaskCategory: {
-          required: this.shouldDisplayCategorySelect,
+        teamTaskSubCategory: {
+          required: this.shouldDisplaySubCategorySelect,
         },
         description: {
           required: true,
           max: MAX_LENGTH_LG,
         },
-        specifyOtherCategory: {
+        specifyOtherSubCategory: {
           required: true,
         },
       };
@@ -190,23 +190,23 @@ export default mixins(caseFileTask).extend({
   async created() {
     await useTaskStore().fetchTaskCategories();
     if (this.isEditMode) {
-      this.selectedTaskNameId = this.taskData.name.optionItemId;
-      this.selectedCategoryId = this.taskData.category.optionItemId;
+      this.selectedTaskCategoryId = this.taskData.category.optionItemId;
+      this.selectedSubCategoryId = this.taskData.subCategory ? this.taskData.subCategory.optionItemId : '';
     }
   },
 
   methods: {
-    setTaskNameIdAndResetForm() {
-      this.selectedTaskNameId = this.localTeamTaskForm.name.optionItemId;
+    setTaskCategoryIdAndResetForm() {
+      this.selectedTaskCategoryId = this.localTeamTaskForm.category.optionItemId;
       this.localTeamTaskForm.description = '';
-      this.localTeamTaskForm.category.optionItemId = null;
-      this.localTeamTaskForm.category.specifiedOther = null;
+      this.localTeamTaskForm.subCategory.optionItemId = null;
+      this.localTeamTaskForm.subCategory.specifiedOther = null;
       this.$emit('reset-form-validation');
     },
 
-    setCategoryIdAndResetSpecifiedOther(categoryId: string) {
-      this.selectedCategoryId = categoryId;
-      this.localTeamTaskForm.category.specifiedOther = null;
+    setSubCategoryIdAndResetSpecifiedOther(subCategoryId: string) {
+      this.selectedSubCategoryId = subCategoryId;
+      this.localTeamTaskForm.subCategory.specifiedOther = null;
     },
   },
 });

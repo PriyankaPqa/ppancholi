@@ -18,20 +18,20 @@
       @submit="onSubmit">
       <div class="px-0">
         <div v-if="task.taskType === TaskType.Team" class="mb-10" data-test="task-action-dialog-team-task-info">
-          <div v-if="selectedTaskName" class="font-weight-bold rc-heading-5">
-            {{ helpers.capitalize(selectedTaskName) }}
+          <div v-if="selectedTaskCategory" class="font-weight-bold rc-heading-5">
+            {{ helpers.capitalize(selectedTaskCategory) }}
           </div>
           <div class="creator-info grey-darken-2 rc-body12 mb-3">
             {{ teamTaskCreatorInfo }}
           </div>
           <v-row class="justify-center mt-0 rc-body14 px-3">
             <v-col cols="12" class="border-all border-radius-6 pa-0">
-              <v-row v-if="selectedCategory" class="border-bottom ma-0 px-2" data-test="task-action-dialog-category">
+              <v-row v-if="selectedSubCategory" class="border-bottom ma-0 px-2" data-test="task-action-dialog-sub-category">
                 <v-col cols="3" class="font-weight-bold">
-                  {{ $t('task.create_edit.task_category') }}
+                  {{ $t('task.task_sub_category') }}
                 </v-col>
                 <v-col cols="9">
-                  {{ selectedCategory }}
+                  {{ selectedSubCategory }}
                 </v-col>
               </v-row>
               <v-row class="ma-0 flex-nowrap flex px-2">
@@ -142,12 +142,12 @@ export default Vue.extend({
       required: true,
     },
 
-    selectedTaskName: {
+    selectedTaskCategory: {
       type: String,
       default: '',
     },
 
-    selectedCategory: {
+    selectedSubCategory: {
       type: String,
       default: '',
     },

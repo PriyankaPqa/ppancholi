@@ -14,10 +14,10 @@
       <v-row>
         <v-col class="pb-1">
           <v-text-field-with-validation
-            v-model="localPersonalTaskForm.name.specifiedOther"
-            :rules="rules.personalTaskName"
-            :label="$t('task.create_edit.task_name') + ' *'"
-            data-test="task-name-personal-task" />
+            v-model="localPersonalTaskForm.category.specifiedOther"
+            :rules="rules.personalTaskCategory"
+            :label="$t('task.task_category') + ' *'"
+            data-test="task-category-personal-task" />
         </v-col>
       </v-row>
 
@@ -60,7 +60,7 @@ import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 interface ILocalPersonalTaskForm {
-  name: IListOption;
+  category: IListOption;
   description: string;
   dueDate: string | Date;
 }
@@ -90,7 +90,7 @@ export default mixins(caseFileTask).extend({
 
   data() {
       const localPersonalTaskForm = {
-        name: this.taskData.name,
+        category: this.taskData.category,
         dueDate: helpers.getLocalStringDate(this.taskData.dueDate, 'Task.dueDate'),
         description: this.taskData.description,
       } as ILocalPersonalTaskForm;
@@ -111,7 +111,7 @@ export default mixins(caseFileTask).extend({
 
     rules(): Record<string, unknown> {
       return {
-        personalTaskName: {
+        personalTaskCategory: {
           required: true,
           max: MAX_LENGTH_MD,
         },
@@ -140,9 +140,9 @@ export default mixins(caseFileTask).extend({
   },
 
   async created() {
-    this.filterOutHiddenTaskName = false;
+    this.filterOutHiddenTaskCategory = false;
     await useTaskStore().fetchTaskCategories();
-    this.localPersonalTaskForm.name.optionItemId = this.taskNames?.filter((t) => t.isOther && t.subitems.length === 0)[0]?.id;
+    this.localPersonalTaskForm.category.optionItemId = this.taskCategories?.filter((t) => t.isOther && t.subitems.length === 0)[0]?.id;
   },
 });
 </script>

@@ -19,7 +19,7 @@ describe('TeamTaskForm.vue', () => {
         taskData: mockTeamTaskEntity(),
       },
       computed: {
-        taskNames: () => mockOptionItems(),
+        taskCategories: () => mockOptionItems(),
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
@@ -31,17 +31,16 @@ describe('TeamTaskForm.vue', () => {
   };
   beforeEach(async () => {
     await doMount();
-    taskStore.getTaskName = jest.fn(() => mockOptionItems());
   });
 
   describe('Template', () => {
-    describe('task-name-team-task', () => {
+    describe('task-category-team-task', () => {
       it('should call resetCurrentCategory when triggering event Change', async () => {
         await doMount();
-        wrapper.vm.setTaskNameIdAndResetForm = jest.fn();
-        const element = wrapper.findDataTest('task-name-team-task');
+        wrapper.vm.setTaskCategoryIdAndResetForm = jest.fn();
+        const element = wrapper.findDataTest('task-category-team-task');
         await element.vm.$emit('change');
-        expect(wrapper.vm.setTaskNameIdAndResetForm).toHaveBeenCalled();
+        expect(wrapper.vm.setTaskCategoryIdAndResetForm).toHaveBeenCalled();
       });
     });
 
@@ -61,91 +60,59 @@ describe('TeamTaskForm.vue', () => {
       });
     });
 
-    describe('task-category', () => {
+    describe('task-sub-category', () => {
       it('should be rendered when shouldDisplayCategorySelect is true', async () => {
         await doMount(true, {
           computed: {
-            shouldDisplayCategorySelect: () => true,
+            shouldDisplaySubCategorySelect: () => true,
           },
         });
-        const element = wrapper.findDataTest('task-category');
+        const element = wrapper.findDataTest('task-sub-category');
         expect(element.exists()).toBeTruthy();
       });
 
       it('should not be rendered when shouldDisplayCategorySelect is false', async () => {
         await doMount(true, {
           computed: {
-            shouldDisplayCategorySelect: () => false,
+            shouldDisplaySubCategorySelect: () => false,
           },
         });
-        const element = wrapper.findDataTest('task-category');
+        const element = wrapper.findDataTest('task-sub-category');
         expect(element.exists()).toBeFalsy();
       });
 
-      it('should set selectedCategoryId when change', async () => {
-        const element = wrapper.findDataTest('task-category');
-        await element.vm.$emit('change', 'mock-category-id');
-        expect(wrapper.vm.selectedCategoryId).toEqual('mock-category-id');
+      it('should set selectedSubCategoryId when change', async () => {
+        const element = wrapper.findDataTest('task-sub-category');
+        await element.vm.$emit('change', 'mock-sub-category-id');
+        expect(wrapper.vm.selectedSubCategoryId).toEqual('mock-sub-category-id');
       });
 
-      it('should call setCategoryIdAndResetSpecifiedOther with proper id when change', async () => {
-        const element = wrapper.findDataTest('task-category');
-        wrapper.vm.setCategoryIdAndResetSpecifiedOther = jest.fn();
-        await element.vm.$emit('change', 'mock-category-id');
-        expect(wrapper.vm.setCategoryIdAndResetSpecifiedOther).toHaveBeenCalledWith('mock-category-id');
+      it('should call setSubCategoryIdAndResetSpecifiedOther with proper id when change', async () => {
+        const element = wrapper.findDataTest('task-sub-category');
+        wrapper.vm.setSubCategoryIdAndResetSpecifiedOther = jest.fn();
+        await element.vm.$emit('change', 'mock-sub-category-id');
+        expect(wrapper.vm.setSubCategoryIdAndResetSpecifiedOther).toHaveBeenCalledWith('mock-sub-category-id');
       });
     });
 
     describe('task-specified-other', () => {
-      it('should be render when selected category is other', async () => {
+      it('should be render when selected sub-category is other', async () => {
         await doMount(true, {
           computed: {
-            selectedCategory: () => mockOptionSubItem({ isOther: true }),
+            selectedSubCategory: () => mockOptionSubItem({ isOther: true }),
           },
         });
         const element = wrapper.findDataTest('task-specified-other');
         expect(element.exists()).toBeTruthy();
       });
 
-      it('should not be render when selected category is not other', async () => {
+      it('should not be render when selected sub-category is not other', async () => {
         await doMount(true, {
           computed: {
-            selectedCategory: () => mockOptionSubItem({ isOther: false }),
+            selectedSubCategory: () => mockOptionSubItem({ isOther: false }),
           },
         });
         const element = wrapper.findDataTest('task-specified-other');
-        expect(element.exists()).toBeFalsy();
-      });
-    });
-
-    describe('task-name-description', () => {
-      it('should be rendered when there is description in task name', async () => {
-        await doMount(true, {
-          computed: {
-            selectedTaskName: () => mockOptionItem({ description: {
-              translation: {
-                en: 'mock-description-content',
-                fr: '',
-              },
-            } }),
-          },
-        });
-        const element = wrapper.findDataTest('task-name-description');
-        expect(element.exists()).toBeTruthy();
-      });
-
-      it('should not be rendered when there is description in task name', async () => {
-        await doMount(true, {
-          computed: {
-            selectedTaskName: () => mockOptionItem({ description: {
-              translation: {
-                en: '',
-                fr: '',
-              },
-            } }),
-          },
-        });
-        const element = wrapper.findDataTest('task-name-description');
         expect(element.exists()).toBeFalsy();
       });
     });
@@ -154,7 +121,7 @@ describe('TeamTaskForm.vue', () => {
       it('should be rendered when there is description in task category', async () => {
         await doMount(true, {
           computed: {
-            selectedCategory: () => mockOptionSubItem({ description: {
+            selectedTaskCategory: () => mockOptionItem({ description: {
               translation: {
                 en: 'mock-description-content',
                 fr: '',
@@ -169,7 +136,7 @@ describe('TeamTaskForm.vue', () => {
       it('should not be rendered when there is description in task category', async () => {
         await doMount(true, {
           computed: {
-            selectedCategory: () => mockOptionSubItem({ description: {
+            selectedTaskCategory: () => mockOptionItem({ description: {
               translation: {
                 en: '',
                 fr: '',
@@ -181,31 +148,81 @@ describe('TeamTaskForm.vue', () => {
         expect(element.exists()).toBeFalsy();
       });
     });
+
+    describe('task-sub-category-description', () => {
+      it('should be rendered when there is description in task sub-category', async () => {
+        await doMount(true, {
+          computed: {
+            selectedSubCategory: () => mockOptionSubItem({ description: {
+              translation: {
+                en: 'mock-description-content',
+                fr: '',
+              },
+            } }),
+          },
+        });
+        const element = wrapper.findDataTest('task-sub-category-description');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered when there is description in task sub-category', async () => {
+        await doMount(true, {
+          computed: {
+            selectedSubCategory: () => mockOptionSubItem({ description: {
+              translation: {
+                en: '',
+                fr: '',
+              },
+            } }),
+          },
+        });
+        const element = wrapper.findDataTest('task-sub-category-description');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Computed', () => {
-    describe('shouldDisplayCategorySelect', () => {
-      it('should be false if there is no selected task name', async () => {
+    describe('shouldDisplaySubCategorySelect', () => {
+      it('should be false if there is no selected task category', async () => {
         await doMount(true, {
           computed: {
-            taskCategories: () => [],
+            taskSubCategories: () => [],
           },
         });
         await wrapper.setProps({
           task: mockTeamTaskEntity({
-            name: {
+            category: {
               optionItemId: null,
             },
           }),
         });
         taskStore.getTaskCategory = jest.fn(() => []);
-        expect(wrapper.vm.shouldDisplayCategorySelect).toEqual(false);
+        expect(wrapper.vm.shouldDisplaySubCategorySelect).toEqual(false);
       });
 
-      it('should be true if there is selected task name but no taskCategories', async () => {
+      it('should be true if there is selected task category but no taskSubCategories', async () => {
         await doMount(true, {
           computed: {
-            taskCategories: () => [],
+            taskSubCategories: () => [],
+          },
+        });
+        await wrapper.setProps({
+          task: mockTeamTaskEntity({
+            category: {
+              optionItemId: 'mock-option-id',
+            },
+          }),
+        });
+        await wrapper.vm.$nextTick();
+        taskStore.getTaskCategory = jest.fn(() => mockOptionItems());
+        expect(wrapper.vm.shouldDisplaySubCategorySelect).toEqual(false);
+      });
+
+      it('should be true if there is selected task category and taskSubCategories', async () => {
+        await doMount(true, {
+          computed: {
+            taskSubCategories: () => [mockOptionSubItem()],
           },
         });
         await wrapper.setProps({
@@ -216,26 +233,8 @@ describe('TeamTaskForm.vue', () => {
           }),
         });
         await wrapper.vm.$nextTick();
-        taskStore.getTaskName = jest.fn(() => mockOptionItems());
-        expect(wrapper.vm.shouldDisplayCategorySelect).toEqual(false);
-      });
-
-      it('should be true if there is selected task name and taskCategories', async () => {
-        await doMount(true, {
-          computed: {
-            taskCategories: () => [mockOptionSubItem()],
-          },
-        });
-        await wrapper.setProps({
-          task: mockTeamTaskEntity({
-            name: {
-              optionItemId: 'mock-option-id',
-            },
-          }),
-        });
-        await wrapper.vm.$nextTick();
-        taskStore.getTaskName = jest.fn(() => mockOptionItems());
-        expect(wrapper.vm.shouldDisplayCategorySelect).toEqual(true);
+        taskStore.getTaskCategory = jest.fn(() => mockOptionItems());
+        expect(wrapper.vm.shouldDisplaySubCategorySelect).toEqual(true);
       });
     });
 
@@ -247,17 +246,17 @@ describe('TeamTaskForm.vue', () => {
           },
         });
         expect(wrapper.vm.rules).toEqual({
-          teamTaskName: {
+          teamTaskCategory: {
             required: true,
           },
-          teamTaskCategory: {
+          teamTaskSubCategory: {
             required: true,
           },
           description: {
             required: true,
             max: MAX_LENGTH_LG,
           },
-          specifyOtherCategory: {
+          specifyOtherSubCategory: {
             required: true,
           },
         });
@@ -285,8 +284,8 @@ describe('TeamTaskForm.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('setTaskNameIdAndResetForm', () => {
-      it('should reset category and emit event', async () => {
+    describe('setTaskCategoryIdAndResetForm', () => {
+      it('should reset sub-category and emit event', async () => {
         await wrapper.setProps({
           task: mockTeamTaskEntity({
             category: {
@@ -296,34 +295,34 @@ describe('TeamTaskForm.vue', () => {
             description: 'mock-string',
           }),
         });
-        wrapper.vm.setTaskNameIdAndResetForm();
-        expect(wrapper.vm.localTeamTaskForm.category).toEqual({
+        wrapper.vm.setTaskCategoryIdAndResetForm();
+        expect(wrapper.vm.localTeamTaskForm.subCategory).toEqual({
           optionItemId: null,
           specifiedOther: null,
         });
         expect(wrapper.vm.localTeamTaskForm.description).toEqual('');
-        expect(wrapper.vm.selectedTaskNameId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
+        expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
         expect(wrapper.emitted('reset-form-validation')).toBeTruthy();
       });
     });
 
-    describe('setCategoryIdAndResetSpecifiedOther', () => {
-      it('should set category id and reset specifiedOther', async () => {
+    describe('setSubCategoryIdAndResetSpecifiedOther', () => {
+      it('should set sub-category id and reset specifiedOther', async () => {
         await doMount(true, {
           data() {
             return {
-              selectedCategoryId: '',
+              selectedSubCategoryId: '',
               localTask: {
-                category: {
+                subCategory: {
                   specifiedOther: 'mock-string',
                 },
               },
             };
           },
         });
-        wrapper.vm.setCategoryIdAndResetSpecifiedOther('mock-category-id-123');
-        expect(wrapper.vm.selectedCategoryId).toEqual('mock-category-id-123');
-        expect(wrapper.vm.localTeamTaskForm.category.specifiedOther).toEqual(null);
+        wrapper.vm.setSubCategoryIdAndResetSpecifiedOther('mock-sub-category-id-123');
+        expect(wrapper.vm.selectedSubCategoryId).toEqual('mock-sub-category-id-123');
+        expect(wrapper.vm.localTeamTaskForm.subCategory.specifiedOther).toEqual(null);
       });
     });
   });
@@ -341,11 +340,11 @@ describe('TeamTaskForm.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.localTeamTaskForm).toEqual({
-          name: {
+          category: {
             optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
             specifiedOther: '',
           },
-          category: {
+          subCategory: {
             optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
             specifiedOther: '',
           },
@@ -361,7 +360,7 @@ describe('TeamTaskForm.vue', () => {
           },
         });
         taskStore.fetchTaskCategories = jest.fn();
-        taskStore.taskCategories = jest.fn(() => []);
+        taskStore.taskSubCategories = jest.fn(() => []);
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
@@ -380,8 +379,8 @@ describe('TeamTaskForm.vue', () => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.selectedTaskNameId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
-        expect(wrapper.vm.selectedCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
+        expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
+        expect(wrapper.vm.selectedSubCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
       });
     });
   });
@@ -395,11 +394,11 @@ describe('TeamTaskForm.vue', () => {
         });
 
         const updatedForm = {
-          name: {
+          category: {
             optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
             specifiedOther: '',
           },
-          category: {
+          subCategory: {
             optionItemId: '986192ea-3f7b-4539-8a65-214161aea123',
             specifiedOther: '',
           },

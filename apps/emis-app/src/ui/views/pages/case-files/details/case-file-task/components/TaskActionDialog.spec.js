@@ -26,8 +26,8 @@ describe('TaskActionDialog.vue', () => {
         show: true,
         eventId: 'mock-event-id-1',
         task: mockTeamTaskEntity({ id: 'mock-task-id' }),
-        selectedTaskName: 'mock-task-name',
-        selectedCategory: 'mock-task-category',
+        selectedTaskCategory: 'mock-task-category',
+        selectedSubCategory: 'mock-task-sub-category',
       },
       mocks: {
         $services: services,
@@ -80,17 +80,17 @@ describe('TaskActionDialog.vue', () => {
       });
     });
 
-    describe('task-action-dialog-category', () => {
+    describe('task-action-dialog-sub-category', () => {
       it('should be displayed if there is selected category', () => {
-        const element = wrapper.findDataTest('task-action-dialog-category');
+        const element = wrapper.findDataTest('task-action-dialog-sub-category');
         expect(element.exists()).toBeTruthy();
       });
 
-      it('should be displayed if there is no selected category', async () => {
+      it('should be displayed if there is no selected sub-category', async () => {
         await wrapper.setProps({
-          selectedCategory: '',
+          selectedSubCategory: '',
         });
-        const element = wrapper.findDataTest('task-action-dialog-category');
+        const element = wrapper.findDataTest('task-action-dialog-sub-category');
         expect(element.exists()).toBeFalsy();
       });
     });

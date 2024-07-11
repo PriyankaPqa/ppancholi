@@ -42,72 +42,72 @@ describe('caseFileTask', () => {
   });
 
   describe('Computed', () => {
-    describe('taskNames', () => {
+    describe('taskCategories', () => {
       it('should return proper data from store', () => {
         const options = mockOptionItems();
-        taskStore.getTaskName = () => options;
-        expect(wrapper.vm.taskNames).toEqual(options);
+        taskStore.getTaskCategory = () => options;
+        expect(wrapper.vm.taskCategories).toEqual(options);
       });
 
       it('should get the inactive actual value item', async () => {
         const options = [mockOptionItem({ id: '1', status: Status.Active }), mockOptionItem({ id: '2', status: Status.Inactive })];
         await wrapper.setData({
-          selectedTaskNameId: '2',
+          selectedTaskCategoryId: '2',
         });
-        taskStore.getTaskName = jest.fn(() => options);
-        expect(wrapper.vm.taskNames).toEqual(options);
+        taskStore.getTaskCategory = jest.fn(() => options);
+        expect(wrapper.vm.taskCategories).toEqual(options);
       });
     });
 
-    describe('taskCategories', () => {
+    describe('taskSubCategories', () => {
       it('should return proper subitems', async () => {
         await wrapper.setData({
-          selectedTaskNameId: '1',
+          selectedTaskCategoryId: '1',
         });
         const options = mockOptionItems();
-        taskStore.getTaskName = jest.fn(() => options);
+        taskStore.getTaskCategory = jest.fn(() => options);
         const expectedRes = [mockOptionSubItem({ id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f' })];
-        expect(wrapper.vm.taskCategories).toEqual(expectedRes);
+        expect(wrapper.vm.taskSubCategories).toEqual(expectedRes);
       });
 
       it('should get the inactive actual value sub-item', async () => {
         const expectedRes = [[mockOptionSubItem({ id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f' }), mockOptionSubItem({ id: '2', status: Status.Inactive })]];
         await wrapper.setData({
-          selectedTaskNameId: '1',
-          selectedCategoryId: '2',
+          selectedTaskCategoryId: '1',
+          selectedSubCategoryId: '2',
         });
         const options = mockOptionItems({ subitems: [mockOptionSubItem({ id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f' }), mockOptionSubItem({ id: '2', status: Status.Inactive })] });
-        taskStore.getTaskName = jest.fn(() => options);
+        taskStore.getTaskCategory = jest.fn(() => options);
         taskStore.filterAndSortActiveSubItems = jest.fn(() => expectedRes);
-        expect(wrapper.vm.taskCategories).toEqual(expectedRes);
+        expect(wrapper.vm.taskSubCategories).toEqual(expectedRes);
       });
     });
 
-    describe('selectedTaskName', () => {
-      it('should return proper selected task name option', async () => {
+    describe('selectedTaskCategory', () => {
+      it('should return proper selected task category option', async () => {
         await wrapper.setData({
-          selectedTaskNameId: '1',
+          selectedTaskCategoryId: '1',
         });
         const options = [mockOptionItem({ id: '1' }), mockOptionItem({ id: '2' })];
-        taskStore.getTaskName = jest.fn(() => options);
+        taskStore.getTaskCategory = jest.fn(() => options);
         const expectedRes = options.filter((o) => o.id === '1')[0];
-        expect(wrapper.vm.selectedTaskName).toEqual(expectedRes);
+        expect(wrapper.vm.selectedTaskCategory).toEqual(expectedRes);
       });
     });
 
-    describe('selectedCategory', () => {
-      it('should return proper selected task category', async () => {
+    describe('selectedSubCategory', () => {
+      it('should return proper selected task sub-category', async () => {
         await doMount(true, {
           computed: {
-            taskNames: () => mockOptionItems(),
-            taskCategories: () => [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }), mockOptionSubItem({ id: '2' })],
+            taskCategories: () => mockOptionItems(),
+            taskSubCategories: () => [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }), mockOptionSubItem({ id: '2' })],
           },
         });
         await wrapper.setData({
-          selectedTaskNameId: '1',
-          selectedCategoryId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
+          selectedTaskCategoryId: '1',
+          selectedSubCategoryId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
         });
-        expect(wrapper.vm.selectedCategory).toEqual(mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }));
+        expect(wrapper.vm.selectedSubCategory).toEqual(mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }));
       });
     });
 

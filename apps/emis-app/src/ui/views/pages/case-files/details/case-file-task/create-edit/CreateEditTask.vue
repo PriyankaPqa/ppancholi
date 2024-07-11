@@ -99,7 +99,13 @@
           </v-btn>
         </template>
       </rc-page-content>
-      <task-action-dialog v-if="showTaskActionDialog" :task="task" :event-id="caseFile.eventId" :show.sync="showTaskActionDialog" />
+      <task-action-dialog
+        v-if="showTaskActionDialog"
+        :task="task"
+        :selected-task-category="displayedTaskCategory"
+        :selected-sub-category="displayedSubCategory"
+        :event-id="caseFile.eventId"
+        :show.sync="showTaskActionDialog" />
     </page-template>
   </validation-observer>
 </template>
@@ -194,8 +200,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       TaskStatus,
       UserRoles,
       originalForm: {
-        name: null as IListOption,
         category: null as IListOption,
+        subCategory: null as IListOption,
         description: '',
         dueDate: '' as string | Date,
         isUrgent: false,
@@ -214,8 +220,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
 
     isDirty(): boolean {
       return !_isEqual(this.originalForm, {
-        name: this.localTask.name,
         category: this.localTask.category,
+        subCategory: this.localTask.subCategory,
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
@@ -235,6 +241,17 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         return userAccountMetadata.displayName;
       }
       return '';
+    },
+
+    displayedTaskCategory(): string {
+      if (this.taskType === 'team') {
+        return this.$m(this.selectedTaskCategory?.name) || '';
+      }
+      return this.localTask?.category?.specifiedOther || '';
+    },
+
+    displayedSubCategory(): string {
+      return this.selectedSubCategory?.isOther ? this.localTask.subCategory.specifiedOther : this.$m(this.selectedSubCategory?.name);
     },
   },
 
@@ -284,8 +301,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
 
     setOriginalData() {
       this.originalForm = _cloneDeep({
-        name: this.localTask.name,
         category: this.localTask.category,
+        subCategory: this.localTask.subCategory,
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
@@ -373,6 +390,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
           this.localTask = new TaskEntity(this.task);
           if (this.taskType === 'team') {
             this.isWorkingOn = !!this.task.userWorkingOn;
+            this.selectedTaskCategoryId = this.task.category.optionItemId;
+            this.selectedSubCategoryId = this.task.subCategory ? this.task.subCategory.optionItemId : '';
             if (this.isWorkingOn) {
               useUserAccountMetadataStore().fetch(this.task.userWorkingOn, GlobalHandler.Partial);
             }
