@@ -6,30 +6,36 @@
       <rc-tab
         v-for="tab in tabs"
         :key="tab"
-        :label="tab === 'schedule' ? 'Schedule' : 'Calendar'"
+        :label="tab"
         :active="selectedTab === tab"
         @click="selectedTab = tab" />
     </rc-tabs>
 
-    <staff-availability v-if="selectedTab === 'schedule'" />
-    <staff-calendar v-if="selectedTab === 'calendar'" />
+    <staff-availability v-if="selectedTab === 'Schedule'" />
+    <staff-calendar v-if="selectedTab === 'Calendar'" />
+    <appointment-form v-if="selectedTab === 'Form'" :appointment="mockAppointment()" :is-edit-mode="false" />
   </rc-page-content>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mockAppointment } from '@libs/entities-lib/appointment';
+
 import StaffAvailability from './StaffAvailability.vue';
 import StaffCalendar from './StaffCalendar.vue';
+import AppointmentForm from './AppointmentForm.vue';
 
 export default Vue.extend({
   name: 'AppointmentsHome',
   components: {
     StaffAvailability,
     StaffCalendar,
+    AppointmentForm,
   },
   data: () => ({
-    tabs: ['calendar', 'schedule'],
-      selectedTab: 'calendar',
+    tabs: ['Calendar', 'Schedule', 'Form'],
+    selectedTab: 'Form',
+    mockAppointment,
   }),
 
 });

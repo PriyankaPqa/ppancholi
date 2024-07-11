@@ -105,7 +105,6 @@ import Vue from 'vue';
 import { parseISO, format, addDays } from 'date-fns';
 import { IAppointment, IDaySchedule, IStaffMemberAvailability } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
-
 import { utcToZonedTime } from 'date-fns-tz';
 import { RcDialog } from '@libs/component-lib/components';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
