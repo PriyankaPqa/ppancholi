@@ -1410,7 +1410,7 @@ describe('CaseFileActivityListItem.vue', () => {
           item: mockCaseFileActivities(CaseFileActivityType.TaskManagementTaskCreated)[0],
         });
         const title = wrapper.vm.$t('caseFileActivity.activityList.title.TaskManagement.Created');
-        const body = wrapper.vm.$t('caseFileActivity.activityList.body.TaskManagement.Created', { x: wrapper.vm.$m(wrapper.vm.item.details.name.name) });
+        const body = wrapper.vm.$t('caseFileActivity.activityList.body.TaskManagement.Created', { x: wrapper.vm.$m(wrapper.vm.item.details.category.name) });
         expect(wrapper.vm.makeContentForTaskManagementAction()).toEqual({
           title,
           body,
@@ -1422,7 +1422,7 @@ describe('CaseFileActivityListItem.vue', () => {
           item: mockCaseFileActivities(CaseFileActivityType.TaskManagementTaskCompleted)[0],
         });
         const title = wrapper.vm.$t('caseFileActivity.activityList.title.TaskManagement.Completed');
-        const body = wrapper.vm.$t('caseFileActivity.activityList.body.TaskManagement.Completed', { x: wrapper.vm.$m(wrapper.vm.item.details.name.name) });
+        const body = wrapper.vm.$t('caseFileActivity.activityList.body.TaskManagement.Completed', { x: wrapper.vm.$m(wrapper.vm.item.details.category.name) });
         expect(wrapper.vm.makeContentForTaskManagementAction()).toEqual({
           title,
           body,
