@@ -474,7 +474,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
             const userAccountMetadata = useUserAccountMetadataStore().getById(d.entity.userWorkingOn);
             userWorkingOnNameWithRole = `${userAccountMetadata?.displayName} (${this.$m(userAccountMetadata?.roleName) as string})`;
           } else {
-            userWorkingOnNameWithRole = this.$t('common.N/A') as string;
+            userWorkingOnNameWithRole = d.entity.taskStatus === TaskStatus.Completed ? '-' : this.$t('common.N/A') as string;
           }
 
         return {

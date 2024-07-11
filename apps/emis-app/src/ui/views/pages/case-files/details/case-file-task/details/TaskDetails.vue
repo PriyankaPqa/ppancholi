@@ -127,7 +127,7 @@
               </v-col>
               <v-col cols="8">
                 <div data-test="task-details-due-date">
-                  {{ helpers.getLocalStringDate(task.dueDate, 'Task.dueDate', 'PP') }}
+                  {{ task.taskStatus === TaskStatus.Completed ? '-' : helpers.getLocalStringDate(task.dueDate, 'Task.dueDate', 'PP') }}
                 </div>
               </v-col>
             </v-row>
