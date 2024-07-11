@@ -116,7 +116,7 @@
                   {{ $t('event.programManagement.approvalRequired') }}
                 </div>
 
-                <div v-if="$hasFeature(FeatureKeys.Lodging)" data-test="program-details-div-useForLodging">
+                <div v-if="$hasFeature($featureKeys.Lodging)" data-test="program-details-div-useForLodging">
                   <v-icon
                     class="mr-1"
                     :color="getEligibilityIconColor(program.useForLodging)"
@@ -202,7 +202,7 @@ import {
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/shared-lib/types';
@@ -238,7 +238,6 @@ export default Vue.extend({
       loading: false,
       financialAssistanceTables: [] as IFinancialAssistanceTableEntity[],
       assessmentIds: [] as string[],
-      FeatureKeys,
     };
   },
 

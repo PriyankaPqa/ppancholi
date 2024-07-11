@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '../../base';
-import { IDaySchedule } from '../appointment-program/appointment-program.types';
-import { IDateRange, IStaffMemberAvailability } from './staff-member-availability.types';
+import { IDateRange, IDaySchedule } from '../appointment-program/appointment-program.types';
+import { IStaffMemberAvailability } from './staff-member-availability.types';
 
 export class StaffMemberAvailability extends BaseEntity {
   staffMemberId: uuid;

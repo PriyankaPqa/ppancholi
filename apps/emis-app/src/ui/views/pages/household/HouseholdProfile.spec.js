@@ -8,7 +8,7 @@ import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validat
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventSummary, EEventLocationStatus } from '@libs/entities-lib/event';
 import { CaseFileStatus, mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
@@ -467,7 +467,7 @@ describe('HouseholdProfile.vue', () => {
             $services: services,
           },
         });
-        await wrapper.setFeature(FeatureKeys.L0Access, false);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.L0Access, false);
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
@@ -697,11 +697,11 @@ describe('HouseholdProfile.vue', () => {
     describe('enableAutocomplete', () => {
       it('return correct value', async () => {
         await doMount();
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.AddressAutoFill, true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
         await doMount();
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });

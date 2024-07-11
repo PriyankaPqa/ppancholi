@@ -1,5 +1,4 @@
 import { RcConfirmationDialog } from '@libs/component-lib/components';
-import { i18n } from '@/ui/plugins/i18n';
 import {
   mockHouseholdCreate, mockAdditionalMembers, mockAdditionalMember, Member,
 } from '@libs/entities-lib/src/household-create';
@@ -15,7 +14,6 @@ describe('AdditionalMembersLib.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        i18n,
         disableAutocomplete: false,
         showBeneficiaryName: false,
       },
@@ -86,7 +84,6 @@ describe('AdditionalMembersLib.vue', () => {
             };
           },
           propsData: {
-            i18n,
             disableAutocomplete: false,
           },
           computed: {
@@ -123,7 +120,6 @@ describe('AdditionalMembersLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            i18n,
             disableAutocomplete: false,
           },
           computed: {
@@ -140,7 +136,6 @@ describe('AdditionalMembersLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            i18n,
             disableAutocomplete: false,
           },
           computed: {

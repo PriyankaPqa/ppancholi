@@ -15,7 +15,6 @@ import Vue from 'vue';
 import { RcPageLoading, RcRouterViewTransition } from '@libs/component-lib/components';
 import _isEmpty from 'lodash/isEmpty';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
-import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
@@ -60,7 +59,7 @@ export default Vue.extend({
 
       if (_isEmpty(event) || !event.selfRegistrationEnabled || event.schedule.status !== EEventStatus.Open) {
         this.$appInsights.trackTrace('trying to register with invalid event', {}, 'MainLayout', 'initializeEvent');
-        window.location.replace(i18n.t('registration.redirection_link') as string);
+        window.location.replace(this.$t('registration.redirection_link') as string);
         return false;
       }
 

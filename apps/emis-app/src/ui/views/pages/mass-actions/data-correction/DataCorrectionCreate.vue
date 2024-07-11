@@ -42,7 +42,6 @@ import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import helpers from '@/ui/helpers/helpers';
 import { format } from 'date-fns';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({ name: 'DataCorrectionCreate',
 
@@ -69,7 +68,7 @@ export default Vue.extend({ name: 'DataCorrectionCreate',
     massActionTypes() {
       return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
         .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther
-        && (this.$hasFeature(FeatureKeys.MovePayments) || m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments)));
+        && (this.$hasFeature(this.$featureKeys.MovePayments) || m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments)));
     },
 
     rules(): Record<string, unknown> {

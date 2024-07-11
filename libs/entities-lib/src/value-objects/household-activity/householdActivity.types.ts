@@ -70,5 +70,5 @@ export interface IHouseholdActivity {
   previousDetails: unknown;
 
   getActivityName? (): string;
-  getTemplateData?(isPreviousValue: boolean, i18n: VueI18n): IHistoryItemTemplateData[];
+  getTemplateData?(isPreviousValue: boolean, i18n: VueI18n, showTempAddressData: boolean): IHistoryItemTemplateData[];
 }

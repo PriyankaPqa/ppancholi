@@ -142,7 +142,6 @@
 
     <add-edit-additional-members-lib
       v-if="showAdditionalMemberDialog"
-      :i18n="i18n"
       :show="showAdditionalMemberDialog"
       :index="index"
       :member="member"
@@ -170,7 +169,7 @@ import { RcTooltip } from '@libs/component-lib/components';
 import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
 import { MIN_AGE_REGISTRATION } from '@libs/registration-lib/constants/validations';
@@ -243,7 +242,6 @@ export default Vue.extend({
       i18n: this.$i18n,
       householdHelpers,
       HouseholdActivityType,
-      FeatureKeys,
     };
   },
 
@@ -299,7 +297,7 @@ export default Vue.extend({
     },
 
     memberInfo(): Array<Record<string, unknown>> {
-      return [
+      const details = [
         {
           primaryMemberOnly: false,
           test: 'name',
@@ -355,6 +353,8 @@ export default Vue.extend({
           customContent: 'address',
         },
       ];
+
+      return details.filter((d) => !this.$hasFeature(this.$featureKeys.CaseFileIndividual) || d.customContent !== 'address');
     },
 
     displayName(): string {
@@ -373,7 +373,7 @@ export default Vue.extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
 
     isMovedMember(): boolean {

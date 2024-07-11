@@ -4,7 +4,6 @@ import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/src/househo
 import { mockEventSummary } from '@libs/entities-lib/src/event';
 import { ECurrentAddressTypes, mockCampGround } from '@libs/entities-lib/src/value-objects/current-address';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
-import { i18n } from '../../ui/plugins/i18n';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
@@ -32,7 +31,6 @@ describe('AddressesLib.vue', () => {
         };
       },
       propsData: {
-        i18n,
         disableAutocomplete: false,
       },
     });
@@ -64,7 +62,7 @@ describe('AddressesLib.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(wrapper.vm.$i18n));
       });
     });
 
@@ -78,7 +76,6 @@ describe('AddressesLib.vue', () => {
             };
           },
           propsData: {
-            i18n,
             disableAutocomplete: false,
           },
           computed: {
@@ -91,7 +88,7 @@ describe('AddressesLib.vue', () => {
           },
         });
 
-        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.i18n, false, true, false);
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.$i18n, false, true, false);
       });
 
       it('returns the right value', async () => {
@@ -108,7 +105,6 @@ describe('AddressesLib.vue', () => {
             },
           },
           propsData: {
-            i18n,
             disableAutocomplete: false,
           },
         });
@@ -139,7 +135,6 @@ describe('AddressesLib.vue', () => {
             },
           },
           propsData: {
-            i18n,
             disableAutocomplete: false,
           },
         });
@@ -182,7 +177,6 @@ describe('AddressesLib.vue', () => {
           };
         },
         propsData: {
-          i18n,
           disableAutocomplete: false,
         },
         computed: {

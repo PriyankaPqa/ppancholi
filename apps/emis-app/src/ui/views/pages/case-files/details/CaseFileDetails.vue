@@ -153,9 +153,9 @@ import { RcTooltip } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { INavigationTab } from '@libs/shared-lib/types';
+import { INavigationTab, Status } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -163,6 +163,8 @@ import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserStore } from '@/pinia/user/user';
 import { useHouseholdDetails } from '@/ui/views/pages/household/useHouseholdDetails';
 import { usePersonStore } from '@/pinia/person/person';
+import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
+import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import HouseholdDetailsList from './components/HouseholdDetailsList.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -199,7 +201,6 @@ export default mixins(caseFileDetail).extend({
       loading: false,
       showVerifyIdentityDialog: false,
       showImpact: false,
-      FeatureKeys,
       isDuplicate: null as boolean,
     };
   },
@@ -324,7 +325,7 @@ export default mixins(caseFileDetail).extend({
           {
             text: this.$t('caseFileDetail.menu_impacted_individuals') as string,
             test: 'impacted_individuals',
-            to: this.$hasFeature(FeatureKeys.CaseFileIndividual) ? routes.caseFile.impactedIndividuals.homeV2.name : routes.caseFile.impactedIndividuals.home.name,
+            to: this.$hasFeature(this.$featureKeys.CaseFileIndividual) ? routes.caseFile.impactedIndividuals.homeV2.name : routes.caseFile.impactedIndividuals.home.name,
             exact: false,
           },
           !this.recoveryPlanInvisible && {
@@ -338,7 +339,7 @@ export default mixins(caseFileDetail).extend({
             to: routes.caseFile.documents.home.name,
             exact: false,
           },
-          this.$hasFeature(FeatureKeys.TaskManagement) && taskTab,
+          this.$hasFeature(this.$featureKeys.TaskManagement) && taskTab,
         ];
 
         return tabs.filter((t) => t);
@@ -352,7 +353,11 @@ export default mixins(caseFileDetail).extend({
     },
 
     receivingAssistanceMembersCount(): number {
-        const receivingAssistanceMembers = this.caseFile.impactedIndividuals?.filter((m) => m.receivingAssistance);
+        const receivingAssistanceMembers = (this.$hasFeature(this.$featureKeys.CaseFileIndividual)
+          ? this.individuals
+            .filter((i) => i.membershipStatus === MembershipStatus.Active && usePersonStore().getById(i.personId)?.status === Status.Active) : this.caseFile.impactedIndividuals)
+          ?.filter((m) => m.receivingAssistance);
+
         return receivingAssistanceMembers?.length || 0;
     },
   },
@@ -386,6 +391,9 @@ export default mixins(caseFileDetail).extend({
         return;
       }
       await usePersonStore().fetchByIds(this.household.members, true);
+
+      const individuals = await useCaseFileIndividualStore().fetchAll({ caseFileId: this.caseFileId });
+      await usePersonStore().fetchByIds(individuals.map((i) => i.personId), true);
       this.isDuplicate = (await this.$services.potentialDuplicates.getPotentialDuplicatesCount(this.household.id)) > 0;
     },
 

@@ -49,7 +49,7 @@
 import Vue from 'vue';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITeamEntity } from '@libs/entities-lib/team';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { ICombinedIndex, ITableSearchResults } from '@libs/shared-lib/types';
 import {
   IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
@@ -87,7 +87,6 @@ export default Vue.extend({
       showAssignmentsDialog: false,
       showViewAssignmentsDialog: false,
       loading: false,
-      FeatureKeys,
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },

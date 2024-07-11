@@ -131,7 +131,7 @@ import {
   AccountStatus, IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { Status, ISearchParams, ITableSearchResults, ICombinedIndex } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
@@ -181,7 +181,6 @@ export default mixins(TablePaginationSearchMixin).extend({
   data() {
     return {
       TeamType,
-      FeatureKeys,
       assignedTeams: [] as TeamWithCount[],
       backupAssignedTeams: [] as TeamWithCount[],
       assignedIndividuals: [] as IIndividual[],

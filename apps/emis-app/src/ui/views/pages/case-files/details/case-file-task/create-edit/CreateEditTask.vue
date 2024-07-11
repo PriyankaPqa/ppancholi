@@ -389,7 +389,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
           if (this.taskType === 'team') {
             this.isWorkingOn = !!this.task.userWorkingOn;
             this.selectedTaskCategoryId = this.task.category.optionItemId;
-            this.selectedSubCategoryId = this.task.subCategory.optionItemId;
+            this.selectedSubCategoryId = this.task.subCategory ? this.task.subCategory.optionItemId : '';
             if (this.isWorkingOn) {
               useUserAccountMetadataStore().fetch(this.task.userWorkingOn, GlobalHandler.Partial);
             }

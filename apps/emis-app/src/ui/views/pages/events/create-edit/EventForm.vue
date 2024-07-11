@@ -329,7 +329,6 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useEventStore } from '@/pinia/event/event';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { TranslateResult } from 'vue-i18n';
 import { EEventSummarySections } from '@/types';
 import { format } from 'date-fns';
@@ -411,7 +410,6 @@ export default Vue.extend({
       eventType: null,
       initialEventType: null,
       languageMode: 'en',
-      FeatureKeys,
       otherProvinces: [] as IEventLocation[],
       regions: [] as IEventLocation[],
       initialStatus: localEvent.schedule.status,

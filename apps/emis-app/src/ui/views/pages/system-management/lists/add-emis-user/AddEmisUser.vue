@@ -136,7 +136,7 @@ import { DataTableHeader } from 'vuetify';
 import { IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { IAppUser, createUserAccount, getSubRoleById } from '../user-accounts/userAccountsHelpers';
 
 export default Vue.extend({
@@ -293,7 +293,7 @@ export default Vue.extend({
       if (this.isSubmitAllowed) {
         this.loading = true;
         this.selectedUsers.forEach(async (user) => {
-          if (this.$hasFeature(FeatureKeys.UseIdentityServer)) {
+          if (this.$hasFeature(this.$featureKeys.UseIdentityServer)) {
             await createUserAccount(user, this.allSubRoles as IOptionSubItem[], useUserAccountStore().createUserAccount, this.$i18n, this.$toasted);
           } else {
             await this.setUserRole(user);

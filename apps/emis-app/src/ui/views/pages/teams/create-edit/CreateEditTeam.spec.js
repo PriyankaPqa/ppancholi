@@ -15,7 +15,6 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { mockProvider } from '@/services/provider';
 import Component from './CreateEditTeam.vue';
@@ -300,7 +299,7 @@ describe('CreateEditTeam.vue', () => {
     describe('team-isEscalation-checkbox', () => {
       it('should be rendered when feature flag Task Management is on and team type is Ad hoc', async () => {
         await mountWrapper(false, 5, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
         });
         await wrapper.setProps({
           teamType: 'adhoc',
@@ -322,7 +321,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('should not be rendered when feature flag Task Management is on and team type is not Ad hoc', async () => {
         await mountWrapper(false, 5, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
         });
         await wrapper.setProps({
           teamType: 'standard',
@@ -333,7 +332,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('should be disabled when feature flag Task Management is on, team type is Ad hoc but doesnt have L5', async () => {
         await mountWrapper(true, 4, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
           computed: {
             isEditMode() {
               return true;
@@ -349,7 +348,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('should not be disabled when feature flag Task Management is on, team type is Ad hoc but has L5', async () => {
         await mountWrapper(true, 5, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
           computed: {
             isEditMode() {
               return true;
@@ -367,7 +366,7 @@ describe('CreateEditTeam.vue', () => {
     describe('team-isAssignable-checkbox', () => {
       it('should be disabled when isEscalation is true', async () => {
         await mountWrapper(false, 5, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
           propsData: {
             teamType: 'adhoc',
           },
@@ -395,7 +394,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('should be disabled when isEscalation is false, but user doesnt have L5', async () => {
         await mountWrapper(false, 4, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
           propsData: {
             teamType: 'standard',
           },

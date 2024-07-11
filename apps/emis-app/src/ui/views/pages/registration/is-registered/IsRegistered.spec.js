@@ -13,7 +13,6 @@ import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './IsRegistered.vue';
 
 const localVue = createLocalVue();
@@ -188,7 +187,7 @@ describe('IsRegistered.vue', () => {
           pinia,
           vuetify,
         });
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
 
         wrapper = shallowMount(Component, {
@@ -196,7 +195,7 @@ describe('IsRegistered.vue', () => {
           pinia,
           vuetify,
         });
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.AddressAutoFill, true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
       });
     });

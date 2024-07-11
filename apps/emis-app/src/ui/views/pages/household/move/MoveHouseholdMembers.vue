@@ -274,10 +274,15 @@ export default mixins(searchHousehold, household).extend({
       if (!isValid) {
         helpers.scrollToFirstError('scrollAnchor');
       } else {
-        this.setNewMembers(this.firstHousehold);
-        this.setNewMembers(this.secondHousehold);
+        let response;
+        this.setNewMembers(this.firstHousehold, this.$hasFeature(this.$featureKeys.CaseFileIndividual));
+        this.setNewMembers(this.secondHousehold, this.$hasFeature(this.$featureKeys.CaseFileIndividual));
         this.submitLoading = true;
-        const response = await this.$services.households.moveMembers(this.firstHousehold, this.secondHousehold);
+        if (!this.$hasFeature(this.$featureKeys.CaseFileIndividual)) {
+          response = await this.$services.households.moveMembers(this.firstHousehold, this.secondHousehold);
+        } else {
+          response = await this.$services.households.moveMembersV2(this.firstHousehold, this.secondHousehold);
+        }
         if (response) {
           this.moveSubmitted = true;
         } else {
@@ -287,10 +292,13 @@ export default mixins(searchHousehold, household).extend({
       }
     },
 
-    setNewMembers(household: IMovingHouseholdCreate) {
+    setNewMembers(household: IMovingHouseholdCreate, ignoreAddress: boolean) {
       household.movingAdditionalMembers.forEach((m:IMovingMember) => {
-        m.setCurrentAddress(m.selectedCurrentAddress.sameAddressSelected
-          ? household.primaryBeneficiary.currentAddress : m.selectedCurrentAddress.newAddress);
+        if (!ignoreAddress) {
+          m.setCurrentAddress(m.selectedCurrentAddress.sameAddressSelected
+            ? household.primaryBeneficiary.currentAddress : m.selectedCurrentAddress.newAddress);
+        }
+        m.sameTemporaryAddressAsPrimary = m.selectedCurrentAddress.sameAddressSelected;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { selectedCurrentAddress, ...memberData } = m;
         household.addAdditionalMember(memberData, false);

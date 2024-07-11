@@ -20,9 +20,13 @@
               :key="item.id"
               :class="{ selected: item.id === selectedStatement.id }"
               class="list-row">
-              <v-col class="d-flex justify-space-between">
+              <v-col class="d-flex justify-space-between" :data-test="`consent-statement-select_${item.name.translation.en}`">
                 {{ $m(item.name) }}
-                <v-btn class="btn" :class="{ secondary: item.id === selectedStatement.id }" @click="selectedStatement = item">
+                <v-btn
+                  class="btn"
+                  :class="{ secondary: item.id === selectedStatement.id }"
+                  :data-test="`consent-statement-select_btn_${item.name.translation.en}`"
+                  @click="selectedStatement = item">
                   {{ item.id === selectedStatement.id ? $t('common.selected') : $t('common.select') }}
                 </v-btn>
               </v-col>

@@ -178,7 +178,7 @@ import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessme
 import helper from '@libs/shared-lib/helpers/helpers';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -215,7 +215,6 @@ export default mixins(caseFileDetail).extend({
 
   data() {
     return {
-      FeatureKeys,
       financialAssistanceLoading: false,
       financialAssistance: null as FinancialAssistancePaymentEntity,
       financialTables: [] as IFinancialAssistanceTableEntity[],

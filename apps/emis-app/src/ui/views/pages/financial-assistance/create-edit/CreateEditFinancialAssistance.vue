@@ -108,7 +108,7 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row v-if="$hasFeature(FeatureKeys.Lodging)">
+              <v-row v-if="$hasFeature($featureKeys.Lodging)">
                 <v-col>
                   <v-checkbox
                     v-model="useForLodging"
@@ -204,7 +204,7 @@ import { IProgramEntity } from '@libs/entities-lib/program';
 import { VForm, Status } from '@libs/shared-lib/types';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
 import ErrorPanel from './ErrorPanel.vue';
 import FinancialAssistanceItems from './FinancialAssistanceItems.vue';
@@ -250,7 +250,6 @@ export default Vue.extend({
       showConfirm: false,
       attemptedSave: false,
       formDirty: false,
-      FeatureKeys,
     };
   },
 

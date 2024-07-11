@@ -105,7 +105,7 @@ describe('CurrentAddressForm.vue', () => {
           },
           city: {
             required: wrapper.vm.currentAddress.requiresCity(),
-            max: MAX_LENGTH_MD,
+            max: MAX_LENGTH_SM,
           },
           postalCode: {
             max: MAX_LENGTH_SM,

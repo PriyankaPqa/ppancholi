@@ -13,6 +13,7 @@ describe('[T28792] SELF REG - Individual cannot register when entering the same 
         const provider = useProvider(accessToken.access_token);
         const createdEvent = await provider.events.createEvent(mockCreateEvent());
         await provider.events.toggleSelfRegistration(createdEvent.id, true);
+        await provider.households.getPublicToken(null);
         const createdHousehold = await createHousehold(provider, createdEvent);
         cy.wrap(createdHousehold.mockCreateHousehold.primaryBeneficiary.identitySet).as('personalInfo');
         cy.wrap(createdEvent.name.translation.en).as('eventName');

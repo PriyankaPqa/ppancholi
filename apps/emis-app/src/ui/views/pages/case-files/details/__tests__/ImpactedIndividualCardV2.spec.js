@@ -1,5 +1,5 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
-import { mockCaseFileIndividualEntity, mockReceivingAssistanceDetails } from '@libs/entities-lib/case-file-individual';
+import { MembershipStatus, mockCaseFileIndividualEntity, mockReceivingAssistanceDetails } from '@libs/entities-lib/case-file-individual';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
@@ -149,9 +149,16 @@ describe('ImpactedIndividualCardV2.vue', () => {
 
     describe('disableEditing', () => {
       it('should be true when props disableEditingByStatus is true', async () => {
+        expect(wrapper.vm.disableEditing).toEqual(false);
         await wrapper.setProps({
           disableEditingByStatus: true,
         });
+        expect(wrapper.vm.disableEditing).toEqual(true);
+      });
+
+      it('should be true when member is removed is true', async () => {
+        expect(wrapper.vm.disableEditing).toEqual(false);
+        wrapper.vm.individual.membershipStatus = MembershipStatus.Removed;
         expect(wrapper.vm.disableEditing).toEqual(true);
       });
 

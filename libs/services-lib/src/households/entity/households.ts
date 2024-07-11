@@ -8,7 +8,11 @@ import {
   IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IHoneyPotIdentitySet,
   ICheckForPossibleDuplicateResponse, ISendOneTimeCodeRegistrationPublicPayload, IVerifyOneTimeCodeRegistrationPublicPayload,
   CurrentAddress,
+  ECurrentAddressTypes,
+  ICurrentAddressCreateRequest,
 } from '@libs/entities-lib/household-create';
+import { ICaseFileIndividualCreateRequest, MembershipStatus } from '@libs/entities-lib/case-file-individual';
+
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
 import {
   ERegistrationMode, ICombinedSearchResult, ISearchParams, IOptionItemData,
@@ -123,6 +127,17 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     });
   }
 
+  async addMemberV2(householdId: string, publicMode: boolean, payload: IMember, sameAddress: boolean): Promise<IHouseholdEntity> {
+    const parsePayload = this.parseMember(payload);
+    // useless eventually
+    parsePayload.currentAddress = { addressType: ECurrentAddressTypes.Unknown } as ICurrentAddressCreateRequest;
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${publicMode ? 'public/' : ''}${householdId}/members`, {
+      ...parsePayload,
+      registrationType: ERegistrationMode.CRC,
+      sameTemporaryAddressAsPrimary: sameAddress,
+    });
+  }
+
   async deleteAdditionalMember(householdId: string, publicMode: boolean, memberId: string): Promise<IHouseholdEntity> {
     return this.http.delete(`${this.baseUrl}/${publicMode ? 'public/' : ''}${householdId}/members/${memberId}`);
   }
@@ -136,6 +151,12 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     const payload = this.parseMovePayload(firstHousehold, secondHousehold);
     // the return value is the 2 modified households
     return this.http.patch(`${this.baseUrl}/move-household-members`, payload);
+  }
+
+  async moveMembersV2(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]> {
+    const payload = this.parseMovePayload(firstHousehold, secondHousehold);
+    // the return value is the 2 modified households
+    return this.http.patch(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/move-household-members`, payload);
   }
 
   async validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
@@ -233,6 +254,12 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       primaryBeneficiaryId: household.primaryBeneficiary.id,
       additionalMemberIds: household.additionalMembers.map((member) => member.id),
       registrationType: ERegistrationMode.CRC,
+      individuals: [household.primaryBeneficiary, ...household.additionalMembers].filter((m) => m).map((m) => ({
+        personId: m.id,
+        temporaryAddressHistory: [CurrentAddress.parseCurrentAddress(m.currentAddress)],
+        receivingAssistanceDetails: [{ receivingAssistance: true }],
+        membershipStatus: MembershipStatus.Active,
+      }) as ICaseFileIndividualCreateRequest),
     };
   }
 
@@ -326,6 +353,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       memberId: member.id,
       currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
       identitySet: isPrimaryBeneficiary ? this.parseIdentitySet(member.identitySet) : null,
+      sameTemporaryAddressAsPrimary: member.sameTemporaryAddressAsPrimary || false,
     };
   }
 }

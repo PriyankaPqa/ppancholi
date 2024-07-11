@@ -171,7 +171,7 @@ export default Vue.extend({
         },
         city: {
           required: true,
-          max: MAX_LENGTH_MD,
+          max: MAX_LENGTH_SM,
         },
         postalCode: {
           required: true,

@@ -5,6 +5,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+
 import Component from './SplitHouseholdDialog.vue';
 
 const localVue = createLocalVue();
@@ -16,6 +17,21 @@ registrationStore.getHouseholdCreate = jest.fn(() => ({
 }));
 describe('SplitHouseholdDialog', () => {
   let wrapper;
+
+  const doMount = (overrides = {}) => {
+    wrapper = shallowMount(Component, {
+      localVue,
+      pinia,
+      propsData: {
+        show: true,
+        newPrimaryMember: member,
+      },
+      ...overrides,
+    });
+    registrationStore.getHouseholdCreate = jest.fn(() => ({
+      additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })],
+    }));
+  };
 
   describe('Template', () => {
     beforeEach(() => {
@@ -107,6 +123,16 @@ describe('SplitHouseholdDialog', () => {
     describe('additionalMembers', () => {
       it('returns the right list of members, without the new primary member', () => {
         expect(wrapper.vm.additionalMembers).toEqual([mockMember({ id: '2' }), mockMember({ id: '3' })]);
+      });
+    });
+
+    describe('memberInfo', () => {
+      it('returns address according to flag', async () => {
+        doMount({ featureList: [wrapper.vm.$featureKeys.CaseFileIndividual] });
+        expect(wrapper.vm.memberInfo(wrapper.vm.newPrimaryMember).find((d) => d.customContent === 'address')).toBeFalsy();
+
+        doMount();
+        expect(wrapper.vm.memberInfo(wrapper.vm.newPrimaryMember).find((d) => d.customContent === 'address')).toBeTruthy();
       });
     });
 

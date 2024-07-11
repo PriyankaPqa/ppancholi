@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="title-container mb-2">
-      <div data-test="title" class="rc-heading-5 flex-grow-1 fw-bold">
+      <div data-test="title" class="flex-grow-1 fw-bold" :class="smallTitle ? 'rc-body14' : 'rc-heading-5'">
         {{ title }}
       </div>
       <template v-if="showEditButton">
@@ -59,6 +59,11 @@ export default Vue.extend({
     },
 
     submitDisabled: {
+      type: Boolean,
+      default: false,
+    },
+
+    smallTitle: {
       type: Boolean,
       default: false,
     },

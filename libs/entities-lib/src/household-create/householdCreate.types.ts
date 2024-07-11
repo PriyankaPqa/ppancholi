@@ -1,10 +1,11 @@
 import { ERegistrationMode, ERegistrationMethod } from '@libs/shared-lib/types';
+import { ICaseFileIndividualCreateRequest } from '../case-file-individual';
 import { IIdentitySet } from '../value-objects/identity-set';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
+import { ICurrentAddress } from '../value-objects/current-address';
 import {
   IMemberEntity, IMember, MemberCreateRequest, IMemberMoveRequest,
 } from '../value-objects/member';
-import { ICurrentAddress } from '../value-objects/current-address';
 
 export interface ISplitHouseholdMembers {
   primaryMember: IMember;
@@ -85,6 +86,7 @@ export interface ISplitHouseholdRequest {
   eventId: uuid;
   consentInformation: IConsentInformation;
   registrationType: ERegistrationMode;
+  individuals: ICaseFileIndividualCreateRequest[];
 }
 
 export interface IMoveHouseholdRequest {

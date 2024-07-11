@@ -10,6 +10,7 @@ import Component from '@/ui/views/pages/household/search/HouseholdResults.vue';
 import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
+import { ECurrentAddressTypes, mockHouseholdCreateData } from '@libs/entities-lib/household-create';
 
 helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
 const localVue = createLocalVue();
@@ -28,18 +29,23 @@ const parsedHousehold = {
 describe('HouseholdResults.vue', () => {
   let wrapper;
 
-  beforeEach(async () => {
+  const doMount = async (featureList = []) => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
       vuetify,
+      featureList,
       propsData: {
         items: [mockHouseholdEntity({ id: '1' }), mockHouseholdEntity({ id: '2' })],
         isSplitMode: false,
       },
     });
     wrapper.vm.buildHouseholdCreateData = jest.fn();
+  };
+
+  beforeEach(async () => {
+    await doMount();
   });
 
   describe('Lifecycle', () => {
@@ -178,6 +184,23 @@ describe('HouseholdResults.vue', () => {
     });
 
     describe('viewDetails', () => {
+      it('resets all current addresses to unknown if flag is on', async () => {
+        let householdCreate = null;
+        wrapper.vm.fetchHouseholdCreate = jest.fn(() => mockHouseholdCreateData());
+        registrationStore.setHouseholdCreate = jest.fn((h) => {
+          householdCreate = h;
+        });
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(householdCreate.primaryBeneficiary.currentAddress.addressType).not.toEqual(ECurrentAddressTypes.Unknown);
+        expect(householdCreate.additionalMembers[0].currentAddress.addressType).not.toEqual(ECurrentAddressTypes.Unknown);
+
+        await doMount([wrapper.vm.$featureKeys.CaseFileIndividual]);
+        wrapper.vm.fetchHouseholdCreate = jest.fn(() => mockHouseholdCreateData());
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(householdCreate.primaryBeneficiary.currentAddress.addressType).toEqual(ECurrentAddressTypes.Unknown);
+        expect(householdCreate.additionalMembers[0].currentAddress.addressType).toEqual(ECurrentAddressTypes.Unknown);
+      });
+
       it('should set detailsId to current household id for loading button', async () => {
         expect(wrapper.vm.detailsId).toEqual('');
         await wrapper.vm.viewDetails(parsedHousehold);

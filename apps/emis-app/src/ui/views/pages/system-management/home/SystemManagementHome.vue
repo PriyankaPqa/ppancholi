@@ -20,7 +20,6 @@ import routes from '@/constants/routes';
 import { UserRoles } from '@libs/entities-lib/user';
 import { ICardSettings } from '@/types/interfaces/ICardSettings';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'SystemManagementHome',
@@ -79,7 +78,7 @@ export default Vue.extend({
         level: UserRoles.level6,
       }];
 
-      if (this.$hasFeature(FeatureKeys.FeatureDashboard)) {
+      if (this.$hasFeature(this.$featureKeys.FeatureDashboard)) {
         cards.push(
         {
           title: 'system_management.card.multiTenantFeatures.title',

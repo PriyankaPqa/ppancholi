@@ -22,5 +22,6 @@ declare module 'vue/types/vue' {
     $hasLevel: (p: string) => boolean;
     $hasRole: (p: string) => boolean;
     $hasFeature: (feature: FeatureKeys) => boolean;
+    $featureKeys: typeof FeatureKeys;
   }
 }

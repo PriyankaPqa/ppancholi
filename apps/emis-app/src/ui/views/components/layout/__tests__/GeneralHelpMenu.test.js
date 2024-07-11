@@ -1,6 +1,5 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, mount } from '@/test/testSetup';
-import { i18n } from '@/ui/plugins/i18n';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import Component from '../GeneralHelpMenu.vue';
 
@@ -40,23 +39,23 @@ describe('GeneralHelpMenu.vue', () => {
     beforeEach(async () => {
       wrapper.setProps({
         menuLinks: [{
-          to: i18n.t('zendesk.help_link.forgot_password').toString(),
-          text: i18n.t('zendesk.question.forgot_password'),
+          to: wrapper.vm.$i18n.t('zendesk.help_link.forgot_password').toString(),
+          text: wrapper.vm.$i18n.t('zendesk.question.forgot_password'),
           test: 'zendesk-forgot-password',
         },
         {
-          to: i18n.t('zendesk.help_link.select_language_preferences').toString(),
-          text: i18n.t('zendesk.question.select_language_preferences'),
+          to: wrapper.vm.$i18n.t('zendesk.help_link.select_language_preferences').toString(),
+          text: wrapper.vm.$i18n.t('zendesk.question.select_language_preferences'),
           test: 'zendesk-select-language-preferences',
         },
         {
-          to: i18n.t('zendesk.help_link.register_a_beneficiary').toString(),
-          text: i18n.t('zendesk.question.register_a_beneficiary'),
+          to: wrapper.vm.$i18n.t('zendesk.help_link.register_a_beneficiary').toString(),
+          text: wrapper.vm.$i18n.t('zendesk.question.register_a_beneficiary'),
           test: 'zendesk-register-a-beneficiary',
         },
         {
-          to: i18n.t('zendesk.help_link.create_case_note').toString(),
-          text: i18n.t('zendesk.question.create_case_note'),
+          to: wrapper.vm.$i18n.t('zendesk.help_link.create_case_note').toString(),
+          text: wrapper.vm.$i18n.t('zendesk.question.create_case_note'),
           test: 'zendesk-create-case-note',
         }],
       });
@@ -66,16 +65,16 @@ describe('GeneralHelpMenu.vue', () => {
       const generalHelpItem = '[data-test="general-help-item-zendesk';
 
       const forgotPasswordLink = wrapper.find(`${generalHelpItem}-forgot-password"]`);
-      expect(forgotPasswordLink.attributes('href')).toBe(i18n.t('zendesk.help_link.forgot_password'));
+      expect(forgotPasswordLink.attributes('href')).toBe(wrapper.vm.$i18n.t('zendesk.help_link.forgot_password'));
 
       const selectLanguagePreferencesLink = wrapper.find(`${generalHelpItem}-select-language-preferences"]`);
-      expect(selectLanguagePreferencesLink.attributes('href')).toBe(i18n.t('zendesk.help_link.select_language_preferences'));
+      expect(selectLanguagePreferencesLink.attributes('href')).toBe(wrapper.vm.$i18n.t('zendesk.help_link.select_language_preferences'));
 
       const registerBeneficiaryLink = wrapper.find(`${generalHelpItem}-register-a-beneficiary"]`);
-      expect(registerBeneficiaryLink.attributes('href')).toBe(i18n.t('zendesk.help_link.register_a_beneficiary'));
+      expect(registerBeneficiaryLink.attributes('href')).toBe(wrapper.vm.$i18n.t('zendesk.help_link.register_a_beneficiary'));
 
       const createCaseNoteLink = wrapper.find(`${generalHelpItem}-create-case-note"]`);
-      expect(createCaseNoteLink.attributes('href')).toBe(i18n.t('zendesk.help_link.create_case_note'));
+      expect(createCaseNoteLink.attributes('href')).toBe(wrapper.vm.$i18n.t('zendesk.help_link.create_case_note'));
     });
   });
 

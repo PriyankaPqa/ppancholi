@@ -3,8 +3,10 @@ import { EEventStatus } from '@libs/entities-lib/event';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
+import { mockCaseFileIndividualEntities } from '@libs/entities-lib/case-file-individual';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { CaseFileStatus, mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
 
 import caseFileDetail from '../caseFileDetail';
 
@@ -20,6 +22,7 @@ const { pinia, eventStore } = useMockEventStore();
 const { caseFileStore } = useMockCaseFileStore(pinia);
 const { householdStore } = useMockHouseholdStore(pinia);
 const { personStore } = useMockPersonStore(pinia);
+useMockCaseFileIndividualStore(pinia);
 
 describe('caseFileDetail mixin', () => {
   const mountWrapper = async (fullMount = false, level = 5, additionalOverwrites = {}) => {
@@ -78,6 +81,13 @@ describe('caseFileDetail mixin', () => {
         const ev = wrapper.vm.primaryMember;
         expect(personStore.getById).toHaveBeenCalledWith(householdStore.getById().primaryBeneficiary);
         expect(JSON.stringify(ev)).toBe(JSON.stringify(personStore.getById()));
+      });
+    });
+
+    describe('individuals', () => {
+      it('returns the right data int the right order (membership status)', () => {
+        const cfi = mockCaseFileIndividualEntities();
+        expect(wrapper.vm.individuals).toEqual([cfi[0], cfi[2], cfi[1]]);
       });
     });
 

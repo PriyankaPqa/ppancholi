@@ -103,6 +103,52 @@ describe('HouseholdProfileHistory', () => {
         expect(wrapper.vm.displayedItems[1].userName).toBe('system.public_user_id');
         expect(wrapper.vm.displayedItems[0].userName).toBe('system.system_user_id');
       });
+
+      it('filters out tempaddress depending on flag', async () => {
+        const item1 = new HouseholdActivity(mockHouseholdActivities(HouseholdActivityType.TempAddressEdited)[0]);
+        const item2 = new HouseholdActivity(mockHouseholdActivities(HouseholdActivityType.ContactInformationEdited)[0]);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            activityItemsData: [item1, item2],
+          },
+          mocks: { $services: services },
+        });
+
+        expect(wrapper.vm.displayedItems).toEqual([{
+          ...item2,
+          activityName: item2.getActivityName(),
+          templateData: item2.getTemplateData(false, wrapper.vm.$i18n, true),
+          templatePreviousData: item2.getTemplateData(true, wrapper.vm.$i18n, true),
+          userName: item2.user.name,
+        }, {
+          ...item1,
+          activityName: item1.getActivityName(),
+          templateData: item1.getTemplateData(false, wrapper.vm.$i18n, true),
+          templatePreviousData: item1.getTemplateData(true, wrapper.vm.$i18n, true),
+          userName: item1.user.name,
+        }]);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            activityItemsData: [item1, item2],
+          },
+          mocks: { $services: services },
+          featureList: [wrapper.vm.$featureKeys.CaseFileIndividual],
+        });
+
+        expect(wrapper.vm.displayedItems).toEqual([{
+          ...item2,
+          activityName: item2.getActivityName(),
+          templateData: item2.getTemplateData(false, wrapper.vm.$i18n, true),
+          templatePreviousData: item2.getTemplateData(true, wrapper.vm.$i18n, true),
+          userName: item2.user.name,
+        }]);
+      });
     });
   });
 

@@ -29,6 +29,7 @@ declare module 'vue/types/vue' {
     $hasRole: (p: string) => boolean;
     $currentUser: () => User;
     $hasFeature: (feature: FeatureKeys) => boolean;
+    $featureKeys: typeof FeatureKeys;
     $confirm: ({
       title, messages, htmlContent, submitActionLabel, cancelActionLabel, showCancelButton,
     }: {

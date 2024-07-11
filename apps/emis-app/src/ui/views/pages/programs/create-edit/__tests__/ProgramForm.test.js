@@ -5,7 +5,6 @@ import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validat
 import { Status } from '@libs/shared-lib/types';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { createTestingPinia } from '@pinia/testing';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from '../ProgramForm.vue';
 
@@ -353,7 +352,7 @@ describe('ProgramForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        featureList: [FeatureKeys.Lodging],
+        featureList: [wrapper.vm.$featureKeys.Lodging],
       });
 
       const element = wrapper.findDataTest('program-useForLodging');
@@ -390,7 +389,7 @@ describe('ProgramForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        featureList: [FeatureKeys.Lodging],
+        featureList: [wrapper.vm.$featureKeys.Lodging],
       });
 
       const element = wrapper.findDataTest('program-approvalRequired');
@@ -410,7 +409,7 @@ describe('ProgramForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        featureList: [FeatureKeys.Lodging],
+        featureList: [wrapper.vm.$featureKeys.Lodging],
       });
 
       const element = wrapper.findDataTest('program-approvalRequired');
@@ -431,7 +430,7 @@ describe('ProgramForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        featureList: [FeatureKeys.Lodging],
+        featureList: [wrapper.vm.$featureKeys.Lodging],
       });
 
       await wrapper.setData({
@@ -460,7 +459,7 @@ describe('ProgramForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          featureList: [FeatureKeys.Lodging],
+          featureList: [wrapper.vm.$featureKeys.Lodging],
         });
 
         await wrapper.setData({

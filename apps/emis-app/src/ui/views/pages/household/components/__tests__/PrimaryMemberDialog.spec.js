@@ -2,14 +2,12 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { mockHouseholdCreate, mockIdentitySetData, ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
-import { i18n } from '@/ui/plugins';
 import { mockProvider } from '@/services/provider';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import Component from '../PrimaryMemberDialog.vue';
@@ -145,7 +143,7 @@ describe('PrimaryMemberDialog', () => {
         expect(wrapper.vm.changedAddress).toBeFalsy();
       });
 
-      it('returns true if the address and the backup address are not the same', async () => {
+      it('returns true if the address and the backup address are not the same if flag is off', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -168,6 +166,30 @@ describe('PrimaryMemberDialog', () => {
         });
 
         expect(wrapper.vm.changedAddress).toBeTruthy();
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          featureList: [wrapper.vm.$featureKeys.CaseFileIndividual],
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+            };
+          },
+        });
+
+        await wrapper.setData({
+          backupAddress: {
+            ...householdCreate.primaryBeneficiary.currentAddress,
+            address: { ...householdCreate.primaryBeneficiary.currentAddress.address, unitSuite: '999' },
+          },
+        });
+
+        expect(wrapper.vm.changedAddress).toBeFalsy();
       });
     });
 
@@ -246,7 +268,7 @@ describe('PrimaryMemberDialog', () => {
 
         });
 
-        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(i18n, wrapper.vm.noFixedHome, true, false);
+        expect(wrapper.vm.getCurrentAddressTypeItems).toHaveBeenCalledWith(wrapper.vm.$i18n, wrapper.vm.noFixedHome, true);
       });
     });
 
@@ -315,7 +337,7 @@ describe('PrimaryMemberDialog', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          featureList: [FeatureKeys.AddressAutoFill],
+          featureList: [wrapper.vm.$featureKeys.AddressAutoFill],
           propsData: {
             show: true,
             shelterLocations: [],

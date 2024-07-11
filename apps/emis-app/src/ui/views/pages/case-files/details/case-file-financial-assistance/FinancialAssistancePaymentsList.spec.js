@@ -2,7 +2,12 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import flushPromises from 'flush-promises';
-import { mockCaseFinancialAssistanceEntities, ApprovalStatus, ApprovalAction, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import {
+  mockCaseFinancialAssistanceEntities,
+  ApprovalStatus,
+  ApprovalAction,
+  mockCaseFinancialAssistanceEntity,
+} from '@libs/entities-lib/financial-assistance-payment';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
@@ -108,6 +113,17 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         });
         dataTable = wrapper.findComponent(RcDataTable);
         expect(dataTable.props('showAddButton')).toBeFalsy();
+      });
+
+      it('should receive correct tableProps', () => {
+        dataTable = wrapper.findComponent(RcDataTable);
+        expect(JSON.stringify(dataTable.props('tableProps'))).toEqual(JSON.stringify({
+          showExpand: true,
+          itemKey: 'id',
+          expandIcon: 'mdi-menu-down',
+          loading: false,
+          itemClass: (item) => (item.pinned ? 'pinned' : ''),
+        }));
       });
     });
 

@@ -35,7 +35,6 @@ describe('AdditionalMemberForm.vue', () => {
         loading: false,
         apiKey: 'google-api-key',
         shelterLocations: mockShelterLocations(),
-        i18n,
         disableAutocomplete: false,
       },
     });

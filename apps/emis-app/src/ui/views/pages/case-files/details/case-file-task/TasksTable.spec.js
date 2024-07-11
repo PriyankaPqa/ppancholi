@@ -556,7 +556,7 @@ describe('TasksTable.vue', () => {
         });
         expect(wrapper.vm.headers).toEqual([
           {
-            text: 'task.task_table_header.task',
+            text: 'task.task_category',
             sortable: true,
             value: wrapper.vm.customColumns.taskCategory,
             width: '25%',
@@ -616,7 +616,7 @@ describe('TasksTable.vue', () => {
         });
         expect(wrapper.vm.headers).toEqual([
           {
-            text: 'task.task_table_header.task',
+            text: 'task.task_category',
             sortable: true,
             value: wrapper.vm.customColumns.taskCategory,
             width: '20%',

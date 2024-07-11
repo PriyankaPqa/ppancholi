@@ -22,6 +22,11 @@ describe('>>> Case File', () => {
         expect(item.personId).toEqual(mockData.personId);
       });
 
+      it('should instantiate membershipStatus', () => {
+        const item = new CaseFileIndividualEntity(mockData);
+        expect(item.membershipStatus).toEqual(mockData.membershipStatus);
+      });
+
       it('should instantiate receivingAssistanceDetails', () => {
         const item = new CaseFileIndividualEntity(mockData);
         expect(item.receivingAssistanceDetails).toEqual(mockData.receivingAssistanceDetails);

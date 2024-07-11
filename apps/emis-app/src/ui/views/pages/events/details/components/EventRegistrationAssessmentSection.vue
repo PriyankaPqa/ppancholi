@@ -15,7 +15,7 @@
               status-name="Status"
               :data-test="`event-assessment-section-status-${index}`"
               :status="assessment.status" />
-            <div class="fw-bold mr-4">
+            <div class="fw-bold mr-4" :data-test="`event-assessment-section-publish-status-${index}`">
               {{ $t(`enums.assessmentPublishStatus.${PublishStatus[assessment.publishStatus]}`) }}
             </div>
             <v-btn
