@@ -673,8 +673,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     setAdditionalFilters(state: unknown) {
-      // eslint-disable-next-line
-        debugger;
       this.personalTaskOnly = (state as any)?.personalTaskOnlyFilter || false;
       this.teamTaskOnly = (state as any)?.teamTaskOnlyFilter || false;
     },
