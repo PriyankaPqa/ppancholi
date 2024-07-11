@@ -17,7 +17,6 @@
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
           <additional-member-form
             :api-key="apiKey"
-            :i18n="i18n"
             :shelter-locations="shelterLocations"
             :same-address.sync="sameAddress"
             :gender-items="genderItems"
@@ -29,6 +28,7 @@
             :member="memberClone"
             :disable-autocomplete="disableAutocomplete"
             :hide-edit-temporary-address="hideEditTemporaryAddress"
+            :can-set-specific-address="canSetSpecificAddress"
             @identity-change="setIdentity($event)"
             @indigenous-identity-change="setIndigenousIdentity($event)"
             @temporary-address-change="setCurrentAddress($event)" />
@@ -40,8 +40,8 @@
 
 <script lang="ts">
 import { RcDialog } from '@libs/component-lib/components';
-import Vue, { VueConstructor } from 'vue';
-import VueI18n, { TranslateResult } from 'vue-i18n';
+import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _debounce from 'lodash/debounce';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -54,12 +54,12 @@ import {
 import { ICurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import { IMember } from '@libs/entities-lib/value-objects/member';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
+
 import { localStorageKeys } from '../../constants/localStorage';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
-const vueComponent: VueConstructor = Vue.extend({
+export default Vue.extend({
   name: 'AddEditAdditionalMembers',
 
   components: {
@@ -88,11 +88,6 @@ const vueComponent: VueConstructor = Vue.extend({
       default: null,
     },
 
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
-
     householdId: {
       type: String,
       default: '',
@@ -103,6 +98,11 @@ const vueComponent: VueConstructor = Vue.extend({
       default: false,
     },
 
+    sendSameAddressToService: {
+      type: Boolean,
+      default: true,
+    },
+
     disableAutocomplete: {
       type: Boolean,
       required: true,
@@ -111,6 +111,11 @@ const vueComponent: VueConstructor = Vue.extend({
     hideEditTemporaryAddress: {
       type: Boolean,
       default: false,
+    },
+
+    canSetSpecificAddress: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -163,7 +168,7 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.getCanadianProvincesWithoutOther(this.i18n);
+      return helpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
@@ -182,7 +187,7 @@ const vueComponent: VueConstructor = Vue.extend({
 
     currentAddressTypeItems(): Record<string, unknown>[] {
       const noFixedHome = this.$registrationStore.householdCreate?.noFixedHome;
-      return this.getCurrentAddressTypeItems(this.i18n, noFixedHome, !!this.shelterLocations?.length, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
+      return this.getCurrentAddressTypeItems(this.$i18n, noFixedHome, !!this.shelterLocations?.length);
     },
 
     shelterLocations(): IEventGenericLocation[] {
@@ -238,7 +243,11 @@ const vueComponent: VueConstructor = Vue.extend({
       } else {
         if (this.submitChangesToService) {
           await this.$registrationStore.addAdditionalMember({
-            householdId: this.householdId, member: this.memberClone, sameAddress: this.sameAddress,
+            householdId: this.householdId,
+            member: this.memberClone,
+            sameAddress: this.sameAddress,
+            sendSameAddressToService: this.sendSameAddressToService,
+            caseFileIndividualMode: this.$hasFeature(this.$featureKeys.CaseFileIndividual),
           });
         } else {
           this.$registrationStore.householdCreate.addAdditionalMember(this.memberClone, this.sameAddress);
@@ -299,8 +308,6 @@ const vueComponent: VueConstructor = Vue.extend({
     }, 500),
   },
 });
-
-export default vueComponent;
 </script>
 
 <style scoped lang="scss">

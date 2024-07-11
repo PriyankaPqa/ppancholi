@@ -2,10 +2,10 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { generateRandomTeamName } from '@libs/cypress-lib/helpers';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { createEventAndTeam } from '../../helpers/prepareState';
-import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { TeamsHomePage } from '../../../pages/teams/teamsHome.page';
-import { verifyAndReturnCreateNewTeamPage } from '../../helpers/page';
+import { verifyAndReturnCreateNewTeamPage } from '../helpers/page';
+import { TeamsHomePage } from '../../pages/teams/teamsHome.page';
+import { removeTeamMembersFromTeam } from '../helpers/teams';
+import { createEventAndTeam } from '../helpers/prepareState';
 
 const canRoles = [
   UserRoles.level6,
@@ -28,7 +28,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('[T29474] Create escalation team', { tags: ['@teams', '@tasks'] }, () => {
+describe('[T29474] Create escalation team.', { tags: ['@teams', '@tasks'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -50,7 +50,7 @@ describe('[T29474] Create escalation team', { tags: ['@teams', '@tasks'] }, () =
           }
         });
 
-        it('should create an escalation team successfully', function () {
+        it('should create an escalation team successfully.', function () {
           const teamsHomePage = new TeamsHomePage();
           teamsHomePage.getCreateTeamButton().click();
           teamsHomePage.getCreateAdHocTeam().should('be.visible');

@@ -23,8 +23,9 @@ export interface IMemberMoveRequest {
   isPrimaryBeneficiary: boolean;
   preferredLanguageId: uuid;
   memberId: uuid;
-  currentAddress: ICurrentAddressCreateRequest;
+  currentAddress?: ICurrentAddressCreateRequest;
   identitySet: IIdentitySetCreateRequest;
+  sameTemporaryAddressAsPrimary?: boolean;
 }
 
 export interface IMember extends IMemberEntity {
@@ -36,4 +37,6 @@ export interface IMember extends IMemberEntity {
   validateIdentity(skipAgeRestriction: boolean, isCRCRegistration?: boolean): string[];
   validateCurrentAddress(): string[];
   validateContactInformation(skipEmailPhoneRules: boolean): string[];
+
+  sameTemporaryAddressAsPrimary?: boolean;
 }

@@ -99,7 +99,6 @@ import { CaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import WarmReferralConsent from './WarmReferralConsent.vue';
 
 export default Vue.extend({
@@ -131,7 +130,6 @@ export default Vue.extend({
     }
 
     return {
-      FeatureKeys,
       localReferral,
       methodsEnum: ReferralMethod,
       showConsent: false,

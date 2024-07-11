@@ -113,6 +113,7 @@
     "registration.household_member.sameAddress": "Is household member located in the same temporary address as the primary?",
     "registration.household_member.sameAddress.no.detail": "If no, user must enter temporary address for the household member.",
     "registration.household_member.sameAddress.yes.detail": "If yes, household member will be assigned same temporary address as Primary.",
+    "registration.household_member.sameAddress.other.detail": "Reminder, please ensure you update temporary address for this individual's active casefiles.",
     "registration.household_members.add.label": "Add new member",
     "registration.household_members.delete.message": "Are you sure you want to remove this member?",
     "registration.household_members.title": "Additional household members",

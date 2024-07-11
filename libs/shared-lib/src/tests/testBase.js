@@ -5,6 +5,7 @@ import VueI18n from 'vue-i18n';
 import deepmerge from 'deepmerge';
 import Vuetify from 'vuetify';
 import Vue from 'vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 Vue.use(Vuetify);
 
@@ -88,6 +89,7 @@ export const getWrapper = (Component, options, {
     },
     $signalR: { connection: { on: jest.fn(), off: jest.fn() }, unsubscribeAll: jest.fn() },
     $hasFeature: jest.fn((f) => options.featureList.indexOf(f) > -1),
+    $featureKeys: FeatureKeys,
   };
 
   document.body.setAttribute('data-app', true);

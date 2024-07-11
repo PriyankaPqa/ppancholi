@@ -1,12 +1,11 @@
 <template>
-  <confirm-registration-lib :i18n="i18n" @search-household="goToSearch()" />
+  <confirm-registration-lib @search-household="goToSearch()" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import ConfirmRegistrationLib from '@libs/registration-lib/components/confirm-registration/ConfirmRegistrationLib.vue';
 import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
-import { i18n } from '@/ui/plugins';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { tabs } from '@/pinia/registration/tabs';
 
@@ -14,11 +13,6 @@ export default Vue.extend({
   name: 'ConfirmRegistration',
   components: {
     ConfirmRegistrationLib,
-  },
-  data() {
-    return {
-      i18n,
-    };
   },
 
   computed: {

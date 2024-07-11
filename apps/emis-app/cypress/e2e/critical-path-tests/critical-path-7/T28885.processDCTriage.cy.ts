@@ -38,7 +38,7 @@ let accessTokenL6 = '';
 const householdQuantity = 2;
 const fileName = 'T28888MassActionTriage';
 
-describe('[T28885] Process DC triage', { tags: ['@case-file', '@mass-actions'] }, () => {
+describe('[T28885] Process DC triage.', { tags: ['@case-file', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

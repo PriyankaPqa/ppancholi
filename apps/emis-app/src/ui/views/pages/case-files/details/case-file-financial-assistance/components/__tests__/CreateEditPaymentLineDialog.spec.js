@@ -10,7 +10,6 @@ import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
@@ -385,7 +384,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('return correct value', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.AddressAutoFill],
+          featureList: [wrapper.vm.$featureKeys.AddressAutoFill],
           propsData: {
             show: true,
             program,

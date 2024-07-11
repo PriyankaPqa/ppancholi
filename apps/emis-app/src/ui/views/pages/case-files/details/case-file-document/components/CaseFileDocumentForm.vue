@@ -118,7 +118,7 @@ import { CASE_FILE_DOC_EXTENSIONS } from '@/constants/documentExtensions';
 import { CaseFileDocumentEntity, DocumentStatus, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import DownloadViewDocument from './DownloadViewDocument.vue';
 
 export default mixins(fileUpload).extend({
@@ -153,7 +153,6 @@ export default mixins(fileUpload).extend({
       localDocument,
       DocumentStatus,
       allowedExtensions: CASE_FILE_DOC_EXTENSIONS,
-      FeatureKeys,
     };
   },
 

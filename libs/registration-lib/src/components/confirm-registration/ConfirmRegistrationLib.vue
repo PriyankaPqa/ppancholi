@@ -112,7 +112,7 @@ import Vue from 'vue';
 import { IHouseholdCreate, IHouseholdCreateData } from '@libs/entities-lib/src/household-create';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IServerError } from '@libs/shared-lib/src/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import {
   IdentityAuthenticationStatus,
 } from '@libs/shared-lib/types';
@@ -124,10 +124,6 @@ export default Vue.extend({
   name: 'ConfirmRegistration',
   components: {
     ConfirmationError,
-  },
-
-  data() {
-    return { FeatureKeys };
   },
 
   computed: {

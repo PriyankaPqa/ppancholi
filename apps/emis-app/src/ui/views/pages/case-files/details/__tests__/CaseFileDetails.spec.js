@@ -11,6 +11,7 @@ import { useMockPersonStore } from '@/pinia/person/person.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
+import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
@@ -22,6 +23,7 @@ mockEvent.schedule.status = EEventStatus.Open;
 
 const pinia = getPiniaForUser(UserRoles.level1);
 const { caseFileStore } = useMockCaseFileStore(pinia);
+const { caseFileIndividualStore } = useMockCaseFileIndividualStore(pinia);
 const { householdStore } = useMockHouseholdStore(pinia);
 const { userStore } = useMockUserStore(pinia);
 const { personStore } = useMockPersonStore(pinia);
@@ -492,6 +494,8 @@ describe('CaseFileDetails.vue', () => {
     describe('receivingAssistanceMembersCount', () => {
       it('should return proper data', async () => {
         expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(1);
+        await doMount([wrapper.vm.$featureKeys.CaseFileIndividual]);
+        expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(2);
       });
     });
 
@@ -574,6 +578,9 @@ describe('CaseFileDetails.vue', () => {
 
     it('should call fetch', () => {
       expect(caseFileStore.fetch).toHaveBeenCalledWith(wrapper.vm.id);
+
+      expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: '1' });
+      expect(personStore.fetchByIds).toHaveBeenCalledWith(['pid-1', 'pid-2', 'pid-3'], true);
     });
 
     it('should call getHouseholdInfo', async () => {
@@ -618,9 +625,12 @@ describe('CaseFileDetails.vue', () => {
 
     describe('getHouseholdInfo', () => {
       it('should fetch household ', async () => {
+        jest.clearAllMocks();
         await wrapper.vm.getHouseholdInfo();
         expect(householdStore.fetch).toBeCalledWith(mockCaseFile.householdId);
+        expect(caseFileIndividualStore.fetchAll).toBeCalledWith({ caseFileId: wrapper.vm.caseFileId });
         expect(personStore.fetchByIds).toBeCalledWith(householdStore.fetch().members, true);
+        expect(personStore.fetchByIds).toBeCalledWith(caseFileIndividualStore.fetchAll().map((x) => x.personId), true);
         expect(services.potentialDuplicates.getPotentialDuplicatesCount).toBeCalledWith(householdStore.fetch().id);
       });
     });

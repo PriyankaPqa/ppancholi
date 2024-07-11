@@ -1,5 +1,5 @@
 import { Address } from '../value-objects/address';
-import { ECurrentAddressTypes } from '../value-objects/current-address';
+import { ECurrentAddressTypes, ICurrentAddressCreateRequest } from '../value-objects/current-address';
 import { IEntity } from '../base';
 
 export enum MembershipStatus {
@@ -33,6 +33,20 @@ export interface ICaseFileIndividualEntity extends IEntity {
   currentAddress: TemporaryAddress;
   temporaryAddressHistory: TemporaryAddress[];
   receivingAssistance: boolean;
+  membershipStatus: MembershipStatus;
+}
+
+export interface ReceivingAssistanceDetailCreateRequest {
+  receivingAssistance: boolean;
+  rationale?: string;
+}
+
+export interface ICaseFileIndividualCreateRequest {
+  caseFileId?: uuid;
+  personId: uuid;
+  receivingAssistanceDetails: ReceivingAssistanceDetailCreateRequest[];
+  temporaryAddressHistory: ICurrentAddressCreateRequest[];
+  membershipStatus: MembershipStatus;
 }
 
 export type IdParams = { id: uuid, caseFileId: uuid };

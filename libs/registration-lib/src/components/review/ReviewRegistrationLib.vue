@@ -8,12 +8,12 @@
         </div>
       </div>
       <slot name="previous-events" :household-id="householdCreate.id" />
-      <template v-if="!householdAlreadyRegistered && !splitMode">
+      <template v-if="canEditSections">
         <div data-test="title" class="rc-heading-5 fw-bold  mb-2 mt-8">
           {{ $t('registration.menu.privacy') }}
         </div>
         <validation-observer ref="privacyStatement">
-          <crc-privacy-statement :i18n="i18n" :user="user" :consent-statements="consentStatements" />
+          <crc-privacy-statement :user="user" :consent-statements="consentStatements" />
         </validation-observer>
       </template>
     </template>
@@ -29,7 +29,7 @@
         }"
         :message="$t('registration.review.personalinfo')" />
       <summary-section
-        :show-edit-button="!householdAlreadyRegistered && !splitMode"
+        :show-edit-button="canEditSections"
         data-test="personalInformation"
         :title="$t('registration.menu.personal_info')"
         :inline-edit="personalInformation.inlineEdit"
@@ -39,7 +39,7 @@
         @cancel="cancelPersonalInformation()"
         @submit="validateEmailAndSubmitPersonalInfo()">
         <template #inline>
-          <personal-information-lib :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" :min-age-registration="minAgeRegistration" is-edit-mode />
+          <personal-information-lib :skip-phone-email-rules="skipPhoneEmailRules" :min-age-registration="minAgeRegistration" is-edit-mode />
         </template>
         <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
       </summary-section>
@@ -57,20 +57,71 @@
         }"
         :message="$t('registration.review.addresses')" />
       <summary-section
-        :show-edit-button="!householdAlreadyRegistered && !splitMode"
+        v-if="!$hasFeature($featureKeys.CaseFileIndividual)"
+        :show-edit-button="canEditSections"
         data-test="addresses"
         :title="$t('registration.menu.addresses')"
-        :inline-edit="addresses.inlineEdit"
+        :inline-edit="addresses.homeEdit || addresses.currentEdit"
         :loading="addresses.loading"
         :submit-disabled="failed"
         @edit="editAddresses()"
         @cancel="cancelAddresses()"
         @submit="submitAddresses()">
         <template #inline>
-          <addresses-lib :i18n="i18n" :disable-autocomplete="disableAutocomplete" is-edit-mode />
+          <addresses-lib :disable-autocomplete="disableAutocomplete" is-edit-mode />
         </template>
-        <addresses-template :household="householdCreate" />
+        <addresses-template
+          :household="householdCreate"
+          :show-edit-button="canEditSections"
+          :disable-autocomplete="disableAutocomplete" />
       </summary-section>
+
+      <template v-if="$hasFeature($featureKeys.CaseFileIndividual)">
+        <div data-test="title" class="rc-heading-5 flex-grow-1 fw-bold">
+          {{ $t('registration.menu.addresses') }}
+        </div>
+        <div class="split-container">
+          <summary-section
+            :show-edit-button="canEditSections"
+            data-test="addresses_household"
+            :title="$t('registration.addresses.homeAddress')"
+            small-title
+            :inline-edit="addresses.homeEdit"
+            :loading="addresses.loading"
+            :submit-disabled="failed"
+            @edit="editAddresses('home')"
+            @cancel="cancelAddresses('home')"
+            @submit="submitAddresses('home')">
+            <template #inline>
+              <addresses-lib :disable-autocomplete="disableAutocomplete" is-edit-mode :show-current-address="false" />
+            </template>
+            <home-address-template
+              :address="householdCreate.homeAddress"
+              :show-edit-button="canEditSections"
+              :disable-autocomplete="disableAutocomplete"
+              hide-title />
+          </summary-section>
+
+          <summary-section
+            :show-edit-button="canEditSections"
+            data-test="addresses_primary"
+            :title="$t('registration.addresses.currentAddress')"
+            small-title
+            :inline-edit="addresses.currentEdit"
+            :loading="addresses.loading"
+            :submit-disabled="failed"
+            @edit="editAddresses('current')"
+            @cancel="cancelAddresses('current')"
+            @submit="submitAddresses('current')">
+            <template #inline>
+              <addresses-lib :disable-autocomplete="disableAutocomplete" is-edit-mode :show-home-address="false" />
+            </template>
+            <current-address-template
+              :current-address="householdCreate.primaryBeneficiary.currentAddress"
+              hide-title />
+          </summary-section>
+        </div>
+      </template>
     </validation-observer>
 
     <message-box
@@ -88,7 +139,7 @@
         {{ `${$t('registration.household_members.title')} (${householdCreate.additionalMembers.length})` }}
       </div>
       <v-btn
-        v-if="associationMode || !splitMode"
+        v-if="canEditSections"
         class="ml-2"
         color="primary"
         :disabled="disabledAddMembers"
@@ -100,15 +151,15 @@
       </v-btn>
     </div>
 
-    <template v-for="(member, index) in additionalMembersCopy">
-      <validation-observer :ref="`additionalMember_${index}`" :key="index" slim>
+    <div v-for="(member, index) in additionalMembersCopy" :key="index">
+      <validation-observer :ref="`additionalMember_${index}`" v-slot="{ failed }" slim>
         <additional-member-section
           :key="index"
-          :show-edit-button="!householdAlreadyRegistered && !splitMode"
-          :show-delete-button="!householdAlreadyRegistered && !splitMode"
+          :show-edit-button="canEditSections && !$hasFeature($featureKeys.CaseFileIndividual)"
+          :show-delete-button="canEditSections"
           :data-test="`additionalMember_${index}`"
           :member="member"
-          :inline-edit="additionalMembers[index].inlineEdit"
+          :inline-edit="!$hasFeature($featureKeys.CaseFileIndividual) && additionalMembers[index].personalInfoEdit"
           :loading="additionalMembers[index].loading"
           :save-disabled-if-duplicate="!$registrationStore.isCRCRegistration()"
           @edit="editAdditionalMember(index)"
@@ -118,7 +169,6 @@
           <template #inline>
             <additional-member-form
               :api-key="apiKey"
-              :i18n="i18n"
               :gender-items="genderItems"
               :current-address-type-items="makeCurrentAddressTypeItems(member)"
               :canadian-provinces-items="canadianProvincesItems"
@@ -133,10 +183,79 @@
               @indigenous-identity-change="setIndigenousIdentity($event)"
               @temporary-address-change="setCurrentAddress($event)" />
           </template>
-          <additional-member-template :member="member" />
+          <div>
+            <additional-member-template v-if="!$hasFeature($featureKeys.CaseFileIndividual)" :member="member" />
+
+            <div v-else class="split-container inside">
+              <summary-section
+                :show-edit-button="canEditSections"
+                :data-test="`additionalMember_${index}.personalinfo`"
+                :title="$t('registration.menu.personal_info')"
+                small-title
+                :inline-edit="additionalMembers[index].personalInfoEdit"
+                :loading="additionalMembers[index].loading"
+                :submit-disabled="failed || disabledIfDuplicate(member)"
+                @edit="editAdditionalMember(index, 'personalInfo')"
+                @cancel="cancelAdditionalMember(index, 'personalInfo')"
+                @submit="submitAdditionalMember(index, 'personalInfo')">
+                <template #inline>
+                  <additional-member-form
+                    :api-key="apiKey"
+                    :gender-items="genderItems"
+                    :current-address-type-items="makeCurrentAddressTypeItems(member)"
+                    :canadian-provinces-items="canadianProvincesItems"
+                    :indigenous-communities-items="indigenousCommunitiesItems"
+                    :indigenous-types-items="indigenousTypesItems"
+                    :loading="loadingIndigenousCommunities"
+                    :member="member"
+                    :same-address.sync="additionalMembers[index].sameAddress"
+                    :shelter-locations="makeShelterLocationsListForMember(member)"
+                    :disable-autocomplete="disableAutocomplete"
+                    hide-edit-temporary-address
+                    @identity-change="setIdentity($event)"
+                    @indigenous-identity-change="setIndigenousIdentity($event)"
+                    @temporary-address-change="setCurrentAddress($event)" />
+                </template>
+                <additional-member-template :member="member" :review-mode="true" />
+              </summary-section>
+
+              <summary-section
+                :show-edit-button="canEditSections"
+                :data-test="`additionalMember_${index}.tempaddress`"
+                :title="$t('registration.addresses.currentAddress')"
+                small-title
+                :inline-edit="additionalMembers[index].tempAddressEdit"
+                :loading="additionalMembers[index].loading"
+                :submit-disabled="failed || disabledIfDuplicate(member)"
+                @edit="editAdditionalMember(index, 'tempAddress')"
+                @cancel="cancelAdditionalMember(index, 'tempAddress')"
+                @submit="submitAdditionalMember(index, 'tempAddress')">
+                <template #inline>
+                  <additional-member-form
+                    :api-key="apiKey"
+                    :gender-items="genderItems"
+                    :current-address-type-items="makeCurrentAddressTypeItems(member)"
+                    :canadian-provinces-items="canadianProvincesItems"
+                    :indigenous-communities-items="indigenousCommunitiesItems"
+                    :indigenous-types-items="indigenousTypesItems"
+                    :loading="loadingIndigenousCommunities"
+                    :member="member"
+                    :same-address.sync="additionalMembers[index].sameAddress"
+                    :shelter-locations="makeShelterLocationsListForMember(member)"
+                    :disable-autocomplete="disableAutocomplete"
+                    :show-identity-section="false"
+                    class="mb-4"
+                    @identity-change="setIdentity($event)"
+                    @indigenous-identity-change="setIndigenousIdentity($event)"
+                    @temporary-address-change="setCurrentAddress($event)" />
+                </template>
+                <current-address-template :current-address="member.currentAddress" hide-title />
+              </summary-section>
+            </div>
+          </div>
         </additional-member-section>
       </validation-observer>
-    </template>
+    </div>
 
     <rc-confirmation-dialog
       v-if="showAdditionalMemberDelete"
@@ -151,25 +270,23 @@
 
     <add-edit-additional-members-lib
       v-if="showAddAdditionalMember"
-      :i18n="i18n"
       :household-id="householdCreate.id"
       :show.sync="showAddAdditionalMember"
       :disable-autocomplete="disableAutocomplete"
       :index="-1"
       :submit-changes-to-service="applySavesRightAway"
+      :send-same-address-to-service="false"
       :member="newAdditionalMember" />
   </div>
 </template>
 
 <script lang="ts">
 import { RcConfirmationDialog, MessageBox } from '@libs/component-lib/components';
-import VueI18n from 'vue-i18n';
-import { VueConstructor } from 'vue';
 import { VForm } from '@libs/registration-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
-import { IHouseholdCreate, IIdentitySet, Member, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
+import { IHouseholdCreate, IIdentitySet, IMember, Member, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
 import _isEqual from 'lodash/isEqual';
 import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 import helpers from '@libs/entities-lib/helpers';
@@ -183,6 +300,8 @@ import AddEditAdditionalMembersLib from '../additional-members/AddEditAdditional
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformationLib from '../personal-information/PersonalInformationLib.vue';
 import AddressesLib from '../addresses/AddressesLib.vue';
+import HomeAddressTemplate from './addresses/HomeAddressTemplate.vue';
+import CurrentAddressTemplate from './addresses/CurrentAddressTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import SummarySection from './SummarySection.vue';
@@ -190,7 +309,7 @@ import AdditionalMemberForm from '../additional-members/AdditionalMemberForm.vue
 import AdditionalMemberSection from './additional-members/AdditionalMemberSection.vue';
 import AdditionalMemberTemplate from './additional-members/AdditionalMemberTemplate.vue';
 
-const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
+export default mixins(additionalMemberForm).extend({
   name: 'ReviewRegistration',
 
   components: {
@@ -206,13 +325,11 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
     RcConfirmationDialog,
     CrcPrivacyStatement,
     AddEditAdditionalMembersLib,
+    HomeAddressTemplate,
+    CurrentAddressTemplate,
   },
 
   props: {
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
     showAgeInReview: {
       type: Boolean,
       default: false,
@@ -251,7 +368,8 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
         loading: false,
       },
       addresses: {
-        inlineEdit: false,
+        homeEdit: false,
+        currentEdit: false,
         backupCurrentAddress: null,
         backupHomeAddress: null,
         backupNoFixedHome: null,
@@ -281,6 +399,10 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
     minAgeRegistration(): number {
       return this.$registrationStore.isCRCRegistration() ? null : MIN_AGE_REGISTRATION;
     },
+
+    canEditSections(): boolean {
+      return this.$registrationStore.inlineEditCounter === 0 && !this.householdAlreadyRegistered && !this.splitMode;
+    },
   },
   async beforeDestroy() {
     this.cancelPersonalInformation();
@@ -297,6 +419,11 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
   },
 
   methods: {
+    disabledIfDuplicate(member: IMember): boolean {
+      return !this.$registrationStore.isCRCRegistration() && member.identitySet
+        && member.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
+    },
+
     editPersonalInformation() {
       this.personalInformation.backup.identitySet = _cloneDeep(this.$registrationStore.householdCreate.primaryBeneficiary.identitySet);
       this.personalInformation.backup.contactInformation = _cloneDeep(this.$registrationStore.householdCreate.primaryBeneficiary.contactInformation);
@@ -304,13 +431,22 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
       this.$registrationStore.increaseInlineEditCounter();
     },
 
-    editAddresses() {
+    editAddresses(section?: string) {
       const householdCopy = _cloneDeep(this.householdCreate);
-      this.addresses.backupCurrentAddress = householdCopy.primaryBeneficiary.currentAddress;
-      this.addresses.backupHomeAddress = householdCopy.homeAddress;
-      this.addresses.inlineEdit = true;
-      this.addresses.backupNoFixedHome = householdCopy.noFixedHome;
-      this.$registrationStore.increaseInlineEditCounter();
+      if (section !== 'home') {
+        this.addresses.backupCurrentAddress = householdCopy.primaryBeneficiary.currentAddress;
+        this.addresses.backupHomeAddress = this.addresses.backupHomeAddress || householdCopy.homeAddress;
+        this.addresses.currentEdit = true;
+        this.$registrationStore.increaseInlineEditCounter();
+      }
+
+      if (section !== 'current') {
+        this.addresses.backupHomeAddress = householdCopy.homeAddress;
+        this.addresses.backupCurrentAddress = this.addresses.backupCurrentAddress || householdCopy.primaryBeneficiary.currentAddress;
+        this.addresses.homeEdit = true;
+        this.addresses.backupNoFixedHome = householdCopy.noFixedHome;
+        this.$registrationStore.increaseInlineEditCounter();
+      }
     },
 
     cancelPersonalInformation() {
@@ -324,13 +460,17 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
       }
     },
 
-    cancelAddresses() {
-      if (this.addresses?.inlineEdit) {
-        this.addresses.inlineEdit = false;
+    cancelAddresses(section?: string) {
+      if (section !== 'home' && this.addresses.currentEdit) {
+        this.addresses.currentEdit = false;
+        this.$registrationStore.decreaseInlineEditCounter();
+        this.$registrationStore.householdCreate.setCurrentAddress(this.addresses.backupCurrentAddress);
+      }
+      if (section !== 'current' && this.addresses.homeEdit) {
+        this.addresses.homeEdit = false;
         this.$registrationStore.decreaseInlineEditCounter();
         this.$registrationStore.householdCreate.setHomeAddress(this.addresses.backupHomeAddress);
         this.$registrationStore.householdCreate.noFixedHome = this.addresses.backupNoFixedHome;
-        this.$registrationStore.householdCreate.setCurrentAddress(this.addresses.backupCurrentAddress);
       }
     },
 
@@ -391,14 +531,23 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
       this.$toasted.global.success(this.$t('registration.contactInformation.updated'));
     },
 
-    async submitAddresses() {
+    async submitAddresses(section?: string) {
       const isValid = await (this.$refs.addresses as VForm).validate();
       if (isValid) {
         if (this.applySavesRightAway) {
           await this.updateAddresses();
         }
-        this.addresses.inlineEdit = false;
-        this.$registrationStore.decreaseInlineEditCounter();
+
+        if (section !== 'home') {
+          this.addresses.currentEdit = false;
+          this.addresses.backupCurrentAddress = _cloneDeep(this.householdCreate.primaryBeneficiary.currentAddress);
+          this.$registrationStore.decreaseInlineEditCounter();
+        }
+        if (section !== 'current') {
+          this.addresses.homeEdit = false;
+          this.addresses.backupHomeAddress = _cloneDeep(this.householdCreate.homeAddress);
+          this.$registrationStore.decreaseInlineEditCounter();
+        }
       } else {
         helpers.scrollToFirstError('app');
       }
@@ -420,7 +569,7 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
         this.$toasted.global.success(this.$t('registration.homeAddress.updated'));
       }
 
-      if (this.isNewPrimaryCurrentAddress()) {
+      if (!this.$hasFeature(this.$featureKeys.CaseFileIndividual) && this.isNewPrimaryCurrentAddress()) {
         const resCurrentAddress = await this.$services.households.updatePersonAddress(
           primaryBeneficiaryId,
           !this.$registrationStore.isCRCRegistration(),
@@ -491,6 +640,51 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
     },
   },
 });
-
-export default vueComponent;
 </script>
+
+<style scoped lang="scss">
+@import "@libs/shared-lib/assets/styles/breakpoints";
+
+@media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
+  .split-container {
+    justify-items: center;
+    align-items: baseline;
+    & > * {
+      width: 100%;
+      padding: 16px;
+      border: solid 1px var(--v-grey-lighten2);
+      &:first-child {
+        border-radius: 4px 4px 0px 0px;
+      }
+      &:not(:first-child) {
+        border-top: 0;
+      }
+      &:last-child {
+        border-radius: 0px 0px 4px 4px;
+      }
+    }
+    &.inside > :first-child {
+      border-top: 0;
+      border-radius: 0;
+    }
+  }
+}
+@media only screen and (min-width: $breakpoint-sm-min) {
+  .split-container {
+    border: solid 1px var(--v-grey-lighten2);
+    border-radius: 4px;
+    display: flex;
+    & > * {
+      width: 100%;
+      padding: 16px;
+      &:not(:first-child) {
+          border-left: 1px solid var(--v-grey-lighten2);
+      }
+    }
+    &.inside {
+      border-top: 0;
+      border-radius: 0px 0px 4px 4px;
+    }
+  }
+}
+</style>

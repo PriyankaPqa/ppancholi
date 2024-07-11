@@ -121,7 +121,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { MessageBox, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { IOptionItemData } from '@libs/shared-lib/types';
 import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { TranslateResult } from 'vue-i18n';
 import Pot from './HoneyPot.vue';
@@ -169,7 +169,6 @@ const vueComponent: VueConstructor = Vue.extend({
   data() {
     return {
       months,
-      FeatureKeys,
       MemberDuplicateStatus,
       formCopy: null as IHoneyPotIdentitySet,
       helpers,

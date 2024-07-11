@@ -16,7 +16,7 @@
       @submit="showDetailsDialog = false">
       <v-row justify="center">
         <v-col cols="12" lg="8">
-          <review-registration-lib :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
+          <review-registration-lib show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
             <template #previous-events>
               <previous-events-template :household-id="selectedHouseholdId" />
             </template>
@@ -33,12 +33,11 @@ import { RcDialog } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
-import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
 import searchHousehold from '@/ui/mixins/searchHousehold';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
 
@@ -49,8 +48,6 @@ export default mixins(searchHousehold).extend({
   },
   data() {
     return {
-      FeatureKeys,
-      i18n,
       showDetailsDialog: false,
       selectedHouseholdId: '',
     };
@@ -64,7 +61,7 @@ export default mixins(searchHousehold).extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 

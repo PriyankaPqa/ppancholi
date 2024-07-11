@@ -15,11 +15,11 @@
         <template slot="default">
           <v-row v-if="currentTab.id !== TabId.Tier2auth" justify="center" class="mt-12 full-height" no-gutters>
             <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
-              <component :is="currentTab.componentName" :disable-autocomplete="!$hasFeature(FeatureKeys.AddressAutoFill)" />
+              <component :is="currentTab.componentName" :disable-autocomplete="!$hasFeature($featureKeys.AddressAutoFill)" />
             </v-col>
           </v-row>
           <template v-else>
-            <component :is="currentTab.componentName" :disable-autocomplete="!$hasFeature(FeatureKeys.AddressAutoFill)" class="full-height" />
+            <component :is="currentTab.componentName" :disable-autocomplete="!$hasFeature($featureKeys.AddressAutoFill)" class="full-height" />
           </template>
         </template>
 
@@ -63,7 +63,7 @@
             <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
               <span class="fw-bold d-sm-inline d-md-none tabtext">{{ nextTabName }}</span>
               <google-recaptcha
-                v-if="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress"
+                v-if="$hasFeature($featureKeys.BotProtection) && !isCaptchaAllowedIpAddress"
                 ref="recaptchaSubmit"
                 data-test="google-recaptcha"
                 :sitekey="recaptchaKey"
@@ -109,7 +109,6 @@ import { RcPageContent } from '@libs/component-lib/components';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import ConfirmationPrintLib from '@libs/registration-lib/components/confirm-registration/ConfirmationPrintLib.vue';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { localStorageKeys } from '@/constants/localStorage';
 import routes from '@/constants/routes';
 import { IServerError, VForm } from '@libs/shared-lib/types';
@@ -152,7 +151,6 @@ export default mixins(individual).extend({
 
   data: () => ({
     recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
-    FeatureKeys,
     showErrorDialog: false,
     showDuplicateDialog: false,
     functionAfterToken: null as () => void,
@@ -181,7 +179,7 @@ export default mixins(individual).extend({
     // for when a component wants to trigger moving to the next step without a button pressed
     EventHub.$on('next', this.goNext);
 
-    if (this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
+    if (this.$hasFeature(this.$featureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
       EventHub.$on('setLanguage', this.renderRecaptcha);
     }
   },
@@ -191,7 +189,7 @@ export default mixins(individual).extend({
       EventHub.$off('fetchPublicToken', this.fetchPublicToken);
       EventHub.$off('next', this.goNext);
 
-      if (this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
+      if (this.$hasFeature(this.$featureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
         EventHub.$off('setLanguage', this.renderRecaptcha);
       }
     }
@@ -214,7 +212,7 @@ export default mixins(individual).extend({
       }
       // if we have to do a recaptcha validation the token endpoint will require it first
       // then we will be able to get the token on the recaptcha callback
-      if (this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
+      if (this.$hasFeature(this.$featureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
         this.functionAfterToken = continueFnct;
         // eslint-disable-next-line
         this.executeRecaptcha();
@@ -305,7 +303,7 @@ export default mixins(individual).extend({
         return;
       }
 
-      if (this.$hasFeature(FeatureKeys.SelfRegistration)) {
+      if (this.$hasFeature(this.$featureKeys.SelfRegistration)) {
         try {
           useRegistrationStore().duplicateResult = await this.$services.households
             .checkForPossibleDuplicatePublic(this.event.id, useRegistrationStore().householdCreate.primaryBeneficiary);
@@ -350,7 +348,7 @@ export default mixins(individual).extend({
     },
 
     async loadHousehold(householdId: string) {
-      await useRegistrationStore().loadHousehold(householdId);
+      await useRegistrationStore().loadHousehold(householdId, this.$hasFeature(this.$featureKeys.CaseFileIndividual));
       await this.jump(this.allTabs.findIndex((x) => x.id === 'review'));
       this.disableOtherTabs(this.currentTabIndex, false);
     },

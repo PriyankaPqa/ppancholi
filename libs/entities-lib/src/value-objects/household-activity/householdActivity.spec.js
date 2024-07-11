@@ -124,9 +124,9 @@ describe('>>> Household Activity', () => {
       const activity = mockHouseholdActivities(HouseholdActivityType.MemberAdded)[0];
       const historyActivity = new HouseholdActivity(activity);
       historyActivity.makeFullMemberTemplate = jest.fn();
-      historyActivity.getTemplateData(false, i18n);
+      historyActivity.getTemplateData(false, i18n, true);
 
-      expect(historyActivity.makeFullMemberTemplate).toHaveBeenCalledWith(historyActivity.newDetails, i18n);
+      expect(historyActivity.makeFullMemberTemplate).toHaveBeenCalledWith(historyActivity.newDetails, i18n, true);
     });
 
     it('calls makeEmptyTemplate for the previous entity if activity is MemberAdded', () => {
@@ -142,9 +142,9 @@ describe('>>> Household Activity', () => {
       const activity = mockHouseholdActivities(HouseholdActivityType.MemberRemoved)[0];
       const historyActivity = new HouseholdActivity(activity);
       historyActivity.makeFullMemberTemplate = jest.fn();
-      historyActivity.getTemplateData(true, i18n);
+      historyActivity.getTemplateData(true, i18n, true);
 
-      expect(historyActivity.makeFullMemberTemplate).toHaveBeenCalledWith(historyActivity.previousDetails, i18n);
+      expect(historyActivity.makeFullMemberTemplate).toHaveBeenCalledWith(historyActivity.previousDetails, i18n, true);
     });
 
     it('calls makeEmptyTemplate for the new entity if activity is MemberRemoved', () => {
@@ -160,18 +160,18 @@ describe('>>> Household Activity', () => {
       const activity = mockHouseholdActivities(HouseholdActivityType.OriginalHouseholdSplit)[0];
       const historyActivity = new HouseholdActivity(activity);
       historyActivity.makeMultipleMembersTemplate = jest.fn();
-      historyActivity.getTemplateData(true, i18n);
+      historyActivity.getTemplateData(true, i18n, true);
 
-      expect(historyActivity.makeMultipleMembersTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.memberDetails, i18n);
+      expect(historyActivity.makeMultipleMembersTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.memberDetails, i18n, true);
     });
 
     it('calls makeMultipleMembersTemplate if activity is HouseholdMoved', () => {
       const activity = mockHouseholdActivities(HouseholdActivityType.HouseholdMoved)[0];
       const historyActivity = new HouseholdActivity(activity);
       historyActivity.makeMultipleMembersTemplate = jest.fn();
-      historyActivity.getTemplateData(true, i18n);
+      historyActivity.getTemplateData(true, i18n, true);
 
-      expect(historyActivity.makeMultipleMembersTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.memberDetails, i18n);
+      expect(historyActivity.makeMultipleMembersTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.memberDetails, i18n, true);
     });
 
     it('calls makeHomeTemplate for the previous entity if activity is HomeAddressEdited', () => {
@@ -183,14 +183,19 @@ describe('>>> Household Activity', () => {
       expect(historyActivity.makeHomeTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.address, i18n);
     });
 
-    it('calls makeMemberNameTemplate and makeTemporaryAddressTemplate if activity is TempAddressEdited ', () => {
+    it('calls makeMemberNameTemplate and makeTemporaryAddressTemplate if activity is TempAddressEdited depending on flag', () => {
       const activity = mockHouseholdActivities(HouseholdActivityType.TempAddressEdited)[0];
       const historyActivity = new HouseholdActivity(activity);
       historyActivity.makeMemberNameTemplate = jest.fn(() => ([]));
       historyActivity.makeTemporaryAddressTemplate = jest.fn(() => ([]));
-      historyActivity.getTemplateData(true, i18n);
+      historyActivity.getTemplateData(true, i18n, true);
       expect(historyActivity.makeMemberNameTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.personFullName);
       expect(historyActivity.makeTemporaryAddressTemplate).toHaveBeenCalledWith(historyActivity.previousDetails, i18n);
+
+      jest.clearAllMocks();
+      historyActivity.getTemplateData(true, i18n, false);
+      expect(historyActivity.makeMemberNameTemplate).not.toHaveBeenCalled();
+      expect(historyActivity.makeTemporaryAddressTemplate).not.toHaveBeenCalled();
     });
 
     it('calls makePrimaryTemplate for the current entity if activity PrimaryAssigned', () => {
@@ -439,7 +444,7 @@ describe('>>> Household Activity', () => {
   });
 
   describe('makeFullMemberTemplate', () => {
-    it('calls makePersonalInfoTemplate, makeTemporaryAddressTemplate, makeEmptyLine and concatenates the responses', () => {
+    it('calls makePersonalInfoTemplate, makeTemporaryAddressTemplate, makeEmptyLine and concatenates the responses depending on flag', () => {
       const activity = mockHouseholdActivities(HouseholdActivityType.MemberRemoved)[0];
       const historyActivity = new HouseholdActivity(activity);
 
@@ -447,7 +452,7 @@ describe('>>> Household Activity', () => {
       historyActivity.makeTemporaryAddressTemplate = jest.fn(() => ([{ label: 'address', value: 'bar' }]));
       historyActivity.makeEmptyLine = jest.fn(() => ([{ label: '\n', value: '' }]));
 
-      const expected = historyActivity.makeFullMemberTemplate(historyActivity, i18n);
+      let expected = historyActivity.makeFullMemberTemplate(historyActivity, i18n, true);
       expect(historyActivity.makePersonalInfoTemplate).toHaveBeenCalledTimes(1);
       expect(historyActivity.makeTemporaryAddressTemplate).toHaveBeenCalledTimes(1);
       expect(historyActivity.makeEmptyLine).toHaveBeenCalledTimes(1);
@@ -455,6 +460,13 @@ describe('>>> Household Activity', () => {
         { label: 'name', value: 'foo' },
         { label: '\n', value: '' },
         { label: 'address', value: 'bar' },
+      ]);
+
+      jest.clearAllMocks();
+      expected = historyActivity.makeFullMemberTemplate(historyActivity, i18n, false);
+      expect(historyActivity.makePersonalInfoTemplate).toHaveBeenCalledTimes(1);
+      expect(expected).toEqual([
+        { label: 'name', value: 'foo' },
       ]);
     });
   });

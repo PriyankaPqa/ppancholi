@@ -162,7 +162,6 @@ import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useEventStore } from '@/pinia/event/event';
 
 export default Vue.extend({
@@ -200,7 +199,6 @@ export default Vue.extend({
       },
       helpLink: this.$t('zendesk.authentication_identity'),
       IdentityAuthenticationMethod,
-      FeatureKeys,
     };
   },
   computed: {

@@ -178,7 +178,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       },
       tableProps: {
         showExpand: true,
-        itemKey: 'entity.id',
+        itemKey: 'id',
         expandIcon: 'mdi-menu-down',
         loading: false,
         itemClass: (item: IFinancialAssistancePaymentEntity) => (item.pinned ? 'pinned' : ''),

@@ -18,8 +18,6 @@
 
     <indigenous-identity-form
       :form="identitySet"
-      :canadian-provinces-items="canadianProvincesItems"
-      :i18n="i18n"
       :indigenous-communities-items="indigenousCommunitiesItems"
       :indigenous-types-items="indigenousTypesItems"
       :loading="loadingIndigenousCommunities"
@@ -28,8 +26,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { VueConstructor } from 'vue';
-import VueI18n, { TranslateResult } from 'vue-i18n';
+import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 import _debounce from 'lodash/debounce';
 import { Status, IOptionItemData } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
@@ -39,13 +37,13 @@ import {
 } from '@libs/entities-lib/household-create';
 import { IInformationFromBeneficiarySearch } from '@/types/interfaces/IInformationFromBeneficiarySearch';
 import _cloneDeep from 'lodash/cloneDeep';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 
-const vueComponent: VueConstructor = Vue.extend({
+export default Vue.extend({
   name: 'PersonalInformation',
 
   components: {
@@ -66,10 +64,6 @@ const vueComponent: VueConstructor = Vue.extend({
     allowDuplicateEmails: {
       type: Boolean,
       default: false,
-    },
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
     },
     memberProps: {
       type: Object as () => IMember,
@@ -95,10 +89,6 @@ const vueComponent: VueConstructor = Vue.extend({
       type: Boolean,
       default: false,
     },
-  },
-
-  data() {
-    return { FeatureKeys };
   },
 
   computed: {
@@ -151,7 +141,7 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.getCanadianProvincesWithoutOther(this.i18n);
+      return helpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     splitHousehold(): ISplitHousehold {
@@ -254,6 +244,4 @@ const vueComponent: VueConstructor = Vue.extend({
     },
   },
 });
-
-export default vueComponent;
 </script>

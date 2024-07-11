@@ -9,6 +9,6 @@ export const mockStaffMemberAvailability = (force? : Partial<IStaffMemberAvailab
   useBusinessHours: false,
   serviceOptionIds: ['mock-serviceOptionId'],
   defaultbusinessHours: mockbusinessHours(),
-  customDateRanges: [{ start: '2024-01-29T16:00:00.000Z', end: '2024-01-29T19:00:00.000Z' }],
+  customDateRanges: [{ startDateTime: '2024-01-29T16:00:00.000Z', endDateTime: '2024-01-29T19:00:00.000Z' }],
   ...force,
 });

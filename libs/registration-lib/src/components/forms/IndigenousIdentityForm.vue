@@ -66,11 +66,6 @@ export default Vue.extend({
       required: true,
     },
 
-    canadianProvincesItems: {
-      type: Array as () => Record<string, unknown>[],
-      required: true,
-    },
-
     indigenousTypesItems: {
       type: Array as () => Record<string, TranslateResult>[],
       required: true,

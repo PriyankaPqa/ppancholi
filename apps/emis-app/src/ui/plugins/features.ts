@@ -13,5 +13,6 @@ export default {
     }
 
     V.prototype.$hasFeature = hasFeature;
+    V.prototype.$featureKeys = FeatureKeys;
   },
 };

@@ -91,7 +91,7 @@
             @toggleChanged="toggleAccessAssessment($event)" />
 
           <event-summary-toggle
-            v-if="$hasFeature(FeatureKeys.AppointmentBooking)"
+            v-if="$hasFeature($featureKeys.AppointmentBooking)"
             :toggle-value="event.appointmentBookingForL0usersEnabled"
             :loading="updatingAppointmentBookingToggle"
             :title-of-toggle="$t('eventSummary.enableAppointmentBooking')"
@@ -163,7 +163,9 @@
           :can-add="canEditConsentSection"
           @click-add-button="onSectionAdd($event)" />
         <event-summary-section-body v-slot="{ item }" :items="[consentStatement]">
-          <div class="fw-bold">
+          <div
+            class="fw-bold"
+            data-test="consent-statement-section-name">
             {{ item }}
           </div>
         </event-summary-section-body>
@@ -203,7 +205,7 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
 import { Status } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { ICaseFileCountByExceptionalAuthentication } from '@libs/services-lib/case-files/entity';
 import EventSummaryLink from './components/EventSummaryLink.vue';
@@ -257,7 +259,6 @@ export default Vue.extend({
       showEventStatusDialog: false,
       loading: false,
       currentDialog: null as DialogData,
-      FeatureKeys,
       updatingAccessAssessmentToggle: false,
       updatingRegistrationToggle: false,
       updatingAppointmentBookingToggle: false,

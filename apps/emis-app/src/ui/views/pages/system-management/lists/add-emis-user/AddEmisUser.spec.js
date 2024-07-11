@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockProvider } from '@/services/provider';
 import { mockUserProfileQueryResponse, mockUserProfileData } from '@libs/entities-lib/user-account';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from './AddEmisUser.vue';
 import { createUserAccount, getSubRoleById } from '../user-accounts/userAccountsHelpers';
 
@@ -457,7 +457,7 @@ describe('AddEmisUser.vue', () => {
         wrapper.vm.isSubmitAllowed = true;
         wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].role = mockSubRole;
-        wrapper.vm.$hasFeature = (f) => f === FeatureKeys.UseIdentityServer;
+        wrapper.vm.$hasFeature = (f) => f === wrapper.vm.$featureKeys.UseIdentityServer;
         await wrapper.vm.submit();
         expect(createUserAccount).toHaveBeenCalled();
       });
@@ -467,7 +467,7 @@ describe('AddEmisUser.vue', () => {
         wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].role = mockSubRole;
         wrapper.vm.setUserRole = jest.fn();
-        wrapper.vm.$hasFeature = (f) => f !== FeatureKeys.UseIdentityServer;
+        wrapper.vm.$hasFeature = (f) => f !== wrapper.vm.$featureKeys.UseIdentityServer;
         await wrapper.vm.submit();
 
         expect(wrapper.vm.setUserRole).toHaveBeenCalled();

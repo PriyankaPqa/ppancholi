@@ -1,18 +1,19 @@
 <template>
   <v-row no-gutters class="d-flex flex-column">
-    <identity-form
-      :form="member.identitySet"
-      prefix-data-test="additionalMember"
-      :gender-items="genderItems"
-      @change="$emit('identity-change', $event)" />
-    <indigenous-identity-form
-      :canadian-provinces-items="canadianProvincesItems"
-      :indigenous-communities-items="indigenousCommunitiesItems"
-      :indigenous-types-items="indigenousTypesItems"
-      :loading="loading"
-      :form="member.identitySet"
-      prefix-data-test="additionalMember"
-      @change="$emit('indigenous-identity-change', $event)" />
+    <template v-if="showIdentitySection">
+      <identity-form
+        :form="member.identitySet"
+        prefix-data-test="additionalMember"
+        :gender-items="genderItems"
+        @change="$emit('identity-change', $event)" />
+      <indigenous-identity-form
+        :indigenous-communities-items="indigenousCommunitiesItems"
+        :indigenous-types-items="indigenousTypesItems"
+        :loading="loading"
+        :form="member.identitySet"
+        prefix-data-test="additionalMember"
+        @change="$emit('indigenous-identity-change', $event)" />
+    </template>
     <v-row v-if="!hideEditTemporaryAddress" class="grey-container pa-2 pb-0">
       <v-col class="pt-4 px-4">
         <div class="rc-body16 fw-bold">
@@ -27,21 +28,29 @@
               <span>
                 <v-radio data-test="sameCurrentAddressYes" :label="$t('common.yes')" :value="true" />
               </span>
-              <span class="rc-body12 ml-5">
+              <span class="rc-body12 ml-8">
                 {{ $t('registration.household_member.sameAddress.yes.detail') }}
               </span>
             </div>
-            <div class="flex-contain mt-2">
+            <div v-if="canSetSpecificAddress" class="flex-contain mt-2">
               <span>
                 <v-radio data-test="sameCurrentAddressNo" :label="$t('common.no')" :value="false" />
               </span>
-              <span class="rc-body12 ml-5">
+              <span class="rc-body12 ml-8">
                 {{ $t('registration.household_member.sameAddress.no.detail') }}
+              </span>
+            </div>
+            <div v-else class="flex-contain mt-2">
+              <span>
+                <v-radio data-test="sameCurrentAddressNo" :label="$t('registration.addresses.temporaryAddressTypes.Other')" :value="false" />
+              </span>
+              <span class="rc-body12 ml-4">
+                {{ $t('registration.household_member.sameAddress.other.detail') }}
               </span>
             </div>
           </v-radio-group>
         </validation-provider>
-        <v-col v-if="sameAddress === false" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
+        <v-col v-if="sameAddress === false && canSetSpecificAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
           <current-address-form
             :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
@@ -59,7 +68,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import VueI18n from 'vue-i18n';
 import { IOptionItemData } from '@libs/shared-lib/types';
 import { IMember } from '@libs/entities-lib//value-objects/member';
 import { IEventGenericLocation } from '@libs/entities-lib/event';
@@ -133,15 +141,21 @@ export default Vue.extend({
       required: true,
     },
 
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
-
     hideEditTemporaryAddress: {
       type: Boolean,
       default: false,
     },
+
+    canSetSpecificAddress: {
+      type: Boolean,
+      default: true,
+    },
+
+    showIdentitySection: {
+      type: Boolean,
+      default: true,
+    },
+
   },
 
   data() {

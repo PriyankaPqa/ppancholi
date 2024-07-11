@@ -7,7 +7,6 @@
     actions-padding="2">
     <rc-page-loading v-if="loading" />
     <template v-else>
-      V2!!!
       <div v-for="individual in individuals" :key="individual.id">
         <impacted-individual-card-v2
           :individual="individual"
@@ -25,9 +24,6 @@
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import mixins from 'vue-typed-mixins';
-import { CaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
-import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
-import { usePersonStore } from '@/pinia/person/person';
 import caseFileDetail from '../caseFileDetail';
 import ImpactedIndividualCardV2 from './components/ImpactedIndividualCardV2.vue';
 
@@ -51,18 +47,6 @@ export default mixins(caseFileDetail).extend({
       const caseFileStatusReadOnly = [CaseFileStatus.Closed, CaseFileStatus.Archived, CaseFileStatus.Inactive];
       return caseFileStatusReadOnly.indexOf(this.caseFile.caseFileStatus) > -1;
     },
-
-    individuals(): CaseFileIndividualEntity[] {
-      return useCaseFileIndividualStore().getByCaseFile(this.caseFileId).sort((x) => (this.household?.primaryBeneficiary === x.personId ? -1 : 1))
-        .map((i) => new CaseFileIndividualEntity(i));
-    },
-  },
-
-  async created() {
-    this.loading = true;
-    const individuals = await useCaseFileIndividualStore().fetchAll({ caseFileId: this.caseFileId });
-    await usePersonStore().fetchByIds(individuals.map((i) => i.personId), true);
-    this.loading = false;
   },
 });
 </script>

@@ -66,3 +66,8 @@ export const STAFF_AVAILABILITIES = [
   mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[2] }),
   mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[3] }),
 ];
+
+export const STAFF_MEMBER_AVAILABILITIES = [
+  { startDateTime: `${today}T14:15:00.000Z`, endDateTime: `${today}T16:00:00.000Z` },
+  { startDateTime: `${today}T17:00:00.000Z`, endDateTime: `${today}T20:00:00.000Z` },
+];

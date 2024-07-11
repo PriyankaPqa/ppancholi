@@ -3,7 +3,6 @@ import { mockEventSummary, mockRegistrationLocations, mockConsentStatments } fro
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './CrcPrivacyStatement.vue';
-import { i18n } from '../../ui/plugins/i18n';
 
 const localVue = createLocalVue();
 const { pinia, registrationStore } = useMockRegistrationStore();
@@ -26,7 +25,6 @@ describe('CrcPrivacyStatement.vue', () => {
       localVue,
       pinia,
       propsData: {
-        i18n,
         user: mockUserL6(),
       },
     });
@@ -78,7 +76,6 @@ describe('CrcPrivacyStatement.vue', () => {
           localVue,
           pinia,
           propsData: {
-            i18n,
             user: mockUserL6(),
           },
           computed: {
@@ -94,7 +91,6 @@ describe('CrcPrivacyStatement.vue', () => {
           localVue,
           pinia,
           propsData: {
-            i18n,
             registrationLocations: [location],
             user: mockUserL6(),
           },
@@ -109,7 +105,6 @@ describe('CrcPrivacyStatement.vue', () => {
           localVue,
           pinia,
           propsData: {
-            i18n,
             user: mockUserL6(),
           },
           computed: {
@@ -127,7 +122,6 @@ describe('CrcPrivacyStatement.vue', () => {
           localVue,
           pinia,
           propsData: {
-            i18n,
             consentStatements: [consent],
             user: mockUserL6(),
           },
@@ -147,7 +141,6 @@ describe('CrcPrivacyStatement.vue', () => {
             },
           },
           propsData: {
-            i18n,
             user: mockUserL6(),
           },
         });
@@ -164,7 +157,6 @@ describe('CrcPrivacyStatement.vue', () => {
             },
           },
           propsData: {
-            i18n,
             user: mockUserL6(),
           },
         });
@@ -217,7 +209,6 @@ describe('CrcPrivacyStatement.vue', () => {
             isRegistrationMethodInPerson: () => true,
           },
           propsData: {
-            i18n,
             user: mockUserL6(),
           },
         });
@@ -234,7 +225,6 @@ describe('CrcPrivacyStatement.vue', () => {
           localVue,
           pinia,
           propsData: {
-            i18n,
             user: mockUserL6(),
           },
           computed: {

@@ -74,7 +74,7 @@ export class HouseholdActivity implements IHouseholdActivity {
     }
   }
 
-  getTemplateData(isPreviousValue: boolean, i18n: VueI18n): IHistoryItemTemplateData[] {
+  getTemplateData(isPreviousValue: boolean, i18n: VueI18n, showTempAddressData: boolean): IHistoryItemTemplateData[] {
     const data = isPreviousValue ? this.previousDetails : this.newDetails;
     switch (this.activityType) {
       case HouseholdActivityType.ContactInformationEdited:
@@ -85,22 +85,25 @@ export class HouseholdActivity implements IHouseholdActivity {
 
       case HouseholdActivityType.MemberAdded:
         return isPreviousValue ? this.makeEmptyTemplate()
-          : this.makeFullMemberTemplate(data as IHouseholdActivityIdentity & IHouseholdActivityTempAddress, i18n);
+          : this.makeFullMemberTemplate(data as IHouseholdActivityIdentity & IHouseholdActivityTempAddress, i18n, showTempAddressData);
 
       case HouseholdActivityType.MemberRemoved:
         return !isPreviousValue ? this.makeEmptyTemplate()
-          : this.makeFullMemberTemplate(data as IHouseholdActivityIdentity & IHouseholdActivityTempAddress, i18n);
+          : this.makeFullMemberTemplate(data as IHouseholdActivityIdentity & IHouseholdActivityTempAddress, i18n, showTempAddressData);
 
       case HouseholdActivityType.OriginalHouseholdSplit:
       case HouseholdActivityType.HouseholdMoved:
-        return this.makeMultipleMembersTemplate((data as IHouseholdActivityMembers)?.memberDetails, i18n);
+        return this.makeMultipleMembersTemplate((data as IHouseholdActivityMembers)?.memberDetails, i18n, showTempAddressData);
 
       case HouseholdActivityType.HomeAddressEdited:
         return this.makeHomeTemplate((data as CurrentAddress)?.address, i18n);
 
       case HouseholdActivityType.TempAddressEdited:
-        return [...this.makeMemberNameTemplate((data as IHouseholdActivityPerson).personFullName),
-          ...this.makeTemporaryAddressTemplate(data as IHouseholdActivityTempAddress, i18n)];
+        if (showTempAddressData) {
+          return [...this.makeMemberNameTemplate((data as IHouseholdActivityPerson).personFullName),
+            ...this.makeTemporaryAddressTemplate(data as IHouseholdActivityTempAddress, i18n)];
+        }
+        return this.makeEmptyTemplate();
 
       case HouseholdActivityType.PrimaryAssigned:
         return this.makePrimaryTemplate(data as IHouseholdActivityPerson);
@@ -293,11 +296,11 @@ export class HouseholdActivity implements IHouseholdActivity {
    *  { label: '\n', value: '' }
    *  { label: 'Temporary address', value: 'Hotel/Motel, Mock Place Name #1234,\n120 East Str.,\n12345, NY, New York' },
    */
-  makeMultipleMembersTemplate(data: (IHouseholdActivityIdentity & IHouseholdActivityTempAddress)[], i18n: VueI18n): IHistoryItemTemplateData[] {
+  makeMultipleMembersTemplate(data: (IHouseholdActivityIdentity & IHouseholdActivityTempAddress)[], i18n: VueI18n, showTempAddressData: boolean): IHistoryItemTemplateData[] {
     let template: IHistoryItemTemplateData[] = [];
     if (data && Array.isArray(data)) {
       data.forEach((member, i) => {
-        template.push(...this.makeFullMemberTemplate(member, i18n));
+        template.push(...this.makeFullMemberTemplate(member, i18n, showTempAddressData));
         if (i < data.length - 1) {
           template = template.concat(this.makeEmptyLine());
         }
@@ -347,8 +350,11 @@ export class HouseholdActivity implements IHouseholdActivity {
    *  { label: '\n', value: '' }
    *  { label: 'Temporary address', value: 'Hotel/Motel, Mock Place Name #1234,\n120 East Str.,\n12345, NY, New York' },
    */
-  makeFullMemberTemplate(data: IHouseholdActivityIdentity & IHouseholdActivityTempAddress, i18n: VueI18n): IHistoryItemTemplateData[] {
+  makeFullMemberTemplate(data: IHouseholdActivityIdentity & IHouseholdActivityTempAddress, i18n: VueI18n, showTempAddressData: boolean): IHistoryItemTemplateData[] {
     const memberIdentity = this.makePersonalInfoTemplate(data, i18n);
+    if (!showTempAddressData) {
+      return memberIdentity;
+    }
     const memberAddress = this.makeTemporaryAddressTemplate(data, i18n);
 
     return [...memberIdentity, ...this.makeEmptyLine(), ...memberAddress];

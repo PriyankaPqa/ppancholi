@@ -113,7 +113,7 @@ import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegis
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 import { IEventSummary, IRegistrationAssessment } from '@libs/entities-lib/event';
@@ -121,6 +121,8 @@ import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/inter
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
+import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
+import { ICaseFileIndividualCreateRequest, MembershipStatus } from '@libs/entities-lib/case-file-individual';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -213,7 +215,7 @@ export default mixins(individual).extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
 
     registrationAssessment(): IRegistrationAssessment {
@@ -358,6 +360,12 @@ export default mixins(individual).extend({
         householdId: this.household.id,
         eventId: this.event.id,
         consentInformation: this.household.consentInformation,
+        individuals: [this.household.primaryBeneficiary, ...this.household.additionalMembers].filter((m) => m).map((m) => ({
+          personId: m.id,
+          temporaryAddressHistory: [CurrentAddress.parseCurrentAddress(m.currentAddress)],
+          receivingAssistanceDetails: [{ receivingAssistance: true }],
+          membershipStatus: MembershipStatus.Active,
+        }) as ICaseFileIndividualCreateRequest),
       });
       if (!res) {
         useRegistrationStore().registrationErrors = { name: 'case-file-create-error', message: 'Case file create error' }; // TODO Check in real app the type of errors

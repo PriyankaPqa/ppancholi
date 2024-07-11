@@ -165,7 +165,7 @@
             </v-col>
           </v-row>
 
-          <v-row no-gutters class="rc-body14 mb-1">
+          <v-row v-if="m.selectedCurrentAddress || !$hasFeature($featureKeys.CaseFileIndividual)" no-gutters class="rc-body14 mb-1">
             <v-col cols="5">
               <span class="fw-bold"> {{ $t('household.move.card.temporaryAddress') }} </span>
             </v-col>
@@ -186,10 +186,19 @@
                       :disabled="i === 0"
                       :data-test="`household_move_same_address_${m.identitySet.firstName}_${m.identitySet.lastName}`" />
                     <v-radio
+                      v-if="!$hasFeature($featureKeys.CaseFileIndividual)"
                       :label=" $t('household.move.new_address')"
                       :value="0"
                       :data-test="`household_move_new_address_${m.identitySet.firstName}_${m.identitySet.lastName}`"
                       @click="!m.selectedCurrentAddress.newAddress && openNewAddressDialog(m)" />
+                    <v-radio
+                      v-else
+                      :label=" $t('registration.addresses.temporaryAddressTypes.Other')"
+                      :value="0"
+                      :data-test="`household_move_unknown_address_${m.identitySet.firstName}_${m.identitySet.lastName}`" />
+                    <div v-if="$hasFeature($featureKeys.CaseFileIndividual)" class="font-italic rc-body14">
+                      {{ $t('registration.household_member.sameAddress.other.detail') }}
+                    </div>
                   </v-radio-group>
                 </validation-provider>
 
@@ -252,7 +261,6 @@ import _cloneDeep from 'lodash/cloneDeep';
 import {
   IMember, CurrentAddress, ICurrentAddress,
 } from '@libs/entities-lib/household-create';
-import { i18n } from '@/ui/plugins';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import libHelpers from '@libs/entities-lib/helpers';
@@ -263,7 +271,7 @@ import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 
@@ -347,7 +355,7 @@ export default Vue.extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
 
     // The main beneficiary must be first
@@ -381,7 +389,7 @@ export default Vue.extend({
 
     currentAddressTypeItems(): Record<string, unknown>[] {
       const hasShelters = this.shelterLocations.some((s) => s.status !== EEventLocationStatus.Inactive);
-      return this.getCurrentAddressTypeItems(i18n, this.household.noFixedHome, hasShelters, !this.$hasFeature(FeatureKeys.RemainingInHomeForAdditionalMembers));
+      return this.getCurrentAddressTypeItems(this.$i18n, this.household.noFixedHome, hasShelters);
     },
 
     movingAdditionalMembers():IMovingMember[] {

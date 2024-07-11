@@ -26,7 +26,6 @@ import {
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'FinancialAssistanceDetails',
@@ -37,7 +36,6 @@ export default Vue.extend({
 
   data() {
     return {
-      FeatureKeys,
       routes,
     };
   },

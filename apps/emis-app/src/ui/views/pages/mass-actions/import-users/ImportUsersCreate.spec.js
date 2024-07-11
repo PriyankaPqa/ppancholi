@@ -7,7 +7,6 @@ import {
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionRunType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from './ImportUsersCreate.vue';
 
@@ -65,7 +64,7 @@ describe('ImportUsersCreate.vue', () => {
       it('should be xlsx when feature flag is on', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.UseIdentityServer],
+          featureList: [wrapper.vm.$featureKeys.UseIdentityServer],
         });
         expect(wrapper.vm.allowedExtensions).toEqual(['xlsx']);
       });

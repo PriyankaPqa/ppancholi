@@ -44,9 +44,8 @@
 import Vue from 'vue';
 import { VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import helpers from '@libs/entities-lib/helpers';
-import VueI18n from 'vue-i18n';
 import { ERegistrationMethod } from '@libs/shared-lib/types';
-import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 
 import { EEventLocationStatus, IEventGenericLocation, IEventSummary } from '@libs/entities-lib/event';
 import { IEventGenericLocationWithEventName } from '@libs/entities-lib/household-create';
@@ -74,11 +73,6 @@ export default Vue.extend({
   },
 
   props: {
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
-
     registrationLocations: {
       type: Array as () => IEventGenericLocation[],
       default: null,
@@ -97,7 +91,6 @@ export default Vue.extend({
 
   data() {
     return {
-      FeatureKeys,
       privacyRegistrationLocation: null as IEventGenericLocation,
     };
   },
@@ -131,7 +124,7 @@ export default Vue.extend({
     },
 
     registrationMethods(): Record<string, unknown>[] {
-      const methods = helpers.enumToTranslatedCollection(ERegistrationMethod, 'registration.privacy_statement', this.i18n);
+      const methods = helpers.enumToTranslatedCollection(ERegistrationMethod, 'registration.privacy_statement', this.$i18n);
       if (this.activeRegistrationLocations.length > 0) {
         return methods;
       }
