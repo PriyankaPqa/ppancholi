@@ -30,7 +30,6 @@
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { RcPageContent } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
-import { i18n } from '@/ui/plugins';
 
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
@@ -47,7 +46,6 @@ export default mixins(searchHousehold).extend({
 
   data() {
     return {
-      i18n,
       showDetailsDialog: false,
       caseFiles: null as ICaseFileEntity[],
       loading: false,

@@ -171,6 +171,9 @@ export class CurrentAddress implements ICurrentAddress {
   }
 
   public static parseCurrentAddress(currentAddress: ICurrentAddressData): ICurrentAddressCreateRequest {
+    if (currentAddress == null) {
+      return null;
+    }
     const noPlaceAddress = currentAddress.addressType === ECurrentAddressTypes.RemainingInHome
       || currentAddress.addressType === ECurrentAddressTypes.Other
       || currentAddress.addressType === ECurrentAddressTypes.Shelter

@@ -47,11 +47,11 @@
 </template>
 
 <script lang="ts">
-import Vue, { VueConstructor } from 'vue';
+import Vue from 'vue';
 import { IMember } from '@libs/entities-lib/value-objects/member';
 import { MemberDuplicateStatus } from '@libs/entities-lib/value-objects/identity-set';
 
-const vueComponent: VueConstructor = Vue.extend({
+export default Vue.extend({
   name: 'AdditionalMemberSection',
 
   props: {
@@ -116,7 +116,6 @@ const vueComponent: VueConstructor = Vue.extend({
   },
 });
 
-export default vueComponent;
 </script>
 
 <style lang="scss" scoped>

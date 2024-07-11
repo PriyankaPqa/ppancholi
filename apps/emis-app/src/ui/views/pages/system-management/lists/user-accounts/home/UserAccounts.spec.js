@@ -7,7 +7,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { Status } from '@libs/shared-lib/types';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -264,7 +264,7 @@ describe('UserAccounts.vue', () => {
       it('toggles visibility of Add EMIS User dialog from menu shown with FF on', () => {
         wrapper.vm.showAddEmisUserDialog = false;
         wrapper.vm.showAddUserAccountDialog = false;
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.UseIdentityServer);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === wrapper.vm.$featureKeys.UseIdentityServer);
         wrapper.vm.addUser({ value: 'activeDirectory' });
         wrapper.vm.$nextTick();
         expect(wrapper.vm.showAddEmisUserDialog).toEqual(true);
@@ -274,7 +274,7 @@ describe('UserAccounts.vue', () => {
       it('toggles visibility of Add User Account dialog from menu shown with FF on', () => {
         wrapper.vm.showAddEmisUserDialog = false;
         wrapper.vm.showAddUserAccountDialog = false;
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.UseIdentityServer);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === wrapper.vm.$featureKeys.UseIdentityServer);
         wrapper.vm.addUser({ value: 'standard' });
         wrapper.vm.$nextTick();
         expect(wrapper.vm.showAddEmisUserDialog).toEqual(false);

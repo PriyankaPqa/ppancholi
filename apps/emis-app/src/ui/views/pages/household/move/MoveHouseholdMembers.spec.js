@@ -10,6 +10,7 @@ import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.v
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 import { mockProvider } from '@/services/provider';
+
 import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -82,7 +83,7 @@ describe('MoveHouseholdMembers.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
+    const mount = (overrides = {}) => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
@@ -104,7 +105,12 @@ describe('MoveHouseholdMembers.vue', () => {
         mocks: {
           $services: services,
         },
+        ...overrides,
       });
+    };
+
+    beforeEach(() => {
+      mount();
     });
 
     describe('back', () => {
@@ -397,9 +403,21 @@ describe('MoveHouseholdMembers.vue', () => {
         wrapper.vm.$services.households.moveMembers = jest.fn(() => {});
 
         await wrapper.vm.submitMove();
-        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.firstHousehold);
-        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.secondHousehold);
+        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.firstHousehold, false);
+        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.secondHousehold, false);
         expect(wrapper.vm.$services.households.moveMembers).toHaveBeenCalledWith(wrapper.vm.firstHousehold, wrapper.vm.secondHousehold);
+      });
+
+      it('should call setNewMembers and the household service moveMembersV2 if form is  valid and flag is on', async () => {
+        mount({ featureList: [wrapper.vm.$featureKeys.CaseFileIndividual] });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.setNewMembers = jest.fn();
+        wrapper.vm.$services.households.moveMembers = jest.fn(() => {});
+
+        await wrapper.vm.submitMove();
+        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.firstHousehold, true);
+        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.secondHousehold, true);
+        expect(wrapper.vm.$services.households.moveMembersV2).toHaveBeenCalledWith(wrapper.vm.firstHousehold, wrapper.vm.secondHousehold);
       });
 
       it('should set moveSubmitted to true if there is a response from the service call', async () => {
@@ -414,9 +432,9 @@ describe('MoveHouseholdMembers.vue', () => {
     });
 
     describe('setNewMembers', () => {
-      it('should set the address and add to the household moving members', () => {
+      it('should set the address and add to the household moving members depending on flag', () => {
         const memberLeft = { ...mockMember(), id: 'new primary', selectedCurrentAddress: { sameAddressSelected: null, newAddress: 'new addr' } };
-        const originHousehold = {
+        let originHousehold = {
           ...mockHouseholdCreate(),
           id: 'origin',
           additionalMembers: [],
@@ -428,6 +446,22 @@ describe('MoveHouseholdMembers.vue', () => {
         wrapper.vm.setNewMembers(originHousehold);
 
         expect(memberLeft.setCurrentAddress).toHaveBeenCalledWith('new addr');
+        expect(originHousehold.addAdditionalMember).toHaveBeenCalledTimes(1);
+        expect(originHousehold.movingAdditionalMembers).toEqual([]);
+
+        originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [],
+          movingAdditionalMembers: [memberLeft],
+          primaryBeneficiary: null,
+        };
+        originHousehold.addAdditionalMember = jest.fn(() => {});
+        memberLeft.setCurrentAddress = jest.fn(() => {});
+
+        mount({ featureList: [wrapper.vm.$featureKeys.CaseFileIndividual] });
+        wrapper.vm.setNewMembers(originHousehold, true);
+        expect(memberLeft.setCurrentAddress).not.toHaveBeenCalled();
         expect(originHousehold.addAdditionalMember).toHaveBeenCalledTimes(1);
         expect(originHousehold.movingAdditionalMembers).toEqual([]);
       });

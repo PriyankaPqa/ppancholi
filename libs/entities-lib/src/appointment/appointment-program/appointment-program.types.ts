@@ -28,6 +28,11 @@ export interface ITimeSlot {
   endLocalTime?: string;
 }
 
+export interface IDateRange {
+  startDateTime: Date | string;
+  endDateTime: Date | string;
+}
+
 export interface IDaySchedule {
   day: DayOfWeek;
   timeSlots: ITimeSlot[];

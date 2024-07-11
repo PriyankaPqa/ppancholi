@@ -8,7 +8,6 @@ import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-f
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { createTestingPinia } from '@pinia/testing';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from './ProgramDetails.vue';
 
@@ -397,7 +396,7 @@ describe('ProgramDetails.vue', () => {
           programId: 'PROGRAM_ID',
           id: 'EVENT_ID',
         },
-        featureList: [FeatureKeys.Lodging],
+        featureList: [wrapper.vm.$featureKeys.Lodging],
         computed: {
           program() {
             return program;

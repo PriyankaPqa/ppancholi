@@ -16,7 +16,7 @@
       <h4 v-if="event" class="pb-3">
         {{ $t('household.split.privacy_policy') }}
       </h4>
-      <crc-privacy-statement v-if="event" :i18n="i18n" :user="user" :consent-statements="consentStatements" />
+      <crc-privacy-statement v-if="event" :user="user" :consent-statements="consentStatements" />
     </v-col>
   </v-row>
 </template>
@@ -43,7 +43,6 @@ export default Vue.extend({
 
   data() {
     return {
-      i18n: this.$i18n,
       event: null as IEventSummary,
     };
   },

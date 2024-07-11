@@ -307,7 +307,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     headers(): Array<DataTableHeader> {
       const headersList = [
         {
-          text: this.$t('task.task_table_header.task') as string,
+          text: this.$t('task.task_category') as string,
           sortable: true,
           value: this.customColumns.taskCategory,
           width: this.isInCaseFile ? '25%' : '20%',

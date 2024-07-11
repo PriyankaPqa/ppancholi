@@ -1,7 +1,7 @@
 import { ECurrentAddressTypes } from '../value-objects/current-address';
 import { mockAddress } from '../value-objects/address';
 import { mockBaseData } from '../base';
-import { ICaseFileIndividualEntity, ReceivingAssistanceDetail, TemporaryAddress } from './case-file-individual.types';
+import { ICaseFileIndividualEntity, MembershipStatus, ReceivingAssistanceDetail, TemporaryAddress } from './case-file-individual.types';
 
 export const mockReceivingAssistanceDetails = (force?: Partial<ReceivingAssistanceDetail>) : ReceivingAssistanceDetail => ({
   ...mockBaseData(),
@@ -141,10 +141,12 @@ export const mockCaseFileIndividualEntity = (force? : Partial<ICaseFileIndividua
     mockTemporaryAddress({ from: '2023-05-05T11:11:11.000Z' }),
     { ...mockOtherData(), from: '2023-05-01T11:11:11.000Z', to: '2023-05-05T11:11:11.000Z' },
   ],
+  membershipStatus: MembershipStatus.Active,
   ...force,
 });
 
 export const mockCaseFileIndividualEntities = () : ICaseFileIndividualEntity[] => [
   mockCaseFileIndividualEntity({ id: '1', personId: 'pid-1', caseFileId: 'cfid-1' }),
-  mockCaseFileIndividualEntity({ id: '2', personId: 'pid-2', caseFileId: 'cfid-2' }),
+  mockCaseFileIndividualEntity({ id: '2', personId: 'pid-2', caseFileId: 'cfid-2', membershipStatus: MembershipStatus.Removed }),
+  mockCaseFileIndividualEntity({ id: '3', personId: 'pid-3', caseFileId: 'cfid-3' }),
 ];

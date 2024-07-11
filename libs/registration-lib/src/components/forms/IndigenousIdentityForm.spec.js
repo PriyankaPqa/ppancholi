@@ -1,7 +1,5 @@
-import { i18n } from '@/ui/plugins/i18n';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import _merge from 'lodash/merge';
-import helpers from '@libs/entities-lib/helpers';
 import {
   mockContactInformation,
   mockMember,
@@ -21,7 +19,6 @@ describe('IndigenousIdentityForm.vue', () => {
       localVue,
       propsData: {
         form: _merge(mockContactInformation(), mockMember()),
-        canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
         indigenousTypesItems: mockIndigenousTypesItems(),
         indigenousCommunitiesItems: mockIndigenousCommunitiesItems(),
         loading: false,

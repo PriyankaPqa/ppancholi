@@ -15,7 +15,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { Status } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
 import Component from '../EventSummary.vue';
@@ -227,7 +227,7 @@ describe('EventSummary.vue', () => {
             showToggleForL0Access() {
               return true;
             },
-          }, [FeatureKeys.AppointmentBooking], false);
+          }, [wrapper.vm.$featureKeys.AppointmentBooking], false);
           const toggle = wrapper.findDataTest('event-summary-toggle-appointment-booking');
           expect(toggle.exists()).toBeTruthy();
         });
@@ -859,13 +859,13 @@ describe('EventSummary.vue', () => {
 
     describe('showToggleForL0Access', () => {
       it('should return true when user has level6 and event has call centre', async () => {
-        doMount(getPiniaForUser(UserRoles.level6), null, [FeatureKeys.L0Access]);
+        doMount(getPiniaForUser(UserRoles.level6), null, [wrapper.vm.$featureKeys.L0Access]);
         expect(wrapper.vm.showToggleForL0Access).toBeTruthy();
       });
 
       it('should return false when user doesnt have level 6,', async () => {
         doMount(getPiniaForUser(UserRoles.level5), null);
-        await wrapper.setFeature(FeatureKeys.L0Access, true);
+        await wrapper.setFeature(wrapper.vm.$featureKeys.L0Access, true);
         expect(wrapper.vm.showToggleForL0Access).toBeFalsy();
       });
     });

@@ -8,6 +8,7 @@ import {
   SearchOptimizedResults,
 } from '@libs/entities-lib/case-file';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
+import { ICaseFileIndividualCreateRequest } from '@libs/entities-lib/src/case-file-individual';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface ICreateCaseFileRequest {
@@ -18,7 +19,8 @@ export interface ICreateCaseFileRequest {
     registrationLocationId: uuid;
     crcUserName: string,
     privacyDateTimeConsent: string;
-  }
+  },
+  individuals: ICaseFileIndividualCreateRequest[]
 }
 
 export interface ICaseFileCountByExceptionalAuthentication {

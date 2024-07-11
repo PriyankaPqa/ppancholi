@@ -39,8 +39,8 @@
                   </validation-provider>
                 </div>
 
-                <div v-if="$hasFeature(FeatureKeys.TaskManagement) || $hasFeature(FeatureKeys.Lodging)" class="mb-4">
-                  <div v-if="$hasFeature(FeatureKeys.TaskManagement)">
+                <div v-if="$hasFeature($featureKeys.TaskManagement) || $hasFeature($featureKeys.Lodging)" class="mb-4">
+                  <div v-if="$hasFeature($featureKeys.TaskManagement)">
                     <v-checkbox-with-validation
                       v-if="teamType === 'adhoc'"
                       v-model="team.isEscalation"
@@ -56,7 +56,7 @@
                       class="is-assignable-checkbox" />
                   </div>
 
-                  <div v-if="$hasFeature(FeatureKeys.Lodging)" class="mb-4">
+                  <div v-if="$hasFeature($featureKeys.Lodging)" class="mb-4">
                     <v-checkbox-with-validation
                       v-model="team.useForLodging"
                       :disabled="!$hasLevel(UserRoles.level5)"
@@ -229,7 +229,6 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -271,7 +270,6 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
   data() {
     return {
-      FeatureKeys,
       UserRoles,
       userAccounts: [] as IUserAccountCombined[],
       currentPrimaryContact: null as UserTeamMember,

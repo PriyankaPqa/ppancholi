@@ -52,7 +52,6 @@
     </v-row>
     <add-edit-additional-members-lib
       v-if="showAddAdditionalMember"
-      :i18n="i18n"
       :show.sync="showAddAdditionalMember"
       :index="index"
       :disable-autocomplete="disableAutocomplete"
@@ -73,7 +72,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcConfirmationDialog } from '@libs/component-lib/components';
-import VueI18n from 'vue-i18n';
 import { IMember, Member, IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '../../constants/validations';
 import AddEditAdditionalMembersLib from './AddEditAdditionalMembersLib.vue';
@@ -87,11 +85,6 @@ export default Vue.extend({
   },
 
   props: {
-    i18n: {
-      type: Object as () => VueI18n,
-      required: true,
-    },
-
     disableAutocomplete: {
       type: Boolean,
       required: true,

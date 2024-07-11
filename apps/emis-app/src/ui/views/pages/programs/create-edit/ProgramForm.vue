@@ -99,7 +99,7 @@
               :label="$t('event.programManagement.approvalRequired')" />
 
             <v-checkbox
-              v-if="$hasFeature(FeatureKeys.Lodging)"
+              v-if="$hasFeature($featureKeys.Lodging)"
               v-model="localProgram.useForLodging"
               data-test="program-useForLodging"
               :label="$t('event.programManagement.setAsLodging')" />
@@ -134,7 +134,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { EPaymentModalities, ProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { Status } from '@libs/shared-lib/types';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
@@ -180,7 +180,6 @@ export default Vue.extend({
       localProgram,
       languageMode: 'en',
       assessmentForms: [] as IAssessmentFormEntity[],
-      FeatureKeys,
     };
   },
 

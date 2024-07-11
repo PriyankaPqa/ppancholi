@@ -44,6 +44,7 @@ export const mockSplitHouseholdRequest = (): ISplitHouseholdRequest => ({
   eventId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
   consentInformation: null,
   registrationType: ERegistrationMode.CRC,
+  individuals: [],
 });
 
 export const mockSplitHousehold = () => ({

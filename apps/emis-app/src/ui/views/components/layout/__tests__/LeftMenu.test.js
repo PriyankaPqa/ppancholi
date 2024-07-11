@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { UserRoles } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from '../LeftMenu.vue';
 
 const localVue = createLocalVue();
@@ -286,7 +286,7 @@ describe('LeftMenu.vue', () => {
         it('should be render when feature flag is on', () => {
           wrapper = shallowMount(Component, {
             localVue,
-            featureList: [FeatureKeys.TaskManagement],
+            featureList: [wrapper.vm.$featureKeys.TaskManagement],
           });
           const item = wrapper.vm.items[7];
           expect(item.to).toBe(routes.tasks.home.name);

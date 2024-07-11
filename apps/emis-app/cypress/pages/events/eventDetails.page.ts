@@ -2,6 +2,9 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { AddCallCentrePage } from './addCallCentre.page';
 import { AddShelterLocationPage } from './addShelterLocation.page';
 import { AddRegistrationLocationPage } from './addRegistrationLocation.page';
+import { AddAssessmentPage } from './addAssessment.page';
+import { AddNewAgreementPage } from './addNewAgreement.page';
+import { SelectStatementPage } from './selectStatement.page';
 
 export enum DataTest {
   eventName = 'title-left-menu',
@@ -31,6 +34,24 @@ export enum DataTest {
   shelterLocationName = 'event-shelter-location-section-name',
   shelterLocationAddress = 'event-shelter-location-section-address',
   shelterLocationStatus = 'event-shelter-location-section-status',
+  addRegistrationAssessment = 'add-section-button-RegistrationAssessment',
+  sectionTitleRegistrationAssessment = 'event-summary-section-title-RegistrationAssessment',
+  sectionDescriptionRegistrationAssessment = 'event-registrationAssessment-section-description',
+  sectionStatusRegistrationAssessment = 'event-assessment-section-status',
+  sectionPublishStatusRegistrationAssessment = 'event-assessment-section-publish-status',
+  sectionRegistrationAssessment = 'registration-assessment-section',
+  registrationAssessmentEdit = 'edit-event-registrationAssessment',
+  registrationAssessmentDelete = 'delete-event-registrationAssessment',
+  registrationAssessmentSectionName = 'event-registrationAssessment-section-name',
+  addAgreement = 'add-section-button-Agreement',
+  agreementName = 'event-agreement-section-name-0',
+  agreementStartDate = 'event-agreement-section-start-date-0',
+  agreementEndDate = 'event-agreement-section-end-date-0',
+  agreementType = 'event-agreement-section-type-0',
+  agreementDetails = 'event-agreement-section-details-0',
+  addEventConsentStatement = 'add-section-button-EventConsent',
+  consentStatement = 'consent-statement-section-name',
+  eventConsentSectionTitle = 'event-summary-section-title-EventConsent',
 }
 
 export class EventDetailsPage {
@@ -87,6 +108,42 @@ export class EventDetailsPage {
   private shelterLocationAddress = { selector: DataTest.shelterLocationAddress };
 
   private shelterLocationStatus = { selector: DataTest.shelterLocationStatus };
+
+  private addNewRegistrationAssessment = { selector: DataTest.addRegistrationAssessment };
+
+  private registrationAssessmentSectionTitle = { selector: DataTest.sectionTitleRegistrationAssessment };
+
+  private registrationAssessmentSectionDescription = { selector: DataTest.sectionDescriptionRegistrationAssessment };
+
+  private registrationAssessmentSectionStatus = { selector: DataTest.sectionStatusRegistrationAssessment };
+
+  private registrationAssessmentSectionPublishStatus = { selector: DataTest.sectionPublishStatusRegistrationAssessment };
+
+  private registrationAssessmentSection = { selector: DataTest.sectionRegistrationAssessment };
+
+  private registrationAssessmentEdit = { selector: DataTest.registrationAssessmentEdit };
+
+  private registrationAssessmentDelete = { selector: DataTest.registrationAssessmentDelete };
+
+  private registrationAssessmentSectionName = { selector: DataTest.registrationAssessmentSectionName };
+
+  private addAgreement = { selector: DataTest.addAgreement };
+
+  private agreementName = { selector: DataTest.agreementName };
+
+  private agreementStartDate = { selector: DataTest.agreementStartDate };
+
+  private agreementEndDate = { selector: DataTest.agreementEndDate };
+
+  private agreementType = { selector: DataTest.agreementType };
+
+  private agreementDetails = { selector: DataTest.agreementDetails };
+
+  private addEventConsentStatement = { selector: DataTest.addEventConsentStatement };
+
+  private consentStatement = { selector: DataTest.consentStatement };
+
+  private eventConsentSectionTitle = { selector: DataTest.eventConsentSectionTitle };
 
   public copyLink() {
     cy.getByDataTest(this.eventLink)
@@ -220,5 +277,88 @@ export class EventDetailsPage {
 
   public getShelterLocationButton() {
     return cy.getByDataTest(this.addNewShelterLocation);
+  }
+
+  public getSectionTitleRegistrationAssessment() {
+    return cy.getByDataTest(this.registrationAssessmentSectionTitle).getAndTrimText();
+  }
+
+  public getAddRegistrationAssessmentButton() {
+    return cy.getByDataTest(this.addNewRegistrationAssessment);
+  }
+
+  public addRegistrationAssessment() {
+    cy.getByDataTest(this.addNewRegistrationAssessment).click();
+    return new AddAssessmentPage();
+  }
+
+  public getRegistrationAssessmentSectionNameElement(index = 0) {
+    return cy.getByDataTestLike(this.registrationAssessmentSectionName).eq(index);
+  }
+
+  public getRegistrationAssessmentSectionDescription(index = 0) {
+    return cy.getByDataTestLike(this.registrationAssessmentSectionDescription).eq(index).getAndTrimText();
+  }
+
+  public getRegistrationAssessmentSectionStatusElement(index = 0) {
+    return cy.getByDataTestLike(this.registrationAssessmentSectionStatus).eq(index);
+  }
+
+  public getRegistrationAssessmentSectionPublishStatusElement(index = 0) {
+    return cy.getByDataTestLike(this.registrationAssessmentSectionPublishStatus).eq(index);
+  }
+
+  public getRegistrationAssessmentEditButton(index = 0) {
+    return cy.getByDataTestLike(this.registrationAssessmentEdit).eq(index);
+  }
+
+  public getRegistrationAssessmentDeleteButton(index = 0) {
+    return cy.getByDataTestLike(this.registrationAssessmentDelete).eq(index);
+  }
+
+  public addNewAgreement() {
+    cy.getByDataTest(this.addAgreement).click();
+    return new AddNewAgreementPage();
+  }
+
+  public getAgreementName(index = 0) {
+    return cy.getByDataTestLike(this.agreementName).eq(index).getAndTrimText();
+  }
+
+  public getAgreementStartDate(index = 0) {
+    return cy.getByDataTestLike(this.agreementStartDate).eq(index).getAndTrimText();
+  }
+
+  public getAgreementEndDate(index = 0) {
+    return cy.getByDataTestLike(this.agreementEndDate).eq(index).getAndTrimText();
+  }
+
+  public getAgreementType(index = 0) {
+    return cy.getByDataTestLike(this.agreementType).eq(index).getAndTrimText();
+  }
+
+  public getAgreementDetails(index = 0) {
+    return cy.getByDataTestLike(this.agreementDetails).eq(index).getAndTrimText();
+  }
+
+  public getAddNewAgreementButton() {
+    return cy.getByDataTest(this.addAgreement);
+  }
+
+  public getSelectConsentStatementButton() {
+    return cy.getByDataTest(this.addEventConsentStatement);
+  }
+
+  public addStatement() {
+    cy.getByDataTest(this.addEventConsentStatement).click();
+    return new SelectStatementPage();
+  }
+
+  public getConsentStatementSectionTitleElement() {
+    return cy.getByDataTest(this.eventConsentSectionTitle);
+  }
+
+  public getConsentStatementDetails() {
+    return cy.getByDataTest(this.consentStatement).getAndTrimText();
   }
 }

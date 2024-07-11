@@ -16,6 +16,7 @@ import { getExtensionComponents } from '@/pinia/case-file/case-file-extension';
 import _sortBy from 'lodash/sortBy';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
+import { ICaseFileIndividualCreateRequest } from '@libs/entities-lib/case-file-individual';
 
 const entityService = mockCaseFilesService();
 const optionItemService = mockOptionItemsService();
@@ -271,6 +272,7 @@ describe('>>> Case File Store', () => {
           crcUserName: 'string',
           privacyDateTimeConsent: '2021-07-06T19:37:10.185Z',
         },
+        individuals: [] as ICaseFileIndividualCreateRequest[],
       };
       const res = mockDetailedRegistrationResponse();
       await store.createCaseFile(payload);

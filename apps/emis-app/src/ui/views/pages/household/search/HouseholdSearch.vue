@@ -140,7 +140,7 @@ import { VForm } from '@libs/shared-lib/types';
 import WithRoot from '@/ui/views/components/WithRoot';
 import _omit from 'lodash/omit';
 import _cloneDeep from 'lodash/cloneDeep';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { IInformationFromBeneficiarySearch } from '@libs/registration-lib/types';
 
@@ -177,7 +177,6 @@ export default Vue.extend({
 
   data() {
     return {
-      FeatureKeys,
       isEmpty,
       months,
       birthDate: {

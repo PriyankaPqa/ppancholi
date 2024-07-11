@@ -67,7 +67,7 @@
               </v-row>
               <v-row no-gutters class="mt-6 flex">
                 <v-col
-                  v-if="$hasFeature(FeatureKeys.TaskManagement)"
+                  v-if="$hasFeature($featureKeys.TaskManagement)"
                   :cols="4"
                   class="team_data"
                   data-test="team_isAssignable">
@@ -143,7 +143,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useEventStore } from '@/pinia/event/event';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 
@@ -166,7 +166,6 @@ export default Vue.extend({
     return {
       UserRoles,
       TeamType,
-      FeatureKeys,
       isEscalation: true,
     };
   },
@@ -197,11 +196,11 @@ export default Vue.extend({
     },
 
     displayEscalationLabel(): boolean {
-      return this.$hasFeature(FeatureKeys.TaskManagement) && this.team.teamType === TeamType.AdHoc && this.team.isEscalation;
+      return this.$hasFeature(this.$featureKeys.TaskManagement) && this.team.teamType === TeamType.AdHoc && this.team.isEscalation;
     },
 
     displayUseLodging(): boolean {
-      return this.$hasFeature(FeatureKeys.Lodging) && this.team.useForLodging;
+      return this.$hasFeature(this.$featureKeys.Lodging) && this.team.useForLodging;
     },
   },
 

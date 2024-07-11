@@ -2,6 +2,7 @@ import {
   ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus, mockAssignedTeamMembers, ITier2Request, IRecoveryPlan,
 } from '@libs/entities-lib/case-file';
 import { IListOption } from '@libs/shared-lib/types';
+import { ICaseFileIndividualCreateRequest } from '@libs/entities-lib/case-file-individual';
 import { IHttpMock, mockHttp } from '../../http-client';
 import { CaseFilesService } from './case-files';
 
@@ -165,6 +166,7 @@ describe('>>> Case File Service', () => {
           crcUserName: 'string',
           privacyDateTimeConsent: '2021-07-06T19:37:10.185Z',
         },
+        individuals: [] as ICaseFileIndividualCreateRequest[],
       };
 
       await service.createCaseFile(payload, false);

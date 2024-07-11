@@ -74,7 +74,7 @@ export default Vue.extend({
     submit() {
       const currentCustomSchedule = this.calculateNewCustomSchedule();
       const weekRange = appointmentHelpers.weekRange(this.rangeStartDate);
-      const otherCustomSchedule = this.customSchedule.filter((sch) => new Date(sch.end) < weekRange.start || new Date(sch.start) > weekRange.end);
+      const otherCustomSchedule = this.customSchedule.filter((sch) => new Date(sch.endDateTime) < weekRange.start || new Date(sch.startDateTime) > weekRange.end);
       // merges the new custom schedule with all the rest of the custom schedule data that is outside the current week
       const customScheduleToSubmit = [...currentCustomSchedule, ...otherCustomSchedule];
 
@@ -98,12 +98,12 @@ export default Vue.extend({
         // with the start and end date the same (midnight) - to signal that the custom schedule for that day is no schedule at all
         if (!currentDaySchedule.timeSlots.length && !!correspondingDefaultDay.timeSlots.length) {
           const midnight = new Date(`${correspondingDefaultDay.date} 0:00`).toISOString();
-          customSchedules.push({ start: midnight, end: midnight });
+          customSchedules.push({ startDateTime: midnight, endDateTime: midnight });
         }
 
         // if there are a different number of time slots for default and current schedule, we know it's a custom day schedule directly, no need to compare times
         if (correspondingDefaultDay.timeSlots.length !== currentDaySchedule.timeSlots.length) {
-          customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ start: s.startDateTime, end: s.endDateTime })));
+          customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ startDateTime: s.startDateTime, endDateTime: s.endDateTime })));
           return;
         }
 
@@ -111,7 +111,7 @@ export default Vue.extend({
         for (let i = 0; i < currentDaySchedule.timeSlots.length; i += 1) {
           if (currentDaySchedule.timeSlots[i].startDateTime !== correspondingDefaultDay.timeSlots[i].startDateTime
           || currentDaySchedule.timeSlots[i].endDateTime !== correspondingDefaultDay.timeSlots[i].endDateTime) {
-            customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ start: s.startDateTime, end: s.endDateTime })));
+            customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ startDateTime: s.startDateTime, endDateTime: s.endDateTime })));
             break;
           }
         }

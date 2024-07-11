@@ -103,7 +103,7 @@ import { RcPageContent, RcPageLoading, RcTooltip, VSelectA11y } from '@libs/comp
 import { CaseFileActivityType, CaseFileTriage, ICaseFileActivity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import entityUtils from '@libs/entities-lib/utils';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
@@ -119,6 +119,7 @@ import AssignCaseFile from './components/AssignCaseFile.vue';
 import CaseFileAssignments from './components/CaseFileAssignments.vue';
 import caseFileDetail from '../caseFileDetail';
 import CaseFileActivityDuplicateUpdated from './components/CaseFileActivityDuplicateUpdated.vue';
+import CaseFileActivityPaymentMoved from './components/CaseFileActivityPaymentMoved.vue';
 
 export default mixins(caseFileDetail, caseFileActivity).extend({
   name: 'CaseFileActivity',
@@ -134,6 +135,7 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     AssignCaseFile,
     CaseFileAssignments,
     CaseFileActivityDuplicateUpdated,
+    CaseFileActivityPaymentMoved,
     VSelectA11y,
   },
   props: {
@@ -147,7 +149,6 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
   },
   data() {
     return {
-      FeatureKeys,
       showLabelsDialog: false,
       loading: false,
       saving: false,
@@ -217,6 +218,11 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
         if (item.activityType === CaseFileActivityType.HouseholdPotentialDuplicateUpdated) {
           return 'CaseFileActivityDuplicateUpdated';
         }
+
+        if (item.activityType === CaseFileActivityType.PaymentMoved) {
+          return 'CaseFileActivityPaymentMoved';
+        }
+
         return 'CaseFileActivityListItem';
     },
 

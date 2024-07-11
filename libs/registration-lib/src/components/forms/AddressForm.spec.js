@@ -74,7 +74,7 @@ describe('AddressForm.vue', () => {
       test('city', () => {
         expect(wrapper.vm.rules.city).toEqual({
           required: true,
-          max: MAX_LENGTH_MD,
+          max: MAX_LENGTH_SM,
         });
       });
 

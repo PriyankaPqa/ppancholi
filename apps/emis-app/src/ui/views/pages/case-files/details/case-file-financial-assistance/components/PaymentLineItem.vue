@@ -100,7 +100,7 @@ import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-a
 import routes from '@/constants/routes';
 import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import PaymentCancelledBy from './PaymentCancelledBy.vue';
@@ -171,7 +171,6 @@ export default Vue.extend({
       PayeeType,
       showCancellationReasonSelect: false,
       PaymentLineStatus,
-      FeatureKeys,
     };
   },
 

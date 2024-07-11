@@ -46,11 +46,10 @@ import _cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
-import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
 
@@ -85,7 +84,7 @@ export default Vue.extend({
 
   computed: {
     canadianProvincesItems(): Record<string, unknown>[] {
-      return libHelpers.getCanadianProvincesWithoutOther(i18n);
+      return libHelpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     rules(): Record<string, unknown> {
@@ -111,7 +110,7 @@ export default Vue.extend({
     },
 
     enableAutocomplete(): boolean {
-      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+      return this.$hasFeature(this.$featureKeys.AddressAutoFill);
     },
   },
 

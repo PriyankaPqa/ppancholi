@@ -4,7 +4,7 @@ import { MassActionDataCorrectionType, MassActionType } from '@libs/entities-lib
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {
@@ -59,7 +59,7 @@ describe('massActions', () => {
 
       it('should trigger proper method downloadImportUsersTemplate when the feature flag is on', () => {
         wrapper.vm.downloadApiTemplate = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.UseIdentityServer);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === wrapper.vm.$featureKeys.UseIdentityServer);
         wrapper.vm.onClick('downloadImportUsersTemplate');
         expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionType.ImportUsers);
       });

@@ -2,7 +2,6 @@ import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import { ICardSettings } from '@/types/interfaces/ICardSettings';
 import { MassActionDataCorrectionType, MassActionType } from '@libs/entities-lib/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface IMassActionCards extends ICardSettings {
   group: number;
@@ -67,7 +66,7 @@ export default Vue.extend({
           this.downloadTemplate(this.templateData.importPaymentStatuses.fileName, this.templateData.importPaymentStatuses.blobsParts);
           break;
         case 'downloadImportUsersTemplate':
-          if (this.$hasFeature(FeatureKeys.UseIdentityServer)) {
+          if (this.$hasFeature(this.$featureKeys.UseIdentityServer)) {
             this.downloadApiTemplate(MassActionType.ImportUsers);
           } else {
             this.downloadTemplate(this.templateData.importUsers.fileName, this.templateData.importUsers.blobsParts);

@@ -105,7 +105,7 @@ export interface IUserAccountMetadata extends IEntity, IUserProfileData {
   givenName?: string;
   surname?: string;
   userPrincipalName?: string;
-  assignedCaseFileCountByTeam: IAssignedCaseFileCountByTeam[]
+  assignedCaseFileCountByTeam?: IAssignedCaseFileCountByTeam[]
 }
 
 export interface IUserProfileQueryResponse extends IUserProfileData {

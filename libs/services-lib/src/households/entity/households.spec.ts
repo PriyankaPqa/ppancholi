@@ -19,6 +19,7 @@ import {
   mockMemberCreateRequest,
   mockSplitHouseholdRequest,
 } from '@libs/entities-lib/household-create';
+import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { mockHttp, GlobalHandler } from '../../http-client';
@@ -209,6 +210,12 @@ describe('>>> Household Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/move-household-members`, { foo: 'bar' });
   });
 
+  test('moveMembersV2 is linked to the correct URL', async () => {
+    service.parseMovePayload = jest.fn(() => ({ foo: 'bar' } as unknown as IMoveHouseholdRequest));
+    await service.moveMembersV2(mockHouseholdCreate(), mockHouseholdCreate());
+    expect(http.patch).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/move-household-members`, { foo: 'bar' });
+  });
+
   test('addMember is linked to the correct URL', async () => {
     const member = mockMember();
     await service.addMember('123', false, member);
@@ -220,6 +227,24 @@ describe('>>> Household Service', () => {
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/members`, {
       ...service.parseMember(member),
       registrationType: ERegistrationMode.CRC,
+    });
+  });
+
+  test('addMemberV2 is linked to the correct URL', async () => {
+    const member = mockMember();
+    const payload = service.parseMember(mockMember()) as any;
+    payload.currentAddress = { addressType: ECurrentAddressTypes.Unknown };
+    await service.addMemberV2('123', false, member, true);
+    expect(http.post).toHaveBeenCalledWith(`www.test.com/orchestration/orchestration-households/${'123'}/members`, {
+      ...payload,
+      registrationType: ERegistrationMode.CRC,
+      sameTemporaryAddressAsPrimary: true,
+    });
+    await service.addMemberV2('123', true, member, false);
+    expect(http.post).toHaveBeenCalledWith(`www.test.com/orchestration/orchestration-households/public/${'123'}/members`, {
+      ...payload,
+      registrationType: ERegistrationMode.CRC,
+      sameTemporaryAddressAsPrimary: false,
     });
   });
 
@@ -435,6 +460,12 @@ describe('>>> Household Service', () => {
         primaryBeneficiaryId: household.primaryBeneficiary.id,
         additionalMemberIds: ['id-1'],
         registrationType: ERegistrationMode.CRC,
+        individuals: [household.primaryBeneficiary, ...household.additionalMembers].filter((m) => m).map((m) => ({
+          personId: m.id,
+          temporaryAddressHistory: [CurrentAddress.parseCurrentAddress(m.currentAddress)],
+          receivingAssistanceDetails: [{ receivingAssistance: true }],
+          membershipStatus: MembershipStatus.Active,
+        })),
       });
     });
   });
@@ -505,6 +536,7 @@ describe('>>> Household Service', () => {
         memberId: member.id,
         currentAddress: CurrentAddress.parseCurrentAddress(member.currentAddress),
         identitySet: service.parseIdentitySet(member.identitySet),
+        sameTemporaryAddressAsPrimary: false,
       });
     });
   });

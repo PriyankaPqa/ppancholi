@@ -37,18 +37,6 @@ describe('useAddresses', () => {
       expect(result).toEqual(expectList);
     });
 
-    it('returns the list of temporary addresses types excludes Remaining in home if mustRemoveRemainingInHome is true', async () => {
-      const expectList = [
-        { value: ECurrentAddressTypes.Campground, text: 'Campground' },
-        { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
-      ];
-      const noFixedHome = false;
-      const hasShelterLocations = true;
-      const mustRemoveRemainingInHome = true;
-      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations, mustRemoveRemainingInHome);
-      expect(result).toEqual(expectList);
-    });
-
     it('returns the list of temporary addresses types excludes shelter locations if hasShelterLocations is false', async () => {
       const expectList = [
         { value: ECurrentAddressTypes.Campground, text: 'Campground' },

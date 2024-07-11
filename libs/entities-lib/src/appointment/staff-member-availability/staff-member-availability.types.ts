@@ -1,10 +1,5 @@
 import { IEntity } from '../../base';
-import { IDaySchedule } from '../appointment-program/appointment-program.types';
-
-export interface IDateRange {
-  start: string | Date;
-  end: string | Date;
-}
+import { IDateRange, IDaySchedule } from '../appointment-program/appointment-program.types';
 
 export interface IStaffMemberAvailability extends IEntity {
   staffMemberId: uuid;

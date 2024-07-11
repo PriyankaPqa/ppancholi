@@ -83,7 +83,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { UserRoles } from '@libs/entities-lib/user';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { format } from 'date-fns';
 import caseFileDetail from '../../caseFileDetail';
 import QuestionTab from './QuestionTab.vue';
@@ -109,7 +109,6 @@ export default mixins(caseFileDetail).extend({
   data() {
     return {
       CompletedByType,
-      FeatureKeys,
       selectedTab: 'Questions',
       tabs: ['Questions'],
       format,

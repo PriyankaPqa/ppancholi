@@ -41,8 +41,10 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   updateNoFixedHomeAddress(id: string, publicMode: boolean, observation?: string): Promise<IHouseholdEntity> | false;
   deleteAdditionalMember(householdId: string, publicMode: boolean, memberId: string): Promise<IHouseholdEntity>;
   addMember(householdId: string, publicMode: boolean, payload: IMember): Promise<IHouseholdEntity>;
+  addMemberV2(householdId: string, publicMode: boolean, payload: IMember, sameAddress: boolean): Promise<IHouseholdEntity>;
   splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IDetailedRegistrationResponse>;
   moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
+  moveMembersV2(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
   validatePublicEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
   makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity>;
@@ -76,8 +78,10 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   updateNoFixedHomeAddress: jest.Mock<IHouseholdEntity>;
   deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
   addMember: jest.Mock<IHouseholdEntity>;
+  addMemberV2: jest.Mock<IHouseholdEntity>;
   splitHousehold: jest.Mock<IDetailedRegistrationResponse>;
   moveMembers: jest.Mock<IHouseholdEntity[]>;
+  moveMembersV2: jest.Mock<IHouseholdEntity[]>;
   validateEmail: jest.Mock<IValidateEmailResponse>;
   validatePublicEmail: jest.Mock<IValidateEmailResponse>;
   makePrimary: jest.Mock<IHouseholdEntity>;

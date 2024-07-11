@@ -47,7 +47,7 @@ describe('CustomSchedule.vue', () => {
           end: '17:00',
         };
         wrapper.setData({ localSchedule: { 0: { ...defaultSchedule[0], timeSlots: [newTimeSlot] } } });
-        expect(wrapper.vm.calculateNewCustomSchedule()).toEqual([{ start: newTimeSlot.startDateTime, end: newTimeSlot.endDateTime }]);
+        expect(wrapper.vm.calculateNewCustomSchedule()).toEqual([{ startDateTime: newTimeSlot.startDateTime, endDateTime: newTimeSlot.endDateTime }]);
       });
 
       it('returns the custom schedule for the whole day if it differs from the default schedule by one extra slot', () => {
@@ -60,9 +60,9 @@ describe('CustomSchedule.vue', () => {
         };
         wrapper.setData({ localSchedule: { 0: { ...defaultSchedule[0], timeSlots: [...defaultSchedule[0].timeSlots, newTimeSlot] } } });
         expect(wrapper.vm.calculateNewCustomSchedule()).toEqual([
-          { start: defaultSchedule[0].timeSlots[0].startDateTime, end: defaultSchedule[0].timeSlots[0].endDateTime },
-          { start: defaultSchedule[0].timeSlots[1].startDateTime, end: defaultSchedule[0].timeSlots[1].endDateTime },
-          { start: newTimeSlot.startDateTime, end: newTimeSlot.endDateTime },
+          { startDateTime: defaultSchedule[0].timeSlots[0].startDateTime, endDateTime: defaultSchedule[0].timeSlots[0].endDateTime },
+          { startDateTime: defaultSchedule[0].timeSlots[1].startDateTime, endDateTime: defaultSchedule[0].timeSlots[1].endDateTime },
+          { startDateTime: newTimeSlot.startDateTime, endDateTime: newTimeSlot.endDateTime },
         ]);
       });
 
@@ -94,15 +94,15 @@ describe('CustomSchedule.vue', () => {
         } });
 
         wrapper.setData({ localSchedule: { ...defaultSchedule, 1: { ...day1DefaultSchedule, timeSlots: [newTimeSlot] } } });
-        expect(wrapper.vm.calculateNewCustomSchedule()).toEqual([{ start: newTimeSlot.startDateTime, end: newTimeSlot.endDateTime },
+        expect(wrapper.vm.calculateNewCustomSchedule()).toEqual([{ startDateTime: newTimeSlot.startDateTime, endDateTime: newTimeSlot.endDateTime },
         ]);
       });
 
       it('returns the right custom schedule for a day schedule if the current schedule is empty and the default schedule is not', () => {
         mountWrapper();
         wrapper.setData({ localSchedule: { 0: { ...defaultSchedule[0], timeSlots: [] } } });
-        expect(wrapper.vm.calculateNewCustomSchedule()).toEqual([{ start: new Date(`${defaultSchedule[0].date} 0:00`).toISOString(),
-          end: new Date(`${defaultSchedule[0].date} 0:00`).toISOString() }]);
+        expect(wrapper.vm.calculateNewCustomSchedule()).toEqual([{ startDateTime: new Date(`${defaultSchedule[0].date} 0:00`).toISOString(),
+          endDateTime: new Date(`${defaultSchedule[0].date} 0:00`).toISOString() }]);
       });
 
       it('returns nothing if the current schedule and the default schedule are the same', () => {

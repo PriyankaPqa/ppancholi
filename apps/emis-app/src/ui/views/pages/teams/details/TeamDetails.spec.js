@@ -7,7 +7,7 @@ import { RcPageContent } from '@libs/component-lib/components';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
 import Component from './TeamDetails.vue';
@@ -257,7 +257,7 @@ describe('TeamDetails.vue', () => {
     describe('displayEscalationLabel', () => {
       it('should be true if has feature flag TaskManagement and teamType is Ad Hoc and isEscalation is true', async () => {
         await mountWrapper(false, 5, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
           computed: {
             team: () => mockTeamsDataAddHoc({ isEscalation: true }),
           },
@@ -277,7 +277,7 @@ describe('TeamDetails.vue', () => {
 
       it('should be false if has feature flag TaskManagement and teamType is Ad Hoc but isEscalation is false', async () => {
         await mountWrapper(false, 5, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
           computed: {
             team: () => mockTeamsDataAddHoc({ isEscalation: false }),
           },
@@ -287,7 +287,7 @@ describe('TeamDetails.vue', () => {
 
       it('should be false if has feature flag TaskManagement but teamType is standard', async () => {
         await mountWrapper(false, 5, {
-          featureList: [FeatureKeys.TaskManagement],
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
           computed: {
             team: () => mockTeamsDataStandard(),
           },
@@ -300,7 +300,7 @@ describe('TeamDetails.vue', () => {
   describe('displayUseLodging', () => {
     it('should be true if has feature flag Lodging and useForLodging is true', async () => {
       await mountWrapper(false, 5, {
-        featureList: [FeatureKeys.Lodging],
+        featureList: [wrapper.vm.$featureKeys.Lodging],
         computed: {
           team: () => mockTeamsDataAddHoc({ useForLodging: true }),
         },
@@ -320,7 +320,7 @@ describe('TeamDetails.vue', () => {
 
     it('should be false if useForLodging is false', async () => {
       await mountWrapper(false, 5, {
-        featureList: [FeatureKeys.TaskManagement],
+        featureList: [wrapper.vm.$featureKeys.TaskManagement],
         computed: {
           team: () => mockTeamsDataAddHoc({ useForLodging: false }),
         },

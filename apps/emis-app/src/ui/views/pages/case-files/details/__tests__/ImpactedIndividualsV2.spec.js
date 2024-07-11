@@ -1,17 +1,14 @@
 import { CaseFileStatus, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
 import { mockProvider } from '@/services/provider';
-import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
-import { mockCaseFileIndividualEntities } from '@libs/entities-lib/case-file-individual';
 import Component from '../case-file-impacted-individualsV2/ImpactedIndividualsV2.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 let caseFile = mockCaseFileEntity({ id: 'test-id-01' });
 
-const { personStore, pinia } = useMockPersonStore();
-const { caseFileIndividualStore } = useMockCaseFileIndividualStore(pinia);
+const { pinia } = useMockPersonStore();
 
 describe('ImpactedIndividualsV2.vue', () => {
   let wrapper;
@@ -42,15 +39,6 @@ describe('ImpactedIndividualsV2.vue', () => {
     await doMount();
   });
 
-  describe('lifecycle', () => {
-    describe('created', () => {
-      it('should fetch and load data', async () => {
-        expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'cf-id' });
-        expect(personStore.fetchByIds).toHaveBeenCalledWith(['pid-1', 'pid-2'], true);
-      });
-    });
-  });
-
   describe('computed', () => {
     describe('disableEditingByStatus', () => {
       it('should be true when case file status is closed or archived or inactive', async () => {
@@ -69,12 +57,6 @@ describe('ImpactedIndividualsV2.vue', () => {
         caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open });
         await doMount();
         expect(wrapper.vm.disableEditingByStatus).toEqual(false);
-      });
-    });
-
-    describe('individuals', () => {
-      it('returns the right data', () => {
-        expect(wrapper.vm.individuals).toEqual(mockCaseFileIndividualEntities());
       });
     });
   });

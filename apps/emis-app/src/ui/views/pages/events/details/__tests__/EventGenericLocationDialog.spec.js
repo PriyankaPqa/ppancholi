@@ -8,7 +8,6 @@ import { ECanadaProvinces } from '@libs/shared-lib/types';
 
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Address } from '@libs/entities-lib/value-objects/address';
 import Component from '../components/EventGenericLocationDialog.vue';
 
@@ -294,7 +293,7 @@ describe('EventGenericLocationDialog.vue', () => {
       test('city', async () => {
         expect(wrapper.vm.rules.city).toEqual({
           required: true,
-          max: MAX_LENGTH_MD,
+          max: MAX_LENGTH_SM,
         });
       });
 
@@ -402,7 +401,7 @@ describe('EventGenericLocationDialog.vue', () => {
       it('returns true if storage returns true', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.AddressAutoFill],
+          featureList: [wrapper.vm.$featureKeys.AddressAutoFill],
           propsData: {
             event: mockEvent,
             isEditMode: false,

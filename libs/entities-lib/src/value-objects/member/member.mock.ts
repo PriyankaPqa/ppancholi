@@ -5,15 +5,17 @@ import { mockCampGround, mockCurrentAddressCreateRequest, mockOther } from '../c
 import {
   IMember, IMemberEntity, MemberCreateRequest,
 } from './member.types';
+import { mockBaseData } from '../../base';
 
 import { Member } from './member';
 
 export const mockMemberData = (): IMemberEntity => ({
+  ...mockBaseData(),
   identitySet: mockIdentitySet(),
   contactInformation: mockContactInformation(),
   currentAddress: mockCampGround(),
   addressHistory: [mockOther(), mockCampGround()],
-} as IMemberEntity);
+});
 
 export const mockMember = (force?: Partial<IMemberEntity>): IMember => new Member(deepmerge(mockMemberData(), force || {}));
 
