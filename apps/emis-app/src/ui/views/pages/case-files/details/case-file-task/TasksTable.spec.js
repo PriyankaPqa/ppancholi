@@ -729,6 +729,21 @@ describe('TasksTable.vue', () => {
           },
           {
             items: [],
+            key: 'Entity/AssignedTeamId',
+            keyType: 'guid',
+            label: 'task.task_table_header.assigned_to',
+            loading: false,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'no-filter': true,
+              placeholder: 'common.filters.autocomplete.placeholder',
+              'return-object': true,
+              'search-input': '',
+            },
+            type: 'select',
+          },
+          {
+            items: [],
             key: 'Entity/UserWorkingOn',
             keyType: 'guid',
             label: 'task.task_details.working_on_it',
@@ -798,6 +813,21 @@ describe('TasksTable.vue', () => {
             type: EFilterType.MultiSelect,
             label: 'task.task_table_header.status',
             items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
+          },
+          {
+            items: [],
+            key: 'Entity/AssignedTeamId',
+            keyType: 'guid',
+            label: 'task.task_table_header.assigned_to',
+            loading: false,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'no-filter': true,
+              placeholder: 'common.filters.autocomplete.placeholder',
+              'return-object': true,
+              'search-input': '',
+            },
+            type: 'select',
           },
           {
             items: [],
@@ -1355,10 +1385,38 @@ describe('TasksTable.vue', () => {
         });
         await wrapper.vm.fetchUserAccountFilter('mock-user-name');
         expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
-          { filter: { and: [{ 'Metadata/DisplayName': { contains: 'mock-user-name' } }] }, top: 5 },
+          { filter: { and: [{ 'Metadata/DisplayName': { contains: 'mock-user-name' } }] }, top: 5, orderBy: 'Metadata/DisplayName asc' },
           null,
           false,
           true,
+        );
+      });
+    });
+
+    describe('fetchTeamFilter', () => {
+      it('should call team search with proper params', async () => {
+        await wrapper.vm.fetchTeamFilter('mock-user-name');
+        expect(teamStore.search).toHaveBeenCalledWith(
+          { params: {
+            filter: { and: [{ 'Entity/Name': { contains: 'mock-user-name' } }], 'Entity/IsAssignable': true },
+            top: 5,
+            orderBy: 'Entity/Name asc',
+          } },
+        );
+
+        jest.clearAllMocks();
+        await wrapper.setProps({ isInCaseFile: true, caseFile: mockCaseFileEntity({ eventId: 'event-id-1' }) });
+        await wrapper.vm.fetchTeamFilter('mock-user-name');
+        expect(teamStore.search).toHaveBeenCalledWith(
+          { params: {
+            filter: {
+              and: [{ 'Entity/Name': { contains: 'mock-user-name' } }],
+              'Entity/IsAssignable': true,
+              Entity: { Events: { any: { Id: { value: 'event-id-1', type: 'guid' } } } },
+            },
+            top: 5,
+            orderBy: 'Entity/Name asc',
+          } },
         );
       });
     });
@@ -1502,6 +1560,39 @@ describe('TasksTable.vue', () => {
         });
         expect(wrapper.vm.debounceSearchUserAccount).toHaveBeenCalledWith('');
         expect(wrapper.vm.userAccountFilter).toEqual([]);
+      });
+    });
+
+    describe('teamSearchQuery', () => {
+      it('should call debounceSearchTeam with new value', async () => {
+        wrapper.vm.debounceSearchTeam = jest.fn();
+        await wrapper.setData({
+          teamSearchQuery: '',
+        });
+        await flushPromises();
+        await wrapper.setData({
+          teamSearchQuery: 'abc',
+        });
+        expect(wrapper.vm.debounceSearchTeam).toHaveBeenCalledWith('abc');
+      });
+
+      it('should not call debounceSearchTeam and reset teamFilter when new value is null or empty string', async () => {
+        wrapper.vm.debounceSearchTeam = jest.fn();
+        await wrapper.setData({
+          teamSearchQuery: 'abc',
+          teamFilter: [
+            {
+              text: 'mock-user-name',
+              value: 'id-1',
+            },
+          ],
+        });
+        await flushPromises();
+        await wrapper.setData({
+          teamSearchQuery: '',
+        });
+        expect(wrapper.vm.debounceSearchTeam).toHaveBeenCalledWith('');
+        expect(wrapper.vm.teamFilter).toEqual([]);
       });
     });
   });

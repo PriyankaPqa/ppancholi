@@ -237,6 +237,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
       userAccountSearchQuery: '',
       userAccountFilter: [],
+      teamSearchQuery: '',
+      teamFilter: [],
     };
   },
 
@@ -421,6 +423,21 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
         },
         {
+          key: 'Entity/AssignedTeamId',
+          type: EFilterType.Select,
+          keyType: EFilterKeyType.Guid,
+          label: this.$t('task.task_table_header.assigned_to') as string,
+          items: this.teamFilter,
+          loading: useTeamStore().searchLoading,
+          props: {
+            'no-data-text': !this.teamSearchQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.teamSearchQuery,
+            'no-filter': true,
+            'return-object': true,
+            placeholder: this.$t('common.filters.autocomplete.placeholder'),
+          },
+        },
+        {
           key: 'Entity/UserWorkingOn',
           type: EFilterType.Select,
           keyType: EFilterKeyType.Guid,
@@ -433,7 +450,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
             'no-filter': true,
             'return-object': true,
             placeholder: this.$t('common.filters.autocomplete.placeholder'),
-    },
+          },
         },
       ];
       if (!this.isInCaseFile) {
@@ -513,6 +530,15 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       }
       if (newVal === null || newVal.trim().length === 0) {
         this.userAccountFilter = [];
+      }
+    },
+
+    teamSearchQuery(newVal) {
+      if (newVal !== null) {
+        this.debounceSearchTeam(newVal);
+      }
+      if (newVal === null || newVal.trim().length === 0) {
+        this.teamFilter = [];
       }
     },
   },
@@ -648,6 +674,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     setAdditionalFilters(state: unknown) {
       // eslint-disable-next-line
+        debugger;
       this.personalTaskOnly = (state as any)?.personalTaskOnlyFilter || false;
       this.teamTaskOnly = (state as any)?.teamTaskOnlyFilter || false;
     },
@@ -694,11 +721,38 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         const params = {
           filter,
           top: 5,
+          orderBy: 'Metadata/DisplayName asc',
         };
 
         const res = await this.combinedUserAccountStore.search(params, null, false, true);
         this.userAccountFilter = res?.values.map((e) => ({
           text: e.metadata.displayName,
+          value: e.id,
+        }));
+    },
+
+    debounceSearchTeam: _debounce(function func(this: any, query: string) {
+      if (query.trim().length > 0) {
+        this.fetchTeamFilter(query);
+      }
+    }, 500),
+
+    async fetchTeamFilter(querySearch: string) {
+        const filter = {
+          ...(this.isInCaseFile ? { Entity: { Events: { any: { Id: { value: this.caseFile.eventId, type: 'guid' } } } } } : {}),
+          ...{ 'Entity/IsAssignable': true },
+          ...helpers.toQuickSearchSql(querySearch, 'Entity/Name'),
+        };
+
+        const params = {
+          filter,
+          top: 5,
+          orderBy: 'Entity/Name asc',
+        };
+
+        const res = await useTeamStore().search({ params });
+        this.teamFilter = res?.values.map((e) => ({
+          text: e.name,
           value: e.id,
         }));
     },
@@ -712,6 +766,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       }
       if ((filterKey === 'Entity/UserWorkingOn' && search !== selectedItem?.text)) {
         this.userAccountSearchQuery = search;
+      }
+      if ((filterKey === 'Entity/AssignedTeamId' && search !== selectedItem?.text)) {
+        this.teamSearchQuery = search;
       }
     },
   },

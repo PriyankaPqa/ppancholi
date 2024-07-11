@@ -277,7 +277,7 @@ export function getEntityStoreComponents<T extends IEntity, IdParams>(
     searchLoading.value = payload;
   }
 
-  async function search({ params, searchEndpoint, includeInactiveItems = true, otherSearchEndpointParameters = {} }:
+  async function search({ params, searchEndpoint, includeInactiveItems = false, otherSearchEndpointParameters = {} }:
     { params: ISearchParams, searchEndpoint?: string, includeInactiveItems?: boolean, otherSearchEndpointParameters?: any })
     : Promise<ITableSearchResults<T>> {
       setSearchLoading(true);
