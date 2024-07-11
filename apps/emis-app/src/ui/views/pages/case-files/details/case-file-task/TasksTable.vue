@@ -71,7 +71,7 @@
 
       <template #[`item.${customColumns.taskCategory}`]="{ item }">
         <div :class="{ 'ml-4': !isInCaseFile }">
-          <v-icon class="adjust-margin" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
+          <v-icon :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
             mdi-account-check
           </v-icon>
           <router-link
@@ -728,9 +728,5 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   & td {
     height: initial;
   }
-}
-
-.adjust-margin{
-  margin-left: -16px;
 }
 </style>
