@@ -70,7 +70,7 @@
       </template>
 
       <template #[`item.${customColumns.taskCategory}`]="{ item }">
-        <div :class="{ 'ml-4': !isInCaseFile }">
+        <div>
           <v-icon :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
             mdi-account-check
           </v-icon>
@@ -81,7 +81,7 @@
             :to="getTaskDetailsRoute(item.entity.caseFileId, item.entity.id)">
             {{ item.metadata.taskCategory }}
           </router-link>
-          <div class="pl-2">
+          <div class="pl-6">
             <span class="rc-red-text font-weight-bold"> {{ item.entity.isUrgent ? $t('task.create_edit.urgent') : '' }}</span>
           </div>
         </div>
