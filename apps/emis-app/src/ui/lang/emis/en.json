@@ -1183,6 +1183,7 @@
     "ds.task.taskStatusNameFr": "Task - Status (fr)",
     "ds.task.taskTypeNameEn": "Task - Type (en)",
     "ds.task.taskTypeNameFr": "Task - Type (fr)",
+    "ds.task.financialAssistancePaymentName": "Task - Financial assistance payment name",
     "ds.task.updateDate": "Task - Date updated",
     "ds.task.userWorkingOn": "Task - User Working On",
     "ds.taskHistory.actionTakenNameEn": "Task History - Action Taken (en)",
