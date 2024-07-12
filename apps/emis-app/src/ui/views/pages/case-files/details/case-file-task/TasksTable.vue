@@ -30,7 +30,8 @@
           add-filter-label="tasksTable.filter"
           @open="isInCaseFile ? null : fetchEventsFilter()"
           @update:autocomplete="onAutoCompleteUpdate($event)"
-          @update:appliedFilter="onApplyFilterLocal">
+          @update:appliedFilter="onApplyFilterLocal"
+          @load:filter="throttleOnLoadFilter($event)">
           <template #toolbarActions>
             <div class="d-flex">
               <div class="d-flex">
@@ -161,7 +162,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useTaskMetadataStore, useTaskStore } from '@/pinia/task/task';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { UserRoles } from '@libs/entities-lib/user';
-import { EFilterKeyType, EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterKeyType, EFilterType, FilterFormData, IFilterSettings } from '@libs/component-lib/types';
 import { FilterKey, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -179,6 +180,7 @@ import { IEntityCombined } from '@libs/entities-lib/base';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query-sql/odata-query-sql';
 import _debounce from 'lodash/debounce';
+import _throttle from 'lodash/throttle';
 
 interface IParsedTaskMetadata extends ITaskMetadata {
   userWorkingOnNameWithRole?: string,
@@ -769,6 +771,16 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         this.teamSearchQuery = search;
       }
     },
+
+    throttleOnLoadFilter: _throttle(async function func(this:any, filterFormData: FilterFormData) {
+      const filterItems = filterFormData.values;
+      if (!filterItems) {
+        return;
+      }
+      await this.onLoadFilter(filterFormData);
+      this.userAccountFilter = [filterItems['Entity/UserWorkingOn'].value];
+      this.teamFilter = [filterItems['Entity/AssignedTeamId'].value];
+    }, 500),
   },
 });
 </script>
