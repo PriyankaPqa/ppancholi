@@ -902,7 +902,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       created: '2021-05-04',
       activityType: CaseFileActivityType.TaskManagementTaskCreated,
       details: {
-        name: {
+        category: {
           id: 'mock-task-name-id-1',
           name: {
             translation: {
@@ -921,7 +921,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       created: '2021-05-04',
       activityType: CaseFileActivityType.TaskManagementTaskCompleted,
       details: {
-        name: {
+        category: {
           id: 'mock-task-name-id-1',
           name: {
             translation: {

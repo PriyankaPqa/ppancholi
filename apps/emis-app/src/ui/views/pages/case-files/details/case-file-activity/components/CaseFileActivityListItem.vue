@@ -699,9 +699,9 @@ export default Vue.extend({
       };
       const contentObject: { [index: number ]: TranslateResult | string } = {
         [CaseFileActivityType.TaskManagementTaskCreated]:
-          this.$t('caseFileActivity.activityList.body.TaskManagement.Created', { x: this.$m((this.item.details.name as any).name as IMultilingual) }),
+          this.$t('caseFileActivity.activityList.body.TaskManagement.Created', { x: this.$m((this.item.details.category as any).name as IMultilingual) }),
         [CaseFileActivityType.TaskManagementTaskCompleted]:
-          this.$t('caseFileActivity.activityList.body.TaskManagement.Completed', { x: this.$m((this.item.details.name as any).name as IMultilingual) }),
+          this.$t('caseFileActivity.activityList.body.TaskManagement.Completed', { x: this.$m((this.item.details.category as any).name as IMultilingual) }),
       };
       const title = titleObject[this.item.activityType as CaseFileActivityType];
       const body = contentObject[this.item.activityType as CaseFileActivityType];

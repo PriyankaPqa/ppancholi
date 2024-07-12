@@ -324,7 +324,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       await Promise.all([
         useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
         useTeamStore().fetch(this.task.assignedTeamId),
-        this.task.financialAssistancePaymentId && this.fetchSelectedFAPaymentAndSetName(),
+        this.task?.financialAssistancePaymentId && this.fetchSelectedFAPaymentAndSetName(),
       ]);
       this.selectedTaskCategoryId = this.task.category?.optionItemId;
       this.selectedSubCategoryId = this.task.subCategory ? this.task.subCategory.optionItemId : '';
