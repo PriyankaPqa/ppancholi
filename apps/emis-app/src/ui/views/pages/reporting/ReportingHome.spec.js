@@ -5,6 +5,7 @@ import {
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 import Component from './ReportingHome.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 const localVue = createLocalVue();
 
@@ -30,6 +31,23 @@ describe('ReportingHome.vue', () => {
       it('is displayed', async () => {
         const card = wrapper.findDataTest('customQueries');
         expect(card.exists()).toBeTruthy();
+      });
+    });
+
+    describe('SentEmailIssues Queries card', () => {
+      it('is displayed when feature flag is on', async () => {
+        wrapper = mount(Component, {
+          pinia: getPiniaForUser(UserRoles.level6),
+          featureList: [FeatureKeys.GeographicMapping],
+          localVue,
+        });
+        const card = wrapper.findDataTest('sentEmailIssuesQueries');
+        expect(card.exists()).toBeTruthy();
+      });
+
+      it('is not displayed when feature flag is off', async () => {
+        const card = wrapper.findDataTest('sentEmailIssuesQueries');
+        expect(card.exists()).toBeFalsy();
       });
     });
   });

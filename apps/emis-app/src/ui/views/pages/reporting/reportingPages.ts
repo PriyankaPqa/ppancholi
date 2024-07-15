@@ -5,6 +5,7 @@ import helpers from '@/ui/helpers/helpers';
 import { VuePlugin } from '@/ui/plugins/features';
 import { INavigationTab } from '@libs/shared-lib/types';
 import { IQuery, QueryType, ReportingTopic } from '@libs/entities-lib/reporting';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { AllPbiReports } from './standard_queries/PowerBiEmbedded';
 
 export class ReportingPages {
@@ -57,6 +58,20 @@ export class ReportingPages {
       level: UserRoles.level6,
       strictLevel: true,
       roles: [UserRoles.contributorIM],
+    }, {
+      title: 'reporting.sentEmailIssuesQueries',
+      button: 'reporting.start',
+        route: {
+          name: routes.reporting.query.name,
+          params: {
+            queryTypeName: 'StandardL6',
+            queryId: 'SentEmailIssuesL6',
+          },
+        },
+      dataTest: 'sentEmailIssuesQueries',
+      level: UserRoles.level6,
+      roles: [UserRoles.contributorIM],
+      feature: FeatureKeys.GeographicMapping,
     }, {
       title: 'reporting.customQueries',
       button: 'reporting.start',

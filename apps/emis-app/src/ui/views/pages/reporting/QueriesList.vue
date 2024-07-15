@@ -167,7 +167,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (this.queryType === QueryType.Custom) {
         return null;
       }
-      return AllReports.filter((r) => r.queryType === this.queryType).map((q) => ({
+      return AllReports.filter((r) => r.queryType === this.queryType && r.topic !== ReportingTopic.LogActivitiesEmailEvents).map((q) => ({
         id: q.id,
         theme: this.$t(`reporting.query.theme.${ReportingTopic[q.topic]}`) as string,
         name: q.name,

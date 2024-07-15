@@ -4,6 +4,7 @@ import { createLocalVue } from '@/test/testSetup';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import { IQuery, QueryType } from '@libs/entities-lib/reporting';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { ReportingPages } from './reportingPages';
 
 const pinia = createTestingPinia({ stubActions: false });
@@ -79,6 +80,25 @@ describe('reportingPages', () => {
         level: UserRoles.level6,
         strictLevel: true,
         roles: [UserRoles.contributorIM],
+      });
+    });
+
+    it('includes sentEmailIssues', () => {
+      const card = reportingPages.cards(localVue.prototype).find((c) => c.dataTest === 'sentEmailIssuesQueries');
+      expect(card).toEqual({
+        title: 'reporting.sentEmailIssuesQueries',
+        button: 'reporting.start',
+        route: {
+          name: routes.reporting.query.name,
+          params: {
+            queryTypeName: 'StandardL6',
+            queryId: 'SentEmailIssuesL6',
+          },
+        },
+        dataTest: 'sentEmailIssuesQueries',
+        level: UserRoles.level6,
+        roles: [UserRoles.contributorIM],
+        feature: FeatureKeys.GeographicMapping,
       });
     });
 

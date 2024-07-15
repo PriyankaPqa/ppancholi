@@ -10,6 +10,7 @@ export enum LookupType {
   eventEn,
   programNameEn,
   programNameFr,
+  issueType,
 }
 
 export interface ExtendedColumn extends Column<any, any> {
@@ -597,6 +598,38 @@ export const eTransferPaymentConfirmationViewDS: IDatasourceBase = {
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.eTransferPaymentConfirmation.${x.dataField}` })),
 };
 
+export const logActivitiesEmailEventsViewDs : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'householdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'activityTypeNameEn', dataType: 'string', visible: false },
+    { dataField: 'activityTypeNameFr', dataType: 'string', visible: false },
+    { dataField: 'eventId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'eventNameEn', dataType: 'string', visible: false },
+    { dataField: 'eventNameFr', dataType: 'string', visible: false },
+    { dataField: 'activityDate', dataType: 'date', asUtcDate: true },
+    { dataField: 'type', dataType: 'number', visible: false },
+    { dataField: 'eventType', dataType: 'string', visible: false },
+    { dataField: 'eventTypeId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'eventTypeNameEn', dataType: 'string', visible: false },
+    { dataField: 'eventTypeNameFr', dataType: 'string', visible: false },
+    { dataField: 'massCommunicationId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'massCommunicationName', dataType: 'string', visible: false },
+    { dataField: 'issueType', dataType: 'string', lookupType: LookupType.issueType },
+    { dataField: 'languageCode', dataType: 'string', visible: false },
+    { dataField: 'email', dataType: 'string' },
+    { dataField: 'emailCategoryEn', dataType: 'string', lookupType: LookupType.enumEn, lookupKey: 'EmailCategory' },
+    { dataField: 'emailCategoryFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'EmailCategory' },
+    { dataField: 'emailTemplateKey', dataType: 'string', visible: false },
+    { dataField: 'reason', dataType: 'string' },
+    { dataField: 'latitude', dataType: 'number', visible: false },
+    { dataField: 'longitude', dataType: 'number', visible: false },
+    { dataField: 'city', dataType: 'string', visible: false },
+    { dataField: 'region', dataType: 'string', visible: false },
+    { dataField: 'countryCode', dataType: 'string', visible: false },
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.logActivitiesEmailEvents.${x.dataField}` })),
+};
+
 export const teamTaskDs : IDatasourceSettings = {
   url: 'common/data-providers/team-tasks',
   reportingTopic: ReportingTopic.Tasks,
@@ -825,6 +858,18 @@ export const assignedCaseFilesDs : IDatasourceSettings = {
   ],
 };
 
+export const logActivitiesEmailEventsDs : IDatasourceSettings = {
+  url: 'common/data-providers/log-activities-email-events',
+  reportingTopic: ReportingTopic.LogActivitiesEmailEvents,
+  key: { logActivitiesEmailEventsId: 'Guid' },
+  columns: [
+    ...(logActivitiesEmailEventsViewDs.columns.map((x) => ({ ...x, dataField: `logActivitiesEmailEvents.${x.dataField}` }))),
+    ...(householdViewDs.columns.filter((c) => c.dataField !== 'primaryBeneficiary' && c.dataField !== 'primaryBeneficiaryFirstName' && c.dataField !== 'primaryBeneficiaryLastName')
+          .map((x) => ({ ...x, dataField: `household.${x.dataField}`, visible: x.dataField === 'registrationNumber' }))),
+    ...(personViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}`, visible: x.dataField === 'email' }))),
+  ],
+};
+
 export const datasources = [
   householdMembersDs,
   householdMembersAddressHistoryDs,
@@ -843,4 +888,5 @@ export const datasources = [
   teamTaskHistoryDs,
   assignedCaseFilesDs,
   documentsDs,
+  logActivitiesEmailEventsDs,
 ];

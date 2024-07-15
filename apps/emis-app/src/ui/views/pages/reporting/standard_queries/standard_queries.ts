@@ -33,6 +33,7 @@ import { TasksL6En, TasksL6Fr } from './TasksL6';
 import { DocumentsL6En, DocumentsL6Fr } from './DocumentsL6';
 import { DataCorrectionTriageL6En, DataCorrectionTriageL6Fr } from './DataCorrectionTriageL6';
 import { LodgingOverviewWithHistoryL6En, LodgingOverviewWithHistoryL6Fr } from './LodgingOverviewWithHistoryL6';
+import { SentEmailIssuesL6En, SentEmailIssuesL6Fr } from './SentEmailIssuesL6';
 
 import { AllPbiReports } from './PowerBiEmbedded';
 
@@ -462,4 +463,5 @@ export const AllReports : IQuery[] = [
   DocumentsL5En, DocumentsL5Fr,
   DocumentsL4En, DocumentsL4Fr,
   DocumentsIMEn, DocumentsIMFr,
+  SentEmailIssuesL6En, SentEmailIssuesL6Fr,
 ];

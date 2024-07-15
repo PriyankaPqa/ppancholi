@@ -47,6 +47,10 @@ export class QueriesService extends DomainBaseService<IQuery, uuid> implements I
     return this.http.get(`${this.http.baseUrl}/common/data-providers/event-names`);
   }
 
+  async fetchIssueTypes(): Promise<ODataResult<ObjectName>> {
+    return this.http.get(`${this.http.baseUrl}/common/data-providers/issue-types`);
+  }
+
   async getPowerBiTokenForReport(reportName: string): Promise<IPowerBiTokenDetails> {
     return this.http.get(`${this.http.baseUrl}/common/power-bi/embed-info/${reportName}`);
   }

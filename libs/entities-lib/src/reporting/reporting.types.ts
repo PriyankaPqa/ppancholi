@@ -38,6 +38,7 @@ export enum ReportingTopic {
   TasksHistory = 15,
   Documents = 16,
   AssignedCaseFiles = 17,
+  LogActivitiesEmailEvents = 18,
   PowerBi = 99,
 }
 

@@ -16,6 +16,7 @@ export enum FeatureKeys {
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
   MovePayments = 'MovePayments',
   CaseFileIndividual = 'CaseFileIndividual',
+  GeographicMapping = 'GeographicMapping',
 }
 
 export enum FeatureType {
