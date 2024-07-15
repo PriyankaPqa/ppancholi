@@ -4,6 +4,7 @@ import {
   mockAssessmentResponseRequest,
   mockCreateAssessmentRequest,
   mockEditAssessmentAnsweredQuestionsRequest,
+  mockEventToPresentAssessmentToUserUponRegistrationRequest,
   mockPartialSaveAssessmentAnsweredQuestionsRequest,
   mockSaveAssessmentAnsweredQuestionsRequest,
   mockUpdateAssessmentRequest,
@@ -971,4 +972,16 @@ export const prepareStateMassActionCaseFileStatusViaUploadFile = async (params: 
   // eslint-disable-next-line
   const responseMassCaseFileStatusUpdate = await params.provider.cypress.massAction.createWithFile('case-file-status', mockCreateMassCaseFileStatusUpdateFile);
   return { responseMassCaseFileStatusUpdate, mockRequestParamData };
+};
+
+/**
+ * Edit the Event Details page to add the Assessment to the ‘Assessment to be completed during registration’ section of the page
+ * @param provider
+ * @param eventId
+ * @param assessmentId
+ */
+export const addAssessmentToBeCompletedDuringRegistration = async (provider: IProvider, eventId: string, assessmentId: string) => {
+  const mockEventToPresentAssessmentToUserUponRegistration = mockEventToPresentAssessmentToUserUponRegistrationRequest(assessmentId);
+  const registrationAssessment = await provider.events.addRegistrationAssessment(eventId, mockEventToPresentAssessmentToUserUponRegistration);
+  return registrationAssessment;
 };

@@ -12,6 +12,7 @@ import {
   SurveyJsAssessmentFormState,
   SurveyJsAssessmentResponseState,
 } from '@libs/entities-lib/assessment-template/assessment-template.types';
+import { IRegistrationAssessment } from '@libs/entities-lib/src/event';
 import { getRandomNumber } from '../../helpers';
 import {
   propertyStateMockEditAssessmentData,
@@ -165,4 +166,21 @@ export const mockEditAssessmentAnsweredQuestionsRequest = (id: string, caseFileI
   answeredQuestions: propertyAnswersMockEditAssessmentData,
   answeredQuestionsHistory,
   ...force,
+});
+
+export const mockEventToPresentAssessmentToUserUponRegistrationRequest = (assessmentId: string): IRegistrationAssessment => ({
+  ...mockBaseData(),
+  assessmentId,
+  sectionTitle: {
+    translation: {
+      en: 'My Assessment title',
+      fr: "C'est le grand cours",
+    },
+  },
+  details: {
+    translation: {
+      en: 'This is my entered description',
+      fr: "C'est cours est va amusant",
+    },
+  },
 });

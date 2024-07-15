@@ -89,7 +89,8 @@
                 <div
                   v-for="requiredAssessmentForm in requiredAssessmentForms"
                   :key="requiredAssessmentForm.id"
-                  class="ml-6 mr-4">
+                  class="ml-6 mr-4"
+                  data-test="program-details-eligibilityCriteria-assessment-name">
                   <v-icon
                     class="mr-1"
                     :color="getEligibilityIconColor(program.eligibilityCriteria.completedAssessments)"
