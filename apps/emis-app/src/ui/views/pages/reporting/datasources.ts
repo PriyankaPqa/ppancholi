@@ -596,6 +596,8 @@ export const eTransferPaymentConfirmationViewDS: IDatasourceBase = {
     { dataField: 'bankNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'Bank' },
     { dataField: 'autoDepositEnabled', dataType: 'boolean', visible: false },
     { dataField: 'sentTimestamp', dataType: 'datetime', visible: false },
+    { dataField: 'batchReferenceNumber', dataType: 'string', visible: false },
+    { dataField: 'lastUpdatedTimestamp', dataType: 'datetime', visible: false },
   ] as Column<any, any>[]).map((x) => ({ ...x, caption: `ds.eTransferPaymentConfirmation.${x.dataField}` })),
 };
 
