@@ -480,7 +480,7 @@ describe('CreateEditTask.vue', () => {
     describe('setOriginalData', () => {
       it('should set originalForm properly', async () => {
         await wrapper.setData({
-          localTask: mockTeamTaskEntity(),
+          localTask: mockTeamTaskEntity({ financialAssistancePaymentId: 'mock-fa-payment-id-123' }),
         });
         wrapper.vm.setOriginalData();
         expect(wrapper.vm.originalForm).toEqual({
@@ -495,6 +495,7 @@ describe('CreateEditTask.vue', () => {
             optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
             specifiedOther: '',
           },
+          financialAssistancePaymentId: 'mock-fa-payment-id-123',
         });
       });
     });

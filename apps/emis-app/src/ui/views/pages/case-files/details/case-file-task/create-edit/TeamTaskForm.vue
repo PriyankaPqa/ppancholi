@@ -44,6 +44,27 @@
         </v-col>
       </v-row>
 
+      <v-row v-if="selectedTaskCategory && selectedTaskCategory.isRelatedToFinancialAssistance">
+        <v-col class="pb-1">
+          <v-autocomplete-with-validation
+            v-model="localTeamTaskForm.financialAssistancePaymentId"
+            background-color="white"
+            outlined
+            :items="financialAssistancePayments"
+            :item-text="getFAName"
+            :item-value="(item) => item && item.id"
+            :loading="loading"
+            async-mode
+            :attach="true"
+            :label="$t('caseFileActivity.activityList.title.FinancialAssistancePayment')"
+            data-test="create-edit-task-FA-select"
+            v-bind="$attrs"
+            clearable
+            @change="$emit('change', $event)"
+            @delete="$emit('delete', $event)" />
+        </v-col>
+      </v-row>
+
       <v-row v-if="shouldDisplaySubCategorySelect">
         <v-col cols="6" class="py-1">
           <v-select-with-validation
@@ -99,17 +120,21 @@ import caseFileTask from '@/ui/mixins/caseFileTask';
 import mixins from 'vue-typed-mixins';
 import { ITaskEntityData, TaskStatus } from '@libs/entities-lib/task';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
+import { VAutocompleteWithValidation, VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
 import { UserRoles } from '@libs/entities-lib/user';
+import { IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 interface ILocalTeamTaskForm {
   category: IListOption;
   subCategory: IListOption;
   description: string;
   isUrgent: boolean;
+  financialAssistancePaymentId: string;
 }
 
 export default mixins(caseFileTask).extend({
@@ -120,6 +145,7 @@ export default mixins(caseFileTask).extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     VTextAreaWithValidation,
+    VAutocompleteWithValidation,
   },
 
   props: {
@@ -132,6 +158,11 @@ export default mixins(caseFileTask).extend({
       type: Boolean,
       default: false,
     },
+
+    caseFileId: {
+      type: String,
+      required: true,
+    },
   },
 
   data() {
@@ -140,10 +171,13 @@ export default mixins(caseFileTask).extend({
         subCategory: this.taskData.subCategory,
         description: this.taskData.description,
         isUrgent: this.taskData.isUrgent,
+        financialAssistancePaymentId: this.taskData.financialAssistancePaymentId,
       } as ILocalTeamTaskForm;
 
       return {
         localTeamTaskForm,
+        loading: false,
+        financialAssistancePayments: [] as IFinancialAssistancePaymentEntity[],
     };
   },
 
@@ -189,9 +223,11 @@ export default mixins(caseFileTask).extend({
 
   async created() {
     await useTaskStore().fetchTaskCategories();
+    await this.fetchFAPayments();
     if (this.isEditMode) {
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
       this.selectedSubCategoryId = this.taskData.subCategory ? this.taskData.subCategory.optionItemId : '';
+      this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
     }
   },
 
@@ -201,12 +237,37 @@ export default mixins(caseFileTask).extend({
       this.localTeamTaskForm.description = '';
       this.localTeamTaskForm.subCategory.optionItemId = null;
       this.localTeamTaskForm.subCategory.specifiedOther = null;
+      this.localTeamTaskForm.financialAssistancePaymentId = null;
       this.$emit('reset-form-validation');
     },
 
     setSubCategoryIdAndResetSpecifiedOther(subCategoryId: string) {
       this.selectedSubCategoryId = subCategoryId;
       this.localTeamTaskForm.subCategory.specifiedOther = null;
+    },
+
+    getFAName(item: IFinancialAssistancePaymentEntity): string {
+      if (item?.name) {
+        return item.name;
+      }
+      return '';
+    },
+
+    async fetchFAPayments() {
+      this.loading = true;
+
+      const params = {
+        filter: {
+          Entity: {
+            CaseFileId: { value: this.caseFileId, type: EFilterKeyType.Guid },
+          },
+        },
+      };
+
+      const res = await useFinancialAssistancePaymentStore().search({ params, includeInactiveItems: true });
+
+      this.financialAssistancePayments = res?.values;
+      this.loading = false;
     },
   },
 });

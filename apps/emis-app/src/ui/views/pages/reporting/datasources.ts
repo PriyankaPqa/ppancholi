@@ -254,6 +254,7 @@ export const taskViewDS : IDatasourceBase = {
     { dataField: 'taskCategoryFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'TaskCategory' },
     { dataField: 'taskSubCategoryEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'TaskCategory', lookupSubItems: true },
     { dataField: 'taskSubCategoryFr', dataType: 'string', visible: false, lookupType: LookupType.optionItemFr, lookupKey: 'TaskCategory', lookupSubItems: true },
+    { dataField: 'financialAssistancePaymentName', dataType: 'string' },
     { dataField: 'taskStatusNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'TaskStatus' },
     { dataField: 'taskStatusNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'TaskStatus' },
     { dataField: 'lastActionTakenNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'ActionTaken' },

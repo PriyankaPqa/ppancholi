@@ -25,9 +25,12 @@ describe('TaskActionDialog.vue', () => {
       propsData: {
         show: true,
         eventId: 'mock-event-id-1',
-        task: mockTeamTaskEntity({ id: 'mock-task-id' }),
-        selectedTaskCategory: 'mock-task-category',
-        selectedSubCategory: 'mock-task-sub-category',
+        taskId: 'mock-task-id',
+        selectedTaskCategoryName: 'mock-task-category',
+        selectedSubCategoryName: 'mock-task-sub-category',
+      },
+      computed: {
+        task: () => mockTeamTaskEntity({ id: 'mock-task-id' }),
       },
       mocks: {
         $services: services,
@@ -72,8 +75,10 @@ describe('TaskActionDialog.vue', () => {
       });
 
       it('should not be displayed if personal task', async () => {
-        await wrapper.setProps({
-          task: mockPersonalTaskEntity(),
+        await doMount({
+          computed: {
+            task: () => mockPersonalTaskEntity(),
+          },
         });
         const element = wrapper.findDataTest('task-action-dialog-team-task-info');
         expect(element.exists()).toBeFalsy();
@@ -88,7 +93,7 @@ describe('TaskActionDialog.vue', () => {
 
       it('should be displayed if there is no selected sub-category', async () => {
         await wrapper.setProps({
-          selectedSubCategory: '',
+          selectedSubCategoryName: '',
         });
         const element = wrapper.findDataTest('task-action-dialog-sub-category');
         expect(element.exists()).toBeFalsy();
@@ -120,8 +125,10 @@ describe('TaskActionDialog.vue', () => {
       });
 
       it('should return proper items status is Completed', async () => {
-        await wrapper.setProps({
-          task: mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
+          },
         });
         expect(wrapper.vm.actionItems).toEqual([
           {
@@ -133,8 +140,10 @@ describe('TaskActionDialog.vue', () => {
       });
 
       it('should return proper items when taskType is personal', async () => {
-        await wrapper.setProps({
-          task: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
+        await doMount({
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
+          },
         });
         expect(wrapper.vm.actionItems).toEqual([
           {
@@ -278,9 +287,13 @@ describe('TaskActionDialog.vue', () => {
   describe('lifecycle', () => {
     describe('created', () => {
       it('should call getAssignableTeams and fetch user account metadata if taskType is team', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+          },
+        });
         await wrapper.setProps({
           eventId: 'mock-id-123',
-          task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
         });
         userAccountMetadataStore.fetch = jest.fn();
         wrapper.vm.getAssignableTeams = jest.fn();
@@ -293,9 +306,13 @@ describe('TaskActionDialog.vue', () => {
       });
 
       it('should not call getAssignableTeams if taskType is personal', async () => {
+        await doMount({
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
+          },
+        });
         await wrapper.setProps({
           eventId: 'mock-id-123',
-          task: mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
         });
         wrapper.vm.getAssignableTeams = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -303,6 +320,58 @@ describe('TaskActionDialog.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.getAssignableTeams).not.toHaveBeenCalled();
+      });
+
+      it('should set financialAssistancePaymentName from prop and do not call fetchSelectedFAPaymentAndSetName', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+          },
+        });
+        await wrapper.setProps({
+          financialAssistancePaymentNameProp: 'mock-fa-name',
+        });
+        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.financialAssistancePaymentName).toEqual('mock-fa-name');
+        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).not.toHaveBeenCalled();
+      });
+
+      it('should call fetchSelectedFAPaymentAndSetName if there is no fa name from prop, and there is financialAssistancePaymentId', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress, financialAssistancePaymentId: 'mock-fa-id-123' }),
+          },
+        });
+        await wrapper.setProps({
+          financialAssistancePaymentNameProp: '',
+        });
+        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).toHaveBeenCalled();
+      });
+
+      it('should not call fetchSelectedFAPaymentAndSetName if there is no fa name from prop, and there is no financialAssistancePaymentId', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress, financialAssistancePaymentId: '' }),
+          },
+        });
+        await wrapper.setProps({
+          financialAssistancePaymentNameProp: '',
+        });
+        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).not.toHaveBeenCalled();
       });
     });
   });

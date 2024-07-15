@@ -7,7 +7,7 @@
             <v-container>
               <team-task-form
                 v-if="taskType === 'team'"
-                :id="id"
+                :case-file-id="id"
                 :task-data.sync="localTask"
                 :is-edit-mode="isEditMode"
                 @reset-form-validation="resetFormValidation()">
@@ -101,9 +101,9 @@
       </rc-page-content>
       <task-action-dialog
         v-if="showTaskActionDialog"
-        :task="task"
-        :selected-task-category="displayedTaskCategory"
-        :selected-sub-category="displayedSubCategory"
+        :task-id="taskId"
+        :selected-task-category-name="displayedTaskCategory"
+        :selected-sub-category-name="displayedSubCategory"
         :event-id="caseFile.eventId"
         :show.sync="showTaskActionDialog" />
     </page-template>
@@ -184,11 +184,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       type: String,
       default: '',
     },
-
-    taskId: {
-      type: String,
-      default: '',
-    },
   },
 
     data() {
@@ -205,6 +200,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         description: '',
         dueDate: '' as string | Date,
         isUrgent: false,
+        financialAssistancePaymentId: '',
       },
     };
   },
@@ -225,6 +221,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
+        financialAssistancePaymentId: this.localTask.financialAssistancePaymentId,
       });
     },
 
@@ -306,6 +303,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         description: this.localTask.description,
         dueDate: helpers.getLocalStringDate(this.localTask.dueDate, 'Task.dueDate'),
         isUrgent: this.localTask.isUrgent,
+        financialAssistancePaymentId: this.localTask.financialAssistancePaymentId,
       });
     },
 

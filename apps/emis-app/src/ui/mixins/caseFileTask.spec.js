@@ -9,6 +9,9 @@ import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
 import { mockTeamEntity } from '@libs/entities-lib/team';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import flushPromises from 'flush-promises';
 
 const Component = {
   render() {},
@@ -19,6 +22,7 @@ const localVue = createLocalVue();
 const { pinia, taskStore } = useMockTaskStore();
 const { userStore } = useMockUserStore(pinia);
 const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
+const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 let wrapper;
 
 describe('caseFileTask', () => {
@@ -314,6 +318,23 @@ describe('caseFileTask', () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.onToggleChange(false);
         expect(wrapper.vm.isWorkingOn).toEqual(true);
+      });
+    });
+
+    describe('fetchSelectedFAPaymentAndSetName', () => {
+      it('should call FinancialAssistancePayment search and set the name of the fa payment', async () => {
+        taskStore.getById = jest.fn(() => mockTeamTaskEntity({ financialAssistancePaymentId: 'mock-fa-payment-id-123' }));
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ financialAssistancePaymentId: 'mock-fa-payment-id-123' }),
+          },
+        });
+        financialAssistancePaymentStore.fetch.mockResolvedValueOnce(mockCaseFinancialAssistanceEntity({ name: 'mock-fa-payment-name' }));
+        await flushPromises();
+
+        await wrapper.vm.fetchSelectedFAPaymentAndSetName();
+        expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith('mock-fa-payment-id-123');
+        expect(wrapper.vm.financialAssistancePaymentName).toEqual('mock-fa-payment-name');
       });
     });
   });

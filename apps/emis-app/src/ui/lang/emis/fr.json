@@ -1212,6 +1212,7 @@
     "ds.task.taskSubCategoryFr": "",
     "ds.task.taskTypeNameEn": "Tâche - type (an)",
     "ds.task.taskTypeNameFr": "Tâche - type (fr)",
+    "ds.task.financialAssistancePaymentName": "Tâche - Nom du paiement de l'aide financière",
     "ds.task.updateDate": "Tâche - date de mise à jour",
     "ds.task.userWorkingOn": "Tâche - usager qui y travaille",
     "ds.taskHistory.actionTakenNameEn": "Historique tâche - action prise (an)",
