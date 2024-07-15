@@ -5,7 +5,6 @@ import { mockOptionItem, mockOptionItems, mockOptionSubItem } from '@libs/entiti
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import flushPromises from 'flush-promises';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
-import { mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
 import Component from './TeamTaskForm.vue';
 
 const localVue = createLocalVue();
@@ -362,42 +361,16 @@ describe('TeamTaskForm.vue', () => {
     });
 
     describe('fetchFAPayments', () => {
-      it('should ', async () => {
+      it('should call financialAssistancePaymentStore.search with proper params', async () => {
         financialAssistancePaymentStore.search = jest.fn();
-        await wrapper.vm.fetchFAPayments('mock-fa-id-1');
+        await wrapper.vm.fetchFAPayments();
         expect(financialAssistancePaymentStore.search).toHaveBeenCalledWith(
           {
             includeInactiveItems: true,
             params:
-              { filter: { Entity: { CaseFileId: { type: 'guid', value: 'mock-case-file-id-1' } }, and: [{ 'Entity/Name': { contains: 'mock-fa-id-1' } }] } },
+              { filter: { Entity: { CaseFileId: { type: 'guid', value: 'mock-case-file-id-1' } } } },
           },
         );
-      });
-    });
-
-    describe('fetchSelectedFAPayment', () => {
-      it('should ', async () => {
-        await wrapper.setProps({
-          taskData: mockTeamTaskEntity({ financialAssistancePaymentId: 'new-fa-id-1' }),
-        });
-        financialAssistancePaymentStore.fetch = jest.fn();
-        await wrapper.vm.fetchSelectedFAPayment();
-        expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith('new-fa-id-1');
-      });
-
-      it('should not call fetch if the entity is already fetched', async () => {
-        jest.clearAllMocks();
-        await wrapper.setProps({
-          taskData: mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1', financialAssistancePaymentId: 'mock-id-1' }),
-          isEditMode: true,
-        });
-        await wrapper.setData({
-          financialAssistancePayments: [mockCaseFinancialAssistanceEntity({ id: 'mock-id-1' })],
-        });
-        await flushPromises();
-        financialAssistancePaymentStore.fetch = jest.fn();
-        await wrapper.vm.fetchSelectedFAPayment();
-        expect(financialAssistancePaymentStore.fetch).not.toHaveBeenCalled();
       });
     });
   });
@@ -464,7 +437,6 @@ describe('TeamTaskForm.vue', () => {
         expect(wrapper.vm.selectedTaskCategoryId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
         expect(wrapper.vm.selectedSubCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
         expect(wrapper.vm.localTeamTaskForm.financialAssistancePaymentId).toEqual('mock-id-1');
-        expect(wrapper.vm.fetchSelectedFAPayment).toHaveBeenCalled();
       });
     });
   });
@@ -495,16 +467,6 @@ describe('TeamTaskForm.vue', () => {
           ...wrapper.vm.taskData,
           ...updatedForm,
         });
-      });
-    });
-
-    describe('search', () => {
-      it('should call debounceSearch', async () => {
-        wrapper.vm.debounceSearch = jest.fn();
-        await wrapper.setData({
-          search: 'new-search',
-        });
-        expect(wrapper.vm.debounceSearch).toHaveBeenCalledWith('new-search');
       });
     });
   });

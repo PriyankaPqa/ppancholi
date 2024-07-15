@@ -49,9 +49,7 @@
           <v-autocomplete-with-validation
             v-model="localTeamTaskForm.financialAssistancePaymentId"
             background-color="white"
-            cache-items
             outlined
-            :search-input.sync="search"
             :items="financialAssistancePayments"
             :item-text="getFAName"
             :item-value="(item) => item && item.id"
@@ -130,8 +128,6 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { EFilterKeyType } from '@libs/component-lib/types';
-import helpers from '@/ui/helpers/helpers';
-import _debounce from 'lodash/debounce';
 
 interface ILocalTeamTaskForm {
   category: IListOption;
@@ -182,7 +178,6 @@ export default mixins(caseFileTask).extend({
         localTeamTaskForm,
         loading: false,
         financialAssistancePayments: [] as IFinancialAssistancePaymentEntity[],
-        search: '',
     };
   },
 
@@ -224,20 +219,15 @@ export default mixins(caseFileTask).extend({
       },
       deep: true,
     },
-
-    search(newVal) {
-      newVal && this.debounceSearch(newVal);
-    },
   },
 
   async created() {
     await useTaskStore().fetchTaskCategories();
-    await this.fetchFAPayments('');
+    await this.fetchFAPayments();
     if (this.isEditMode) {
       this.selectedTaskCategoryId = this.taskData.category.optionItemId;
       this.selectedSubCategoryId = this.taskData.subCategory ? this.taskData.subCategory.optionItemId : '';
       this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
-      await this.fetchSelectedFAPayment();
     }
   },
 
@@ -263,38 +253,21 @@ export default mixins(caseFileTask).extend({
       return '';
     },
 
-    debounceSearch: _debounce(function func(this: any, query: string) {
-      this.fetchFAPayments(query);
-    }, 500),
-
-    async fetchFAPayments(querySearch = '') {
+    async fetchFAPayments() {
       this.loading = true;
-      const searchParam = helpers.toQuickSearchSql(querySearch, 'Entity/Name');
-
-      const filter = {
-        Entity: {
-          CaseFileId: { value: this.caseFileId, type: EFilterKeyType.Guid },
-        },
-        ...searchParam,
-      } as Record<any, any>;
 
       const params = {
-        filter,
+        filter: {
+          Entity: {
+            CaseFileId: { value: this.caseFileId, type: EFilterKeyType.Guid },
+          },
+        },
       };
 
       const res = await useFinancialAssistancePaymentStore().search({ params, includeInactiveItems: true });
 
       this.financialAssistancePayments = res?.values;
       this.loading = false;
-    },
-
-    async fetchSelectedFAPayment() {
-      if (this.taskData.financialAssistancePaymentId && !this.financialAssistancePayments?.some((fa) => fa.id === this.taskData.financialAssistancePaymentId)) {
-        const res = await useFinancialAssistancePaymentStore().fetch(this.taskData.financialAssistancePaymentId);
-        if (res) {
-          this.financialAssistancePayments.push(res);
-        }
-      }
     },
   },
 });
