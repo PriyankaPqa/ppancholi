@@ -280,7 +280,6 @@ export default mixins(caseFileTask).extend({
 
       const params = {
         filter,
-        top: 5,
       };
 
       const res = await useFinancialAssistancePaymentStore().search({ params, includeInactiveItems: true });

@@ -369,8 +369,7 @@ describe('TeamTaskForm.vue', () => {
           {
             includeInactiveItems: true,
             params:
-              { filter: { Entity: { CaseFileId: { type: 'guid', value: 'mock-case-file-id-1' } }, and: [{ 'Entity/Name': { contains: 'mock-fa-id-1' } }] }, top: 5,
-              },
+              { filter: { Entity: { CaseFileId: { type: 'guid', value: 'mock-case-file-id-1' } }, and: [{ 'Entity/Name': { contains: 'mock-fa-id-1' } }] } },
           },
         );
       });
