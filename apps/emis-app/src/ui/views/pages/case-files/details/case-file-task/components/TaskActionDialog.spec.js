@@ -18,7 +18,7 @@ const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 describe('TaskActionDialog.vue', () => {
   let wrapper;
 
-  const doMount = async (otherOptions = {}, shallow = true) => {
+  const doMount = async (otherOptions = {}, shallow = true, level = 5) => {
     const options = {
       localVue,
       pinia,
@@ -34,6 +34,7 @@ describe('TaskActionDialog.vue', () => {
       },
       mocks: {
         $services: services,
+        $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
       },
       ...otherOptions,
     };
@@ -103,8 +104,11 @@ describe('TaskActionDialog.vue', () => {
 
   describe('Computed', () => {
     describe('actionItems', () => {
-      it('should return proper items when taskType is team and status is InProgress', async () => {
-        await doMount();
+      it('should return proper items when taskType is team and status is InProgress and user is in assigned team', async () => {
+        await doMount({ computed: {
+          assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
+          userId: () => 'user-1',
+        } }, true, 5);
         expect(wrapper.vm.actionItems).toEqual([
           {
             value: TaskActionTaken.Assign,
@@ -122,6 +126,53 @@ describe('TaskActionDialog.vue', () => {
             description: 'task.task_action_dialog.TaskCompleted.description',
           },
         ]);
+      });
+
+      it('should return proper items when taskType is team and status is New', async () => {
+        const task = mockTeamTaskEntity({ taskStatus: TaskStatus.New });
+
+        await doMount({ computed: { task: () => task,
+          assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
+          userId: () => 'user-1',
+        } }, true, 5);
+
+        expect(wrapper.vm.actionItems).toEqual([
+          {
+            value: TaskActionTaken.Assign,
+            label: 'task.task_action_dialog.Assign',
+            description: 'task.task_action_dialog.Assign.description',
+          },
+          {
+            value: TaskActionTaken.ActionCompleted,
+            label: 'task.task_action_dialog.ActionCompleted',
+            description: 'task.task_action_dialog.ActionCompleted.description',
+          },
+          {
+            value: TaskActionTaken.TaskCompleted,
+            label: 'task.task_action_dialog.TaskCompleted',
+            description: 'task.task_action_dialog.TaskCompleted.description',
+          },
+        ]);
+        expect(wrapper.vm.actionItems.find((a) => a.value === TaskActionTaken.Cancelled)).toBeFalsy();
+
+        await doMount({ computed: { task: () => task } }, true, 6);
+        expect(wrapper.vm.actionItems.find((a) => a.value === TaskActionTaken.Cancelled)).toBeTruthy();
+
+        await doMount({ computed: { task: () => task } }, true, 5);
+        await wrapper.setData({ userIsInEscalationTeam: true });
+        expect(wrapper.vm.actionItems.find((a) => a.value === TaskActionTaken.Cancelled)).toBeTruthy();
+
+        task.createdBy = wrapper.vm.userId;
+        await doMount({ computed: { task: () => task } }, true, 5);
+        expect(wrapper.vm.actionItems.find((a) => a.value === TaskActionTaken.Cancelled)).toBeTruthy();
+      });
+
+      it('should only contain cancelled if user is creator but not assigned to team and status is new', async () => {
+        const task = mockTeamTaskEntity({ taskStatus: TaskStatus.New });
+        task.createdBy = wrapper.vm.userId;
+        await doMount({ computed: { task: () => task, isInAssignedTeam: () => false } }, true, 5);
+        expect(wrapper.vm.actionItems.find((a) => a.value === TaskActionTaken.Cancelled)).toBeTruthy();
+        expect(wrapper.vm.actionItems.length).toBe(1);
       });
 
       it('should return proper items status is Completed', async () => {
@@ -150,6 +201,11 @@ describe('TaskActionDialog.vue', () => {
             value: TaskActionTaken.TaskCompleted,
             label: 'task.task_action_dialog.personal_task.TaskCompleted',
             description: '',
+          },
+          {
+            value: TaskActionTaken.Cancelled,
+            label: 'task.task_action_dialog.Cancelled',
+            description: 'task.task_action_dialog.Cancelled.description',
           },
         ]);
       });
@@ -255,6 +311,7 @@ describe('TaskActionDialog.vue', () => {
         teamStore.getTeamsByEvent = jest.fn(() => ([
           mockTeamsDataStandard({ id: '1', isAssignable: true }),
           mockTeamsDataStandard({ id: '2', isAssignable: false }),
+          mockTeamsDataStandard({ id: '3', isEscalation: true, teamMembers: [{ id: 'someone' }] }),
         ]));
         await wrapper.setProps({
           eventId: mockTeamEvents()[0].id,
@@ -262,6 +319,15 @@ describe('TaskActionDialog.vue', () => {
         await wrapper.vm.getAssignableTeams();
         expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: wrapper.vm.eventId });
         expect(wrapper.vm.assignableTeams).toEqual([mockTeamsDataStandard({ id: '1', isAssignable: true })]);
+        expect(wrapper.vm.userIsInEscalationTeam).toBeFalsy();
+
+        teamStore.getTeamsByEvent = jest.fn(() => ([
+          mockTeamsDataStandard({ id: '1', isAssignable: true }),
+          mockTeamsDataStandard({ id: '2', isAssignable: false }),
+          mockTeamsDataStandard({ id: '3', isEscalation: true, teamMembers: [{ id: 'someone' }, { id: wrapper.vm.userId }] }),
+        ]));
+        await wrapper.vm.getAssignableTeams();
+        expect(wrapper.vm.userIsInEscalationTeam).toBeTruthy();
       });
     });
 

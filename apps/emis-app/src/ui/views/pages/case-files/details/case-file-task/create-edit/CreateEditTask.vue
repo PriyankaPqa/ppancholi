@@ -51,7 +51,7 @@
                         :aria-label="$t('task.task_details.working_on_it')"
                         class="ma-0"
                         :loading="toggleLoading"
-                        :disabled="toggleLoading || !canAction"
+                        :disabled="toggleLoading || !canToggleIsWorkingOn"
                         @change="onToggleChange($event)" />
                     </div>
                   </v-row>

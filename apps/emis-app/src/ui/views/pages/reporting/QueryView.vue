@@ -398,6 +398,7 @@ export default Vue.extend({
       };
     },
 
+    // eslint-disable-next-line complexity
     async initializeLookups(columns: ExtendedColumn[]) {
       const results = await Promise.all([
               this.$services.queries.fetchEnums(),

@@ -30,6 +30,11 @@ describe('>>> Tasks Service', () => {
     expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/complete', { rationale: 'mock-rationale-123' });
   });
 
+  test('cancelTask is linked to the correct URL', async () => {
+    await service.cancelTask('mock-task-id-123', 'mock-case-file-id-1', 'mock-rationale-123');
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/cancel', { rationale: 'mock-rationale-123' });
+  });
+
   test('setTaskActionTaken is linked to the correct URL', async () => {
     await service.setTaskActionTaken('mock-task-id-123', 'mock-case-file-id-1', { actionTaken: ActionTaken.Assign, rationale: 'mock-rationale-123', teamId: 'mock-team-id-1' });
     expect(http.patch).toHaveBeenCalledWith(

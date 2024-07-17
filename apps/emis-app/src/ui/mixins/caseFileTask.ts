@@ -73,24 +73,23 @@ export default Vue.extend({
     },
 
     canAction(): boolean {
-      if (this.$hasLevel(UserRoles.level6)) {
-        return !(this.task.taskType === TaskType.Personal && this.task.taskStatus === TaskStatus.Completed);
-      }
+      return this.calculateCanAction();
+    },
 
-      if (this.task.taskType === TaskType.Personal) {
-        return this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.InProgress;
-      }
+    canToggleIsWorkingOn(): boolean {
+      return this.calculateCanAction(true);
+    },
 
-      // Team task - for these roles, user needs to be part of the assigned team
-        if (this.$hasLevel(UserRoles.level1)
+    hasRoleOrLevelAboveZero(): boolean {
+     return this.$hasLevel(UserRoles.level1)
           || this.$hasRole(UserRoles.readonly)
           || this.$hasRole(UserRoles.contributor3)
           || this.$hasRole(UserRoles.contributorIM)
-          || this.$hasRole(UserRoles.contributorFinance)) {
-          return this.assignedTeam?.teamMembers?.some((m) => m.id === this.userId) && this.assignedTeam.status === Status.Active;
-        }
-        // L0, no-role --> false
-        return false;
+          || this.$hasRole(UserRoles.contributorFinance);
+    },
+
+    isInAssignedTeam():boolean {
+      return this.assignedTeam?.teamMembers?.some((m) => m.id === this.userId) && this.assignedTeam.status === Status.Active;
     },
   },
 
@@ -137,5 +136,31 @@ export default Vue.extend({
         this.financialAssistancePaymentName = res.name;
       }
     },
+
+    calculateCanAction(togglingIsWorkingOn = false): boolean {
+      if (this.task.taskStatus === TaskStatus.Cancelled) {
+        return false;
+      }
+
+      if (this.$hasLevel(UserRoles.level6)) {
+        return !(this.task.taskType === TaskType.Personal && this.task.taskStatus === TaskStatus.Completed);
+      }
+
+      if (this.task.taskType === TaskType.Personal) {
+        return this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.InProgress;
+      }
+
+      if (!togglingIsWorkingOn && this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.New) {
+        return true;
+      }
+
+    // Team task - for these roles, user needs to be part of the assigned team
+      if (this.hasRoleOrLevelAboveZero) {
+        return this.isInAssignedTeam;
+      }
+      // L0, no-role --> false
+      return false;
+    },
+
   },
 });

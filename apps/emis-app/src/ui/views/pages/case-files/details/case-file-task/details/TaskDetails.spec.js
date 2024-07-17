@@ -434,6 +434,20 @@ describe('TaskDetails.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
+      it('should be rendered for cancelled personal task', async () => {
+        await doMount(false, {
+          computed: {
+            task: () => mockPersonalTaskEntity({
+              taskStatus: TaskStatus.Cancelled,
+            }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findComponent(StatusChip);
+        expect(element.exists()).toBeTruthy();
+      });
+
       it('should not be rendered for in progress personal task', async () => {
         await doMount(false, {
           computed: {
@@ -618,6 +632,16 @@ describe('TaskDetails.vue', () => {
           pinia: getPiniaForUser(UserRoles.level6),
         }, 6);
         expect(wrapper.vm.canEdit).toEqual(true);
+      });
+
+      it('should be false when cancelled even when user has Level6', async () => {
+        await doMount(true, {
+          pinia: getPiniaForUser(UserRoles.level6),
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled }),
+          },
+        }, 6);
+        expect(wrapper.vm.canEdit).toEqual(false);
       });
 
       it('should be true when task type is personal and user is the creator', async () => {

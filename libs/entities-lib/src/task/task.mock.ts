@@ -124,6 +124,26 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
         },
       } },
   },
+  {
+    actionTaken: ActionTaken.Cancelled,
+    taskStatus: TaskStatus.Cancelled,
+    currentTeamId: '',
+    previousTeamId: '',
+    currentTeamName: '',
+    previousTeamName: '',
+    rationale: 'Personal task cancelled',
+    timestamp: '2023-01-03',
+    userInformation: {
+      userId: 'mock-user-id-1',
+      userName: 'mock-user-name',
+      roleId: 'mock-role-id-1',
+      roleName: {
+        translation: {
+          en: 'mock-role-name en',
+          fr: 'mock-role-name fr',
+        },
+      } },
+  },
 ]);
 
 const mockBaseTaskEntityData = (force? : Partial<ITaskEntityData>): ITaskEntityData => ({

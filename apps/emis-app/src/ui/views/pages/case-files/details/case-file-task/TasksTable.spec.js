@@ -1078,6 +1078,14 @@ describe('TasksTable.vue', () => {
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
+      it('should be false even when user has Level6 when task cancelled', async () => {
+        await doMount({
+          pinia: getPiniaForUser(UserRoles.level6),
+        });
+        const taskEntity = mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled });
+        expect(wrapper.vm.canEdit(taskEntity)).toEqual(false);
+      });
+
       it('should be true when task type is personal and user is the creator', async () => {
         const taskEntity = mockPersonalTaskEntity({ createdBy: 'user-1' });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
@@ -1296,6 +1304,11 @@ describe('TasksTable.vue', () => {
     });
 
     describe('canAction', () => {
+      it('should be false for L6 user if it is cancelled task', async () => {
+        await doMount(null, true, 6);
+        expect(wrapper.vm.canAction(mockPersonalTaskEntity({ taskStatus: TaskStatus.Cancelled }))).toEqual(false);
+      });
+
       it('should be false for L6 user if it is completed personal task', async () => {
         await doMount(null, true, 6);
         expect(wrapper.vm.canAction(mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }))).toEqual(false);
@@ -1333,6 +1346,13 @@ describe('TasksTable.vue', () => {
         userStore.getUserId = jest.fn(() => 'mock-id-2');
         await doMount(null, true, 5);
         expect(wrapper.vm.canAction(mockPersonalTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.InProgress }))).toEqual(false);
+      });
+
+      it('should be true for team task if user is creator and status is new', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(null, true, 5);
+        const task = mockTeamTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.New });
+        expect(wrapper.vm.canAction(task)).toEqual(true);
       });
 
       it('should be false for team task with L0 user', async () => {

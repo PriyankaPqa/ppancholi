@@ -96,6 +96,10 @@ describe('TaskHistoryDialog.vue', () => {
       it('should generate action string for personal task completed properly', async () => {
         expect(wrapper.vm.generateTaskActionString(mockTaskActionHistories()[5])).toEqual('task.history.action_taken.completed');
       });
+
+      it('should generate action string for Cancelled properly', async () => {
+        expect(wrapper.vm.generateTaskActionString(mockTaskActionHistories()[6])).toEqual('task.history.action_taken.cancelled');
+      });
     });
 
     describe('parseTaskHistory', () => {
@@ -106,6 +110,28 @@ describe('TaskHistoryDialog.vue', () => {
         });
         wrapper.vm.parseTaskHistory();
         expect(wrapper.vm.parsedTaskActionHistoryData).toEqual([
+          {
+            actionTaken: ActionTaken.Cancelled,
+            actionTakenString: 'task.history.action_taken.cancelled',
+            currentTeamId: '',
+            currentTeamName: '',
+            previousTeamId: '',
+            previousTeamName: '',
+            rationale: 'Personal task cancelled',
+            taskStatus: TaskStatus.Cancelled,
+            timestamp: '2023-01-03',
+            userInformation: {
+              roleId: 'mock-role-id-1',
+              roleName: {
+                translation: {
+                  en: 'mock-role-name en',
+                  fr: 'mock-role-name fr',
+                },
+              },
+              userId: 'mock-user-id-1',
+              userName: 'mock-user-name',
+            },
+          },
           {
             actionTaken: null,
             actionTakenString: 'task.history.action_taken.completed',

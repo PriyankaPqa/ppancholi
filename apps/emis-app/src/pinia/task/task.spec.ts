@@ -121,6 +121,16 @@ describe('Task Store', () => {
         expect(entityService.completeTask).toHaveBeenCalledWith('mock-task-id-1', 'mock-case-file-id-1', 'mock-rationale');
       });
 
+      it('should call service cancelTask when actionType is Cancelled', () => {
+        const store = createTestStore();
+        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Cancelled, rationale: 'mock-rationale' });
+        expect(entityService.cancelTask).toHaveBeenCalledWith(
+          'mock-task-id-1',
+          'mock-case-file-id-1',
+          'mock-rationale',
+        );
+      });
+
       it('should call service setTaskActionTaken when actionType is Assign', () => {
         const store = createTestStore();
         entityService.setTaskActionTaken = jest.fn();

@@ -109,7 +109,7 @@
       </template>
       <template #[`item.${customColumns.taskStatus}`]="{ item }">
         <status-chip
-          v-if="item.entity.taskType === TaskType.Team || item.entity.taskStatus === TaskStatus.Completed"
+          v-if="item.entity.taskType === TaskType.Team || item.entity.taskStatus === TaskStatus.Completed || item.entity.taskStatus === TaskStatus.Cancelled"
           data-test="task-table-task-status"
           x-small
           :status="item.entity.taskStatus"
@@ -626,6 +626,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     canEdit(taskEntity: ITaskEntity): boolean {
+      if (taskEntity.taskStatus === TaskStatus.Cancelled) {
+        return false;
+      }
       if (this.$hasLevel(UserRoles.level6)) {
         return true;
       }
@@ -640,13 +643,19 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       },
 
     canAction(task: ITaskEntity): boolean {
-      const userId = useUserStore().getUserId();
+      if (task.taskStatus === TaskStatus.Cancelled) {
+        return false;
+      }
       if (this.$hasLevel(UserRoles.level6)) {
         return !(task.taskType === TaskType.Personal && task.taskStatus === TaskStatus.Completed);
       }
 
       if (task.taskType === TaskType.Personal) {
-        return task.createdBy === userId && task.taskStatus === TaskStatus.InProgress;
+        return task.createdBy === this.userId && task.taskStatus === TaskStatus.InProgress;
+      }
+
+      if (task.createdBy === this.userId && task.taskStatus === TaskStatus.New) {
+        return true;
       }
 
         // Team task --> for these roles, user needs to be part of the assigned team
@@ -656,7 +665,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           || this.$hasRole(UserRoles.contributorIM)
           || this.$hasRole(UserRoles.contributorFinance)) {
           const assignedTeam = this.assignedTeams?.find((t) => t.id === task.assignedTeamId);
-          return assignedTeam?.teamMembers.some((m) => m.id === userId);
+          return assignedTeam?.teamMembers.some((m) => m.id === this.userId);
         }
         // L0, no-role --> false
         return false;

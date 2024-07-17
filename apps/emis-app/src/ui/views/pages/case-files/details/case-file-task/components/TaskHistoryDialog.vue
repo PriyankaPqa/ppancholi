@@ -147,6 +147,7 @@ export default Vue.extend({
             ? this.$t('task.history.action_taken.action_completed', { x: assignedTeamName, y: actionTeamName })
             : this.$t('task.history.action_taken.completed')),
           [ActionTaken.Reopen]: this.$t('task.history.action_taken.reopen'),
+          [ActionTaken.Cancelled]: this.$t('task.history.action_taken.cancelled'),
         };
         return actionType[historyItem.actionTaken];
       }

@@ -137,91 +137,60 @@ describe('caseFileTask', () => {
     });
 
     describe('canAction', () => {
-      it('should be true for L6 user if it is completed personal task', async () => {
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
-          },
-        }, 6);
-        expect(wrapper.vm.canAction).toEqual(false);
-      });
+      it('returns calculateCanAction', () => {
+        doMount();
+        wrapper.vm.calculateCanAction = jest.fn(() => true);
+        wrapper.vm.$nextTick();
+        expect(wrapper.vm.canAction).toBeTruthy();
 
-      it('should be true for team task L6 user', async () => {
-        await doMount(true, {
-          computed: {
-            task: () => mockTeamTaskEntity(),
-          },
-        }, 6);
-        expect(wrapper.vm.canAction).toEqual(true);
-      });
+        doMount();
+        wrapper.vm.calculateCanAction = jest.fn(() => false);
+        wrapper.vm.$nextTick();
 
-      it('should be true for in progress personal task L6 user', async () => {
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity(),
-          },
-        }, 6);
-        expect(wrapper.vm.canAction).toEqual(true);
+        expect(wrapper.vm.canAction).toBeFalsy();
       });
+    });
 
-      it('should be false for completed personal task L6 user', async () => {
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
-          },
-        }, 6);
-        expect(wrapper.vm.canAction).toEqual(false);
+    describe('canToggleIsWorkingOn', () => {
+      it('calls calculateCanAction and returns the result', () => {
+        doMount();
+        wrapper.vm.calculateCanAction = jest.fn(() => true);
+        wrapper.vm.$nextTick();
+        expect(wrapper.vm.canAction).toBeTruthy();
+
+        doMount();
+        wrapper.vm.calculateCanAction = jest.fn(() => false);
+        wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.canAction).toBeFalsy();
       });
+    });
 
-      it('should be true for personal task if he is the creator and task is in progress', async () => {
-        userStore.getUserId = jest.fn(() => 'mock-id-1');
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'mock-id-1' }),
-          },
-        }, 5);
-        expect(wrapper.vm.canAction).toEqual(true);
+    describe('hasRoleOrLevelAboveZero', () => {
+      it('returns true if user is level 1 or has a role', async () => {
+        await doMount(true, {}, 1);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeTruthy();
+        await doMount(true, {}, 0, UserRoles.contributorIM);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeTruthy();
+        await doMount(true, {}, 0, UserRoles.readonly);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeTruthy();
+        await doMount(true, {}, 0, UserRoles.contributor3);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeTruthy();
+        await doMount(true, {}, 0, UserRoles.contributorFinance);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeTruthy();
       });
-
-      it('should be false for personal task if he is the creator and task is completed', async () => {
-        userStore.getUserId = jest.fn(() => 'mock-id-1');
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'mock-id-1' }),
-          },
-        }, 5);
-        expect(wrapper.vm.canAction).toEqual(false);
+      it('returns false if user is level 0 or has no role', async () => {
+        await doMount(true, {}, 0);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeFalsy();
+        await doMount(true, {}, 0, UserRoles.noAccess);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeFalsy();
+        await doMount(true, {}, 0, UserRoles.no_role);
+        expect(wrapper.vm.hasRoleOrLevelAboveZero).toBeFalsy();
       });
+    });
 
-      it('should be false for personal task if he is not the creator and task is in progress', async () => {
-        userStore.getUserId = jest.fn(() => 'mock-id-1');
-        await doMount(true, {
-          computed: {
-            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'mock-id-2' }),
-          },
-        }, 5);
-        expect(wrapper.vm.canAction).toEqual(false);
-      });
-
-      it('should be false for team task with L0 user', async () => {
-        await doMount(true, {
-          computed: {
-            task: () => mockTeamTaskEntity(),
-          },
-        }, 0);
-        expect(wrapper.vm.canAction).toEqual(false);
-      });
-
-      it('should be false for team task with no-role user', async () => {
-        await doMount(true, {
-          computed: {
-            task: () => mockTeamTaskEntity(),
-          },
-        }, null, UserRoles.no_role);
-        expect(wrapper.vm.canAction).toEqual(false);
-      });
-
-      it('should be true for team task with L1-L5 user if he is assigned team member', async () => {
+    describe('isInAssignedTeam', () => {
+      it('returns true if user is in assigned team', async () => {
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
           computed: {
@@ -229,30 +198,18 @@ describe('caseFileTask', () => {
             assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
           },
         }, 1);
-        expect(wrapper.vm.canAction).toEqual(true);
+        expect(wrapper.vm.isInAssignedTeam).toEqual(true);
       });
 
-      it('should be false for team task with L1-L5 user if he is assigned team member, but task is inactive', async () => {
-        userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount(true, {
-          computed: {
-            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
-            assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }], status: Status.Inactive }),
-          },
-        }, 1);
-        expect(wrapper.vm.canAction).toEqual(false);
-      });
-
-      it('should be false for team task with L1-L5 user if he is not assigned team member', async () => {
+      it('returns false if user is not in assigned team', async () => {
         userStore.getUserId = jest.fn(() => 'user-2');
         await doMount(true, {
           computed: {
             task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
             assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
-
           },
         }, 1);
-        expect(wrapper.vm.canAction).toEqual(false);
+        expect(wrapper.vm.isInAssignedTeam).toEqual(false);
       });
     });
   });
@@ -335,6 +292,156 @@ describe('caseFileTask', () => {
         await wrapper.vm.fetchSelectedFAPaymentAndSetName();
         expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith('mock-fa-payment-id-123');
         expect(wrapper.vm.financialAssistancePaymentName).toEqual('mock-fa-payment-name');
+      });
+    });
+
+    describe('calculateCanAction', () => {
+      it('should be false for L6 user if it is completed personal task', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
+          },
+        }, 6);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be false even for L6 user if it is cancelled', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Cancelled }),
+          },
+        }, 6);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be true for team task L6 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+          },
+        }, 6);
+        expect(wrapper.vm.calculateCanAction()).toEqual(true);
+      });
+
+      it('should be true for in progress personal task L6 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity(),
+          },
+        }, 6);
+        expect(wrapper.vm.calculateCanAction()).toEqual(true);
+      });
+
+      it('should be false for completed personal task L6 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed }),
+          },
+        }, 6);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be true for personal task if he is the creator and task is in progress', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'mock-id-1' }),
+          },
+        }, 5);
+        expect(wrapper.vm.calculateCanAction()).toEqual(true);
+      });
+
+      it('should be false for personal task if he is the creator and task is completed', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'mock-id-1' }),
+          },
+        }, 5);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be false for personal task if he is not the creator and task is in progress', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress, createdBy: 'mock-id-2' }),
+          },
+        }, 5);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be true for team task if user is creator and status is new', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.New }),
+          },
+        }, 5);
+        expect(wrapper.vm.calculateCanAction()).toEqual(true);
+      });
+
+      it('should be false for team task if user is creator, status is new but togglingIsWorkingOn is true and user is not assigned to team', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.New }),
+            isInAssignedTeam: () => false,
+          },
+        }, 5);
+        expect(wrapper.vm.calculateCanAction(true)).toEqual(false);
+      });
+
+      it('should be false for team task with L0 user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+          },
+        }, 0);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be false for team task with no-role user', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity(),
+          },
+        }, null, UserRoles.no_role);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be true for team task with L1-L5 user if he is assigned team member', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+            assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
+          },
+        }, 1);
+        expect(wrapper.vm.calculateCanAction()).toEqual(true);
+      });
+
+      it('should be false for team task with L1-L5 user if he is assigned team member, but task is inactive', async () => {
+        userStore.getUserId = jest.fn(() => 'user-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+            assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }], status: Status.Inactive }),
+          },
+        }, 1);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+
+      it('should be false for team task with L1-L5 user if he is not assigned team member', async () => {
+        userStore.getUserId = jest.fn(() => 'user-2');
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'mock-team-1' }),
+            assignedTeam: () => mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] }),
+          },
+        }, 1);
+        expect(wrapper.vm.calculateCanAction()).toEqual(false);
       });
     });
   });

@@ -10,6 +10,7 @@ export enum TaskStatus {
   New = 1,
   InProgress = 2,
   Completed = 3,
+  Cancelled = 4,
 }
 
 // used in the FE
@@ -18,6 +19,7 @@ export enum TaskActionTaken {
   ActionCompleted = 1,
   TaskCompleted = 2,
   Reopen = 3,
+  Cancelled = 4,
 }
 
 export enum ActionTaken {
@@ -25,6 +27,7 @@ export enum ActionTaken {
   Assign = 2,
   Completed = 3,
   Reopen = 4,
+  Cancelled = 5,
 }
 
 export interface ITaskEntityData extends IEntity {

@@ -4,8 +4,8 @@ import {
 } from '@/test/testSetup';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
-import Component from './ReportingHome.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import Component from './ReportingHome.vue';
 
 const localVue = createLocalVue();
 

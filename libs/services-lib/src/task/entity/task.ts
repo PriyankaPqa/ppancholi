@@ -30,6 +30,10 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/complete`, { id, caseFileId }), { rationale });
   }
 
+  async cancelTask(id: uuid, caseFileId: uuid, rationale: string): Promise<ITaskEntityData> {
+    return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/cancel`, { id, caseFileId }), { rationale });
+  }
+
   async setTaskActionTaken(id: uuid, caseFileId: uuid, params: { actionTaken: ActionTaken, rationale: string, teamId: uuid }): Promise<ITaskEntityData> {
     return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/set-action-taken`, { id, caseFileId }), params);
   }

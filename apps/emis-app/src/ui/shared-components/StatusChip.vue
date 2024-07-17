@@ -345,6 +345,9 @@ export default Vue.extend({
         case TaskStatus.Completed:
           return colors.chips.green;
 
+        case TaskStatus.Cancelled:
+          return colors.chips.red;
+
         default:
           return colors.chips.orange;
       }

@@ -81,6 +81,7 @@ export function getExtensionComponents(
       [TaskActionTaken.ActionCompleted]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Completed, teamId }),
       [TaskActionTaken.TaskCompleted]: () => entityService.completeTask(id, caseFileId, rationale),
       [TaskActionTaken.Reopen]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Reopen, teamId }),
+      [TaskActionTaken.Cancelled]: () => entityService.cancelTask(id, caseFileId, rationale),
     };
 
     try {

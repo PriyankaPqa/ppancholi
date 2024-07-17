@@ -20,7 +20,11 @@
                 </v-icon>
               </v-btn>
 
-              <status-chip v-if="isTeamTask || task.taskStatus === TaskStatus.Completed" status-name="TaskStatus" :status="task.taskStatus" class="mr-4" />
+              <status-chip
+                v-if="isTeamTask || task.taskStatus === TaskStatus.Completed || task.taskStatus === TaskStatus.Cancelled"
+                status-name="TaskStatus"
+                :status="task.taskStatus"
+                :class="{ 'mr-4': canEdit }" />
               <template v-if="canEdit">
                 <v-divider vertical class="mr-2" />
                 <v-btn icon data-test="task-details-edit-button" :aria-label="$t('common.edit')" @click="getEditTaskRoute()">
@@ -82,7 +86,7 @@
                 :aria-label="$t('task.task_details.working_on_it')"
                 class="ma-0"
                 :loading="toggleLoading"
-                :disabled="toggleLoading || !canAction"
+                :disabled="toggleLoading || !canToggleIsWorkingOn"
                 @change="onToggleChange($event)" />
             </div>
           </v-row>
@@ -272,6 +276,9 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     },
 
     canEdit(): boolean {
+      if (this.task.taskStatus === TaskStatus.Cancelled) {
+        return false;
+      }
       if (this.$hasLevel(UserRoles.level6)) {
         return true;
       }

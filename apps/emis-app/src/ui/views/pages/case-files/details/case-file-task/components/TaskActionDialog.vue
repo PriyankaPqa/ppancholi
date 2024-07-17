@@ -63,7 +63,7 @@
               class="mt-0"
               data-test="action-radio-group"
               @change="resetForm()">
-              <div class="d-flex flex-nowrap pl-4">
+              <div class="d-flex flex-nowrap px-4 justify-space-between">
                 <div v-for="(item, $index) in actionItems" :key="$index">
                   <v-radio :value="item.value">
                     <template #label>
@@ -120,6 +120,7 @@ import { GlobalHandler } from '@libs/services-lib/http-client';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import caseFileTask from '@/ui/mixins/caseFileTask';
 import mixins from 'vue-typed-mixins';
+import { UserRoles } from '@libs/entities-lib/user';
 
 interface IActionItem {
   value: TaskActionTaken;
@@ -174,6 +175,7 @@ export default mixins(caseFileTask).extend({
       loading: false,
       TaskType,
       helpers,
+      userIsInEscalationTeam: false,
     };
   },
 
@@ -205,8 +207,12 @@ export default mixins(caseFileTask).extend({
       }
 
       if (this.task.taskType === TaskType.Team) {
-        return [
-          {
+         const isCreator = this.task.createdBy === this.userId;
+         const hasAccess = this.$hasLevel(UserRoles.level6) || this.isInAssignedTeam;
+
+         const canCancel = this.task.taskStatus === TaskStatus.New && (isCreator || this.$hasLevel(UserRoles.level6) || this.userIsInEscalationTeam);
+
+        const actions = [{
             value: TaskActionTaken.Assign,
             label: this.$t('task.task_action_dialog.Assign'),
             description: this.$t('task.task_action_dialog.Assign.description'),
@@ -220,14 +226,38 @@ export default mixins(caseFileTask).extend({
             value: TaskActionTaken.TaskCompleted,
             label: this.$t('task.task_action_dialog.TaskCompleted'),
             description: this.$t('task.task_action_dialog.TaskCompleted.description'),
-          },
-        ];
+          }];
+
+          const cancel = {
+            value: TaskActionTaken.Cancelled,
+            label: this.$t('task.task_action_dialog.Cancelled'),
+            description: this.$t('task.task_action_dialog.Cancelled.description'),
+          };
+
+          if (!hasAccess && canCancel) {
+            return [cancel];
+          }
+
+          if (hasAccess && !canCancel) {
+            return actions;
+          }
+
+          if (hasAccess && canCancel) {
+            return [...actions, cancel];
+          }
+
+          return [];
       }
       return [
         {
           value: TaskActionTaken.TaskCompleted,
           label: this.$t('task.task_action_dialog.personal_task.TaskCompleted'),
           description: '',
+        },
+        {
+          value: TaskActionTaken.Cancelled,
+          label: this.$t('task.task_action_dialog.Cancelled'),
+          description: this.$t('task.task_action_dialog.Cancelled.description'),
         },
       ];
     },
@@ -287,6 +317,7 @@ export default mixins(caseFileTask).extend({
       const res = await useTeamStore().getTeamsByEvent({ eventId: this.eventId });
       if (res) {
         this.assignableTeams = res.filter((t) => t.isAssignable);
+        this.userIsInEscalationTeam = !!res.find((t) => t.isEscalation)?.teamMembers?.find((m) => this.userId === m.id);
       }
     },
 
