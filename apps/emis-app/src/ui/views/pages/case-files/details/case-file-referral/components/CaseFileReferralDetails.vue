@@ -6,7 +6,7 @@
     <v-row class="justify-center mt-10">
       <v-col cols="12" lg="7">
         <div class="pb-4 d-flex justify-space-between">
-          <div class="details-page-title">
+          <div class="details-page-title" data-test="organization-name">
             {{ referral.name }}
           </div>
           <v-btn v-if="canEdit" icon :to="referralEditRoute" :aria-label="$t('common.edit')" data-test="editReferral-link">
