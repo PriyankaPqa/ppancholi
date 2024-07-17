@@ -84,7 +84,7 @@
         <div v-if="showAssignTeamSelect" class="py-0">
           <v-select-with-validation
             v-model="assignedTeamId"
-            :items="assignableTeams"
+            :items="availableTeams"
             :item-text="(item) => item.name"
             :item-value="(item) => item.id"
             :label="`${$t('task.action.select_team_to_assign')} *`"
@@ -278,6 +278,13 @@ export default mixins(caseFileTask).extend({
       creatorInfo += user;
       creatorInfo += role;
       return creatorInfo;
+    },
+
+    availableTeams(): ITeamEntity[] {
+      if (this.actionTaken !== TaskActionTaken.Reopen) {
+        return this.assignableTeams.filter((t) => t.id !== this.task.assignedTeamId);
+      }
+      return this.assignableTeams;
     },
   },
 

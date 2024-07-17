@@ -255,12 +255,40 @@ describe('TaskActionDialog.vue', () => {
 
     describe('teamTaskCreatorInfo', () => {
       it('should return proper data', async () => {
-        await doMount(true, {
+        await doMount({
           computed: {
             userAccountMetadata: () => mockUserAccountMetadata({ id: 'mock-id-1' }),
           },
-        });
+        }, true);
         expect(wrapper.vm.teamTaskCreatorInfo).toEqual('task.task_details.by Jane Smith (System Admin)');
+      });
+    });
+
+    describe('availableTeams', () => {
+      it('should return list of teams filter out assigned team when actionTaken is not Reopen', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'id-1' }),
+          },
+        }, true);
+        await wrapper.setData({
+          actionTaken: TaskActionTaken.Assign,
+          assignableTeams: [mockTeamEntity({ id: 'id-1' }), mockTeamEntity({ id: 'id-2' })],
+        });
+        expect(wrapper.vm.availableTeams).toEqual([mockTeamEntity({ id: 'id-2' })]);
+      });
+
+      it('should not filter out assigned team when actionTaken is Reopen', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ assignedTeamId: 'id-1' }),
+          },
+        }, true);
+        await wrapper.setData({
+          actionTaken: TaskActionTaken.Reopen,
+          assignableTeams: [mockTeamEntity({ id: 'id-1' }), mockTeamEntity({ id: 'id-2' })],
+        });
+        expect(wrapper.vm.availableTeams).toEqual([mockTeamEntity({ id: 'id-1' }), mockTeamEntity({ id: 'id-2' })]);
       });
     });
   });
