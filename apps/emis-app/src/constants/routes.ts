@@ -18,6 +18,10 @@ const routes = {
       path: 'reporting/powerbi/:queryTypeName/:queryId',
       name: 'reporting.powerbi',
     },
+    emailedPowerbi: {
+      path: 'link/powerbi/:queryTypeName/:queryId/:slicerQry',
+      name: 'link.powerbi',
+    },
     list: {
       path: ':queryTypeName',
       name: 'reporting.list',

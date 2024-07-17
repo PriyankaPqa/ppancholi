@@ -6,7 +6,7 @@
         :labels="{ title }"
         :show-help="false"
         :hide-search="true">
-        <template #headerLeft>
+        <template v-if="!slicerQry" #headerLeft>
           <div>
             <v-btn
               elevation="0"
@@ -20,6 +20,14 @@
             </v-btn>
           </div>
           <v-divider vertical class="mx-4" />
+        </template>
+        <template v-if="canShare" #headerRight>
+          <v-divider vertical class="mx-4" />
+          <div>
+            <v-btn class="primary" @click="extractReportStateToLink()">
+              {{ $t('report.pbi.copyLink') }}
+            </v-btn>
+          </div>
         </template>
       </rc-data-table-header>
       <div class="full-height-minus-header full-width">
@@ -38,11 +46,15 @@ import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/ap
 import { IPowerBiTokenDetails, IQuery, QueryType } from '@libs/entities-lib/reporting';
 import { RcDataTableHeader } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
+import { UserRoles } from '@libs/entities-lib/user';
 import { ReportingPages } from './reportingPages';
-import { AllPbiReports } from './standard_queries/PowerBiEmbedded';
+import { AllPbiReports, GeographicEmailMapL6En } from './standard_queries/PowerBiEmbedded';
 
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-loop-func */
 export default Vue.extend({
-  name: 'ReportingHome',
+  name: 'PowerBiEmbedded',
 
   components: {
     RcDataTableHeader,
@@ -57,12 +69,16 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    slicerQry: {
+      type: String,
+      default: null,
+    },
   },
 
   data() {
     return {
       token: null as IPowerBiTokenDetails,
-      report: null as pbi.Embed,
+      report: null as pbi.Report,
       headerOptions: {
         color: 'primary darken-1',
         dark: true,
@@ -83,6 +99,10 @@ export default Vue.extend({
     title(): string {
       return ReportingPages.titleForQuery(this.query, this);
     },
+
+    canShare(): boolean {
+      return this.$hasLevel(UserRoles.level6) && [GeographicEmailMapL6En.id].indexOf(this.query?.id) > -1;
+    },
   },
 
   watch: {
@@ -102,6 +122,60 @@ export default Vue.extend({
     async loadReport() {
       this.token = await this.$services.queries.getPowerBiTokenForReport(this.queryId + this.$i18n.locale);
       this.embedPowerBIReport();
+    },
+
+    async extractReportStateToLink() {
+      const page = this.report as pbi.Visual;
+      const visual = (await (await page.getActivePage()).getVisuals()).filter((x) => x.type === 'slicer');
+      const slicers = [];
+      let hasError = false;
+      for (let i = 0; i < visual.length; i += 1) {
+        slicers.push(await visual[i].getSlicerState());
+        // tests that the slicer state is usable
+        await visual[i].setSlicerState(slicers[i]).catch((e) => {
+          hasError = true;
+          console.log(e);
+          this.$toasted.global.error(this.$t('report.pbi.filterInvalid'));
+        });
+        if (hasError) {
+          return;
+        }
+      }
+
+      const link = `${window.location.href.replace('/reporting/', '/link/')}/${btoa(JSON.stringify(slicers))}`;
+
+      navigator.clipboard.writeText(link)
+        .then(() => this.$toasted.global.info(this.$t('report.pbi.copied')))
+        .catch(() => this.$toasted.global.error(this.$t('report.pbi.copyError')));
+    },
+
+    async applyReportStateFromLink() {
+      try {
+        let tryNb = 0;
+        const page = await this.report.getActivePage();
+        const visual = (await page.getVisuals()).filter((x) => x.type === 'slicer');
+        const states = JSON.parse(atob(this.slicerQry)) as pbi.models.ISlicerState[];
+
+        for (let i = 0; i < visual.length; i += 1) {
+          if (states[i]) {
+            await visual[i].setSlicerState(states[i]).catch((e) => {
+              // we allow for 10 retries... shouldnt happen but dont want to loop indefinitely
+              if (e.message === 'slicerTargetDoesNotMatch' && tryNb < 10) {
+                setTimeout(() => this.applyReportStateFromLink(), 1000);
+                tryNb += 1;
+                console.log('Loaded too quickly.  Waiting 1s');
+              } else {
+                applicationInsights.trackException(e, { states, current: states[i] }, 'PowerBiEmbedded.vue', 'applySlicer');
+                throw e;
+              }
+            });
+          }
+        }
+      } catch (e) {
+        this.$toasted.global.error(this.$t('report.pbi.linkInvalid'));
+        console.error('applySlicer error', e);
+        applicationInsights.trackException(e, {}, 'PowerBiEmbedded.vue', 'applySlicer');
+      }
     },
 
     async embedPowerBIReport() {
@@ -130,11 +204,16 @@ export default Vue.extend({
       );
       const reportContainer = document.getElementById('powerBiContainer');
 
-      this.report = powerbi.embed(reportContainer, config);
+      this.report = powerbi.embed(reportContainer, config) as pbi.Report;
       this.report.on('error', (e) => {
-        // eslint-disable-next-line no-console
+        this.$toasted.global.error(this.$t('report.pbi.generalError'));
         console.error('error', e);
         applicationInsights.trackException(e, { token: this.embedPowerBIReport, queryId: this.queryId }, 'PowerBiEmbedded.vue', 'embedPowerBIReport');
+      });
+      this.report.on('loaded', () => {
+        if (this.slicerQry) {
+          setTimeout(() => this.applyReportStateFromLink(), 1000);
+        }
       });
     },
   },

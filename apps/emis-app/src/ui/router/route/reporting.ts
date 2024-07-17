@@ -12,6 +12,13 @@ const access = { level: UserRoles.level4, requiresAuthentication: true, requires
 
 export const reporting: Array<RouteConfig> = [
   {
+    path: Routes.reporting.emailedPowerbi.path,
+    name: Routes.reporting.emailedPowerbi.name,
+    component: PowerBiEmbedded,
+    props: true,
+    meta: { requiresAuthentication: true },
+  },
+  {
     path: Routes.reporting.home.path,
     name: Routes.reporting.home.name,
     component: Home,

@@ -108,6 +108,19 @@ export const QuarterlyReportPaymentsPbiIMFr = {
   queryType: QueryType.StandardIMfr,
 } as IQuery;
 
+export const GeographicEmailMapL6En = {
+  id: 'GeographicEmailMap',
+  queryType: QueryType.StandardL6en,
+  name: 'Geographic email map',
+  topic: ReportingTopic.PowerBi,
+} as IQuery;
+
+export const GeographicEmailMapL6Fr = {
+  ...GeographicEmailMapL6En,
+  queryType: QueryType.StandardL6fr,
+  name: 'Carte géographique des courriels',
+} as IQuery;
+
 export const HouseholdStatisticsL6En = {
   id: 'HouseholdStatistics',
   queryType: QueryType.Cardslevel6en,
@@ -212,4 +225,5 @@ export const AllPbiReports : IQuery[] = [
   FinancialStatisticsL5En, FinancialStatisticsL5Fr,
   FinancialStatisticsL4En, FinancialStatisticsL4Fr,
   FinancialStatisticsIMEn, FinancialStatisticsIMFr,
+  GeographicEmailMapL6En, GeographicEmailMapL6Fr,
 ];
