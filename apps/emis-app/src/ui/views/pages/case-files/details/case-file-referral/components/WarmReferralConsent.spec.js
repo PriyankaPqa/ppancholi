@@ -21,6 +21,21 @@ describe('WarmReferralConsent.vue', () => {
     });
   };
 
+  describe('Template', () => {
+    describe('consent - user name displayed', () => {
+      it('displays when the user information exists', async () => {
+        doMount();
+        await wrapper.setData({ localConsentInfo: { crcUserId: 'id-1',
+          crcUserName: 'user-name',
+          dateTimeConsent: new Date() } });
+        await wrapper.vm.$nextTick();
+        const element = wrapper.findDataTest('crc-username');
+        expect(element.exists()).toBe(true);
+        expect(element.text()).toContain('user-name');
+      });
+    });
+  });
+
   describe('Watch', () => {
     describe('consentChecked', () => {
       it('flushes referralConsentInformation when false', async () => {
