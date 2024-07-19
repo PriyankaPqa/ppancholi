@@ -8,10 +8,11 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
-import { mockTeamEntity } from '@libs/entities-lib/team';
+import { mockTeamEntity, mockTeamEvents, mockTeamsDataStandard } from '@libs/entities-lib/team';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
 import flushPromises from 'flush-promises';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 
 const Component = {
   render() {},
@@ -23,6 +24,7 @@ const { pinia, taskStore } = useMockTaskStore();
 const { userStore } = useMockUserStore(pinia);
 const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+const { teamStore } = useMockTeamStore(pinia);
 let wrapper;
 
 describe('caseFileTask', () => {
@@ -305,7 +307,7 @@ describe('caseFileTask', () => {
         expect(wrapper.vm.calculateCanAction()).toEqual(false);
       });
 
-      it('should be false even for L6 user if it is cancelled', async () => {
+      it('should be false even for L6 user if it is a cancelled personal task', async () => {
         await doMount(true, {
           computed: {
             task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.Cancelled }),
@@ -382,6 +384,17 @@ describe('caseFileTask', () => {
         expect(wrapper.vm.calculateCanAction()).toEqual(true);
       });
 
+      it('should be true for team task if user is creator and status is cancelled', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.Cancelled }),
+          },
+        }, 5);
+        expect(wrapper.vm.calculateCanAction()).toEqual(true);
+      });
+
       it('should be false for team task if user is creator, status is new but togglingIsWorkingOn is true and user is not assigned to team', async () => {
         userStore.getUserId = jest.fn(() => 'mock-id-1');
         await doMount(true, {
@@ -442,6 +455,31 @@ describe('caseFileTask', () => {
           },
         }, 1);
         expect(wrapper.vm.calculateCanAction()).toEqual(false);
+      });
+    });
+
+    describe('getAssignableTeams', () => {
+      it('should call service getTeamsByEvent event id, filter out unassigned teams and set data properly', async () => {
+        teamStore.getTeamsByEvent = jest.fn(() => ([
+          mockTeamsDataStandard({ id: '1', isAssignable: true }),
+          mockTeamsDataStandard({ id: '2', isAssignable: false }),
+          mockTeamsDataStandard({ id: '3', isEscalation: true, teamMembers: [{ id: 'someone' }] }),
+        ]));
+        await wrapper.setProps({
+          eventId: mockTeamEvents()[0].id,
+        });
+        await wrapper.vm.getAssignableTeams();
+        expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: wrapper.vm.eventId });
+        expect(wrapper.vm.assignableTeams).toEqual([mockTeamsDataStandard({ id: '1', isAssignable: true })]);
+        expect(wrapper.vm.userIsInEscalationTeam).toBeFalsy();
+
+        teamStore.getTeamsByEvent = jest.fn(() => ([
+          mockTeamsDataStandard({ id: '1', isAssignable: true }),
+          mockTeamsDataStandard({ id: '2', isAssignable: false }),
+          mockTeamsDataStandard({ id: '3', isEscalation: true, teamMembers: [{ id: 'someone' }, { id: wrapper.vm.userId }] }),
+        ]));
+        await wrapper.vm.getAssignableTeams();
+        expect(wrapper.vm.userIsInEscalationTeam).toBeTruthy();
       });
     });
   });

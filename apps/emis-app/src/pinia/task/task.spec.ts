@@ -117,13 +117,13 @@ describe('Task Store', () => {
       it('should call service completeTask when actionType is TaskCompleted', () => {
         const store = createTestStore();
         entityService.completeTask = jest.fn();
-        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.TaskCompleted, rationale: 'mock-rationale' });
+        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.TaskCompleted, rationale: 'mock-rationale', taskStatus: TaskStatus.InProgress });
         expect(entityService.completeTask).toHaveBeenCalledWith('mock-task-id-1', 'mock-case-file-id-1', 'mock-rationale');
       });
 
       it('should call service cancelTask when actionType is Cancelled', () => {
         const store = createTestStore();
-        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Cancelled, rationale: 'mock-rationale' });
+        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Cancelled, rationale: 'mock-rationale', taskStatus: TaskStatus.New });
         expect(entityService.cancelTask).toHaveBeenCalledWith(
           'mock-task-id-1',
           'mock-case-file-id-1',
@@ -134,7 +134,11 @@ describe('Task Store', () => {
       it('should call service setTaskActionTaken when actionType is Assign', () => {
         const store = createTestStore();
         entityService.setTaskActionTaken = jest.fn();
-        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Assign, rationale: 'mock-rationale', teamId: 'mock-team-id-1' });
+        store.taskAction(
+          'mock-task-id-1',
+          'mock-case-file-id-1',
+          { actionType: TaskActionTaken.Assign, rationale: 'mock-rationale', teamId: 'mock-team-id-1', taskStatus: TaskStatus.InProgress },
+          );
         expect(entityService.setTaskActionTaken).toHaveBeenCalledWith(
           'mock-task-id-1',
           'mock-case-file-id-1',
@@ -145,7 +149,11 @@ describe('Task Store', () => {
       it('should call service setTaskActionTaken when actionType is ActionCompleted', () => {
         const store = createTestStore();
         entityService.setTaskActionTaken = jest.fn();
-        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.ActionCompleted, rationale: 'mock-rationale', teamId: 'mock-team-id-1' });
+        store.taskAction(
+          'mock-task-id-1',
+          'mock-case-file-id-1',
+          { actionType: TaskActionTaken.ActionCompleted, rationale: 'mock-rationale', teamId: 'mock-team-id-1', taskStatus: TaskStatus.InProgress },
+          );
         expect(entityService.setTaskActionTaken).toHaveBeenCalledWith(
           'mock-task-id-1',
           'mock-case-file-id-1',
@@ -156,11 +164,30 @@ describe('Task Store', () => {
       it('should call service setTaskActionTaken when actionType is Reopen', () => {
         const store = createTestStore();
         entityService.setTaskActionTaken = jest.fn();
-        store.taskAction('mock-task-id-1', 'mock-case-file-id-1', { actionType: TaskActionTaken.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1' });
+        store.taskAction(
+          'mock-task-id-1',
+          'mock-case-file-id-1',
+          { actionType: TaskActionTaken.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1', taskStatus: TaskStatus.Completed },
+        );
         expect(entityService.setTaskActionTaken).toHaveBeenCalledWith(
           'mock-task-id-1',
           'mock-case-file-id-1',
           { actionTaken: ActionTaken.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
+        );
+      });
+
+      it('should call service reopenCanceledTask when actionType is Reopen and task status is Canceled', () => {
+        const store = createTestStore();
+        entityService.reopenCanceledTask = jest.fn();
+        store.taskAction(
+          'mock-task-id-1',
+          'mock-case-file-id-1',
+          { actionType: TaskActionTaken.Reopen, rationale: 'mock-rationale', teamId: 'mock-team-id-1', taskStatus: TaskStatus.Cancelled },
+        );
+        expect(entityService.reopenCanceledTask).toHaveBeenCalledWith(
+          'mock-task-id-1',
+          'mock-case-file-id-1',
+          { rationale: 'mock-rationale', teamId: 'mock-team-id-1' },
         );
       });
     });

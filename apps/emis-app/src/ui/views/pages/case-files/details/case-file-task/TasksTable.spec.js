@@ -1304,7 +1304,7 @@ describe('TasksTable.vue', () => {
     });
 
     describe('canAction', () => {
-      it('should be false for L6 user if it is cancelled task', async () => {
+      it('should be false for L6 user if it is cancelled personal task', async () => {
         await doMount(null, true, 6);
         expect(wrapper.vm.canAction(mockPersonalTaskEntity({ taskStatus: TaskStatus.Cancelled }))).toEqual(false);
       });
@@ -1352,6 +1352,13 @@ describe('TasksTable.vue', () => {
         userStore.getUserId = jest.fn(() => 'mock-id-1');
         await doMount(null, true, 5);
         const task = mockTeamTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.New });
+        expect(wrapper.vm.canAction(task)).toEqual(true);
+      });
+
+      it('should be true for team task when he is the creator and task is cancelled', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-id-1');
+        await doMount(null, true, 5);
+        const task = mockTeamTaskEntity({ createdBy: 'mock-id-1', taskStatus: TaskStatus.Cancelled });
         expect(wrapper.vm.canAction(task)).toEqual(true);
       });
 

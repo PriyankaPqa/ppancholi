@@ -29,6 +29,8 @@ export default Vue.extend({
       filterOutInactiveTaskCategoryAndSubCategory: true,
       localTask: new TaskEntity(),
       financialAssistancePaymentName: '',
+      userIsInEscalationTeam: false,
+      assignableTeams: [] as ITeamEntity[],
     };
   },
 
@@ -137,8 +139,16 @@ export default Vue.extend({
       }
     },
 
+    async getAssignableTeams() {
+      const res = await useTeamStore().getTeamsByEvent({ eventId: (this as any).eventId });
+      if (res) {
+        this.assignableTeams = res.filter((t) => t.isAssignable);
+        this.userIsInEscalationTeam = !!res.find((t) => t.isEscalation)?.teamMembers?.find((m) => this.userId === m.id);
+      }
+    },
+
     calculateCanAction(togglingIsWorkingOn = false): boolean {
-      if (this.task.taskStatus === TaskStatus.Cancelled) {
+      if (this.task.taskStatus === TaskStatus.Cancelled && this.task.taskType === TaskType.Personal) {
         return false;
       }
 
@@ -150,7 +160,7 @@ export default Vue.extend({
         return this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.InProgress;
       }
 
-      if (!togglingIsWorkingOn && this.task.createdBy === this.userId && this.task.taskStatus === TaskStatus.New) {
+      if (!togglingIsWorkingOn && this.task.createdBy === this.userId && (this.task.taskStatus === TaskStatus.New || this.task.taskStatus === TaskStatus.Cancelled)) {
         return true;
       }
 

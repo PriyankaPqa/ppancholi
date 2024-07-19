@@ -55,7 +55,7 @@
             </v-col>
           </v-row>
         </div>
-        <div class="action-select-area mb-8 py-5">
+        <div class="mb-8 py-5" :class="{ 'action-select-bg': actionItems.length === 1 }">
           <validation-provider v-slot="{ errors }" :rules="rules.actionTaken">
             <v-radio-group
               v-model="actionTaken"
@@ -63,16 +63,16 @@
               class="mt-0"
               data-test="action-radio-group"
               @change="resetForm()">
-              <div class="d-flex flex-nowrap px-4 justify-space-between">
-                <div v-for="(item, $index) in actionItems" :key="$index">
-                  <v-radio :value="item.value">
+              <div class="d-flex flex-nowrap">
+                <div v-for="(item, $index) in actionItems" :key="$index" class="mx-1 py-2" :class="{ 'action-select-radio': actionItems.length > 1 }">
+                  <v-radio :value="item.value" :class="{ 'flex-column': actionItems.length > 1 }">
                     <template #label>
                       <div class="font-weight-bold">
                         {{ item.label }}
                       </div>
                     </template>
                   </v-radio>
-                  <div v-if="item.description" class="rc-body12 pl-8">
+                  <div v-if="item.description" class="rc-body12 px-2 text-center">
                     {{ item.description }}
                   </div>
                 </div>
@@ -89,6 +89,7 @@
             :item-value="(item) => item.id"
             :label="`${$t('task.action.select_team_to_assign')} *`"
             :rules="rules.teamAssignTo"
+            :disabled="task.taskStatus === TaskStatus.Cancelled"
             data-test="task-action-dialog-team-assign-to" />
         </div>
 
@@ -110,9 +111,7 @@ import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { ValidationProvider } from 'vee-validate';
 import { VForm } from '@libs/shared-lib/types';
-import { ITeamEntity } from '@libs/entities-lib/team';
 import { TranslateResult } from 'vue-i18n';
-import { useTeamStore } from '@/pinia/team/team';
 import { useTaskStore } from '@/pinia/task/task';
 import helpers from '@/ui/helpers/helpers';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
@@ -121,6 +120,7 @@ import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import caseFileTask from '@/ui/mixins/caseFileTask';
 import mixins from 'vue-typed-mixins';
 import { UserRoles } from '@libs/entities-lib/user';
+import { ITeamEntity } from '@libs/entities-lib/team';
 
 interface IActionItem {
   value: TaskActionTaken;
@@ -169,13 +169,12 @@ export default mixins(caseFileTask).extend({
     return {
       rationale: '',
       actionTaken: null as TaskActionTaken,
-      assignableTeams: [] as ITeamEntity[],
       assignedTeamId: '',
       submitLoading: false,
       loading: false,
       TaskType,
       helpers,
-      userIsInEscalationTeam: false,
+      TaskStatus,
     };
   },
 
@@ -196,7 +195,7 @@ export default mixins(caseFileTask).extend({
     },
 
     actionItems(): IActionItem[] {
-      if (this.task.taskStatus === TaskStatus.Completed) {
+      if (this.task.taskStatus === TaskStatus.Completed || this.task.taskStatus === TaskStatus.Cancelled) {
         return [
           {
             value: TaskActionTaken.Reopen,
@@ -281,6 +280,14 @@ export default mixins(caseFileTask).extend({
     },
 
     availableTeams(): ITeamEntity[] {
+      if (this.task.taskStatus === TaskStatus.Cancelled) {
+        const escalationTeam = this.assignableTeams.filter((t) => t.isEscalation)[0];
+        if (escalationTeam) {
+          this.assignedTeamId = escalationTeam.id;
+          return [escalationTeam];
+        }
+        return [];
+      }
       if (this.actionTaken !== TaskActionTaken.Reopen) {
         return this.assignableTeams.filter((t) => t.id !== this.task.assignedTeamId);
       }
@@ -309,23 +316,22 @@ export default mixins(caseFileTask).extend({
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) {
+        if (this.availableTeams.length === 0 && this.task.taskStatus === TaskStatus.Cancelled) {
+          this.$toasted.global.error(this.$t('task.error.escalation_team_is_not_available_for_the_event'));
+        }
         return;
       }
       this.submitLoading = true;
       try {
-        await useTaskStore().taskAction(this.task.id, this.task.caseFileId, { actionType: this.actionTaken, rationale: this.rationale, teamId: this.assignedTeamId });
+        await useTaskStore().taskAction(
+          this.task.id,
+          this.task.caseFileId,
+          { actionType: this.actionTaken, rationale: this.rationale, teamId: this.assignedTeamId, taskStatus: this.task.taskStatus },
+        );
       } finally {
         this.$emit('update:show', false);
       }
       this.submitLoading = false;
-    },
-
-    async getAssignableTeams() {
-      const res = await useTeamStore().getTeamsByEvent({ eventId: this.eventId });
-      if (res) {
-        this.assignableTeams = res.filter((t) => t.isAssignable);
-        this.userIsInEscalationTeam = !!res.find((t) => t.isEscalation)?.teamMembers?.find((m) => this.userId === m.id);
-      }
     },
 
     resetForm() {
@@ -338,9 +344,16 @@ export default mixins(caseFileTask).extend({
 </script>
 
 <style scoped lang="scss">
-.action-select-area{
+.action-select-radio{
   background-color: var(--v-grey-lighten4);
   border-radius: 4px;
+  width: 25%;
+}
+
+.action-select-bg{
+  background-color: var(--v-grey-lighten4);
+  border-radius: 4px;
+  padding-left: 16px;
   width: 100%;
 }
 
@@ -350,5 +363,10 @@ export default mixins(caseFileTask).extend({
 
 .border-radius-6 {
   border-radius: 6px;
+}
+
+.flex-column {
+  display: flex !important;
+  flex-direction: column;
 }
 </style>

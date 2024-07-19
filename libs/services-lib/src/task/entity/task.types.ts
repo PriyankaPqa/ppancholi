@@ -8,6 +8,7 @@ export interface ITaskService extends IDomainBaseService<ITaskEntity, IdParams> 
   completeTask(id: uuid, caseFileId: uuid, rationale: string): Promise<ITaskEntityData>;
   cancelTask(id: uuid, caseFileId: uuid, rationale: string): Promise<ITaskEntityData>;
   setTaskActionTaken(id: uuid, caseFileId: uuid, params: { rationale: string, actionTaken: ActionTaken, teamId: uuid }): Promise<ITaskEntityData>;
+  reopenCanceledTask(id: uuid, caseFileId: uuid, params: { rationale: string, teamId: uuid }): Promise<ITaskEntityData>;
 }
 
 export interface ITaskServiceMock extends IDomainBaseServiceMock<ITaskEntity> {
@@ -17,4 +18,5 @@ export interface ITaskServiceMock extends IDomainBaseServiceMock<ITaskEntity> {
   completeTask: jest.Mock <ITaskEntityData>;
   cancelTask: jest.Mock <ITaskEntityData>;
   setTaskActionTaken: jest.Mock <ITaskEntityData>;
+  reopenCanceledTask: jest.Mock <ITaskEntityData>;
 }

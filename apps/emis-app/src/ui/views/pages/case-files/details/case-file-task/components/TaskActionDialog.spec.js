@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockPersonalTaskEntity, mockTeamTaskEntity, TaskActionTaken, TaskStatus } from '@libs/entities-lib/task';
 import { mockProvider } from '@/services/provider';
-import { mockTeamEntity, mockTeamEvents, mockTeamsDataStandard } from '@libs/entities-lib/team';
+import { mockTeamEntity, mockTeamsDataStandard } from '@libs/entities-lib/team';
 import flushPromises from 'flush-promises';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
@@ -12,8 +12,14 @@ import Component from './TaskActionDialog.vue';
 const localVue = createLocalVue();
 const services = mockProvider();
 const { pinia, taskStore } = useMockTaskStore();
-const { teamStore } = useMockTeamStore(pinia);
 const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
+const { teamStore } = useMockTeamStore(pinia);
+
+teamStore.getTeamsByEvent = jest.fn(() => ([
+  mockTeamsDataStandard({ id: '1', isAssignable: true }),
+  mockTeamsDataStandard({ id: '2', isAssignable: false }),
+  mockTeamsDataStandard({ id: '3', isEscalation: true, teamMembers: [{ id: 'someone' }] }),
+]));
 
 describe('TaskActionDialog.vue', () => {
   let wrapper;
@@ -190,6 +196,21 @@ describe('TaskActionDialog.vue', () => {
         ]);
       });
 
+      it('should return proper items status is Cancelled', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled }),
+          },
+        });
+        expect(wrapper.vm.actionItems).toEqual([
+          {
+            value: TaskActionTaken.Reopen,
+            label: 'task.task_action_dialog.Reopen',
+            description: '',
+          },
+        ]);
+      });
+
       it('should return proper items when taskType is personal', async () => {
         await doMount({
           computed: {
@@ -265,6 +286,30 @@ describe('TaskActionDialog.vue', () => {
     });
 
     describe('availableTeams', () => {
+      it('should only return the escalation team when task status is cancelled', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled }),
+          },
+        });
+        await wrapper.setData({
+          assignableTeams: [mockTeamEntity({ isAssignable: true, isEscalation: true, id: 'id-1' }), mockTeamEntity({ isAssignable: true, isEscalation: false, id: 'id-2' })],
+        });
+        expect(wrapper.vm.availableTeams).toEqual([mockTeamEntity({ isAssignable: true, isEscalation: true, id: 'id-1' })]);
+      });
+
+      it('should return empty list if no escalation on that event when task status is cancelled', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled }),
+          },
+        });
+        await wrapper.setData({
+          assignableTeams: [mockTeamEntity({ isAssignable: true, isEscalation: false, id: 'id-1' }), mockTeamEntity({ isAssignable: true, isEscalation: false, id: 'id-2' })],
+        });
+        expect(wrapper.vm.availableTeams).toEqual([]);
+      });
+
       it('should return list of teams filter out assigned team when actionTaken is not Reopen', async () => {
         await doMount({
           computed: {
@@ -306,6 +351,24 @@ describe('TaskActionDialog.vue', () => {
         expect(taskStore.taskAction).not.toHaveBeenCalled();
       });
 
+      it('should call error toaster if form validation is false and task status is Canceled and availableTeams is empty', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled }),
+            availableTeams: () => [],
+          },
+        });
+        await wrapper.setData({
+          actionTaken: TaskActionTaken.Reopen,
+          rationale: 'test-string',
+        });
+        wrapper.vm.$toasted.global.error = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalled();
+        expect(taskStore.taskAction).not.toHaveBeenCalled();
+      });
+
       it('should call service taskAction if form validation is true', async () => {
         taskStore.taskAction = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -317,7 +380,7 @@ describe('TaskActionDialog.vue', () => {
         expect(taskStore.taskAction).toHaveBeenCalledWith(
           'mock-task-id',
           'mock-case-file-id-1',
-          { actionType: TaskActionTaken.Assign, rationale: 'test-string', teamId: '' },
+          { actionType: TaskActionTaken.Assign, rationale: 'test-string', teamId: '', taskStatus: TaskStatus.InProgress },
         );
       });
 
@@ -331,31 +394,6 @@ describe('TaskActionDialog.vue', () => {
         });
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$emit).toHaveBeenCalledWith('update:show', false);
-      });
-    });
-
-    describe('getAssignableTeams', () => {
-      it('should call service getTeamsByEvent event id, filter out unassigned teams and set data properly', async () => {
-        teamStore.getTeamsByEvent = jest.fn(() => ([
-          mockTeamsDataStandard({ id: '1', isAssignable: true }),
-          mockTeamsDataStandard({ id: '2', isAssignable: false }),
-          mockTeamsDataStandard({ id: '3', isEscalation: true, teamMembers: [{ id: 'someone' }] }),
-        ]));
-        await wrapper.setProps({
-          eventId: mockTeamEvents()[0].id,
-        });
-        await wrapper.vm.getAssignableTeams();
-        expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: wrapper.vm.eventId });
-        expect(wrapper.vm.assignableTeams).toEqual([mockTeamsDataStandard({ id: '1', isAssignable: true })]);
-        expect(wrapper.vm.userIsInEscalationTeam).toBeFalsy();
-
-        teamStore.getTeamsByEvent = jest.fn(() => ([
-          mockTeamsDataStandard({ id: '1', isAssignable: true }),
-          mockTeamsDataStandard({ id: '2', isAssignable: false }),
-          mockTeamsDataStandard({ id: '3', isEscalation: true, teamMembers: [{ id: 'someone' }, { id: wrapper.vm.userId }] }),
-        ]));
-        await wrapper.vm.getAssignableTeams();
-        expect(wrapper.vm.userIsInEscalationTeam).toBeTruthy();
       });
     });
 

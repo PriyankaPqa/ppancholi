@@ -643,7 +643,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       },
 
     canAction(task: ITaskEntity): boolean {
-      if (task.taskStatus === TaskStatus.Cancelled) {
+      if (task.taskStatus === TaskStatus.Cancelled && task.taskType === TaskType.Personal) {
         return false;
       }
       if (this.$hasLevel(UserRoles.level6)) {
@@ -654,7 +654,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         return task.createdBy === this.userId && task.taskStatus === TaskStatus.InProgress;
       }
 
-      if (task.createdBy === this.userId && task.taskStatus === TaskStatus.New) {
+      if (task.createdBy === this.userId && (task.taskStatus === TaskStatus.New || task.taskStatus === TaskStatus.Cancelled)) {
         return true;
       }
 

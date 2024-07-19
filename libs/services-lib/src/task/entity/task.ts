@@ -54,6 +54,10 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     });
   }
 
+  async reopenCanceledTask(id: uuid, caseFileId: uuid, params:{ rationale: string, teamId: uuid }): Promise<ITaskEntityData> {
+    return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}/reopen-cancelled-task`, { id, caseFileId }), params);
+  }
+
   /** Private methods * */
 
   parseTaskPayload(task: ITaskEntityData): ITaskEntityData {

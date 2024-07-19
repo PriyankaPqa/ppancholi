@@ -231,6 +231,10 @@ export default mixins(caseFileTask, caseFileDetail).extend({
   },
 
   computed: {
+    eventId(): string {
+      return this.caseFile.eventId;
+    },
+
     title(): string {
       return this.task?.taskType === TaskType.Team
         ? this.$t('task.task_details.title.team_task_details') as string
@@ -330,6 +334,7 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     if (this.isTeamTask) {
       await Promise.all([
         useUserAccountMetadataStore().fetch(this.task.createdBy, GlobalHandler.Partial),
+        this.getAssignableTeams(),
         useTeamStore().fetch(this.task.assignedTeamId),
         this.task?.financialAssistancePaymentId && this.fetchSelectedFAPaymentAndSetName(),
       ]);
@@ -360,7 +365,6 @@ export default mixins(caseFileTask, caseFileDetail).extend({
         },
       });
     },
-
   },
 });
 </script>

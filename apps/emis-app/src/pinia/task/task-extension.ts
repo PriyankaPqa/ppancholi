@@ -74,13 +74,15 @@ export function getExtensionComponents(
     }
   }
 
-  async function taskAction(id: uuid, caseFileId: uuid, params: { actionType: TaskActionTaken, rationale: string, teamId?: uuid }) {
-    const { actionType, rationale, teamId } = params;
+  async function taskAction(id: uuid, caseFileId: uuid, params: { actionType: TaskActionTaken, rationale: string, teamId?: uuid, taskStatus: TaskStatus }) {
+    const { actionType, rationale, teamId, taskStatus } = params;
     const actionServices : { [index: number ]: () => ITaskEntityData | Promise<ITaskEntityData> } = {
       [TaskActionTaken.Assign]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Assign, teamId }),
       [TaskActionTaken.ActionCompleted]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Completed, teamId }),
       [TaskActionTaken.TaskCompleted]: () => entityService.completeTask(id, caseFileId, rationale),
-      [TaskActionTaken.Reopen]: () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Reopen, teamId }),
+      [TaskActionTaken.Reopen]: taskStatus === TaskStatus.Completed
+        ? () => entityService.setTaskActionTaken(id, caseFileId, { rationale, actionTaken: ActionTaken.Reopen, teamId })
+        : () => entityService.reopenCanceledTask(id, caseFileId, { rationale, teamId }),
       [TaskActionTaken.Cancelled]: () => entityService.cancelTask(id, caseFileId, rationale),
     };
 

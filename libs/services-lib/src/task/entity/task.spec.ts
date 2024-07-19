@@ -82,4 +82,12 @@ describe('>>> Tasks Service', () => {
       expect(parseTask.subCategory.optionItemId).toEqual('mock-id');
     });
   });
+
+  test('reopenCanceledTask is linked to the correct URL', async () => {
+    await service.reopenCanceledTask('mock-task-id-123', 'mock-case-file-id-1', { rationale: 'mock-rationale-123', teamId: 'mock-id-1' });
+    expect(http.patch).toHaveBeenCalledWith(
+      'www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/reopen-cancelled-task',
+      { rationale: 'mock-rationale-123', teamId: 'mock-id-1' },
+      );
+  });
 });

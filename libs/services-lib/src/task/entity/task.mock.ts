@@ -10,4 +10,5 @@ export const mockTaskService = (): ITaskServiceMock => ({
   completeTask: jest.fn(() => mockTeamTaskEntity()),
   cancelTask: jest.fn(() => mockTeamTaskEntity()),
   setTaskActionTaken: jest.fn(() => mockTeamTaskEntity()),
+  reopenCanceledTask: jest.fn(() => mockTeamTaskEntity()),
 });
