@@ -76,6 +76,17 @@ describe('RecoveryPlanDetails', () => {
     });
   });
 
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('should fetch the casefile', async () => {
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(caseFileStore.fetch).toHaveBeenCalledWith(wrapper.vm.caseFileId);
+      });
+    });
+  });
+
   describe('Methods', () => {
     describe('getCaseFileDocumentRoute', () => {
       it('should redirect to case file documents', () => {

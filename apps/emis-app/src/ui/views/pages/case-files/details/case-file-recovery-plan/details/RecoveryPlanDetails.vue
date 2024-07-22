@@ -4,7 +4,7 @@
     :outer-scroll="true"
     :title="$t('recoveryPlan.title')"
     :show-help="false">
-    <div v-if="!recoveryPlan">
+    <div v-if="!recoveryPlan || loading">
       <v-skeleton-loader tile type="table-heading" />
       <v-skeleton-loader tile type="list-item" />
     </div>
@@ -85,6 +85,7 @@ import { RcPageContent, VDateFieldWithValidation } from '@libs/component-lib/com
 import { CaseFileStatus, IRecoveryPlan } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(caseFileDetail).extend({
@@ -98,6 +99,7 @@ export default mixins(caseFileDetail).extend({
   data() {
     return {
       helpers,
+      loading: false,
       questionList: [
         {
           question: this.$t('recoveryPlan.question.has_recovery_plan'),
@@ -113,6 +115,15 @@ export default mixins(caseFileDetail).extend({
         },
       ],
     };
+  },
+
+  async created() {
+    try {
+      this.loading = true;
+      await useCaseFileStore().fetch(this.caseFileId);
+    } finally {
+      this.loading = false;
+    }
   },
 
   computed: {
