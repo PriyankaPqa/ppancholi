@@ -2,10 +2,10 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { generateRandomTeamName } from '@libs/cypress-lib/helpers';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { createEventAndTeam } from '../helpers/prepareState';
-import { removeTeamMembersFromTeam } from '../helpers/teams';
-import { TeamsHomePage } from '../../pages/teams/teamsHome.page';
-import { verifyAndReturnCreateNewTeamPage } from '../helpers/page';
+import { createEventAndTeam } from '../../helpers/prepareState';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { TeamsHomePage } from '../../../pages/teams/teamsHome.page';
+import { verifyAndReturnCreateNewTeamPage } from '../../helpers/page';
 
 const canRoles = [
   UserRoles.level6,
