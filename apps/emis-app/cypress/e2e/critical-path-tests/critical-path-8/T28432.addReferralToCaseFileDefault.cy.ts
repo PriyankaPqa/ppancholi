@@ -27,7 +27,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 
 let accessTokenL6 = '';
 
-describe('[T28432] Add Referral to a Case File (default)', { tags: ['@case-file'] }, () => {
+describe('[T28432] Add Referral to a Case File (default).', { tags: ['@case-file'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

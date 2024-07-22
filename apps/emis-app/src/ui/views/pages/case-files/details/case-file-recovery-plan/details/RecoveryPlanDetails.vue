@@ -11,7 +11,7 @@
     <div v-else>
       <v-row class="justify-center mb-0">
         <v-col cols="12" md="12" lg="8" class="d-flex justify-end pr-0">
-          <v-btn icon :disabled="!canEdit" :aria-label="$t('common.edit')" @click="getEditRecoveryPlanRoute()">
+          <v-btn icon data-test="recoveryPlan_EditBtn" :disabled="!canEdit" :aria-label="$t('common.edit')" @click="getEditRecoveryPlanRoute()">
             <v-icon>
               mdi-pencil
             </v-icon>
@@ -20,7 +20,7 @@
       </v-row>
       <v-row class="justify-center mt-0 rc-body14">
         <v-col cols="12" md="12" lg="8" class="border-all border-radius-6 pa-0">
-          <v-row class="justify-space-between mt-3 mb-0 pl-4 mx-0">
+          <v-row data-test="has-recovery-plan" class="justify-space-between mt-3 mb-0 pl-4 mx-0">
             <div class="font-weight-bold flex-grow-1 pb-3 description-section">
               {{ questionList[0].question }}
             </div>
@@ -28,7 +28,7 @@
               {{ recoveryPlan.hasRecoveryPlan ? $t('common.yes') : $t('common.no') }}
             </div>
           </v-row>
-          <v-row v-if="recoveryPlan.hasRecoveryPlan" class="border-top flex-nowrap justify-space-between pt-3 pl-0 mx-0 my-0 px-0">
+          <v-row v-if="recoveryPlan.hasRecoveryPlan" data-test="crc-provided-recovery-plan" class="border-top flex-nowrap justify-space-between pt-3 pl-0 mx-0 my-0 px-0">
             <div class="pb-3 pl-4 description-section">
               <div class="font-weight-bold">
                 {{ questionList[1].question }}
@@ -42,7 +42,7 @@
             </div>
           </v-row>
           <template v-if="recoveryPlan.crcProvided">
-            <v-row class="border-bottom border-top justify-space-between flex-nowrap py-3 pr-4 mx-0 my-0">
+            <v-row data-test="crc-provided-recovery-plan-date" class="border-bottom border-top justify-space-between flex-nowrap py-3 pr-4 mx-0 my-0">
               <div class="description-section pl-4">
                 <div class="font-weight-bold">
                   {{ questionList[2].question }}

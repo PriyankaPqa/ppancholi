@@ -29,7 +29,7 @@ export enum DataTest {
   dialogApprovalHistoryRationale = 'rationale-item',
   dialogApprovalHistoryDate = 'date-item',
   dialogApprovalHistoryAction = 'action-item',
-  caseFileActivityTab = 'item-text-0',
+  caseFileActivityTab = 'case-file-activity',
   pageTitle = 'page-title',
   paymentLineItemCancelButton = 'paymentLineItem__cancelBtn',
   cancelledLabel = 'paymentLineItem__cancelled_label',

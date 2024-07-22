@@ -13,6 +13,7 @@ export const getUserName = (roleName: string) => {
     level1: 'TestDev1',
     level0: 'TestDev0',
     contributorFinance: 'Contributor2',
+    contributor3: 'Contributor3',
   } as Record<string, string>;
   return map[roleName];
 };
@@ -26,6 +27,7 @@ export const getUserRoleDescription = (roleName: string) => {
     level2: 'Case Worker',
     level1: 'Call Centre Agent',
     level0: 'Call Centre Agent(L0)',
+    contributor3: 'Advisor',
   } as Record<string, string>;
   return map[roleName];
 };

@@ -152,7 +152,7 @@ describe('[T29048] File can be processed case file status (Open to closed)', { t
           massCaseFileStatusUpdateDetailsPage.getMassActionType().should('eq', 'Case file status update');
           massCaseFileStatusUpdateDetailsPage.getMassActionDateCreated().should('eq', getToday());
           massCaseFileStatusUpdateDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
-          massCaseFileStatusUpdateDetailsPage.getMassActionCaseFileStatusDetailsEvent().should('eq', this.event.name.translation.en);
+          massCaseFileStatusUpdateDetailsPage.getMassActionCaseFileStatusDetailsEventElement().contains(this.event.name.translation.en).should('be.visible');
           massCaseFileStatusUpdateDetailsPage.getMassActionCaseFileStatusDetailsCaseFileStatus().should('eq', 'Closed');
           massCaseFileStatusUpdateDetailsPage.getMassActionCaseFileStatusDetailsReason().should('eq', 'Operation ended');
           massCaseFileStatusUpdateDetailsPage.getMassActionCaseFileStatusDetailsRationale().should('eq', this.massActionCaseFileStatusUploadFile.rationale);

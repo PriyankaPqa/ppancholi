@@ -29,6 +29,10 @@ export class MassCaseFileStatusUpdateDetailsPage extends BaseDetailsMassAction {
     return cy.getByDataTest(this.event).getAndTrimText();
   }
 
+  public getMassActionCaseFileStatusDetailsEventElement() {
+    return cy.getByDataTest(this.event);
+  }
+
   public getMassActionCaseFileStatusDetailsCaseFileStatus() {
     return cy.getByDataTest(this.caseFileStatus).getAndTrimText();
   }

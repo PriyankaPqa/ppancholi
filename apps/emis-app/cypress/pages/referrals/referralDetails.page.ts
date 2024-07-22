@@ -7,7 +7,7 @@ export enum DataTest {
   notesReferral = 'referral_details_notes',
   methodReferral = 'referral_details_method',
   backToReferrals = 'referral_details_back_btn',
-  caseFileActivityTab = 'item-text-0',
+  caseFileActivityTab = 'case-file-activity',
 }
 
 export class ReferralDetailsPage {

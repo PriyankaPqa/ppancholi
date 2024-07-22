@@ -99,7 +99,7 @@ describe('[T28827] Update Household Address', { tags: ['@household'] }, () => {
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
           caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Address information changed');
-          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+          caseFileDetailsPage.getUserName(1).should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
           caseFileDetailsPage.getCaseFileActivityBodies().should('string', 'Address information changed');

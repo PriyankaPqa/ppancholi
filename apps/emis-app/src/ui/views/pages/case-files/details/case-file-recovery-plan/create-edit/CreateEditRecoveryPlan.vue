@@ -9,7 +9,7 @@
       <v-row class="justify-center mt-0 rc-body14">
         <v-col cols="12" md="12" lg="8" class="border-all border-radius-6 pa-0">
           <v-row class="justify-space-between mt-3 mb-0 pl-4 mx-0">
-            <div class="font-weight-bold flex-grow-1 pb-3 description-section">
+            <div data-test="recoveryPlan_description" class="font-weight-bold flex-grow-1 pb-3 description-section">
               {{ questionList[0].question }}
             </div>
             <div>

@@ -9,7 +9,7 @@ export enum DataTest {
   groupTitle = 'caseFile-financialAssistance-expand-groupTitle',
   groupTotal = 'caseFile-financialAssistance-expand-groupTotal',
   groupPaymentStatus = 'caseFile-financialAssistance-expand-groupPaymentStatus',
-  caseFileDetails = 'item-text-0',
+  caseFileDetails = 'case-file-activity',
   faHistory = 'history-link',
   addFaPayment = 'table__addButton',
   refreshButton = 'financialAssistanceOverview__table_refresh_button',
