@@ -10,7 +10,6 @@ export interface IQueriesService extends IDomainBaseService<IQuery, uuid> {
   fetchListOptions(): Promise<ODataResult<ListOption>>;
   fetchPrograms(): Promise<ODataResult<ObjectName>>;
   fetchEvents(): Promise<ODataResult<ObjectName>>;
-  fetchIssueTypes(): Promise<ODataResult<ObjectName>>;
   fetchByType(type: QueryType): Promise<IQuery[]>;
   edit(query: IQuery): Promise<IQuery>;
   create(query: IQuery): Promise<IQuery>;
@@ -22,7 +21,6 @@ export interface IQueriesServiceMock extends IDomainBaseServiceMock<IQuery> {
   fetchListOptions: jest.Mock<ODataResult<ListOption>>;
   fetchPrograms: jest.Mock<ODataResult<ObjectName>>;
   fetchEvents: jest.Mock<ODataResult<ObjectName>>;
-  fetchIssueTypes: jest.Mock<ODataResult<ObjectName>>;
   fetchByType: jest.Mock<IQuery[]>;
   edit: jest.Mock<IQuery>;
   create: jest.Mock<IQuery>;

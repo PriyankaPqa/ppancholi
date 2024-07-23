@@ -47,11 +47,6 @@ describe('>>> Queries Service', () => {
     expect(http.get).toHaveBeenCalledWith('www.test.com/common/data-providers/event-names');
   });
 
-  test('fetchIssueTypes is linked to the correct URL', async () => {
-    await service.fetchIssueTypes();
-    expect(http.get).toHaveBeenCalledWith('www.test.com/common/data-providers/issue-types');
-  });
-
   test('getPowerBiTokenForReport is linked to the correct URL', async () => {
     await service.getPowerBiTokenForReport('name');
     expect(http.get).toHaveBeenCalledWith('www.test.com/common/power-bi/embed-info/name');

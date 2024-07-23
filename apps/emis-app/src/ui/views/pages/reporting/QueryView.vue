@@ -406,14 +406,11 @@ export default Vue.extend({
               columns.find((x) => x.lookupType === LookupType.eventEn || x.lookupType === LookupType.eventFr) ? this.$services.queries.fetchEvents() : null,
               columns.find((x) => x.lookupType === LookupType.programNameEn || x.lookupType === LookupType.programNameFr)
                     ? await this.$services.queries.fetchPrograms() : null,
-              columns.find((x) => x.lookupType === LookupType.issueType)
-                    ? await this.$services.queries.fetchIssueTypes() : null,
             ]);
       const enums = results[0].value;
       const listOptions = results[1].value;
       const events = results[2]?.value || [];
       const programs = results[3]?.value || [];
-      const issueTypes = results[4]?.value || [];
       const normalize = (item: string) => sharedHelpers.getNormalizedString(item).toLocaleLowerCase();
       for (let i = 0; i < columns.length; i += 1) {
         const col = columns[i];
@@ -443,9 +440,6 @@ export default Vue.extend({
             break;
           case LookupType.programNameFr:
             col.lookup = { dataSource: sortBy(programs.map((x) => x.french), [normalize]) };
-            break;
-          case LookupType.issueType:
-            col.lookup = { dataSource: sortBy(issueTypes.map((x) => x.english), [normalize]) };
             break;
           default:
             // for non-lookups we need to remove 'anyof' and 'noneof' which if not using a lookup would download the whole dataset

@@ -10,7 +10,6 @@ export enum LookupType {
   eventEn,
   programNameEn,
   programNameFr,
-  issueType,
 }
 
 export interface ExtendedColumn extends Column<any, any> {
@@ -611,18 +610,17 @@ export const logActivitiesEmailEventsViewDs : IDatasourceBase = {
     { dataField: 'eventNameEn', dataType: 'string', visible: false },
     { dataField: 'eventNameFr', dataType: 'string', visible: false },
     { dataField: 'activityDate', dataType: 'date', asUtcDate: true },
-    { dataField: 'type', dataType: 'number', visible: false },
-    { dataField: 'eventType', dataType: 'string', visible: false },
     { dataField: 'eventTypeId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'eventTypeNameEn', dataType: 'string', visible: false },
     { dataField: 'eventTypeNameFr', dataType: 'string', visible: false },
     { dataField: 'massCommunicationId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
     { dataField: 'massCommunicationName', dataType: 'string', visible: false },
-    { dataField: 'issueType', dataType: 'string', lookupType: LookupType.issueType },
     { dataField: 'languageCode', dataType: 'string', visible: false },
     { dataField: 'email', dataType: 'string' },
     { dataField: 'emailCategoryEn', dataType: 'string', lookupType: LookupType.enumEn, lookupKey: 'EmailCategory' },
     { dataField: 'emailCategoryFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'EmailCategory' },
+    { dataField: 'emailIssueTypeEn', dataType: 'string', lookupType: LookupType.enumEn, lookupKey: 'EmailIssueType' },
+    { dataField: 'emailIssueTypeFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'EmailIssueType' },
     { dataField: 'emailTemplateKey', dataType: 'string', visible: false },
     { dataField: 'reason', dataType: 'string' },
     { dataField: 'latitude', dataType: 'number', visible: false },

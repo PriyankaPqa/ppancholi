@@ -468,29 +468,6 @@ describe('QueryView.vue', () => {
         );
       });
 
-      it('initializes issueTypes columns', async () => {
-        const columns = [
-          { dataField: 'issueType', dataType: 'string', lookupType: LookupType.issueType },
-        ];
-        await wrapper.vm.initializeLookups(columns);
-        expect(columns).toEqual(
-          [
-            {
-              dataField: 'issueType',
-              dataType: 'string',
-              lookup: {
-                dataSource: [
-                  'event for Authtencation',
-                  'MANITOBA Wilfire 2022',
-                  'TEST THIS EVENT',
-                ],
-              },
-              lookupType: 8,
-            },
-          ],
-        );
-      });
-
       it('sets filterOperations for non lookups', async () => {
         const columns = [
           { dataField: 'str', dataType: 'string', visible: false },

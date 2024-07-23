@@ -11,6 +11,5 @@ export const mockQueriesService = (): IQueriesServiceMock => ({
   fetchListOptions: jest.fn(() => ({ value: mockListOptions() })),
   fetchPrograms: jest.fn(() => ({ value: mockObjectNames() })),
   fetchEvents: jest.fn(() => ({ value: mockObjectNames() })),
-  fetchIssueTypes: jest.fn(() => ({ value: mockObjectNames() })),
   getPowerBiTokenForReport: jest.fn(() => mockPowerBiToken()),
 });
