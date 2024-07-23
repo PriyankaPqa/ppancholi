@@ -160,6 +160,9 @@
   </div>
 </template>
 <script lang="ts">
+
+/* eslint-disable complexity */
+
 import Vue from 'vue';
 import {
   DxDataGrid, DxColumnChooser, DxColumnChooserSearch, DxPosition, DxHeaderFilter, DxFilterRow,
@@ -348,12 +351,15 @@ export default Vue.extend({
     /// this picks the right datasource for this query.  Also it sets the initial "select" list to the list of columns that are visible by default
     async initializeDatasource() {
       const ds = datasources.find((d) => d.reportingTopic === this.query.topic);
-      const columns = sortBy(ds.columns.map((c) => ({
+      let columns = sortBy(ds.columns.map((c) => ({
         ...c,
         caption: this.$t(c.caption) as string,
         cssClass: `grid-column ${c.cssClass || ''}`,
         allowSearch: c.allowSearch !== false && c.visible !== false,
       })), (x) => x.caption.toLowerCase()) as ExtendedColumn[];
+
+      columns = columns.filter((c) => !c.featureKey || this.$hasFeature(c.featureKey));
+
       const select = columns.filter((c) => c.visible !== false).map((c) => c.dataField);
       Object.keys(ds.key).forEach((k) => {
           if (select.indexOf(k) === -1) {

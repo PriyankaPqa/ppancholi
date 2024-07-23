@@ -1091,6 +1091,8 @@
     "ds.person.shelterLocationsNameEnFr": "ds.person.shelterLocationsNameEnFr",
     "ds.person.shelterLocationsNameFr": "ds.person.shelterLocationsNameFr",
     "ds.person.updateDate": "ds.person.updateDate",
+    "ds.person.caseFileIndividualId": "ds.person.caseFileIndividualId",
+    "ds.person.caseFileIndividualETag": "ds.person.caseFileIndividualETag",
     "ds.personAddressHistory.address_AddressTypeNameEn": "ds.personAddressHistory.address_AddressTypeNameEn",
     "ds.personAddressHistory.address_AddressTypeNameEnFr": "ds.personAddressHistory.address_AddressTypeNameEnFr",
     "ds.personAddressHistory.address_AddressTypeNameFr": "ds.personAddressHistory.address_AddressTypeNameFr",

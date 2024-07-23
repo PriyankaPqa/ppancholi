@@ -1091,6 +1091,8 @@
     "ds.person.shelterLocationsNameEnFr": "Person - Temp. Addr - Shelter Location (en\/fr)",
     "ds.person.shelterLocationsNameFr": "Person - Temp. Addr - Shelter Location (fr)",
     "ds.person.updateDate": "Person - Date updated",
+    "ds.person.caseFileIndividualId": "Case File Individual - ID",
+    "ds.person.caseFileIndividualETag": "Case File Individual - eTag",
     "ds.personAddressHistory.address_AddressTypeNameEn": "Person - Temp. Addr History - Type (en)",
     "ds.personAddressHistory.address_AddressTypeNameEnFr": "Person - Temp. Addr History - Type (en\/fr)",
     "ds.personAddressHistory.address_AddressTypeNameFr": "Person - Temp. Addr History - Type (fr)",

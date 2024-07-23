@@ -1,4 +1,6 @@
+/* eslint-disable vue/max-len */
 import { ReportingTopic } from '@libs/entities-lib/reporting';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Column } from 'devextreme/ui/data_grid_types';
 
 export enum LookupType {
@@ -16,6 +18,8 @@ export interface ExtendedColumn extends Column<any, any> {
   lookupType?: LookupType;
   lookupKey?: string;
   lookupSubItems?: boolean;
+
+  featureKey?: FeatureKeys;
 
   asUtcDate?: boolean; // whether we want to show the date field in the original UTC or as local.  most dates should be local.
 }
@@ -227,6 +231,8 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'createdBy', dataType: 'string', visible: false },
     { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
     { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileIndividualETag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false, featureKey: FeatureKeys.CaseFileIndividual },
+    { dataField: 'caseFileIndividualId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false, featureKey: FeatureKeys.CaseFileIndividual },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
 };
 
