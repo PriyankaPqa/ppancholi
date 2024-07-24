@@ -1,6 +1,6 @@
 <template>
   <div class="grey-container pa-4 flex-row justify-space-between">
-    <div class="rc-body14 fw-bold">
+    <div class="rc-body14 fw-bold" data-test="file-name">
       {{ document.originalFilename }}
     </div>
     <div>
