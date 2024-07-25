@@ -2,6 +2,7 @@ export enum DataTest {
   frequency = 'assessmentTemplate_details_frequency',
   assessmentStatus = 'assessmentTemplate_details_status',
   savePartialAssessmentsSurveyResults = 'assessmentTemplate_details_savePartialSurveyResults',
+  pageTitle = 'assessmentTemplate_details_page_title',
 }
 
 export class AssessmentDetailsPage {
@@ -11,8 +12,14 @@ export class AssessmentDetailsPage {
 
   private savePartialAssessmentsSurveyResults = { selector: DataTest.savePartialAssessmentsSurveyResults };
 
+  private pageTitle = { selector: DataTest.pageTitle };
+
   public getFrequency() {
     return cy.getByDataTestLike(this.frequency);
+  }
+
+  public getPageTitleElement() {
+    return cy.getByDataTest(this.pageTitle);
   }
 
   public getAssessmentStatusTag() {
