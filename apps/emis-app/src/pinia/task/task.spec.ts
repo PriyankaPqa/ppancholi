@@ -1,6 +1,16 @@
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { Entity } from '@/pinia/task/task';
-import { ActionTaken, IdParams, ITaskEntityData, mockPersonalTaskEntity, mockTaskEntities, mockTeamTaskEntity, TaskActionTaken, TaskStatus } from '@libs/entities-lib/task';
+import {
+  ActionTaken,
+  IdParams,
+  ITaskEntityData,
+  mockPersonalTaskEntity,
+  mockTaskEntities,
+  mockTeamTaskEntity,
+  mockUpdateTaskRequest,
+  TaskActionTaken,
+  TaskStatus,
+} from '@libs/entities-lib/task';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 
@@ -68,7 +78,7 @@ describe('Task Store', () => {
         const store = createTestStore();
         entityService.editTask = jest.fn();
         const taskId = '4321';
-        const task = mockTeamTaskEntity();
+        const task = mockUpdateTaskRequest();
         await store.editTask(taskId, task);
         expect(entityService.editTask).toHaveBeenCalledWith(taskId, task);
       });

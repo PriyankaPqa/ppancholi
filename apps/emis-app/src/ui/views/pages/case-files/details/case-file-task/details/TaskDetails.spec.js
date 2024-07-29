@@ -93,7 +93,7 @@ describe('TaskDetails.vue', () => {
 
     describe('task-details-edit-button', () => {
       it('should be render when user has level 1 and is team task', async () => {
-        await doMount(false, {
+        await doMount(true, {
           pinia: getPiniaForUser(UserRoles.level1),
           data() {
             return {
@@ -104,7 +104,7 @@ describe('TaskDetails.vue', () => {
             task: () => mockTeamTaskEntity(),
             isTeamTask: () => true,
           },
-        });
+        }, 1);
         await flushPromises();
         const element = wrapper.findDataTest('task-details-edit-button');
         expect(element.exists()).toBeTruthy();

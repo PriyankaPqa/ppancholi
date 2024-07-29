@@ -1,5 +1,5 @@
 import { BaseStoreComponents, filterAndSortActiveItems, filterAndSortActiveSubItems } from '@libs/stores-lib/base';
-import { ActionTaken, IdParams, ITaskEntity, ITaskEntityData, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { ActionTaken, IdParams, ITaskEntity, ITaskEntityData, IUpdateTaskRequest, TaskActionTaken, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { TaskService } from '@libs/services-lib/task/entity/task';
 import { ITaskServiceMock } from '@libs/services-lib/task/entity';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
@@ -48,7 +48,7 @@ export function getExtensionComponents(
     }
   }
 
-  async function editTask(taskId: uuid, task: ITaskEntityData) {
+  async function editTask(taskId: uuid, task: IUpdateTaskRequest) {
     try {
       const res = await entityService.editTask(taskId, task);
       if (res) {

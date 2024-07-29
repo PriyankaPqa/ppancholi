@@ -1,5 +1,5 @@
 import { TaskService } from '@/task/entity/task';
-import { ActionTaken, mockTeamTaskEntity } from '@libs/entities-lib/task';
+import { ActionTaken, mockTeamTaskEntity, mockUpdateTaskRequest } from '@libs/entities-lib/task';
 import { mockHttp, GlobalHandler } from '../../http-client';
 
 const http = mockHttp();
@@ -15,9 +15,9 @@ describe('>>> Tasks Service', () => {
   });
 
   test('editTask is linked to the correct URL', async () => {
-    const payload = mockTeamTaskEntity();
+    const payload = mockUpdateTaskRequest();
     await service.editTask('mock-task-id-123', payload);
-    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', payload, { globalHandler: GlobalHandler.Partial });
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-2/tasks/mock-task-id-123', payload, { globalHandler: GlobalHandler.Partial });
   });
 
   test('setWorkingOn is linked to the correct URL', async () => {

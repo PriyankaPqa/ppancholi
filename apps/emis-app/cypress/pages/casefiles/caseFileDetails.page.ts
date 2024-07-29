@@ -28,6 +28,8 @@ export enum DataTest {
   caseFileLabel3 = 'case-file-labels-3',
   caseFileLabel4 = 'case-file-labels-4',
   rowLabel = 'row-label',
+  triageSelect = 'caseFileActivity-triage-select',
+  triageSelectInput = 'caseFileActivity-triage-select_input',
 }
 
 export enum caseFileTags {
@@ -81,6 +83,10 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   private rowLabel = { selector: DataTest.rowLabel };
 
+  private triageSelect = { selector: DataTest.triageSelect };
+
+  private triageSelectInput = { selector: DataTest.triageSelectInput, type: 'input' };
+
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
   }
@@ -102,7 +108,7 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
   }
 
   public getCaseFileActivityLogDate(index = 0) {
-    return cy.getByDataTest(this.dateCreated).eq(index);
+    return cy.getByDataTest(this.dateCreated).eq(index).getAndTrimText();
   }
 
   public getCaseFileActivityTitle(index = 0) {
@@ -224,5 +230,17 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public getLabelElement() {
     return cy.getByDataTest(this.rowLabel);
+  }
+
+  public selectTriage(level: number) {
+    return cy.selectListElementByIndex(DataTest.triageSelect, level);
+  }
+
+  public getSelectedTriageElement() {
+    return cy.getByDataTest(this.triageSelect);
+  }
+
+  public getSelectedTriageInputElement() {
+    return cy.getByDataTest(this.triageSelectInput);
   }
 }

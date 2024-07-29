@@ -1,9 +1,9 @@
-import { ActionTaken, IdParams, ITaskEntity, ITaskEntityData } from '@libs/entities-lib/task';
+import { ActionTaken, IdParams, ITaskEntity, ITaskEntityData, IUpdateTaskRequest } from '@libs/entities-lib/task';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface ITaskService extends IDomainBaseService<ITaskEntity, IdParams> {
   createTask(task: ITaskEntity): Promise<ITaskEntity>;
-  editTask(taskId: uuid, task: ITaskEntity): Promise<ITaskEntity>;
+  editTask(taskId: uuid, task: IUpdateTaskRequest): Promise<ITaskEntity>;
   setWorkingOn(id: uuid, caseFileId: uuid, userId: string): Promise<ITaskEntity>;
   completeTask(id: uuid, caseFileId: uuid, rationale: string): Promise<ITaskEntityData>;
   cancelTask(id: uuid, caseFileId: uuid, rationale: string): Promise<ITaskEntityData>;

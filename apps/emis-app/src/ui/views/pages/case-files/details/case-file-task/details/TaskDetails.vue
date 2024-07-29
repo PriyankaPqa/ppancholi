@@ -177,7 +177,11 @@
       :selected-sub-category-name="displayedSubCategory"
       :financial-assistance-payment-name-prop="financialAssistancePaymentName"
       :show.sync="showTaskActionDialog" />
-    <task-history-dialog v-if="showTaskHistoryDialog" :show.sync="showTaskHistoryDialog" :task-action-histories="task.taskActionHistories" />
+    <task-history-dialog
+      v-if="showTaskHistoryDialog"
+      :show.sync="showTaskHistoryDialog"
+      :task-action-histories="task.taskActionHistories"
+      :is-personal-task="task.taskType === TaskType.Personal" />
   </rc-page-content>
 </template>
 
