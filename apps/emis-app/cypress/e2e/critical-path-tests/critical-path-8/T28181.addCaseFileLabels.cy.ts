@@ -3,7 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
+import { CaseFileDetailsPage, DataTest } from '../../../pages/casefiles/caseFileDetails.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -59,10 +59,10 @@ describe('[T28181] Add Case File Labels', { tags: ['@case-file'] }, () => {
           caseFileDetailsPage.addLabel();
           caseFileDetailsPage.getDialogActionSubmitButton().should('not.be.enabled');
           caseFileDetailsPage.getDialogActionCancelButton().should('be.visible');
-          caseFileDetailsPage.enterLabelFieldsData('Test label 1', 1);
-          caseFileDetailsPage.enterLabelFieldsData('Test label 2', 2);
-          caseFileDetailsPage.enterLabelFieldsData('Test label 3', 3);
-          caseFileDetailsPage.enterLabelFieldsData('Test label 4', 4);
+          caseFileDetailsPage.fillLabelField('Test label 1', DataTest.caseFileLabel1);
+          caseFileDetailsPage.fillLabelField('Test label 2', DataTest.caseFileLabel2);
+          caseFileDetailsPage.fillLabelField('Test label 3', DataTest.caseFileLabel3);
+          caseFileDetailsPage.fillLabelField('Test label 4', DataTest.caseFileLabel4);
           caseFileDetailsPage.getDialogActionSubmitButton().should('be.enabled');
           caseFileDetailsPage.getDialogActionSubmitButton().click();
           cy.contains('Labels are modified').should('be.visible');
