@@ -114,6 +114,11 @@ export default mixins(caseFileDetail).extend({
       type: Boolean,
       default: false,
     },
+
+    newAddress: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   setup() {

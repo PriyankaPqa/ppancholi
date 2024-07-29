@@ -20,8 +20,7 @@ describe('useAddresses', () => {
       ];
       const noFixedHome = true;
       const hasShelterLocations = true;
-      const mustRemoveRemainingInHome = false;
-      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations, mustRemoveRemainingInHome);
+      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations);
       expect(result).toEqual(expectList);
     });
     it('returns the list of temporary addresses types includes Remaining in home if noFixedHome is false and mustRemoveRemainingInHome is false', async () => {
@@ -32,8 +31,7 @@ describe('useAddresses', () => {
       ];
       const noFixedHome = false;
       const hasShelterLocations = true;
-      const mustRemoveRemainingInHome = false;
-      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations, mustRemoveRemainingInHome);
+      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations);
       expect(result).toEqual(expectList);
     });
 
@@ -44,8 +42,7 @@ describe('useAddresses', () => {
       ];
       const noFixedHome = false;
       const hasShelterLocations = false;
-      const mustRemoveRemainingInHome = false;
-      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations, mustRemoveRemainingInHome);
+      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations);
       expect(result).toEqual(expectList);
     });
 
@@ -57,8 +54,19 @@ describe('useAddresses', () => {
       ];
       const noFixedHome = false;
       const hasShelterLocations = true;
-      const mustRemoveRemainingInHome = false;
-      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations, mustRemoveRemainingInHome);
+      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations);
+      expect(result).toEqual(expectList);
+    });
+
+    it('returns the list of crc provided addresses if crcProvidedOnly is true', async () => {
+      const expectList = [
+        { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+        { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+      ];
+      const noFixedHome = false;
+      const hasShelterLocations = true;
+      const crcProvidedOnly = true;
+      const result = useAddresses().getCurrentAddressTypeItems(i18n, noFixedHome, hasShelterLocations, crcProvidedOnly);
       expect(result).toEqual(expectList);
     });
   });

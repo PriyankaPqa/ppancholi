@@ -172,6 +172,49 @@ describe('ImpactedIndividualCardV2.vue', () => {
         expect(wrapper.vm.disableEditing).toEqual(false);
       });
     });
+
+    describe('disableEditingAddress', () => {
+      it('based on disableEditing and pendingbooking request', async () => {
+        await doMount({
+          disableEditing() {
+            return false;
+          },
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(false);
+
+        await wrapper.setProps({
+          pendingBookingRequest: {},
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(true);
+
+        await doMount({
+          disableEditing() {
+            return true;
+          },
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(true);
+        await wrapper.setProps({
+          pendingBookingRequest: {},
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(true);
+      });
+
+      it('should be true when member is removed is true', async () => {
+        expect(wrapper.vm.disableEditing).toEqual(false);
+        wrapper.vm.individual.membershipStatus = MembershipStatus.Removed;
+        expect(wrapper.vm.disableEditing).toEqual(true);
+      });
+
+      it('should be true when user doesnt have L1', async () => {
+        await doMount(null, null, 0);
+        expect(wrapper.vm.disableEditing).toEqual(true);
+      });
+
+      it('should return false when user has L6', async () => {
+        await doMount(null, null, 6);
+        expect(wrapper.vm.disableEditing).toEqual(false);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -187,6 +230,19 @@ describe('ImpactedIndividualCardV2.vue', () => {
   });
 
   describe('Method', () => {
+    describe('openEditAddress', () => {
+      it('should set newAddress and open dialog', () => {
+        expect(wrapper.vm.newAddress).toBeFalsy();
+        expect(wrapper.vm.showEditMemberDialog).toBeFalsy();
+        wrapper.vm.openEditAddress(true);
+        expect(wrapper.vm.newAddress).toBeTruthy();
+        expect(wrapper.vm.showEditMemberDialog).toBeTruthy();
+        wrapper.vm.openEditAddress(false);
+        expect(wrapper.vm.newAddress).toBeFalsy();
+        expect(wrapper.vm.showEditMemberDialog).toBeTruthy();
+      });
+    });
+
     describe('onToggleChange', () => {
       it('should set isReceivingAssistance to proper value and showRequireRationaleDialog to true ', () => {
         wrapper.vm.$services.caseFiles.setPersonReceiveAssistance = jest.fn();

@@ -67,9 +67,9 @@ export const mockTeamsDataAddHoc = (force? : Partial<IEntity>): ITeamEntity => (
   ...force,
 });
 
-export const mockTeamEntity = (force?: Partial<IEntity>) => mockTeamsDataStandard(force);
+export const mockTeamEntity = (force?: Partial<ITeamEntity>) => mockTeamsDataStandard(force);
 
-export const mockTeamEntities = (force?: Partial<IEntity>) : ITeamEntity[] => ([
+export const mockTeamEntities = (force?: Partial<ITeamEntity>) : ITeamEntity[] => ([
   mockTeamsDataStandard(force),
   mockTeamsDataAddHoc(force),
 ]);

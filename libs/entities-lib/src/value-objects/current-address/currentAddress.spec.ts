@@ -81,6 +81,11 @@ describe('>>> CurrentAddress', () => {
 
   describe('>> Methods', () => {
     describe('hasPlaceNumber', () => {
+      it('should return false in bookingRequestMode', () => {
+        const p = mockCampGround() as CurrentAddress;
+        p.setBookingRequestMode(false);
+        expect(p.hasPlaceNumber()).toBeFalsy();
+      });
       it('should return true for Campground', () => {
         const p = mockCampGround();
         expect(p.hasPlaceNumber()).toBeTruthy();
@@ -131,6 +136,12 @@ describe('>>> CurrentAddress', () => {
       it('should return true for FriendsFamily', () => {
         const p = mockFriendsFamily();
         expect(p.hasUnitSuite()).toBeTruthy();
+      });
+
+      it('should return false for bookingrequestmode', () => {
+        const p = mockFriendsFamily() as CurrentAddress;
+        p.setBookingRequestMode(false);
+        expect(p.hasUnitSuite()).toBeFalsy();
       });
 
       it('should return false for Other', () => {
@@ -206,6 +217,18 @@ describe('>>> CurrentAddress', () => {
         const p = mockShelter();
         expect(p.hasPostalCode()).toBeFalsy();
       });
+
+      it('should return true for bookingrequestmode unless shelter or other', () => {
+        let p = mockShelter() as CurrentAddress;
+        p.setBookingRequestMode(false);
+        expect(p.hasPostalCode()).toBeFalsy();
+        p = mockOther() as CurrentAddress;
+        p.setBookingRequestMode(false);
+        expect(p.hasPostalCode()).toBeFalsy();
+        p = mockHotelMotel() as CurrentAddress;
+        p.setBookingRequestMode(false);
+        expect(p.hasPostalCode()).toBeTruthy();
+      });
     });
 
     describe('requiresPlaceName', () => {
@@ -222,6 +245,12 @@ describe('>>> CurrentAddress', () => {
       it('should return true for MedicalFacility', () => {
         const p = mockMedicalFacility();
         expect(p.requiresPlaceName()).toBeTruthy();
+      });
+
+      it('should return false for bookingrequestmode', () => {
+        const p = mockMedicalFacility() as CurrentAddress;
+        p.setBookingRequestMode(false);
+        expect(p.requiresPlaceName()).toBeFalsy();
       });
 
       it('should return false for FriendsFamily', () => {
@@ -365,6 +394,16 @@ describe('>>> CurrentAddress', () => {
       it('should return true for Shelter', () => {
         const p = mockShelter();
         expect(p.requiresShelterLocation()).toBeTruthy();
+      });
+    });
+
+    describe('setBookingRequestMode', () => {
+      it('sets the properties', () => {
+        const p = new CurrentAddress();
+        p.setBookingRequestMode();
+        expect(p.isBookingRequest()).toBeTruthy();
+        expect(p.crcProvided).toBeTruthy();
+        expect(p.addressType).toBe(ECurrentAddressTypes.HotelMotel);
       });
     });
 

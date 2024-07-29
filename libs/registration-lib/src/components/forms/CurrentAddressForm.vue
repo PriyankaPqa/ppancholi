@@ -45,6 +45,7 @@
             <v-radio-group
               v-model="form.crcProvided"
               row
+              :disabled="lockCrcProvided"
               hide-details>
               <v-radio :label="$t('common.yes')" :value="true" data-test="CRC_provided_yes" />
               <v-radio :label="$t('common.no')" :value="false" data-test="CRC_provided_no" />
@@ -101,7 +102,7 @@
             @change="form.placeNumber = null" />
         </v-col>
 
-        <v-col v-if="form.hasPlaceNumber() || form.requiresShelterLocation()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
+        <v-col v-if="!form.isBookingRequest() && (form.hasPlaceNumber() || form.requiresShelterLocation())" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.placeNumber"
             background-color="white"
@@ -271,6 +272,11 @@ export default Vue.extend({
     },
 
     showCrcProvidedAndCheckInCheckOut: {
+      type: Boolean,
+      default: false,
+    },
+
+    lockCrcProvided: {
       type: Boolean,
       default: false,
     },

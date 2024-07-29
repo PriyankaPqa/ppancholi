@@ -1,9 +1,9 @@
 import helpers from '@libs/entities-lib/helpers';
-import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
+import { ECurrentAddressTypes, addressTypeHasCrcProvided } from '@libs/entities-lib/household-create';
 import VueI18n from 'vue-i18n';
 
 export function useAddresses() {
-   function getCurrentAddressTypeItems(i18n: VueI18n, noFixedHome: Boolean, hasShelterLocations: Boolean): Record<string, unknown>[] {
+   function getCurrentAddressTypeItems(i18n: VueI18n, noFixedHome: Boolean, hasShelterLocations: Boolean, crcProvidedOnly: boolean = false): Record<string, unknown>[] {
       let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
 
       if (!hasShelterLocations) {
@@ -11,6 +11,10 @@ export function useAddresses() {
       }
       if (noFixedHome) {
         list = list.filter((i) => i.value !== ECurrentAddressTypes.RemainingInHome);
+      }
+
+      if (crcProvidedOnly) {
+        list = list.filter((i) => addressTypeHasCrcProvided.indexOf(i.value as ECurrentAddressTypes) > -1);
       }
 
       return list;

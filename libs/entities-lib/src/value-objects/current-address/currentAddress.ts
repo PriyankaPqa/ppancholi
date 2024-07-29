@@ -7,6 +7,14 @@ import { Address, IAddress, IAddressData } from '../address';
 import { ECurrentAddressTypes, ICurrentAddress, ICurrentAddressCreateRequest, ICurrentAddressData } from './currentAddress.types';
 import { IEventGenericLocation } from '../../event';
 
+export const addressTypeHasCrcProvided = [
+  ECurrentAddressTypes.Campground,
+  ECurrentAddressTypes.HotelMotel,
+  ECurrentAddressTypes.MedicalFacility,
+  ECurrentAddressTypes.Other,
+  ECurrentAddressTypes.Shelter,
+];
+
 export class CurrentAddress implements ICurrentAddress {
   addressType: ECurrentAddressTypes;
 
@@ -23,6 +31,8 @@ export class CurrentAddress implements ICurrentAddress {
   checkIn: Date | string;
 
   checkOut: Date | string;
+
+  private bookingRequestMode: boolean;
 
   constructor(data?: ICurrentAddressData) {
     if (!data) {
@@ -85,6 +95,14 @@ export class CurrentAddress implements ICurrentAddress {
     return errors;
   }
 
+  setBookingRequestMode(doReset = true): void {
+    this.bookingRequestMode = true;
+    if (doReset) {
+      this.reset(ECurrentAddressTypes.HotelMotel);
+    }
+    this.crcProvided = true;
+  }
+
   reset(type?: ECurrentAddressTypes, preservePlace = false, country?: string): void {
     this.addressType = type ?? null;
 
@@ -104,13 +122,13 @@ export class CurrentAddress implements ICurrentAddress {
   }
 
   hasPlaceNumber(): boolean {
-    return this.addressType === ECurrentAddressTypes.Campground
+    return !this.bookingRequestMode && (this.addressType === ECurrentAddressTypes.Campground
         || this.addressType === ECurrentAddressTypes.HotelMotel
-        || this.addressType === ECurrentAddressTypes.MedicalFacility;
+        || this.addressType === ECurrentAddressTypes.MedicalFacility);
   }
 
   hasUnitSuite(): boolean {
-    return this.addressType === ECurrentAddressTypes.FriendsFamily;
+    return !this.bookingRequestMode && this.addressType === ECurrentAddressTypes.FriendsFamily;
   }
 
   hasStreet(): boolean {
@@ -118,14 +136,21 @@ export class CurrentAddress implements ICurrentAddress {
   }
 
   hasPostalCode(): boolean {
+    if (this.bookingRequestMode) {
+      return this.addressType !== ECurrentAddressTypes.Other && this.addressType !== ECurrentAddressTypes.Shelter;
+    }
     return this.hasStreet();
   }
 
+  isBookingRequest(): boolean {
+    return this.bookingRequestMode;
+  }
+
   requiresPlaceName(): boolean {
-    return this.addressType === ECurrentAddressTypes.Campground
+    return !this.bookingRequestMode && (this.addressType === ECurrentAddressTypes.Campground
     || this.addressType === ECurrentAddressTypes.HotelMotel
     || this.addressType === ECurrentAddressTypes.MedicalFacility
-    || this.addressType === ECurrentAddressTypes.Other;
+    || this.addressType === ECurrentAddressTypes.Other);
   }
 
   requiresCountry(): boolean {
@@ -148,13 +173,6 @@ export class CurrentAddress implements ICurrentAddress {
   }
 
   hasCrcProvided() {
-    const addressTypeHasCrcProvided = [
-      ECurrentAddressTypes.Campground,
-      ECurrentAddressTypes.HotelMotel,
-      ECurrentAddressTypes.MedicalFacility,
-      ECurrentAddressTypes.Other,
-      ECurrentAddressTypes.Shelter,
-    ];
     return addressTypeHasCrcProvided.indexOf(this.addressType) >= 0;
   }
 

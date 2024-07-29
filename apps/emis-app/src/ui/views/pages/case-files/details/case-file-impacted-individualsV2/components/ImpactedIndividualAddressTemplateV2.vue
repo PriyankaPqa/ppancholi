@@ -28,11 +28,18 @@
       </div>
     </v-col>
     <v-col cols="1" class="pt-2 d-flex justify-end">
-      <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-temporary-address-dialog')">
-        <v-icon>
-          mdi-pencil
-        </v-icon>
-      </v-btn>
+      <template v-if="!$hasFeature($featureKeys.Lodging)">
+        <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address', true)">
+          <v-icon>
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+      </template>
+      <template v-else>
+        <v-btn v-if="showEditButton && !disableEditing" color="secondary" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address', false)">
+          {{ $t('impactedIndividuals.updateExistingAddress') }}
+        </v-btn>
+      </template>
     </v-col>
   </v-row>
 </template>

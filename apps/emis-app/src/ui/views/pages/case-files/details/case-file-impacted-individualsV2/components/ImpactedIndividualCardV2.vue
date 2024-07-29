@@ -64,8 +64,8 @@
       :address="individual.currentAddress"
       :shelter-locations-list="shelterLocationsList"
       show-edit-button
-      :disable-editing="disableEditing"
-      @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
+      :disable-editing="disableEditingAddress"
+      @open-edit-address="openEditAddress" />
 
     <div v-if="reorderedAddressHistory.length > 0" data-test="previous-address-section">
       <div class="px-4 py-0 rc-body14 fw-bold background">
@@ -94,6 +94,7 @@
       :id="individual.caseFileId"
       :show.sync="showEditMemberDialog"
       :individual="individual"
+      :new-address="newAddress"
       :member="member"
       :is-primary-member="isPrimaryMember"
       :shelter-locations-list="shelterLocationsList" />
@@ -115,6 +116,7 @@ import { Status } from '@libs/shared-lib/types';
 import { IEventGenericLocation } from '@libs/entities-lib/src/event';
 import { CaseFileIndividualEntity, MembershipStatus, ReceivingAssistanceDetail, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { usePersonStore } from '@/pinia/person/person';
+import { IBookingRequest } from '@libs/entities-lib/booking-request';
 import ImpactedIndividualsRequireRationaleDialogV2 from './ImpactedIndividualsRequireRationaleDialogV2.vue';
 import ImpactedIndividualsCardPinnedRationaleV2 from './ImpactedIndividualsCardPinnedRationaleV2.vue';
 import ImpactedIndividualsEditAddressDialogV2 from './ImpactedIndividualsEditAddressDialogV2.vue';
@@ -155,12 +157,23 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    userCanDoBookings: {
+      type: Boolean,
+      default: false,
+    },
+
+    pendingBookingRequest: {
+      type: Object as () => IBookingRequest,
+      default: null,
+    },
   },
 
   data() {
     return {
       showPreviousTemporaryAddress: false,
       showEditMemberDialog: false,
+      newAddress: false,
       isReceivingAssistance: true,
       showRequireRationaleDialog: false,
       backUpIsReceivingAssistance: false,
@@ -200,6 +213,10 @@ export default Vue.extend({
       }
       return this.disableEditingByStatus || !this.$hasLevel(UserRoles.level1);
     },
+
+    disableEditingAddress(): boolean {
+      return this.disableEditing || !!this.pendingBookingRequest;
+    },
   },
 
   async created() {
@@ -208,7 +225,12 @@ export default Vue.extend({
   },
 
   methods: {
-     async onToggleChange(isReceivingAssistanceChangeTo: boolean) {
+    openEditAddress(newAddress: boolean = false) {
+      this.newAddress = newAddress;
+      this.showEditMemberDialog = true;
+    },
+
+    async onToggleChange(isReceivingAssistanceChangeTo: boolean) {
        this.isReceivingAssistance = isReceivingAssistanceChangeTo;
        this.showRequireRationaleDialog = true;
     },

@@ -60,6 +60,7 @@ export interface ICurrentAddressCreateRequest {
 export interface ICurrentAddress extends ICurrentAddressData {
     validate(): string[];
     hasPlaceNumber(): boolean;
+    isBookingRequest(): boolean;
     hasUnitSuite(): boolean;
     hasStreet(): boolean;
     hasPostalCode(): boolean;
