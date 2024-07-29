@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockPersonalTaskEntity, mockTeamTaskEntity, TaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { mockPersonalTaskEntity, mockTeamTaskEntity, mockUpdateTaskRequest, TaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import flushPromises from 'flush-promises';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
 import { mockTeamEntities, mockTeamEntity, mockTeamsDataAddHoc, mockTeamsDataStandard } from '@libs/entities-lib/team';
@@ -423,7 +423,7 @@ describe('CreateEditTask.vue', () => {
           taskId: 'mock-task-id-1',
         });
         await wrapper.vm.submitEditTask();
-        expect(taskStore.editTask).toHaveBeenCalledWith('mock-task-id-1', mockTeamTaskEntity());
+        expect(taskStore.editTask).toHaveBeenCalledWith('mock-task-id-1', mockUpdateTaskRequest({ caseFileId: 'mock-case-file-id-1' }));
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('task.task_edited');
       });
 

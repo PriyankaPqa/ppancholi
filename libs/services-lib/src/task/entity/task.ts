@@ -1,4 +1,4 @@
-import { ITaskEntity, ITaskEntityData, IdParams, ITaskMetadata, ActionTaken } from '@libs/entities-lib/task';
+import { ITaskEntity, ITaskEntityData, IdParams, ITaskMetadata, ActionTaken, IUpdateTaskRequest } from '@libs/entities-lib/task';
 import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
 import { ITaskService } from './task.types';
 import { GlobalHandler, IHttpClient } from '../../http-client';
@@ -17,7 +17,7 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     return this.http.post(this.getItemUrl(`${this.baseUrl}`, task), parseTask, { globalHandler: GlobalHandler.Partial });
   }
 
-  async editTask(taskId: uuid, task: ITaskEntityData): Promise<ITaskEntityData> {
+  async editTask(taskId: uuid, task: IUpdateTaskRequest): Promise<ITaskEntityData> {
     const parseTask = this.parseTaskPayload(task);
     return this.http.patch(this.getItemUrl(`${this.baseUrl}/${taskId}`, task), parseTask, { globalHandler: GlobalHandler.Partial });
   }
@@ -60,7 +60,7 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
 
   /** Private methods * */
 
-  parseTaskPayload(task: ITaskEntityData): ITaskEntityData {
+  parseTaskPayload(task: ITaskEntityData | IUpdateTaskRequest): ITaskEntityData | IUpdateTaskRequest {
     if (!task?.subCategory?.optionItemId) {
       task.subCategory = null;
     }

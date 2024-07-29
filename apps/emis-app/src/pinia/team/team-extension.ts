@@ -70,8 +70,11 @@ export function getExtensionComponents(
     : { eventId: uuid, teamIds?:String[], includeInactive?: boolean, isEscalation?: boolean }): Promise<ITeamEntity[]> {
     try {
       const res = await entityService.getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation });
-      baseComponents.setAll(res);
-      return res;
+      if (res) {
+        baseComponents.setAll(res);
+        return res;
+      }
+      return null;
     } catch (e) {
       applicationInsights.trackException(e, { eventId }, 'module.teamEntity', 'getTeamsByEvent');
       return null;
