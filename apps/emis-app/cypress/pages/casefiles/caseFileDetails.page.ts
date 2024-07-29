@@ -21,6 +21,13 @@ export enum DataTest {
   verifyIdentityIcon = 'caseFileDetails-verify-identity-icon',
   identityIconColorValidation = 'caseFileDetails-identity-icon-color-validation',
   impactIconColorValidation = 'caseFileDetails-impact-icon-color-validation',
+  labelAdd = 'caseFileActivity-add-label-btn',
+  dialogTitle = 'dialog-title',
+  caseFileLabel1 = 'case-file-labels-1',
+  caseFileLabel2 = 'case-file-labels-2',
+  caseFileLabel3 = 'case-file-labels-3',
+  caseFileLabel4 = 'case-file-labels-4',
+  rowLabel = 'row-label',
 }
 
 export enum caseFileTags {
@@ -59,6 +66,20 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
   private impactIconColorValidation = { selector: DataTest.impactIconColorValidation };
 
   private roleUserNameSystemAdmin = { selector: DataTest.roleUserNameSystemAdmin };
+
+  private labelAdd = { selector: DataTest.labelAdd };
+
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private caseFileLabel1 = { selector: DataTest.caseFileLabel1, type: 'input' };
+
+  private caseFileLabel2 = { selector: DataTest.caseFileLabel2, type: 'input' };
+
+  private caseFileLabel3 = { selector: DataTest.caseFileLabel3, type: 'input' };
+
+  private caseFileLabel4 = { selector: DataTest.caseFileLabel4, type: 'input' };
+
+  private rowLabel = { selector: DataTest.rowLabel };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -167,5 +188,41 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public getImpactIconColorValidationElement() {
     return cy.getByDataTest(this.impactIconColorValidation);
+  }
+
+  public getAddLabelButton() {
+    return cy.getByDataTest(this.labelAdd);
+  }
+
+  public addLabel() {
+    return cy.getByDataTest(this.labelAdd).click();
+  }
+
+  public getDialogTitleElement() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public enterLabelFieldData(label: string, labelIdentifier: { selector: string; type?: string }) {
+    return cy.getByDataTest(labelIdentifier).type(label);
+  }
+
+  public enterLabel1FieldData(label1: string) {
+    return this.enterLabelFieldData(label1, this.caseFileLabel1);
+  }
+
+  public enterLabel2FieldData(label2: string) {
+    return this.enterLabelFieldData(label2, this.caseFileLabel2);
+  }
+
+  public enterLabel3FieldData(label3: string) {
+    return this.enterLabelFieldData(label3, this.caseFileLabel3);
+  }
+
+  public enterLabel4FieldData(label4: string) {
+    return this.enterLabelFieldData(label4, this.caseFileLabel4);
+  }
+
+  public getLabelElement() {
+    return cy.getByDataTest(this.rowLabel);
   }
 }
