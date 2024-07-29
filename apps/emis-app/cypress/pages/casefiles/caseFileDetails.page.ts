@@ -208,24 +208,14 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
     return cy.getByDataTest(this.dialogTitle);
   }
 
-  public enterLabelFieldData(label: string, labelIdentifier: { selector: string; type?: string }) {
-    return cy.getByDataTest(labelIdentifier).type(label);
-  }
-
-  public enterLabel1FieldData(label1: string) {
-    return this.enterLabelFieldData(label1, this.caseFileLabel1);
-  }
-
-  public enterLabel2FieldData(label2: string) {
-    return this.enterLabelFieldData(label2, this.caseFileLabel2);
-  }
-
-  public enterLabel3FieldData(label3: string) {
-    return this.enterLabelFieldData(label3, this.caseFileLabel3);
-  }
-
-  public enterLabel4FieldData(label4: string) {
-    return this.enterLabelFieldData(label4, this.caseFileLabel4);
+  public enterLabelFieldsData(labelText: string, targetLabel: number) {
+    const labelIdentifiers = [
+      this.caseFileLabel1,
+      this.caseFileLabel2,
+      this.caseFileLabel3,
+      this.caseFileLabel4,
+    ];
+    return cy.getByDataTest(labelIdentifiers[targetLabel - 1]).type(labelText);
   }
 
   public getLabelElement() {

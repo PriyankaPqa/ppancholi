@@ -59,10 +59,10 @@ describe('[T28181] Add Case File Labels', { tags: ['@case-file'] }, () => {
           caseFileDetailsPage.addLabel();
           caseFileDetailsPage.getDialogActionSubmitButton().should('not.be.enabled');
           caseFileDetailsPage.getDialogActionCancelButton().should('be.visible');
-          caseFileDetailsPage.enterLabel1FieldData('Test label 1');
-          caseFileDetailsPage.enterLabel2FieldData('Test label 2');
-          caseFileDetailsPage.enterLabel3FieldData('Test label 3');
-          caseFileDetailsPage.enterLabel4FieldData('Test label 4');
+          caseFileDetailsPage.enterLabelFieldsData('Test label 1', 1);
+          caseFileDetailsPage.enterLabelFieldsData('Test label 2', 2);
+          caseFileDetailsPage.enterLabelFieldsData('Test label 3', 3);
+          caseFileDetailsPage.enterLabelFieldsData('Test label 4', 4);
           caseFileDetailsPage.getDialogActionSubmitButton().should('be.enabled');
           caseFileDetailsPage.getDialogActionSubmitButton().click();
           cy.contains('Labels are modified').should('be.visible');
