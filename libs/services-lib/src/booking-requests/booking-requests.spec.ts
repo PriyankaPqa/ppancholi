@@ -28,4 +28,12 @@ describe('>>> Booking request Service', () => {
       expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/booking-requests', entity);
     });
   });
+
+  describe('search', () => {
+    it('should call the proper endpoint', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('case-file/search/booking-requests', { params, isOData: true });
+    });
+  });
 });

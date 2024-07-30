@@ -22,8 +22,8 @@ export const mockBookingRequest = (force?: Partial<IBookingRequest>) : IBookingR
   ...force,
 });
 
-export const mockBookingRequests = () : IBookingRequest[] => [
-  mockBookingRequest({ id: '1-rejected', householdId: 'hh-1', caseFileId: 'cfid-1', state: BookingRequestState.Rejected }),
-  mockBookingRequest({ id: '2-approved', householdId: 'hh-2', caseFileId: 'cfid-2', state: BookingRequestState.Approved }),
-  mockBookingRequest({ id: '3-pending', householdId: 'hh-1', caseFileId: 'cfid-3', state: BookingRequestState.Pending }),
+export const mockBookingRequests = (force?: Partial<IBookingRequest>) : IBookingRequest[] => [
+  mockBookingRequest({ id: '1-rejected', householdId: 'hh-1', caseFileId: 'cfid-1', state: BookingRequestState.Rejected, ...force }),
+  mockBookingRequest({ id: '2-approved', householdId: 'hh-2', caseFileId: 'cfid-2', state: BookingRequestState.Approved, ...force }),
+  mockBookingRequest({ id: '3-pending', householdId: 'hh-1', caseFileId: 'cfid-3', state: BookingRequestState.Pending, ...force }),
 ];

@@ -55,6 +55,8 @@ import routes from '@/constants/routes';
 import { ui } from '@/constants/ui';
 import { INavigationTab } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
+import { useTeamStore } from '@/pinia/team/team';
+import { useUserStore } from '@/pinia/user/user';
 
 import { ClickOutside } from 'vuetify/es5/directives';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
@@ -75,6 +77,7 @@ export default Vue.extend({
     return {
       leftMenu: true,
       routes,
+      userCanDoBookings: false,
     };
   },
 
@@ -185,6 +188,17 @@ export default Vue.extend({
         },
       ];
 
+      if (this.userCanDoBookings) {
+        tabs.splice(9, 0, {
+          to: routes.lodging.home.name,
+          icon: 'mdi-bed',
+          text: 'lodging.leftMenu.title',
+          test: 'lodging',
+          exact: false,
+          level: UserRoles.level1,
+        });
+      }
+
       if (this.$hasFeature(this.$featureKeys.TaskManagement)) {
         tabs.splice(7, 0, tasksTab);
       }
@@ -221,6 +235,16 @@ export default Vue.extend({
       }
       return '';
     },
+  },
+
+  async created() {
+    if (this.$hasFeature(this.$featureKeys.Lodging)) {
+      const bookingTeams = (await useTeamStore().search({ params: { filter: {
+            'Entity/UseForLodging': true,
+            Entity: { TeamMembers: { any: { UserId: { value: useUserStore().getUserId(), type: 'guid' } } } },
+          } } })).values;
+      this.userCanDoBookings = (this.$hasLevel(UserRoles.level6) || bookingTeams.length > 0);
+    }
   },
 
   methods: {

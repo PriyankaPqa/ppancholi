@@ -31,6 +31,8 @@ const LoginError = () => import('@/ui/views/pages/login-error/LoginError.vue');
 
 const MainHouseholdSearch = () => import('@/ui/views/pages/household/search/MainHouseholdSearch.vue');
 
+const BookingRequestSearch = () => import('@/ui/views/pages/lodging/BookingRequestsTable.vue');
+
 const AccountSettings = () => import('@/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue');
 
 const MainTasksTable = () => import('@/ui/views/pages/case-files/details/case-file-task/TasksTable.vue');
@@ -143,6 +145,13 @@ export const routes: Array<RouteConfig> = [
             path: Routes.householdSearch.path,
             name: Routes.householdSearch.name,
             component: MainHouseholdSearch,
+            meta: { level: UserRoles.level1 },
+            props: true,
+          },
+          {
+            path: Routes.lodging.home.path,
+            name: Routes.lodging.home.name,
+            component: BookingRequestSearch,
             meta: { level: UserRoles.level1 },
             props: true,
           },

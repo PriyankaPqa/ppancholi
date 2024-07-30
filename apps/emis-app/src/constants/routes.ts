@@ -5,6 +5,12 @@ const routes = {
       name: 'account',
     },
   },
+  lodging: {
+    home: {
+      path: 'lodging',
+      name: 'lodging.home',
+    },
+  },
   reporting: {
     home: {
       path: 'reporting',

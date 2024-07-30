@@ -17,7 +17,6 @@ export interface ISearchResult <T> {
 
 export interface ICombinedIndex <TEntity, TMetadata> {
   id: uuid;
-  tenantId: uuid;
   entity: TEntity;
   metadata: TMetadata;
 }
@@ -25,7 +24,7 @@ export interface ICombinedIndex <TEntity, TMetadata> {
 export interface ICombinedSearchResult <TEntity, TMetadata> {
   odataContext?: string;
   odataCount?: number;
-  value: Array<ICombinedIndex<TEntity, TMetadata> & { id: uuid, tenantId: uuid }>;
+  value: Array<ICombinedIndex<TEntity, TMetadata>>;
 }
 
 export interface ITableSearchResults<T> {
