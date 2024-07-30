@@ -5,10 +5,12 @@ import { mockNotificationHelperView } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
 const localVue = createLocalVue();
 
 const { pinia, taskStore } = useMockTaskStore();
+const { caseFileStore } = useMockCaseFileStore(pinia);
 
 const mockNotification = mockNotificationEntity();
 const mockReadNotification = mockNotificationEntity({ isRead: true });
@@ -114,6 +116,16 @@ describe('NotificationCard.vue', () => {
         const urgentLabel = wrapper.findDataTest('notification-overdue');
         expect(urgentLabel.exists()).toBeFalsy();
       });
+      it('should render case file number for task notifications', () => {
+        mountWithNotification(mockTaskNotification);
+        const extraTextLabel = wrapper.findDataTest('notification-case-file-number');
+        expect(extraTextLabel.exists()).toBeTruthy();
+      });
+      it('should not render case file number for other notification types', () => {
+        mountWithNotification(mockNotification);
+        const extraTextLabel = wrapper.findDataTest('notification-case-file-number');
+        expect(extraTextLabel.exists()).toBeFalsy();
+      });
     });
 
     describe('isRead status and text', () => {
@@ -160,6 +172,21 @@ describe('NotificationCard.vue', () => {
         expect(wrapper.vm.helperView).toBeFalsy();
       });
     });
+    describe('caseFile', () => {
+      it('is not set for General notifications', async () => {
+        mountWithNotification(mockNotification);
+        expect(wrapper.vm.caseFile).toBeFalsy();
+      });
+      it('is set for Task notifications when returned by the store', async () => {
+        mountWithNotification(mockTaskNotification);
+        expect(wrapper.vm.caseFile).toBeTruthy();
+      });
+      it('is not set for Task notifications when not returned by the store', async () => {
+        caseFileStore.getById = jest.fn();
+        mountWithNotification(mockTaskNotification);
+        expect(wrapper.vm.caseFile).toBeFalsy();
+      });
+    });
   });
 
   describe('methods', () => {
@@ -171,7 +198,7 @@ describe('NotificationCard.vue', () => {
       });
     });
     describe('subjectClick', () => {
-      it('marks the notificaiton as read', async () => {
+      it('marks the notification as read', async () => {
         expect(mockNotification.isRead).toBeFalsy();
         mountWithNotification(mockNotification);
         wrapper.vm.toggleIsRead = jest.fn();

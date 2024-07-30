@@ -31,17 +31,22 @@
         </span>
       </div>
     </div>
-    <div class="d-flex align-center">
-      <v-checkbox v-model="notification.isRead" :label="$t(checkboxLabel)" data-test="notification-chk-read" @change="toggleIsRead" />
+    <div class="d-flex align-end flex-column">
+      <div v-if="caseFile" class="rc-caption12" data-test="notification-case-file-number">
+        {{ caseFile.caseFileNumber }}
+      </div>
+      <v-checkbox v-model="notification.isRead" class="mt-0" :label="$t(checkboxLabel)" data-test="notification-chk-read" @change="toggleIsRead" />
     </div>
   </v-sheet>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { INotificationEntity, INotificationHelperView, NotificationCategoryType } from '@libs/entities-lib/notification';
 import helpers from '@/ui/helpers/helpers';
 import { useTaskStore } from '@/pinia/task/task';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default Vue.extend({
   name: 'NotificationCard',
@@ -70,6 +75,13 @@ export default Vue.extend({
       }
 
       return useTaskStore().getNotificationHelperView(this.notification.targetEntityId);
+    },
+    caseFile(): ICaseFileEntity {
+      if (this.notification.categoryType !== NotificationCategoryType.Tasks) {
+        return null;
+      }
+
+      return useCaseFileStore().getById(this.notification.targetEntityParentId);
     },
   },
   methods: {
