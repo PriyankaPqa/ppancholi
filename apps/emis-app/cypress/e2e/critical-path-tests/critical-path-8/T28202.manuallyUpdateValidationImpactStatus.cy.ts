@@ -54,7 +54,7 @@ describe('[T28202] Manually update Validation of Impact status', { tags: ['@case
         it('should be able to manually update validation of impact status', () => {
           const caseFileDetailsPage = new CaseFileDetailsPage();
           caseFileDetailsPage.getImpactIconColorValidationElement().should('have.attr', 'class').and('contains', 'validation-button-warning');
-          caseFileDetailsPage.getValidationOfImpactIcon().click();
+          caseFileDetailsPage.getValidationOfImpactIconButton().click();
           caseFileDetailsPage.getDialogTitleElement().contains('Validation of impact').should('be.visible');
           caseFileDetailsPage.getImpactValidationMethodRow().should('be.visible');
           caseFileDetailsPage.getImpactValidationStatusRow().should('be.visible');
@@ -96,7 +96,8 @@ describe('[T28202] Manually update Validation of Impact status', { tags: ['@case
         });
         it('should not be able to manually update validation of impact status', () => {
           const caseFileDetailsPage = new CaseFileDetailsPage();
-          caseFileDetailsPage.getValidationOfImpactIcon().should('be.disabled');
+          cy.contains('Impact').should('be.visible');
+          caseFileDetailsPage.getValidationOfImpactIconButton().should('not.exist');
         });
       });
     }

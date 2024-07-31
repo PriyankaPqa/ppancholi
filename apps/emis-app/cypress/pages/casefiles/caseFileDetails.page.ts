@@ -211,7 +211,7 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
     return cy.getByDataTest(this.triageSelectInput);
   }
 
-  public getValidationOfImpactIcon() {
+  public getValidationOfImpactIconButton() {
     return cy.getByDataTest(this.impactIcon);
   }
 
