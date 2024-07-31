@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-row caseFileLabels__row pl-6">
+  <div class="flex-row caseFileLabels__row pl-6" data-test="row-label">
     <v-btn
       :disabled="readonly"
       class="mr-4"

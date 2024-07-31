@@ -21,6 +21,13 @@ export enum DataTest {
   verifyIdentityIcon = 'caseFileDetails-verify-identity-icon',
   identityIconColorValidation = 'caseFileDetails-identity-icon-color-validation',
   impactIconColorValidation = 'caseFileDetails-impact-icon-color-validation',
+  labelAdd = 'caseFileActivity-add-label-btn',
+  dialogTitle = 'dialog-title',
+  caseFileLabel1 = 'case-file-labels-1',
+  caseFileLabel2 = 'case-file-labels-2',
+  caseFileLabel3 = 'case-file-labels-3',
+  caseFileLabel4 = 'case-file-labels-4',
+  rowLabel = 'row-label',
   triageSelect = 'caseFileActivity-triage-select',
   triageSelectInput = 'caseFileActivity-triage-select_input',
 }
@@ -61,6 +68,20 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
   private impactIconColorValidation = { selector: DataTest.impactIconColorValidation };
 
   private roleUserNameSystemAdmin = { selector: DataTest.roleUserNameSystemAdmin };
+
+  private labelAdd = { selector: DataTest.labelAdd };
+
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private caseFileLabel1 = { selector: DataTest.caseFileLabel1, type: 'input' };
+
+  private caseFileLabel2 = { selector: DataTest.caseFileLabel2, type: 'input' };
+
+  private caseFileLabel3 = { selector: DataTest.caseFileLabel3, type: 'input' };
+
+  private caseFileLabel4 = { selector: DataTest.caseFileLabel4, type: 'input' };
+
+  private rowLabel = { selector: DataTest.rowLabel };
 
   private triageSelect = { selector: DataTest.triageSelect };
 
@@ -173,6 +194,27 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public getImpactIconColorValidationElement() {
     return cy.getByDataTest(this.impactIconColorValidation);
+  }
+
+  public getAddLabelButton() {
+    return cy.getByDataTest(this.labelAdd);
+  }
+
+  public addLabel() {
+    return cy.getByDataTest(this.labelAdd).click();
+  }
+
+  public getDialogTitleElement() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public fillLabelField(labelText: string, labelDataTest: DataTest) {
+    const elementSelector = { selector: labelDataTest, type: 'input' };
+    return cy.getByDataTest(elementSelector).type(labelText);
+  }
+
+  public getLabelElement() {
+    return cy.getByDataTest(this.rowLabel);
   }
 
   public selectTriage(level: number) {
