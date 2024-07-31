@@ -65,16 +65,13 @@ describe('[T28202] Manually update Validation of Impact status', { tags: ['@case
           caseFileDetailsPage.getImpactMethodManualButton().check({ force: true });
           caseFileDetailsPage.getImpactStatusImpactedButton().check({ force: true });
           caseFileDetailsPage.getDialogActionSubmitButton().should('be.enabled');
-          cy.intercept('PATCH', '**/case-file/case-files/*/validation-of-impact-status').as('impactValidationStatus');
           caseFileDetailsPage.getDialogActionSubmitButton().click();
-          cy.wait('@impactValidationStatus').then(async () => {
-            cy.contains('The validation of impact has been successfully edited.').should('be.visible');
-            caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('New status: Impacted');
-            caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-            caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-            caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Changed validation of impact status');
-            caseFileDetailsPage.getCaseFileActivityBody().should('string', 'New status: Impacted');
-          });
+          cy.contains('The validation of impact has been successfully edited.').should('be.visible');
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('New status: Impacted');
+          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+          caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Changed validation of impact status');
+          caseFileDetailsPage.getCaseFileActivityBody().should('string', 'New status: Impacted');
         });
       });
     }
