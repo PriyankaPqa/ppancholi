@@ -30,6 +30,14 @@ export enum DataTest {
   rowLabel = 'row-label',
   triageSelect = 'caseFileActivity-triage-select',
   triageSelectInput = 'caseFileActivity-triage-select_input',
+  impactIcon = 'caseFileDetails-verify-impact-icon',
+  dialogTitle = 'dialog-title',
+  impactValidationMethodRow = 'impactValidation_method',
+  impactValidationStatusRow = 'impactValidation_status',
+  impactMethodManual = 'impact-method-manual',
+  impactMethodNotApplicable = 'impact-method-not-applicable',
+  impactStatusUndetermined = 'impact-status-undetermined',
+  impactStatusImpacted = 'impact-status-impacted',
 }
 
 export enum caseFileTags {
@@ -86,6 +94,22 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
   private triageSelect = { selector: DataTest.triageSelect };
 
   private triageSelectInput = { selector: DataTest.triageSelectInput, type: 'input' };
+
+  private impactIcon = { selector: DataTest.impactIcon };
+
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private impactValidationMethodRow = { selector: DataTest.impactValidationMethodRow };
+
+  private impactValidationStatusRow = { selector: DataTest.impactValidationStatusRow };
+
+  private impactMethodManual = { selector: DataTest.impactMethodManual, type: 'input' };
+
+  private impactMethodNotApplicable = { selector: DataTest.impactMethodNotApplicable, type: 'input' };
+
+  private impactStatusUndetermined = { selector: DataTest.impactStatusUndetermined, type: 'input' };
+
+  private impactStatusImpacted = { selector: DataTest.impactStatusImpacted, type: 'input' };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -227,5 +251,37 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public getSelectedTriageInputElement() {
     return cy.getByDataTest(this.triageSelectInput);
+  }
+
+  public getValidationOfImpactIconButton() {
+    return cy.getByDataTest(this.impactIcon);
+  }
+
+  public getDialogTitleElement() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public getImpactValidationMethodRow() {
+    return cy.getByDataTest(this.impactValidationMethodRow);
+  }
+
+  public getImpactValidationStatusRow() {
+    return cy.getByDataTest(this.impactValidationStatusRow);
+  }
+
+  public getImpactMethodManualButton() {
+    return cy.getByDataTest(this.impactMethodManual);
+  }
+
+  public getImpactMethodNotApplicableButton() {
+    return cy.getByDataTest(this.impactMethodNotApplicable);
+  }
+
+  public getImpactStatusUndeterminedButton() {
+    return cy.getByDataTest(this.impactStatusUndetermined);
+  }
+
+  public getImpactStatusImpactedButton() {
+    return cy.getByDataTest(this.impactStatusImpacted);
   }
 }
