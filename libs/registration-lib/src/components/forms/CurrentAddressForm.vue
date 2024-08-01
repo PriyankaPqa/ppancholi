@@ -17,7 +17,7 @@
         </div>
       </v-col>
 
-      <v-col cols="12" sm="6" md="8" :class="{ 'pb-0': compactView }">
+      <v-col v-if="!bookingMode" cols="12" sm="6" md="8" :class="{ 'pb-0': compactView }">
         <v-select-with-validation
           ref="addressType"
           background-color="white"
@@ -37,7 +37,7 @@
         cols="12"
         sm="6"
         md="8">
-        <template v-if="form.hasCrcProvided()">
+        <template v-if="!bookingMode && form.hasCrcProvided()">
           <div class="font-weight-bold ">
             {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
           </div>
@@ -58,6 +58,7 @@
             :attach="true"
             :locale="$i18n.locale"
             :value="checkInCheckOutDate"
+            background-color="white"
             display-format="MMM d, yyyy"
             :start-label="$t('impactedIndividuals.temporary_address.check_in')"
             :end-label="$t('impactedIndividuals.temporary_address.check_out')"
@@ -174,7 +175,7 @@
             @keyup="form.address.postalCode = form.address.postalCode ? form.address.postalCode.toUpperCase() : null" />
         </v-col>
 
-        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
+        <v-col v-if="!bookingMode && form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
           <rc-country-select-with-validation
             v-model="form.address.country"
             background-color="white"
@@ -277,6 +278,11 @@ export default Vue.extend({
     },
 
     lockCrcProvided: {
+      type: Boolean,
+      default: false,
+    },
+
+    bookingMode: {
       type: Boolean,
       default: false,
     },

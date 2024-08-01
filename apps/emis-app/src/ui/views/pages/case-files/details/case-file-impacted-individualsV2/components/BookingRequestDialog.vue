@@ -120,7 +120,7 @@ import {
 import { VForm } from '@libs/shared-lib/types';
 import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
-import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
+import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@libs/entities-lib/helpers';
@@ -203,7 +203,12 @@ export default mixins(caseFileDetail).extend({
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
         this.loading = true;
-        const params = { ...this.bookingRequest, ...this.address, caseFileId: this.caseFileId, householdId: this.household.id } as IBookingRequest;
+        const params = {
+          ...this.bookingRequest, ...this.address, shelterLocationId: this.address.shelterLocation?.id, caseFileId: this.caseFileId, householdId: this.household.id,
+        } as IBookingRequest;
+        if (params.addressType === ECurrentAddressTypes.Other || params.addressType === ECurrentAddressTypes.Shelter) {
+          params.address = null;
+        }
         const res = await useBookingRequestStore().createBookingRequest(params);
         if (res) {
           this.$emit('update:show', false);

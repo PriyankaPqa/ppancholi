@@ -85,6 +85,7 @@
             <component
               :is="getComponentName(item)"
               v-for="item in caseFileActivities"
+              :id="caseFile.id"
               :key="item.id"
               :force-hide-menu="true"
               :item="item" />

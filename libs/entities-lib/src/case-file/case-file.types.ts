@@ -74,6 +74,7 @@ export enum CaseFileActivityType {
   RecoveryPlanUpdate = 43,
   CommunicationSent = 44,
   PaymentMoved = 45,
+  BookingRequestSubmitted = 46,
 }
 
 export enum HouseholdCaseFileActivityType {

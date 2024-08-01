@@ -30,6 +30,7 @@ export interface IBookingRequest extends IEntity {
   address: IAddressData;
   checkIn: string;
   checkOut: string;
+  shelterLocationId?: uuid;
   numberOfAdults: number;
   numberOfChildren: number;
   numberOfRooms: number;

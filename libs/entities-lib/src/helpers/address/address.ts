@@ -28,13 +28,11 @@ export default {
     }
 
     const suite = address.unitSuite ? `${address.unitSuite}-` : '';
-    const city = address.city ? `${address.city}, ` : '';
     const provinceCode = this.provinceCode(address);
-    const province = provinceCode ? `${provinceCode}, ` : '';
     const countryName = this.countryName(address.country, i18n);
 
     addressLines.push(address.streetAddress ? `${suite + address.streetAddress}` : '');
-    addressLines.push(city + province + (address.postalCode || ''));
+    addressLines.push([(address.city || ''), (provinceCode || ''), (address.postalCode || '')].filter((x) => x).join(', '));
 
     if (countryName) {
       addressLines.push(countryName);

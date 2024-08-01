@@ -52,11 +52,11 @@
       </template>
 
       <template #[`item.${customColumns.checkIn}`]="{ item }">
-        {{ getLocalStringDate(item.checkIn, 'BookingRequest.checkIn') }}
+        {{ getLocalStringDate(item.checkIn, 'BookingRequest.checkIn', 'PP') }}
       </template>
 
       <template #[`item.${customColumns.checkOut}`]="{ item }">
-        {{ getLocalStringDate(item.checkOut, 'BookingRequest.checkOut') }}
+        {{ getLocalStringDate(item.checkOut, 'BookingRequest.checkOut', 'PP') }}
       </template>
 
       <template #[`item.${customColumns.roomOptions}`]="{ item }">
@@ -69,6 +69,13 @@
         </v-btn>
       </template>
     </rc-data-table>
+
+    <booking-setup-dialog
+      v-if="showBooking"
+      :id="selectedRequest.caseFileId"
+      :booking-request="selectedRequest"
+      :show.sync="showBooking"
+      @close="showBooking = false;" />
   </div>
 </template>
 
@@ -94,6 +101,7 @@ import { useHouseholdStore } from '@/pinia/household/household';
 import { BookingRequestState, IBookingRequest, RoomOption } from '@libs/entities-lib/booking-request';
 import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import BookingSetupDialog from './BookingSetupDialog.vue';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'TeamsTable',
@@ -102,6 +110,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     RcDataTable,
     StatusChip,
     FilterToolbar,
+    BookingSetupDialog,
   },
 
   data() {
@@ -113,6 +122,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         page: 1,
         sortBy: ['Metadata/CaseFileNumber'],
       },
+      selectedRequest: null as IBookingRequest,
+      showBooking: false,
     };
   },
 
@@ -148,8 +159,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     customColumns(): Record<string, string> {
       return {
         caseFileNumber: 'Metadata/CaseFileNumber',
-        primaryMemberName: 'Metadata/PrimaryMemberName',
-        eventName: `Metadata/EventName/Translation/${this.$i18n.locale}`,
+        primaryMemberName: 'Metadata/PrimaryBeneficiaryFirstName',
+        eventName: `Metadata/Event/Translation/${this.$i18n.locale}`,
         numberOfRooms: 'Entity/NumberOfRooms',
         checkIn: 'Entity/CheckIn',
         checkOut: 'Entity/CheckOut',
@@ -213,7 +224,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     filters(): Array<IFilterSettings> {
       return [
         {
-          key: 'Metadata/EventId',
+          key: 'Metadata/Event/Id',
           keyType: EFilterKeyType.Guid,
           type: EFilterType.Select,
           label: this.$t('bookingRequest.eventName') as string,
@@ -268,7 +279,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     actionItem(item: IBookingRequest) {
-      return item;
+      this.selectedRequest = item;
+      this.showBooking = true;
     },
 
     async fetchData(params: ISearchParams) {

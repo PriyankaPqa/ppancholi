@@ -20,6 +20,7 @@
                 outlined
                 readonly
                 clearable
+                :background-color="backgroundColor"
                 :label="startLabel"
                 :rules="[rules.startRequired]"
                 :value="inputFrom"
@@ -54,6 +55,7 @@
                 outlined
                 readonly
                 clearable
+                :background-color="backgroundColor"
                 :label="endLabel"
                 :value="inputTo"
                 :rules="[rules.endRequired]"
@@ -116,6 +118,11 @@ export default Vue.extend({
     },
     // Formats the dates values in requested format
     displayFormat: {
+      type: String,
+      default: null,
+    },
+
+    backgroundColor: {
       type: String,
       default: null,
     },

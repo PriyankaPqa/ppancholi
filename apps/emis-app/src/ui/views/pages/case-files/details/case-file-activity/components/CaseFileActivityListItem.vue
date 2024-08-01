@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import {
@@ -31,8 +31,10 @@ import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment'
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useEventStore } from '@/pinia/event/event';
-
+import libHelpers from '@libs/entities-lib/helpers';
 import helpers from '@/ui/helpers/helpers';
+import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
+import caseFileDetail from '../../caseFileDetail';
 
 export interface IAssignInfo {
   id: string;
@@ -44,7 +46,7 @@ export interface IAssignTeamMembersActivity {
   teamMembers: IAssignInfo[]
 }
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CaseFileActivityListItem',
   components: {
     CaseFileListItemWrapper,
@@ -178,6 +180,9 @@ export default Vue.extend({
         case CaseFileActivityType.CommunicationSent:
           return this.makeContentForCommunicationSent();
 
+        case CaseFileActivityType.BookingRequestSubmitted:
+          return this.makeContentForBookingRequestSubmitted();
+
         default:
           return null;
       }
@@ -227,6 +232,9 @@ export default Vue.extend({
         case CaseFileActivityType.PaymentCorrected:
         case CaseFileActivityType.FinancialAssistancePayment:
           return 'mdi-currency-usd';
+
+        case CaseFileActivityType.BookingRequestSubmitted:
+          return 'mdi-bed';
 
         default:
           return 'mdi-message-text';
@@ -730,6 +738,19 @@ export default Vue.extend({
       const body = this.$t('caseFileActivity.activityList.body.communicationSent', {
         x: this.item.details.massCommunicationName,
         y: this.item.details.personFullName,
+      });
+
+      return { title, body };
+    },
+
+    makeContentForBookingRequestSubmitted(): { title: TranslateResult, body: TranslateResult } {
+      const title = this.$t('caseFileActivity.activityList.title.BookingRequestSubmitted');
+      const body = this.$t('caseFileActivity.activityList.body.BookingRequestSubmitted', {
+        checkIn: helpers.getLocalStringDate(this.item.details.checkIn as string, 'BookingRequest.checkIn', 'PP'),
+        checkOut: helpers.getLocalStringDate(this.item.details.checkOut as string, 'BookingRequest.checkIn', 'PP'),
+        type: this.$t(`registration.addresses.temporaryAddressTypes.${ECurrentAddressTypes[this.item.details.addressType as any]}`),
+        address: this.item.details.shelterLocationId ? this.$m(this.event?.shelterLocations?.find((s) => this.item.details.shelterLocationId === s.id)?.name)
+          : libHelpers.getAddressLines(this.item.details.address, this.$i18n).filter((x) => x).join(', '),
       });
 
       return { title, body };

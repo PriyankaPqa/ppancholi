@@ -8,13 +8,13 @@
     <rc-page-loading v-if="loading" />
     <template v-else>
       <div class="d-flex full-width">
-        <v-btn v-if="!canRequestBooking" class="primary mb-6" @click="openBookingRequest()">
+        <v-btn v-if="canRequestBooking" class="primary mb-6" @click="openBookingRequest()">
           <v-icon class="mr-2">
             mdi-bed
           </v-icon>
           {{ $t('impactedIndividuals.bookingRequest') }}
         </v-btn>
-        <div class="ml-auto d-flex">
+        <div class="ml-auto mb-6 d-flex">
           <v-chip v-if="pendingBookingRequest" label color="orange">
             <v-icon class="mr-2" small>
               mdi-clock-outline

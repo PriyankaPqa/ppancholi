@@ -18,7 +18,11 @@ export class BookingRequestsService extends DomainBaseService<IBookingRequest, I
     return this.http.post<IBookingRequest>(this.getItemUrl(`${this.baseUrl}`, item), item);
   }
 
-  async search(params: ISearchParams): Promise<ICombinedSearchResult<IBookingRequest, IEntity>> {
-    return this.http.get('case-file/search/booking-requests', { params, isOData: true });
+  async search(params: ISearchParams):
+    Promise<ICombinedSearchResult<IBookingRequest, IEntity>> {
+      // try { this.http.get('case-file/search/booking-requests', { params, isOData: true }) } catch {}
+      // return { odataCount: 2, value: mockBookingRequests({ householdId: '269162b8-aea7-4bb5-840c-9bc810a449f3',
+      // caseFileId: '7a2f59bf-d036-449f-bce9-ed54f8225f42' }).map((b) => ({ entity: b, metadata: b, id: '' })) };
+      return this.http.get('case-file/search/booking-requests', { params, isOData: true });
   }
 }

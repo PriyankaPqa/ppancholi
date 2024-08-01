@@ -1014,6 +1014,79 @@ previousCaseFileId: 'id1',
                  newCaseFileNumber: 'new case file',
 newCaseFileId: 'id1' },
     },
+    {
+      caseFileId: 'f1d5b8c2-62a7-4ffd-bca3-b6e702ac5916',
+      user: {
+          id: 'a2d1da8a-e705-4e36-856c-7c3d8bfb697d',
+          name: 'Dev Three',
+      },
+      role: {
+          id: 'bcfe792e-65e3-47de-af0b-843c75acfb89',
+          name: {
+              translation: {
+                  en: 'Case Management Supervisor',
+                  fr: 'Superviseur(e) de suivi personnalisé',
+              },
+          },
+      },
+      details: {
+          checkIn: '2024-07-31T00:00:00',
+          addressType: 7,
+          shelterLocationId: '46fa20ad-0534-48c9-94fb-c0b023a19770',
+      },
+      activityType: CaseFileActivityType.BookingRequestSubmitted,
+      triggeredByMassAction: false,
+      id: '941fcba7-46f9-462b-9741-7a2285f4a6fc',
+      tenantId: '56f61c9c-0a6f-4be2-954d-941c9f02cb4c',
+      created: '2024-07-31T14:16:33.0948493Z',
+      timestamp: '2024-07-31T14:16:33.0948493Z',
+      status: 1,
+      createdBy: 'a2d1da8a-e705-4e36-856c-7c3d8bfb697d',
+      lastAction: 'Created',
+      lastActionCorrelationId: 'b5a260f3-aaa0-40b0-ab51-c36934164505',
+      discriminator: 'CaseFileActivity',
+      _etag: '"04004fad-0000-0a00-0000-66aa47410000"',
+    },
+    {
+      caseFileId: 'ef91cef1-5aea-40f5-ba99-5fa72fd670d8',
+      user: {
+          id: '64cc9431-e1b7-4fff-9c9d-7284b8525ff7',
+          name: 'Marc-André Deschênes',
+      },
+      role: {
+          id: '89b458fe-cf9f-4411-b100-2575b5729293',
+          name: {
+              translation: {
+                  en: 'System Admin',
+                  fr: 'Administrateur(-trice) de système',
+              },
+          },
+      },
+      details: {
+          checkIn: '2024-07-31T00:00:00',
+          checkOut: '2024-08-14T00:00:00',
+          addressType: 4,
+          address: {
+              country: 'CA',
+              province: 2,
+              city: 'Mont',
+              latitude: 0,
+              longitude: 0,
+          },
+      },
+      activityType: CaseFileActivityType.BookingRequestSubmitted,
+      triggeredByMassAction: false,
+      id: '292b0748-a8aa-4977-9791-3e7b68182645',
+      tenantId: '56f61c9c-0a6f-4be2-954d-941c9f02cb4c',
+      created: '2024-07-31T13:26:42.7367748Z',
+      timestamp: '2024-07-31T13:26:42.7367748Z',
+      status: 1,
+      createdBy: '64cc9431-e1b7-4fff-9c9d-7284b8525ff7',
+      lastAction: 'Created',
+      lastActionCorrelationId: '73b96c01-baa6-4fd1-832f-b6ad6b927d86',
+      discriminator: 'CaseFileActivity',
+      _etag: '"04003262-0000-0a00-0000-66aa3b930000"',
+    },
   ];
 
   if (type) {

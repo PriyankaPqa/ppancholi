@@ -1103,6 +1103,40 @@ describe('CaseFileActivityListItem.vue', () => {
           });
         });
       });
+
+      describe('makeContentForBookingRequestSubmitted', () => {
+        it('returns the correct data when activity type is BookingRequestSubmitted for a shelter', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.BookingRequestSubmitted)[0],
+          });
+
+          const body = wrapper.vm.$t(
+            'caseFileActivity.activityList.body.BookingRequestSubmitted',
+            { checkIn: 'Jul 31, 2024', checkOut: '', type: 'registration.addresses.temporaryAddressTypes.Shelter' },
+          );
+
+          expect(wrapper.vm.makeContentForBookingRequestSubmitted()).toEqual({
+            title: 'caseFileActivity.activityList.title.BookingRequestSubmitted',
+            body,
+          });
+        });
+
+        it('returns the correct data when activity type is BookingRequestSubmitted for an address', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.BookingRequestSubmitted)[1],
+          });
+
+          const body = wrapper.vm.$t(
+            'caseFileActivity.activityList.body.BookingRequestSubmitted',
+            { address: 'Mont, BC, Canada', checkIn: 'Jul 31, 2024', checkOut: 'Aug 14, 2024', type: 'registration.addresses.temporaryAddressTypes.HotelMotel' },
+          );
+
+          expect(wrapper.vm.makeContentForBookingRequestSubmitted()).toEqual({
+            title: 'caseFileActivity.activityList.title.BookingRequestSubmitted',
+            body,
+          });
+        });
+      });
     });
 
     describe('makeContentForHouseholdSplit', () => {
