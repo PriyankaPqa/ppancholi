@@ -2,7 +2,7 @@ import { INotificationHelperView } from '../notification';
 import { IEntity, mockBaseData, mockBaseMetadata } from '../base';
 import {
   ActionTaken,
-  HistoryActionTaken,
+  TaskActivityType,
   ITaskActionHistory,
   ITaskCombined,
   ITaskEntity,
@@ -16,7 +16,7 @@ import {
 // eslint-disable-next-line max-lines-per-function
 export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
   {
-    actionTaken: HistoryActionTaken.Create,
+    activityType: TaskActivityType.Create,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-1',
     currentTeamName: 'mock-team-1',
@@ -42,7 +42,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
           } },
   },
   {
-    actionTaken: HistoryActionTaken.Assign,
+    activityType: TaskActivityType.Assign,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-2',
     currentTeamName: 'mock-team-2',
@@ -68,7 +68,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.Completed,
+    activityType: TaskActivityType.Completed,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-3',
     previousTeamId: 'mock-team-id-2',
@@ -94,7 +94,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.Completed,
+    activityType: TaskActivityType.Completed,
     taskStatus: TaskStatus.Completed,
     currentTeamId: 'mock-team-id-3',
     previousTeamId: 'mock-team-id-3',
@@ -121,7 +121,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     },
   },
   {
-    actionTaken: HistoryActionTaken.Reopen,
+    activityType: TaskActivityType.Reopen,
     taskStatus: TaskStatus.InProgress,
     currentTeamId: 'mock-team-id-3',
     previousTeamId: 'mock-team-id-3',
@@ -147,7 +147,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.Completed,
+    activityType: TaskActivityType.Completed,
     taskStatus: TaskStatus.Completed,
     currentTeamId: '',
     previousTeamId: '',
@@ -173,7 +173,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.Cancelled,
+    activityType: TaskActivityType.Cancelled,
     taskStatus: TaskStatus.Cancelled,
     currentTeamId: '',
     previousTeamId: '',
@@ -199,7 +199,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.WorkingOn,
+    activityType: TaskActivityType.WorkingOn,
     taskStatus: TaskStatus.Cancelled,
     currentTeamId: '',
     previousTeamId: '',
@@ -209,7 +209,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     financialAssistancePaymentId: null,
     isUrgent: false,
     currentUserWorkingOn: 'mock-user-id-1',
-    rationale: 'Personal task cancelled',
+    rationale: 'WorkingOn',
     timestamp: '2023-01-07',
     userInformation: {
       userId: 'mock-user-id-1',
@@ -225,7 +225,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.WorkingOn,
+    activityType: TaskActivityType.WorkingOn,
     taskStatus: TaskStatus.Cancelled,
     currentTeamId: '',
     previousTeamId: '',
@@ -235,7 +235,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     financialAssistancePaymentId: null,
     isUrgent: false,
     currentUserWorkingOn: null,
-    rationale: 'Personal task cancelled',
+    rationale: 'no longer WorkingOn',
     timestamp: '2023-01-08',
     userInformation: {
       userId: 'mock-user-id-1',
@@ -251,7 +251,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.UrgentStatusTagUpdated,
+    activityType: TaskActivityType.UrgentStatusTagUpdated,
     taskStatus: TaskStatus.Cancelled,
     currentTeamId: '',
     previousTeamId: '',
@@ -261,7 +261,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     financialAssistancePaymentName: null,
     financialAssistancePaymentId: null,
     currentUserWorkingOn: null,
-    rationale: 'Personal task cancelled',
+    rationale: 'UrgentStatusTagUpdated',
     timestamp: '2023-01-09',
     userInformation: {
       userId: 'mock-user-id-1',
@@ -277,7 +277,7 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
       } },
   },
   {
-    actionTaken: HistoryActionTaken.FinancialAssistancePaymentUpdated,
+    activityType: TaskActivityType.FinancialAssistancePaymentUpdated,
     taskStatus: TaskStatus.Cancelled,
     currentTeamId: '',
     previousTeamId: '',
@@ -287,7 +287,33 @@ export const mockTaskActionHistories = (): ITaskActionHistory[] => ([
     financialAssistancePaymentName: 'FA-payment-1',
     financialAssistancePaymentId: null,
     currentUserWorkingOn: null,
-    rationale: 'Personal task cancelled',
+    rationale: 'FinancialAssistancePaymentUpdated',
+    timestamp: '2023-01-09',
+    userInformation: {
+      userId: 'mock-user-id-1',
+      userName: 'mock-user-name',
+      roleId: 'mock-role-id-1',
+      teamName: 'mock-team-1',
+      teamId: 'team-id-1',
+      roleName: {
+        translation: {
+          en: 'mock-role-name en',
+          fr: 'mock-role-name fr',
+        },
+      } },
+  },
+  {
+    activityType: TaskActivityType.TaskDetailsUpdated,
+    taskStatus: TaskStatus.InProgress,
+    currentTeamId: '',
+    previousTeamId: '',
+    currentTeamName: 'mock-team-A',
+    previousTeamName: 'mock-team-A',
+    isUrgent: false,
+    financialAssistancePaymentName: 'FA-payment-1',
+    financialAssistancePaymentId: null,
+    currentUserWorkingOn: null,
+    rationale: 'update details',
     timestamp: '2023-01-09',
     userInformation: {
       userId: 'mock-user-id-1',

@@ -113,6 +113,20 @@ describe('TaskHistoryDialog.vue', () => {
         expect(wrapper.vm.generateTaskActionString(mockTaskActionHistories()[6])).toEqual('task.history.action_taken.personal_task_cancelled');
       });
 
+      it('should generate action string for Created personal task properly', async () => {
+        await wrapper.setProps({
+          isPersonalTask: true,
+        });
+        expect(wrapper.vm.generateTaskActionString(mockTaskActionHistories()[0])).toEqual('task.history.action_taken.created');
+      });
+
+      it('should generate action string for Update personal task details properly', async () => {
+        await wrapper.setProps({
+          isPersonalTask: true,
+        });
+        expect(wrapper.vm.generateTaskActionString(mockTaskActionHistories()[0])).toEqual('task.history.action_taken.created');
+      });
+
       it('should generate action string for Cancelled team task properly', async () => {
         await wrapper.setProps({
           isPersonalTask: false,
@@ -141,8 +155,11 @@ describe('TaskHistoryDialog.vue', () => {
       });
 
       it('should generate action string for FinancialAssistancePaymentUpdated properly', async () => {
-        expect(wrapper.vm.generateTaskActionString(mockTaskActionHistories()[10])).toEqual(
-          { key: 'task.history.action_taken.fa_payment_update', params: [{ x: 'mock-user-name', y: 'mock-team-1', z: 'FA-payment-1' }] },
+        await wrapper.setProps({
+          isPersonalTask: true,
+        });
+        expect(wrapper.vm.generateTaskActionString(mockTaskActionHistories()[11])).toEqual(
+          { key: 'task.history.action_taken.task_details_update_l6', params: [{ x: 'mock-user-name' }] },
         );
       });
     });
@@ -156,8 +173,8 @@ describe('TaskHistoryDialog.vue', () => {
         wrapper.vm.parseTaskHistory();
         expect(wrapper.vm.parsedTaskActionHistoryData).toEqual([
           {
-            actionTaken: 1,
             actionTakenString: 'task.history.action_taken.created',
+            activityType: 1,
             currentTeamId: 'mock-team-id-1',
             currentTeamName: 'mock-team-1',
             currentUserWorkingOn: null,
@@ -184,16 +201,7 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 2,
-            actionTakenString: {
-              key: 'task.history.action_taken.assigned',
-              params: [
-                {
-                  x: 'mock-team-2',
-                  y: 'mock-team-1',
-                },
-              ],
-            },
+            activityType: 2,
             currentTeamId: 'mock-team-id-2',
             currentTeamName: 'mock-team-2',
             currentUserWorkingOn: null,
@@ -220,16 +228,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 3,
-            actionTakenString: {
-              key: 'task.history.action_taken.action_completed',
-              params: [
-                {
-                  x: 'mock-team-3',
-                  y: 'mock-team-2',
-                },
-              ],
-            },
+            actionTakenString: 'task.history.action_taken.personal_task_completed',
+            activityType: 3,
             currentTeamId: 'mock-team-id-3',
             currentTeamName: 'mock-team-3',
             currentUserWorkingOn: null,
@@ -256,16 +256,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 3,
-            actionTakenString: {
-              key: 'task.history.action_taken.completed',
-              params: [
-                {
-                  x: 'mock-user-name',
-                  y: 'mock-team-3',
-                },
-              ],
-            },
+            actionTakenString: 'task.history.action_taken.personal_task_completed',
+            activityType: 3,
             currentTeamId: 'mock-team-id-3',
             currentTeamName: 'mock-team-3',
             currentUserWorkingOn: null,
@@ -292,15 +284,7 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 4,
-            actionTakenString: {
-              key: 'task.history.action_taken.reopen',
-              params: [
-                {
-                  x: 'mock-team-3',
-                },
-              ],
-            },
+            activityType: 4,
             currentTeamId: 'mock-team-id-3',
             currentTeamName: 'mock-team-3',
             currentUserWorkingOn: null,
@@ -327,16 +311,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 3,
-            actionTakenString: {
-              key: 'task.history.action_taken.completed',
-              params: [
-                {
-                  x: 'mock-user-name',
-                  y: 'mock-team-A',
-                },
-              ],
-            },
+            actionTakenString: 'task.history.action_taken.personal_task_completed',
+            activityType: 3,
             currentTeamId: '',
             currentTeamName: 'mock-team-A',
             currentUserWorkingOn: null,
@@ -363,16 +339,8 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 5,
-            actionTakenString: {
-              key: 'task.history.action_taken.cancelled',
-              params: [
-                {
-                  x: 'mock-user-name',
-                  y: 'mock-team-1',
-                },
-              ],
-            },
+            actionTakenString: 'task.history.action_taken.personal_task_cancelled',
+            activityType: 5,
             currentTeamId: '',
             currentTeamName: 'mock-team-A',
             currentUserWorkingOn: null,
@@ -399,16 +367,7 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 6,
-            actionTakenString: {
-              key: 'task.history.action_taken.working_on_it',
-              params: [
-                {
-                  x: 'mock-user-name',
-                  y: 'mock-team-A',
-                },
-              ],
-            },
+            activityType: 6,
             currentTeamId: '',
             currentTeamName: 'mock-team-A',
             currentUserWorkingOn: 'mock-user-id-1',
@@ -417,7 +376,7 @@ describe('TaskHistoryDialog.vue', () => {
             isUrgent: false,
             previousTeamId: '',
             previousTeamName: 'mock-team-A',
-            rationale: 'Personal task cancelled',
+            rationale: 'WorkingOn',
             taskStatus: 4,
             timestamp: '2023-01-07',
             userInformation: {
@@ -435,16 +394,7 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 6,
-            actionTakenString: {
-              key: 'task.history.action_taken.no_longer_working_on_it',
-              params: [
-                {
-                  x: 'mock-user-name',
-                  y: 'mock-team-A',
-                },
-              ],
-            },
+            activityType: 6,
             currentTeamId: '',
             currentTeamName: 'mock-team-A',
             currentUserWorkingOn: null,
@@ -453,7 +403,7 @@ describe('TaskHistoryDialog.vue', () => {
             isUrgent: false,
             previousTeamId: '',
             previousTeamName: 'mock-team-A',
-            rationale: 'Personal task cancelled',
+            rationale: 'no longer WorkingOn',
             taskStatus: 4,
             timestamp: '2023-01-08',
             userInformation: {
@@ -471,16 +421,7 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 7,
-            actionTakenString: {
-              key: 'task.history.action_taken.urgent_value_update',
-              params: [
-                {
-                  x: 'mock-user-name',
-                  y: 'mock-team-1',
-                },
-              ],
-            },
+            activityType: 7,
             currentTeamId: '',
             currentTeamName: 'mock-team-A',
             currentUserWorkingOn: null,
@@ -489,7 +430,7 @@ describe('TaskHistoryDialog.vue', () => {
             isUrgent: true,
             previousTeamId: '',
             previousTeamName: 'mock-team-A',
-            rationale: 'Personal task cancelled',
+            rationale: 'UrgentStatusTagUpdated',
             taskStatus: 4,
             timestamp: '2023-01-09',
             userInformation: {
@@ -507,17 +448,7 @@ describe('TaskHistoryDialog.vue', () => {
             },
           },
           {
-            actionTaken: 8,
-            actionTakenString: {
-              key: 'task.history.action_taken.fa_payment_update',
-              params: [
-                {
-                  x: 'mock-user-name',
-                  y: 'mock-team-1',
-                  z: 'FA-payment-1',
-                },
-              ],
-            },
+            activityType: 8,
             currentTeamId: '',
             currentTeamName: 'mock-team-A',
             currentUserWorkingOn: null,
@@ -526,8 +457,43 @@ describe('TaskHistoryDialog.vue', () => {
             isUrgent: false,
             previousTeamId: '',
             previousTeamName: 'mock-team-A',
-            rationale: 'Personal task cancelled',
+            rationale: 'FinancialAssistancePaymentUpdated',
             taskStatus: 4,
+            timestamp: '2023-01-09',
+            userInformation: {
+              roleId: 'mock-role-id-1',
+              roleName: {
+                translation: {
+                  en: 'mock-role-name en',
+                  fr: 'mock-role-name fr',
+                },
+              },
+              teamId: 'team-id-1',
+              teamName: 'mock-team-1',
+              userId: 'mock-user-id-1',
+              userName: 'mock-user-name',
+            },
+          },
+          {
+            actionTakenString: {
+              key: 'task.history.action_taken.task_details_update_l6',
+              params: [
+                {
+                  x: 'mock-user-name',
+                },
+              ],
+            },
+            activityType: 9,
+            currentTeamId: '',
+            currentTeamName: 'mock-team-A',
+            currentUserWorkingOn: null,
+            financialAssistancePaymentId: null,
+            financialAssistancePaymentName: 'FA-payment-1',
+            isUrgent: false,
+            previousTeamId: '',
+            previousTeamName: 'mock-team-A',
+            rationale: 'update details',
+            taskStatus: 2,
             timestamp: '2023-01-09',
             userInformation: {
               roleId: 'mock-role-id-1',

@@ -264,8 +264,7 @@ export const taskViewDS : IDatasourceBase = {
     { dataField: 'taskStatusNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'TaskStatus' },
     { dataField: 'lastActionTakenNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'ActionTaken' },
     { dataField: 'lastActionTakenNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'ActionTaken' },
-    { dataField: 'userWorkingOn', dataType: 'string', visible: false },
-    { dataField: 'dueDate', dataType: 'date', asUtcDate: true, visible: false },
+    { dataField: 'userWorkingOnName', dataType: 'string', visible: false },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.task.${x.dataField}` })),
 };
 
@@ -281,8 +280,12 @@ export const taskHistoryViewDS : IDatasourceBase = {
     { dataField: 'previousAssignedTeamName', dataType: 'string', visible: false },
     { dataField: 'taskStatusNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'TaskStatus' },
     { dataField: 'taskStatusNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'TaskStatus' },
-    { dataField: 'actionTakenNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'ActionTaken' },
-    { dataField: 'actionTakenNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'ActionTaken' },
+    { dataField: 'activityTypeNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'TaskActivityType' },
+    { dataField: 'activityTypeNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'TaskActivityType' },
+    { dataField: 'isUrgent', dataType: 'boolean', visible: false },
+    { dataField: 'userWorkingOnName', dataType: 'string', visible: false },
+    { dataField: 'userTeamName', dataType: 'string', visible: false },
+    { dataField: 'financialAssistancePaymentName', dataType: 'string' },
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.taskHistory.${x.dataField}` })),
 };
 

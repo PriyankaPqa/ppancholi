@@ -51,7 +51,7 @@
 import Vue from 'vue';
 import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { HistoryActionTaken, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
+import { TaskActivityType, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
 import { TranslateResult } from 'vue-i18n';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
@@ -172,37 +172,39 @@ export default Vue.extend({
           : this.$t('task.history.action_taken.completed', { x: userName, y: assignedTeamName })
       );
 
-      if (this.isPersonalTask && historyItem.actionTaken) {
+      if (this.isPersonalTask && historyItem.activityType) {
         const personalActionType: { [index: number ]: TranslateResult } = {
-          [HistoryActionTaken.Completed]: this.$t('task.history.action_taken.personal_task_completed'),
-          [HistoryActionTaken.Cancelled]: this.$t('task.history.action_taken.personal_task_cancelled'),
+          [TaskActivityType.Create]: this.$t('task.history.action_taken.created'),
+          [TaskActivityType.Completed]: this.$t('task.history.action_taken.personal_task_completed'),
+          [TaskActivityType.Cancelled]: this.$t('task.history.action_taken.personal_task_cancelled'),
+          [TaskActivityType.TaskDetailsUpdated]: this.$t('task.history.action_taken.task_details_update_l6', { x: userName }),
         };
-        return personalActionType[historyItem.actionTaken];
+        return personalActionType[historyItem.activityType];
       }
 
-      if (historyItem.actionTaken) {
+      if (historyItem.activityType) {
         const actionType: { [index: number ]: TranslateResult } = {
-          [HistoryActionTaken.Create]: this.$t('task.history.action_taken.created'),
-          [HistoryActionTaken.Assign]: this.$t('task.history.action_taken.assigned', { x: assignedTeamName, y: actionTeamName }),
-          [HistoryActionTaken.Completed]: (historyItem.taskStatus === TaskStatus.InProgress
+          [TaskActivityType.Create]: this.$t('task.history.action_taken.created'),
+          [TaskActivityType.Assign]: this.$t('task.history.action_taken.assigned', { x: assignedTeamName, y: actionTeamName }),
+          [TaskActivityType.Completed]: (historyItem.taskStatus === TaskStatus.InProgress
             ? this.$t('task.history.action_taken.action_completed', { x: assignedTeamName, y: actionTeamName })
             : taskCompleteHistoryString()),
-          [HistoryActionTaken.Reopen]: this.$t('task.history.action_taken.reopen', { x: assignedTeamName }),
-          [HistoryActionTaken.Cancelled]: userIsL6
+          [TaskActivityType.Reopen]: this.$t('task.history.action_taken.reopen', { x: assignedTeamName }),
+          [TaskActivityType.Cancelled]: userIsL6
             ? this.$t('task.history.action_taken.cancelled_l6', { x: userName })
             : this.$t('task.history.action_taken.cancelled', { x: userName, y: updatedByTeamName }),
-          [HistoryActionTaken.WorkingOn]: workingOnItHistoryString(),
-          [HistoryActionTaken.UrgentStatusTagUpdated]: userIsL6
+          [TaskActivityType.WorkingOn]: workingOnItHistoryString(),
+          [TaskActivityType.UrgentStatusTagUpdated]: userIsL6
             ? this.$t('task.history.action_taken.urgent_value_update_l6', { x: userName })
             : this.$t('task.history.action_taken.urgent_value_update', { x: userName, y: updatedByTeamName }),
-          [HistoryActionTaken.FinancialAssistancePaymentUpdated]: userIsL6
+          [TaskActivityType.FinancialAssistancePaymentUpdated]: userIsL6
             ? this.$t('task.history.action_taken.fa_payment_update_l6', { x: userName, z: historyItem.financialAssistancePaymentName ?? '-' })
             : this.$t('task.history.action_taken.fa_payment_update', { x: userName, y: updatedByTeamName, z: historyItem.financialAssistancePaymentName ?? '-' }),
-          [HistoryActionTaken.TaskDetailsUpdated]: userIsL6
+          [TaskActivityType.TaskDetailsUpdated]: userIsL6
             ? this.$t('task.history.action_taken.task_details_update_l6', { x: userName })
             : this.$t('task.history.action_taken.task_details_update', { x: userName, y: updatedByTeamName }),
         };
-        return actionType[historyItem.actionTaken];
+        return actionType[historyItem.activityType];
       }
       return '';
     },

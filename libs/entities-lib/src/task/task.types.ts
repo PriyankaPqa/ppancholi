@@ -31,7 +31,7 @@ export enum ActionTaken {
 }
 
 // used for history action type
-export enum HistoryActionTaken {
+export enum TaskActivityType {
   Create = 1,
   Assign = 2,
   Completed = 3,
@@ -64,7 +64,7 @@ export interface ITaskEntity extends ITaskEntityData {
 }
 
 export interface ITaskActionHistory {
-  actionTaken: HistoryActionTaken,
+  activityType: TaskActivityType,
   taskStatus: TaskStatus,
   currentTeamId: uuid,
   currentTeamName: string,
