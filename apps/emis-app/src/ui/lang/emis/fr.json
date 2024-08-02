@@ -2669,6 +2669,7 @@
     "caseFileActivity.activityList.body.BookingRequestSubmitted": "Arrivée: {checkIn} - Départ: {checkOut}\nType: {type}\nAdresse: {address}",
     "caseFileActivity.activityList.title.BookingRequestSubmitted": "Booking request Submitted",
     "enums.RoomType.TwoBeds": "Deux lits (standard)",
+    "bookingRequest.addRoom": "Ajouter une autre chambre",
     "enums.RoomType.OneBedOneSofaBed": "Un lit + sofa-lit",
     "enums.RoomType.TwoBedsOneSofaBed": "Deux lits + sofa-lit",
     "enums.RoomOption.PetFriendly": "Accepte les animaux",

@@ -2668,6 +2668,7 @@
     "bookingRequests.title": "Lodging management",
     "bookingRequest.checkIn": "Check-in",
     "bookingRequest.checkOut": "Check-out",
+    "bookingRequest.addRoom": "Book another room",
     "enums.RoomType.TwoBeds": "Two beds (standard)",
     "enums.RoomType.OneBedOneSofaBed": "One bed + sofa bed",
     "enums.RoomType.TwoBedsOneSofaBed": "Two beds + sofa bed",

@@ -36,7 +36,8 @@
         data-test="crc_provided_check_in_check_out"
         cols="12"
         sm="6"
-        md="8">
+        md="8"
+        :class="{ 'py-0': compactView }">
         <template v-if="!bookingMode && form.hasCrcProvided()">
           <div class="font-weight-bold ">
             {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
@@ -52,7 +53,7 @@
             </v-radio-group>
           </div>
         </template>
-        <div v-if="form.hasCheckInCheckOut()" class="py-4">
+        <div v-if="form.hasCheckInCheckOut()" class="py-4" :class="{ 'py-0': compactView }">
           <date-range
             id="currentAddressForm"
             :attach="true"
@@ -66,7 +67,7 @@
         </div>
       </v-col>
 
-      <v-col v-if="form.hasStreet()" cols="12">
+      <v-col v-if="form.hasStreet()" cols="12" :class="{ 'py-0': compactView }">
         <rc-google-autocomplete-with-validation
           prepend-inner-icon="mdi-map-marker"
           background-color="white"

@@ -84,8 +84,8 @@ describe('BookingRequestsTable.vue', () => {
       it('returns the right columns', () => {
         expect(wrapper.vm.customColumns).toEqual({
           caseFileNumber: 'Metadata/CaseFileNumber',
-          primaryMemberName: 'Metadata/PrimaryMemberName',
-          eventName: 'Metadata/EventName/Translation/en',
+          primaryMemberName: 'Metadata/PrimaryBeneficiaryFirstName',
+          eventName: 'Metadata/Event/Translation/en',
           numberOfRooms: 'Entity/NumberOfRooms',
           checkIn: 'Entity/CheckIn',
           checkOut: 'Entity/CheckOut',
@@ -146,7 +146,7 @@ describe('BookingRequestsTable.vue', () => {
       it('returns the right filters', async () => {
         expect(wrapper.vm.filters)
           .toEqual([{ items: [],
-            key: 'Metadata/EventId',
+            key: 'Metadata/Event/Id',
             keyType: 'guid',
             label: 'bookingRequest.eventName',
             loading: false,

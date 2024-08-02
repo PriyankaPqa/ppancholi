@@ -38,9 +38,6 @@
                 {{ $t('bookingRequest.initialRequest') }}
               </div>
             </v-row>
-            <v-btn @click="addRoom()">
-              test
-            </v-btn>
             <v-row>
               <review-booking-request :id="bookingRequest.caseFileId" :booking-request="bookingRequest" />
             </v-row>
@@ -50,7 +47,7 @@
               </div>
               <div class="grey-container pa-4">
                 <v-row>
-                  <v-col cols="3">
+                  <v-col cols="3" class="pb-0">
                     <v-text-field-with-validation
                       v-model="booking.estimatedAmount"
                       data-test="estimated-amount"
@@ -59,7 +56,7 @@
                       :rules="{ required: true, numeric: true }"
                       :label="`${$t('bookingRequest.estimatedAmount')} *`" />
                   </v-col>
-                  <v-col cols="3">
+                  <v-col cols="3" class="pb-0">
                     <v-text-field-with-validation
                       v-model="booking.confirmationNumber"
                       data-test="confirmation-number"
@@ -68,7 +65,7 @@
                       :rules="{ numeric: true }"
                       :label="`${$t('bookingRequest.confirmationNumber')}`" />
                   </v-col>
-                  <v-col cols="3">
+                  <v-col cols="3" class="pb-0">
                     <v-text-field-with-validation
                       v-model="booking.numberOfNights"
                       disabled
@@ -77,7 +74,7 @@
                       background-color="white"
                       :label="`${$t('bookingRequest.numberOfNights')} *`" />
                   </v-col>
-                  <v-col cols="3">
+                  <v-col cols="3" class="pb-0">
                     <v-text-field-with-validation
                       v-model="bookings.length"
                       disabled
@@ -103,6 +100,16 @@
                   show-crc-provided-and-check-in-check-out
                   @change="setCurrentAddress($event, index)" />
               </div>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-btn class="secondary" @click="addRoom()">
+                  <v-icon class="mr-2">
+                    mdi-plus
+                  </v-icon>
+                  {{ $t('bookingRequest.addRoom') }}
+                </v-btn>
+              </v-col>
             </v-row>
           </v-col>
         </v-row>
