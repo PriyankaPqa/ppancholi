@@ -31,13 +31,16 @@ export enum DataTest {
   triageSelect = 'caseFileActivity-triage-select',
   triageSelectInput = 'caseFileActivity-triage-select_input',
   impactIcon = 'caseFileDetails-verify-impact-icon',
-  dialogTitle = 'dialog-title',
   impactValidationMethodRow = 'impactValidation_method',
   impactValidationStatusRow = 'impactValidation_status',
   impactMethodManual = 'impact-method-manual',
   impactMethodNotApplicable = 'impact-method-not-applicable',
   impactStatusUndetermined = 'impact-status-undetermined',
   impactStatusImpacted = 'impact-status-impacted',
+  statusNotVerified = 'status-notVerified',
+  statusFailed = 'status-failed',
+  verifyIdentityMethod = 'verifyIdentity_method',
+  verifyIdentityOptions = 'verifyIdentity_options',
 }
 
 export enum caseFileTags {
@@ -97,8 +100,6 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   private impactIcon = { selector: DataTest.impactIcon };
 
-  private dialogTitle = { selector: DataTest.dialogTitle };
-
   private impactValidationMethodRow = { selector: DataTest.impactValidationMethodRow };
 
   private impactValidationStatusRow = { selector: DataTest.impactValidationStatusRow };
@@ -110,6 +111,14 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
   private impactStatusUndetermined = { selector: DataTest.impactStatusUndetermined, type: 'input' };
 
   private impactStatusImpacted = { selector: DataTest.impactStatusImpacted, type: 'input' };
+
+  private authenticationStatusNotVerified = { selector: DataTest.statusNotVerified, type: 'input' };
+
+  private authenticationStatusFailed = { selector: DataTest.statusFailed, type: 'input' };
+
+  private verifyIdentityMethod = { selector: DataTest.verifyIdentityMethod };
+
+  private verifyIdentityOptions = { selector: DataTest.verifyIdentityOptions };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -208,7 +217,7 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
     return cy.getByDataTest(tagItemSelector);
   }
 
-  public getVerifyIdentityIconElement() {
+  public getVerifyIdentityIconButton() {
     return cy.getByDataTest(this.verifyIdentityIcon);
   }
 
@@ -226,10 +235,6 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public addLabel() {
     return cy.getByDataTest(this.labelAdd).click();
-  }
-
-  public getDialogTitleElement() {
-    return cy.getByDataTest(this.dialogTitle);
   }
 
   public fillLabelField(labelText: string, labelDataTest: DataTest) {
@@ -283,5 +288,21 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public getImpactStatusImpactedButton() {
     return cy.getByDataTest(this.impactStatusImpacted);
+  }
+
+  public getDialogAuthenticationStatusNotVerifiedCheckbox() {
+    return cy.getByDataTest(this.authenticationStatusNotVerified);
+  }
+
+  public getDialogAuthenticationStatusFailedCheckbox() {
+    return cy.getByDataTest(this.authenticationStatusFailed);
+  }
+
+  public getDialogVerifyIdentityMethodDropdown() {
+    return cy.getByDataTest(this.verifyIdentityMethod);
+  }
+
+  public getDialogVerifyIdentityOptionsDropdown() {
+    return cy.getByDataTest(this.verifyIdentityOptions);
   }
 }
