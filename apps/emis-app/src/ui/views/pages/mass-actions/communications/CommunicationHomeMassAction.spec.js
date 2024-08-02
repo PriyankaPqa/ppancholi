@@ -120,12 +120,12 @@ describe('CommunicationHomeMassAction.vue', () => {
           text: 'massAction.communication.table.add.list',
           value: 'list',
           icon: 'mdi-filter-variant',
-          dataTest: 'fa-mass-action-list',
+          dataTest: 'add-mass-communication-via-list',
         }, {
           text: 'massAction.communication.table.add.file',
           value: 'file',
           icon: 'mdi-upload',
-          dataTest: 'fa-mass-action-file',
+          dataTest: 'add-mass-communication-via-file',
         }]);
       });
     });

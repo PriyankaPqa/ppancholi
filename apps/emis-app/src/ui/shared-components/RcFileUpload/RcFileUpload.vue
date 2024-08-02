@@ -5,7 +5,7 @@
         :id="inputId"
         ref="input"
         v-model="localFiles"
-        data-test="upload-file"
+        :data-test="dataTest"
         :counter="counter"
         :multiple="multiple"
         :show-size="showSize"
@@ -144,6 +144,11 @@ export default Vue.extend({
     backgroundColor: {
       type: String,
       default: undefined,
+    },
+
+    dataTest: {
+      type: String,
+      default: 'upload-file',
     },
   },
   data() {

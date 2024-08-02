@@ -12,6 +12,7 @@ import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 import { INewMassCaseFileStatusFields } from '../pages/mass-action/mass-case-file-status/newMassCaseFileStatusUpdate.page';
+import { INewMassCommunicationFields } from '../pages/mass-action/mass-communication/newMassCommunication.page';
 
 export interface GenerateFaCustomOptionsXlsxFileParams {
   caseFiles: ICaseFileEntity[],
@@ -38,6 +39,12 @@ export const fixtureNewCaseFileStatus = (force?: INewMassCaseFileStatusFields): 
   reason: '',
   reasonSpecifyOther: '',
   rationale: 'mock-rationale-string',
+  ...force,
+});
+
+export const fixtureNewMassCommunication = (force?: INewMassCommunicationFields) : INewMassCommunicationFields => ({
+  messageSubject: 'mock-message-subject',
+  messageText: 'mock-message-text',
   ...force,
 });
 

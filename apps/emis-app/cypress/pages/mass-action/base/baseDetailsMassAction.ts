@@ -17,6 +17,8 @@ export enum DataTest {
   dialogConfirmCancel = 'cancel-action-dialog-confirmation',
   dialogConfirmSubmit = 'submit-action-dialog-confirmation',
   backToMassActionListButton = 'back_to_mass_action_list_button',
+  editButton = 'edit',
+  deleteButton = 'delete',
 }
 
 export class BaseDetailsMassAction {
@@ -55,6 +57,18 @@ export class BaseDetailsMassAction {
   private dialogConfirmCancel = { selector: DataTest.dialogConfirmCancel };
 
   private backToMassActionListButton = { selector: DataTest.backToMassActionListButton };
+
+  private editButton = { selector: DataTest.editButton };
+
+  private deleteButton = { selector: DataTest.deleteButton };
+
+  public getEditButton() {
+    return cy.getByDataTest(this.editButton);
+  }
+
+  public getDeleteButton() {
+    return cy.getByDataTest(this.deleteButton);
+  }
 
   public getMassActionName() {
     return cy.getByDataTest(this.name).getAndTrimText();

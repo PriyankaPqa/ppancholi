@@ -16,7 +16,7 @@
         <rc-add-button-with-menu
           :add-button-label="$t('massActions.communication.tooltip.add')"
           :items="menuItems"
-          data-test="create-fa-mass-action"
+          data-test="create-mass-communication"
           @click-item="goToAdd($event)" />
       </template>
 
@@ -143,12 +143,12 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
         text: this.$t('massAction.communication.table.add.list') as string,
         value: MassActionMode.List,
         icon: 'mdi-filter-variant',
-        dataTest: 'fa-mass-action-list',
+        dataTest: 'add-mass-communication-via-list',
       }, {
         text: this.$t('massAction.communication.table.add.file') as string,
         value: MassActionMode.File,
         icon: 'mdi-upload',
-        dataTest: 'fa-mass-action-file',
+        dataTest: 'add-mass-communication-via-file',
       }];
     },
   },
