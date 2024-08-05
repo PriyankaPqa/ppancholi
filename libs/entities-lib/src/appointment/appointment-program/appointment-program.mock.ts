@@ -1,6 +1,6 @@
 import { mockBaseData } from '../../base';
 import { mockServiceOption } from '../service-option/service-option.mock';
-import { DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
+import { AppointmentProgramStatus, DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
 
 export const mockBookingHour = (force?: Partial<IDaySchedule>): IDaySchedule => ({
   day: DayOfWeek.Monday,
@@ -26,5 +26,6 @@ export const mockAppointmentProgram = (force? : Partial<IAppointmentProgram>): I
   timeZone: 'America/Toronto',
   businessHours: mockbusinessHours(),
   serviceOptions: [mockServiceOption()],
+  appointmentProgramStatus: AppointmentProgramStatus.Active,
   ...force,
 });

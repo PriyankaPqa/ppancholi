@@ -1,34 +1,60 @@
 <!-- POC Component for updating the schedule for a staff member -->
 
 <template>
-  <div>
-    <div v-for="day in Object.keys(scheduleCopy)" :key="day">
-      <strong>{{ DayOfWeek[+day] }} {{ scheduleCopy[+day].date }}</strong>
-      <div>
+  <v-sheet
+    rounded
+    outlined
+    class="mb-4">
+    <v-simple-table>
+      <thead>
+        <tr>
+          <th><span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.day') }}</span></th>
+          <th><span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.from') }}</span></th>
+          <th><span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.to') }}</span></th>
+          <th />
+          <th />
+        </tr>
+      </thead>
+      <tbody v-for="day in Object.keys(scheduleCopy)" :key="day" class="border">
         <template v-if="scheduleCopy[+day].timeSlots.length">
-          <div v-for="(timeSlot, timeSlotIndex) in scheduleCopy[+day].timeSlots" :key="`${day}_${timeSlotIndex}`">
-            <div class="d-flex">
+          <tr v-for="(timeSlot, timeSlotIndex) in scheduleCopy[+day].timeSlots" :key="`${day}_${timeSlotIndex}`">
+            <td>
+              {{ timeSlotIndex === 0 ? $t(`enums.DayOfWeek.${DayOfWeek[+day]}`) : '' }}
+            </td>
+            <td class="px-0 py-2 select-cell">
               <v-select-a11y
                 :value="timeSlot.start"
                 :items="INTERVALS"
+                outlined
                 dense
-                class="select mx-10"
+                attach
+                hide-details
+                class="select"
                 menu-props="auto"
                 :item-value="(item) => item.value"
                 @change="updateTime($event, +day, timeSlotIndex, 'start')" />
+            </td>
+            <td class="px-0 py-2 select-cell">
               <v-select-a11y
                 :value="timeSlot.end"
                 :items="INTERVALS"
                 menu-props="auto"
+                outlined
+                hide-details
                 dense
+                attach
                 class="select"
                 :item-value="(item) => item.value"
                 @change="updateTime($event, +day, timeSlotIndex, 'end')" />
+            </td>
+            <td class="px-0 py-1 action-cell">
               <v-btn icon data-test="delete-link" :aria-label="$t('common.delete')" @click="deleteSlot(+day, timeSlotIndex)">
                 <v-icon size="24" color="grey darken-2">
                   mdi-delete
                 </v-icon>
               </v-btn>
+            </td>
+            <td class="px-0 py-1 action-cell">
               <v-btn
                 v-if="timeSlotIndex === scheduleCopy[+day].timeSlots.length - 1"
                 icon
@@ -39,21 +65,31 @@
                   mdi-plus
                 </v-icon>
               </v-btn>
-            </div>
-          </div>
+            </td>
+          </tr>
         </template>
-
-        <div v-else>
-          N/A
-          <v-btn icon data-test="delete-link" :aria-label="$t('common.delete')" @click="addSlot(+day)">
-            <v-icon size="24" color="grey darken-2">
-              mdi-plus
-            </v-icon>
-          </v-btn>
-        </div>
-      </div>
-    </div>
-  </div>
+        <template v-else>
+          <tr>
+            <td>
+              {{ $t(`enums.DayOfWeek.${DayOfWeek[+day]}`) }}
+            </td>
+            <td>
+              {{ $t('common.N/A') }}
+            </td>
+            <td />
+            <td />
+            <td class="px-0 py-1 action-cell">
+              <v-btn icon data-test="delete-link" :aria-label="$t('common.delete')" @click="addSlot(+day)">
+                <v-icon size="24" color="grey darken-2">
+                  mdi-plus
+                </v-icon>
+              </v-btn>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </v-simple-table>
+  </v-sheet>
 </template>
 
 <script lang="ts">
@@ -61,12 +97,12 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VSelectA11y } from '@libs/component-lib/components';
 import { DayOfWeek, IDaySchedule, ITimeSlot } from '@libs/entities-lib/appointment';
-import appointmentHelpers from './appointmentHelpers';
+import appointmentHelpers from '../utils/appointmentHelpers';
 
 const INTERVALS = appointmentHelpers.createDropdownTimeIntervals('00:00', '24:00');
 
 export default Vue.extend({
-  name: 'AvailabilitySchedule',
+  name: 'AvailabilityHours',
 
   components: {
     VSelectA11y,
@@ -99,15 +135,18 @@ export default Vue.extend({
   methods: {
     // change the UTC datetime of the time slot with the new value , calculated from the new selected time
     updateTime(value: string, dayOfWeek: number, timeSlotIndex: number, position: string) {
-      const date = this.scheduleCopy[dayOfWeek].date;
-      const newTime = new Date(`${date} ${value}`).toISOString();
       let updatedSlot = this.scheduleCopy[dayOfWeek].timeSlots[timeSlotIndex];
       if (updatedSlot) {
         updatedSlot = {
           ...updatedSlot,
-          [`${position}DateTime` as 'startDateTime' | 'endDateTime']: newTime,
           [position]: value,
         };
+
+        const date = this.scheduleCopy[dayOfWeek]?.date;
+        if (date) {
+          const newTime = new Date(`${date} ${value}`).toISOString();
+          updatedSlot[`${position}DateTime` as 'startDateTime' | 'endDateTime'] = newTime;
+        }
       }
       this.scheduleCopy[dayOfWeek].timeSlots.splice(timeSlotIndex, 1, updatedSlot);
     },
@@ -115,13 +154,14 @@ export default Vue.extend({
     // TODO: when adding a slot, if the previous slot ends before 5pm, set the start time of the new slot to the end time of the last slot
     // (copy behavior from MSBooking)
     addSlot(day: number) {
-      const slotDate = this.scheduleCopy[day].date;
+      const slotDate = this.scheduleCopy[day]?.date;
       const newSlot:ITimeSlot = {
         start: '09:00',
         end: '17:00',
-        startDateTime: new Date(`${slotDate} 9:00`).toISOString(),
-        endDateTime: new Date(`${slotDate} 17:00`).toISOString(),
+        startDateTime: slotDate && new Date(`${slotDate} 9:00`).toISOString(),
+        endDateTime: slotDate && new Date(`${slotDate} 17:00`).toISOString(),
       };
+
       this.scheduleCopy[day].timeSlots.push(newSlot);
     },
 
@@ -135,6 +175,21 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
   .select {
-    max-width: 150px;
+    max-width: 130px;
   }
+  .select-cell {
+    width: 170px;
+  }
+  .action-cell {
+    width: 50px;
+  }
+
+  ::v-deep .v-data-table > .v-data-table__wrapper > table {
+    border-collapse: collapse;
+  }
+
+  ::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
+    border-top: thin solid rgba(0, 0, 0, 0.12);
+  }
+
 </style>

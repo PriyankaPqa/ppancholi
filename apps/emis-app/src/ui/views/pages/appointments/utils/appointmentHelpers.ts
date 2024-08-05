@@ -246,5 +246,4 @@ export default {
 
       return intervals.map((i) => ({ text: format(i, 'hh:mm a'), value: format(i, 'HH:mm') }));
   },
-
-};
+  };

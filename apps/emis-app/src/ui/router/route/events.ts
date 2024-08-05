@@ -23,6 +23,9 @@ const EventFinancialAssistanceHome = () => import('@/ui/views/pages/events/detai
 const CreateEditFinancialAssistance = () => import('@/ui/views/pages/financial-assistance/create-edit/CreateEditFinancialAssistance.vue');
 const FinancialAssistanceDetails = () => import('@/ui/views/pages/financial-assistance/FinancialAssistanceDetails.vue');
 
+const AppointmentProgramsHome = () => import('@/ui/views/pages/appointment-programs/home/AppointmentProgramsHome.vue');
+const CreateEditAppointmentProgram = () => import('@/ui/views/pages/appointment-programs/create-edit/CreateEditAppointmentProgram.vue');
+
 export const events: RouteConfig = {
   path: Routes.events.layout.path,
   component: EventsLayout,
@@ -195,6 +198,34 @@ export const events: RouteConfig = {
           },
           props: true,
           children: [],
+        },
+        {
+          path: Routes.events.appointmentPrograms.home.path,
+          name: Routes.events.appointmentPrograms.home.name,
+          component: AppointmentProgramsHome,
+          meta: { level: UserRoles.level6 },
+          props: true,
+        },
+        {
+          path: Routes.events.appointmentPrograms.create.path,
+          name: Routes.events.appointmentPrograms.create.name,
+          component: CreateEditAppointmentProgram,
+          meta: { level: UserRoles.level6 },
+          props: true,
+        },
+        {
+          path: Routes.events.appointmentPrograms.edit.path,
+          name: Routes.events.appointmentPrograms.edit.name,
+          component: CreateEditAppointmentProgram,
+          meta: { level: UserRoles.level6 },
+          props: true,
+        },
+        {
+          path: Routes.events.appointmentPrograms.details.path,
+          name: Routes.events.appointmentPrograms.details.name,
+          // component: AppointmentProgramDetails,
+          meta: { level: UserRoles.level6 },
+          props: true,
         }],
     },
   ],

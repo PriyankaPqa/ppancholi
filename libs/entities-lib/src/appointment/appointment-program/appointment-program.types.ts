@@ -15,6 +15,11 @@ export enum DayOfWeek {
   Saturday = 6,
 }
 
+export enum AppointmentProgramStatus {
+  Active = 1,
+  Inactive = 2,
+}
+
 /**
  * Value objects
  */
@@ -46,6 +51,7 @@ export interface IAppointmentProgram extends IEntity {
   timeZone: string;
   businessHours: IDaySchedule[];
   serviceOptions: IServiceOption[];
+  appointmentProgramStatus:AppointmentProgramStatus;
 }
 
 export type IdParams = uuid;

@@ -104,7 +104,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { IDaySchedule } from '@libs/entities-lib/appointment';
 import CustomSchedule from './CustomSchedule.vue';
 import DefaultSchedule from './DefaultSchedule.vue';
-import appointmentHelpers from './appointmentHelpers';
+import appointmentHelpers from '../utils/appointmentHelpers';
 
 import { APPOINTMENT_PROGRAM_TIMEZONE, CUSTOM_SCHEDULE, DEFAULT_SCHEDULE } from './mocks';
 
