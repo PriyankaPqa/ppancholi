@@ -16,7 +16,7 @@
         <rc-add-button-with-menu
           :add-button-label="$t('massActions.assessment.tooltip.add')"
           :items="menuItems"
-          data-test="create-fa-mass-action"
+          data-test="create-assessments-mass-action"
           @click-item="goToAdd($event)" />
       </template>
 
@@ -142,12 +142,12 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
         text: this.$t('massAction.assessment.table.add.list') as string,
         value: MassActionMode.List,
         icon: 'mdi-filter-variant',
-        dataTest: 'fa-mass-action-list',
+        dataTest: 'add-mass-assessments-via-list',
       }, {
         text: this.$t('massAction.assessment.table.add.file') as string,
         value: MassActionMode.File,
         icon: 'mdi-upload',
-        dataTest: 'fa-mass-action-file',
+        dataTest: 'add-mass-assessments-via-file',
       }];
     },
   },

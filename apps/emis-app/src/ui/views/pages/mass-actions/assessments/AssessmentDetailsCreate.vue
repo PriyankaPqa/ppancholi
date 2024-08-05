@@ -11,7 +11,7 @@
             async-mode
             :force-events="filteredEvents"
             return-object
-            data-test="payment_event_name"
+            data-test="event_name_select"
             fetch-all-events
             :label="`${$t('massActions.financialAssistance.create.event.label')} *`"
             :rules="rules.event"
@@ -45,13 +45,13 @@
           <v-btn class="ma-2" small @click="clearEmailText(true)">
             {{ $t('common.clear') }}
           </v-btn>
-          <vue-editor v-model="formCopy.emailTopCustomContent.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          <vue-editor id="content-before-link-editor" v-model="formCopy.emailTopCustomContent.translation[languageMode]" :editor-toolbar="toolbarSettings" />
 
           <span>{{ $t('massActions.assessment.create.emailBottomCustomContent.label') }}</span>
           <v-btn class="ma-2" small @click="clearEmailText(false)">
             {{ $t('common.clear') }}
           </v-btn>
-          <vue-editor v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          <vue-editor id="content-after-link-editor" v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
         </v-col>
         <v-btn
           class="ma-2 preview"
