@@ -108,7 +108,9 @@ export default Vue.extend({
       .then(() => {
         this.initAutocompleteFeature();
         setTimeout(() => {
-          this.$refs.input.$el.querySelector('input').placeholder = '';
+          if (this.$refs.input) {
+            this.$refs.input.$el.querySelector('input').placeholder = '';
+          }
         }, 100);
       });
   },

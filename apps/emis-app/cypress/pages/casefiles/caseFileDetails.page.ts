@@ -21,6 +21,26 @@ export enum DataTest {
   verifyIdentityIcon = 'caseFileDetails-verify-identity-icon',
   identityIconColorValidation = 'caseFileDetails-identity-icon-color-validation',
   impactIconColorValidation = 'caseFileDetails-impact-icon-color-validation',
+  labelAdd = 'caseFileActivity-add-label-btn',
+  dialogTitle = 'dialog-title',
+  caseFileLabel1 = 'case-file-labels-1',
+  caseFileLabel2 = 'case-file-labels-2',
+  caseFileLabel3 = 'case-file-labels-3',
+  caseFileLabel4 = 'case-file-labels-4',
+  rowLabel = 'row-label',
+  triageSelect = 'caseFileActivity-triage-select',
+  triageSelectInput = 'caseFileActivity-triage-select_input',
+  impactIcon = 'caseFileDetails-verify-impact-icon',
+  impactValidationMethodRow = 'impactValidation_method',
+  impactValidationStatusRow = 'impactValidation_status',
+  impactMethodManual = 'impact-method-manual',
+  impactMethodNotApplicable = 'impact-method-not-applicable',
+  impactStatusUndetermined = 'impact-status-undetermined',
+  impactStatusImpacted = 'impact-status-impacted',
+  statusNotVerified = 'status-notVerified',
+  statusFailed = 'status-failed',
+  verifyIdentityMethod = 'verifyIdentity_method',
+  verifyIdentityOptions = 'verifyIdentity_options',
 }
 
 export enum caseFileTags {
@@ -60,6 +80,46 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   private roleUserNameSystemAdmin = { selector: DataTest.roleUserNameSystemAdmin };
 
+  private labelAdd = { selector: DataTest.labelAdd };
+
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private caseFileLabel1 = { selector: DataTest.caseFileLabel1, type: 'input' };
+
+  private caseFileLabel2 = { selector: DataTest.caseFileLabel2, type: 'input' };
+
+  private caseFileLabel3 = { selector: DataTest.caseFileLabel3, type: 'input' };
+
+  private caseFileLabel4 = { selector: DataTest.caseFileLabel4, type: 'input' };
+
+  private rowLabel = { selector: DataTest.rowLabel };
+
+  private triageSelect = { selector: DataTest.triageSelect };
+
+  private triageSelectInput = { selector: DataTest.triageSelectInput, type: 'input' };
+
+  private impactIcon = { selector: DataTest.impactIcon };
+
+  private impactValidationMethodRow = { selector: DataTest.impactValidationMethodRow };
+
+  private impactValidationStatusRow = { selector: DataTest.impactValidationStatusRow };
+
+  private impactMethodManual = { selector: DataTest.impactMethodManual, type: 'input' };
+
+  private impactMethodNotApplicable = { selector: DataTest.impactMethodNotApplicable, type: 'input' };
+
+  private impactStatusUndetermined = { selector: DataTest.impactStatusUndetermined, type: 'input' };
+
+  private impactStatusImpacted = { selector: DataTest.impactStatusImpacted, type: 'input' };
+
+  private authenticationStatusNotVerified = { selector: DataTest.statusNotVerified, type: 'input' };
+
+  private authenticationStatusFailed = { selector: DataTest.statusFailed, type: 'input' };
+
+  private verifyIdentityMethod = { selector: DataTest.verifyIdentityMethod };
+
+  private verifyIdentityOptions = { selector: DataTest.verifyIdentityOptions };
+
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
   }
@@ -81,7 +141,7 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
   }
 
   public getCaseFileActivityLogDate(index = 0) {
-    return cy.getByDataTest(this.dateCreated).eq(index);
+    return cy.getByDataTest(this.dateCreated).eq(index).getAndTrimText();
   }
 
   public getCaseFileActivityTitle(index = 0) {
@@ -157,7 +217,7 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
     return cy.getByDataTest(tagItemSelector);
   }
 
-  public getVerifyIdentityIconElement() {
+  public getVerifyIdentityIconButton() {
     return cy.getByDataTest(this.verifyIdentityIcon);
   }
 
@@ -167,5 +227,82 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public getImpactIconColorValidationElement() {
     return cy.getByDataTest(this.impactIconColorValidation);
+  }
+
+  public getAddLabelButton() {
+    return cy.getByDataTest(this.labelAdd);
+  }
+
+  public addLabel() {
+    return cy.getByDataTest(this.labelAdd).click();
+  }
+
+  public fillLabelField(labelText: string, labelDataTest: DataTest) {
+    const elementSelector = { selector: labelDataTest, type: 'input' };
+    return cy.getByDataTest(elementSelector).type(labelText);
+  }
+
+  public getLabelElement() {
+    return cy.getByDataTest(this.rowLabel);
+  }
+
+  public selectTriage(level: number) {
+    return cy.selectListElementByIndex(DataTest.triageSelect, level);
+  }
+
+  public getSelectedTriageElement() {
+    return cy.getByDataTest(this.triageSelect);
+  }
+
+  public getSelectedTriageInputElement() {
+    return cy.getByDataTest(this.triageSelectInput);
+  }
+
+  public getValidationOfImpactIconButton() {
+    return cy.getByDataTest(this.impactIcon);
+  }
+
+  public getDialogTitleElement() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public getImpactValidationMethodRow() {
+    return cy.getByDataTest(this.impactValidationMethodRow);
+  }
+
+  public getImpactValidationStatusRow() {
+    return cy.getByDataTest(this.impactValidationStatusRow);
+  }
+
+  public getImpactMethodManualButton() {
+    return cy.getByDataTest(this.impactMethodManual);
+  }
+
+  public getImpactMethodNotApplicableButton() {
+    return cy.getByDataTest(this.impactMethodNotApplicable);
+  }
+
+  public getImpactStatusUndeterminedButton() {
+    return cy.getByDataTest(this.impactStatusUndetermined);
+  }
+
+  public getImpactStatusImpactedButton() {
+    return cy.getByDataTest(this.impactStatusImpacted);
+  }
+
+  public getDialogAuthenticationStatusNotVerifiedCheckbox() {
+    return cy.getByDataTest(this.authenticationStatusNotVerified);
+  }
+
+  public getDialogAuthenticationStatusFailedCheckbox() {
+    return cy.getByDataTest(this.authenticationStatusFailed);
+  }
+
+  public getDialogVerifyIdentityMethodDropdown() {
+    return cy.getByDataTest(this.verifyIdentityMethod);
+  }
+
+  public getDialogVerifyIdentityOptionsDropdown() {
+    return cy.getByDataTest(this.verifyIdentityOptions);
   }
 }

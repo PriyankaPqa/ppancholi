@@ -5,4 +5,6 @@ export interface IUserInformation {
   userName: string;
   roleId? : uuid;
   roleName: IMultilingual;
+  teamName?: string;
+  teamId?: uuid;
 }

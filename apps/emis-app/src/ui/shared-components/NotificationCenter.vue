@@ -71,6 +71,7 @@ import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useNotificationStore } from '@/pinia/notification/notification';
 import { useUserStore } from '@/pinia/user/user';
 import { useTaskStore } from '@/pinia/task/task';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { INotificationEntity, NotificationCategoryType } from '@libs/entities-lib/notification';
 import NotificationCard from '@/ui/shared-components/NotificationCard.vue';
 import { IFetchParams } from '@libs/services-lib/notifications/entity';
@@ -194,12 +195,14 @@ export default Vue.extend({
     },
 
     async fetchTargetEntities(fetchedNotifications: INotificationEntity[]) {
-      const tasks = fetchedNotifications?.filter((n) => n.categoryType === NotificationCategoryType.Tasks && n.targetEntityId);
-      if (!tasks || tasks.length === 0) {
+      const taskNotifications = fetchedNotifications?.filter((n) => n.categoryType === NotificationCategoryType.Tasks && n.targetEntityId);
+      if (!taskNotifications || taskNotifications.length === 0) {
         return;
       }
 
-      await useTaskStore().fetchByIds(tasks.map((t) => t.targetEntityId), true);
+      // for task notifications: trigger loading of related entities (tasks, case files) used in notification helper view
+      await useTaskStore().fetchByIds([...new Set(taskNotifications.map((t) => t.targetEntityId))], true);
+      await useCaseFileStore().fetchByIds([...new Set(taskNotifications.map((t) => t.targetEntityParentId))], true);
     },
   },
 });

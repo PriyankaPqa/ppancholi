@@ -29,7 +29,7 @@
             async-mode
             :force-events="filteredEvents"
             return-object
-            data-test="payment_event_name"
+            data-test="communication_event_name"
             fetch-all-events
             :label="`${$t('massActions.financialAssistance.create.event.label')} *`"
             :rules="rules.event"
@@ -64,7 +64,11 @@
               {{ $t('common.clear') }}
             </v-btn>
             <div class="mb-4 white">
-              <vue-editor id="editor1" v-model="formCopy.emailMessage.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+              <vue-editor
+                id="communication-message-text-editor"
+                v-model="formCopy.emailMessage.translation[languageMode]"
+                data-test="communication-message-text"
+                :editor-toolbar="toolbarSettings" />
             </div>
 
             <div class="mb-1">
@@ -80,6 +84,7 @@
                 :allowed-extensions="allowedExtensions"
                 :sanitize-file-name="true"
                 :max-size="10000000"
+                data-test="attach-documents-upload-file"
                 @update:files="fileAdded" />
             </validation-provider>
           </template>

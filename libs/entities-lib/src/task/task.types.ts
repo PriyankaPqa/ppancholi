@@ -30,6 +30,19 @@ export enum ActionTaken {
   Cancelled = 5,
 }
 
+// used for history action type
+export enum TaskActivityType {
+  Create = 1,
+  Assign = 2,
+  Completed = 3,
+  Reopen = 4,
+  Cancelled = 5,
+  WorkingOn = 6,
+  UrgentStatusTagUpdated = 7,
+  FinancialAssistancePaymentUpdated = 8,
+  TaskDetailsUpdated = 9,
+}
+
 export interface ITaskEntityData extends IEntity {
   category: IListOption;
   caseFileId: string;
@@ -51,7 +64,7 @@ export interface ITaskEntity extends ITaskEntityData {
 }
 
 export interface ITaskActionHistory {
-  actionTaken: ActionTaken,
+  activityType: TaskActivityType,
   taskStatus: TaskStatus,
   currentTeamId: uuid,
   currentTeamName: string,
@@ -60,6 +73,10 @@ export interface ITaskActionHistory {
   rationale: string,
   timestamp: string,
   userInformation: IUserInformation,
+  financialAssistancePaymentName: string,
+  financialAssistancePaymentId: uuid,
+  currentUserWorkingOn: uuid,
+  isUrgent: boolean,
 }
 
 export interface ITaskMetadata extends IEntity {
@@ -67,6 +84,17 @@ export interface ITaskMetadata extends IEntity {
   eventId: uuid;
   userWorkingOnName: string;
   userWorkingOnRole: IMultilingual;
+}
+
+export interface IUpdateTaskRequest {
+  category: IListOption;
+  caseFileId: string;
+  isUrgent: boolean;
+  subCategory: IListOption;
+  description: string;
+  assignedTeamId: string;
+  financialAssistancePaymentId: string;
+  dueDate: Date | string;
 }
 
 export type ITaskCombined = IEntityCombined<ITaskEntity, ITaskMetadata>;

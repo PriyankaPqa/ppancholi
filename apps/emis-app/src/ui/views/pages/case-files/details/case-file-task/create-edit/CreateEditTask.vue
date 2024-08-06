@@ -117,7 +117,7 @@ import VDateFieldWithValidation from '@libs/component-lib/components/atoms/VDate
 import routes from '@/constants/routes';
 import { TranslateResult } from 'vue-i18n';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { TaskStatus, TaskType } from '@libs/entities-lib/task/task.types';
+import { IUpdateTaskRequest, TaskStatus, TaskType } from '@libs/entities-lib/task/task.types';
 import { TaskEntity } from '@libs/entities-lib/task/task';
 import { IListOption, VForm } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
@@ -335,7 +335,17 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     async submitEditTask() {
       try {
         this.isSubmitting = true;
-        const res = await useTaskStore().editTask(this.taskId, this.localTask);
+        const updateTaskRequest: IUpdateTaskRequest = {
+          isUrgent: this.localTask.isUrgent,
+          assignedTeamId: this.localTask.assignedTeamId,
+          dueDate: this.localTask.dueDate,
+          category: this.localTask.category,
+          subCategory: this.localTask.subCategory,
+          description: this.localTask.description,
+          financialAssistancePaymentId: this.localTask.financialAssistancePaymentId,
+          caseFileId: this.localTask.caseFileId,
+        };
+        const res = await useTaskStore().editTask(this.taskId, updateTaskRequest);
 
         if (res) {
           this.$toasted.global.success(this.$t('task.task_edited'));

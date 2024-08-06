@@ -614,6 +614,7 @@
     "registration.household_member.edit.title": "registration.household_member.edit.title",
     "registration.household_member.sameAddress": "registration.household_member.sameAddress",
     "registration.household_member.sameAddress.no.detail": "registration.household_member.sameAddress.no.detail",
+    "registration.household_member.sameAddress.other.detail": "",
     "registration.household_member.sameAddress.yes.detail": "registration.household_member.sameAddress.yes.detail",
     "registration.household_members.add.label": "registration.household_members.add.label",
     "registration.household_members.delete.message": "registration.household_members.delete.message",

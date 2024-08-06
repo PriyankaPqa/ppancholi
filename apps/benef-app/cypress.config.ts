@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress';
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 import zephyrPlugin from '@libs/cypress-lib/src/reporter/cypress-zephyr/plugin';
 import { initPlugins } from 'cypress-plugin-init';
+import fs from 'fs';
 import reporterConfig from './cypress-reporter-config';
 
 require('tsconfig-paths').register();
@@ -19,6 +20,20 @@ export default defineConfig({
   },
   e2e: {
     setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
+      on(
+        'after:spec',
+        (spec: Cypress.Spec, results: CypressCommandLine.RunResult) => {
+          if (results && results.video) {
+            // Do we have failures for any retry attempts?
+            const failures = results.tests.some((test) => test.attempts.some((attempt) => attempt.state === 'failed'));
+            if (!failures) {
+              // delete the video if the spec passed and no tests retried
+              fs.unlinkSync(results.video);
+            }
+          }
+        },
+      );
+
       installLogsPrinter(on, {
         printLogsToConsole: 'onFail',
         includeSuccessfulHookLogs: false,
@@ -30,7 +45,7 @@ export default defineConfig({
       }
         return initPlugins(on, [cloudPlugin], config);
     },
-    videoUploadOnPasses: false,
+    videoUploadOnPasses: true, // but we remove video if spec passed and no tests retried. See after:spec above
     baseUrl: 'http://localhost:8080/',
     env: {
       AZURE_CLIENT_ID: process.env.CYPRESS_AZURE_CLIENT_ID,

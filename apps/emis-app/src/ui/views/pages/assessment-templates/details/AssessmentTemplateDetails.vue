@@ -4,7 +4,7 @@
       <v-row class="justify-center mt-10">
         <v-col cols="12" lg="7">
           <div class="pb-4 d-flex justify-space-between">
-            <div class="details-page-title">
+            <div class="details-page-title" data-test="assessmentTemplate_details_page_title">
               {{ $m(assessmentTemplate.name) }}
             </div>
             <div>

@@ -29,9 +29,7 @@
           </div>
         </div>
       </template>
-      <template #[`item.${customColumns.dateOfChange}`]="{ item }">
-        {{ helpers.getLocalStringDate(item.timestamp, '', 'PP') }}
-      </template>
+
       <template #[`item.${customColumns.actionTaken}`]="{ item }">
         <div class="no-word-break">
           {{ item.actionTakenString }}
@@ -39,8 +37,11 @@
       </template>
       <template #[`item.${customColumns.rationale}`]="{ item }">
         <div class="no-word-break">
-          {{ item.rationale || $t('common.N/A') }}
+          {{ item.rationale || '-' }}
         </div>
+      </template>
+      <template #[`item.${customColumns.dateOfChange}`]="{ item }">
+        {{ helpers.getLocalStringDate(item.timestamp, '', 'PP') }}
       </template>
     </v-data-table-a11y>
   </rc-dialog>
@@ -50,9 +51,12 @@
 import Vue from 'vue';
 import { RcDialog, VDataTableA11y } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { ActionTaken, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
+import { TaskActivityType, ITaskActionHistory, TaskStatus } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
 import { TranslateResult } from 'vue-i18n';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { UserRolesNames } from '@libs/entities-lib/user';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 interface IParsedTaskHistory extends ITaskActionHistory {
   actionTakenString: TranslateResult;
@@ -76,6 +80,11 @@ export default Vue.extend({
       type: Array as () => ITaskActionHistory[],
       required: true,
     },
+
+    isPersonalTask: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
@@ -83,6 +92,7 @@ export default Vue.extend({
       parsedTaskActionHistoryData: [] as Array<IParsedTaskHistory>,
       loading: false,
       helpers,
+      roles: [] as IOptionItem[],
     };
   },
 
@@ -97,25 +107,25 @@ export default Vue.extend({
           sortable: true,
         },
         {
-          text: this.$t('task.history.header.date_of_change') as string,
-          filterable: false,
-          value: 'timestamp',
-          width: '15%',
-          sortable: true,
-        },
-        {
           text: this.$t('task.history.header.action_taken') as string,
           filterable: false,
           value: 'actionTaken',
-          width: '20%',
+          width: '30%',
           sortable: true,
         },
         {
           text: this.$t('task.history.header.rationale') as string,
           filterable: false,
           value: 'rationale',
-          width: '45%',
+          width: '35%',
           sortable: false,
+        },
+        {
+          text: this.$t('task.history.header.date_of_change') as string,
+          filterable: false,
+          value: 'timestamp',
+          width: '15%',
+          sortable: true,
         },
       ];
     },
@@ -129,37 +139,79 @@ export default Vue.extend({
       };
     },
   },
-    created() {
+    async created() {
+      await useUserAccountStore().fetchRoles();
       this.parseTaskHistory();
-  },
+    },
 
   methods: {
     close() {
       this.$emit('update:show', false);
     },
 
-    generateTaskActionString(historyItem: ITaskActionHistory, assignedTeamName = '', actionTeamName = ''): TranslateResult | string {
-      if (historyItem.actionTaken) {
-        const actionType: { [index: number ]: TranslateResult } = {
-          [ActionTaken.Create]: this.$t('task.history.action_taken.created'),
-          [ActionTaken.Assign]: this.$t('task.history.action_taken.assigned', { x: assignedTeamName }),
-          [ActionTaken.Completed]: (historyItem.taskStatus === TaskStatus.InProgress
-            ? this.$t('task.history.action_taken.action_completed', { x: assignedTeamName, y: actionTeamName })
-            : this.$t('task.history.action_taken.completed')),
-          [ActionTaken.Reopen]: this.$t('task.history.action_taken.reopen'),
-          [ActionTaken.Cancelled]: this.$t('task.history.action_taken.cancelled'),
+    generateTaskActionString(historyItem: ITaskActionHistory): TranslateResult | string {
+      const assignedTeamName = historyItem.currentTeamName;
+      const actionTeamName = historyItem.previousTeamName;
+      const updatedByTeamName = historyItem.userInformation.teamName;
+      const userName = historyItem.userInformation.userName;
+      const L6RoleIds = useUserAccountStore().rolesByLevels([UserRolesNames.level6])?.map((r) => r.id);
+      const userIsL6 = L6RoleIds && L6RoleIds.includes(historyItem.userInformation.roleId);
+      const workingOnItHistoryString = () => {
+        if (userIsL6) {
+          return (historyItem.currentUserWorkingOn
+            ? this.$t('task.history.action_taken.working_on_it_l6', { x: userName })
+            : this.$t('task.history.action_taken.no_longer_working_on_it_l6', { x: userName }));
+        }
+        return (historyItem.currentUserWorkingOn
+          ? this.$t('task.history.action_taken.working_on_it', { x: userName, y: assignedTeamName })
+          : this.$t('task.history.action_taken.no_longer_working_on_it', { x: userName, y: assignedTeamName }));
+      };
+      const taskCompleteHistoryString = () => (
+        userIsL6
+          ? this.$t('task.history.action_taken.completed_l6', { x: userName })
+          : this.$t('task.history.action_taken.completed', { x: userName, y: assignedTeamName })
+      );
+
+      if (this.isPersonalTask && historyItem.activityType) {
+        const personalActionType: { [index: number ]: TranslateResult } = {
+          [TaskActivityType.Create]: this.$t('task.history.action_taken.created'),
+          [TaskActivityType.Completed]: this.$t('task.history.action_taken.personal_task_completed'),
+          [TaskActivityType.Cancelled]: this.$t('task.history.action_taken.personal_task_cancelled'),
+          [TaskActivityType.TaskDetailsUpdated]: this.$t('task.history.action_taken.task_details_update_l6', { x: userName }),
         };
-        return actionType[historyItem.actionTaken];
+        return personalActionType[historyItem.activityType];
       }
-      if (historyItem.taskStatus === TaskStatus.Completed) {
-        return this.$t('task.history.action_taken.completed');
+
+      if (historyItem.activityType) {
+        const actionType: { [index: number ]: TranslateResult } = {
+          [TaskActivityType.Create]: this.$t('task.history.action_taken.created'),
+          [TaskActivityType.Assign]: this.$t('task.history.action_taken.assigned', { x: assignedTeamName, y: actionTeamName }),
+          [TaskActivityType.Completed]: (historyItem.taskStatus === TaskStatus.InProgress
+            ? this.$t('task.history.action_taken.action_completed', { x: assignedTeamName, y: actionTeamName })
+            : taskCompleteHistoryString()),
+          [TaskActivityType.Reopen]: this.$t('task.history.action_taken.reopen', { x: assignedTeamName }),
+          [TaskActivityType.Cancelled]: userIsL6
+            ? this.$t('task.history.action_taken.cancelled_l6', { x: userName })
+            : this.$t('task.history.action_taken.cancelled', { x: userName, y: updatedByTeamName }),
+          [TaskActivityType.WorkingOn]: workingOnItHistoryString(),
+          [TaskActivityType.UrgentStatusTagUpdated]: userIsL6
+            ? this.$t('task.history.action_taken.urgent_value_update_l6', { x: userName })
+            : this.$t('task.history.action_taken.urgent_value_update', { x: userName, y: updatedByTeamName }),
+          [TaskActivityType.FinancialAssistancePaymentUpdated]: userIsL6
+            ? this.$t('task.history.action_taken.fa_payment_update_l6', { x: userName, z: historyItem.financialAssistancePaymentName ?? '-' })
+            : this.$t('task.history.action_taken.fa_payment_update', { x: userName, y: updatedByTeamName, z: historyItem.financialAssistancePaymentName ?? '-' }),
+          [TaskActivityType.TaskDetailsUpdated]: userIsL6
+            ? this.$t('task.history.action_taken.task_details_update_l6', { x: userName })
+            : this.$t('task.history.action_taken.task_details_update', { x: userName, y: updatedByTeamName }),
+        };
+        return actionType[historyItem.activityType];
       }
       return '';
     },
 
     parseTaskHistory() {
-      this.parsedTaskActionHistoryData = this.taskActionHistories.reverse().map((historyItem: ITaskActionHistory) => {
-        const actionTakenString = this.generateTaskActionString(historyItem, historyItem.currentTeamName, historyItem.previousTeamName);
+      this.parsedTaskActionHistoryData = this.taskActionHistories.map((historyItem: ITaskActionHistory) => {
+        const actionTakenString = this.generateTaskActionString(historyItem);
         return {
           ...historyItem,
           actionTakenString,

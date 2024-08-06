@@ -6,19 +6,31 @@ import Component from '@/ui/shared-components/NotificationCenter.vue';
 import { NotificationCategoryType, mockNotificationEntity } from '@libs/entities-lib/notification';
 import { useNotificationStore } from '@/pinia/notification/notification';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
 const localVue = createLocalVue();
 
 const mockUnreadGeneral = mockNotificationEntity({ id: '1' });
 const mockReadGeneral = mockNotificationEntity({ id: '2', isRead: true });
-const mockUnreadTasks = mockNotificationEntity({ id: '3', categoryType: NotificationCategoryType.Tasks });
-const mockReadTasks = mockNotificationEntity({ id: '4', categoryType: NotificationCategoryType.Tasks, isRead: true });
+const mockUnreadTasks = mockNotificationEntity({
+  id: '3',
+  categoryType: NotificationCategoryType.Tasks,
+  targetEntityParentId: '2dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+});
+const mockReadTasks = mockNotificationEntity({
+  id: '4',
+  categoryType: NotificationCategoryType.Tasks,
+  targetEntityId: '3dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+  targetEntityParentId: '4dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+  isRead: true,
+});
 const mockNotifications = [mockUnreadGeneral, mockReadGeneral, mockUnreadTasks, mockReadTasks];
 
 const { pinia, notificationStore } = useMockNotificationStore();
 const { dashboardStore } = useMockDashboardStore(pinia);
 const { userStore } = useMockUserStore(pinia);
 const { taskStore } = useMockTaskStore(pinia);
+const { caseFileStore } = useMockCaseFileStore(pinia);
 
 describe('NotificationCenter.vue', () => {
   let wrapper;
@@ -269,6 +281,10 @@ describe('NotificationCenter.vue', () => {
       it('should call task store when task notifications passed in', async () => {
         await wrapper.vm.fetchTargetEntities(mockNotifications);
         expect(taskStore.fetchByIds).toHaveBeenCalledWith([mockUnreadTasks.targetEntityId, mockReadTasks.targetEntityId], true);
+      });
+      it('should call case file store when task notifications passed in', async () => {
+        await wrapper.vm.fetchTargetEntities(mockNotifications);
+        expect(caseFileStore.fetchByIds).toHaveBeenCalledWith([mockUnreadTasks.targetEntityParentId, mockReadTasks.targetEntityParentId], true);
       });
     });
 

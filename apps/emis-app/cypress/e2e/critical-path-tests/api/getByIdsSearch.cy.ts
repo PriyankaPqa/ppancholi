@@ -115,12 +115,22 @@ const isEqualObjects = (searchObject: any, getByIdObject: any, domain: domainSet
         return false;
       }
       const useId = value1[0]?.id && value2[0]?.id;
+      const useTimestamp = value1[0]?.timestamp && value2[0]?.timestamp;
+      const sortableKeyMaker = (item: any) => {
+        if (useId) {
+          return item.id;
+        }
+        if (useTimestamp) {
+          return item.timestamp;
+        }
+        return JSON.stringify(item);
+      };
       value1 = typeof value1[0] === 'string'
         ? [...value1].sort()
-        : [...value1].map((item) => ({ ...item, sortableKey: useId ? item.id : JSON.stringify(item) })).sort((a, b) => (a.sortableKey > b.sortableKey ? 1 : -1));
-        value2 = typeof value1[0] === 'string'
+        : [...value1].map((item) => ({ ...item, sortableKey: sortableKeyMaker(item) })).sort((a, b) => (a.sortableKey > b.sortableKey ? 1 : -1));
+      value2 = typeof value1[0] === 'string'
         ? [...value1].sort()
-        : [...value2].map((item) => ({ ...item, sortableKey: useId ? item.id : JSON.stringify(item) })).sort((a, b) => (a.sortableKey > b.sortableKey ? 1 : -1));
+        : [...value2].map((item) => ({ ...item, sortableKey: sortableKeyMaker(item) })).sort((a, b) => (a.sortableKey > b.sortableKey ? 1 : -1));
 
       for (let i = 0; i < value1.length; i += 1) {
         delete value1[i].sortableKey;

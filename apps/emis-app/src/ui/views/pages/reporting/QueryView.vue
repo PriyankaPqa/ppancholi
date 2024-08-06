@@ -414,7 +414,7 @@ export default Vue.extend({
                     ? await this.$services.queries.fetchPrograms() : null,
             ]);
       const enums = results[0].value;
-      const listOptions = results[1].value;
+      const listOptions = results[1].value.filter((option) => !option.isHidden);
       const events = results[2]?.value || [];
       const programs = results[3]?.value || [];
       const normalize = (item: string) => sharedHelpers.getNormalizedString(item).toLocaleLowerCase();

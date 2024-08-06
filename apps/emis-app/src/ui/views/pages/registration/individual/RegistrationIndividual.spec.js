@@ -15,6 +15,7 @@ import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
+const specificDate = new Date('2023-08-01T00:00:00Z');
 
 const { pinia, caseFileStore } = useMockCaseFileStore();
 const { registrationStore } = useMockRegistrationStore(pinia);
@@ -40,7 +41,13 @@ describe('Individual.vue', () => {
       wrapper = mount(Component, options);
     }
   };
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(specificDate);
+  });
   afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
     jest.clearAllMocks();
   });
 
