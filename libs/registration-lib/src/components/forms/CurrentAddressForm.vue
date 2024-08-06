@@ -59,10 +59,11 @@
             :attach="true"
             :locale="$i18n.locale"
             :value="checkInCheckOutDate"
+            :required="bookingMode"
             background-color="white"
             display-format="MMM d, yyyy"
-            :start-label="$t('impactedIndividuals.temporary_address.check_in')"
-            :end-label="$t('impactedIndividuals.temporary_address.check_out')"
+            :start-label="$t('impactedIndividuals.temporary_address.check_in') + (bookingMode ? ' *' : '')"
+            :end-label="$t('impactedIndividuals.temporary_address.check_out') + (bookingMode ? ' *' : '')"
             @input="setCheckInCheckOut($event)" />
         </div>
       </v-col>

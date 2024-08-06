@@ -14,7 +14,7 @@
             offset-y
             min-width="290px">
             <template #activator="{ on }">
-              <v-text-field
+              <v-text-field-with-validation
                 prepend-inner-icon="mdi-calendar"
                 :data-test="`filterToolbar__input-${id}-dateRange-start`"
                 outlined
@@ -22,7 +22,7 @@
                 clearable
                 :background-color="backgroundColor"
                 :label="startLabel"
-                :rules="[rules.startRequired]"
+                :rules="rules.startRequired"
                 :value="inputFrom"
                 v-on="on"
                 @click:clear="clearStart" />
@@ -49,7 +49,7 @@
             offset-y
             min-width="290px">
             <template #activator="{ on }">
-              <v-text-field
+              <v-text-field-with-validation
                 prepend-inner-icon="mdi-calendar"
                 :data-test="`filterToolbar__input-${id}-dateRange-end`"
                 outlined
@@ -58,7 +58,7 @@
                 :background-color="backgroundColor"
                 :label="endLabel"
                 :value="inputTo"
-                :rules="[rules.endRequired]"
+                :rules="rules.endRequired"
                 v-on="on"
                 @click:clear="clearEnd" />
             </template>
@@ -81,11 +81,18 @@ import Vue from 'vue';
 import {
   format, parse,
 } from 'date-fns';
+import {
+  VTextFieldWithValidation,
+} from '@libs/component-lib/components';
 import { IFilterToolbarLabels } from '@libs/component-lib/types';
 import { DEFAULT_DATE, ISO_FORMAT } from '@libs/component-lib/components/molecule/RcFilterToolbar/inputs/constants';
 
 export default Vue.extend({
   name: 'DateRange',
+
+  components: {
+    VTextFieldWithValidation,
+  },
 
   props: {
     // Take start and end as the input. Could be used via v-model.
@@ -126,6 +133,11 @@ export default Vue.extend({
       type: String,
       default: null,
     },
+
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -139,22 +151,26 @@ export default Vue.extend({
 
   computed: {
     rules() {
+      if (this.required) {
+        return { startRequired: { required: true }, endRequired: { required: true } };
+      }
+
       return {
-        startRequired: (value: string) => {
+        startRequired: [(value: string) => {
           if (this.pickerEnd && !value && this.labels) {
             return this.labels.formRequiredField;
           }
 
           return true;
-        },
+        }],
 
-        endRequired: (value: string) => {
+        endRequired: [(value: string) => {
           if (this.pickerStart && !value && this.labels) {
             return this.labels.formRequiredField;
           }
 
           return true;
-        },
+        }],
       };
     },
 

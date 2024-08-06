@@ -79,4 +79,16 @@ export default Vue.extend({
       await usePersonStore().fetchByIds([newValue.primaryBeneficiary, ...individuals.map((i) => i.personId)], true);
     },
   },
+
+  methods: {
+    // these are loaded when in the case file page.  if you need this outside of the main page
+    // these insure we have all the getters ready
+    async loadMissingCaseFileDetails() {
+      const cf = (await useCaseFileStore().fetchByIds([this.id], true))[0];
+      await useEventStore().fetchByIds([cf?.eventId], true);
+      const hh = (await useHouseholdStore().fetchByIds([cf?.householdId], true))[0];
+      const individuals = await useCaseFileIndividualStore().fetchAll({ caseFileId: this.caseFileId });
+      await usePersonStore().fetchByIds([hh?.primaryBeneficiary, ...individuals.map((i) => i.personId)], true);
+    },
+  },
 });

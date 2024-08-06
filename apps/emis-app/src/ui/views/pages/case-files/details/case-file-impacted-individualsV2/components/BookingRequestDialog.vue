@@ -98,8 +98,8 @@
               <v-col>
                 <v-text-area-with-validation
                   v-model="bookingRequest.notes"
-                  rules="required"
                   data-test="notes"
+                  :rules="{ required: true, max: MAX_LENGTH_LG }"
                   :label="`${$t('bookingRequest.notes')} *`"
                   rows="3" />
               </v-col>
@@ -127,6 +127,7 @@ import helpers from '@libs/entities-lib/helpers';
 import { BookingRequestState, IBookingRequest, RoomOption, RoomType } from '@libs/entities-lib/booking-request';
 import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
 import mixins from 'vue-typed-mixins';
+import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -176,6 +177,7 @@ export default mixins(caseFileDetail).extend({
       RoomType,
       RoomOption,
       helpers,
+      MAX_LENGTH_LG,
     };
   },
 
