@@ -92,7 +92,8 @@ export default mixins(caseFileDetail).extend({
     },
 
     canRequestBooking(): boolean {
-      return this.$hasFeature(this.$featureKeys.Lodging) && !this.pendingBookingRequest && !this.readonly && !this.userCanDoBookings && this.$hasLevel(UserRoles.level1);
+      return this.$hasFeature(this.$featureKeys.Lodging) && !this.individuals.find((i) => i.personId === this.primaryMember.id && i.currentAddress.crcProvided)
+        && !this.pendingBookingRequest && !this.readonly && !this.userCanDoBookings && this.$hasLevel(UserRoles.level1);
     },
 
     canMoveToNewAddress(): boolean {

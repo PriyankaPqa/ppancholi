@@ -6,7 +6,9 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockBookingRequestStore } from '@/pinia/booking-request/booking-request.mock';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import { useMockUserStore } from '@/pinia/user/user.mock';
+import { mockMember } from '@libs/entities-lib/household-create';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
+import { mockCaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
 import Component from '../case-file-impacted-individualsV2/ImpactedIndividualsV2.vue';
 
 const localVue = createLocalVue();
@@ -38,6 +40,9 @@ describe('ImpactedIndividualsV2.vue', () => {
         },
         event() {
           return event;
+        },
+        primaryMember() {
+          return mockMember();
         },
         ...additionalComputeds,
       },
@@ -145,6 +150,33 @@ describe('ImpactedIndividualsV2.vue', () => {
         await doMount();
         await wrapper.setData({ userCanDoBookings: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
+      });
+
+      it('returns false when primary has crc provided', async () => {
+        const bck = bookingRequestStore.getByCaseFile;
+        featureList = [wrapper.vm.$featureKeys.Lodging];
+        bookingRequestStore.getByCaseFile = jest.fn(() => []);
+
+        const individual = mockCaseFileIndividualEntity();
+        individual.personId = mockMember().id;
+        individual.currentAddress.crcProvided = false;
+        await doMount(false, 1, {}, {
+          individuals() {
+            return [individual];
+          },
+        });
+        await wrapper.setData({ userCanDoBookings: false });
+        expect(wrapper.vm.canRequestBooking).toBeTruthy();
+        individual.currentAddress.crcProvided = true;
+        await doMount(false, 1, {}, {
+          individuals() {
+            return [individual];
+          },
+        });
+        await wrapper.setData({ userCanDoBookings: false });
+        expect(wrapper.vm.canRequestBooking).toBeFalsy();
+
+        bookingRequestStore.getByCaseFile = bck;
       });
     });
 

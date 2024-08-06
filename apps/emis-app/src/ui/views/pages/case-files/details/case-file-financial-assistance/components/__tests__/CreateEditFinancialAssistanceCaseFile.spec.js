@@ -1201,31 +1201,26 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     describe('makePaymentName', () => {
       it('sets the right name to the financial assistance in edit mode', async () => {
-        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
         await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010' } });
         wrapper.vm.makePaymentName();
-        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - 20220530 101010`);
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - Children's Needs - 20220530 101010`);
       });
 
       it('sets the right name to the financial assistance when argument keepDate true is passed', async () => {
-        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
         await wrapper.setData({ isEditMode: false });
         await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010' } });
         wrapper.vm.makePaymentName(true);
-        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - 20220530 101010`);
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - Children's Needs - 20220530 101010`);
       });
 
       it('sets the right name to the financial assistance in create mode', async () => {
-        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
         format.mockImplementation(() => '20220530 101022');
         await wrapper.setData({ isEditMode: false });
         await wrapper.setData({ selectedProgram: program });
         wrapper.vm.makePaymentName();
-        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - 20220530 101022`);
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - Children's Needs - 20220530 101022`);
       });
-    });
 
-    describe('makePaymentLineNames', () => {
       it('returns the unique names of payment lines', async () => {
         const items = [{ mainCategory: { id: 'id-1', name: { translation: { en: 'name-1' } } } },
           { mainCategory: { id: 'id-2', name: { translation: { en: 'name-2' } } } },
@@ -1241,8 +1236,10 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         });
 
         await wrapper.setData({
+          selectedProgram: program,
           financialAssistance: {
             ...financialAssistance,
+            name: 'programName - lineName - 20220530 101010',
             groups: [
               { lines: [{ status: Status.Active, mainCategoryId: 'id-1' }, { status: Status.Active, mainCategoryId: 'id-2' }] },
               { lines: [{ status: Status.Active, mainCategoryId: 'id-2' }, { status: Status.Active, mainCategoryId: 'id-3' }] },
@@ -1250,8 +1247,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
           },
         });
 
-        const result = wrapper.vm.makePaymentLineNames();
-        expect(result).toEqual('name-1 - name-2 - name-3');
+        wrapper.vm.makePaymentName();
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - name-1 - name-2 - name-3 - 20220530 101010`);
       });
     });
 
@@ -1264,16 +1261,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
       it('calls action editFinancialAssistancePayment if financial assistance name has changed and it has FA id', async () => {
         wrapper.vm.financialAssistance = mockFinancialAssistanceTableEntity();
-        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
         await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010' } });
 
         await wrapper.vm.submitPaymentNameUpdate();
-        const newFA = { ...wrapper.vm.financialAssistance, name: `${program.name.translation.en} - mock-payment-line - 20220530 101010` };
+        const newFA = { ...wrapper.vm.financialAssistance, name: `${program.name.translation.en} - Children's Needs - 20220530 101010` };
         expect(financialAssistancePaymentStore.editFinancialAssistancePayment).toHaveBeenCalledWith(newFA);
       });
 
       it('should not call action editFinancialAssistancePayment if financial assistance name has changed and it has no FA id', async () => {
-        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
         await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010', id: '' } });
         await wrapper.vm.submitPaymentNameUpdate();
         expect(financialAssistancePaymentStore.editFinancialAssistancePayment).not.toHaveBeenCalled();
