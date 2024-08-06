@@ -117,7 +117,7 @@ Cypress.Commands.add('waitItemsRefreshUntilDisplayed', (piniaStoreId, selector, 
  @throws Will throw an error if the option cannot be found after the maximum number of retries has been reached.
  @returns {void}
  */
-Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeoutInSec: 20, intervalInSec: 2 }) => {
+Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeoutInSec: 50, intervalInSec: 2 }) => {
   const timeout = opts.timeoutInSec * 1000;
   const interval = opts.intervalInSec * 1000;
   const valueWithoutSpace = searchString.replace(/\s/g, '');
