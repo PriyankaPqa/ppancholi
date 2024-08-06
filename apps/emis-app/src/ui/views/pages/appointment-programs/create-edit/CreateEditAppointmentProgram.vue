@@ -43,33 +43,49 @@
                   attach
                   :label="`${$t('appointmentProgram.timeZone')}*`"
                   :item-value="(item) => item.name"
-                  :item-text="(item) => item.label"
+                  :item-text="(item) => $t(`appointmentProgram.timeZones.${item.label}`)"
                   :items="timeZoneOptions"
                   :rules="rules.timeZone"
                   @input="resetAsUnique()" />
               </v-col>
             </v-row>
+
             <v-row class="my-0">
               <v-col cols="12" class="py-0">
-                <div class="fw-bold pb-2">
-                  {{ $t('appointmentProgram.businessHours') }}
+                <div class="fw-bold pb-4">
+                  {{ $t('appointmentProgram.section.businessHours') }}
                 </div>
-                <availability-hours :schedule.sync="schedule" />
+                <availability-hours :schedule.sync="schedule" :schedule-has-error.sync="scheduleHasError" />
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col cols="12">
+                <service-options-table :appointment-program-id="appointmentProgram.id" />
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" class="d-flex justify-end">
-                <v-btn class="mr-4" data-test="cancel" @click.stop="back()">
-                  {{ $t('common.cancel') }}
-                </v-btn>
-                <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || loading || (isEditMode && !dirty)" @click.stop="submit">
-                  {{ submitLabel }}
-                </v-btn>
+              <v-col cols="12">
+                <staff-members-table :appointment-program-id="appointmentProgram.id" />
               </v-col>
             </v-row>
           </v-col>
         </v-row>
       </v-container>
+
+      <template #actions>
+        <v-btn class="mr-4" data-test="cancel" @click.stop="back()">
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          color="primary"
+          data-test="save"
+          :loading="loading"
+          :disabled="failed || loading || (isEditMode && !dirty) || scheduleHasError"
+          @click.stop="submit">
+          {{ submitLabel }}
+        </v-btn>
+      </template>
     </rc-page-content>
   </validation-observer>
 </template>
@@ -90,6 +106,8 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
+import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
+import StaffMembersTable from '../components/StaffMembersTable.vue';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
 
 export default mixins(handleUniqueNameSubmitError).extend({
@@ -101,6 +119,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     AvailabilityHours,
+    ServiceOptionsTable,
+    StaffMembersTable,
   },
 
   props: {
@@ -108,6 +128,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
       type: String,
       default: '',
     },
+    id: {
+      type: String,
+      default: '',
+    },
+
   },
 
   data() {
@@ -118,6 +143,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       appointmentProgram: new AppointmentProgram(),
       AppointmentProgramStatus,
       timeZoneOptions: canadaTimeZones,
+      scheduleHasError: false,
     };
   },
 
@@ -128,6 +154,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
           required: true,
           max: MAX_LENGTH_MD,
           customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
+        },
+        timeZone: {
+          required: true,
         },
       };
     },
@@ -193,6 +222,17 @@ export default mixins(handleUniqueNameSubmitError).extend({
       }
     },
 
+    async createAppointmentProgram() {
+      this.appointmentProgram.eventId = this.id;
+      const newProgram = await useAppointmentProgramStore().createAppointmentProgram(this.appointmentProgram);
+      if (newProgram) {
+        this.$toasted.global.success(this.$t('event.appointmentProgram.created'));
+        this.$router.replace({ name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: newProgram.id } });
+      } else {
+        this.$toasted.global.error(this.$t('event.appointmentProgram.create.failed'));
+      }
+    },
+
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
 
@@ -204,13 +244,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       try {
         this.loading = true;
         if (!this.isEditMode) {
-          const newProgram = await useAppointmentProgramStore().createAppointmentProgram(this.appointmentProgram);
-          if (newProgram) {
-            this.$toasted.global.success(this.$t('event.appointmentProgram.created'));
-            this.$router.replace({ name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: newProgram.id } });
-          } else {
-            this.$toasted.global.error(this.$t('event.appointmentProgram.create.failed'));
-          }
+          await this.createAppointmentProgram();
         } else {
           // edit program
         }

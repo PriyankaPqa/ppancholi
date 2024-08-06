@@ -52,6 +52,9 @@ export interface IAppointmentProgram extends IEntity {
   businessHours: IDaySchedule[];
   serviceOptions: IServiceOption[];
   appointmentProgramStatus:AppointmentProgramStatus;
+  emailConfirmationSubject: IMultilingual;
+  emailConfirmationContent: IMultilingual;
+  fillEmptyMultilingualAttributes(): void;
 }
 
 export type IdParams = uuid;

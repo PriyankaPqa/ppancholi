@@ -11,8 +11,6 @@ const mockData = mockServiceOption();
 
           expect(item.name).toEqual(mockData.name);
           expect(item.duration).toEqual(mockData.duration);
-          expect(item.emailConfirmationSubject).toEqual(mockData.emailConfirmationSubject);
-          expect(item.emailConfirmationContent).toEqual(mockData.emailConfirmationContent);
           expect(item.appointmentModalities).toEqual(mockData.appointmentModalities);
         });
 
@@ -21,8 +19,6 @@ const mockData = mockServiceOption();
 
           expect(item.name).toEqual(null);
           expect(item.duration).toEqual(null);
-          expect(item.emailConfirmationSubject).toEqual(null);
-          expect(item.emailConfirmationContent).toEqual(null);
           expect(item.appointmentModalities).toEqual([]);
         });
       });

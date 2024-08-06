@@ -18,6 +18,10 @@ export class AppointmentProgram extends BaseEntity {
 
   appointmentProgramStatus: AppointmentProgramStatus;
 
+  emailConfirmationSubject: IMultilingual;
+
+  emailConfirmationContent: IMultilingual;
+
   constructor(data?: IAppointmentProgram) {
     if (data) {
       super(data);
@@ -27,6 +31,8 @@ export class AppointmentProgram extends BaseEntity {
       this.businessHours = data?.businessHours ? _cloneDeep(data.businessHours) : [];
       this.serviceOptions = data?.serviceOptions ? _cloneDeep(data.serviceOptions) : [];
       this.appointmentProgramStatus = data?.appointmentProgramStatus;
+      this.emailConfirmationSubject = data?.emailConfirmationSubject;
+      this.emailConfirmationContent = data?.emailConfirmationContent;
     } else {
       super();
       this.eventId = null;
@@ -35,6 +41,12 @@ export class AppointmentProgram extends BaseEntity {
       this.businessHours = [];
       this.serviceOptions = [];
       this.appointmentProgramStatus = AppointmentProgramStatus.Active;
+      this.emailConfirmationContent = null;
+      this.emailConfirmationSubject = null;
     }
+  }
+
+  public fillEmptyMultilingualAttributes() {
+    this.name = utils.getFilledMultilingualField(this.name);
   }
 }

@@ -5,7 +5,7 @@ import { GlobalHandler, IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentProgramsService } from './appointment-programs.types';
 
-const API_URL_SUFFIX = 'appointments';
+const API_URL_SUFFIX = 'appointment';
 const ENTITY = 'appointment-programs';
 
 export class AppointmentProgramsService extends DomainBaseService<IAppointmentProgram, IdParams>
@@ -15,6 +15,7 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
   }
 
   async create(item: IAppointmentProgram): Promise<IAppointmentProgram> {
+    item.fillEmptyMultilingualAttributes();
     return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item);
   }
 
