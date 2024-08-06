@@ -105,6 +105,7 @@ describe('[T29032] Pre-process mass communication upload file', { tags: ['@asses
           massAssessmentsDetailsPage.getMassActionDateCreated().should('eq', getToday());
           massAssessmentsDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
           massAssessmentsDetailsPage.getMassAssessmentEvent().should('eq', this.eventName);
+          massAssessmentsDetailsPage.getMassAssessmentName().should('eq', this.assessmentName);
           massAssessmentsDetailsPage.getEmailSubject().should('eq', massAssessmentsData.subjectContent);
           massAssessmentsDetailsPage.getContentBeforeLink().should('eq', massAssessmentsData.contentBeforeLink);
           massAssessmentsDetailsPage.getContentAfterLink().should('eq', massAssessmentsData.contentAfterLink);
