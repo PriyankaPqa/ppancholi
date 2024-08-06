@@ -1,21 +1,21 @@
 export const canadaTimeZones = [{
-  name: 'America/Vancouver',
+  name: 'Pacific Standard Time',
   label: 'PacificTime',
 },
   {
-  name: 'America/Edmonton',
+  name: 'Mountain Standard Time',
   label: 'MountainTime',
 },
   {
-  name: 'America/Winnipeg',
+  name: 'Central America Standard Time',
   label: 'CentralTime',
 },
   {
-  name: 'America/Toronto',
+  name: 'Eastern Standard Time',
   label: 'EasternTime',
 },
   {
-  name: 'America/Halifax',
+  name: 'Atlantic Standard Time',
   label: 'AtlanticTime',
 },
   {

@@ -244,6 +244,6 @@ export default {
         time = new Date(time.setMinutes(time.getMinutes() + intervalLength));
       }
 
-      return intervals.map((i) => ({ text: format(i, 'hh:mm a'), value: format(i, 'HH:mm') }));
+      return intervals.map((i) => ({ text: format(i, 'hh:mm a'), value: format(i, 'HH:mm:ss') }));
   },
   };
