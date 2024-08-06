@@ -41,14 +41,15 @@ import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockU
 import { EPaymentModalities, IProgramEntity, IProgramEntityData } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
-import { fixtureGenerateCaseFileStatusCsvFile, fixtureGenerateFaCsvFile } from 'cypress/fixtures/mass-actions';
+import { fixtureGenerateCaseFileStatusCsvFile, fixtureGenerateFaCsvFile, fixtureGenerateMassCommunicationCsvFile } from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication, IImpactStatusValidation } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { ECurrentAddressTypes, ICreateHouseholdRequest, ICurrentAddress } from '@libs/entities-lib/household-create';
-import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { MassActionCommunicationMethod, MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { EFilterKeyType } from '@libs/component-lib/types';
 import { IListOption } from '@libs/shared-lib/types';
+import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
@@ -156,6 +157,16 @@ export interface MassActionCaseFileStatusViaUploadFileParams {
   reason: IListOption,
   rationale: string,
   status: number,
+}
+
+export interface MassCommunicationViaUploadFileParams {
+  provider: any,
+  event: IEventEntity,
+  caseFiles: ICaseFileEntity[],
+  filePath: string,
+  method: MassActionCommunicationMethod,
+  messageSubject: Record<string, string>,
+  message: Record<string, string>,
 }
 
 /**
@@ -984,4 +995,37 @@ export const addAssessmentToBeCompletedDuringRegistration = async (provider: IPr
   const mockEventToPresentAssessmentToUserUponRegistration = mockEventToPresentAssessmentToUserUponRegistrationRequest(assessmentId);
   const registrationAssessment = await provider.events.addRegistrationAssessment(eventId, mockEventToPresentAssessmentToUserUponRegistration);
   return registrationAssessment;
+};
+
+/**
+ * Creates a Mass Communication Update using csv file
+ * @param provider
+ * @param event
+ * @param caseFiles
+ * @param filePath
+ * @param method
+ * @param messageSubject
+ * @param message
+ */
+export const prepareStateMassCommunicationViaUploadFile = async (params: MassCommunicationViaUploadFileParams) => {
+  const generatedMassCommunicationCsvFile = fixtureGenerateMassCommunicationCsvFile(
+    [
+      params.caseFiles[0],
+      params.caseFiles[1],
+      params.caseFiles[2],
+    ],
+    params.filePath,
+  );
+
+  const mockRequestParamData: MockCreateMassCommunicationFileRequestParams = {
+    eventId: params.event.id,
+    method: params.method,
+    messageSubject: params.messageSubject,
+    message: params.message,
+    fileContents: generatedMassCommunicationCsvFile,
+  };
+  const mockCreateMassCommunicationFile = mockCreateMassCommunicationFileRequest(mockRequestParamData);
+  // eslint-disable-next-line
+  const responseMassCommunicationUpdate = await params.provider.cypress.massAction.createWithFile('communication', mockCreateMassCommunicationFile);
+  return { responseMassCommunicationUpdate, mockRequestParamData };
 };
