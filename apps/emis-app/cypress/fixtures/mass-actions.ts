@@ -147,6 +147,16 @@ export const fixtureGenerateMassCommunicationCsvFile = (caseFiles: ICaseFileEnti
   return writeCSVContentToFile(filePath, massCommunicationData);
 };
 
+export const fixtureGenerateMassAssessmentsCsvFile = (caseFiles: ICaseFileEntity[], filePath: string) => {
+  const massAssessmentsnData = [];
+  for (const caseFile of caseFiles) {
+    massAssessmentsnData.push({
+      CaseFileId: caseFile.id,
+    });
+  }
+  return writeCSVContentToFile(filePath, massAssessmentsnData);
+};
+
 function extractXlsxRowFromUserData(caseFile: ICaseFileEntity, FinancialAssistanceTableId: string): string[] {
   return Object.values(generateRandomFaCustomFileUserData(caseFile, FinancialAssistanceTableId));
 }

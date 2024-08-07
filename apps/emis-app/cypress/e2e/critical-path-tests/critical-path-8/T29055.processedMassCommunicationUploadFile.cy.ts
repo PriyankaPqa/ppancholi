@@ -74,7 +74,7 @@ describe('[T29055] Processed Mass Communication upload file', { tags: ['@communi
           }
         });
         // eslint-disable-next-line
-        it('should successfully process mass action for case file status update via upload file', function () {
+        it('should successfully process mass communications via upload file', function () {
           const massCommunicationDetailsPage = new MassCommunicationDetailsPage();
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed, false);
           massCommunicationDetailsPage.getMassActionProcessButton().should('be.visible');

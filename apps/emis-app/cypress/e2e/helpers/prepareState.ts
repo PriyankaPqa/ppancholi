@@ -41,7 +41,12 @@ import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockU
 import { EPaymentModalities, IProgramEntity, IProgramEntityData } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
-import { fixtureGenerateCaseFileStatusCsvFile, fixtureGenerateFaCsvFile, fixtureGenerateMassCommunicationCsvFile } from 'cypress/fixtures/mass-actions';
+import {
+  fixtureGenerateCaseFileStatusCsvFile,
+  fixtureGenerateFaCsvFile,
+  fixtureGenerateMassAssessmentsCsvFile,
+  fixtureGenerateMassCommunicationCsvFile,
+} from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication, IImpactStatusValidation } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
@@ -50,6 +55,7 @@ import { MassActionCommunicationMethod, MassActionDataCorrectionType } from '@li
 import { EFilterKeyType } from '@libs/component-lib/types';
 import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
+import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
 import { linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
@@ -167,6 +173,17 @@ export interface MassCommunicationViaUploadFileParams {
   method: MassActionCommunicationMethod,
   messageSubject: Record<string, string>,
   message: Record<string, string>,
+}
+
+export interface MassAssessmentsViaUploadFileParams {
+  provider: any,
+  event: IEventEntity,
+  caseFiles: ICaseFileEntity[],
+  filePath: string,
+  assessmentFormId: string,
+  emailSubject: Record<string, string>,
+  emailTopCustomContent: Record<string, string>,
+  emailAdditionalDescription: Record<string, string>,
 }
 
 /**
@@ -1028,4 +1045,39 @@ export const prepareStateMassCommunicationViaUploadFile = async (params: MassCom
   // eslint-disable-next-line
   const responseMassCommunicationUpdate = await params.provider.cypress.massAction.createWithFile('communication', mockCreateMassCommunicationFile);
   return { responseMassCommunicationUpdate, mockRequestParamData };
+};
+
+/**
+ * Creates a Mass Assessment Update using csv file
+ * @param provider
+ * @param event
+ * @param caseFiles
+ * @param filePath
+ * @param assessmentFormId
+ * @param emailSubject
+ * @param emailTopCustomContent
+ * @param emailAdditionalDescription
+ */
+export const prepareStateMassAssessmentsViaUploadFile = async (params: MassAssessmentsViaUploadFileParams) => {
+  const generatedMassAssessmentsCsvFile = fixtureGenerateMassAssessmentsCsvFile(
+    [
+      params.caseFiles[0],
+      params.caseFiles[1],
+      params.caseFiles[2],
+    ],
+    params.filePath,
+  );
+
+  const mockRequestParamData: MockCreateMassAssessmentsFileRequestParams = {
+    eventId: params.event.id,
+    assessmentFormId: params.assessmentFormId,
+    emailSubject: params.emailSubject,
+    emailTopCustomContent: params.emailTopCustomContent,
+    emailAdditionalDescription: params.emailAdditionalDescription,
+    fileContents: generatedMassAssessmentsCsvFile,
+  };
+  const mockCreateMassAssessmentsFile = mockCreateMassAssessmentsFileRequest(mockRequestParamData);
+  // eslint-disable-next-line
+  const responseMassAssessmentsUpdate = await params.provider.cypress.massAction.createWithFile('assessment', mockCreateMassAssessmentsFile);
+  return { responseMassAssessmentsUpdate, mockRequestParamData };
 };
