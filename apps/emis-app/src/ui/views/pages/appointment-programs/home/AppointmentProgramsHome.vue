@@ -67,6 +67,7 @@ import { IProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { useProgramStore } from '@/pinia/program/program';
 
+//* * COMPONENT NOT COMPLETED, TO BE DONE IN A FUTURE STORY */
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ProgramsHome',
 

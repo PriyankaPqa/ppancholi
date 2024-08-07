@@ -141,7 +141,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   data() {
     return {
-      appointmentProgramLoading: true,
+      appointmentProgramLoading: false,
       loading: false,
       languageMode: 'en',
       appointmentProgram: new AppointmentProgram(),
@@ -194,19 +194,16 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   async created() {
-    this.appointmentProgramLoading = true;
-
     if (this.isEditMode) {
       try {
+        this.appointmentProgramLoading = true;
         const res = await useAppointmentProgramStore().fetch(this.appointmentProgramId) as AppointmentProgram;
         this.appointmentProgram = new AppointmentProgram(res);
       } finally {
         this.appointmentProgramLoading = false;
       }
     } else {
-      this.appointmentProgram = new AppointmentProgram(null);
       this.appointmentProgram.businessHours = defaultBusinessHours;
-      this.appointmentProgramLoading = false;
     }
   },
 

@@ -1,5 +1,3 @@
-<!-- POC Component for updating the schedule for a staff member -->
-
 <template>
   <div>
     <message-box
@@ -102,7 +100,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { VSelectA11y } from '@libs/component-lib/components';
+import { MessageBox, VSelectA11y } from '@libs/component-lib/components';
 import { DayOfWeek, IDaySchedule, ITimeSlot } from '@libs/entities-lib/appointment';
 import appointmentHelpers from '../utils/appointmentHelpers';
 
@@ -113,6 +111,7 @@ export default Vue.extend({
 
   components: {
     VSelectA11y,
+    MessageBox,
   },
 
   props: {
@@ -161,17 +160,21 @@ export default Vue.extend({
       this.scheduleCopy[dayOfWeek].timeSlots.splice(timeSlotIndex, 1, updatedSlot);
     },
 
-    // TODO: when adding a slot, if the previous slot ends before 5pm, set the start time of the new slot to the end time of the last slot
-    // (copy behavior from MSBooking)
     addSlot(day: number) {
       const slotDate = this.scheduleCopy[day].date;
       const daySlots = this.scheduleCopy[day].timeSlots;
+      // Take over the end time of the previous slot as the start of the current slot, if there is a previous slot
+      const startTime = daySlots.length ? daySlots[daySlots.length - 1].end : '09:00';
+
       const newSlot:ITimeSlot = {
-        start: daySlots.length ? daySlots[daySlots.length - 1].end : '09:00',
+        start: startTime,
         end: '17:00',
-        startDateTime: slotDate && new Date(`${slotDate} 9:00`).toISOString(),
-        endDateTime: slotDate && new Date(`${slotDate} 17:00`).toISOString(),
       };
+
+      if (slotDate) {
+        newSlot.startDateTime = new Date(`${slotDate} ${startTime}`).toISOString();
+        newSlot.endDateTime = new Date(`${slotDate} 17:00`).toISOString();
+      }
 
       this.scheduleCopy[day].timeSlots.push(newSlot);
     },
