@@ -39,7 +39,9 @@ export enum DataTest {
   impactStatusImpacted = 'impact-status-impacted',
   statusNotVerified = 'status-notVerified',
   statusFailed = 'status-failed',
+  statusPassed = 'status-passed',
   verifyIdentityMethod = 'verifyIdentity_method',
+  verifyIdentityExceptionalType = 'verifyIdentity_exceptionalType',
   verifyIdentityOptions = 'verifyIdentity_options',
 }
 
@@ -116,9 +118,13 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   private authenticationStatusFailed = { selector: DataTest.statusFailed, type: 'input' };
 
+  private authenticationStatusPassed = { selector: DataTest.statusPassed, type: 'input' };
+
   private verifyIdentityMethod = { selector: DataTest.verifyIdentityMethod };
 
   private verifyIdentityOptions = { selector: DataTest.verifyIdentityOptions };
+
+  private verifyIdentityExceptionalType = { selector: DataTest.verifyIdentityExceptionalType };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -298,11 +304,27 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
     return cy.getByDataTest(this.authenticationStatusFailed);
   }
 
+  public getDialogAuthenticationStatusPassedCheckbox() {
+    return cy.getByDataTest(this.authenticationStatusPassed);
+  }
+
   public getDialogVerifyIdentityMethodDropdown() {
     return cy.getByDataTest(this.verifyIdentityMethod);
   }
 
+  public selectIdentityMethod(method: string) {
+    return cy.selectListElementByValue(DataTest.verifyIdentityMethod, method);
+  }
+
+  public getDialogVerifyIdentityExceptionalType() {
+    return cy.getByDataTest(this.verifyIdentityExceptionalType);
+  }
+
   public getDialogVerifyIdentityOptionsDropdown() {
     return cy.getByDataTest(this.verifyIdentityOptions);
+  }
+
+  public selectIdProvided(id: string) {
+    return cy.selectListElementByValue(DataTest.verifyIdentityOptions, id);
   }
 }
