@@ -43,7 +43,7 @@
                   attach
                   :label="`${$t('appointmentProgram.timeZone')}*`"
                   :item-value="(item) => item.name"
-                  :item-text="(item) => $t(`appointmentProgram.timeZones.${item.label}`)"
+                  :item-text="(item) => $t(`appointmentProgram.timeZones.${item.label}`, { offset: item.offset })"
                   :items="timeZoneOptions"
                   :rules="rules.timeZone"
                   @input="resetAsUnique()" />
