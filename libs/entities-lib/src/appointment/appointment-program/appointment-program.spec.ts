@@ -1,5 +1,6 @@
 import { AppointmentProgram } from './appointment-program';
 import { mockAppointmentProgram } from './appointment-program.mock';
+import { AppointmentProgramStatus } from './appointment-program.types';
 
 const mockData = mockAppointmentProgram();
 
@@ -23,11 +24,11 @@ const mockData = mockAppointmentProgram();
           const item = new AppointmentProgram();
 
           expect(item.eventId).toEqual(null);
-          expect(item.name).toEqual(null);
+          expect(item.name).toEqual({ translation: { en: '', fr: '' } });
           expect(item.timeZone).toEqual(null);
           expect(item.businessHours).toEqual([]);
           expect(item.serviceOptions).toEqual([]);
-          expect(item.appointmentProgramStatus).toEqual(null);
+          expect(item.appointmentProgramStatus).toEqual(AppointmentProgramStatus.Active);
           expect(item.emailConfirmationSubject).toEqual(null);
           expect(item.emailConfirmationContent).toEqual(null);
         });

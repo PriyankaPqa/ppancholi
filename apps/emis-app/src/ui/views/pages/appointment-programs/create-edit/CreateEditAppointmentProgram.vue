@@ -105,6 +105,8 @@ import { AppointmentProgram, AppointmentProgramStatus, DayOfWeek, IDaySchedule }
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
+import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -121,6 +123,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
     AvailabilityHours,
     ServiceOptionsTable,
     StaffMembersTable,
+    StatusSelect,
+    LanguageTabs,
   },
 
   props: {

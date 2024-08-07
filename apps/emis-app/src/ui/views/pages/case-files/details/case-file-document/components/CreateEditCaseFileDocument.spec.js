@@ -32,7 +32,7 @@ describe('CreateEditDocument', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
         $route: {
-          name: routes.caseFile.documents.add.name,
+          name: routes.events.documents.add.name,
           params: {
             id: 'CASEFILE_ID',
           },

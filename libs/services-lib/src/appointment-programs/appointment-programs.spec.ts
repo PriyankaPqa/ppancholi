@@ -24,7 +24,7 @@ describe('>>> Appointment Programs Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAppointmentProgram();
       await service.create(entity);
-      expect(http.post).toHaveBeenCalledWith(`www.test.com/appointments/appointment-programs/${entity.id}`, entity);
+      expect(http.post).toHaveBeenCalledWith(`www.test.com/appointment/appointment-programs/${entity.id}`, entity);
     });
   });
 
@@ -32,7 +32,7 @@ describe('>>> Appointment Programs Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAppointmentProgram();
       await service.update(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/appointments/appointment-programs/${entity.id}`, entity, {
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/appointment/appointment-programs/${entity.id}`, entity, {
         globalHandler: GlobalHandler.Partial });
     });
   });

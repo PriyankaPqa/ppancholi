@@ -356,7 +356,18 @@ describe('EventDetails.vue', () => {
             to: routes.events.assessments.home.name,
             level: UserRoles.level6,
             exact: false,
-          }],
+          },
+          {
+            text: 'eventDetail.menu_appointments',
+            test: 'event-appointments',
+            icon: '',
+            disabled: false,
+            to: routes.events.appointmentPrograms.home.name,
+            level: UserRoles.level6,
+            exact: false,
+            feature: wrapper.vm.$featureKeys.AppointmentBooking,
+          },
+          ],
         );
       });
     });
