@@ -64,7 +64,7 @@
       </template>
 
       <template #[`item.${customColumns.action}`]="{ item }">
-        <v-btn :data-test="`action_${item.id}`" @click="actionItem(item)">
+        <v-btn v-if="item.state === BookingRequestState.Pending" :data-test="`action_${item.id}`" @click="actionItem(item)">
           {{ $t('bookingRequest.action') }}
         </v-btn>
       </template>
@@ -124,6 +124,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       },
       selectedRequest: null as IBookingRequest,
       showBooking: false,
+      BookingRequestState,
     };
   },
 

@@ -35,6 +35,8 @@ export interface ICurrentAddressData {
     checkIn?: Date | string;
 
     checkOut?: Date | string;
+
+    takeover?: boolean;
 }
 
 export interface ICurrentAddressCreateRequest {
@@ -55,6 +57,8 @@ export interface ICurrentAddressCreateRequest {
     checkIn: Date | string;
 
     checkOut: Date | string;
+
+    takeover?: boolean;
 }
 
 export interface ICurrentAddress extends ICurrentAddressData {

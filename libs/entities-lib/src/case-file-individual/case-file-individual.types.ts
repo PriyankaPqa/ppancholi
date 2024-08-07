@@ -24,6 +24,7 @@ export interface TemporaryAddress extends IEntity {
   checkIn: string | Date;
   checkOut: string | Date;
   crcProvided: boolean;
+  takeover?: boolean;
 }
 
 export interface ICaseFileIndividualEntity extends IEntity {

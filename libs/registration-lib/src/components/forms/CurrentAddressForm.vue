@@ -424,9 +424,14 @@ export default Vue.extend({
 
   methods: {
     changeType(type: ECurrentAddressTypes) {
+      const bckCrcProvided = this.form.crcProvided;
       this.form.reset(type);
       (this.$refs.form as VForm).reset();
       this.checkInCheckOutDate = [null, null];
+
+      if (this.lockCrcProvided) {
+        this.form.crcProvided = bckCrcProvided;
+      }
     },
 
     onCountryChange() {

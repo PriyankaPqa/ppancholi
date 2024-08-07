@@ -32,6 +32,8 @@ export class CurrentAddress implements ICurrentAddress {
 
   checkOut: Date | string;
 
+  takeover: boolean;
+
   private bookingRequestMode: boolean;
 
   constructor(data?: ICurrentAddressData) {
@@ -46,6 +48,7 @@ export class CurrentAddress implements ICurrentAddress {
       this.crcProvided = this.hasCrcProvided() ? data.crcProvided === true : null;
       this.checkIn = data.checkIn ? new Date(data.checkIn) : null;
       this.checkOut = data.checkOut ? new Date(data.checkOut) : null;
+      this.takeover = data.takeover;
     }
   }
 
@@ -119,6 +122,7 @@ export class CurrentAddress implements ICurrentAddress {
     this.checkIn = null;
     this.checkOut = null;
     this.crcProvided = this.hasCrcProvided() ? false : null;
+    this.takeover = false;
   }
 
   hasPlaceNumber(): boolean {
@@ -207,6 +211,7 @@ export class CurrentAddress implements ICurrentAddress {
       crcProvided: currentAddress.crcProvided,
       checkIn: currentAddress.checkIn ? new Date(currentAddress.checkIn).toISOString() : null,
       checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,
+      takeover: currentAddress.takeover,
     };
   }
 

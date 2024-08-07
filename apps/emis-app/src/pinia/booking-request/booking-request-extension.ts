@@ -2,7 +2,7 @@ import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { BookingRequestsService, IBookingRequestsServiceMock } from '@libs/services-lib/booking-requests';
 import _cloneDeep from 'lodash/cloneDeep';
 import { Status } from '@libs/shared-lib/types';
-import { IBookingRequest, IdParams } from '@libs/entities-lib/booking-request';
+import { IBookingRequest, IdParams, IBooking } from '@libs/entities-lib/booking-request';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<IBookingRequest, IdParams>,
@@ -21,8 +21,17 @@ export function getExtensionComponents(
     return result;
   }
 
+  async function fulfillBooking(bookingRequest: IBookingRequest, paymentId: string, bookings: IBooking[]): Promise<IBookingRequest> {
+    const result = await service.fulfillBooking(bookingRequest, paymentId, bookings);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
   return {
     getByCaseFile,
     createBookingRequest,
+    fulfillBooking,
   };
 }

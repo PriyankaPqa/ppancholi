@@ -155,23 +155,7 @@ export default Vue.extend({
         return { startRequired: { required: true }, endRequired: { required: true } };
       }
 
-      return {
-        startRequired: [(value: string) => {
-          if (this.pickerEnd && !value && this.labels) {
-            return this.labels.formRequiredField;
-          }
-
-          return true;
-        }],
-
-        endRequired: [(value: string) => {
-          if (this.pickerStart && !value && this.labels) {
-            return this.labels.formRequiredField;
-          }
-
-          return true;
-        }],
-      };
+      return { startRequired: null, endRequired: null };
     },
 
     inputFrom(): string {

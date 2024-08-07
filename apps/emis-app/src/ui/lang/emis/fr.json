@@ -2660,6 +2660,8 @@
     "lodging.leftMenu.title": "Logement",
     "bookingRequest.action": "Action",
     "bookingRequest.caseFileNumber": "Numéro de dossier",
+    "impactedIndividuals.takeoverCompleted": "Prise en charge complétée",
+    "bookingRequest.fulfilledAndPaid": "Paiement créé et adresses mises à jour",
     "bookingRequest.primaryMemberName": "Nom du primaire",
     "bookingRequest.event": "Événement",
     "bookingRequest.isProvidedByCrc": "Est-ce que le nouveau logement temporaire est fourni par la CRC?",

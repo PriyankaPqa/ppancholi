@@ -1,5 +1,6 @@
-import { IBookingRequest, IdParams } from '@libs/entities-lib/booking-request';
+import { IBookingRequest, IdParams, IBooking } from '@libs/entities-lib/booking-request';
 import { ICombinedSearchResult, ISearchParams } from '@libs/shared-lib/types';
+import { CurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 import { IEntity } from '@libs/entities-lib/src/base';
 import { IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
@@ -16,6 +17,17 @@ export class BookingRequestsService extends DomainBaseService<IBookingRequest, I
 
   async createBookingRequest(item: IBookingRequest): Promise<IBookingRequest> {
     return this.http.post<IBookingRequest>(this.getItemUrl(`${this.baseUrl}`, item), item);
+  }
+
+  async fulfillBooking(item: IBookingRequest, paymentId: string, bookings: IBooking[]): Promise<IBookingRequest> {
+    return this.http.post<IBookingRequest>(this.getItemUrl(`${this.baseUrl}/fulfill`, item), {
+      bookingRequestId: item.id,
+      paymentIds: [paymentId],
+      bookings: bookings.map((b) => ({
+        peopleInRoom: b.peopleInRoom,
+        address: CurrentAddress.parseCurrentAddress(b.address),
+      })),
+    });
   }
 
   async search(params: ISearchParams):

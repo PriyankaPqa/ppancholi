@@ -1,5 +1,5 @@
 import { IAddressData } from '../value-objects/address';
-import { ECurrentAddressTypes } from '../value-objects/current-address';
+import { CurrentAddress, ECurrentAddressTypes } from '../value-objects/current-address';
 import { IEntity } from '../base';
 
 export enum RoomType {
@@ -41,6 +41,15 @@ export interface IBookingRequest extends IEntity {
   rejectionRationale?: string;
   actionedBy?: string;
   actionedOn?: string;
+}
+
+export interface IBooking {
+  estimatedAmount: number,
+  confirmationNumber: string,
+  numberOfNights: number,
+  peopleInRoom: string[],
+  address: CurrentAddress,
+  uniqueNb: number,
 }
 
 export type IdParams = { id: uuid, caseFileId: uuid };
