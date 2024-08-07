@@ -42,6 +42,7 @@ describe('>>> CurrentAddress', () => {
       expect(t.checkIn).toEqual(null);
       expect(t.checkOut).toEqual(null);
       expect(t.crcProvided).toEqual(null);
+      expect(t.takeover).toEqual(false);
     });
 
     it('should set crcProvided to false when address type has crcProvided', () => {

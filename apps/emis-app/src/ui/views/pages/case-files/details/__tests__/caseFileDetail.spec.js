@@ -22,7 +22,7 @@ const { pinia, eventStore } = useMockEventStore();
 const { caseFileStore } = useMockCaseFileStore(pinia);
 const { householdStore } = useMockHouseholdStore(pinia);
 const { personStore } = useMockPersonStore(pinia);
-useMockCaseFileIndividualStore(pinia);
+const { caseFileIndividualStore } = useMockCaseFileIndividualStore(pinia);
 
 describe('caseFileDetail mixin', () => {
   const mountWrapper = async (fullMount = false, level = 5, additionalOverwrites = {}) => {
@@ -119,6 +119,21 @@ describe('caseFileDetail mixin', () => {
         cf.readonly = true;
         ev.schedule.status = EEventStatus.OnHold;
         expect(wrapper.vm.readonly).toBeFalsy();
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('loadMissingCaseFileDetails', () => {
+      it('loads details from the store', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.loadMissingCaseFileDetails();
+        expect(caseFileStore.fetchByIds).toHaveBeenCalledWith([wrapper.vm.caseFileId], true);
+        expect(eventStore.fetchByIds).toHaveBeenCalledWith([wrapper.vm.caseFile.eventId], true);
+        expect(householdStore.fetchByIds).toHaveBeenCalledWith([wrapper.vm.caseFile.householdId], true);
+        expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: wrapper.vm.caseFileId });
+        expect(personStore.fetchByIds)
+          .toHaveBeenCalledWith([wrapper.vm.household.primaryBeneficiary, ...caseFileIndividualStore.fetchAll().map((p) => p.personId)], true);
       });
     });
   });

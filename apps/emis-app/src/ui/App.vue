@@ -15,7 +15,7 @@
     </div>
     <rc-router-view-transition v-else />
 
-    <activity-watcher v-if="!isLoading && !isDevEnvironment" />
+    <activity-watcher v-if="!isLoading" />
 
     <!-- eslint-disable -->
     <rc-confirmation-dialog
@@ -118,9 +118,6 @@ export default {
     },
     checkingAccount() {
       return useDashboardStore().checkingAccount;
-    },
-    isDevEnvironment() {
-      return window.location.host.startsWith('localhost') || window.location.host.startsWith('emis-');
     },
   },
 

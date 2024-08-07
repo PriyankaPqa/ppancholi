@@ -154,6 +154,7 @@ describe('BookingRequestDialog.vue', () => {
             roomTypes: [],
             shelterLocation: null,
             state: 1,
+            takeover: false,
           },
         );
       });

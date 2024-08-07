@@ -2,7 +2,7 @@ import { mockBookingRequestsService } from '@libs/services-lib/booking-requests'
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
-import { IBookingRequest, mockBookingRequest, IdParams } from '@libs/entities-lib/booking-request';
+import { IBookingRequest, mockBookingRequest, IdParams, IBooking } from '@libs/entities-lib/booking-request';
 import { getExtensionComponents } from '@/pinia/booking-request/booking-request-extension';
 
 import { Status } from '@libs/shared-lib/types';
@@ -65,8 +65,8 @@ describe('>>> BookingRequest Store', () => {
     });
   });
 
-  describe('createIndividual', () => {
-    it('should call createIndividual service with proper params', async () => {
+  describe('createBookingRequest', () => {
+    it('should call createBookingRequest service with proper params', async () => {
       const bComponents = { ...baseComponents, addNewlyCreatedId: jest.fn(), set: jest.fn() };
       const store = createTestStore(bComponents);
       const payload = {} as IBookingRequest;
@@ -76,6 +76,21 @@ describe('>>> BookingRequest Store', () => {
 
       expect(entityService.createBookingRequest).toBeCalledWith(payload);
       expect(bComponents.addNewlyCreatedId).toBeCalledWith(res);
+      expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
+
+  describe('fulfillBooking', () => {
+    it('should call fulfillBooking service with proper params', async () => {
+      const bComponents = { ...baseComponents, addNewlyCreatedId: jest.fn(), set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const bookingRequest = {} as IBookingRequest;
+      const bookings = [] as IBooking[];
+      const res = {} as IBookingRequest;
+      entityService.fulfillBooking = jest.fn(() => res);
+      await store.fulfillBooking(bookingRequest, 'some-id', bookings);
+
+      expect(entityService.fulfillBooking).toBeCalledWith(bookingRequest, 'some-id', bookings);
       expect(bComponents.set).toBeCalledWith(res);
     });
   });
