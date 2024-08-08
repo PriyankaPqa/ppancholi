@@ -16,7 +16,7 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
 
   async create(item: IAppointmentProgram): Promise<IAppointmentProgram> {
     item.fillEmptyMultilingualAttributes();
-    return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item);
+    return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item, { globalHandler: GlobalHandler.Partial });
   }
 
   async update(item: IAppointmentProgram): Promise<IAppointmentProgram> {

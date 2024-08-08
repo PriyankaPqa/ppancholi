@@ -164,11 +164,11 @@ export default Vue.extend({
       const slotDate = this.scheduleCopy[day].date;
       const daySlots = this.scheduleCopy[day].timeSlots;
       // Take over the end time of the previous slot as the start of the current slot, if there is a previous slot
-      const startTime = daySlots.length ? daySlots[daySlots.length - 1].end : '09:00';
+      const startTime = daySlots.length ? daySlots[daySlots.length - 1].end : '09:00:00';
 
       const newSlot:ITimeSlot = {
         start: startTime,
-        end: '17:00',
+        end: '17:00:00',
       };
 
       if (slotDate) {
