@@ -9,7 +9,7 @@
       rounded
       outlined
       class="mb-4">
-      <v-simple-table>
+      <v-simple-table data-test="appointments-availability-hours-table">
         <thead>
           <tr>
             <th><span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.day') }}</span></th>
@@ -23,7 +23,9 @@
           <template v-if="scheduleCopy[+day].timeSlots.length">
             <tr v-for="(timeSlot, timeSlotIndex) in scheduleCopy[+day].timeSlots" :key="`${day}_${timeSlotIndex}`">
               <td>
-                {{ timeSlotIndex === 0 ? $t(`enums.DayOfWeek.${DayOfWeek[+day]}`) : '' }}
+                <div v-if="timeSlotIndex === 0" :data-test="`appointments-availability-hours_day_${day}_${timeSlotIndex}`">
+                  {{ $t(`enums.DayOfWeek.${DayOfWeek[+day]}`) }}
+                </div>
               </td>
               <td class="px-0 py-2 select-cell">
                 <v-select-a11y
@@ -35,6 +37,7 @@
                   hide-details
                   class="select"
                   menu-props="auto"
+                  :data-test="`appointments-availability-hours_${day}_${timeSlotIndex}_start`"
                   :item-value="(item) => item.value"
                   @change="updateTime($event, +day, timeSlotIndex, 'start')" />
               </td>
@@ -42,6 +45,7 @@
                 <v-select-a11y
                   :value="timeSlot.end"
                   :items="INTERVALS"
+                  :data-test="`appointments-availability-hours_${day}_${timeSlotIndex}_end`"
                   menu-props="auto"
                   outlined
                   hide-details
@@ -52,7 +56,7 @@
                   @change="updateTime($event, +day, timeSlotIndex, 'end')" />
               </td>
               <td class="px-0 py-1 action-cell">
-                <v-btn icon data-test="delete-link" :aria-label="$t('common.delete')" @click="deleteSlot(+day, timeSlotIndex)">
+                <v-btn icon :data-test="`delete-time-slot_${day}_${timeSlotIndex}`" :aria-label="$t('common.delete')" @click="deleteSlot(+day, timeSlotIndex)">
                   <v-icon size="24" color="grey darken-2">
                     mdi-delete
                   </v-icon>
@@ -62,8 +66,8 @@
                 <v-btn
                   v-if="timeSlotIndex === scheduleCopy[+day].timeSlots.length - 1"
                   icon
-                  data-test="delete-link"
-                  :aria-label="$t('common.delete')"
+                  :data-test="`add-time-slot_${day}_${timeSlotIndex}`"
+                  :aria-label="$t('common.add')"
                   @click="addSlot(+day)">
                   <v-icon size="24" color="grey darken-2">
                     mdi-plus
@@ -75,7 +79,9 @@
           <template v-else>
             <tr>
               <td>
-                {{ $t(`enums.DayOfWeek.${DayOfWeek[+day]}`) }}
+                <div :data-test="`appointments-availability-hours_day_${day}_no_slots`">
+                  {{ $t(`enums.DayOfWeek.${DayOfWeek[+day]}`) }}
+                </div>
               </td>
               <td>
                 {{ $t('common.N/A') }}

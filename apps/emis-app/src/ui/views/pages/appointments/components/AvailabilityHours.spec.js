@@ -218,4 +218,56 @@ describe('AvailabilityHours.vue', () => {
       });
     });
   });
+
+  describe('Template', () => {
+    describe('table', () => {
+      it('renders', () => {
+        mountWrapper(false);
+        const element = wrapper.findDataTest('appointments-availability-hours-table');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('week day label', () => {
+      it('renders and displays name of day for the first time slot of the day', () => {
+        mountWrapper(false);
+        const element = wrapper.findDataTest('appointments-availability-hours_day_1_0');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toContain('enums.DayOfWeek.Monday');
+      });
+      it('renders and displays name of day if there are no time slots', () => {
+        mountWrapper(false);
+        const element = wrapper.findDataTest('appointments-availability-hours_day_5_no_slots');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toContain('enums.DayOfWeek.Friday');
+      });
+      it('does not display name of day for the subsequent time slots of the day', () => {
+        const newSchedule = schedule();
+        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '11:00', end: '17:00' }] };
+        mountWrapper(false, { propsData: { schedule: newSchedule } });
+        const element = wrapper.findDataTest('appointments-availability-hours_day_1_1');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('delete button', () => {
+      it('renders on time slot rows', () => {
+        mountWrapper(false);
+        const element = wrapper.findDataTest('delete-time-slot_1_0');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('add button', () => {
+      it('renders on time slot rows for the last time slot', () => {
+        const newSchedule = schedule();
+        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '11:00', end: '17:00' }] };
+        mountWrapper(false, { propsData: { schedule: newSchedule } });
+        const element1 = wrapper.findDataTest('add-time-slot_1_0');
+        expect(element1.exists()).toBeFalsy();
+        const element2 = wrapper.findDataTest('add-time-slot_1_1');
+        expect(element2.exists()).toBeTruthy();
+      });
+    });
+  });
 });
