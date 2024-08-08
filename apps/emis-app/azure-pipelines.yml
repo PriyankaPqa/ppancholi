@@ -30,7 +30,7 @@ variables:
 - name: VITE_VERSION
   value: $(Major).$(Minor).$(Patch)
 - name: nodeJsVersion
-  value: '18.18.0' # use a cache version from the ubuntu-latest image, so we don't have errors when downloading https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md#nodejs
+  value: '18.20.4' # use a cache version from the ubuntu-latest image, so we don't have errors when downloading https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2004-Readme.md
 - name: disableCache
   value: 'false' # change this value to force npm package to be installed
 

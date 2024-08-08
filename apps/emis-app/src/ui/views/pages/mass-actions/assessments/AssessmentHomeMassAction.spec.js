@@ -120,12 +120,12 @@ describe('AssessmentHomeMassAction.vue', () => {
           text: 'massAction.assessment.table.add.list',
           value: 'list',
           icon: 'mdi-filter-variant',
-          dataTest: 'fa-mass-action-list',
+          dataTest: 'add-mass-assessments-via-list',
         }, {
           text: 'massAction.assessment.table.add.file',
           value: 'file',
           icon: 'mdi-upload',
-          dataTest: 'fa-mass-action-file',
+          dataTest: 'add-mass-assessments-via-file',
         }]);
       });
     });
