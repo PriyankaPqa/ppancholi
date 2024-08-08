@@ -175,6 +175,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
         : this.$t('common.buttons.create');
     },
 
+    // The component AvailabilityHours takes the schedule as an object with all week days as keys. Therefore the schedule stored in businessHours,
+    // which is a list, needs to be transformed into this object (in the getter) and back (in the setter)
     schedule: {
       get(): Record<number, IDaySchedule> {
         const weekSchedule = {} as Record<number, IDaySchedule>;
