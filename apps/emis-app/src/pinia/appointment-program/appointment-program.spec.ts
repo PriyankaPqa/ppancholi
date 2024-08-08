@@ -3,7 +3,7 @@ import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { getExtensionComponents } from '@/pinia/appointment-program/appointment-program-extension';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore } from 'pinia';
-import { IAppointmentProgram, IdParams, mockAppointmentProgram } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, IAppointmentProgram, IdParams, mockAppointmentProgram } from '@libs/entities-lib/appointment';
 
 const entityService = mockAppointmentProgramsService();
 const baseComponents = getBaseStoreComponents<IAppointmentProgram, IdParams>(entityService);
@@ -36,7 +36,7 @@ describe('Appointment program store', () => {
   describe('create appointment program', () => {
     it('should call service create and commit the result', async () => {
       const store = createTestStore();
-      const mockProgram = mockAppointmentProgram();
+      const mockProgram = new AppointmentProgram(mockAppointmentProgram());
       entityService.create = jest.fn(() => mockProgram);
       await store.createAppointmentProgram(mockProgram);
 

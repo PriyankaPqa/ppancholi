@@ -5,7 +5,7 @@ const localVue = createLocalVue();
 
 const schedule = () => ({
   0: { day: 0, timeSlots: [] },
-  1: { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }] },
+  1: { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }] },
   2: { day: 2, timeSlots: [] },
   3: { day: 3, timeSlots: [] },
   4: { day: 4, timeSlots: [] },
@@ -31,10 +31,10 @@ describe('AvailabilityHours.vue', () => {
     describe('updateTime', () => {
       it('updates the data with the new value for the right day and timeslot', async () => {
         mountWrapper();
-        await wrapper.vm.updateTime('15:00', 1, 0, 'end');
+        await wrapper.vm.updateTime('15:00:00', 1, 0, 'end');
         expect(wrapper.vm.scheduleCopy).toEqual({
           0: { day: 0, timeSlots: [] },
-          1: { day: 1, timeSlots: [{ start: '09:00', end: '15:00' }] },
+          1: { day: 1, timeSlots: [{ start: '09:00:00', end: '15:00:00' }] },
           2: { day: 2, timeSlots: [] },
           3: { day: 3, timeSlots: [] },
           4: { day: 4, timeSlots: [] },
@@ -67,8 +67,8 @@ describe('AvailabilityHours.vue', () => {
         await wrapper.vm.addSlot(2);
         expect(wrapper.vm.scheduleCopy).toEqual({
           0: { day: 0, timeSlots: [] },
-          1: { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }] },
-          2: { day: 2, timeSlots: [{ start: '09:00', end: '17:00' }] },
+          1: { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }] },
+          2: { day: 2, timeSlots: [{ start: '09:00:00', end: '17:00:00' }] },
           3: { day: 3, timeSlots: [] },
           4: { day: 4, timeSlots: [] },
           5: { day: 5, timeSlots: [] },
@@ -81,7 +81,7 @@ describe('AvailabilityHours.vue', () => {
         await wrapper.vm.addSlot(1);
         expect(wrapper.vm.scheduleCopy).toEqual({
           0: { day: 0, timeSlots: [] },
-          1: { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '12:00', end: '17:00' }] },
+          1: { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }, { start: '12:00:00', end: '17:00:00' }] },
           2: { day: 2, timeSlots: [] },
           3: { day: 3, timeSlots: [] },
           4: { day: 4, timeSlots: [] },
@@ -92,15 +92,15 @@ describe('AvailabilityHours.vue', () => {
 
       it('adds a new slot in the right place when there are slots in the day with the right dates, if the schedule has a date', async () => {
         const newSchedule = schedule();
-        newSchedule[1] = { day: 1, date: '2024-01-02', timeSlots: [{ start: '09:00', end: '12:00' }] };
+        newSchedule[1] = { day: 1, date: '2024-01-02', timeSlots: [{ start: '09:00:00', end: '12:00:00' }] };
         mountWrapper(true, { propsData: { schedule: newSchedule } });
         await wrapper.vm.addSlot(1);
         expect(wrapper.vm.scheduleCopy).toEqual({
           0: { day: 0, timeSlots: [] },
           1: { day: 1,
             date: '2024-01-02',
-            timeSlots: [{ start: '09:00', end: '12:00' }, { start: '12:00',
-              end: '17:00',
+            timeSlots: [{ start: '09:00:00', end: '12:00:00' }, { start: '12:00:00',
+              end: '17:00:00',
               startDateTime: new Date('2024-01-02 12:00').toISOString(),
               endDateTime: new Date('2024-01-02 17:00').toISOString(),
             }] },
@@ -119,11 +119,11 @@ describe('AvailabilityHours.vue', () => {
         await wrapper.vm.addSlot(2);
         expect(wrapper.vm.scheduleCopy).toEqual({
           0: { day: 0, timeSlots: [] },
-          1: { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }] },
+          1: { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }] },
           2: { day: 2,
             date: '2024-01-02',
-            timeSlots: [{ start: '09:00',
-              end: '17:00',
+            timeSlots: [{ start: '09:00:00',
+              end: '17:00:00',
               startDateTime: new Date('2024-01-02 09:00').toISOString(),
               endDateTime: new Date('2024-01-02 17:00').toISOString(),
             }] },
@@ -151,13 +151,13 @@ describe('AvailabilityHours.vue', () => {
       });
       it('removes the right slot in the right day - day with 2 slot', async () => {
         const newSchedule = schedule();
-        newSchedule[2] = { day: 2, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '12:00', end: '17:00' }] };
+        newSchedule[2] = { day: 2, timeSlots: [{ start: '09:00:00', end: '12:00:00' }, { start: '12:00:00', end: '17:00:00' }] };
         mountWrapper(true, { propsData: { schedule: newSchedule } });
         await wrapper.vm.deleteSlot(2, 0);
         expect(wrapper.vm.scheduleCopy).toEqual({
           0: { day: 0, timeSlots: [] },
-          1: { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }] },
-          2: { day: 2, timeSlots: [{ start: '12:00', end: '17:00' }] },
+          1: { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }] },
+          2: { day: 2, timeSlots: [{ start: '12:00:00', end: '17:00:00' }] },
           3: { day: 3, timeSlots: [] },
           4: { day: 4, timeSlots: [] },
           5: { day: 5, timeSlots: [] },
@@ -169,7 +169,7 @@ describe('AvailabilityHours.vue', () => {
     describe('checkForErrors', () => {
       it('sets showError to false if the schedule has no overlaps or inversed start and end times', async () => {
         const newSchedule = schedule();
-        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '13:00', end: '17:00' }] };
+        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }, { start: '13:00:00', end: '17:00:00' }] };
         mountWrapper(true, { propsData: { schedule: newSchedule } });
 
         await wrapper.vm.checkForErrors();
@@ -178,7 +178,7 @@ describe('AvailabilityHours.vue', () => {
 
       it('sets showError to true if the schedule has the start  after the end', async () => {
         const newSchedule = schedule();
-        newSchedule[1] = { day: 1, timeSlots: [{ start: '12:00', end: '09:00' }, { start: '12:00', end: '17:00' }] };
+        newSchedule[1] = { day: 1, timeSlots: [{ start: '12:00:00', end: '09:00:00' }, { start: '12:00:00', end: '17:00:00' }] };
         mountWrapper(true, { propsData: { schedule: newSchedule } });
 
         await wrapper.vm.checkForErrors();
@@ -186,7 +186,7 @@ describe('AvailabilityHours.vue', () => {
       });
       it('sets showError to true if the schedules overlap', async () => {
         const newSchedule = schedule();
-        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '11:00', end: '17:00' }] };
+        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }, { start: '11:00:00', end: '17:00:00' }] };
         mountWrapper(true, { propsData: { schedule: newSchedule } });
 
         await wrapper.vm.checkForErrors();
@@ -195,7 +195,7 @@ describe('AvailabilityHours.vue', () => {
 
       it('sets showError to true if the schedule start and end are the same', async () => {
         const newSchedule = schedule();
-        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00', end: '12:00' }, { start: '13:00', end: '13:00' }] };
+        newSchedule[1] = { day: 1, timeSlots: [{ start: '09:00:00', end: '12:00:00' }, { start: '13:00:00', end: '13:00:00' }] };
         mountWrapper(true, { propsData: { schedule: newSchedule } });
 
         await wrapper.vm.checkForErrors();
