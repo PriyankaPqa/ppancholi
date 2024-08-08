@@ -1,4 +1,4 @@
-import { mockAppointmentProgram } from '@libs/entities-lib/src/appointment';
+import { AppointmentProgram, mockAppointmentProgram } from '@libs/entities-lib/src/appointment';
 import { IHttpMock, mockHttp, GlobalHandler } from '../http-client';
 import { AppointmentProgramsService } from './appointment-programs';
 
@@ -22,7 +22,7 @@ describe('>>> Appointment Programs Service', () => {
 
   describe('create', () => {
     it('should call the proper endpoint', async () => {
-      const entity = mockAppointmentProgram();
+      const entity = new AppointmentProgram(mockAppointmentProgram());
       await service.create(entity);
       expect(http.post).toHaveBeenCalledWith(`www.test.com/appointment/appointment-programs/${entity.id}`, entity, {
         globalHandler: GlobalHandler.Partial });

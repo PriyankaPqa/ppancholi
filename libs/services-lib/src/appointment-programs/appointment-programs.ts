@@ -1,6 +1,6 @@
 import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
-import { IAppointmentProgram, IdParams } from '@libs/entities-lib/appointment/appointment-program/appointment-program.types';
+import { IAppointmentProgram, AppointmentProgram, IdParams } from '@libs/entities-lib/appointment';
 import { GlobalHandler, IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentProgramsService } from './appointment-programs.types';
@@ -14,7 +14,7 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
-  async create(item: IAppointmentProgram): Promise<IAppointmentProgram> {
+  async create(item: AppointmentProgram): Promise<IAppointmentProgram> {
     item.fillEmptyMultilingualAttributes();
     return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item, { globalHandler: GlobalHandler.Partial });
   }

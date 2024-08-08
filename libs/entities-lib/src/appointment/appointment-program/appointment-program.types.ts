@@ -54,7 +54,6 @@ export interface IAppointmentProgram extends IEntity {
   appointmentProgramStatus:AppointmentProgramStatus;
   emailConfirmationSubject: IMultilingual;
   emailConfirmationContent: IMultilingual;
-  fillEmptyMultilingualAttributes(): void;
 }
 
 export type IdParams = uuid;

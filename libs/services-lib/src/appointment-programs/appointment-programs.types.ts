@@ -1,8 +1,8 @@
-import { IAppointmentProgram, IdParams } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
+import { IAppointmentProgram, AppointmentProgram, IdParams } from '@libs/entities-lib/src/appointment';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../base';
 
 export interface IAppointmentProgramsService extends IDomainBaseService<IAppointmentProgram, IdParams> {
-  create(item: IAppointmentProgram): Promise<IAppointmentProgram>;
+  create(item: AppointmentProgram): Promise<IAppointmentProgram>;
   update(item: IAppointmentProgram): Promise<IAppointmentProgram>;
 }
 
