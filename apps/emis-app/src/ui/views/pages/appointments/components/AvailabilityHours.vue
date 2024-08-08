@@ -33,7 +33,6 @@
                   :items="INTERVALS"
                   outlined
                   dense
-                  attach
                   hide-details
                   class="select"
                   menu-props="auto"
@@ -50,7 +49,6 @@
                   outlined
                   hide-details
                   dense
-                  attach
                   class="select"
                   :item-value="(item) => item.value"
                   @change="updateTime($event, +day, timeSlotIndex, 'end')" />
