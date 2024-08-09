@@ -6,4 +6,5 @@ export const mockBookingRequestsService = (): IBookingRequestsServiceMock => ({
   ...mockDomainBaseService(mockBookingRequests()),
   createBookingRequest: jest.fn(() => mockBookingRequest()),
   fulfillBooking: jest.fn(() => mockBookingRequest()),
+  rejectBooking: jest.fn(() => mockBookingRequest()),
 });

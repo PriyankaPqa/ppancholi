@@ -30,6 +30,10 @@ export class BookingRequestsService extends DomainBaseService<IBookingRequest, I
     });
   }
 
+  async rejectBooking(item: IBookingRequest, rationale: string): Promise<IBookingRequest> {
+    return this.http.patch<IBookingRequest>(this.getItemUrl(`${this.baseUrl}/{id}/reject`, item), { rationale });
+  }
+
   async search(params: ISearchParams):
     Promise<ICombinedSearchResult<IBookingRequest, IEntity>> {
       return this.http.get('case-file/search/booking-requests', { params, isOData: true });

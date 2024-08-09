@@ -50,7 +50,7 @@
           class="mt-1 ml-3"
           :aria-label="$t('impactedIndividuals.receiving_assistance')"
           data-test="receiving_assistance_toggle"
-          @change="onToggleChange($event)" />
+          @change="onReceivingAssistanceChange()" />
         <span class="rc-body12">
           {{ isReceivingAssistance ? $t('impactedIndividuals.receiving_assistance') : $t('impactedIndividuals.not_receiving_assistance') }}
         </span>
@@ -99,13 +99,7 @@
       :is-primary-member="isPrimaryMember"
       :shelter-locations-list="shelterLocationsList" />
 
-    <impacted-individuals-require-rationale-dialog-v2
-      v-if="showRequireRationaleDialog"
-      :case-file-individual-id="individual.id"
-      :case-file-id="caseFileId"
-      :is-receiving-assistance-change-to="isReceivingAssistance"
-      :show.sync="showRequireRationaleDialog"
-      @close="onCloseDialog()" />
+    <rationale-dialog ref="rationaleDialog" />
   </v-sheet>
 </template>
 <script lang="ts">
@@ -113,11 +107,12 @@ import Vue from 'vue';
 import { IMemberEntity } from '@libs/entities-lib/household-create';
 import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/shared-lib/types';
+import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import { IEventGenericLocation } from '@libs/entities-lib/src/event';
 import { CaseFileIndividualEntity, MembershipStatus, ReceivingAssistanceDetail, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { usePersonStore } from '@/pinia/person/person';
 import { IBookingRequest } from '@libs/entities-lib/booking-request';
-import ImpactedIndividualsRequireRationaleDialogV2 from './ImpactedIndividualsRequireRationaleDialogV2.vue';
+import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
 import ImpactedIndividualsCardPinnedRationaleV2 from './ImpactedIndividualsCardPinnedRationaleV2.vue';
 import ImpactedIndividualsEditAddressDialogV2 from './ImpactedIndividualsEditAddressDialogV2.vue';
 import ImpactedIndividualAddressTemplateV2 from './ImpactedIndividualAddressTemplateV2.vue';
@@ -129,7 +124,7 @@ export default Vue.extend({
     ImpactedIndividualAddressTemplateV2,
     ImpactedIndividualsEditAddressDialogV2,
     ImpactedIndividualsCardPinnedRationaleV2,
-    ImpactedIndividualsRequireRationaleDialogV2,
+    RationaleDialog,
   },
 
   props: {
@@ -175,8 +170,6 @@ export default Vue.extend({
       showEditMemberDialog: false,
       newAddress: false,
       isReceivingAssistance: true,
-      showRequireRationaleDialog: false,
-      backUpIsReceivingAssistance: false,
       UserRoles,
       MembershipStatus,
       Status,
@@ -221,7 +214,6 @@ export default Vue.extend({
 
   async created() {
     this.isReceivingAssistance = this.individual.receivingAssistance;
-    this.backUpIsReceivingAssistance = this.isReceivingAssistance;
   },
 
   methods: {
@@ -230,14 +222,26 @@ export default Vue.extend({
       this.showEditMemberDialog = true;
     },
 
-    async onToggleChange(isReceivingAssistanceChangeTo: boolean) {
-       this.isReceivingAssistance = isReceivingAssistanceChangeTo;
-       this.showRequireRationaleDialog = true;
-    },
-
-    onCloseDialog() {
-      this.isReceivingAssistance = this.backUpIsReceivingAssistance;
-      this.showRequireRationaleDialog = false;
+    async onReceivingAssistanceChange() {
+      const dialog = this.$refs.rationaleDialog as any;
+      const answer = (await dialog.open({
+        title: this.isReceivingAssistance ? this.$t('impactedIndividuals.remove_member_from_receiving_assistance.title.receiving_assistance')
+            : this.$t('impactedIndividuals.remove_member_from_receiving_assistance.title.not_receiving_assistance'),
+        userBoxText: this.isReceivingAssistance ? this.$t('impactedIndividuals.remove_member_from_receiving_assistance.actioned_by')
+              : this.$t('impactedIndividuals.remove_member_from_receiving_assistance.removed_by'),
+      })) as { answered: boolean, rationale: string };
+      if (answer.answered) {
+        const params = {
+          receivingAssistance: this.isReceivingAssistance,
+          rationale: answer.rationale,
+        } as ReceivingAssistanceDetail;
+        const res = await useCaseFileIndividualStore().addReceiveAssistanceDetails(this.caseFileId, this.individual.id, params);
+        if (res) {
+          dialog.close();
+        }
+      } else {
+        this.isReceivingAssistance = !this.isReceivingAssistance;
+      }
     },
   },
 });

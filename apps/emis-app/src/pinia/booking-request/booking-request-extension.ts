@@ -29,9 +29,18 @@ export function getExtensionComponents(
     return result;
   }
 
+  async function rejectBooking(bookingRequest: IBookingRequest, rationale: string): Promise<IBookingRequest> {
+    const result = await service.rejectBooking(bookingRequest, rationale);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
   return {
     getByCaseFile,
     createBookingRequest,
     fulfillBooking,
+    rejectBooking,
   };
 }

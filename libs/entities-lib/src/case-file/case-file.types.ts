@@ -75,6 +75,7 @@ export enum CaseFileActivityType {
   CommunicationSent = 44,
   PaymentMoved = 45,
   BookingRequestSubmitted = 46,
+  BookingRequestRejected = 47,
 }
 
 export enum HouseholdCaseFileActivityType {

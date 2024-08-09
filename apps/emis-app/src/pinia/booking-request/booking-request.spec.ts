@@ -94,4 +94,18 @@ describe('>>> BookingRequest Store', () => {
       expect(bComponents.set).toBeCalledWith(res);
     });
   });
+
+  describe('rejectBooking', () => {
+    it('should call rejectBooking service with proper params', async () => {
+      const bComponents = { ...baseComponents, addNewlyCreatedId: jest.fn(), set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const bookingRequest = {} as IBookingRequest;
+      const res = {} as IBookingRequest;
+      entityService.rejectBooking = jest.fn(() => res);
+      await store.rejectBooking(bookingRequest, 'rationale');
+
+      expect(entityService.rejectBooking).toBeCalledWith(bookingRequest, 'rationale');
+      expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
 });

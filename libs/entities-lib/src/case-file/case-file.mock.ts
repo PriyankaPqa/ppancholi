@@ -1087,6 +1087,48 @@ newCaseFileId: 'id1' },
       discriminator: 'CaseFileActivity',
       _etag: '"04003262-0000-0a00-0000-66aa3b930000"',
     },
+    {
+      caseFileId: '9ff0fe58-4db6-4505-8f36-15f1dd4f2977',
+      user: {
+          id: '64cc9431-e1b7-4fff-9c9d-7284b8525ff7',
+          name: 'Marc-André Deschênes',
+      },
+      role: {
+          id: '89b458fe-cf9f-4411-b100-2575b5729293',
+          name: {
+              translation: {
+                  en: 'System Admin',
+                  fr: 'Administrateur(-trice) de système',
+              },
+          },
+      },
+      details: {
+          rationale: 'dsdfdsfsdfs',
+          checkIn: '2024-07-31T00:00:00',
+          checkOut: '2024-08-14T00:00:00',
+          addressType: 4,
+          address: {
+              country: 'CA',
+              province: 2,
+              city: 'Mont',
+              latitude: 0,
+              longitude: 0,
+          },
+      } as any,
+      activityType: CaseFileActivityType.BookingRequestRejected,
+      triggeredByMassAction: false,
+      id: '9b6c97c4-7a2f-4e3b-8b13-e5ce28994f30',
+      tenantId: '56f61c9c-0a6f-4be2-954d-941c9f02cb4c',
+      created: '2024-08-08T20:52:19.3323293Z',
+      timestamp: '2024-08-08T20:52:19.3323293Z',
+      status: 1,
+      createdBy: '64cc9431-e1b7-4fff-9c9d-7284b8525ff7',
+      lastUpdatedBy: null as any,
+      lastAction: 'Created',
+      lastActionCorrelationId: 'e4a7adb1-c964-4290-9fe7-93c55676c4cb',
+      discriminator: 'CaseFileActivity',
+      _etag: '"0f007c9a-0000-0a00-0000-66b530030000"',
+    },
   ];
 
   if (type) {

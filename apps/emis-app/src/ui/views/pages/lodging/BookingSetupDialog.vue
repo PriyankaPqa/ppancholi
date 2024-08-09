@@ -26,7 +26,7 @@
                   {{ $t('bookingRequest.initialRequest') }}
                 </div>
                 <div>
-                  <v-btn>
+                  <v-btn @click="rejectBooking">
                     <v-icon class="pr-2">
                       mdi-close-box-outline
                     </v-icon>
@@ -196,6 +196,8 @@
           return-object />
       </div>
     </rc-dialog>
+
+    <rationale-dialog ref="rationaleDialog" />
   </validation-observer>
 </template>
 
@@ -215,6 +217,7 @@ import helpers from '@libs/entities-lib/helpers';
 import { IBookingRequest, RoomOption, RoomType, IBooking } from '@libs/entities-lib/booking-request';
 import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
+import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import { differenceInDays, parseISO } from 'date-fns';
 import mixins from 'vue-typed-mixins';
 import { IProgramEntity } from '@libs/entities-lib/program';
@@ -239,6 +242,7 @@ export default mixins(caseFileDetail).extend({
     VTextFieldWithValidation,
     VTextAreaWithValidation,
     ReviewBookingRequest,
+    RationaleDialog,
   },
 
   props: {
@@ -367,6 +371,22 @@ export default mixins(caseFileDetail).extend({
       return !!this.bookings.find((b) => b !== booking && b.peopleInRoom.indexOf(id) > -1);
     },
 
+    async rejectBooking() {
+      const dialog = this.$refs.rationaleDialog as any;
+      const answer = (await dialog.open({
+        title: this.$t('bookingRequest.rejectRequest.title'),
+        userBoxText: this.$t('bookingRequest.rejectRequest.message'),
+      })) as { answered: boolean, rationale: string };
+      if (answer.answered) {
+        const res = await useBookingRequestStore().rejectBooking(this.bookingRequest, answer.rationale);
+        if (res) {
+          dialog.close();
+          this.$toasted.global.success(this.$t('bookingRequest.rejected'));
+          this.$emit('update:show', false);
+        }
+      }
+    },
+
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
@@ -462,6 +482,9 @@ export default mixins(caseFileDetail).extend({
 </script>
 
 <style scoped lang="scss">
+  .cb-validation {
+    width: 100%;
+  }
   ::v-deep .cb-validation .error--text {
     padding-left: 16px;
     padding-bottom: 4px;

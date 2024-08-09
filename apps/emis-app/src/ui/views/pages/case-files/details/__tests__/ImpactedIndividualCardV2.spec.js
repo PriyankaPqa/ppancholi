@@ -3,11 +3,13 @@ import { MembershipStatus, mockCaseFileIndividualEntity, mockReceivingAssistance
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
+import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
 import Component from '../case-file-impacted-individualsV2/components/ImpactedIndividualCardV2.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 const { pinia } = useMockPersonStore();
+const { caseFileIndividualStore } = useMockCaseFileIndividualStore(pinia);
 
 describe('ImpactedIndividualCardV2.vue', () => {
   let wrapper;
@@ -40,6 +42,7 @@ describe('ImpactedIndividualCardV2.vue', () => {
     await wrapper.vm.$nextTick();
   };
   beforeEach(async () => {
+    jest.clearAllMocks();
     await doMount();
   });
 
@@ -100,11 +103,11 @@ describe('ImpactedIndividualCardV2.vue', () => {
     });
 
     describe('receiving_assistance_toggle', () => {
-      it('should trigger onToggleChange when changed', async () => {
-        wrapper.vm.onToggleChange = jest.fn();
+      it('should trigger onReceivingAssistanceChange when changed', async () => {
+        wrapper.vm.onReceivingAssistanceChange = jest.fn();
         const toggle = wrapper.findDataTest('receiving_assistance_toggle');
         await toggle.vm.$emit('change');
-        expect(wrapper.vm.onToggleChange).toHaveBeenCalled();
+        expect(wrapper.vm.onReceivingAssistanceChange).toHaveBeenCalled();
       });
 
       it('should be enabled when user has level 1', async () => {
@@ -243,25 +246,29 @@ describe('ImpactedIndividualCardV2.vue', () => {
       });
     });
 
-    describe('onToggleChange', () => {
-      it('should set isReceivingAssistance to proper value and showRequireRationaleDialog to true ', () => {
-        wrapper.vm.$services.caseFiles.setPersonReceiveAssistance = jest.fn();
-        wrapper.vm.onToggleChange(true);
-        expect(wrapper.vm.isReceivingAssistance).toEqual(true);
-        expect(wrapper.vm.showRequireRationaleDialog).toEqual(true);
-      });
-    });
+    describe('onReceivingAssistanceChange', () => {
+      it('should show the dialog and save if answered', async () => {
+        const answer = { answered: true, rationale: 'some rationale' };
+        wrapper.vm.$refs.rationaleDialog.open = jest.fn(() => answer);
+        wrapper.vm.$refs.rationaleDialog.close = jest.fn();
+        await wrapper.setData({ isReceivingAssistance: true });
+        await wrapper.vm.onReceivingAssistanceChange();
 
-    describe('onCloseDialog', () => {
-      it('should reset isReceivingAssistance and set showRequireRationaleDialog to false', async () => {
-        await wrapper.setData({
-          backUpIsReceivingAssistance: true,
-          isReceivingAssistance: false,
-          showRequireRationaleDialog: true,
-        });
-        wrapper.vm.onCloseDialog();
+        expect(caseFileIndividualStore.addReceiveAssistanceDetails)
+          .toHaveBeenCalledWith(wrapper.vm.caseFileId, wrapper.vm.individual.id, { receivingAssistance: true, rationale: 'some rationale' });
         expect(wrapper.vm.isReceivingAssistance).toEqual(true);
-        expect(wrapper.vm.showRequireRationaleDialog).toEqual(false);
+        expect(wrapper.vm.$refs.rationaleDialog.close).toHaveBeenCalled();
+      });
+
+      it('should show the dialog and reset isreceivingassistance if not answered', async () => {
+        const answer = { answered: false, rationale: null };
+        wrapper.vm.$refs.rationaleDialog.open = jest.fn(() => answer);
+        wrapper.vm.$refs.rationaleDialog.close = jest.fn();
+        await wrapper.setData({ isReceivingAssistance: true });
+        await wrapper.vm.onReceivingAssistanceChange();
+
+        expect(caseFileIndividualStore.addReceiveAssistanceDetails).not.toHaveBeenCalled();
+        expect(wrapper.vm.isReceivingAssistance).toEqual(false);
       });
     });
   });

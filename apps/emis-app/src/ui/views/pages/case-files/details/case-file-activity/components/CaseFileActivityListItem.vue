@@ -181,7 +181,8 @@ export default mixins(caseFileDetail).extend({
           return this.makeContentForCommunicationSent();
 
         case CaseFileActivityType.BookingRequestSubmitted:
-          return this.makeContentForBookingRequestSubmitted();
+        case CaseFileActivityType.BookingRequestRejected:
+          return this.makeContentForBookingRequest();
 
         default:
           return null;
@@ -234,6 +235,7 @@ export default mixins(caseFileDetail).extend({
           return 'mdi-currency-usd';
 
         case CaseFileActivityType.BookingRequestSubmitted:
+        case CaseFileActivityType.BookingRequestRejected:
           return 'mdi-bed';
 
         default:
@@ -743,14 +745,16 @@ export default mixins(caseFileDetail).extend({
       return { title, body };
     },
 
-    makeContentForBookingRequestSubmitted(): { title: TranslateResult, body: TranslateResult } {
-      const title = this.$t('caseFileActivity.activityList.title.BookingRequestSubmitted');
-      const body = this.$t('caseFileActivity.activityList.body.BookingRequestSubmitted', {
+    makeContentForBookingRequest(): { title: TranslateResult, body: TranslateResult } {
+      const isSubmit = this.item.activityType === CaseFileActivityType.BookingRequestSubmitted;
+      const title = this.$t(`caseFileActivity.activityList.title.BookingRequest${isSubmit ? 'Submitted' : 'Rejected'}`);
+      const body = this.$t(`caseFileActivity.activityList.body.BookingRequest${isSubmit ? 'Submitted' : 'Rejected'}`, {
         checkIn: helpers.getLocalStringDate(this.item.details.checkIn as string, 'BookingRequest.checkIn', 'PP'),
         checkOut: helpers.getLocalStringDate(this.item.details.checkOut as string, 'BookingRequest.checkIn', 'PP'),
         type: this.$t(`registration.addresses.temporaryAddressTypes.${ECurrentAddressTypes[this.item.details.addressType as any]}`),
         address: this.item.details.shelterLocationId ? this.$m(this.event?.shelterLocations?.find((s) => this.item.details.shelterLocationId === s.id)?.name)
           : libHelpers.getAddressLines(this.item.details.address, this.$i18n).filter((x) => x).join(', '),
+        rationale: this.item.details.rationale,
       });
 
       return { title, body };

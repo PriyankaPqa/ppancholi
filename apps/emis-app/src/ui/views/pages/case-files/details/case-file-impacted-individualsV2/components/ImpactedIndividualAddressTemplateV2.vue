@@ -28,7 +28,7 @@
         <span class="font-weight-bold">{{ $t('impactedIndividuals.temporary_address.crc_provided') + ':' }}</span>
         <span data-test="impacted_individuals_card_template_is_crc_provided">{{ address.crcProvided ? $t('common.yes') : $t('common.no') }}</span>
       </div>
-      <div v-if="!address.takeover">
+      <div v-if="address.takeover">
         <v-chip label color="green" text-color="white">
           <v-icon class="mr-2" small>
             mdi-check-circle-outline

@@ -46,6 +46,15 @@ describe('>>> Booking request Service', () => {
     });
   });
 
+  describe('rejectBooking', () => {
+    it('is linked to the correct URL and params', async () => {
+      const entity = mockBookingRequest();
+      entity.caseFileId = 'myParent';
+      await service.rejectBooking(entity, 'rationale');
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/case-file/case-files/myParent/booking-requests/${entity.id}/reject`, { rationale: 'rationale' });
+    });
+  });
+
   describe('search', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
