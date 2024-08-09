@@ -64,7 +64,7 @@ export default Vue.extend({
 
   data() {
     return {
-      answer: { answered: false, rationale: null as string },
+      userInput: { answered: false, rationale: null as string },
       promise: null,
       format,
       MAX_LENGTH_MD,
@@ -103,10 +103,10 @@ export default Vue.extend({
       this.doClose('close');
     },
     doClose(emitted: string) {
-      this.answer.answered = false;
-      this.answer.rationale = null;
+      this.userInput.answered = false;
+      this.userInput.rationale = null;
       if (this.promise) {
-        this.promise(this.answer);
+        this.promise(this.userInput);
       }
       this.loading = false;
       this.show = false;
@@ -116,9 +116,9 @@ export default Vue.extend({
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
         this.loading = true;
-        this.answer.answered = true;
+        this.userInput.answered = true;
         if (this.promise) {
-          this.promise(this.answer);
+          this.promise(this.userInput);
         }
         this.$emit('submit');
       }

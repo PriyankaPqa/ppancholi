@@ -374,12 +374,12 @@ export default mixins(caseFileDetail).extend({
 
     async rejectBooking() {
       const dialog = this.$refs.rationaleDialog as any;
-      const answer = (await dialog.open({
+      const userInput = (await dialog.open({
         title: this.$t('bookingRequest.rejectRequest.title'),
         userBoxText: this.$t('bookingRequest.rejectRequest.message'),
       })) as { answered: boolean, rationale: string };
-      if (answer.answered) {
-        const res = await useBookingRequestStore().rejectBooking(this.bookingRequest, answer.rationale);
+      if (userInput.answered) {
+        const res = await useBookingRequestStore().rejectBooking(this.bookingRequest, userInput.rationale);
         if (res) {
           dialog.close();
           this.$toasted.global.success(this.$t('bookingRequest.rejected'));

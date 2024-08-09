@@ -224,16 +224,16 @@ export default Vue.extend({
 
     async onReceivingAssistanceChange() {
       const dialog = this.$refs.rationaleDialog as any;
-      const answer = (await dialog.open({
+      const userInput = (await dialog.open({
         title: this.isReceivingAssistance ? this.$t('impactedIndividuals.remove_member_from_receiving_assistance.title.receiving_assistance')
             : this.$t('impactedIndividuals.remove_member_from_receiving_assistance.title.not_receiving_assistance'),
         userBoxText: this.isReceivingAssistance ? this.$t('impactedIndividuals.remove_member_from_receiving_assistance.actioned_by')
               : this.$t('impactedIndividuals.remove_member_from_receiving_assistance.removed_by'),
       })) as { answered: boolean, rationale: string };
-      if (answer.answered) {
+      if (userInput.answered) {
         const params = {
           receivingAssistance: this.isReceivingAssistance,
-          rationale: answer.rationale,
+          rationale: userInput.rationale,
         } as ReceivingAssistanceDetail;
         const res = await useCaseFileIndividualStore().addReceiveAssistanceDetails(this.caseFileId, this.individual.id, params);
         if (res) {
