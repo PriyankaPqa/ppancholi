@@ -13,6 +13,7 @@ import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassA
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 import { INewMassCaseFileStatusFields } from '../pages/mass-action/mass-case-file-status/newMassCaseFileStatusUpdate.page';
 import { INewMassCommunicationFields } from '../pages/mass-action/mass-communication/newMassCommunication.page';
+import { INewMassAssessmentFields } from '../pages/mass-action/assessments/newMassAssessments.page';
 
 export interface GenerateFaCustomOptionsXlsxFileParams {
   caseFiles: ICaseFileEntity[],
@@ -45,6 +46,13 @@ export const fixtureNewCaseFileStatus = (force?: INewMassCaseFileStatusFields): 
 export const fixtureNewMassCommunication = (force?: INewMassCommunicationFields) : INewMassCommunicationFields => ({
   messageSubject: 'mock-message-subject',
   messageText: 'mock-message-text',
+  ...force,
+});
+
+export const fixtureNewMassAssessment = (force?: INewMassAssessmentFields) : INewMassAssessmentFields => ({
+  subjectContent: 'mock-subject-content',
+  contentBeforeLink: 'mock-content-before-the-link',
+  contentAfterLink: 'mock-content-after-the-link',
   ...force,
 });
 
@@ -127,6 +135,26 @@ export const fixtureGenerateCaseFileStatusCsvFile = (caseFiles: ICaseFileEntity[
     });
   }
   return writeCSVContentToFile(filePath, caseFileStatusData);
+};
+
+export const fixtureGenerateMassCommunicationCsvFile = (caseFiles: ICaseFileEntity[], filePath: string) => {
+  const massCommunicationData = [];
+  for (const caseFile of caseFiles) {
+    massCommunicationData.push({
+      CaseFileId: caseFile.id,
+    });
+  }
+  return writeCSVContentToFile(filePath, massCommunicationData);
+};
+
+export const fixtureGenerateMassAssessmentsCsvFile = (caseFiles: ICaseFileEntity[], filePath: string) => {
+  const massAssessmentsnData = [];
+  for (const caseFile of caseFiles) {
+    massAssessmentsnData.push({
+      CaseFileId: caseFile.id,
+    });
+  }
+  return writeCSVContentToFile(filePath, massAssessmentsnData);
 };
 
 function extractXlsxRowFromUserData(caseFile: ICaseFileEntity, FinancialAssistanceTableId: string): string[] {

@@ -145,6 +145,14 @@ export const generateRandomTriageData = (casefileId:string): ITriageDataCorrecti
   Triage: 'Tier 2',
 });
 
+export interface IMassCommunicationTemplate {
+  CaseFileId: string,
+}
+
+export const generateRandomMassCommunicationData = (casefileId:string): IMassCommunicationTemplate => ({
+  CaseFileId: casefileId,
+});
+
 export interface IIdentitySetDataCorrectionTemplate {
   PersonId: string,
   FirstName: string,
