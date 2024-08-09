@@ -54,7 +54,7 @@ describe('ReviewBookingRequest.vue', () => {
             { data: 3, label: 'bookingRequest.numberOfAdults' },
             { data: 2, label: 'bookingRequest.numberOfChildren' },
             { data: 2, label: 'bookingRequest.numberOfRooms' },
-            { data: 'Two beds (standard)', label: 'bookingRequest.roomType' },
+            { data: '2 beds (standard)', label: 'bookingRequest.roomType' },
             { data: 'Baby bed, Elevator', label: 'bookingRequest.roomOptions' },
           ],
         );
