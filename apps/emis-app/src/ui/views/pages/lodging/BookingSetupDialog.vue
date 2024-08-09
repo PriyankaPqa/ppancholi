@@ -206,6 +206,7 @@ import {
   RcDialog,
   VTextFieldWithValidation,
   VTextAreaWithValidation,
+  VSelectWithValidation,
 } from '@libs/component-lib/components';
 import { Status, VForm } from '@libs/shared-lib/types';
 import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
@@ -243,6 +244,7 @@ export default mixins(caseFileDetail).extend({
     VTextAreaWithValidation,
     ReviewBookingRequest,
     RationaleDialog,
+    VSelectWithValidation,
   },
 
   props: {
@@ -314,7 +316,6 @@ export default mixins(caseFileDetail).extend({
     })).values;
     const faTables = (await useFinancialAssistanceStore().search({ params: {
         filter: {
-          'Entity/EventId': { type: EFilterKeyType.Guid, value: this.caseFile.eventId },
           'Entity/UseForLodging': true,
           'Entity/ProgramId': { in: programs.map((p) => p.id) },
         },
@@ -445,7 +446,7 @@ export default mixins(caseFileDetail).extend({
           {
             amountPerNight: [...new Set(this.bookings.map((b) => b.estimatedAmount))].join(', '),
             numberOfNights: this.bookings.map((b) => b.numberOfNights).reduce((a, b) => a + b),
-            numberOfRooms: this.bookings.length + 1,
+            numberOfRooms: this.bookings.length,
           },
         ),
         financialAssistanceTableId: this.selectedPaymentDetails.table.id,

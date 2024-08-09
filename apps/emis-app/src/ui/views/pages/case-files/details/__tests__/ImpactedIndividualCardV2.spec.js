@@ -254,10 +254,24 @@ describe('ImpactedIndividualCardV2.vue', () => {
         await wrapper.setData({ isReceivingAssistance: true });
         await wrapper.vm.onReceivingAssistanceChange();
 
+        expect(wrapper.vm.$refs.rationaleDialog.open).toHaveBeenCalledWith({
+          title: 'impactedIndividuals.remove_member_from_receiving_assistance.title.receiving_assistance',
+          userBoxText: 'impactedIndividuals.remove_member_from_receiving_assistance.actioned_by',
+        });
+
         expect(caseFileIndividualStore.addReceiveAssistanceDetails)
           .toHaveBeenCalledWith(wrapper.vm.caseFileId, wrapper.vm.individual.id, { receivingAssistance: true, rationale: 'some rationale' });
         expect(wrapper.vm.isReceivingAssistance).toEqual(true);
         expect(wrapper.vm.$refs.rationaleDialog.close).toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        await wrapper.setData({ isReceivingAssistance: false });
+        await wrapper.vm.onReceivingAssistanceChange();
+
+        expect(wrapper.vm.$refs.rationaleDialog.open).toHaveBeenCalledWith({
+          title: 'impactedIndividuals.remove_member_from_receiving_assistance.title.not_receiving_assistance',
+          userBoxText: 'impactedIndividuals.remove_member_from_receiving_assistance.removed_by',
+        });
       });
 
       it('should show the dialog and reset isreceivingassistance if not answered', async () => {
