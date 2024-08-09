@@ -275,8 +275,8 @@ export default mixins(caseFileDetail).extend({
       RoomType,
       RoomOption,
       helpers,
-      paymentDetails: [] as { program: IProgramEntity, table: IFinancialAssistanceTableEntity, name: string }[],
-      selectedPaymentDetails: null as { program: IProgramEntity, table: IFinancialAssistanceTableEntity, name: string },
+      paymentDetails: [] as IPaymentDetails[],
+      selectedPaymentDetails: null as IPaymentDetails,
       uniqueNb: 0,
       showSelectTable: false,
     };

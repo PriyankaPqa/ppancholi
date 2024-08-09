@@ -20,14 +20,21 @@ export class BookingRequestsService extends DomainBaseService<IBookingRequest, I
   }
 
   async fulfillBooking(item: IBookingRequest, paymentId: string, bookings: IBooking[]): Promise<IBookingRequest> {
-    return this.http.post<IBookingRequest>(this.getItemUrl(`${this.baseUrl}/fulfill`, item), {
+    return this.http.post<IBookingRequest>(
+      this.getItemUrl(`${this.baseUrl}/fulfill`, item),
+      this.parseFulFillBooking(item, paymentId, bookings),
+    );
+  }
+
+  parseFulFillBooking(item: IBookingRequest, paymentId: string, bookings: IBooking[]) {
+    return {
       bookingRequestId: item.id,
       paymentIds: [paymentId],
       bookings: bookings.map((b) => ({
         peopleInRoom: b.peopleInRoom,
         address: CurrentAddress.parseCurrentAddress(b.address),
       })),
-    });
+    };
   }
 
   async rejectBooking(item: IBookingRequest, rationale: string): Promise<IBookingRequest> {
