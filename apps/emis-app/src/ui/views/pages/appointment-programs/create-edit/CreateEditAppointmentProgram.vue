@@ -60,12 +60,12 @@
 
             <v-row v-if="isEditMode">
               <v-col cols="12" class="d-flex justify-end pb-4">
-                <v-btn class="mr-4" data-test="cancel" @click.stop="back()">
+                <v-btn class="mr-4" data-test="appointment-program-edit-cancel" @click.stop="back()">
                   {{ $t('common.cancel') }}
                 </v-btn>
                 <v-btn
                   color="primary"
-                  data-test="save"
+                  data-test="appointment-program-edit-save"
                   :loading="loading"
                   :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError"
                   @click.stop="submit">
@@ -96,12 +96,12 @@
       </v-container>
 
       <template v-if="!isEditMode" #actions>
-        <v-btn class="mr-4" data-test="cancel" @click.stop="back()">
+        <v-btn class="mr-4" data-test="appointment-program-create-cancel" @click.stop="back()">
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
-          data-test="save"
+          data-test="appointment-program-create-submit"
           :loading="loading"
           :disabled="failed || loading || scheduleHasError"
           @click.stop="submit">
@@ -124,13 +124,14 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import entityUtils from '@libs/entities-lib/utils';
-import { AppointmentProgram, AppointmentProgramStatus, DayOfWeek, IDaySchedule, mockAppointmentProgram } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, AppointmentProgramStatus, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { NavigationGuardNext, Route } from 'vue-router';
+import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -149,6 +150,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     StaffMembersTable,
     StatusSelect,
     LanguageTabs,
+    RationaleDialog,
   },
 
   props: {
@@ -177,7 +179,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       AppointmentProgramStatus,
       timeZoneOptions: canadaTimeZones,
       scheduleHasError: false,
-      originalBusinessHours: null as IDaySchedule[],
+      initialBusinessHours: null as IDaySchedule[],
     };
   },
 
@@ -200,7 +202,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     scheduleIsModified(): boolean {
-      return (this.isEditMode && JSON.stringify(this.originalBusinessHours) !== JSON.stringify(this.appointmentProgram.businessHours));
+      return (this.isEditMode && JSON.stringify(this.initialBusinessHours) !== JSON.stringify(this.appointmentProgram.businessHours));
     },
 
     // The component AvailabilityHours takes the schedule as an object with all week days as keys. Therefore the schedule stored in businessHours,
@@ -227,9 +229,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
     if (this.isEditMode) {
       try {
         this.appointmentProgramLoading = true;
-        // const res = await useAppointmentProgramStore().fetch(this.appointmentProgramId) as AppointmentProgram;
-        this.appointmentProgram = new AppointmentProgram(mockAppointmentProgram());
-        this.originalBusinessHours = _cloneDeep(this.appointmentProgram.businessHours);
+        const res = await useAppointmentProgramStore().fetch(this.appointmentProgramId) as AppointmentProgram;
+        this.appointmentProgram = new AppointmentProgram(res);
+
+        this.initialBusinessHours = _cloneDeep(this.appointmentProgram.businessHours);
       } finally {
         this.appointmentProgramLoading = false;
       }
@@ -252,19 +255,19 @@ export default mixins(handleUniqueNameSubmitError).extend({
       if (this.isEditMode) {
         const dialog = this.$refs.rationaleDialog as any;
         const userInput = (await dialog.open({
-        title: this.$t('appointmentProgram.edit.changeStatus.rationale.title'),
-        userBoxText: this.$t('appointmentProgram.edit.changeStatus.rationale.message'),
-      })) as { answered: boolean, rationale: string };
-      if (userInput.answered) {
-        const res = await useAppointmentProgramStore().setAppointmentProgramStatus(this.appointmentProgram.id, status, userInput.rationale);
-        if (res) {
-          this.appointmentProgram.appointmentProgramStatus = status;
-          this.$toasted.global.success(this.$t('appointmentProgram.edit.changeStatus.success'));
-        } else {
-          this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.error'));
+          title: this.$t('appointmentProgram.edit.changeStatus.rationale.title'),
+          userBoxText: this.$t('appointmentProgram.edit.changeStatus.rationale.message'),
+        })) as { answered: boolean, rationale: string };
+        if (userInput.answered) {
+          const res = await useAppointmentProgramStore().setAppointmentProgramStatus(this.appointmentProgram.id, status, userInput.rationale);
+          if (res) {
+            this.appointmentProgram.appointmentProgramStatus = status;
+            this.$toasted.global.success(this.$t('appointmentProgram.edit.changeStatus.success'));
+          } else {
+            this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.error'));
+          }
+          dialog.close();
         }
-        dialog.close();
-      }
       } else {
         this.appointmentProgram.appointmentProgramStatus = status;
       }
@@ -316,27 +319,3 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 });
 </script>
-
-<style scoped lang="scss">
-.firstSection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: solid 1px var(--v-grey-lighten2);
-  border-radius: 4px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  margin-left: 4px;
-  margin-right: 4px;
-
-  &__actions {
-    display: flex;
-    justify-content: flex-end;
-
-    button {
-      margin: 0 0 0 16px;
-    }
-  }
-}
-
-</style>

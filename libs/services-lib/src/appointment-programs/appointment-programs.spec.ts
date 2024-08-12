@@ -31,10 +31,21 @@ describe('>>> Appointment Programs Service', () => {
 
   describe('update', () => {
     it('should call the proper endpoint', async () => {
-      const entity = mockAppointmentProgram();
+      const entity = new AppointmentProgram(mockAppointmentProgram());
       await service.update(entity);
       expect(http.patch).toHaveBeenCalledWith(`www.test.com/appointment/appointment-programs/${entity.id}`, entity, {
         globalHandler: GlobalHandler.Partial });
+    });
+  });
+
+  describe('setAppointmentProgramStatus', () => {
+    it('should call the proper endpoint', async () => {
+      const entity = new AppointmentProgram(mockAppointmentProgram());
+      await service.setAppointmentProgramStatus(entity.id, entity.appointmentProgramStatus, 'rationale');
+      expect(http.patch).toHaveBeenCalledWith(
+`www.test.com/appointment/appointment-programs/${entity.id}`,
+        { appointmentProgramStatus: entity.appointmentProgramStatus, rationale: 'rationale' },
+);
     });
   });
 });

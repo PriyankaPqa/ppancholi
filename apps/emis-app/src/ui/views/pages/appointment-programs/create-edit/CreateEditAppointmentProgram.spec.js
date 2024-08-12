@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
-import { AppointmentProgram, mockAppointmentProgram } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, AppointmentProgramStatus, mockAppointmentProgram } from '@libs/entities-lib/appointment';
 import entityUtils from '@libs/entities-lib/utils';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
 import Component from './CreateEditAppointmentProgram.vue';
@@ -85,17 +85,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
       });
     });
 
-    describe('submitLabel', () => {
-      it('returns the right text when is edit mode', () => {
-        mountWrapper();
-        expect(wrapper.vm.submitLabel).toEqual('common.save');
-      });
-      it('returns the right text when is create mode', () => {
-        mountWrapper(false);
-        expect(wrapper.vm.submitLabel).toEqual('common.buttons.create');
-      });
-    });
-
     describe('schedule', () => {
       test('getter turns an array schedule into an object with all week days', () => {
         mountWrapper();
@@ -128,16 +117,44 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(wrapper.vm.appointmentProgram.businessHours).toEqual(businessHours);
       });
     });
+
+    describe('scheduleIsModified', () => {
+      it('returns false if not in edit mode', async () => {
+        await mountWrapper(false);
+        expect(wrapper.vm.scheduleIsModified).toBeFalsy();
+      });
+
+      it('returns false if in edit mode and the initial business hours are the same as the current ones', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.scheduleIsModified).toBeFalsy();
+      });
+
+      it('returns true if in edit mode and the initial business hours differ from the current ones', async () => {
+        await mountWrapper();
+        await wrapper.setData({ initialBusinessHours: [] });
+        expect(wrapper.vm.scheduleIsModified).toBeTruthy();
+      });
+    });
   });
 
   describe('lifecycle', () => {
     describe('Created', () => {
-      it('when is not edit mode, it should set ', async () => {
+      it('when is not edit mode, it should set businessHours to default', async () => {
         await mountWrapper(false);
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.appointmentProgram.businessHours).toEqual(defaultBusinessHours);
+      });
+
+      it('when in edit mode, should fetch the appointment program and set the appointment program and initial business hours', async () => {
+        await mountWrapper();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(appointmentProgramStore.fetch).toHaveBeenCalledWith('appt-program-id');
+        expect(wrapper.vm.appointmentProgram).toEqual(mockAppointmentProgram());
+        expect(wrapper.vm.initialBusinessHours).toEqual(mockAppointmentProgram().businessHours);
       });
     });
   });
@@ -174,6 +191,23 @@ describe('CreateEditAppointmentProgram.vue', () => {
         wrapper.vm.onStatusChange(2);
         expect(wrapper.vm.appointmentProgram.appointmentProgramStatus).toEqual(2);
       });
+
+      it('in edit mode should show the dialog and save if answered', async () => {
+        mountWrapper();
+        const userInput = { answered: true, rationale: 'some rationale' };
+        wrapper.vm.$refs.rationaleDialog.open = jest.fn(() => userInput);
+        wrapper.vm.$refs.rationaleDialog.close = jest.fn();
+        await wrapper.vm.onStatusChange(AppointmentProgramStatus.Inactive);
+
+        expect(wrapper.vm.$refs.rationaleDialog.open).toHaveBeenCalledWith({
+          title: 'appointmentProgram.edit.changeStatus.rationale.title',
+          userBoxText: 'appointmentProgram.edit.changeStatus.rationale.message',
+        });
+
+        expect(appointmentProgramStore.setAppointmentProgramStatus)
+          .toHaveBeenCalledWith(wrapper.vm.appointmentProgram.id, AppointmentProgramStatus.Inactive, 'some rationale');
+        expect(wrapper.vm.$refs.rationaleDialog.close).toHaveBeenCalled();
+      });
     });
 
     describe('createAppointmentProgram', () => {
@@ -209,6 +243,28 @@ describe('CreateEditAppointmentProgram.vue', () => {
       });
     });
 
+    describe('updateAppointmentProgram', () => {
+      it('calls the store updateAppointmentProgram with the right payload', async () => {
+        const program = new AppointmentProgram();
+        mountWrapper();
+        await wrapper.vm.updateAppointmentProgram();
+        expect(appointmentProgramStore.updateAppointmentProgram).toHaveBeenCalledWith(program);
+      });
+
+      it('calls a toaster after creating', async () => {
+        mountWrapper();
+        await wrapper.vm.updateAppointmentProgram();
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.appointmentProgram.updated');
+      });
+
+      it('calls an error toaster if creating fails', async () => {
+        mountWrapper();
+        appointmentProgramStore.updateAppointmentProgram = jest.fn();
+        await wrapper.vm.updateAppointmentProgram();
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('event.appointmentProgram.updated.failed');
+      });
+    });
+
     describe('submit', () => {
       it('does not call create unless form validation succeeds and not edit mode', async () => {
         await mountWrapper(false);
@@ -225,6 +281,15 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls update if form validation succeeds and in edit mode', async () => {
+        await mountWrapper();
+        wrapper.vm.updateAppointmentProgram = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.submit();
+        expect(wrapper.vm.updateAppointmentProgram).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -258,6 +323,32 @@ describe('CreateEditAppointmentProgram.vue', () => {
         const element = wrapper.findDataTest('appointment-program-status');
         element.vm.$emit('input');
         expect(wrapper.vm.onStatusChange).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('saveButton', () => {
+      it('renders in edit mode', async () => {
+        await mountWrapper(true, false);
+        const element = wrapper.findDataTest('appointment-program-edit-save');
+        expect(element.exists()).toBeTruthy();
+      });
+      it('does not render in create mode', async () => {
+        await mountWrapper(false, false);
+        const element = wrapper.findDataTest('appointment-program-edit-save');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('submitButton', () => {
+      it('renders in create mode', async () => {
+        await mountWrapper(false, false);
+        const element = wrapper.findDataTest('appointment-program-create-submit');
+        expect(element.exists()).toBeTruthy();
+      });
+      it('does not render in create mode', async () => {
+        await mountWrapper(true, false);
+        const element = wrapper.findDataTest('appointment-program-create-submit');
+        expect(element.exists()).toBeFalsy();
       });
     });
   });
