@@ -30,7 +30,7 @@
         </v-col>
 
         <v-text-area-with-validation
-          v-model="answer.rationale"
+          v-model="userInput.rationale"
           rows="2"
           :label="`${$t('impactedIndividuals.rationale')} *`"
           class="full-width"

@@ -134,7 +134,7 @@ describe('BookingSetupDialog.vue', () => {
           {
             address: c,
             confirmationNumber: '',
-            estimatedAmount: 1,
+            nightlyRate: 1,
             numberOfNights: null,
             peopleInRoom: [],
             uniqueNb: 2,
@@ -168,11 +168,11 @@ describe('BookingSetupDialog.vue', () => {
 
     describe('selectPaymentDetails', () => {
       it('sets the payment details', async () => {
-        wrapper.vm.bookings[0].estimatedAmount = 0;
+        wrapper.vm.bookings[0].nightlyRate = 0;
         jest.clearAllMocks();
         const detail = wrapper.vm.paymentDetails[0];
         wrapper.vm.selectPaymentDetails(detail);
-        expect(wrapper.vm.bookings[0].estimatedAmount).toEqual(1);
+        expect(wrapper.vm.bookings[0].nightlyRate).toEqual(1);
         expect(paymentStore.getFinancialAssistanceCategories).toHaveBeenCalled();
         expect(tableStore.setFinancialAssistance).toHaveBeenCalledWith({
           fa: detail.table, categories: paymentStore.getFinancialAssistanceCategories(), newProgram: detail.program, removeInactiveItems: true,
@@ -275,23 +275,23 @@ describe('BookingSetupDialog.vue', () => {
         let b = wrapper.vm.bookings[0];
         b.numberOfNights = 2;
         b.confirmationNumber = 'abc';
-        b.estimatedAmount = 100;
+        b.nightlyRate = 100;
         b = wrapper.vm.bookings[1];
         b.numberOfNights = 1;
-        b.estimatedAmount = 200;
+        b.nightlyRate = 200;
         b.confirmationNumber = 'abc';
         b = wrapper.vm.bookings[2];
         b.numberOfNights = 6;
-        b.estimatedAmount = 200;
+        b.nightlyRate = 200;
         b.confirmationNumber = 'def';
         b = wrapper.vm.bookings[3];
         b.numberOfNights = 6;
-        b.estimatedAmount = 200;
+        b.nightlyRate = 200;
         b.confirmationNumber = '';
 
         const payment = wrapper.vm.generatePayment();
         expect(payment.caseFileId).toEqual(wrapper.vm.caseFileId);
-        expect(payment.description).toEqual({ key: 'bookingRequest.paymentDescription', params: [{ amountPerNight: '100, 200', numberOfNights: 15, numberOfRooms: 4 }] });
+        expect(payment.description).toEqual({ key: 'bookingRequest.paymentDescription', params: [{ nightlyRate: '100, 200', numberOfNights: 15, numberOfRooms: 4 }] });
         expect(payment.name.substring(0, 20)).toEqual('Program A - Children');
         expect(payment.financialAssistanceTableId).toEqual(table.id);
         expect(payment.groups).toEqual([

@@ -103,12 +103,12 @@
                   <v-row>
                     <v-col cols="3" class="pb-0">
                       <v-text-field-with-validation
-                        v-model="booking.estimatedAmount"
-                        data-test="estimated-amount"
+                        v-model="booking.nightlyRate"
+                        data-test="nightly-rate"
                         autocomplete="off"
                         background-color="white"
                         :rules="{ required: true, numeric: true }"
-                        :label="`${$t('bookingRequest.estimatedAmount')} *`" />
+                        :label="`${$t('bookingRequest.nightlyRate')} *`" />
                     </v-col>
                     <v-col cols="3" class="pb-0">
                       <v-text-field-with-validation
@@ -116,7 +116,7 @@
                         data-test="confirmation-number"
                         autocomplete="off"
                         background-color="white"
-                        :rules="{ numeric: true }"
+                        :rules="{ max: MAX_LENGTH_SM }"
                         :label="`${$t('bookingRequest.confirmationNumber')}`" />
                     </v-col>
                     <v-col cols="3" class="pb-0">
@@ -229,6 +229,7 @@ import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financ
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity, PayeeType } from '@libs/entities-lib/financial-assistance-payment';
 import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
+import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
 
@@ -279,6 +280,8 @@ export default mixins(caseFileDetail).extend({
       selectedPaymentDetails: null as IPaymentDetails,
       uniqueNb: 0,
       showSelectTable: false,
+      MAX_LENGTH_SM,
+      defaultAmount: 0,
     };
   },
 
@@ -336,8 +339,7 @@ export default mixins(caseFileDetail).extend({
       const address = new CurrentAddress();
       this.uniqueNb += 1;
       address.reset(this.bookings[0]?.address?.addressType || type || this.bookingRequest.addressType);
-      const amount = this.selectedPaymentDetails?.table?.items[0]?.subItems[0]?.maximumAmount;
-      this.bookings.push({ address, peopleInRoom: [], confirmationNumber: '', estimatedAmount: amount, numberOfNights: null, uniqueNb: this.uniqueNb });
+      this.bookings.push({ address, peopleInRoom: [], confirmationNumber: '', nightlyRate: this.defaultAmount, numberOfNights: null, uniqueNb: this.uniqueNb });
     },
 
     removeRoom(booking: IBooking) {
@@ -354,11 +356,15 @@ export default mixins(caseFileDetail).extend({
       if (detail) {
         this.showSelectTable = false;
         this.selectedPaymentDetails = detail;
-        this.bookings[0].estimatedAmount = detail?.table?.items[0]?.subItems[0]?.maximumAmount;
+
         const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
         useFinancialAssistanceStore().setFinancialAssistance({
           fa: detail.table, categories, newProgram: detail.program, removeInactiveItems: true,
         });
+
+        this.defaultAmount = useFinancialAssistanceStore().mainItems[0].subItems[0].maximumAmount;
+
+        this.bookings[0].nightlyRate = this.defaultAmount;
       }
     },
 
@@ -444,7 +450,7 @@ export default mixins(caseFileDetail).extend({
         description: this.$t(
           'bookingRequest.paymentDescription',
           {
-            amountPerNight: [...new Set(this.bookings.map((b) => b.estimatedAmount))].join(', '),
+            nightlyRate: [...new Set(this.bookings.map((b) => b.nightlyRate))].join(', '),
             numberOfNights: this.bookings.map((b) => b.numberOfNights).reduce((a, b) => a + b),
             numberOfRooms: this.bookings.length,
           },
@@ -459,7 +465,7 @@ export default mixins(caseFileDetail).extend({
             },
             lines: [
               {
-                amount: this.bookings.map((b) => b.numberOfNights * b.estimatedAmount).reduce((a, b) => a + b),
+                amount: this.bookings.map((b) => b.numberOfNights * b.nightlyRate).reduce((a, b) => a + b),
                 mainCategoryId: useFinancialAssistanceStore().mainItems[0].mainCategory.id,
                 relatedNumber: [...new Set(this.bookings.map((b) => b.confirmationNumber).filter((x) => x))].join(', '),
                 subCategoryId: useFinancialAssistanceStore().mainItems[0].subItems[0].subCategory.id,

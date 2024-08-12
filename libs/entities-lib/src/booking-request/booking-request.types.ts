@@ -44,7 +44,7 @@ export interface IBookingRequest extends IEntity {
 }
 
 export interface IBooking {
-  estimatedAmount: number,
+  nightlyRate: number,
   confirmationNumber: string,
   numberOfNights: number,
   peopleInRoom: string[],
