@@ -1,6 +1,6 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { ref, Ref } from 'vue';
-import { IAppointmentProgram, IDateRange, IDaySchedule, IdParams, AppointmentProgram } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IDateRange, IDaySchedule, IdParams, AppointmentProgram, AppointmentProgramStatus } from '@libs/entities-lib/appointment';
 import { AppointmentProgramsService, IAppointmentProgramsServiceMock } from '@libs/services-lib/appointment-programs';
 
 export function getExtensionComponents(
@@ -19,8 +19,16 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function editAppointmentProgram(appointment: IAppointmentProgram): Promise<IAppointmentProgram> {
+  async function updateAppointmentProgram(appointment: AppointmentProgram): Promise<IAppointmentProgram> {
     const result = await service.update(appointment);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
+  async function setAppointmentProgramStatus(appointmentId: uuid, aapointmentStatus: AppointmentProgramStatus, rationale: string): Promise<IAppointmentProgram> {
+    const result = await service.setAppointmentProgramStatus(appointmentId, aapointmentStatus, rationale);
     if (result) {
       baseComponents.set(result);
     }
@@ -30,6 +38,7 @@ export function getExtensionComponents(
   return {
     schedule,
     createAppointmentProgram,
-    editAppointmentProgram,
+    updateAppointmentProgram,
+    setAppointmentProgramStatus,
   };
 }

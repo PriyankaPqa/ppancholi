@@ -1,5 +1,5 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed, changed }" slim>
     <rc-page-content
       :title="isEditMode ? $t('appointmentProgram.edit.title') : $t('appointmentProgram.add.title')">
       <v-container v-if="appointmentProgramLoading">
@@ -58,13 +58,36 @@
               </v-col>
             </v-row>
 
-            <v-row>
+            <v-row v-if="isEditMode">
+              <v-col cols="12" class="d-flex justify-end pb-4">
+                <v-btn class="mr-4" data-test="cancel" @click.stop="back()">
+                  {{ $t('common.cancel') }}
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  data-test="save"
+                  :loading="loading"
+                  :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError"
+                  @click.stop="submit">
+                  {{ $t('common.save') }}
+                </v-btn>
+              </v-col>
               <v-col cols="12">
+                <v-divider />
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+
+        <v-row justify="center">
+          <v-col>
+            <v-row justify="center">
+              <v-col cols="12" xl="8" lg="9" md="11">
                 <service-options-table :appointment-program-id="appointmentProgram.id" />
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12">
+            <v-row justify="center">
+              <v-col cols="12" xl="8" lg="9" md="11">
                 <staff-members-table :appointment-program-id="appointmentProgram.id" />
               </v-col>
             </v-row>
@@ -72,7 +95,7 @@
         </v-row>
       </v-container>
 
-      <template #actions>
+      <template v-if="!isEditMode" #actions>
         <v-btn class="mr-4" data-test="cancel" @click.stop="back()">
           {{ $t('common.cancel') }}
         </v-btn>
@@ -80,32 +103,34 @@
           color="primary"
           data-test="save"
           :loading="loading"
-          :disabled="failed || loading || (isEditMode && !dirty) || scheduleHasError"
+          :disabled="failed || loading || scheduleHasError"
           @click.stop="submit">
-          {{ submitLabel }}
+          {{ $t('common.buttons.create') }}
         </v-btn>
       </template>
     </rc-page-content>
+    <rationale-dialog ref="rationaleDialog" />
   </validation-observer>
 </template>
 
 <script lang="ts">
-import { TranslateResult } from 'vue-i18n';
 import { RcPageContent, VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
+import _cloneDeep from 'lodash/cloneDeep';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import entityUtils from '@libs/entities-lib/utils';
-import { AppointmentProgram, AppointmentProgramStatus, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, AppointmentProgramStatus, DayOfWeek, IDaySchedule, mockAppointmentProgram } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
+import { NavigationGuardNext, Route } from 'vue-router';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -138,6 +163,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   },
 
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    const condition = this.isEditMode && ((this.$refs.form as VForm).flags.changed || this.scheduleIsModified);
+    await helpers.confirmBeforeLeaving(this, condition, next);
+  },
+
   data() {
     return {
       appointmentProgramLoading: false,
@@ -147,6 +177,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       AppointmentProgramStatus,
       timeZoneOptions: canadaTimeZones,
       scheduleHasError: false,
+      originalBusinessHours: null as IDaySchedule[],
     };
   },
 
@@ -168,10 +199,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
       return this.$route.name === routes.events.appointmentPrograms.edit.name;
     },
 
-    submitLabel(): TranslateResult {
-      return this.isEditMode
-        ? this.$t('common.save')
-        : this.$t('common.buttons.create');
+    scheduleIsModified(): boolean {
+      return (this.isEditMode && JSON.stringify(this.originalBusinessHours) !== JSON.stringify(this.appointmentProgram.businessHours));
     },
 
     // The component AvailabilityHours takes the schedule as an object with all week days as keys. Therefore the schedule stored in businessHours,
@@ -198,8 +227,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
     if (this.isEditMode) {
       try {
         this.appointmentProgramLoading = true;
-        const res = await useAppointmentProgramStore().fetch(this.appointmentProgramId) as AppointmentProgram;
-        this.appointmentProgram = new AppointmentProgram(res);
+        // const res = await useAppointmentProgramStore().fetch(this.appointmentProgramId) as AppointmentProgram;
+        this.appointmentProgram = new AppointmentProgram(mockAppointmentProgram());
+        this.originalBusinessHours = _cloneDeep(this.appointmentProgram.businessHours);
       } finally {
         this.appointmentProgramLoading = false;
       }
@@ -218,8 +248,24 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.appointmentProgram.name = entityUtils.getFilledMultilingualField(this.appointmentProgram.name);
     },
 
-    onStatusChange(status: AppointmentProgramStatus) {
-      if (!this.isEditMode) {
+    async onStatusChange(status: AppointmentProgramStatus) {
+      if (this.isEditMode) {
+        const dialog = this.$refs.rationaleDialog as any;
+        const userInput = (await dialog.open({
+        title: this.$t('appointmentProgram.edit.changeStatus.rationale.title'),
+        userBoxText: this.$t('appointmentProgram.edit.changeStatus.rationale.message'),
+      })) as { answered: boolean, rationale: string };
+      if (userInput.answered) {
+        const res = await useAppointmentProgramStore().setAppointmentProgramStatus(this.appointmentProgram.id, status, userInput.rationale);
+        if (res) {
+          this.appointmentProgram.appointmentProgramStatus = status;
+          this.$toasted.global.success(this.$t('appointmentProgram.edit.changeStatus.success'));
+        } else {
+          this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.error'));
+        }
+        dialog.close();
+      }
+      } else {
         this.appointmentProgram.appointmentProgramStatus = status;
       }
     },
@@ -232,6 +278,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.$router.replace({ name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: newProgram.id } });
       } else {
         this.$toasted.global.error(this.$t('event.appointmentProgram.create.failed'));
+      }
+    },
+
+    async updateAppointmentProgram() {
+      const newProgram = await useAppointmentProgramStore().updateAppointmentProgram(this.appointmentProgram);
+      if (newProgram) {
+        this.$toasted.global.success(this.$t('event.appointmentProgram.updated'));
+      } else {
+        this.$toasted.global.error(this.$t('event.appointmentProgram.updated.failed'));
       }
     },
 
@@ -248,7 +303,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         if (!this.isEditMode) {
           await this.createAppointmentProgram();
         } else {
-          // edit program
+          await this.updateAppointmentProgram();
         }
       } catch (e) {
         this.$appInsights.trackTrace('Appointment program submit error', { error: e }, 'CreateEditAppointmentProgram', 'submit');
@@ -261,3 +316,27 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 });
 </script>
+
+<style scoped lang="scss">
+.firstSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: solid 1px var(--v-grey-lighten2);
+  border-radius: 4px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-left: 4px;
+  margin-right: 4px;
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      margin: 0 0 0 16px;
+    }
+  }
+}
+
+</style>

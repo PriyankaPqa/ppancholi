@@ -7,5 +7,5 @@ export const mockAppointmentProgramsService = (): IAppointmentProgramsServiceMoc
   ...mockDomainBaseService(mockAppointmentProgram()),
   create: jest.fn(() => mockAppointmentProgram()),
   update: jest.fn(() => mockAppointmentProgram()),
-
+  setAppointmentProgramStatus: jest.fn(() => mockAppointmentProgram()),
 });

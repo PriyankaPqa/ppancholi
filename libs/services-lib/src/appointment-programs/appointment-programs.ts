@@ -1,6 +1,7 @@
 import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
 import { IAppointmentProgram, AppointmentProgram, IdParams } from '@libs/entities-lib/appointment';
+import { AppointmentProgramStatus } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
 import { GlobalHandler, IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentProgramsService } from './appointment-programs.types';
@@ -19,10 +20,15 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
     return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item, { globalHandler: GlobalHandler.Partial });
   }
 
-  async update(item: IAppointmentProgram): Promise<IAppointmentProgram> {
+  async update(item: AppointmentProgram): Promise<IAppointmentProgram> {
+    item.fillEmptyMultilingualAttributes();
     return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item, {
       globalHandler: GlobalHandler.Partial,
     });
+  }
+
+  async setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: AppointmentProgramStatus, rationale: string): Promise<IAppointmentProgram> {
+    return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${id}`, { appointmentProgramStatus, rationale });
   }
 
   async search(params: ISearchParams):
