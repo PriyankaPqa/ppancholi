@@ -56,7 +56,8 @@ import { EFilterKeyType } from '@libs/component-lib/types';
 import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
-import { linkEventToTeamForManyRoles } from './teams';
+import { TeamType } from '@libs/entities-lib/team';
+import { LinkEventToTeamForManyRoleParams, linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
   provider: any,
@@ -193,7 +194,13 @@ export interface MassAssessmentsViaUploadFileParams {
  */
 export const createEventWithTeamWithUsers = async (provider: IProvider, roles = Object.values(UserRoles)) => {
   const event = await provider.events.createEvent(mockCreateEvent());
-  const team = await linkEventToTeamForManyRoles(event, provider, roles);
+  const linkEventToTeamParamData: Partial<LinkEventToTeamForManyRoleParams> = {
+    event,
+    provider,
+    roles,
+    teamType: TeamType.Standard,
+  };
+  const team = await linkEventToTeamForManyRoles(linkEventToTeamParamData);
   return { event, team };
 };
 
@@ -1080,4 +1087,24 @@ export const prepareStateMassAssessmentsViaUploadFile = async (params: MassAsses
   // eslint-disable-next-line
   const responseMassAssessmentsUpdate = await params.provider.cypress.massAction.createWithFile('assessment', mockCreateMassAssessmentsFile);
   return { responseMassAssessmentsUpdate, mockRequestParamData };
+};
+
+/**
+ * Creates an Event with Assignable Team
+ * @param accessToken
+ * @param roles
+ */
+export const createEventWithAssignableTeam = async (accessToken: string, roles: UserRoles[]) => {
+  const provider = useProvider(accessToken);
+  const event = await provider.events.createEvent(mockCreateEvent());
+  const linkEventToTeamParamData: Partial<LinkEventToTeamForManyRoleParams> = {
+    event,
+    provider,
+    roles,
+    teamType: TeamType.Standard,
+    isAssignable: true,
+    isEscalation: false,
+  };
+  const team = await linkEventToTeamForManyRoles(linkEventToTeamParamData);
+  return { provider, event, team };
 };

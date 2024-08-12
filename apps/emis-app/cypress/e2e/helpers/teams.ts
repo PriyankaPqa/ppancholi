@@ -28,28 +28,49 @@ export const teamMemberId = {
   [UserRoles.readonly]: memberTestDevReadonly,
 } as Record<UserRoles, string>;
 
-export const linkEventToTeamForOneRole = async (event: IEventEntity, provider: IProvider, roleValue: UserRoles, teamType = TeamType.Standard) => {
-  const team = await provider.teams.createTeam(mockTeams({
-    eventIds: [event.id],
-    teamMembers: [{ id: teamMemberId[roleValue], isPrimaryContact: true }],
-    teamType,
+export interface LinkEventToTeamForOneRoleParams {
+  event: IEventEntity,
+  provider: IProvider,
+  teamType: TeamType,
+  roleValue: UserRoles,
+  isAssignable?: boolean,
+  isEscalation?: boolean,
+}
+
+export const linkEventToTeamForOneRole = async (params: Partial<LinkEventToTeamForOneRoleParams>) => {
+  const team = await params.provider.teams.createTeam(mockTeams({
+    eventIds: [params.event.id],
+    teamMembers: [{ id: teamMemberId[params.roleValue], isPrimaryContact: true }],
+    teamType: params.teamType,
+    isAssignable: params.isAssignable,
+    isEscalation: params.isEscalation,
   }));
   return team;
 };
 
-export const linkEventToTeamForManyRoles = async (event: IEventEntity, provider: IProvider, roles: UserRoles[], teamType = TeamType.Standard) => {
+export interface LinkEventToTeamForManyRoleParams {
+  event: IEventEntity,
+  provider: IProvider,
+  roles: UserRoles[]
+  teamType: TeamType,
+  isAssignable?: boolean,
+  isEscalation?: boolean,
+}
+
+export const linkEventToTeamForManyRoles = async (params: Partial<LinkEventToTeamForManyRoleParams>) => {
   const teamMembers = [] as ITeamMember[];
 
-  roles.filter((r) => teamMemberId[r]).forEach((r, i) => {
+  params.roles.filter((r) => teamMemberId[r]).forEach((r, i) => {
     teamMembers.push({ id: teamMemberId[r], isPrimaryContact: i === 0 });
   });
 
-  const team = await provider.teams.createTeam(mockTeams({
-    eventIds: [event.id],
+  const team = await params.provider.teams.createTeam(mockTeams({
+    eventIds: [params.event.id],
     teamMembers,
-    teamType,
+    teamType: params.teamType,
+    isAssignable: params.isAssignable,
+    isEscalation: params.isEscalation,
   }));
-
   return team;
 };
 
@@ -71,7 +92,7 @@ export const removeAddedTeamMembersFromTeam = async (teamId: string, provider: I
           await provider.teams.removeTeamMember(teamId, teamMemberId[r]);
         }
       } catch {
-          // Ignore error
+        // Ignore error
       }
     });
   });
