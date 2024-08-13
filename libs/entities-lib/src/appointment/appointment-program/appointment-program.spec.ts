@@ -17,7 +17,7 @@ const mockData = mockAppointmentProgram();
           expect(item.serviceOptions).toEqual(mockData.serviceOptions);
           expect(item.appointmentProgramStatus).toEqual(mockData.appointmentProgramStatus);
           expect(item.emailConfirmationSubject).toEqual(mockData.emailConfirmationSubject);
-          expect(item.emailConfirmationContent).toEqual(mockData.emailConfirmationContent);
+          expect(item.emailConfirmationMessage).toEqual(mockData.emailConfirmationMessage);
         });
 
         it('should instantiate on empty', () => {
@@ -30,7 +30,7 @@ const mockData = mockAppointmentProgram();
           expect(item.serviceOptions).toEqual([]);
           expect(item.appointmentProgramStatus).toEqual(AppointmentProgramStatus.Active);
           expect(item.emailConfirmationSubject).toEqual(null);
-          expect(item.emailConfirmationContent).toEqual(null);
+          expect(item.emailConfirmationMessage).toEqual(null);
         });
       });
     });

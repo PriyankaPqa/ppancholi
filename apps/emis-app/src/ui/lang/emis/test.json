@@ -2761,6 +2761,8 @@
     "impactedIndividuals.remove_member_from_receiving_assistance.title.not_receiving_assistance": "impactedIndividuals.remove_member_from_receiving_assistance.title.not_receiving_assistance",
     "impactedIndividuals.remove_member_from_receiving_assistance.title.receiving_assistance": "impactedIndividuals.remove_member_from_receiving_assistance.title.receiving_assistance",
     "impactedIndividuals.removed": "impactedIndividuals.removed",
+    "impactedIndividuals.selectMove.content": "",
+    "impactedIndividuals.selectMove.title": "",
     "impactedIndividuals.takeoverCompleted": "",
     "impactedIndividuals.temporary_address.check_in": "impactedIndividuals.temporary_address.check_in",
     "impactedIndividuals.temporary_address.check_out": "impactedIndividuals.temporary_address.check_out",

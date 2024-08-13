@@ -28,6 +28,6 @@ export const mockAppointmentProgram = (force? : Partial<IAppointmentProgram>): I
   serviceOptions: [mockServiceOption()],
   appointmentProgramStatus: AppointmentProgramStatus.Active,
   emailConfirmationSubject: { translation: { en: 'mock-emailConfirmationSubject-en', fr: 'mock-emailConfirmationSubject-fr' } },
-  emailConfirmationContent: { translation: { en: 'mock-emailConfirmationContent-en', fr: 'mock-emailConfirmationContent-fr' } },
+  emailConfirmationMessage: { translation: { en: 'mock-emailConfirmationMessage-en', fr: 'mock-emailConfirmationMessage-fr' } },
   ...force,
 });
