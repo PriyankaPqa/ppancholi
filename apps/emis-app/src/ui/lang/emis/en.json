@@ -2740,6 +2740,8 @@
     "householdDetails.manageDuplicates.title.flagHouseholdResolved": "Flag household duplicate as resolved",
     "householdDetails.potentialDuplicates": "potential duplicate(s)",
     "houshold.status.all-members-have-been-moved-out": "All members have been moved out",
+    "impactedIndividuals.selectMove.title": "Move to another address",
+    "impactedIndividuals.selectMove.content": "Select which member(s) to move:",
     "impactedIndividuals.Previous_temporary_address": "Previous temporary address(es)",
     "impactedIndividuals.bookingRequest": "Booking request",
     "impactedIndividuals.current_temporary_address": "Current temporary address",

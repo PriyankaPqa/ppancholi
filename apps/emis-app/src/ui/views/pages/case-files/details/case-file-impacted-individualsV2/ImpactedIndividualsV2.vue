@@ -21,7 +21,7 @@
             </v-icon>
             {{ $t('impactedIndividuals.pendingRequest') }}
           </v-chip>
-          <v-btn v-if="canMoveToNewAddress" class="mb-6 ml-4 secondary" @click="openBookingRequest()">
+          <v-btn v-if="canMoveToNewAddress" class="mb-6 ml-4 secondary" @click="startMoveProcess()">
             <v-icon class="mr-2">
               mdi-account-multiple
             </v-icon>
@@ -47,6 +47,8 @@
       :show.sync="showBookingDialog"
       :shelter-locations-list="event && event.shelterLocations"
       @close="onCloseDialog()" />
+
+    <select-individuals-dialog ref="selectIndividualsDialog" />
   </rc-page-content>
 </template>
 
@@ -59,9 +61,12 @@ import mixins from 'vue-typed-mixins';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useTeamStore } from '@/pinia/team/team';
 import { ITeamEntity } from '@libs/entities-lib/team';
+import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
+import { Status } from '@libs/shared-lib/types';
 import { useUserStore } from '@/pinia/user/user';
 import caseFileDetail from '../caseFileDetail';
 import ImpactedIndividualCardV2 from './components/ImpactedIndividualCardV2.vue';
+import SelectIndividualsDialog from './components/SelectIndividualsDialog.vue';
 
 export default mixins(caseFileDetail).extend({
   name: 'ImpactedIndividuals',
@@ -70,6 +75,7 @@ export default mixins(caseFileDetail).extend({
     ImpactedIndividualCardV2,
     RcPageContent,
     RcPageLoading,
+    SelectIndividualsDialog,
   },
 
   data() {
@@ -78,6 +84,8 @@ export default mixins(caseFileDetail).extend({
       showBookingDialog: false,
       userCanDoBookings: false,
       bookingTeams: [] as ITeamEntity[],
+      showModifyLodging: false,
+      selectedIndividuals: [] as string[],
     };
   },
 
@@ -120,6 +128,26 @@ export default mixins(caseFileDetail).extend({
     },
     onCloseDialog() : void {
       this.showBookingDialog = false;
+    },
+
+    async startMoveProcess() {
+      const dialog = this.$refs.selectIndividualsDialog as any;
+      const userInput = await (dialog.open({
+        title: this.$t('impactedIndividuals.selectMove.title'),
+        textUserSelection: this.$t('impactedIndividuals.selectMove.content'),
+        individuals: this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active)
+          .map((i) => ({
+            ...this.members.find((m) => m.id === i.personId && m.status === Status.Active),
+            caseFileIndividualId: i.id,
+            isPrimary: i.personId === this.primaryMember?.id,
+          })).filter((m) => m),
+      })) as { answered: boolean, selectedIndividuals: string[] };
+
+      if (userInput.answered) {
+        this.selectedIndividuals = userInput.selectedIndividuals;
+        // this.lodgingMode = LodgingMode.crcProvidedNotAllowed;
+      }
+      dialog.close();
     },
   },
 });
