@@ -681,7 +681,7 @@ const routes = {
       name: 'systemManagement.lists.appointmentModalities',
     },
     serviceOptionTypes: {
-      path: 'lists/service-options',
+      path: 'lists/service-option-types',
       name: 'systemManagement.lists.serviceOptionTypes',
     },
   },
