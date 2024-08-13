@@ -28,16 +28,7 @@ export const teamMemberId = {
   [UserRoles.readonly]: memberTestDevReadonly,
 } as Record<UserRoles, string>;
 
-export const linkEventToTeamForOneRole = async (event: IEventEntity, provider: IProvider, roleValue: UserRoles, teamType = TeamType.Standard) => {
-  const team = await provider.teams.createTeam(mockTeams({
-    eventIds: [event.id],
-    teamMembers: [{ id: teamMemberId[roleValue], isPrimaryContact: true }],
-    teamType,
-  }));
-  return team;
-};
-
-export interface LinkEventToTeamForManyRolesParams {
+export interface LinkEventToTeamParams {
   event: IEventEntity,
   provider: IProvider,
   roles: UserRoles[],
@@ -46,7 +37,18 @@ export interface LinkEventToTeamForManyRolesParams {
   isEscalation?: boolean,
 }
 
-export const linkEventToTeamForManyRoles = async (params: LinkEventToTeamForManyRolesParams) => {
+export const linkEventToTeamForOneRole = async (params: LinkEventToTeamParams) => {
+  const team = await params.provider.teams.createTeam(mockTeams({
+    eventIds: [params.event.id],
+    teamMembers: [{ id: teamMemberId[params.roles[0]], isPrimaryContact: true }],
+    teamType: params.teamType,
+    isAssignable: params.isAssignable,
+    isEscalation: params.isEscalation,
+  }));
+  return team;
+};
+
+export const linkEventToTeamForManyRoles = async (params: LinkEventToTeamParams) => {
   const teamMembers = [] as ITeamMember[];
 
   params.roles.filter((r) => teamMemberId[r]).forEach((r, i) => {
