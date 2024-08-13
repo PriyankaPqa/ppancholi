@@ -88,7 +88,7 @@
                 <v-select-with-validation
                   v-model="form.exceptionalTypeId"
                   :attach="false"
-                  data-test="verifyIdentity_options"
+                  data-test="verifyIdentity_exceptionalType"
                   :disabled="readonly"
                   :items="exceptionalTypes"
                   :item-text="(item) => $m(item.name)"

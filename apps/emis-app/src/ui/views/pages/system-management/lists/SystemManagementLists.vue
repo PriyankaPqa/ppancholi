@@ -148,6 +148,14 @@ export default Vue.extend({
       });
     }
 
+    if (this.$hasFeature(this.$featureKeys.AppointmentBooking)) {
+      optionLists.push({
+        name: 'system_management.lists.appointmentModalities',
+        route: routes.systemManagement.appointmentModalities.name,
+        dataTest: 'appointmentModalities',
+      });
+    }
+
     return {
       ascendingSort: true,
       searchString: '',

@@ -331,6 +331,24 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function setIsOnline(payload: { id: string, isOnline: boolean }): Promise<IOptionItem> {
+    const { id, isOnline } = payload;
+    if (!list.value) {
+      throw new Error('You must set a value for list');
+    }
+
+    const data = await optionItemService.setOptionItemIsOnline(list.value, id, isOnline);
+
+    if (data != null) {
+      // Update the modified item in the state
+      addOrUpdateItem(data);
+
+      return data;
+    }
+
+    return null;
+  }
+
   return {
     items,
     list,
@@ -352,5 +370,6 @@ export function getExtensionComponents(
     setIsDefault,
     setLodging,
     setRestrictFinancial,
+    setIsOnline,
   };
 }

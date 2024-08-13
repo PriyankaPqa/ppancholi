@@ -20,7 +20,7 @@ export class AppointmentProgram extends BaseEntity {
 
   emailConfirmationSubject: IMultilingual;
 
-  emailConfirmationContent: IMultilingual;
+  emailConfirmationMessage: IMultilingual;
 
   constructor(data?: IAppointmentProgram) {
     if (data) {
@@ -32,7 +32,7 @@ export class AppointmentProgram extends BaseEntity {
       this.serviceOptions = data?.serviceOptions ? _cloneDeep(data.serviceOptions) : [];
       this.appointmentProgramStatus = data?.appointmentProgramStatus;
       this.emailConfirmationSubject = data?.emailConfirmationSubject;
-      this.emailConfirmationContent = data?.emailConfirmationContent;
+      this.emailConfirmationMessage = data?.emailConfirmationMessage;
     } else {
       super();
       this.eventId = null;
@@ -41,7 +41,7 @@ export class AppointmentProgram extends BaseEntity {
       this.businessHours = [];
       this.serviceOptions = [];
       this.appointmentProgramStatus = AppointmentProgramStatus.Active;
-      this.emailConfirmationContent = null;
+      this.emailConfirmationMessage = null;
       this.emailConfirmationSubject = null;
     }
   }
