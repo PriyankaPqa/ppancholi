@@ -46,6 +46,7 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     isHidden: false,
     isDefault: false,
     restrictFinancial: false,
+    isOnline: false,
     subitems: [mockOptionSubItem({ id: '1' }), mockOptionSubItem({ id: '2' })],
   },
   {

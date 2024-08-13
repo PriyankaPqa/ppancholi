@@ -447,5 +447,27 @@ describe('>>> Option List Store', () => {
         );
       });
     });
+
+    describe('setIsOnline', () => {
+      it('throws an error if list is not set in the store', async () => {
+        const store = createTestStore();
+        await expect(store.setIsOnline).rejects.toThrow();
+      });
+
+      it('calls the setOptionItemIsOnline endpoint', async () => {
+        const store = createTestStore();
+        store.list = EOptionLists.AppointmentModalities;
+        await store.setIsOnline({
+          id: 'ID',
+          isOnline: true,
+        });
+
+        expect(entityService.setOptionItemIsOnline).toHaveBeenCalledWith(
+          EOptionLists.AppointmentModalities,
+          'ID',
+          true,
+        );
+      });
+    });
   });
 });

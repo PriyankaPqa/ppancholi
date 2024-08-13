@@ -19,6 +19,7 @@ export enum EOptionLists {
   DocumentCategories = 15,
   ExceptionalAuthenticationTypes = 16,
   TaskCategories = 17,
+  AppointmentModalities = 18,
 }
 
 export interface IOptionSubItem extends IEntity {
