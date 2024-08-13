@@ -19,7 +19,9 @@ export default defineConfig(({ mode }) => {
     {},
   );
 
-  return {
+  const isFeatureBranch = env.VITE_IS_FEATURE_BRANCH === 'true';
+
+  const options = {
     server: {
       port: 8080,
     },
@@ -87,4 +89,15 @@ export default defineConfig(({ mode }) => {
     },
     define: envWithProcessPrefix,
   };
+
+  if (isFeatureBranch) {
+    return {
+      ...options,
+      build: {
+        assetsDir: env.VITE_BRANCH_ID,
+      },
+    };
+  }
+
+  return options;
 });

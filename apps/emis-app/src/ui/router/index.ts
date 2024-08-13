@@ -253,7 +253,10 @@ router.beforeEach(async (to, from, next) => {
       } else {
         next(from);
       }
-      checkAppVersion();
+      // We don't want to check app version when testing a feature branch
+      if (process.env.VITE_IS_FEATURE_BRANCH !== 'true') {
+        checkAppVersion();
+      }
     }
   } catch (e) {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
