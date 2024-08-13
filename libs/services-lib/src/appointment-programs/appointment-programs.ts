@@ -33,6 +33,6 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
 
   async search(params: ISearchParams):
     Promise<ICombinedSearchResult<IAppointmentProgram, IEntity>> {
-    return this.http.get('appointments/search/appointment-programs', { params, isOData: true });
+    return this.http.get('appointment/search/appointment-programs', { params, isOData: true });
   }
 }
