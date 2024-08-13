@@ -41,131 +41,27 @@
             <v-row class="mt-8">
               <v-col cols="12" sm="6" md="8">
                 <v-select-with-validation
-                  ref="addressType"
+                  v-model="addressType"
                   background-color="white"
-                  :value="bookings[0].address.addressType"
                   rules="required"
                   hide-details
                   item-value="value"
                   :data-test="'currentAddressType'"
                   :label="`${$t('registration.addresses.addressType')} *`"
                   :items="currentAddressTypeItems"
-                  @change="changeType($event)" />
+                  @change="changeType()" />
               </v-col>
             </v-row>
-            <template v-if="bookings.length">
-              <v-row v-for="(booking, index) in bookings" :key="bookings[0].address.addressType + '_' + booking.uniqueNb">
-                <v-col cols="11" class="rc-heading-5 mb-2 d-flex">
-                  <div class="pr-4">
-                    {{ $t('bookingRequest.roomNumber', { index: index + 1 }) }}
-                  </div>
-                  <v-divider vertical />
-                  <div class="pl-4">
-                    <v-checkbox
-                      v-model="booking.address.takeover"
-                      class="mt-0"
-                      :label="$t('bookingRequest.takeover')"
-                      hide-details />
-                  </div>
-                </v-col>
-                <v-col cols="1" class="float-right">
-                  <v-btn
-                    v-if="index > 0"
-                    icon
-                    @click="removeRoom(booking)">
-                    <v-icon size="24" color="grey darken-2">
-                      mdi-delete
-                    </v-icon>
-                  </v-btn>
-                </v-col>
-                <v-col cols="12" class="grey-container pa-4">
-                  <v-row>
-                    <validation-provider v-slot="{ errors }" class="cb-validation" :rules="{ required: { messageKey: 'bookingRequest.mustSelectIndividuals' } }">
-                      <!-- there are no v-checkbox-group - this does the same for error handling-->
-                      <v-radio-group :error-messages="errors" row class="ma-0 pa-0">
-                        <v-col cols="12" class="pb-0">
-                          <div class="fw-bold">
-                            {{ $t('bookingRequest.individualsToOccupyRoom') }}
-                          </div>
-                        </v-col>
-                        <v-col v-for="individual in peopleToLodge" :key="individual.caseFileIndividualId" lg="3" md="4" sm="6" class="pb-0">
-                          <v-checkbox
-                            v-model="booking.peopleInRoom"
-                            class="mt-0"
-                            :label="individual.identitySet.firstName + ' ' + individual.identitySet.lastName"
-                            :value="individual.caseFileIndividualId"
-                            :disabled="isMemberAlreadySelected(booking, individual.caseFileIndividualId)"
-                            hide-details />
-                        </v-col>
-                      </v-radio-group>
-                    </validation-provider>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="3" class="pb-0">
-                      <v-text-field-with-validation
-                        v-model="booking.nightlyRate"
-                        data-test="nightly-rate"
-                        autocomplete="off"
-                        background-color="white"
-                        :rules="{ required: true, numeric: true }"
-                        :label="`${$t('bookingRequest.nightlyRate')} *`" />
-                    </v-col>
-                    <v-col cols="3" class="pb-0">
-                      <v-text-field-with-validation
-                        v-model="booking.confirmationNumber"
-                        data-test="confirmation-number"
-                        autocomplete="off"
-                        background-color="white"
-                        :rules="{ max: MAX_LENGTH_SM }"
-                        :label="`${$t('bookingRequest.confirmationNumber')}`" />
-                    </v-col>
-                    <v-col cols="3" class="pb-0">
-                      <v-text-field-with-validation
-                        v-model="booking.numberOfNights"
-                        disabled
-                        data-test="number-of-rooms"
-                        autocomplete="off"
-                        background-color="white"
-                        :label="`${$t('bookingRequest.numberOfNights')} *`" />
-                    </v-col>
-                    <v-col cols="3" class="pb-0">
-                      <v-text-field-with-validation
-                        v-model="bookings.length"
-                        disabled
-                        data-test="number-of-rooms"
-                        autocomplete="off"
-                        background-color="white"
-                        :label="`${$t('bookingRequest.numberOfRooms')} *`" />
-                    </v-col>
-                  </v-row>
-
-                  <current-address-form
-                    :shelter-locations="shelterLocations"
-                    :canadian-provinces-items="canadianProvincesItems"
-                    :current-address-type-items="currentAddressTypeItems"
-                    :no-fixed-home="false"
-                    :api-key="apiKey"
-                    :disable-autocomplete="false"
-                    :current-address="booking.address"
-                    lock-crc-provided
-                    booking-mode
-                    hide-title
-                    compact-view
-                    show-crc-provided-and-check-in-check-out
-                    @change="setCurrentAddress($event, index)" />
-                </v-col>
-              </v-row>
-            </template>
-            <v-row>
-              <v-col>
-                <v-btn class="secondary" @click="addRoom()">
-                  <v-icon class="mr-2">
-                    mdi-plus
-                  </v-icon>
-                  {{ $t('bookingRequest.addRoom') }}
-                </v-btn>
-              </v-col>
-            </v-row>
+            <crc-provided-lodging
+              v-if="selectedPaymentDetails && !showSelectTable"
+              :id="caseFileId"
+              ref="crcProvidedLodging"
+              :address-type="addressType"
+              :default-amount="defaultAmount"
+              :bookings="bookings"
+              :people-to-lodge="peopleToLodge"
+              :program="selectedPaymentDetails.program"
+              :table-id="selectedPaymentDetails.table.id" />
           </v-col>
         </v-row>
       </div>
@@ -211,7 +107,7 @@ import {
 import { Status, VForm } from '@libs/shared-lib/types';
 import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
-import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
+import { ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@libs/entities-lib/helpers';
@@ -219,7 +115,6 @@ import { IBookingRequest, RoomOption, RoomType, IBooking } from '@libs/entities-
 import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
-import { differenceInDays, parseISO } from 'date-fns';
 import mixins from 'vue-typed-mixins';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { EFilterKeyType } from '@libs/component-lib/types';
@@ -227,11 +122,11 @@ import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-as
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity, PayeeType } from '@libs/entities-lib/financial-assistance-payment';
 import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
+import CrcProvidedLodging, { ICrcProvidedLodging } from './CrcProvidedLodging.vue';
 
 interface IPaymentDetails { program: IProgramEntity, table: IFinancialAssistanceTableEntity, name: string }
 
@@ -246,6 +141,7 @@ export default mixins(caseFileDetail).extend({
     ReviewBookingRequest,
     RationaleDialog,
     VSelectWithValidation,
+    CrcProvidedLodging,
   },
 
   props: {
@@ -282,6 +178,7 @@ export default mixins(caseFileDetail).extend({
       showSelectTable: false,
       MAX_LENGTH_SM,
       defaultAmount: 0,
+      addressType: null as ECurrentAddressTypes,
     };
   },
 
@@ -289,10 +186,6 @@ export default mixins(caseFileDetail).extend({
     shelterLocations(): IEventGenericLocation[] {
       const locations = this.event?.shelterLocations || [];
       return locations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
-    },
-
-    canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
@@ -307,7 +200,7 @@ export default mixins(caseFileDetail).extend({
 
   async mounted() {
     this.loading = true;
-    this.addRoom();
+    this.addressType = this.bookingRequest.addressType;
     await this.loadMissingCaseFileDetails();
     await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
     const programs = (await useProgramStore().search({ params: {
@@ -335,28 +228,16 @@ export default mixins(caseFileDetail).extend({
   },
 
   methods: {
-    addRoom(type?: ECurrentAddressTypes) {
-      const address = new CurrentAddress();
-      this.uniqueNb += 1;
-      address.reset(this.bookings[0]?.address?.addressType || type || this.bookingRequest.addressType);
-      this.bookings.push({ address, peopleInRoom: [], confirmationNumber: '', nightlyRate: this.defaultAmount, numberOfNights: null, uniqueNb: this.uniqueNb });
-    },
-
-    removeRoom(booking: IBooking) {
-      this.bookings = this.bookings.filter((b) => b !== booking);
-    },
-
-    async changeType(type: ECurrentAddressTypes) {
+    async changeType() {
       this.bookings = [];
-      this.addRoom(type);
       (this.$refs.form as VForm).reset();
+      const crcProvidedSection = (this.$refs.crcProvidedLodging as any) as ICrcProvidedLodging;
+      await this.$nextTick();
+      crcProvidedSection.addRoom();
     },
 
     selectPaymentDetails(detail: IPaymentDetails) {
       if (detail) {
-        this.showSelectTable = false;
-        this.selectedPaymentDetails = detail;
-
         const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
         useFinancialAssistanceStore().setFinancialAssistance({
           fa: detail.table, categories, newProgram: detail.program, removeInactiveItems: true,
@@ -364,18 +245,9 @@ export default mixins(caseFileDetail).extend({
 
         this.defaultAmount = useFinancialAssistanceStore().mainItems[0].subItems[0].maximumAmount;
 
-        this.bookings[0].nightlyRate = this.defaultAmount;
+        this.showSelectTable = false;
+        this.selectedPaymentDetails = detail;
       }
-    },
-
-    setCurrentAddress(form: CurrentAddress, index: number) {
-      this.bookings[index].address = form;
-      this.bookings[index].numberOfNights = form.checkOut && form.checkIn
-        ? (differenceInDays(parseISO(`${form.checkOut}Z`), parseISO(`${form.checkIn}Z`)) || 1) : null;
-    },
-
-    isMemberAlreadySelected(booking: IBooking, id: string) {
-      return !!this.bookings.find((b) => b !== booking && b.peopleInRoom.indexOf(id) > -1);
     },
 
     async rejectBooking() {
@@ -395,9 +267,10 @@ export default mixins(caseFileDetail).extend({
     },
 
     async onSubmit() {
+      const crcProvidedSection = (this.$refs.crcProvidedLodging as any) as ICrcProvidedLodging;
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        if (this.peopleToLodge.find((p) => !this.isMemberAlreadySelected(null, p.caseFileIndividualId))) {
+        if (this.peopleToLodge.find((p) => !crcProvidedSection.isMemberAlreadySelected(null, p.caseFileIndividualId))) {
           if (!(await this.$confirm({
               title: this.$t('bookingRequest.notAllMembersPicked.confirm.title'),
               messages: null,
@@ -412,7 +285,7 @@ export default mixins(caseFileDetail).extend({
         this.loading = true;
 
         try {
-          const paymentPayload = this.generatePayment();
+          const paymentPayload = crcProvidedSection.generatePayment();
 
           const paymentResult = await useFinancialAssistancePaymentStore().addFinancialAssistancePayment(paymentPayload);
           if (!paymentResult) {
@@ -442,45 +315,6 @@ export default mixins(caseFileDetail).extend({
         this.$toasted.global.success(this.$t('bookingRequest.fulfilledAndPaid'));
         this.$emit('update:show', false);
       }
-    },
-
-    generatePayment() : IFinancialAssistancePaymentEntity {
-      const paymentPayload = {
-        caseFileId: this.caseFileId,
-        description: this.$t(
-          'bookingRequest.paymentDescription',
-          {
-            nightlyRate: [...new Set(this.bookings.map((b) => b.nightlyRate))].join(', '),
-            numberOfNights: this.bookings.map((b) => b.numberOfNights).reduce((a, b) => a + b),
-            numberOfRooms: this.bookings.length,
-          },
-        ),
-        financialAssistanceTableId: this.selectedPaymentDetails.table.id,
-        groups: [
-          {
-            groupingInformation: {
-              modality: this.selectedPaymentDetails.program.paymentModalities[0],
-              payeeType: PayeeType.Individual,
-              payeeName: `${this.primaryMember.identitySet.firstName} ${this.primaryMember.identitySet.lastName}`,
-            },
-            lines: [
-              {
-                amount: this.bookings.map((b) => b.numberOfNights * b.nightlyRate).reduce((a, b) => a + b),
-                mainCategoryId: useFinancialAssistanceStore().mainItems[0].mainCategory.id,
-                relatedNumber: [...new Set(this.bookings.map((b) => b.confirmationNumber).filter((x) => x))].join(', '),
-                subCategoryId: useFinancialAssistanceStore().mainItems[0].subItems[0].subCategory.id,
-                status: Status.Active,
-              },
-            ],
-          } as any,
-        ],
-      } as IFinancialAssistancePaymentEntity;
-
-      FinancialAssistancePaymentEntity.generateName(
-        { payment: paymentPayload, items: useFinancialAssistanceStore().mainItems, keepCurrentDate: false, program: this.selectedPaymentDetails.program },
-        this,
-      );
-      return paymentPayload;
     },
   },
 
