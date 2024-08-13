@@ -47,6 +47,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/case-file/task-categories';
       case EOptionLists.AppointmentModalities:
         return '/appointment/appointment-modalities';
+      case EOptionLists.ServiceOptions:
+        return '/appointment/service-options';
       default:
         return '';
     }

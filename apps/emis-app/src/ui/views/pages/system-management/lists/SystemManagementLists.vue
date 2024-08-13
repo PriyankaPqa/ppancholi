@@ -149,11 +149,17 @@ export default Vue.extend({
     }
 
     if (this.$hasFeature(this.$featureKeys.AppointmentBooking)) {
-      optionLists.push({
+      optionLists.push(...[{
         name: 'system_management.lists.appointmentModalities',
         route: routes.systemManagement.appointmentModalities.name,
         dataTest: 'appointmentModalities',
-      });
+      },
+      {
+        name: 'system_management.lists.serviceOptions',
+        route: routes.systemManagement.serviceOptions.name,
+        dataTest: 'serviceOptions',
+      },
+    ]);
     }
 
     return {
