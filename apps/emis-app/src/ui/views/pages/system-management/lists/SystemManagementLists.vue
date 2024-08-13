@@ -155,9 +155,9 @@ export default Vue.extend({
         dataTest: 'appointmentModalities',
       },
       {
-        name: 'system_management.lists.serviceOptions',
-        route: routes.systemManagement.serviceOptions.name,
-        dataTest: 'serviceOptions',
+        name: 'system_management.lists.serviceOptionTypes',
+        route: routes.systemManagement.serviceOptionTypes.name,
+        dataTest: 'serviceOptionTypes',
       },
     ]);
     }

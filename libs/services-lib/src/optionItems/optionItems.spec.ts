@@ -75,8 +75,8 @@ describe('>>> OptionItems Service', () => {
     it('returns correct prefix for EOptionLists.AppointmentModalities', () => {
       expect(service.getPrefix(EOptionLists.AppointmentModalities)).toBe('/appointment/appointment-modalities');
     });
-    it('returns correct prefix for EOptionLists.ServiceOptions', () => {
-      expect(service.getPrefix(EOptionLists.ServiceOptions)).toBe('/appointment/service-options');
+    it('returns correct prefix for EOptionLists.ServiceOptionTypes', () => {
+      expect(service.getPrefix(EOptionLists.ServiceOptionTypes)).toBe('/appointment/service-option-types');
     });
   });
 

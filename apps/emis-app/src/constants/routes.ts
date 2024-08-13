@@ -680,9 +680,9 @@ const routes = {
       path: 'lists/appointment-modalities',
       name: 'systemManagement.lists.appointmentModalities',
     },
-    serviceOptions: {
+    serviceOptionTypes: {
       path: 'lists/service-options',
-      name: 'systemManagement.lists.serviceOptions',
+      name: 'systemManagement.lists.serviceOptionTypes',
     },
   },
   teams: {

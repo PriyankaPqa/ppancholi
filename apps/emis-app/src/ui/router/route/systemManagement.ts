@@ -30,7 +30,7 @@ const DocumentCategories = () => import('@/ui/views/pages/system-management/list
 const ExceptionalAuthenticationTypes = () => import('@/ui/views/pages/system-management/lists/pages/ExceptionalAuthenticationTypes.vue');
 const TaskCategories = () => import('@/ui/views/pages/system-management/lists/pages/TaskCategories.vue');
 const AppointmentModalities = () => import('@/ui/views/pages/system-management/lists/pages/AppointmentModalities.vue');
-const ServiceOptions = () => import('@/ui/views/pages/system-management/lists/pages/ServiceOptions.vue');
+const ServiceOptionTypes = () => import('@/ui/views/pages/system-management/lists/pages/ServiceOptionTypes.vue');
 
 export const systemManagement: RouteConfig = {
   path: Routes.systemManagement.layout.path,
@@ -209,9 +209,9 @@ export const systemManagement: RouteConfig = {
       meta: { level: UserRoles.level6 },
     },
     {
-      path: Routes.systemManagement.serviceOptions.path,
-      name: Routes.systemManagement.serviceOptions.name,
-      component: ServiceOptions,
+      path: Routes.systemManagement.serviceOptionTypes.path,
+      name: Routes.systemManagement.serviceOptionTypes.name,
+      component: ServiceOptionTypes,
       meta: { level: UserRoles.level6 },
     },
   ],

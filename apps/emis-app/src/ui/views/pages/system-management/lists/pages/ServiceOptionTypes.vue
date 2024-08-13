@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.serviceOptions" add-button-label="system_management.lists.add.type" />
+  <option-list title="system_management.lists.serviceOptionTypes" add-button-label="system_management.lists.add.type" />
 </template>
 
 <script lang="ts">
@@ -9,7 +9,7 @@ import { useOptionListStore } from '@/pinia/option-list/optionList';
 import OptionList from '../components/OptionList.vue';
 
 export default Vue.extend({
-  name: 'ServiceOptions',
+  name: 'ServiceOptionTypes',
 
   components: {
     OptionList,
@@ -17,7 +17,7 @@ export default Vue.extend({
 
   created() {
     useOptionListStore().resetState();
-    useOptionListStore().list = EOptionLists.ServiceOptions;
+    useOptionListStore().list = EOptionLists.ServiceOptionTypes;
   },
 });
 </script>

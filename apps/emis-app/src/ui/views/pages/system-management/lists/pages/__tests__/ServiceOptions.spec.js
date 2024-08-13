@@ -6,14 +6,14 @@ import {
 import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 
-import Component from '../ServiceOptions.vue';
+import Component from '../ServiceOptionTypes.vue';
 import OptionList from '../../components/OptionList.vue';
 
 const localVue = createLocalVue();
 
 const { pinia, optionListStore } = useMockOptionListStore();
 
-describe('ServiceOptions.vue', () => {
+describe('ServiceOptionTypes.vue', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('ServiceOptions.vue', () => {
     });
 
     it('uses correct title', () => {
-      expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.serviceOptions');
+      expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.serviceOptionTypes');
     });
   });
 
@@ -47,7 +47,7 @@ describe('ServiceOptions.vue', () => {
       await wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
       });
-      expect(optionListStore.list).toEqual(EOptionLists.ServiceOptions);
+      expect(optionListStore.list).toEqual(EOptionLists.ServiceOptionTypes);
     });
   });
 });
