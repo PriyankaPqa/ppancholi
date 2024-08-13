@@ -37,6 +37,8 @@ export interface IOptionItemsService {
   setOptionItemRestrictFinancial(target: EOptionLists, id: string, restrictFinancial: boolean): Promise<IOptionItemData>;
 
   setOptionItemLodging(target: EOptionLists, id: string, isLodging: boolean): Promise<IOptionItemData>;
+
+  setOptionItemIsOnline(target: EOptionLists, id: string, isOnline: boolean): Promise<IOptionItemData>;
 }
 
 export interface IOptionItemsServiceMock {
@@ -67,4 +69,6 @@ export interface IOptionItemsServiceMock {
   setOptionItemRestrictFinancial: jest.Mock<IOptionItemData>;
 
   setOptionItemLodging: jest.Mock<IOptionItemData>;
+
+  setOptionItemIsOnline: jest.Mock<IOptionItemData>;
 }

@@ -658,6 +658,10 @@ const routes = {
       path: 'lists/task-categories',
       name: 'systemManagement.lists.taskCategories',
     },
+    appointmentModalities: {
+      path: 'lists/appointment-modalities',
+      name: 'systemManagement.lists.appointmentModalities',
+    },
   },
   teams: {
     layout: {
