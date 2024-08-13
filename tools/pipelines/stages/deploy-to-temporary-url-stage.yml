@@ -90,7 +90,7 @@ stages:
                     inlineScript: |
                       az storage blob upload-batch --overwrite --destination '$web' --account-name $(featureStorageName) --source "$(Pipeline.Workspace)/dist"
 
-                  ## TO DO: If VITE_IS_FEATURE_BRANCH === 'true', then our assests will be azure storage under $web/xxxx/xxxx. xxxxx being the branch id VITE_BRANCH_ID. We need to copy all files from $web/xxxx/xxxx to $web/xxxx
+                  ## TO DO For a temporary branch our assests will be azure storage under $web/xxxx/xxxx. xxxxx being the branch id VITE_TEMP_BRANCH_ID. We need to copy all files from $web/xxxx/xxxx to $web/xxxx
                   ## TO DO: Remove things related to storage account validation, custom domain, purge CDN and clean storage
 
                 - task: AzureCLI@2

@@ -18,7 +18,7 @@
         </h1>
       </template>
 
-      <template v-if="isFeatureBranch">
+      <template v-if="isTemporaryBranch">
         <div class="branch-box">
           You are on the branch {{ branchId }}
         </div>
@@ -159,8 +159,8 @@ export default Vue.extend({
     showUnreadNotificationBadge(): boolean {
       return useNotificationStore().getUnreadCount() > 0;
     },
-    isFeatureBranch() {
-      return process.env.VITE_IS_FEATURE_BRANCH === 'true';
+    isTemporaryBranch() {
+      return !!process.env.VITE_TEMP_BRANCH_ID;
     },
   },
 

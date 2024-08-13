@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
     {},
   );
 
-  const isFeatureBranch = env.VITE_IS_FEATURE_BRANCH === 'true';
+  const isTemporaryBranch = !!env.VITE_TEMP_BRANCH_ID;
 
   const options = {
     server: {
@@ -90,11 +90,11 @@ export default defineConfig(({ mode }) => {
     define: envWithProcessPrefix,
   };
 
-  if (isFeatureBranch) {
+  if (isTemporaryBranch) {
     return {
       ...options,
       build: {
-        assetsDir: env.VITE_BRANCH_ID,
+        assetsDir: env.VITE_TEMP_BRANCH_ID,
       },
     };
   }
