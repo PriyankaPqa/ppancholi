@@ -53,7 +53,7 @@ export interface IAppointmentProgram extends IEntity {
   serviceOptions: IServiceOption[];
   appointmentProgramStatus:AppointmentProgramStatus;
   emailConfirmationSubject: IMultilingual;
-  emailConfirmationContent: IMultilingual;
+  emailConfirmationMessage: IMultilingual;
 }
 
 export type IdParams = uuid;
