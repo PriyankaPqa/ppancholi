@@ -8,7 +8,6 @@
       :labels="labels"
       :headers="headers"
       :table-props="tableProps"
-      hide-footer
       :footer-text="footerText"
       :options.sync="options"
       :initial-search="params && params.search"
