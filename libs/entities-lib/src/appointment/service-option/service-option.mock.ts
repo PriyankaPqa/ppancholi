@@ -12,8 +12,6 @@ export const mockServiceOption = (force? : Partial<IServiceOption>): IServiceOpt
   ...mockBaseData(),
   name: { translation: { en: 'service-option-name-en', fr: 'service-option-name-fr' } },
   duration: { minutes: 30 },
-  emailConfirmationSubject: { translation: { en: 'mock-emailConfirmationSubject-en', fr: 'mock-emailConfirmationSubject-fr' } },
-  emailConfirmationContent: { translation: { en: 'mock-emailConfirmationContent-en', fr: 'mock-emailConfirmationContent-fr' } },
   appointmentModalities: [mockListOption()],
   ...force,
 });

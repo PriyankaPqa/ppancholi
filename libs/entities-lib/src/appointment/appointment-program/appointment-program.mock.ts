@@ -1,6 +1,6 @@
 import { mockBaseData } from '../../base';
 import { mockServiceOption } from '../service-option/service-option.mock';
-import { DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
+import { AppointmentProgramStatus, DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
 
 export const mockBookingHour = (force?: Partial<IDaySchedule>): IDaySchedule => ({
   day: DayOfWeek.Monday,
@@ -8,7 +8,7 @@ export const mockBookingHour = (force?: Partial<IDaySchedule>): IDaySchedule => 
   ...force,
 });
 
-export const mockbusinessHours = (force?: IDaySchedule): IDaySchedule[] => {
+export const mockBusinessHours = (force?: IDaySchedule): IDaySchedule[] => {
   const hours:IDaySchedule[] = [
     mockBookingHour({ day: DayOfWeek.Tuesday }),
     mockBookingHour({ day: DayOfWeek.Wednesday }),
@@ -24,7 +24,10 @@ export const mockAppointmentProgram = (force? : Partial<IAppointmentProgram>): I
   eventId: 'mock-eventId',
   name: { translation: { en: 'mock-appointment-program-name-en', fr: 'mock-appointment-program-name-fr' } },
   timeZone: 'America/Toronto',
-  businessHours: mockbusinessHours(),
+  businessHours: mockBusinessHours(),
   serviceOptions: [mockServiceOption()],
+  appointmentProgramStatus: AppointmentProgramStatus.Active,
+  emailConfirmationSubject: { translation: { en: 'mock-emailConfirmationSubject-en', fr: 'mock-emailConfirmationSubject-fr' } },
+  emailConfirmationMessage: { translation: { en: 'mock-emailConfirmationMessage-en', fr: 'mock-emailConfirmationMessage-fr' } },
   ...force,
 });

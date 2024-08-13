@@ -12,7 +12,7 @@
     @close="close"
     @cancel="close"
     @submit="submit">
-    <availability-schedule :schedule.sync="localSchedule" />
+    <availability-hours :schedule.sync="localSchedule" />
   </rc-dialog>
 </template>
 
@@ -22,15 +22,15 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@libs/component-lib/components';
 import { IDaySchedule, IDateRange, ITimeSlot } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import appointmentHelpers from './appointmentHelpers';
-import AvailabilitySchedule from './AvailabilitySchedule.vue';
+import appointmentHelpers from '../utils/appointmentHelpers';
+import AvailabilityHours from '../components/AvailabilityHours.vue';
 
 export default Vue.extend({
   name: 'CustomSchedule',
 
   components: {
     RcDialog,
-    AvailabilitySchedule,
+    AvailabilityHours,
   },
 
   props: {

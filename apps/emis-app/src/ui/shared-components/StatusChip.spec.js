@@ -191,6 +191,18 @@ describe('StatusChip.vue', () => {
       });
     });
 
+    describe('AppointmentProgramStatus', () => {
+      it('should render proper color and text', () => {
+        mountWithStatus('AppointmentProgramStatus', Status.Active);
+        expect(wrapper.vm.color).toEqual(colors.chips.green);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.Status.Active'));
+
+        mountWithStatus('AppointmentProgramStatus', Status.Inactive);
+        expect(wrapper.vm.color).toEqual(colors.chips.light_grey);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.Status.Inactive'));
+      });
+    });
+
     describe('MassActionRunStatus', () => {
       it('should render proper color and text', () => {
         mountWithStatus('MassActionRunStatus', MassActionRunStatus.Processed);
