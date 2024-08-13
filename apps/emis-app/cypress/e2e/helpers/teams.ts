@@ -28,36 +28,25 @@ export const teamMemberId = {
   [UserRoles.readonly]: memberTestDevReadonly,
 } as Record<UserRoles, string>;
 
-export interface LinkEventToTeamForOneRoleParams {
-  event: IEventEntity,
-  provider: IProvider,
-  teamType: TeamType,
-  roleValue: UserRoles,
-  isAssignable?: boolean,
-  isEscalation?: boolean,
-}
-
-export const linkEventToTeamForOneRole = async (params: Partial<LinkEventToTeamForOneRoleParams>) => {
-  const team = await params.provider.teams.createTeam(mockTeams({
-    eventIds: [params.event.id],
-    teamMembers: [{ id: teamMemberId[params.roleValue], isPrimaryContact: true }],
-    teamType: params.teamType,
-    isAssignable: params.isAssignable,
-    isEscalation: params.isEscalation,
+export const linkEventToTeamForOneRole = async (event: IEventEntity, provider: IProvider, roleValue: UserRoles, teamType = TeamType.Standard) => {
+  const team = await provider.teams.createTeam(mockTeams({
+    eventIds: [event.id],
+    teamMembers: [{ id: teamMemberId[roleValue], isPrimaryContact: true }],
+    teamType,
   }));
   return team;
 };
 
-export interface LinkEventToTeamForManyRoleParams {
+export interface LinkEventToTeamForManyRolesParams {
   event: IEventEntity,
   provider: IProvider,
-  roles: UserRoles[]
+  roles: UserRoles[],
   teamType: TeamType,
   isAssignable?: boolean,
   isEscalation?: boolean,
 }
 
-export const linkEventToTeamForManyRoles = async (params: Partial<LinkEventToTeamForManyRoleParams>) => {
+export const linkEventToTeamForManyRoles = async (params: LinkEventToTeamForManyRolesParams) => {
   const teamMembers = [] as ITeamMember[];
 
   params.roles.filter((r) => teamMemberId[r]).forEach((r, i) => {

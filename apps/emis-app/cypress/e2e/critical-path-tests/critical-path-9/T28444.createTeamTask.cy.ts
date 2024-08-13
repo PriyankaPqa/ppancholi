@@ -6,9 +6,11 @@ import { TeamType } from '@libs/entities-lib/team';
 import { format } from 'date-fns';
 import { createEventWithAssignableTeam, createHousehold } from '../../helpers/prepareState';
 import { TasksHomePage } from '../../../pages/tasks/tasksHome.page';
-import { linkEventToTeamForOneRole, LinkEventToTeamForOneRoleParams, removeTeamMembersFromTeam } from '../../helpers/teams';
+import { linkEventToTeamForManyRoles, LinkEventToTeamForManyRolesParams, removeTeamMembersFromTeam } from '../../helpers/teams';
 
-const escalationRole = UserRoles.level6;
+const escalationRole = [
+  UserRoles.level6,
+];
 
 const assignableRoles = [
   UserRoles.level5,
@@ -49,15 +51,15 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
           cy.getToken().then(async (tokenResponse) => {
             accessTokenL6 = tokenResponse.access_token;
             const { provider, event, team } = await createEventWithAssignableTeam(accessTokenL6, assignableRoles);
-            const linkEventToTeamParamData: Partial<LinkEventToTeamForOneRoleParams> = {
+            const escalationTeamParamData: LinkEventToTeamForManyRolesParams = {
               event,
               provider,
               teamType: TeamType.AdHoc,
-              roleValue: escalationRole,
+              roles: escalationRole,
               isAssignable: true,
               isEscalation: true,
             };
-            const escalationTeam = await linkEventToTeamForOneRole(linkEventToTeamParamData); // creates escalation team
+            const escalationTeam = await linkEventToTeamForManyRoles(escalationTeamParamData); // creates escalation team
             const resultCreateHousehold = await createHousehold(provider, event);
             cy.login(roleName);
             cy.goTo(`casefile/${resultCreateHousehold.registrationResponse.caseFile.id}/task`);
@@ -108,7 +110,7 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
           teamTaskDetailsPage.getEditButton().should('be.visible');
           teamTaskDetailsPage.getTeamTaskTeamAssignedTo().should('eq', this.escalationTeamName);
           teamTaskDetailsPage.getTeamTaskActionButton().should('not.be.disabled');
-          if (roleName === escalationRole) {
+          if (roleName === UserRoles.level6) {
             teamTaskDetailsPage.getTeamTaskActionWorkingOnItToggle().should('not.be.disabled');
           } else {
             teamTaskDetailsPage.getTeamTaskActionWorkingOnItToggle().should('be.disabled');

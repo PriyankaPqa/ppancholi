@@ -57,7 +57,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
 import { TeamType } from '@libs/entities-lib/team';
-import { LinkEventToTeamForManyRoleParams, linkEventToTeamForManyRoles } from './teams';
+import { LinkEventToTeamForManyRolesParams, linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
   provider: any,
@@ -194,7 +194,7 @@ export interface MassAssessmentsViaUploadFileParams {
  */
 export const createEventWithTeamWithUsers = async (provider: IProvider, roles = Object.values(UserRoles)) => {
   const event = await provider.events.createEvent(mockCreateEvent());
-  const linkEventToTeamParamData: Partial<LinkEventToTeamForManyRoleParams> = {
+  const linkEventToTeamParamData: LinkEventToTeamForManyRolesParams = {
     event,
     provider,
     roles,
@@ -1097,7 +1097,7 @@ export const prepareStateMassAssessmentsViaUploadFile = async (params: MassAsses
 export const createEventWithAssignableTeam = async (accessToken: string, roles: UserRoles[]) => {
   const provider = useProvider(accessToken);
   const event = await provider.events.createEvent(mockCreateEvent());
-  const linkEventToTeamParamData: Partial<LinkEventToTeamForManyRoleParams> = {
+  const linkEventToTeamParamData: LinkEventToTeamForManyRolesParams = {
     event,
     provider,
     roles,
