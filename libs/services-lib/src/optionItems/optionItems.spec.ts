@@ -75,6 +75,9 @@ describe('>>> OptionItems Service', () => {
     it('returns correct prefix for EOptionLists.AppointmentModalities', () => {
       expect(service.getPrefix(EOptionLists.AppointmentModalities)).toBe('/appointment/appointment-modalities');
     });
+    it('returns correct prefix for EOptionLists.ServiceOptions', () => {
+      expect(service.getPrefix(EOptionLists.ServiceOptions)).toBe('/appointment/service-options');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {
