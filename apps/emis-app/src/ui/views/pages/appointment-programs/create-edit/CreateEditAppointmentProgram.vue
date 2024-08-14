@@ -123,7 +123,6 @@ import _cloneDeep from 'lodash/cloneDeep';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import entityUtils from '@libs/entities-lib/utils';
 import { AppointmentProgram, AppointmentProgramStatus, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
@@ -248,7 +247,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     setLanguageMode(lang: string) {
       this.languageMode = lang;
-      this.appointmentProgram.name = entityUtils.getFilledMultilingualField(this.appointmentProgram.name);
+      this.appointmentProgram.fillEmptyMultilingualAttributes();
     },
 
     async onStatusChange(status: AppointmentProgramStatus) {
@@ -273,26 +272,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
       }
     },
 
-    async createAppointmentProgram() {
-      this.appointmentProgram.eventId = this.id;
-      const newProgram = await useAppointmentProgramStore().createAppointmentProgram(this.appointmentProgram);
-      if (newProgram) {
-        this.$toasted.global.success(this.$t('event.appointmentProgram.created'));
-        this.$router.replace({ name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: newProgram.id } });
-      } else {
-        this.$toasted.global.error(this.$t('event.appointmentProgram.create.failed'));
-      }
-    },
-
-    async updateAppointmentProgram() {
-      const newProgram = await useAppointmentProgramStore().updateAppointmentProgram(this.appointmentProgram);
-      if (newProgram) {
-        this.$toasted.global.success(this.$t('event.appointmentProgram.updated'));
-      } else {
-        this.$toasted.global.error(this.$t('event.appointmentProgram.updated.failed'));
-      }
-    },
-
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
 
@@ -303,10 +282,17 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
       try {
         this.loading = true;
-        if (!this.isEditMode) {
-          await this.createAppointmentProgram();
+        const programResponse = !this.isEditMode ? await useAppointmentProgramStore().createAppointmentProgram(this.appointmentProgram)
+        : await useAppointmentProgramStore().updateAppointmentProgram(this.appointmentProgram);
+        if (programResponse) {
+          this.$toasted.global.success(!this.isEditMode ? this.$t('event.appointmentProgram.created') : this.$t('event.appointmentProgram.updated'));
+          // so we can leave without warning
+          (this.$refs.form as VForm).reset();
+          // reset actually takes a few ms but isnt awaitable...
+          await helpers.timeout(500);
+          this.$router.replace({ name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: programResponse.id } });
         } else {
-          await this.updateAppointmentProgram();
+          this.$toasted.global.error(!this.isEditMode ? this.$t('event.appointmentProgram.create.failed') : this.$t('event.appointmentProgram.updated.failed'));
         }
       } catch (e) {
         this.$appInsights.trackTrace('Appointment program submit error', { error: e }, 'CreateEditAppointmentProgram', 'submit');

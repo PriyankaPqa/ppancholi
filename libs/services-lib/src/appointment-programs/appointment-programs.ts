@@ -16,23 +16,31 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
   }
 
   async create(item: AppointmentProgram): Promise<IAppointmentProgram> {
-    item.fillEmptyMultilingualAttributes();
-    return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item, { globalHandler: GlobalHandler.Partial });
+    const payload = this.parsePayload(item);
+    return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async update(item: AppointmentProgram): Promise<IAppointmentProgram> {
-    item.fillEmptyMultilingualAttributes();
-    return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, item, {
+    const payload = this.parsePayload(item);
+    return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, payload, {
       globalHandler: GlobalHandler.Partial,
     });
   }
 
   async setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: AppointmentProgramStatus, rationale: string): Promise<IAppointmentProgram> {
-    return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${id}`, { appointmentProgramStatus, rationale });
+    return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${id}/appointment-program-status`, { appointmentProgramStatus, rationale });
   }
 
   async search(params: ISearchParams):
     Promise<ICombinedSearchResult<IAppointmentProgram, IEntity>> {
     return this.http.get('appointment/search/appointment-programs', { params, isOData: true });
+  }
+
+  parsePayload(program: AppointmentProgram) {
+    // TODO remove this when email message is implemented
+    program.emailConfirmationMessage = { translation: { en: 'mock-message' } };
+    program.emailConfirmationSubject = { translation: { en: 'mock-subject' } };
+    program.fillEmptyMultilingualAttributes();
+    return program;
   }
 }

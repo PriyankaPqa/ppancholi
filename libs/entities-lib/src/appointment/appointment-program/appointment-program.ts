@@ -41,12 +41,14 @@ export class AppointmentProgram extends BaseEntity {
       this.businessHours = [];
       this.serviceOptions = [];
       this.appointmentProgramStatus = AppointmentProgramStatus.Active;
-      this.emailConfirmationMessage = null;
-      this.emailConfirmationSubject = null;
+      this.emailConfirmationMessage = utils.initMultilingualAttributes();
+      this.emailConfirmationSubject = utils.initMultilingualAttributes();
     }
   }
 
   public fillEmptyMultilingualAttributes() {
     this.name = utils.getFilledMultilingualField(this.name);
+    this.emailConfirmationMessage = utils.getFilledMultilingualField(this.emailConfirmationMessage);
+    this.emailConfirmationSubject = utils.getFilledMultilingualField(this.emailConfirmationSubject);
   }
 }
