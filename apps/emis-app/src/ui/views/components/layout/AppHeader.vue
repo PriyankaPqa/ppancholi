@@ -205,7 +205,7 @@ export default Vue.extend({
     },
     refreshToSameFeatureBranch() {
       // Save where we are to go back there after the refresh
-      sessionStorage.setItem(sessionStorageKeys.sourceUrl.name, this.$route.path);
+      sessionStorage.setItem(sessionStorageKeys.pathBeforeRefresh.name, this.$route.path);
       const branchId = process.env.VITE_TEMP_BRANCH_ID;
       window.location.href = `${window.location.origin}/?fb=${branchId}`;
     },

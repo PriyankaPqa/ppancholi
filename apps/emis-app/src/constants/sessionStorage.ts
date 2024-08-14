@@ -5,8 +5,8 @@ export const sessionStorageKeys = {
   branchId: {
     name: 'branch-id',
   },
-  sourceUrl: {
-    name: 'source-url',
+  pathBeforeRefresh: {
+    name: 'path-before-refresh',
   },
 
 };

@@ -206,10 +206,10 @@ export default {
 
     handleRedirectToBeforeRefreshBranch() {
       // When app refreshed to stay within a branch
-      const sourceUrl = sessionStorage.getItem(sessionStorageKeys.sourceUrl.name);
-      if (sourceUrl) {
-        this.$router.replace({ path: sourceUrl });
-        sessionStorage.removeItem(sessionStorageKeys.sourceUrl.name);
+      const pathBeforeRefresh = sessionStorage.getItem(sessionStorageKeys.pathBeforeRefresh.name);
+      if (pathBeforeRefresh) {
+        this.$router.replace({ path: pathBeforeRefresh });
+        sessionStorage.removeItem(sessionStorageKeys.pathBeforeRefresh.name);
       }
     },
   },
