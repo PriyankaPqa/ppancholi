@@ -38,8 +38,8 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
 
   parsePayload(program: AppointmentProgram) {
     // TODO remove this when email message is implemented
-    program.emailConfirmationMessage = { translation: { en: 'mock-message' } };
-    program.emailConfirmationSubject = { translation: { en: 'mock-subject' } };
+    program.emailConfirmationMessage = program.emailConfirmationMessage?.translation?.en ? program.emailConfirmationMessage : { translation: { en: 'mock-message' } };
+    program.emailConfirmationSubject = program.emailConfirmationSubject?.translation?.en ? program.emailConfirmationSubject : { translation: { en: 'mock-subject' } };
     program.fillEmptyMultilingualAttributes();
     return program;
   }

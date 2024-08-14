@@ -85,7 +85,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       options: {
         page: 1,
         sortBy: [`Entity/Name/Translation/${this.$i18n.locale}`],
-        sortDesc: [true],
       },
       FilterKey,
     };

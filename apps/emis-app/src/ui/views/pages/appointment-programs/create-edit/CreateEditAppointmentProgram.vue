@@ -236,6 +236,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.appointmentProgramLoading = false;
       }
     } else {
+      this.appointmentProgram.eventId = this.id;
       this.appointmentProgram.businessHours = defaultBusinessHours;
     }
   },
@@ -282,14 +283,16 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
       try {
         this.loading = true;
+
         const programResponse = !this.isEditMode ? await useAppointmentProgramStore().createAppointmentProgram(this.appointmentProgram)
         : await useAppointmentProgramStore().updateAppointmentProgram(this.appointmentProgram);
+
         if (programResponse) {
           this.$toasted.global.success(!this.isEditMode ? this.$t('event.appointmentProgram.created') : this.$t('event.appointmentProgram.updated'));
           // so we can leave without warning
           (this.$refs.form as VForm).reset();
           // reset actually takes a few ms but isnt awaitable...
-          await helpers.timeout(500);
+          await helpers.timeout(600);
           this.$router.replace({ name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: programResponse.id } });
         } else {
           this.$toasted.global.error(!this.isEditMode ? this.$t('event.appointmentProgram.create.failed') : this.$t('event.appointmentProgram.updated.failed'));

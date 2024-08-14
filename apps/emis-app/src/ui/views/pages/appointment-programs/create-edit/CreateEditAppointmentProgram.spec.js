@@ -2,7 +2,6 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { AppointmentProgram, AppointmentProgramStatus, mockAppointmentProgram } from '@libs/entities-lib/appointment';
-import entityUtils from '@libs/entities-lib/utils';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
 import Component from './CreateEditAppointmentProgram.vue';
 
@@ -139,12 +138,13 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
   describe('lifecycle', () => {
     describe('Created', () => {
-      it('when is not edit mode, it should set businessHours to default', async () => {
+      it('when is not edit mode, it should set businessHours to default and eventId', async () => {
         await mountWrapper(false);
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.appointmentProgram.businessHours).toEqual(defaultBusinessHours);
+        expect(wrapper.vm.appointmentProgram.eventId).toEqual('EVENT_ID');
       });
 
       it('when in edit mode, should fetch the appointment program and set the appointment program and initial business hours', async () => {
@@ -178,10 +178,9 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls fillEmptyMultilingualAttributes entity method', async () => {
         await mountWrapper();
-        entityUtils.getFilledMultilingualField = jest.fn(() => ({ translate: { en: 'en', fr: 'fr' } }));
+        wrapper.vm.appointmentProgram.fillEmptyMultilingualAttributes = jest.fn();
         await wrapper.vm.setLanguageMode('fr');
-        expect(entityUtils.getFilledMultilingualField).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.appointmentProgram.name).toEqual({ translate: { en: 'en', fr: 'fr' } });
+        expect(wrapper.vm.appointmentProgram.fillEmptyMultilingualAttributes).toHaveBeenCalledTimes(1);
       });
     });
 
