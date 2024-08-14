@@ -22,7 +22,7 @@
         <div class="branch-box">
           You are on the branch {{ branchId }}
         </div>
-        <v-btn @click="refreshToSameFeatureBranch">
+        <v-btn class="ml-1" @click="refreshToSameFeatureBranch">
           Refresh branch
         </v-btn>
       </template>
@@ -171,7 +171,7 @@ export default Vue.extend({
   async created() {
     await useNotificationStore().fetchCurrentUserUnreadIds();
 
-    this.branchId = process.env.VITE_TEMP_BRANCH_ID; // sessionStorage.getItem(sessionStorageKeys.branchId.name);
+    this.branchId = process.env.VITE_TEMP_BRANCH_ID;
   },
 
   methods: {

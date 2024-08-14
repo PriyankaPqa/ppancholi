@@ -141,11 +141,7 @@ export default {
   },
 
   mounted() {
-    // When app refreshed to stay within a branch
-    const sourceUrl = sessionStorage.getItem(sessionStorageKeys.sourceUrl.name);
-    if (sourceUrl) {
-      this.$router.replace({ path: sourceUrl });
-    }
+    this.handleRedirectToBeforeRefreshBranch();
   },
 
   methods: {
@@ -206,6 +202,15 @@ export default {
       setInterval(() => {
         this.$signalR.updateSubscriptions();
       }, this.intervalSignalRSubscriptions);
+    },
+
+    handleRedirectToBeforeRefreshBranch() {
+      // When app refreshed to stay within a branch
+      const sourceUrl = sessionStorage.getItem(sessionStorageKeys.sourceUrl.name);
+      if (sourceUrl) {
+        this.$router.replace({ path: sourceUrl });
+        sessionStorage.removeItem(sessionStorageKeys.sourceUrl.name);
+      }
     },
   },
 };
