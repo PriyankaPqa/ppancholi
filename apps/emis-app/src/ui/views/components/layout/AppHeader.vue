@@ -22,6 +22,9 @@
         <div class="branch-box">
           You are on the branch {{ branchId }}
         </div>
+        <v-btn @click="refreshToSameFeatureBranch">
+          Refresh branch
+        </v-btn>
       </template>
 
       <v-spacer />
@@ -159,6 +162,7 @@ export default Vue.extend({
     showUnreadNotificationBadge(): boolean {
       return useNotificationStore().getUnreadCount() > 0;
     },
+
     isTemporaryBranch() {
       return !!process.env.VITE_TEMP_BRANCH_ID;
     },
@@ -167,7 +171,7 @@ export default Vue.extend({
   async created() {
     await useNotificationStore().fetchCurrentUserUnreadIds();
 
-    this.branchId = sessionStorage.getItem(sessionStorageKeys.branchId.name);
+    this.branchId = process.env.VITE_TEMP_BRANCH_ID; // sessionStorage.getItem(sessionStorageKeys.branchId.name);
   },
 
   methods: {
@@ -198,6 +202,17 @@ export default Vue.extend({
       this.$router.push({
         name: routes.registration.home.name,
       });
+    },
+    refreshToSameFeatureBranch() {
+      const branchId = process.env.VITE_TEMP_BRANCH_ID;
+      const currentUrl = window.location.href;
+      const urlObject = new URL(currentUrl);
+      const baseUrl = `${urlObject.origin}${urlObject.pathname}`;
+
+      sessionStorage.setItem(sessionStorageKeys.sourceUrl.name, currentUrl);
+
+      window.location.href = `${baseUrl}/?fb=${branchId}`;
+      window.location.replace(sessionStorage.getItem(sessionStorageKeys.sourceUrl.name));
     },
   },
 });

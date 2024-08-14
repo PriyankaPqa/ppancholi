@@ -127,7 +127,6 @@ export default {
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VITE_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VITE_API_BASE_URL);
     sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VITE_VERSION);
-    sessionStorage.setItem(sessionStorageKeys.branchId.name, process.env.VITE_TEMP_BRANCH_ID);
 
     if (window.Cypress) {
       initializeStores();
@@ -140,10 +139,8 @@ export default {
     // The access token will be refreshed automatically every 5 minutes..
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // eslint-disable-next-line no-console
-      console.log('DOM ready!');
-    });
+    // Create a infinite loop, probably because some refreshes happen will loading the app
+    // this.listenToRefreshAndKeepFeatureBranch();
   },
 
   methods: {
@@ -206,6 +203,17 @@ export default {
       }, this.intervalSignalRSubscriptions);
     },
 
+    listenToRefreshAndKeepFeatureBranch() {
+      document.addEventListener('DOMContentLoaded', () => {
+        const branchId = process.env.VITE_TEMP_BRANCH_ID;
+        const currentUrl = window.location.href;
+        // Check if the URL already has a query string
+        const separator = currentUrl.includes('?') ? '&' : '?';
+
+        const newUrl = `${currentUrl}${separator}fb=${branchId}`;
+        window.location.href = newUrl;
+      });
+    },
   },
 };
 </script>
