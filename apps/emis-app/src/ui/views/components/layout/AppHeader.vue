@@ -21,10 +21,10 @@
       <template v-if="isTemporaryBranch">
         <div class="branch-box">
           You are on the branch {{ branchId }}
+          <v-btn small class="ml-1" @click="refreshToSameFeatureBranch">
+            Refresh
+          </v-btn>
         </div>
-        <v-btn class="ml-1" @click="refreshToSameFeatureBranch">
-          Refresh branch
-        </v-btn>
       </template>
 
       <v-spacer />
