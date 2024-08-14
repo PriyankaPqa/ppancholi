@@ -152,7 +152,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableData(): IAppointmentProgram[] {
       return useAppointmentProgramStore().getByIdsWithPinnedItems(
         this.searchResultIds,
-        { baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
+        { baseDate: this.searchExecutionDate, parentId: { eventId: this.id }, onlyActive: true },
       );
     },
 
