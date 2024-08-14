@@ -209,26 +209,49 @@ describe('CreateEditAppointmentProgram.vue', () => {
       });
     });
 
-    describe('createAppointmentProgram', () => {
+    describe('submit', () => {
+      it('does not call create unless form validation succeeds', async () => {
+        await mountWrapper(false);
+        wrapper.vm.createAppointmentProgram = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        await wrapper.vm.submit();
+        expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
+      });
+
       it('calls the store createAppointmentProgram with the right payload', async () => {
         const program = new AppointmentProgram();
         program.eventId = 'EVENT_ID';
         program.businessHours = defaultBusinessHours;
         mountWrapper(false);
-        await wrapper.vm.createAppointmentProgram();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
         expect(appointmentProgramStore.createAppointmentProgram).toHaveBeenCalledWith(program);
       });
 
       it('calls a toaster after creating', async () => {
         mountWrapper(false);
-        await wrapper.vm.createAppointmentProgram();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.appointmentProgram.created');
       });
 
       it('sends to details page after creating', async () => {
         mountWrapper(false);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.form.reset = jest.fn();
         appointmentProgramStore.createAppointmentProgram = jest.fn(() => mockAppointmentProgram({ id: '1' }));
-        await wrapper.vm.createAppointmentProgram();
+        await wrapper.vm.submit();
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+          name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: '1' },
+        });
+      });
+
+      it('sends to details page after editing', async () => {
+        mountWrapper();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.form.reset = jest.fn();
+        appointmentProgramStore.updateAppointmentProgram = jest.fn(() => mockAppointmentProgram({ id: '1' }));
+        await wrapper.vm.submit();
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
           name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: '1' },
         });
@@ -236,59 +259,32 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls an error toaster if creating fails', async () => {
         mountWrapper(false);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
         appointmentProgramStore.createAppointmentProgram = jest.fn();
-        await wrapper.vm.createAppointmentProgram();
+        await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('event.appointmentProgram.create.failed');
       });
-    });
 
-    describe('updateAppointmentProgram', () => {
-      it('calls the store updateAppointmentProgram with the right payload', async () => {
-        const program = new AppointmentProgram();
+      it('calls the store updateAppointmentProgram with the right payload in edit mode', async () => {
         mountWrapper();
-        await wrapper.vm.updateAppointmentProgram();
-        expect(appointmentProgramStore.updateAppointmentProgram).toHaveBeenCalledWith(program);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
+        expect(appointmentProgramStore.updateAppointmentProgram).toHaveBeenCalledWith(mockAppointmentProgram());
       });
 
-      it('calls a toaster after creating', async () => {
+      it('calls a toaster after updating', async () => {
         mountWrapper();
-        await wrapper.vm.updateAppointmentProgram();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.appointmentProgram.updated');
       });
 
-      it('calls an error toaster if creating fails', async () => {
+      it('calls an error toaster if updating fails', async () => {
         mountWrapper();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
         appointmentProgramStore.updateAppointmentProgram = jest.fn();
-        await wrapper.vm.updateAppointmentProgram();
+        await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('event.appointmentProgram.updated.failed');
-      });
-    });
-
-    describe('submit', () => {
-      it('does not call create unless form validation succeeds and not edit mode', async () => {
-        await mountWrapper(false);
-        wrapper.vm.createAppointmentProgram = jest.fn();
-        wrapper.vm.$refs.form.validate = jest.fn(() => false);
-
-        await wrapper.vm.submit();
-        expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
-      });
-      it('calls create if form validation succeeds and not edit mode', async () => {
-        await mountWrapper(false);
-        wrapper.vm.createAppointmentProgram = jest.fn();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-        await wrapper.vm.submit();
-        expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(1);
-      });
-
-      it('calls update if form validation succeeds and in edit mode', async () => {
-        await mountWrapper();
-        wrapper.vm.updateAppointmentProgram = jest.fn();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-        await wrapper.vm.submit();
-        expect(wrapper.vm.updateAppointmentProgram).toHaveBeenCalledTimes(1);
       });
     });
   });
