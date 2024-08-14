@@ -138,9 +138,14 @@ export default {
 
     // The access token will be refreshed automatically every 5 minutes..
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
+  },
 
-    // Create a infinite loop, probably because some refreshes happen will loading the app
-    // this.listenToRefreshAndKeepFeatureBranch();
+  mounted() {
+    // When app refreshed to stay within a branch
+    const sourceUrl = sessionStorage.getItem(sessionStorageKeys.sourceUrl.name);
+    if (sourceUrl) {
+      this.$router.replace({ path: sourceUrl });
+    }
   },
 
   methods: {
@@ -201,18 +206,6 @@ export default {
       setInterval(() => {
         this.$signalR.updateSubscriptions();
       }, this.intervalSignalRSubscriptions);
-    },
-
-    listenToRefreshAndKeepFeatureBranch() {
-      document.addEventListener('DOMContentLoaded', () => {
-        const branchId = process.env.VITE_TEMP_BRANCH_ID;
-        const currentUrl = window.location.href;
-        // Check if the URL already has a query string
-        const separator = currentUrl.includes('?') ? '&' : '?';
-
-        const newUrl = `${currentUrl}${separator}fb=${branchId}`;
-        window.location.href = newUrl;
-      });
     },
   },
 };
