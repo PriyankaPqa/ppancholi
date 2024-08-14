@@ -97,7 +97,6 @@ import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useNotificationStore } from '@/pinia/notification/notification';
 import { UserRoles } from '@libs/entities-lib/user';
-import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 const MAX_UNREAD_COUNT = 10; // value for testing, will bump up to 50 after QA is complete
 
@@ -206,13 +205,11 @@ export default Vue.extend({
     refreshToSameFeatureBranch() {
       const branchId = process.env.VITE_TEMP_BRANCH_ID;
       const currentUrl = window.location.href;
-      const urlObject = new URL(currentUrl);
-      const baseUrl = `${urlObject.origin}${urlObject.pathname}`;
+      // Check if the URL already has a query string
+      const separator = currentUrl.includes('?') ? '&' : '?';
 
-      sessionStorage.setItem(sessionStorageKeys.sourceUrl.name, currentUrl);
-
-      window.location.href = `${baseUrl}/?fb=${branchId}`;
-      window.location.replace(sessionStorage.getItem(sessionStorageKeys.sourceUrl.name));
+      const newUrl = `${currentUrl}${separator}fb=${branchId}`;
+      window.location.href = newUrl;
     },
   },
 });
