@@ -28,28 +28,40 @@ export const teamMemberId = {
   [UserRoles.readonly]: memberTestDevReadonly,
 } as Record<UserRoles, string>;
 
-export const linkEventToTeamForOneRole = async (event: IEventEntity, provider: IProvider, roleValue: UserRoles, teamType = TeamType.Standard) => {
-  const team = await provider.teams.createTeam(mockTeams({
-    eventIds: [event.id],
-    teamMembers: [{ id: teamMemberId[roleValue], isPrimaryContact: true }],
-    teamType,
+export interface LinkEventToTeamParams {
+  event: IEventEntity,
+  provider: IProvider,
+  roles: UserRoles[],
+  teamType: TeamType,
+  isAssignable?: boolean,
+  isEscalation?: boolean,
+}
+
+export const linkEventToTeamForOneRole = async (params: LinkEventToTeamParams) => {
+  const team = await params.provider.teams.createTeam(mockTeams({
+    eventIds: [params.event.id],
+    teamMembers: [{ id: teamMemberId[params.roles[0]], isPrimaryContact: true }],
+    teamType: params.teamType,
+    isAssignable: params.isAssignable,
+    isEscalation: params.isEscalation,
   }));
   return team;
 };
 
-export const linkEventToTeamForManyRoles = async (event: IEventEntity, provider: IProvider, roles: UserRoles[], teamType = TeamType.Standard) => {
+export const linkEventToTeamForManyRoles = async (params: LinkEventToTeamParams) => {
   const teamMembers = [] as ITeamMember[];
 
-  roles.filter((r) => teamMemberId[r]).forEach((r, i) => {
+  params.roles.filter((r) => teamMemberId[r]).forEach((r, i) => {
     teamMembers.push({ id: teamMemberId[r], isPrimaryContact: i === 0 });
   });
 
-  const team = await provider.teams.createTeam(mockTeams({
-    eventIds: [event.id],
+  const team = await params.provider.teams.createTeam(mockTeams({
+    eventIds: [params.event.id],
     teamMembers,
-    teamType,
+    teamType: params.teamType,
+    isAssignable: params.isAssignable,
+    isEscalation: params.isEscalation,
   }));
-
   return team;
 };
 
@@ -71,7 +83,7 @@ export const removeAddedTeamMembersFromTeam = async (teamId: string, provider: I
           await provider.teams.removeTeamMember(teamId, teamMemberId[r]);
         }
       } catch {
-          // Ignore error
+        // Ignore error
       }
     });
   });
