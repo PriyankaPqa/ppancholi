@@ -279,6 +279,14 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.appointmentProgram.updated');
       });
 
+      it('resets initialBusinessHours after updating', async () => {
+        mountWrapper();
+        await wrapper.setData({ initialBusinessHours: [] });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
+        expect(wrapper.vm.initialBusinessHours).toEqual(wrapper.vm.appointmentProgram.businessHours);
+      });
+
       it('calls an error toaster if updating fails', async () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
