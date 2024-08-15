@@ -8,7 +8,7 @@
     <rc-page-loading v-if="loading" />
     <template v-else>
       <div class="d-flex full-width">
-        <v-btn v-if="!canRequestBooking" class="primary mb-6" @click="openBookingRequest()">
+        <v-btn v-if="canRequestBooking" class="primary mb-6" @click="openBookingRequest()">
           <v-icon class="mr-2">
             mdi-bed
           </v-icon>
@@ -157,7 +157,7 @@ export default mixins(caseFileDetail).extend({
 
       if (userInput.answered) {
         this.selectedIndividuals = userInput.selectedIndividuals;
-        this.lodgingMode = !this.userCanDoBookings ? LodgingMode.MoveCrcProvidedAllowed : LodgingMode.MoveCrcProvidedNotAllowed;
+        this.lodgingMode = this.userCanDoBookings ? LodgingMode.MoveCrcProvidedAllowed : LodgingMode.MoveCrcProvidedNotAllowed;
         this.showMoveDialog = true;
       }
       dialog.close();
