@@ -15,7 +15,7 @@
     "appointmentProgram.edit.changeStatus.error": "There was an issue updating the appointment program status",
     "appointmentProgram.edit.changeStatus.rationale.message": "Updated by:",
     "appointmentProgram.edit.changeStatus.rationale.title": "Change the appointment program status",
-    "appointmentProgram.edit.changeStatus.success": "The appointment program status was success updated",
+    "appointmentProgram.edit.changeStatus.success": "The appointment program status was successfully updated",
     "appointmentProgram.edit.title": "Edit appointment program",
     "appointmentProgram.name": "Appointment program name",
     "appointmentProgram.section.businessHours": "Business hours",
