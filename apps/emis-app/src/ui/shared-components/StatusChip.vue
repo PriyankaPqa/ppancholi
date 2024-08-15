@@ -55,6 +55,7 @@ export default Vue.extend({
           'AssessmentResponseCompletionStatus',
           'HouseholdStatus',
           'TaskStatus',
+          'AppointmentProgramStatus',
         ].indexOf(value) > -1
       ),
     },
@@ -99,6 +100,7 @@ export default Vue.extend({
         case 'DocumentStatus':
           return this.getDocumentStatusColor();
         case 'Status':
+        case 'AppointmentProgramStatus':
           return this.getStatusColor();
         case 'MassActionRunStatus':
           return this.getMassActionRunStatusColor();
@@ -144,6 +146,7 @@ export default Vue.extend({
         case 'DocumentStatus':
           return `caseFile.document.status.${DocumentStatus[this.status]}`;
         case 'Status':
+        case 'AppointmentProgramStatus':
           return `enums.Status.${Status[this.status]}`;
         case 'MassActionRunStatus':
           return `enums.MassActionRunStatus.${MassActionRunStatus[this.status]}`;

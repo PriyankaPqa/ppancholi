@@ -328,6 +328,24 @@ const routes = {
         name: 'events.assessments.complete',
       },
     },
+    appointmentPrograms: {
+        home: {
+          path: 'appointmentPrograms',
+          name: 'events.appointmentPrograms.home',
+        },
+        create: {
+          path: 'appointmentPrograms/create',
+          name: 'events.appointmentPrograms.create',
+        },
+        edit: {
+          path: 'appointmentPrograms/:appointmentProgramId/edit',
+          name: 'events.appointmentPrograms.edit',
+        },
+        details: {
+          path: 'appointmentPrograms/details/:appointmentProgramId',
+          name: 'events.appointmentPrograms.details',
+        },
+    },
   },
   household: {
     householdProfile: {
@@ -663,6 +681,10 @@ const routes = {
     taskCategories: {
       path: 'lists/task-categories',
       name: 'systemManagement.lists.taskCategories',
+    },
+    appointmentModalities: {
+      path: 'lists/appointment-modalities',
+      name: 'systemManagement.lists.appointmentModalities',
     },
   },
   teams: {

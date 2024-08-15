@@ -22,7 +22,7 @@
       :items="parsedTaskActionHistoryData"
       :items-per-page="-1">
       <template #[`item.${customColumns.userInformation}`]="{ item }">
-        <div class="py-2">
+        <div class="py-2" data-test="history_table_edited_by">
           <b class="no-word-break">{{ item.userInformation.userName }}</b>
           <div class="no-word-break">
             ({{ $m(item.userInformation.roleName) }})
@@ -31,17 +31,19 @@
       </template>
 
       <template #[`item.${customColumns.actionTaken}`]="{ item }">
-        <div class="no-word-break">
+        <div class="no-word-break" data-test="history_table_action_taken">
           {{ item.actionTakenString }}
         </div>
       </template>
       <template #[`item.${customColumns.rationale}`]="{ item }">
-        <div class="no-word-break">
+        <div class="no-word-break" data-test="history_table_rationale">
           {{ item.rationale || '-' }}
         </div>
       </template>
       <template #[`item.${customColumns.dateOfChange}`]="{ item }">
-        {{ helpers.getLocalStringDate(item.timestamp, '', 'PP') }}
+        <div data-test="history_table_change_date">
+          {{ helpers.getLocalStringDate(item.timestamp, '', 'PP') }}
+        </div>
       </template>
     </v-data-table-a11y>
   </rc-dialog>

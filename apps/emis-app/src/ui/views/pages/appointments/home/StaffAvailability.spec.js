@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
-import appointmentHelpers from './appointmentHelpers';
+import appointmentHelpers from '../utils/appointmentHelpers';
 import Component from './StaffAvailability.vue';
 
 const localVue = createLocalVue();

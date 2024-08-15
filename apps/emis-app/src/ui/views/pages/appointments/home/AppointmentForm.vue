@@ -100,7 +100,7 @@ import helpers from '@/ui/helpers/helpers';
 
 import { IDaySchedule } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
 import { STAFF_MEMBER_IDS, STAFF_MEMBER_AVAILABILITIES, APPOINTMENT_PROGRAM_TIMEZONE } from './mocks';
-import appointmentHelpers from './appointmentHelpers';
+import appointmentHelpers from '../utils/appointmentHelpers';
 
 export interface ICalendarEvent {
   name: string,

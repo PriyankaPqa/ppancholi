@@ -9,10 +9,6 @@ export class ServiceOption extends BaseEntity {
 
   duration: Duration;
 
-  emailConfirmationSubject: IMultilingual;
-
-  emailConfirmationContent: IMultilingual;
-
   appointmentModalities: IListOption[];
 
   constructor(data?: IServiceOption) {
@@ -20,15 +16,11 @@ export class ServiceOption extends BaseEntity {
       super(data);
       this.name = data?.name;
       this.duration = data?.duration;
-      this.emailConfirmationSubject = data?.emailConfirmationSubject;
-      this.emailConfirmationContent = data?.emailConfirmationContent;
       this.appointmentModalities = data?.appointmentModalities ? _cloneDeep(data.appointmentModalities) : [];
     } else {
       super();
       this.name = null;
       this.duration = null;
-      this.emailConfirmationSubject = null;
-      this.emailConfirmationContent = null;
       this.appointmentModalities = [];
     }
   }

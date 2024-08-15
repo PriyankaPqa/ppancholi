@@ -10,7 +10,5 @@ export interface IAppointmentModality {
 export interface IServiceOption extends IEntity {
   name: IMultilingual;
   duration: Duration;
-  emailConfirmationSubject: IMultilingual;
-  emailConfirmationContent: IMultilingual;
   appointmentModalities: IListOption[];
 }
