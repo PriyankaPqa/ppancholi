@@ -292,7 +292,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           // so we can leave without warning
           (this.$refs.form as VForm).reset();
           // reset actually takes a few ms but isnt awaitable...
-          await helpers.timeout(600);
+          await helpers.timeout(800);
           this.$router.replace({ name: routes.events.appointmentPrograms.details.name, params: { appointmentProgramId: programResponse.id } });
         } else {
           this.$toasted.global.error(!this.isEditMode ? this.$t('event.appointmentProgram.create.failed') : this.$t('event.appointmentProgram.updated.failed'));
