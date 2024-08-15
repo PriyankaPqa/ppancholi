@@ -37,6 +37,8 @@ export interface ICurrentAddressData {
     checkOut?: Date | string;
 
     takeover?: boolean;
+
+    relatedPaymentIds?: string[];
 }
 
 export interface ICurrentAddressCreateRequest {
@@ -59,6 +61,8 @@ export interface ICurrentAddressCreateRequest {
     checkOut: Date | string;
 
     takeover?: boolean;
+
+    relatedPaymentIds?: string[];
 }
 
 export interface ICurrentAddress extends ICurrentAddressData {

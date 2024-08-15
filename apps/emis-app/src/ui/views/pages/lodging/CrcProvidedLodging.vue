@@ -128,7 +128,7 @@ import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/value-o
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@libs/entities-lib/helpers';
 import { RoomOption, RoomType, IBooking } from '@libs/entities-lib/booking-request';
-import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
+import { IMemberForSelection } from '@libs/entities-lib/value-objects/member';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import { differenceInDays, parseISO } from 'date-fns';
 import mixins from 'vue-typed-mixins';
@@ -180,7 +180,7 @@ export default mixins(caseFileDetail).extend({
       required: true,
     },
     peopleToLodge: {
-      type: Array as () => (IMemberEntity & { caseFileIndividualId: string })[],
+      type: Array as () => IMemberForSelection[],
       required: true,
     },
   },
@@ -211,15 +211,19 @@ export default mixins(caseFileDetail).extend({
   },
 
   async mounted() {
-    this.addRoom();
+    this.addRoom(true);
     await this.loadMissingCaseFileDetails();
   },
 
   methods: {
-    addRoom() {
+    addRoom(ifEmptyOnly = false) {
+      if (ifEmptyOnly && this.bookings.length) {
+        return;
+      }
       const address = new CurrentAddress();
       this.uniqueNb += 1;
       address.reset(this.addressType);
+      address.crcProvided = true;
       this.bookings.push({ address, peopleInRoom: [], confirmationNumber: '', nightlyRate: this.defaultAmount, numberOfNights: null, uniqueNb: this.uniqueNb });
     },
 

@@ -34,10 +34,13 @@ export class CurrentAddress implements ICurrentAddress {
 
   takeover: boolean;
 
+  relatedPaymentIds?: string[];
+
   private bookingRequestMode: boolean;
 
   constructor(data?: ICurrentAddressData) {
     if (!data) {
+      this.relatedPaymentIds = [];
       this.reset();
     } else {
       this.addressType = data.addressType;
@@ -49,6 +52,7 @@ export class CurrentAddress implements ICurrentAddress {
       this.checkIn = data.checkIn ? new Date(data.checkIn) : null;
       this.checkOut = data.checkOut ? new Date(data.checkOut) : null;
       this.takeover = data.takeover;
+      this.relatedPaymentIds = data.relatedPaymentIds;
     }
   }
 
@@ -212,6 +216,7 @@ export class CurrentAddress implements ICurrentAddress {
       checkIn: currentAddress.checkIn ? new Date(currentAddress.checkIn).toISOString() : null,
       checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,
       takeover: currentAddress.takeover,
+      relatedPaymentIds: currentAddress.relatedPaymentIds || [],
     };
   }
 

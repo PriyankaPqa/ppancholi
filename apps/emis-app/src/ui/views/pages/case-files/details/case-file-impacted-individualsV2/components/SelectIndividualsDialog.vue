@@ -71,12 +71,7 @@ import {
   RcDialog,
 } from '@libs/component-lib/components';
 import { VForm } from '@libs/shared-lib/types';
-import { IMemberEntity } from '@libs/entities-lib/household-create';
-
-export interface IMemberForSelection extends IMemberEntity {
-  caseFileIndividualId: string;
-  isPrimary?: boolean;
-}
+import { IMemberForSelection } from '@libs/entities-lib/household-create';
 
 export default Vue.extend({
   name: 'RationaleDialog',

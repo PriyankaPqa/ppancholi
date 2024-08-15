@@ -75,6 +75,7 @@
       :id="selectedRequest.caseFileId"
       :booking-request="selectedRequest"
       :show.sync="showBooking"
+      :lodging-mode="LodgingMode.BookingMode"
       @close="showBooking = false;" />
   </div>
 </template>
@@ -101,7 +102,7 @@ import { useHouseholdStore } from '@/pinia/household/household';
 import { BookingRequestState, IBookingRequest, RoomOption } from '@libs/entities-lib/booking-request';
 import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
-import BookingSetupDialog from './BookingSetupDialog.vue';
+import BookingSetupDialog, { LodgingMode } from './BookingSetupDialog.vue';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'TeamsTable',
@@ -125,6 +126,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       selectedRequest: null as IBookingRequest,
       showBooking: false,
       BookingRequestState,
+      LodgingMode,
     };
   },
 

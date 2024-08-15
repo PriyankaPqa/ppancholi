@@ -59,11 +59,11 @@
             :attach="true"
             :locale="$i18n.locale"
             :value="checkInCheckOutDate"
-            :required="bookingMode"
+            :required="bookingMode && form.crcProvided"
             background-color="white"
             display-format="MMM d, yyyy"
-            :start-label="$t('impactedIndividuals.temporary_address.check_in') + (bookingMode ? ' *' : '')"
-            :end-label="$t('impactedIndividuals.temporary_address.check_out') + (bookingMode ? ' *' : '')"
+            :start-label="$t('impactedIndividuals.temporary_address.check_in') + (bookingMode && form.crcProvided ? ' *' : '')"
+            :end-label="$t('impactedIndividuals.temporary_address.check_out') + (bookingMode && form.crcProvided ? ' *' : '')"
             @input="setCheckInCheckOut($event)" />
         </div>
       </v-col>
@@ -177,7 +177,7 @@
             @keyup="form.address.postalCode = form.address.postalCode ? form.address.postalCode.toUpperCase() : null" />
         </v-col>
 
-        <v-col v-if="!bookingMode && form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
+        <v-col v-if="!form.crcProvided && form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
           <rc-country-select-with-validation
             v-model="form.address.country"
             background-color="white"

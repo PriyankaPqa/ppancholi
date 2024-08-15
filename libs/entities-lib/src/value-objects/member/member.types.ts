@@ -13,6 +13,12 @@ export interface IMemberEntity extends IEntity {
   addressHistory: Array<ICurrentAddress>;
 }
 
+export interface IMemberForSelection extends IMemberEntity {
+  caseFileIndividualId: string;
+  isPrimary?: boolean;
+  receivingAssistance?: boolean;
+}
+
 export interface MemberCreateRequest {
   identitySet: IIdentitySetCreateRequest;
   currentAddress: ICurrentAddressCreateRequest;

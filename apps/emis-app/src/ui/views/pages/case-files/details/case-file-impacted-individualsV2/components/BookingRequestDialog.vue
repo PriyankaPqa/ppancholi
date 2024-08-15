@@ -26,6 +26,7 @@
               :no-fixed-home="false"
               :api-key="apiKey"
               :disable-autocomplete="false"
+              compact-view
               :current-address="address"
               lock-crc-provided
               show-crc-provided-and-check-in-check-out
@@ -192,7 +193,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      return this.getCurrentAddressTypeItems(this.$i18n, false, !!this.shelterLocations.length, true);
+      return this.getCurrentAddressTypeItems(this.$i18n, false, !!this.shelterLocations.length, 'CrcProvidedOnly');
     },
   },
 
