@@ -4,7 +4,7 @@
       v-if="showError"
       icon="mdi-alert"
       data-test="appointments-availability-hours-error"
-      :message=" $t('appointments.availabilityHours.error')" />
+      :message="isEmpty ? $t('appointments.availabilityHours.shouldNotBeEmpty') : $t('appointments.availabilityHours.error')" />
     <v-sheet
       rounded
       outlined
@@ -123,6 +123,11 @@ export default Vue.extend({
       type: Object as () => Record<number, IDaySchedule>,
       required: true,
     },
+
+    canBeEmpty: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -132,6 +137,12 @@ export default Vue.extend({
       showError: false,
       scheduleCopy: _cloneDeep(this.schedule),
     };
+  },
+
+  computed: {
+    isEmpty():boolean {
+      return !Object.keys(this.scheduleCopy).some((key) => !!this.scheduleCopy[+key].timeSlots.length);
+    },
   },
 
   watch: {
@@ -198,7 +209,7 @@ export default Vue.extend({
         });
         return slotHasErrors;
       });
-      this.showError = hasError;
+      this.showError = hasError || (!this.canBeEmpty && this.isEmpty);
     },
   },
 

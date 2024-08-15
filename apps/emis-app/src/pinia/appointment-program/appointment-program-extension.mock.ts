@@ -6,5 +6,6 @@ export function getMockAppointmentProgramExtensionComponents() {
   return {
     createAppointmentProgram: jest.fn(() => appointment),
     updateAppointmentProgram: jest.fn(() => appointment),
+    setAppointmentProgramStatus: jest.fn(() => appointment),
   };
 }
