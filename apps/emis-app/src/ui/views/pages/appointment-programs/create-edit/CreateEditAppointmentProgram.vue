@@ -1,116 +1,118 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed, changed }" slim>
-    <rc-page-content
-      :title="isEditMode ? $t('appointmentProgram.edit.title') : $t('appointmentProgram.add.title')">
-      <v-container v-if="appointmentProgramLoading">
-        <v-row justify="center">
-          <v-col cols="12" lg="10" class="mt-10">
-            <v-skeleton-loader class="my-6" type="article" />
-            <v-skeleton-loader class="my-6" type="article" />
-            <v-skeleton-loader class="my-6" type="article" />
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container v-else>
-        <v-row justify="center">
-          <v-col cols="12" xl="8" lg="9" md="11">
-            <language-tabs :language="languageMode" @click="setLanguageMode" />
-            <v-row class=" ma-0 pa-0 pb-4">
-              <v-col class="d-flex ma-0 pa-0 align-center" cols="10">
-                <status-select
-                  data-test="appointment-program-status"
-                  :value="appointmentProgram.appointmentProgramStatus"
-                  :statuses="[AppointmentProgramStatus.Active, AppointmentProgramStatus.Inactive]"
-                  status-name="AppointmentProgramStatus"
-                  @input="onStatusChange($event)" />
-              </v-col>
-            </v-row>
-            <v-row class="my-0">
-              <v-col cols="12" class="py-0">
-                <v-text-field-with-validation
-                  v-model="appointmentProgram.name.translation[languageMode]"
-                  data-test="appointment-program-name"
-                  :label="`${$t('appointmentProgram.name')}*`"
-                  :rules="rules.name"
-                  @input="resetAsUnique()" />
-              </v-col>
-            </v-row>
-            <v-row class="my-0">
-              <v-col cols="12" class="py-0">
-                <v-select-with-validation
-                  v-model="appointmentProgram.timeZone"
-                  data-test="appointment-program-time-zone"
-                  attach
-                  :label="`${$t('appointmentProgram.timeZone')}*`"
-                  :item-value="(item) => item.name"
-                  :item-text="(item) => $t(`appointmentProgram.timeZones.${item.label}`, { offset: item.offset })"
-                  :items="timeZoneOptions"
-                  :rules="rules.timeZone" />
-              </v-col>
-            </v-row>
+  <div>
+    <validation-observer ref="form" v-slot="{ failed, changed }" slim>
+      <rc-page-content
+        :title="isEditMode ? $t('appointmentProgram.edit.title') : $t('appointmentProgram.add.title')">
+        <v-container v-if="appointmentProgramLoading">
+          <v-row justify="center">
+            <v-col cols="12" lg="10" class="mt-10">
+              <v-skeleton-loader class="my-6" type="article" />
+              <v-skeleton-loader class="my-6" type="article" />
+              <v-skeleton-loader class="my-6" type="article" />
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container v-else>
+          <v-row justify="center">
+            <v-col cols="12" xl="8" lg="9" md="11">
+              <language-tabs :language="languageMode" @click="setLanguageMode" />
+              <v-row class=" ma-0 pa-0 pb-4">
+                <v-col class="d-flex ma-0 pa-0 align-center" cols="10">
+                  <status-select
+                    data-test="appointment-program-status"
+                    :value="appointmentProgram.appointmentProgramStatus"
+                    :statuses="[AppointmentProgramStatus.Active, AppointmentProgramStatus.Inactive]"
+                    status-name="AppointmentProgramStatus"
+                    @input="onStatusChange($event)" />
+                </v-col>
+              </v-row>
+              <v-row class="my-0">
+                <v-col cols="12" class="py-0">
+                  <v-text-field-with-validation
+                    v-model="appointmentProgram.name.translation[languageMode]"
+                    data-test="appointment-program-name"
+                    :label="`${$t('appointmentProgram.name')}*`"
+                    :rules="rules.name"
+                    @input="resetAsUnique()" />
+                </v-col>
+              </v-row>
+              <v-row class="my-0">
+                <v-col cols="12" class="py-0">
+                  <v-select-with-validation
+                    v-model="appointmentProgram.timeZone"
+                    data-test="appointment-program-time-zone"
+                    attach
+                    :label="`${$t('appointmentProgram.timeZone')}*`"
+                    :item-value="(item) => item.name"
+                    :item-text="(item) => $t(`appointmentProgram.timeZones.${item.label}`, { offset: item.offset })"
+                    :items="timeZoneOptions"
+                    :rules="rules.timeZone" />
+                </v-col>
+              </v-row>
 
-            <v-row class="my-0">
-              <v-col cols="12" class="py-0">
-                <div class="fw-bold pb-4">
-                  {{ $t('appointmentProgram.section.businessHours') }}
-                </div>
-                <availability-hours :schedule.sync="schedule" :schedule-has-error.sync="scheduleHasError" />
-              </v-col>
-            </v-row>
+              <v-row class="my-0">
+                <v-col cols="12" class="py-0">
+                  <div class="fw-bold pb-4">
+                    {{ $t('appointmentProgram.section.businessHours') }}
+                  </div>
+                  <availability-hours :schedule.sync="schedule" :schedule-has-error.sync="scheduleHasError" />
+                </v-col>
+              </v-row>
 
-            <v-row v-if="isEditMode">
-              <v-col cols="12" class="d-flex justify-end pb-4">
-                <v-btn class="mr-4" data-test="appointment-program-edit-cancel" @click.stop="back()">
-                  {{ $t('common.cancel') }}
-                </v-btn>
-                <v-btn
-                  color="primary"
-                  data-test="appointment-program-edit-save"
-                  :loading="loading"
-                  :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError"
-                  @click.stop="submit">
-                  {{ $t('common.save') }}
-                </v-btn>
-              </v-col>
-              <v-col cols="12">
-                <v-divider />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
+              <v-row v-if="isEditMode">
+                <v-col cols="12" class="d-flex justify-end pb-4">
+                  <v-btn class="mr-4" data-test="appointment-program-edit-cancel" @click.stop="back()">
+                    {{ $t('common.cancel') }}
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    data-test="appointment-program-edit-save"
+                    :loading="loading"
+                    :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError"
+                    @click.stop="submit">
+                    {{ $t('common.save') }}
+                  </v-btn>
+                </v-col>
+                <v-col cols="12">
+                  <v-divider />
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
 
-        <v-row justify="center">
-          <v-col>
-            <v-row justify="center">
-              <v-col cols="12" xl="8" lg="9" md="11">
-                <service-options-table :appointment-program-id="appointmentProgram.id" />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="12" xl="8" lg="9" md="11">
-                <staff-members-table :appointment-program-id="appointmentProgram.id" />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-container>
+          <v-row justify="center">
+            <v-col>
+              <v-row justify="center">
+                <v-col cols="12" xl="8" lg="9" md="11">
+                  <service-options-table :appointment-program-id="appointmentProgram.id" />
+                </v-col>
+              </v-row>
+              <v-row justify="center">
+                <v-col cols="12" xl="8" lg="9" md="11">
+                  <staff-members-table :appointment-program-id="appointmentProgram.id" />
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-container>
 
-      <template v-if="!isEditMode" #actions>
-        <v-btn class="mr-4" data-test="appointment-program-create-cancel" @click.stop="back()">
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          color="primary"
-          data-test="appointment-program-create-submit"
-          :loading="loading"
-          :disabled="failed || loading || scheduleHasError"
-          @click.stop="submit">
-          {{ $t('common.buttons.create') }}
-        </v-btn>
-      </template>
-    </rc-page-content>
+        <template v-if="!isEditMode" #actions>
+          <v-btn class="mr-4" data-test="appointment-program-create-cancel" @click.stop="back()">
+            {{ $t('common.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            data-test="appointment-program-create-submit"
+            :loading="loading"
+            :disabled="failed || loading || scheduleHasError"
+            @click.stop="submit">
+            {{ $t('common.buttons.create') }}
+          </v-btn>
+        </template>
+      </rc-page-content>
+    </validation-observer>
     <rationale-dialog ref="rationaleDialog" />
-  </validation-observer>
+  </div>
 </template>
 
 <script lang="ts">
