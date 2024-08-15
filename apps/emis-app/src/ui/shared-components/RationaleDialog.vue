@@ -13,12 +13,13 @@
       :show-help="false"
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"
+      :min-height="325"
       content-padding="5"
       data-test="rationale-dialog"
       @cancel="cancel"
       @close="close"
       @submit="submit">
-      <div class="px-16 mx-8 overflow-hidden">
+      <div class="px-16 mx-8">
         <v-col
           cols="12"
           class=" mt-2 mb-8 pa-4 border-radius-all background-color rc-body14"
