@@ -12,9 +12,10 @@ import { mockBookingRequest } from '@libs/entities-lib/booking-request';
 import { createTestingPinia } from '@pinia/testing';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockMember } from '@libs/entities-lib/household-create';
+import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 
-import Component from './BookingSetupDialog.vue';
+import Component, { LodgingMode } from './BookingSetupDialog.vue';
 
 const localVue = createLocalVue();
 
@@ -44,7 +45,7 @@ describe('BookingSetupDialog.vue', () => {
   let wrapper;
   let crcProvidedLodging;
 
-  const mountWrapper = async (fullMount = true, level = 5) => {
+  const mountWrapper = async (fullMount = true, level = 5, lodgingMode = LodgingMode.BookingMode, additionalComputeds = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       pinia,
@@ -57,14 +58,22 @@ describe('BookingSetupDialog.vue', () => {
         };
       },
       propsData: {
-        bookingRequest,
+        bookingRequest: lodgingMode === LodgingMode.BookingMode ? bookingRequest : null,
         id: 'cf-id',
         show: true,
+        lodgingMode,
+      },
+      computed: {
+        ...additionalComputeds,
       },
     });
 
     crcProvidedLodging = { addRoom: jest.fn(), isMemberAlreadySelected: jest.fn() };
-    wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+    if (lodgingMode === LodgingMode.BookingMode) {
+      wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+    }
+
+    await wrapper.vm.$nextTick();
   };
 
   beforeEach(async () => {
@@ -73,6 +82,16 @@ describe('BookingSetupDialog.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('title', () => {
+      it('depends on lodging mode', async () => {
+        await wrapper.setProps({ lodgingMode: LodgingMode.BookingMode });
+        expect(wrapper.vm.title).toEqual('bookingRequest.setup.title');
+        await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedAllowed });
+        expect(wrapper.vm.title).toEqual('impactedIndividuals.moveNewAddress');
+        await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedNotAllowed });
+        expect(wrapper.vm.title).toEqual('impactedIndividuals.moveNewAddress');
+      });
+    });
     describe('shelterLocations', () => {
       it('should return active shelters', async () => {
         expect(wrapper.vm.shelterLocations).toEqual([eventStore.getById().shelterLocations[1]]);
@@ -80,11 +99,17 @@ describe('BookingSetupDialog.vue', () => {
     });
 
     describe('peopleToLodge', () => {
-      it('returns the people receiving assistance', async () => {
+      it('returns the people receiving assistance when no preselected people in props, or preselected people', async () => {
         expect(wrapper.vm.peopleToLodge.length).toEqual(wrapper.vm.individuals.length - 1);
         expect(wrapper.vm.peopleToLodge).toEqual([
-          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id },
-          { ...mockMember({ id: 'pid3' }), caseFileIndividualId: individuals[2].id },
+          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true },
+          { ...mockMember({ id: 'pid3' }), caseFileIndividualId: individuals[2].id, isPrimary: false, receivingAssistance: true },
+        ]);
+
+        await wrapper.setProps({ preselectedIndividuals: [individuals[0].id] });
+        expect(wrapper.vm.peopleToLodge.length).toEqual(1);
+        expect(wrapper.vm.peopleToLodge).toEqual([
+          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true },
         ]);
       });
     });
@@ -115,7 +140,21 @@ describe('BookingSetupDialog.vue', () => {
         expect(wrapper.vm.paymentDetails).toEqual([{ table: tableStore.getById(), program, name: 'Program A - abcd' }]);
         expect(wrapper.vm.showSelectTable).toBeFalsy();
         expect(wrapper.vm.selectedPaymentDetails).toEqual(wrapper.vm.paymentDetails[0]);
+
+        // when lodgingMode = booking
         expect(wrapper.vm.addressType).toEqual(wrapper.vm.bookingRequest.addressType);
+        expect(wrapper.vm.isCrcProvided).toEqual(true);
+        expect(wrapper.vm.lockCrcProvided).toEqual(false);
+
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
+        expect(wrapper.vm.addressType).toBeNull();
+        expect(wrapper.vm.isCrcProvided).toEqual(false);
+        expect(wrapper.vm.lockCrcProvided).toEqual(false);
+
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedNotAllowed);
+        expect(wrapper.vm.addressType).toBeNull();
+        expect(wrapper.vm.isCrcProvided).toEqual(false);
+        expect(wrapper.vm.lockCrcProvided).toEqual(true);
       });
     });
   });
@@ -126,9 +165,69 @@ describe('BookingSetupDialog.vue', () => {
         wrapper.vm.$refs.form.reset = jest.fn();
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
 
+        await wrapper.setData({ addressType: ECurrentAddressTypes.HotelMotel });
         await wrapper.vm.changeType();
         expect(wrapper.vm.$refs.form.reset).toHaveBeenCalled();
         expect(wrapper.vm.$refs.crcProvidedLodging.addRoom).toHaveBeenCalled();
+
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
+        wrapper.vm.$refs.form.reset = jest.fn();
+        await wrapper.setData({ addressType: ECurrentAddressTypes.HotelMotel });
+        await wrapper.vm.changeType();
+        const address = new CurrentAddress();
+        address.reset(ECurrentAddressTypes.HotelMotel);
+        expect(wrapper.vm.bookings).toEqual([{ address, peopleInRoom: [], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }]);
+      });
+
+      it('sets up crc provided depending on address type', async () => {
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
+        wrapper.vm.$refs.form.reset = jest.fn();
+
+        await wrapper.setData({ addressType: ECurrentAddressTypes.HotelMotel, isCrcProvided: true });
+        await wrapper.vm.changeType(true);
+        expect(wrapper.vm.showCrcProvidedSelection).toBeTruthy();
+        expect(wrapper.vm.isCrcProvided).toBeNull();
+
+        await wrapper.setData({ addressType: ECurrentAddressTypes.HotelMotel, isCrcProvided: true });
+        await wrapper.vm.changeType();
+        expect(wrapper.vm.showCrcProvidedSelection).toBeTruthy();
+        expect(wrapper.vm.isCrcProvided).toBeTruthy();
+
+        await wrapper.setData({ addressType: ECurrentAddressTypes.FriendsFamily, isCrcProvided: true });
+        await wrapper.vm.changeType(true);
+        expect(wrapper.vm.showCrcProvidedSelection).toBeFalsy();
+        expect(wrapper.vm.isCrcProvided).toBeFalsy();
+      });
+
+      it('warns if trying to set CRCProvided but one person cant receive it', async () => {
+        const peopleToLodge = wrapper.vm.peopleToLodge;
+
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { peopleToLodge() {
+          return peopleToLodge;
+        } });
+        wrapper.vm.$refs.form.reset = jest.fn();
+
+        await wrapper.setData({ addressType: ECurrentAddressTypes.HotelMotel, isCrcProvided: true });
+        await wrapper.vm.changeType();
+
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+        expect(wrapper.vm.isCrcProvided).toBeTruthy();
+
+        peopleToLodge[0].receivingAssistance = false;
+        await wrapper.setData({ addressType: ECurrentAddressTypes.HotelMotel, isCrcProvided: true });
+        await wrapper.vm.changeType();
+
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({
+          maxWidth: 750, message: 'impactedIndividuals.crcProvided.notReceivingAssistance.message', title: 'impactedIndividuals.crcProvided.notReceivingAssistance.title',
+        });
+        expect(wrapper.vm.isCrcProvided).toBeFalsy();
+
+        jest.clearAllMocks();
+        await wrapper.setData({ addressType: ECurrentAddressTypes.FriendsFamily, isCrcProvided: false });
+        await wrapper.vm.changeType();
+
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+        expect(wrapper.vm.isCrcProvided).toBeFalsy();
       });
     });
 
@@ -180,6 +279,7 @@ describe('BookingSetupDialog.vue', () => {
         crcProvidedLodging.isMemberAlreadySelected = jest.fn(() => true);
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
         crcProvidedLodging.isMemberAlreadySelected = jest.fn(() => false);
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ cancelActionLabel: 'common.buttons.back', htmlContent: 'bookingRequest.notAllMembersPicked.confirm', messages: null, submitActionLabel: 'common.buttons.continue', title: 'bookingRequest.notAllMembersPicked.confirm.title' });
@@ -187,16 +287,74 @@ describe('BookingSetupDialog.vue', () => {
 
       it('does the calls to save data', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.isMemberAlreadySelected = jest.fn(() => true);
+        crcProvidedLodging.isMemberAlreadySelected = jest.fn(() => true);
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
         const payment = { id: 'some payment' };
         crcProvidedLodging.generatePayment = jest.fn(() => payment);
+        wrapper.vm.provideCrcAddress = jest.fn();
+        wrapper.vm.provideNonCrcAddress = jest.fn();
+
+        await wrapper.setData({ isCrcProvided: true });
         await wrapper.vm.onSubmit();
+
+        expect(wrapper.vm.provideCrcAddress).toHaveBeenCalled();
+        expect(wrapper.vm.provideNonCrcAddress).not.toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        await wrapper.setData({ isCrcProvided: false });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.provideCrcAddress).not.toHaveBeenCalled();
+        expect(wrapper.vm.provideNonCrcAddress).toHaveBeenCalled();
+      });
+    });
+
+    describe('provideCrcAddress', () => {
+      it('does the calls to save data', async () => {
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        const payment = { id: 'some payment' };
+        crcProvidedLodging.generatePayment = jest.fn(() => payment);
+        const address = new CurrentAddress();
+        address.reset(ECurrentAddressTypes.HotelMotel);
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['someone', 'someother'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+
+        await wrapper.vm.provideCrcAddress();
 
         expect(crcProvidedLodging.generatePayment).toHaveBeenCalled();
         expect(paymentStore.addFinancialAssistancePayment).toHaveBeenCalledWith(payment);
         expect(paymentStore.submitFinancialAssistancePayment).toHaveBeenCalledWith('some payment');
         expect(bookingStore.fulfillBooking).toHaveBeenCalledWith(wrapper.vm.bookingRequest, paymentStore.submitFinancialAssistancePayment().id, wrapper.vm.bookings);
+        expect(individualStore.addTemporaryAddress).not.toHaveBeenCalled();
+
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        crcProvidedLodging.generatePayment = jest.fn(() => payment);
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['someone', 'someother'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+
+        jest.clearAllMocks();
+        await wrapper.vm.provideCrcAddress();
+
+        expect(crcProvidedLodging.generatePayment).toHaveBeenCalled();
+        expect(paymentStore.addFinancialAssistancePayment).toHaveBeenCalledWith(payment);
+        expect(paymentStore.submitFinancialAssistancePayment).toHaveBeenCalledWith('some payment');
+        expect(bookingStore.fulfillBooking).not.toHaveBeenCalled();
+        expect(individualStore.addTemporaryAddress).toHaveBeenCalled();
+      });
+    });
+
+    describe('provideNonCrcAddress', () => {
+      it('does the calls to save data', async () => {
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        const payment = { id: 'some payment' };
+        crcProvidedLodging.generatePayment = jest.fn(() => payment);
+        const address = new CurrentAddress();
+        address.reset(ECurrentAddressTypes.HotelMotel);
+
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['someone', 'someother'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+
+        await wrapper.vm.provideNonCrcAddress();
+
+        expect(crcProvidedLodging.generatePayment).not.toHaveBeenCalled();
+        expect(individualStore.addTemporaryAddress).toHaveBeenCalled();
       });
     });
   });

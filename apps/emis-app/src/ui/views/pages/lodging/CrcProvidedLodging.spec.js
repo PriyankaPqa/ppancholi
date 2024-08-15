@@ -91,6 +91,7 @@ describe('CrcProvidedLodging.vue', () => {
         wrapper.vm.addRoom();
         const c = new CurrentAddress();
         c.reset(oldBookings[0].address.addressType);
+        c.crcProvided = true;
         expect(wrapper.vm.bookings).toEqual([...oldBookings,
           {
             address: c,
@@ -101,6 +102,14 @@ describe('CrcProvidedLodging.vue', () => {
             uniqueNb: 2,
           },
         ]);
+      });
+
+      it('doesnt add when not empty when ifEmptyOnly is true', async () => {
+        const oldBookings = [...wrapper.vm.bookings];
+        wrapper.vm.addRoom(true);
+        expect(wrapper.vm.bookings).toEqual([...oldBookings]);
+        wrapper.vm.addRoom();
+        expect(wrapper.vm.bookings.length).toEqual(oldBookings.length + 1);
       });
     });
 

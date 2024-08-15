@@ -141,7 +141,7 @@
       </div>
     </rc-dialog>
     <rc-dialog
-      v-if="showSelectTable"
+      v-if="showSelectTable && isCrcProvided"
       :title="$t('bookingRequest.selectPaymentDetails')"
       :show.sync="showSelectTable"
       :cancel-action-label="$t('common.buttons.cancel')"
@@ -309,7 +309,7 @@ export default mixins(caseFileDetail).extend({
         caseFileIndividualId: i.id,
         receivingAssistance: i.receivingAssistance,
         isPrimary: i.personId === this.primaryMember?.id,
-       })).filter((m) => m);
+       })).filter((m) => m.id);
     },
   },
 
@@ -379,8 +379,9 @@ export default mixins(caseFileDetail).extend({
       (this.$refs.form as VForm).reset();
       await this.$nextTick();
       const crcProvidedSection = (this.$refs.crcProvidedLodging as any) as ICrcProvidedLodging;
+
       if (this.bookings.length === 0) {
-        if (crcProvidedSection) {
+        if (crcProvidedSection?.addRoom) {
           crcProvidedSection.addRoom();
         } else {
           const address = new CurrentAddress();

@@ -144,15 +144,16 @@ export default mixins(caseFileDetail).extend({
 
     async startMoveProcess() {
       const dialog = this.$refs.selectIndividualsDialog as any;
-      const userInput = await (dialog.open({
-        title: this.$t('impactedIndividuals.selectMove.title'),
-        textUserSelection: this.$t('impactedIndividuals.selectMove.content'),
-        individuals: this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active)
+      const peopleToMove = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active)
           .map((i) => ({
             ...this.members.find((m) => m.id === i.personId && m.status === Status.Active),
             caseFileIndividualId: i.id,
             isPrimary: i.personId === this.primaryMember?.id,
-          })).filter((m) => m),
+          })).filter((m) => m.id);
+      const userInput = await (dialog.open({
+        title: this.$t('impactedIndividuals.selectMove.title'),
+        textUserSelection: this.$t('impactedIndividuals.selectMove.content'),
+        individuals: peopleToMove,
       })) as { answered: boolean, selectedIndividuals: string[] };
 
       if (userInput.answered) {

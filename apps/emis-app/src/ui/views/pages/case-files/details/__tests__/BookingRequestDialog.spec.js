@@ -155,6 +155,7 @@ describe('BookingRequestDialog.vue', () => {
             shelterLocation: null,
             state: 1,
             takeover: false,
+            relatedPaymentIds: [],
           },
         );
       });
