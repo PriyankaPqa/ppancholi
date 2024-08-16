@@ -152,7 +152,7 @@
                 {{ $t('task.create_edit.task_description') }}
               </v-col>
               <v-col cols="8">
-                <div class="task-details-description">
+                <div data-test="task-details-description" class="task-details-description">
                   {{ task.description }}
                 </div>
               </v-col>
