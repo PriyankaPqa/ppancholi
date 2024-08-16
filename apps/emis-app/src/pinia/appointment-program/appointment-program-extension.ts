@@ -94,7 +94,9 @@ export function getExtensionComponents(
 
   return {
     schedule,
+    serviceOptionTypes,
     serviceOptionTypesFetched,
+    appointmentModalities,
     appointmentModalitiesFetched,
     getServiceOptionTypes,
     getAppointmentModalities,
