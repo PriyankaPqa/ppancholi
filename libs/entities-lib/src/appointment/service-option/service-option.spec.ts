@@ -9,16 +9,14 @@ const mockData = mockServiceOption();
         it('should instantiate info', () => {
           const item = new ServiceOption(mockData);
 
-          expect(item.name).toEqual(mockData.name);
-          expect(item.duration).toEqual(mockData.duration);
+          expect(item.type).toEqual(mockData.type);
           expect(item.appointmentModalities).toEqual(mockData.appointmentModalities);
         });
 
         it('should instantiate on empty', () => {
           const item = new ServiceOption();
 
-          expect(item.name).toEqual(null);
-          expect(item.duration).toEqual(null);
+          expect(item.type).toEqual(null);
           expect(item.appointmentModalities).toEqual([]);
         });
       });
