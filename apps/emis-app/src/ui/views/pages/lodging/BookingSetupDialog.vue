@@ -460,25 +460,29 @@ export default mixins(caseFileDetail).extend({
     async provideCrcAddress() {
       const crcProvidedSection = (this.$refs.crcProvidedLodging as any) as ICrcProvidedLodging;
       const paymentPayload = crcProvidedSection.generatePayment();
+      let paymentId = null as string;
 
-      const paymentResult = await useFinancialAssistancePaymentStore().addFinancialAssistancePayment(paymentPayload);
-      if (!paymentResult) {
-        throw new Error('addFinancialAssistancePayment failed');
-      }
+      if (paymentPayload) {
+        const paymentResult = await useFinancialAssistancePaymentStore().addFinancialAssistancePayment(paymentPayload);
+        if (!paymentResult) {
+          throw new Error('addFinancialAssistancePayment failed');
+        }
 
-      const submitPaymentResult = await useFinancialAssistancePaymentStore().submitFinancialAssistancePayment(paymentResult.id);
-      if (!submitPaymentResult) {
-        throw new Error('submitFinancialAssistancePayment failed');
+        const submitPaymentResult = await useFinancialAssistancePaymentStore().submitFinancialAssistancePayment(paymentResult.id);
+        if (!submitPaymentResult) {
+          throw new Error('submitFinancialAssistancePayment failed');
+        }
+        paymentId = submitPaymentResult.id;
       }
 
       if (this.lodgingMode === LodgingMode.BookingMode) {
-        const bookingresult = await useBookingRequestStore().fulfillBooking(this.bookingRequest, submitPaymentResult.id, this.bookings);
+        const bookingresult = await useBookingRequestStore().fulfillBooking(this.bookingRequest, paymentId, this.bookings);
         if (!bookingresult) {
           throw new Error('fulfillBooking failed');
         }
       } else {
         this.bookings.forEach(async (b) => {
-          b.address.relatedPaymentIds = [submitPaymentResult.id];
+          b.address.relatedPaymentIds = paymentId ? [paymentId] : [];
           await b.peopleInRoom.forEach(async (p) => {
             const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p, b.address);
             if (!moveResult) {
@@ -487,7 +491,7 @@ export default mixins(caseFileDetail).extend({
           });
         });
       }
-      this.$toasted.global.success(this.$t('bookingRequest.fulfilledAndPaid'));
+      this.$toasted.global.success(this.$t(paymentId ? 'bookingRequest.fulfilledAndPaid' : 'impactedIndividuals.membersMoved'));
     },
 
     async provideNonCrcAddress() {

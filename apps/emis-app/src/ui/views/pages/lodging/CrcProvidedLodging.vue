@@ -65,23 +65,13 @@
               :rules="{ max: MAX_LENGTH_SM }"
               :label="`${$t('bookingRequest.confirmationNumber')}`" />
           </v-col>
-          <v-col cols="3" class="pb-0">
-            <v-text-field-with-validation
-              v-model="booking.numberOfNights"
-              disabled
-              data-test="number-of-rooms"
-              autocomplete="off"
-              background-color="white"
-              :label="`${$t('bookingRequest.numberOfNights')} *`" />
+          <v-col cols="3" class="pb-0 fw-bold">
+            <div>{{ $t('bookingRequest.numberOfNights') }}:</div>
+            <div>{{ booking.numberOfNights }}</div>
           </v-col>
-          <v-col cols="3" class="pb-0">
-            <v-text-field-with-validation
-              v-model="bookings.length"
-              disabled
-              data-test="number-of-rooms"
-              autocomplete="off"
-              background-color="white"
-              :label="`${$t('bookingRequest.numberOfRooms')} *`" />
+          <v-col cols="3" class="pb-0 fw-bold">
+            <div>{{ $t('bookingRequest.numberOfRooms') }}:</div>
+            <div>{{ bookings.length }}</div>
           </v-col>
         </v-row>
 
@@ -111,6 +101,9 @@
         </v-btn>
       </v-col>
     </v-row>
+    <v-card outlined class="mt-8 pa-4 text-right rc-heading-5">
+      {{ $t('bookingRequest.totalEstimatedAmount') }}: {{ $formatCurrency(currentAmount) }}
+    </v-card>
   </div>
 </template>
 
@@ -208,6 +201,10 @@ export default mixins(caseFileDetail).extend({
     canadianProvincesItems(): Record<string, unknown>[] {
       return helpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
+
+    currentAmount(): number {
+      return this.bookings.map((b) => b.numberOfNights * b.nightlyRate).reduce((a, b) => a + b);
+    },
   },
 
   async mounted() {
@@ -224,6 +221,9 @@ export default mixins(caseFileDetail).extend({
       this.uniqueNb += 1;
       address.reset(this.addressType);
       address.crcProvided = true;
+      if (address.hasPlaceNumber() || address.requiresShelterLocation()) {
+        address.placeNumber = this.$t('bookingRequest.roomNumber', { index: this.bookings.length + 1 }) as string;
+      }
       this.bookings.push({ address, peopleInRoom: [], confirmationNumber: '', nightlyRate: this.defaultAmount, numberOfNights: null, uniqueNb: this.uniqueNb });
     },
 
@@ -242,6 +242,9 @@ export default mixins(caseFileDetail).extend({
     },
 
     generatePayment() : IFinancialAssistancePaymentEntity {
+      if (this.currentAmount === 0) {
+        return null;
+      }
       const paymentPayload = {
         caseFileId: this.caseFileId,
         description: this.$t(
@@ -262,7 +265,7 @@ export default mixins(caseFileDetail).extend({
             },
             lines: [
               {
-                amount: this.bookings.map((b) => b.numberOfNights * b.nightlyRate).reduce((a, b) => a + b),
+                amount: this.currentAmount,
                 mainCategoryId: useFinancialAssistanceStore().mainItems[0].mainCategory.id,
                 relatedNumber: [...new Set(this.bookings.map((b) => b.confirmationNumber).filter((x) => x))].join(', '),
                 subCategoryId: useFinancialAssistanceStore().mainItems[0].subItems[0].subCategory.id,

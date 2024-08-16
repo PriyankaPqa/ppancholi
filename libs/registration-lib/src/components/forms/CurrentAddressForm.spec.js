@@ -35,9 +35,6 @@ const doMount = (currentAddress = mockCampGround(), computed = {}, featureList =
       noFixedHome: false,
       disableAutocomplete: false,
     },
-    mocks: {
-      $hasFeature: jest.fn(),
-    },
     ...otherOptions,
   };
 
@@ -85,7 +82,7 @@ describe('CurrentAddressForm.vue', () => {
     });
 
     describe('rules', () => {
-      it('should return correct rules', () => {
+      it('should return correct rules', async () => {
         expect(wrapper.vm.rules).toEqual({
           addressType: {
             required: true,
@@ -117,6 +114,7 @@ describe('CurrentAddressForm.vue', () => {
           },
           placeNumber: {
             max: MAX_LENGTH_SM,
+            required: false,
           },
           unitSuite: {
             max: MAX_LENGTH_SM,
@@ -125,6 +123,12 @@ describe('CurrentAddressForm.vue', () => {
             required: true,
           },
         });
+
+        await doMount(mockCampGround(), {}, [wrapper.vm.$featureKeys.Lodging]);
+        expect(wrapper.vm.rules.placeNumber.required).toBeFalsy();
+
+        await doMount(mockCampGround({ crcProvided: true }), {}, [wrapper.vm.$featureKeys.Lodging]);
+        expect(wrapper.vm.rules.placeNumber.required).toBeTruthy();
       });
     });
 

@@ -43,6 +43,14 @@ describe('>>> Booking request Service', () => {
         bookings: [{ peopleInRoom: ['a'], address: CurrentAddress.parseCurrentAddress(mockTemporaryAddress()) },
           { peopleInRoom: ['b'], address: CurrentAddress.parseCurrentAddress(mockTemporaryAddress()) }],
       });
+
+      await service.fulfillBooking(entity, null, bookings);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/booking-requests/fulfill', {
+        bookingRequestId: entity.id,
+        paymentIds: [],
+        bookings: [{ peopleInRoom: ['a'], address: CurrentAddress.parseCurrentAddress(mockTemporaryAddress()) },
+          { peopleInRoom: ['b'], address: CurrentAddress.parseCurrentAddress(mockTemporaryAddress()) }],
+      });
     });
   });
 

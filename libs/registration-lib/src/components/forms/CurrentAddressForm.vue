@@ -340,6 +340,7 @@ export default Vue.extend({
         },
         placeNumber: {
           max: MAX_LENGTH_SM,
+          required: this.$hasFeature(this.$featureKeys.Lodging) && this.currentAddress.crcProvided,
         },
         unitSuite: {
           max: MAX_LENGTH_SM,
@@ -370,14 +371,15 @@ export default Vue.extend({
     },
 
     placeNumberLabel(): TranslateResult {
+      const required = (this.rules.placeNumber as any).required ? ' *' : '';
       switch (this.addressType) {
         case (ECurrentAddressTypes.Campground):
-          return this.$t('registration.addresses.lotNumber');
+          return this.$t('registration.addresses.lotNumber') + required;
         case (ECurrentAddressTypes.HotelMotel):
         case (ECurrentAddressTypes.MedicalFacility):
-          return this.$t('registration.addresses.roomNumber');
+          return this.$t('registration.addresses.roomNumber') + required;
         case (ECurrentAddressTypes.Shelter):
-          return this.$t('registration.addresses.shelterLocationNumber');
+          return this.$t('registration.addresses.shelterLocationNumber') + required;
         default:
           return '';
       }

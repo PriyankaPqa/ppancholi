@@ -29,7 +29,7 @@ export class BookingRequestsService extends DomainBaseService<IBookingRequest, I
   parseFulFillBooking(item: IBookingRequest, paymentId: string, bookings: IBooking[]) {
     return {
       bookingRequestId: item.id,
-      paymentIds: [paymentId],
+      paymentIds: paymentId ? [paymentId] : [],
       bookings: bookings.map((b) => ({
         peopleInRoom: b.peopleInRoom,
         address: CurrentAddress.parseCurrentAddress(b.address),

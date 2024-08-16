@@ -92,6 +92,7 @@ describe('CrcProvidedLodging.vue', () => {
         const c = new CurrentAddress();
         c.reset(oldBookings[0].address.addressType);
         c.crcProvided = true;
+        c.placeNumber = { key: 'bookingRequest.roomNumber', params: [{ index: 2 }] };
         expect(wrapper.vm.bookings).toEqual([...oldBookings,
           {
             address: c,

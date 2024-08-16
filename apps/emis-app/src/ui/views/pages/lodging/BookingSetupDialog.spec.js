@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 /* eslint-disable vue/max-len */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
@@ -323,6 +324,16 @@ describe('BookingSetupDialog.vue', () => {
         expect(paymentStore.addFinancialAssistancePayment).toHaveBeenCalledWith(payment);
         expect(paymentStore.submitFinancialAssistancePayment).toHaveBeenCalledWith('some payment');
         expect(bookingStore.fulfillBooking).toHaveBeenCalledWith(wrapper.vm.bookingRequest, paymentStore.submitFinancialAssistancePayment().id, wrapper.vm.bookings);
+        expect(individualStore.addTemporaryAddress).not.toHaveBeenCalled();
+
+        crcProvidedLodging.generatePayment = jest.fn(() => null);
+        jest.clearAllMocks();
+        await wrapper.vm.provideCrcAddress();
+
+        expect(crcProvidedLodging.generatePayment).toHaveBeenCalled();
+        expect(paymentStore.addFinancialAssistancePayment).not.toHaveBeenCalled();
+        expect(paymentStore.submitFinancialAssistancePayment).not.toHaveBeenCalled();
+        expect(bookingStore.fulfillBooking).toHaveBeenCalledWith(wrapper.vm.bookingRequest, null, wrapper.vm.bookings);
         expect(individualStore.addTemporaryAddress).not.toHaveBeenCalled();
 
         await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
