@@ -4,7 +4,7 @@
       {{ $t('appointmentProgram.section.serviceOptions') }}
     </div>
     <div class="table_top_header border-radius-top no-bottom-border">
-      <v-btn color="primary" data-test="add-service-option" @click="showAddServiceOptionDialog = true">
+      <v-btn color="primary" data-test="add-service-option" @click="showServiceOptionDialog = true">
         {{ $t('appointmentProgram.serviceOption.table.addServiceOption') }}
       </v-btn>
     </div>
@@ -19,21 +19,32 @@
       @update:sort-by="sortBy = $event"
       @update:sort-desc="sortDesc = $event">
       <template #[`item.${customColumns.name}`]="{ item }">
-        <span data-test="serviceOption__name">{{ item.name }}</span>
-      </template>
-
-      <template #[`item.${customColumns.duration}`]="{ item }">
-        <span data-test="serviceOption__duration"> {{ item.duration }} </span>
+        <button
+          type="button"
+          data-test="serviceOption__name"
+          class="rc-link14 font-weight-bold"
+          @click="selectServiceOption(item)">
+          {{ getTypeName(item.type) }}
+        </button>
       </template>
 
       <template #[`item.${customColumns.modality}`]="{ item }">
-        <span data-test="serviceOption__modality"> {{ item.modality }} </span>
+        <span data-test="serviceOption__modality"> {{ getModalitiesNames(item.appointmentModalities) }} </span>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
-        <span data-test="serviceOption__status"> {{ item.status }} </span>
+        <status-chip data-test="serviceOption__status" status-name="Status" :status="item.status" />
       </template>
     </v-data-table-a11y>
+
+    <create-edit-service-option
+      v-if="showServiceOptionDialog"
+      :show.sync="showServiceOptionDialog"
+      :is-edit-mode="!!selectedServiceOption"
+      :appointment-program-id="appointmentProgramId"
+      :existing-types-ids="existingTypesIds"
+      :service-option="selectedServiceOption || new ServiceOption()"
+      @submit="onUpdateServiceOption" />
   </div>
 </template>
 
@@ -41,31 +52,42 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
+import { IServiceOption, ServiceOption } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { IListOption } from '@libs/shared-lib/types';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import CreateEditServiceOption from '../create-edit/CreateEditServiceOption.vue';
 
 export default Vue.extend({
   name: 'ServiceOptionsTable',
 
   components: {
     VDataTableA11y,
+    CreateEditServiceOption,
+    StatusChip,
   },
 
   props: {
     appointmentProgramId: {
       type: String,
-      required: true,
+      default: '',
     },
 
+    serviceOptions: {
+      type: Array as () => IServiceOption[],
+      required: true,
+    },
   },
 
   data() {
     return {
       sortDesc: false,
       sortBy: 'metadata.displayName',
-      showAddServiceOptionDialog: false,
       loading: false,
-      serviceOptions: [] as IServiceOption[],
+      selectedServiceOption: null,
+      showServiceOptionDialog: false,
+      ServiceOption,
     };
   },
 
@@ -73,7 +95,6 @@ export default Vue.extend({
     customColumns(): Record<string, string> {
       return {
         name: 'name',
-        duration: 'duration',
         modality: 'Metadata/Modality',
         status: 'status',
       };
@@ -86,12 +107,6 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: this.customColumns.name,
-        },
-        {
-          text: this.$t('appointmentProgram.serviceOption.table.duration') as string,
-          filterable: false,
-          sortable: false,
-          value: this.customColumns.duration,
         },
         {
           text: this.$t('appointmentProgram.serviceOption.table.modality') as string,
@@ -108,13 +123,53 @@ export default Vue.extend({
       ];
     },
 
-    appointmentProgram(): IAppointmentProgram {
-      return useAppointmentProgramStore().getById(this.appointmentProgramId);
+    existingTypesIds(): string[] {
+      return this.serviceOptions.map((o) => o.type.optionItemId).filter((id) => id !== this.selectedServiceOption?.type?.optionItemId);
+    },
+
+    serviceOptionTypes(): IOptionItem[] {
+      return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.type.optionItemId));
+    },
+
+    appointmentModalities(): IOptionItem[] {
+      return useAppointmentProgramStore().getAppointmentModalities(this.serviceOptions.map((o) => o.appointmentModalities?.map((m) => m.optionItemId)).flat());
     },
 
   },
 
+  async created() {
+    this.loading = true;
+    await Promise.all([useAppointmentProgramStore().fetchServiceOptionTypes(),
+    useAppointmentProgramStore().fetchAppointmentModalities()]);
+    this.loading = false;
+  },
+
   methods: {
+    getTypeName(type: IListOption): string {
+      return this.$m(this.serviceOptionTypes.find((t) => t.id === type.optionItemId)?.name);
+    },
+
+    getModalitiesNames(modalities: IListOption[]) {
+      return modalities.map((m) => this.$m(this.appointmentModalities.find((t) => t.id === m.optionItemId)?.name)).join(', ');
+    },
+
+    selectServiceOption(serviceOption:ServiceOption) {
+      this.selectedServiceOption = serviceOption;
+      this.showServiceOptionDialog = true;
+    },
+
+    onUpdateServiceOption(serviceOption: ServiceOption) {
+        const index = this.serviceOptions.findIndex((o) => o.type.optionItemId === serviceOption.type.optionItemId);
+
+        if (index > -1) {
+          this.serviceOptions.splice(index, 1, serviceOption);
+        } else {
+          this.serviceOptions.push(serviceOption);
+        }
+
+      this.showServiceOptionDialog = false;
+      this.selectedServiceOption = null;
+    },
 
   },
 });

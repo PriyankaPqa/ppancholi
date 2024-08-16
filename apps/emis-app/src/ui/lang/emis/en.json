@@ -3722,5 +3722,10 @@
     "zendesk.question.create_case_note": "How to create a case note?",
     "zendesk.question.forgot_password": "Forgot password?",
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
-    "zendesk.question.select_language_preferences": "How do I select my language preferences?"
+    "zendesk.question.select_language_preferences": "How do I select my language preferences?",
+    "appointmentProgram.serviceOption.dialog.appointmentModalities": "Appointment modalities",
+    "appointmentProgram.serviceOption.dialog.type": "Service option type",
+    "appointmentProgram.serviceOption.dialog.title.add": "Add service option",
+    "appointmentProgram.serviceOption.dialog.isOnline": "Is online",
+    "appointmentProgram.serviceOption.dialog.title.edit": "Edit service option"
 }

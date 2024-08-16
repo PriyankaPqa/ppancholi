@@ -18,7 +18,7 @@ export class ServiceOption extends BaseEntity {
       this.appointmentModalities = data?.appointmentModalities ? _cloneDeep(data.appointmentModalities) : [];
     } else {
       super();
-      this.type = null;
+      this.type = { optionItemId: null, specifiedOther: null };
       this.appointmentModalities = [];
     }
   }

@@ -50,7 +50,7 @@
                 </v-col>
               </v-row>
 
-              <v-row class="my-0">
+              <v-row v-if="1 === 2" class="my-0">
                 <v-col cols="12" class="py-0">
                   <div class="fw-bold pb-4">
                     {{ $t('appointmentProgram.section.businessHours') }}
@@ -84,7 +84,9 @@
             <v-col>
               <v-row justify="center">
                 <v-col cols="12" xl="8" lg="9" md="11">
-                  <service-options-table :appointment-program-id="appointmentProgram.id" />
+                  <service-options-table
+                    :service-options="appointmentProgram.serviceOptions"
+                    :appointment-program-id="appointmentProgram.id" />
                 </v-col>
               </v-row>
               <v-row justify="center">
@@ -232,7 +234,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.appointmentProgramLoading = true;
         const res = await useAppointmentProgramStore().fetch(this.appointmentProgramId) as AppointmentProgram;
         this.appointmentProgram = new AppointmentProgram(res);
-
         this.initialBusinessHours = _cloneDeep(this.appointmentProgram.businessHours);
       } finally {
         this.appointmentProgramLoading = false;
