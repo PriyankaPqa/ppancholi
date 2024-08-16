@@ -11,21 +11,30 @@
       data-test="service-option-form-dialog"
       :tooltip-label="$t('common.tooltip_label')"
       fullscreen
-      @cancel="$emit('update:show', false)"
-      @close="$emit('update:show', false)"
+      @cancel="$emit('close')"
+      @close="$emit('close')"
       @submit="onSubmit">
       <v-row justify="center" class="pa-0">
         <v-col cols="12" xl="8" lg="9" md="11">
+          <v-row justify="center" class=" ma-0 pa-0 pb-4">
+            <v-col cols="12" xl="8" lg="9" md="11" class="pa-0 pa-0">
+              <status-select
+                v-model="localServiceOption.serviceOptionStatus"
+                data-test="service-option-status"
+                :statuses="[Status.Active, Status.Inactive]"
+                status-name="Status" />
+            </v-col>
+          </v-row>
           <v-row justify="center">
             <v-col cols="12" xl="8" lg="9" md="11">
               <v-select-with-validation
-                v-model="serviceOption.type.optionItemId"
+                v-model="localServiceOption.serviceOptionType.optionItemId"
                 :label="$t('appointmentProgram.serviceOption.dialog.type') + ' *'"
                 :items="serviceOptionTypes"
                 :item-text="(item) => item ? $m(item.name) : null"
                 :item-value="(item) => item ? item.id : null"
                 :rules="{ required: true }"
-                data-test="service-option-form-type" />
+                data-test="service-option-form-serviceOptionType" />
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -74,7 +83,8 @@ import {
   RcDialog,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import { VForm } from '@libs/shared-lib/types';
+import _cloneDeep from 'lodash/cloneDeep';
+import { Status, VForm } from '@libs/shared-lib/types';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { IServiceOption } from '@libs/entities-lib/appointment';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
@@ -101,7 +111,7 @@ export default Vue.extend({
 
     serviceOption: {
       type: Object as () => IServiceOption,
-      required: true,
+      default: null,
     },
 
     existingTypesIds: {
@@ -117,20 +127,28 @@ export default Vue.extend({
   },
 
   data() {
+    const emptyServiceOption : Partial<IServiceOption> = {
+      serviceOptionType: { optionItemId: '', specifiedOther: null },
+      appointmentModalities: [],
+      serviceOptionStatus: Status.Active,
+    };
+
     return {
+      Status,
       loading: false,
-      selectedModalitiesId: this.serviceOption.appointmentModalities.map((m) => m.optionItemId),
+      selectedModalitiesId: this.serviceOption?.appointmentModalities.map((m) => m.optionItemId) || [],
+      localServiceOption: _cloneDeep(this.serviceOption) || emptyServiceOption as IServiceOption | Partial<IServiceOption>,
     };
   },
 
   computed: {
     serviceOptionTypes(): IOptionItem[] {
-      const allTypes = useAppointmentProgramStore().getServiceOptionTypes(this.serviceOption.type.optionItemId);
+      const allTypes = useAppointmentProgramStore().getServiceOptionTypes(this.localServiceOption.serviceOptionType.optionItemId);
       return allTypes.filter((t) => !this.existingTypesIds.includes(t.id));
     },
 
     appointmentModalities(): IOptionItem[] {
-      return useAppointmentProgramStore().getAppointmentModalities(this.serviceOption?.appointmentModalities?.map((m) => m.optionItemId));
+      return useAppointmentProgramStore().getAppointmentModalities(this.localServiceOption?.appointmentModalities?.map((m) => m.optionItemId));
     },
 
   },
@@ -139,23 +157,25 @@ export default Vue.extend({
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        this.serviceOption.appointmentModalities = this.selectedModalitiesId.map((id) => ({ optionItemId: id, specifiedOther: '' }));
+        this.localServiceOption.appointmentModalities = this.selectedModalitiesId.map((id) => ({ optionItemId: id, specifiedOther: null }));
 
         if (this.appointmentProgramId) {
           this.loading = true;
-          const res = !this.isEditMode ? await useAppointmentProgramStore().createServiceOption(this.appointmentProgramId, this.serviceOption)
-          : await useAppointmentProgramStore().updateServiceOption(this.appointmentProgramId, this.serviceOption);
+          const res = !this.isEditMode ? await useAppointmentProgramStore().createServiceOption(this.appointmentProgramId, this.localServiceOption as IServiceOption)
+          : await useAppointmentProgramStore().updateServiceOption(this.appointmentProgramId, this.localServiceOption as IServiceOption);
 
           if (res) {
             this.$toasted.global.success(this.isEditMode ? this.$t('appointmentProgram.serviceOption.dialog.update.success')
             : this.$t('appointmentProgram.serviceOption.dialog.create.success'));
             this.$emit('update:show', false);
           } else {
-            this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.error'));
+            this.isEditMode ? this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.dialog.update.error'))
+            : this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.dialog.create.error'));
           }
           this.loading = false;
+          this.$emit('close');
         } else {
-          this.$emit('submit', this.serviceOption);
+          this.$emit('submit', this.localServiceOption);
         }
       } else {
         helpers.scrollToFirstError('dialogScrollAnchor');

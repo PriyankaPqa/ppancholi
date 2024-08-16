@@ -1,6 +1,6 @@
 <template>
   <div>
-    <validation-observer ref="form" v-slot="{ failed }" slim>
+    <validation-observer ref="form" v-slot="{ failed, changed }" slim>
       <rc-page-content
         :title="isEditMode ? $t('appointmentProgram.edit.title') : $t('appointmentProgram.add.title')">
         <v-container v-if="appointmentProgramLoading">
@@ -17,11 +17,11 @@
             <v-col cols="12" xl="8" lg="9" md="11">
               <language-tabs :language="languageMode" @click="setLanguageMode" />
               <v-row class=" ma-0 pa-0 pb-4">
-                <v-col class="d-flex ma-0 pa-0 align-center" cols="10">
+                <v-col class="d-flex ma-0 pa-0 align-center">
                   <status-select
                     data-test="appointment-program-status"
                     :value="appointmentProgram.appointmentProgramStatus"
-                    :statuses="[AppointmentProgramStatus.Active, AppointmentProgramStatus.Inactive]"
+                    :statuses="[Status.Active, Status.Inactive]"
                     status-name="AppointmentProgramStatus"
                     @input="onStatusChange($event)" />
                 </v-col>
@@ -59,13 +59,36 @@
                 </v-col>
               </v-row>
 
-              <v-row>
+              <v-row v-if="isEditMode">
+                <v-col cols="12" class="d-flex justify-end pb-4">
+                  <v-btn class="mr-4" data-test="appointment-program-edit-cancel" @click.stop="back()">
+                    {{ $t('common.cancel') }}
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    data-test="appointment-program-edit-save"
+                    :loading="loading"
+                    :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError"
+                    @click.stop="submit">
+                    {{ $t('common.save') }}
+                  </v-btn>
+                </v-col>
                 <v-col cols="12">
-                  <service-options-table :appointment-program-id="appointmentProgram.id" />
+                  <v-divider />
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col cols="12">
+            </v-col>
+          </v-row>
+
+          <v-row justify="center">
+            <v-col>
+              <v-row justify="center">
+                <v-col cols="12" xl="8" lg="9" md="11">
+                  <service-options-table :appointment-program-id="appointmentProgram.id" :service-options="appointmentProgram.serviceOptions" />
+                </v-col>
+              </v-row>
+              <v-row justify="center">
+                <v-col cols="12" xl="8" lg="9" md="11">
                   <staff-members-table :appointment-program-id="appointmentProgram.id" />
                 </v-col>
               </v-row>
@@ -95,14 +118,14 @@
 <script lang="ts">
 import { RcPageContent, VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
-import { VForm } from '@libs/shared-lib/types';
+import { Status, VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import _cloneDeep from 'lodash/cloneDeep';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { AppointmentProgram, AppointmentProgramStatus, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
@@ -154,7 +177,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       loading: false,
       languageMode: 'en',
       appointmentProgram: new AppointmentProgram(),
-      AppointmentProgramStatus,
+      Status,
       timeZoneOptions: canadaTimeZones,
       scheduleHasError: false,
       initialBusinessHours: null as IDaySchedule[],
@@ -162,6 +185,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   computed: {
+    initialAppointmentProgram() {
+      return this.appointmentProgramId ? new AppointmentProgram(useAppointmentProgramStore().getById(this.appointmentProgramId)) : new AppointmentProgram();
+    },
+
     rules(): Record<string, unknown> {
       return {
         name: {
@@ -219,6 +246,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
     }
   },
 
+  watch: {
+    initialAppointmentProgram(newVal) {
+      this.appointmentProgram = newVal;
+    },
+  },
+
   methods: {
     back(): void {
       this.$router.back();
@@ -229,7 +262,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.appointmentProgram.fillEmptyMultilingualAttributes();
     },
 
-    async onStatusChange(status: AppointmentProgramStatus) {
+    async onStatusChange(status: Status) {
       if (this.isEditMode) {
         const dialog = this.$refs.rationaleDialog as any;
         const userInput = (await dialog.open({

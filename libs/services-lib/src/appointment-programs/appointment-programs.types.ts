@@ -1,4 +1,5 @@
-import { IAppointmentProgram, AppointmentProgram, IdParams, AppointmentProgramStatus, IServiceOption } from '@libs/entities-lib/src/appointment';
+import { IAppointmentProgram, AppointmentProgram, IdParams, IServiceOption } from '@libs/entities-lib/src/appointment';
+import { Status } from '@libs/shared-lib/src/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../base';
 
 export interface IAppointmentProgramsService extends IDomainBaseService<IAppointmentProgram, IdParams> {
@@ -6,7 +7,7 @@ export interface IAppointmentProgramsService extends IDomainBaseService<IAppoint
   update(item: AppointmentProgram): Promise<IAppointmentProgram>;
   createServiceOption(appointmentProgramId:string, item: IServiceOption): Promise<IAppointmentProgram>;
   updateServiceOption(appointmentProgramId:string, item: IServiceOption): Promise<IAppointmentProgram>;
-  setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: AppointmentProgramStatus, rationale: string): Promise<IAppointmentProgram>;
+  setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: Status, rationale: string): Promise<IAppointmentProgram>;
 }
 
 export interface IAppointmentProgramsServiceMock extends IDomainBaseServiceMock<IAppointmentProgram> {

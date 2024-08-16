@@ -3727,5 +3727,10 @@
     "appointmentProgram.serviceOption.dialog.type": "Service option type",
     "appointmentProgram.serviceOption.dialog.title.add": "Add service option",
     "appointmentProgram.serviceOption.dialog.isOnline": "Is online",
-    "appointmentProgram.serviceOption.dialog.title.edit": "Edit service option"
+    "appointmentProgram.serviceOption.dialog.title.edit": "Edit service option",
+    "appointmentProgram.serviceOption.dialog.update.success": "The service option was successfully updated",
+    "appointmentProgram.serviceOption.dialog.create.success": "The service option was successfully created",
+    "appointmentProgram.serviceOption.dialog.update.error": "There was an issue updating the service option",
+    "appointmentProgram.serviceOption.dialog.create.error": "There was an issue creating the service option",
+    "appointmentProgram.serviceOption.table.type": "Type"
 }

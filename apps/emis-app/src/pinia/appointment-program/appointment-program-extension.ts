@@ -1,9 +1,10 @@
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
 import { ref, Ref } from 'vue';
-import { IAppointmentProgram, IDateRange, IDaySchedule, IdParams, AppointmentProgram, AppointmentProgramStatus, IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IDateRange, IDaySchedule, IdParams, AppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { AppointmentProgramsService, IAppointmentProgramsServiceMock } from '@libs/services-lib/appointment-programs';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
+import { Status } from '@libs/shared-lib/types';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<IAppointmentProgram, IdParams>,
@@ -83,7 +84,7 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function setAppointmentProgramStatus(appointmentId: uuid, aapointmentStatus: AppointmentProgramStatus, rationale: string): Promise<IAppointmentProgram> {
+  async function setAppointmentProgramStatus(appointmentId: uuid, aapointmentStatus: Status, rationale: string): Promise<IAppointmentProgram> {
     const result = await service.setAppointmentProgramStatus(appointmentId, aapointmentStatus, rationale);
     if (result) {
       baseComponents.set(result);

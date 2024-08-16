@@ -11,20 +11,20 @@
     <v-data-table-a11y
       :class="{ 'table border-radius-bottom': true, loading }"
       data-test="serviceOptions__table"
-      must-sort
       hide-default-footer
       :loading="loading"
       :headers="headers"
       :items="serviceOptions"
+      must-sort
       @update:sort-by="sortBy = $event"
       @update:sort-desc="sortDesc = $event">
-      <template #[`item.${customColumns.name}`]="{ item }">
+      <template #[`item.${customColumns.serviceOptionType}`]="{ item }">
         <button
           type="button"
-          data-test="serviceOption__name"
+          data-test="serviceOption__type"
           class="rc-link14 font-weight-bold"
           @click="selectServiceOption(item)">
-          {{ getTypeName(item.type) }}
+          {{ getTypeName(item.serviceOptionType) }}
         </button>
       </template>
 
@@ -33,7 +33,7 @@
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
-        <status-chip data-test="serviceOption__status" status-name="Status" :status="item.status" />
+        <status-chip data-test="serviceOption__status" status-name="Status" :status="item.serviceOptionStatus" />
       </template>
     </v-data-table-a11y>
 
@@ -43,8 +43,9 @@
       :is-edit-mode="!!selectedServiceOption"
       :appointment-program-id="appointmentProgramId"
       :existing-types-ids="existingTypesIds"
-      :service-option="selectedServiceOption || new ServiceOption()"
-      @submit="onUpdateServiceOption" />
+      :service-option="selectedServiceOption"
+      @submit="onUpdateServiceOption"
+      @close="onCloseDialog" />
   </div>
 </template>
 
@@ -52,7 +53,7 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
-import { IServiceOption, ServiceOption } from '@libs/entities-lib/appointment';
+import { IServiceOption } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
@@ -87,14 +88,13 @@ export default Vue.extend({
       loading: false,
       selectedServiceOption: null,
       showServiceOptionDialog: false,
-      ServiceOption,
     };
   },
 
   computed: {
     customColumns(): Record<string, string> {
       return {
-        name: 'name',
+        serviceOptionType: 'serviceOptionType',
         modality: 'Metadata/Modality',
         status: 'status',
       };
@@ -103,10 +103,10 @@ export default Vue.extend({
     headers(): Array<DataTableHeader> {
       return [
         {
-          text: this.$t('appointmentProgram.serviceOption.table.name') as string,
+          text: this.$t('appointmentProgram.serviceOption.table.type') as string,
           filterable: false,
-          sortable: true,
-          value: this.customColumns.name,
+          value: this.customColumns.serviceOptionType,
+          sort: (a, b) => this.getTypeName(a).localeCompare(this.getTypeName(b)),
         },
         {
           text: this.$t('appointmentProgram.serviceOption.table.modality') as string,
@@ -117,18 +117,18 @@ export default Vue.extend({
         {
           text: this.$t('appointmentProgram.serviceOption.table.status') as string,
           filterable: false,
-          sortable: true,
+          sortable: false,
           value: this.customColumns.status,
         },
       ];
     },
 
     existingTypesIds(): string[] {
-      return this.serviceOptions.map((o) => o.type.optionItemId).filter((id) => id !== this.selectedServiceOption?.type?.optionItemId);
+      return this.serviceOptions.map((o) => o.serviceOptionType?.optionItemId).filter((id) => id !== this.selectedServiceOption?.serviceOptionType?.optionItemId);
     },
 
     serviceOptionTypes(): IOptionItem[] {
-      return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.type.optionItemId));
+      return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.serviceOptionType?.optionItemId));
     },
 
     appointmentModalities(): IOptionItem[] {
@@ -140,26 +140,31 @@ export default Vue.extend({
   async created() {
     this.loading = true;
     await Promise.all([useAppointmentProgramStore().fetchServiceOptionTypes(),
-    useAppointmentProgramStore().fetchAppointmentModalities()]);
+      useAppointmentProgramStore().fetchAppointmentModalities()]);
     this.loading = false;
   },
 
   methods: {
-    getTypeName(type: IListOption): string {
-      return this.$m(this.serviceOptionTypes.find((t) => t.id === type.optionItemId)?.name);
+    getTypeName(serviceOptionType: IListOption): string {
+      return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOptionType?.optionItemId)?.name);
     },
 
     getModalitiesNames(modalities: IListOption[]) {
       return modalities.map((m) => this.$m(this.appointmentModalities.find((t) => t.id === m.optionItemId)?.name)).join(', ');
     },
 
-    selectServiceOption(serviceOption:ServiceOption) {
+    selectServiceOption(serviceOption:IServiceOption) {
       this.selectedServiceOption = serviceOption;
       this.showServiceOptionDialog = true;
     },
 
-    onUpdateServiceOption(serviceOption: ServiceOption) {
-        const index = this.serviceOptions.findIndex((o) => o.type.optionItemId === serviceOption.type.optionItemId);
+    onCloseDialog() {
+      this.showServiceOptionDialog = false;
+      this.selectedServiceOption = null;
+    },
+
+    onUpdateServiceOption(serviceOption: IServiceOption) {
+        const index = this.serviceOptions.findIndex((o) => o.serviceOptionType?.optionItemId === serviceOption.serviceOptionType?.optionItemId);
 
         if (index > -1) {
           this.serviceOptions.splice(index, 1, serviceOption);
@@ -167,10 +172,8 @@ export default Vue.extend({
           this.serviceOptions.push(serviceOption);
         }
 
-      this.showServiceOptionDialog = false;
-      this.selectedServiceOption = null;
+      this.onCloseDialog();
     },
-
   },
 });
 
