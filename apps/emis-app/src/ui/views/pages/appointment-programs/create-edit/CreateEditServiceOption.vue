@@ -1,12 +1,12 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed }" slim>
+  <validation-observer ref="form" v-slot="{ failed, changed }" slim>
     <rc-dialog
       :title="isEditMode ? $t('appointmentProgram.serviceOption.dialog.title.edit') : $t('appointmentProgram.serviceOption.dialog.title.add')"
       :show.sync="show"
       :loading="loading"
       :cancel-action-label="$t('common.buttons.cancel')"
       :submit-action-label="isEditMode ? $t('common.buttons.save') : $t('common.buttons.add')"
-      :submit-button-disabled="failed"
+      :submit-button-disabled="failed || (isEditMode && !changed)"
       :persistent="true"
       data-test="service-option-form-dialog"
       :tooltip-label="$t('common.tooltip_label')"
@@ -18,11 +18,15 @@
         <v-col cols="12" xl="8" lg="9" md="11">
           <v-row justify="center" class=" ma-0 pa-0 pb-4">
             <v-col cols="12" xl="8" lg="9" md="11" class="pa-0 pa-0">
-              <status-select
-                v-model="localServiceOption.serviceOptionStatus"
-                data-test="service-option-status"
-                :statuses="[Status.Active, Status.Inactive]"
-                status-name="Status" />
+              <validation-provider
+                name="status"
+                tag="div">
+                <status-select
+                  v-model="localServiceOption.serviceOptionStatus"
+                  data-test="service-option-status"
+                  :statuses="[Status.Active, Status.Inactive]"
+                  status-name="Status" />
+              </validation-provider>
             </v-col>
           </v-row>
           <v-row justify="center">
