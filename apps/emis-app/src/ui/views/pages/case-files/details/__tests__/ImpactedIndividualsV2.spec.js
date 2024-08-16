@@ -91,6 +91,12 @@ describe('ImpactedIndividualsV2.vue', () => {
         teamStore.search = jest.fn(() => ({ values: [mockTeamEntity({ teamMembers: [{ id: userStore.getUserId() }] })] }));
         await doMount(false, 5);
         expect(wrapper.vm.userCanDoBookings).toBeTruthy();
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        await doMount(false, 5);
+        expect(wrapper.vm.userCanDoBookings).toBeFalsy();
+        await doMount(false, 6);
+        expect(wrapper.vm.userCanDoBookings).toBeTruthy();
       });
     });
   });
@@ -145,9 +151,19 @@ describe('ImpactedIndividualsV2.vue', () => {
         bookingRequestStore.getByCaseFile = bck;
       });
 
-      it('returns false when a pending request', async () => {
+      it('returns false when a pending request or case file disabled', async () => {
         featureList = [wrapper.vm.$featureKeys.Lodging];
         await doMount();
+        await wrapper.setData({ userCanDoBookings: false });
+        expect(wrapper.vm.canRequestBooking).toBeFalsy();
+
+        bookingRequestStore.getByCaseFile = jest.fn(() => []);
+        await doMount(false, 5);
+        await wrapper.setData({ userCanDoBookings: false });
+        expect(wrapper.vm.canRequestBooking).toBeTruthy();
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        await doMount(false, 5);
         await wrapper.setData({ userCanDoBookings: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
       });

@@ -113,7 +113,7 @@ export default mixins(caseFileDetail).extend({
 
     canRequestBooking(): boolean {
       return this.$hasFeature(this.$featureKeys.Lodging) && !this.individuals.find((i) => i.personId === this.primaryMember.id && i.currentAddress.crcProvided)
-        && !this.pendingBookingRequest && !this.readonly && !this.userCanDoBookings && this.$hasLevel(UserRoles.level1);
+        && !this.pendingBookingRequest && !this.readonly && !this.userCanDoBookings && this.$hasLevel(UserRoles.level1) && !this.disableEditingByStatus;
     },
 
     canMoveToNewAddress(): boolean {
@@ -129,7 +129,7 @@ export default mixins(caseFileDetail).extend({
           'Entity/UseForLodging': true,
         } } })).values;
     this.userCanDoBookings = this.$hasFeature(this.$featureKeys.Lodging) && (this.$hasLevel(UserRoles.level6)
-      || !!this.bookingTeams.find((t) => !!t.teamMembers.find((tm) => tm.id === useUserStore().getUserId())));
+      || (!this.disableEditingByStatus && !!this.bookingTeams.find((t) => !!t.teamMembers.find((tm) => tm.id === useUserStore().getUserId()))));
 
     this.loading = false;
   },
