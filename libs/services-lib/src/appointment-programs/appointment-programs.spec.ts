@@ -16,11 +16,22 @@ describe('>>> Appointment Programs Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('appointments/search/appointment-programs', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('appointment/search/appointment-programs', { params, isOData: true });
     });
   });
 
   describe('create', () => {
+    it('should create the proper payload', async () => {
+      const entity = new AppointmentProgram(mockAppointmentProgram({ name: { translation: { en: 'mock-en' } } }));
+      await service.create(entity);
+      expect(http.post).toHaveBeenCalledWith(
+`www.test.com/appointment/appointment-programs/${entity.id}`,
+         mockAppointmentProgram({ name: { translation: { en: 'mock-en', fr: 'mock-en' } } }),
+{
+        globalHandler: GlobalHandler.Partial },
+);
+    });
+
     it('should call the proper endpoint', async () => {
       const entity = new AppointmentProgram(mockAppointmentProgram());
       await service.create(entity);
@@ -30,11 +41,32 @@ describe('>>> Appointment Programs Service', () => {
   });
 
   describe('update', () => {
+    it('should create the proper payload', async () => {
+      const entity = new AppointmentProgram(mockAppointmentProgram({ name: { translation: { en: 'mock-en' } } }));
+      await service.update(entity);
+      expect(http.patch).toHaveBeenCalledWith(
+`www.test.com/appointment/appointment-programs/${entity.id}`,
+         mockAppointmentProgram({ name: { translation: { en: 'mock-en', fr: 'mock-en' } } }),
+{
+        globalHandler: GlobalHandler.Partial },
+);
+    });
     it('should call the proper endpoint', async () => {
-      const entity = mockAppointmentProgram();
+      const entity = new AppointmentProgram(mockAppointmentProgram());
       await service.update(entity);
       expect(http.patch).toHaveBeenCalledWith(`www.test.com/appointment/appointment-programs/${entity.id}`, entity, {
         globalHandler: GlobalHandler.Partial });
+    });
+  });
+
+  describe('setAppointmentProgramStatus', () => {
+    it('should call the proper endpoint', async () => {
+      const entity = new AppointmentProgram(mockAppointmentProgram());
+      await service.setAppointmentProgramStatus(entity.id, entity.appointmentProgramStatus, 'rationale');
+      expect(http.patch).toHaveBeenCalledWith(
+`appointment/${entity.id}/appointment-program-status`,
+        { appointmentProgramStatus: entity.appointmentProgramStatus, rationale: 'rationale' },
+);
     });
   });
 });

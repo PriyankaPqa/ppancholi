@@ -43,5 +43,24 @@ describe('Appointment program store', () => {
       expect(entityService.create).toBeCalledWith(mockProgram);
       expect(store.items).toContainEqual(mockProgram);
     });
+
+    it('should call service update and commit the result', async () => {
+      const store = createTestStore();
+      const mockProgram = new AppointmentProgram(mockAppointmentProgram());
+      entityService.update = jest.fn(() => mockProgram);
+      await store.updateAppointmentProgram(mockProgram);
+
+      expect(entityService.update).toBeCalledWith(mockProgram);
+      expect(store.items).toContainEqual(mockProgram);
+    });
+    it('should call the right service and commit the result', async () => {
+      const store = createTestStore();
+      const mockProgram = new AppointmentProgram(mockAppointmentProgram());
+      entityService.setAppointmentProgramStatus = jest.fn(() => mockProgram);
+      await store.setAppointmentProgramStatus(mockProgram.id, mockProgram.appointmentProgramStatus, 'rationale');
+
+      expect(entityService.setAppointmentProgramStatus).toBeCalledWith(mockProgram.id, mockProgram.appointmentProgramStatus, 'rationale');
+      expect(store.items).toContainEqual(mockProgram);
+    });
   });
 });

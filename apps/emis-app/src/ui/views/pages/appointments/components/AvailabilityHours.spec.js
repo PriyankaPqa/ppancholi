@@ -27,6 +27,21 @@ describe('AvailabilityHours.vue', () => {
     });
   };
 
+  describe('Computed', () => {
+    describe('isEmpty', () => {
+      it('returns true if there are no time slots', () => {
+        const newSchedule = schedule();
+        newSchedule[1] = { day: 1, timeSlots: [] };
+        mountWrapper(true, { propsData: { schedule: newSchedule } });
+        expect(wrapper.vm.isEmpty).toBeTruthy();
+      });
+      it('returns false if there are time slots', () => {
+        mountWrapper();
+        expect(wrapper.vm.isEmpty).toBeFalsy();
+      });
+    });
+  });
+
   describe('Methods', () => {
     describe('updateTime', () => {
       it('updates the data with the new value for the right day and timeslot', async () => {
@@ -200,6 +215,30 @@ describe('AvailabilityHours.vue', () => {
 
         await wrapper.vm.checkForErrors();
         expect(wrapper.vm.showError).toBeTruthy();
+      });
+
+      it('sets showError to true if the schedule is empty and should not be', async () => {
+        const newSchedule = schedule();
+        newSchedule[1] = { day: 1, timeSlots: [] };
+        mountWrapper(true, { propsData: { schedule: newSchedule } });
+        await wrapper.vm.checkForErrors();
+        expect(wrapper.vm.showError).toBeTruthy();
+      });
+
+      it('sets showError to true if the schedule is empty and should not be', async () => {
+        const newSchedule = schedule();
+        newSchedule[1] = { day: 1, timeSlots: [] };
+        mountWrapper(true, { propsData: { schedule: newSchedule } });
+        await wrapper.vm.checkForErrors();
+        expect(wrapper.vm.showError).toBeTruthy();
+      });
+
+      it('does not set showError to true if the schedule is empty and can be', async () => {
+        const newSchedule = schedule();
+        newSchedule[1] = { day: 1, timeSlots: [] };
+        await mountWrapper(true, { propsData: { schedule: newSchedule, canBeEmpty: true } });
+        await wrapper.vm.checkForErrors();
+        expect(wrapper.vm.showError).toBeFalsy();
       });
     });
   });
