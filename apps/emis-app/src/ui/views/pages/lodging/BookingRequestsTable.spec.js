@@ -195,13 +195,18 @@ describe('BookingRequestsTable.vue', () => {
       it('should call storage actions with proper parameters', async () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchData(params);
-        expect(bookingStore.search).toHaveBeenCalledWith({ params: {
-          filter: { f: 'filter', 'Entity/State': helpers.getEnumKeyText(BookingRequestState, BookingRequestState.Pending) },
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-        } });
+        expect(bookingStore.search).toHaveBeenCalledWith(
+          { params:
+            {
+              filter: { f: 'filter', 'Entity/State': helpers.getEnumKeyText(BookingRequestState, BookingRequestState.Pending) },
+              top: params.top,
+              skip: params.skip,
+              orderBy: params.orderBy,
+              count: true,
+            },
+          otherSearchEndpointParameters: { forManagement: true },
+          },
+        );
         const items = bookingStore.search().values;
         expect(householdStore.fetchByIds).toHaveBeenCalledWith(items.map((x) => x.householdId), true);
         expect(personStore.fetchByIds).toHaveBeenCalledWith(householdStore.fetchByIds().map((x) => x.primaryBeneficiary), true);

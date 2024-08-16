@@ -289,12 +289,14 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     async fetchData(params: ISearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await useBookingRequestStore().search({ params: {
-        filter: { ...filterParams, 'Entity/State': helpers.getEnumKeyText(BookingRequestState, BookingRequestState.Pending) },
-        top: params.top,
-        skip: params.skip,
-        orderBy: params.orderBy,
-        count: true,
-      } });
+          filter: { ...filterParams, 'Entity/State': helpers.getEnumKeyText(BookingRequestState, BookingRequestState.Pending) },
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+        },
+        otherSearchEndpointParameters: { forManagement: true },
+      });
 
       const items = res.values;
 

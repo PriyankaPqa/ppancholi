@@ -57,9 +57,12 @@ describe('>>> Booking request Service', () => {
 
   describe('search', () => {
     it('should call the proper endpoint', async () => {
-      const params = { filter: { Foo: 'foo' } };
+      const params = { filter: { Foo: 'foo' }, forManagement: true };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/booking-requests', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('case-file/search/booking-requests?forManagement=true', { params, isOData: true });
+      params.forManagement = false;
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('case-file/search/booking-requests?forManagement=false', { params, isOData: true });
     });
   });
 });

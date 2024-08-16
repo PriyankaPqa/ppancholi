@@ -41,8 +41,8 @@ export class BookingRequestsService extends DomainBaseService<IBookingRequest, I
     return this.http.patch<IBookingRequest>(this.getItemUrl(`${this.baseUrl}/{id}/reject`, item), { rationale });
   }
 
-  async search(params: ISearchParams):
+  async search(params: ISearchParams & { forManagement?: boolean }, searchEndpoint?: string, forManagement = false):
     Promise<ICombinedSearchResult<IBookingRequest, IEntity>> {
-      return this.http.get('case-file/search/booking-requests', { params, isOData: true });
+      return this.http.get(`case-file/search/booking-requests?forManagement=${params.forManagement || forManagement}`, { params, isOData: true });
   }
 }
