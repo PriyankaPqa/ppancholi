@@ -1,6 +1,6 @@
 <template>
   <div>
-    <validation-observer ref="form" v-slot="{ failed, changed }" slim>
+    <validation-observer ref="form" v-slot="{ failed }" slim>
       <rc-page-content
         :title="isEditMode ? $t('appointmentProgram.edit.title') : $t('appointmentProgram.add.title')">
         <v-container v-if="appointmentProgramLoading">
@@ -50,7 +50,7 @@
                 </v-col>
               </v-row>
 
-              <v-row v-if="1 === 2" class="my-0">
+              <v-row class="my-0">
                 <v-col cols="12" class="py-0">
                   <div class="fw-bold pb-4">
                     {{ $t('appointmentProgram.section.businessHours') }}
@@ -59,38 +59,13 @@
                 </v-col>
               </v-row>
 
-              <v-row v-if="isEditMode">
-                <v-col cols="12" class="d-flex justify-end pb-4">
-                  <v-btn class="mr-4" data-test="appointment-program-edit-cancel" @click.stop="back()">
-                    {{ $t('common.cancel') }}
-                  </v-btn>
-                  <v-btn
-                    color="primary"
-                    data-test="appointment-program-edit-save"
-                    :loading="loading"
-                    :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError"
-                    @click.stop="submit">
-                    {{ $t('common.save') }}
-                  </v-btn>
-                </v-col>
+              <v-row>
                 <v-col cols="12">
-                  <v-divider />
+                  <service-options-table :appointment-program-id="appointmentProgram.id" />
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
-
-          <v-row justify="center">
-            <v-col>
-              <v-row justify="center">
-                <v-col cols="12" xl="8" lg="9" md="11">
-                  <service-options-table
-                    :service-options="appointmentProgram.serviceOptions"
-                    :appointment-program-id="appointmentProgram.id" />
-                </v-col>
-              </v-row>
-              <v-row justify="center">
-                <v-col cols="12" xl="8" lg="9" md="11">
+              <v-row>
+                <v-col cols="12">
                   <staff-members-table :appointment-program-id="appointmentProgram.id" />
                 </v-col>
               </v-row>
@@ -122,8 +97,8 @@ import { RcPageContent, VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers/helpers';
 import _cloneDeep from 'lodash/cloneDeep';
+import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';

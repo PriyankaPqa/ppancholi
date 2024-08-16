@@ -132,6 +132,7 @@
           icon
           small
           :aria-label="$t('common.edit')"
+          :data-test="`task-table-edit-btn-${item.entity.id}`"
           @click="getEditTaskRoute(item.entity)">
           <v-icon>
             mdi-pencil
