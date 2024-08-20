@@ -93,6 +93,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { IServiceOption } from '@libs/entities-lib/appointment';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import helpers from '@libs/entities-lib/helpers';
+import { IExtendedServiceOption } from '../components/ServiceOptionsTable.vue';
 
 export default Vue.extend({
   name: 'CreateEditServiceOption',
@@ -114,7 +115,7 @@ export default Vue.extend({
     },
 
     serviceOption: {
-      type: Object as () => IServiceOption,
+      type: Object as () => IExtendedServiceOption,
       default: null,
     },
 
@@ -128,14 +129,23 @@ export default Vue.extend({
       required: true,
     },
 
+    tempId: {
+      type: Number,
+      default: 0,
+    },
+
   },
 
   data() {
-    const emptyServiceOption : Partial<IServiceOption> = {
+    const emptyServiceOption : Partial<IExtendedServiceOption> = {
       serviceOptionType: { optionItemId: '', specifiedOther: null },
       appointmentModalities: [],
       serviceOptionStatus: Status.Active,
     };
+
+    if (!this.appointmentProgramId) {
+      emptyServiceOption.tempId = this.tempId;
+    }
 
     return {
       Status,
