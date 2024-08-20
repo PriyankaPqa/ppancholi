@@ -1,7 +1,8 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
-import { AppointmentProgram, AppointmentProgramStatus, mockAppointmentProgram } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, mockAppointmentProgram } from '@libs/entities-lib/appointment';
+import { Status } from '@libs/shared-lib/types';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
 import Component from './CreateEditAppointmentProgram.vue';
 
@@ -196,7 +197,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
         const userInput = { answered: true, rationale: 'some rationale' };
         wrapper.vm.$refs.rationaleDialog.open = jest.fn(() => userInput);
         wrapper.vm.$refs.rationaleDialog.close = jest.fn();
-        await wrapper.vm.onStatusChange(AppointmentProgramStatus.Inactive);
+        await wrapper.vm.onStatusChange(Status.Inactive);
 
         expect(wrapper.vm.$refs.rationaleDialog.open).toHaveBeenCalledWith({
           title: 'appointmentProgram.edit.changeStatus.rationale.title',
@@ -204,7 +205,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
         });
 
         expect(appointmentProgramStore.setAppointmentProgramStatus)
-          .toHaveBeenCalledWith(wrapper.vm.appointmentProgram.id, AppointmentProgramStatus.Inactive, 'some rationale');
+          .toHaveBeenCalledWith(wrapper.vm.appointmentProgram.id, Status.Inactive, 'some rationale');
         expect(wrapper.vm.$refs.rationaleDialog.close).toHaveBeenCalled();
       });
     });

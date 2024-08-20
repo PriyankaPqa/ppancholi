@@ -17,7 +17,7 @@
       @update:sort-desc="sortDesc = $event">
       <template #[`item.${customColumns.serviceOptionType}`]="{ item }">
         <router-link
-          data-test="serviceOption__type"
+          :data-test="`serviceOption__type_${item.id}`"
           class="rc-link14 font-weight-bold"
           :to="getDetailsRoute(item.id)">
           {{ getTypeName(item.serviceOptionType) }}
@@ -33,7 +33,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn icon data-test="editDocument-link" :aria-label="$t('common.edit')" @click="selectServiceOption(item)">
+        <v-btn icon data-test="serviceOption__edit" :aria-label="$t('common.edit')" @click="selectServiceOption(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -41,7 +41,7 @@
       </template>
 
       <template #[`item.${customColumns.delete}`]="{ item }">
-        <v-btn icon data-test="editDocument-link" :aria-label="$t('common.delete')" @click="deleteServiceOption(item)">
+        <v-btn icon data-test="serviceOption__delete" :aria-label="$t('common.delete')" @click="deleteServiceOption(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -118,7 +118,7 @@ export default Vue.extend({
     customColumns(): Record<string, string> {
       return {
         serviceOptionType: 'serviceOptionType',
-        modality: 'Metadata/Modality',
+        modality: 'modality',
         status: 'status',
         edit: 'edit',
         delete: 'delete',
@@ -187,7 +187,8 @@ export default Vue.extend({
       return {
         name: '',
         params: {
-           id,
+           appointmentProgramId: this.appointmentProgramId,
+           serviceOptionId: id,
         },
       };
     },
