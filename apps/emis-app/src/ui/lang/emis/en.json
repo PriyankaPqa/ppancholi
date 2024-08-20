@@ -1603,6 +1603,8 @@
     "errorReport.errorDialog.title": "Report a problem",
     "errorReport.reportProblem": "Report problem",
     "errors.a-filter-with-this-name-already-exists": "A filter with this name already exists",
+    "errors.at-least-one-service-option-must-be-provided": "At least one service option must be provided",
+    "errors.at-least-one-day-schedule-must-be-provided": "At least one day schedule must be provided",
     "errors.a-financial-assistance-payment-with-this-name-already-exists": "A financial assistance payment with this name already exists",
     "errors.a-financial-assistance-table-with-this-name-already-exists": "A financial assistance table with this name already exists",
     "errors.a-household-cannot-have-the-same-members-twice": "A household cannot have the same members twice",
@@ -3732,5 +3734,6 @@
     "appointmentProgram.serviceOption.dialog.create.success": "The service option was successfully created",
     "appointmentProgram.serviceOption.dialog.update.error": "There was an issue updating the service option",
     "appointmentProgram.serviceOption.dialog.create.error": "There was an issue creating the service option",
+    "appointments.serviceOptions.shouldNotBeEmpty": "At least one service option must be provided",
     "appointmentProgram.serviceOption.table.type": "Type"
 }

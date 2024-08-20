@@ -7,6 +7,7 @@ export interface IAppointmentProgramsService extends IDomainBaseService<IAppoint
   update(item: AppointmentProgram): Promise<IAppointmentProgram>;
   createServiceOption(appointmentProgramId:string, item: IServiceOption): Promise<IAppointmentProgram>;
   updateServiceOption(appointmentProgramId:string, item: IServiceOption): Promise<IAppointmentProgram>;
+  deleteServiceOption(appointmentProgramId:string, itemId: string): Promise<IAppointmentProgram>;
   setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: Status, rationale: string): Promise<IAppointmentProgram>;
 }
 
@@ -15,5 +16,6 @@ export interface IAppointmentProgramsServiceMock extends IDomainBaseServiceMock<
   update: jest.Mock<IAppointmentProgram>;
   createServiceOption: jest.Mock<IAppointmentProgram>;
   updateServiceOption: jest.Mock<IAppointmentProgram>;
+  deleteServiceOption: jest.Mock<IAppointmentProgram>;
   setAppointmentProgramStatus: jest.Mock<IAppointmentProgram>;
 }

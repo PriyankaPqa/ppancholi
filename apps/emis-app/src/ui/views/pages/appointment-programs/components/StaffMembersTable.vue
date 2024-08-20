@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="fw-bold pb-4">
-      {{ $t('appointmentProgram.section.staffMembers') }}
-    </div>
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn color="primary" data-test="add-staff-member" @click="showAddStaffMembersDialog = true">
         {{ $t('appointmentProgram.staffMembers.table.addStaff') }}

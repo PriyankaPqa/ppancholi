@@ -68,7 +68,7 @@
                     color="primary"
                     data-test="appointment-program-edit-save"
                     :loading="loading"
-                    :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError"
+                    :disabled="failed || loading || (!changed && !scheduleIsModified) || scheduleHasError || showServiceOptionsError"
                     @click.stop="submit">
                     {{ $t('common.save') }}
                   </v-btn>
@@ -84,11 +84,26 @@
             <v-col>
               <v-row justify="center">
                 <v-col cols="12" xl="8" lg="9" md="11">
-                  <service-options-table :appointment-program-id="appointmentProgram.id" :service-options="appointmentProgram.serviceOptions" />
+                  <div class="fw-bold pb-4">
+                    {{ $t('appointmentProgram.section.serviceOptions') }}
+                  </div>
+                  <message-box
+                    v-if="showServiceOptionsError"
+                    icon="mdi-alert"
+                    class="failed"
+                    data-test="appointment-program-service-options-error"
+                    :message=" $t('appointments.serviceOptions.shouldNotBeEmpty')" />
+                  <service-options-table
+                    :appointment-program-id="appointmentProgram.id"
+                    :service-options.sync="appointmentProgram.serviceOptions"
+                    :is-edit-mode="isEditMode" />
                 </v-col>
               </v-row>
               <v-row justify="center">
                 <v-col cols="12" xl="8" lg="9" md="11">
+                  <div class="fw-bold pb-4">
+                    {{ $t('appointmentProgram.section.staffMembers') }}
+                  </div>
                   <staff-members-table :appointment-program-id="appointmentProgram.id" />
                 </v-col>
               </v-row>
@@ -104,7 +119,7 @@
             color="primary"
             data-test="appointment-program-create-submit"
             :loading="loading"
-            :disabled="failed || loading || scheduleHasError"
+            :disabled="failed || loading || scheduleHasError || showServiceOptionsError"
             @click.stop="submit">
             {{ $t('common.buttons.create') }}
           </v-btn>
@@ -180,11 +195,16 @@ export default mixins(handleUniqueNameSubmitError).extend({
       Status,
       timeZoneOptions: canadaTimeZones,
       scheduleHasError: false,
+      showServiceOptionsError: false,
       initialBusinessHours: null as IDaySchedule[],
     };
   },
 
   computed: {
+    serviceOptions() {
+      return this.appointmentProgram.serviceOptions;
+    },
+
     initialAppointmentProgram() {
       return this.appointmentProgramId ? new AppointmentProgram(useAppointmentProgramStore().getById(this.appointmentProgramId)) : new AppointmentProgram();
     },
@@ -250,6 +270,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
     initialAppointmentProgram(newVal) {
       this.appointmentProgram = newVal;
     },
+
+   serviceOptions(newVal, oldVal) {
+    if (newVal.length && !oldVal.length) {
+      this.showServiceOptionsError = false;
+    }
+   },
   },
 
   methods: {
@@ -285,10 +311,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submit() {
-      const isValid = await (this.$refs.form as VForm).validate();
+      const hasServiceOptions = !!this.appointmentProgram.serviceOptions.length;
+      if (!hasServiceOptions) {
+        this.showServiceOptionsError = true;
+      }
+
+      const isValid = await (this.$refs.form as VForm).validate() && hasServiceOptions;
 
       if (!isValid) {
-        helpers.scrollToFirstError('scrollAnchor');
+        helpers.scrollToFirstError('app');
         return;
       }
 

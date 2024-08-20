@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="fw-bold pb-4">
-      {{ $t('appointmentProgram.section.serviceOptions') }}
-    </div>
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn color="primary" data-test="add-service-option" @click="onAdd">
         {{ $t('appointmentProgram.serviceOption.table.addServiceOption') }}
@@ -15,7 +12,6 @@
       :loading="loading"
       :headers="headers"
       :items="serviceOptions"
-      :item-key="'serviceOptionType'"
       must-sort
       @update:sort-by="sortBy = $event"
       @update:sort-desc="sortDesc = $event">
@@ -44,8 +40,8 @@
         </v-btn>
       </template>
 
-      <template #[`item.${customColumns.delete}`]>
-        <v-btn icon data-test="editDocument-link" :aria-label="$t('common.delete')">
+      <template #[`item.${customColumns.delete}`]="{ item }">
+        <v-btn icon data-test="editDocument-link" :aria-label="$t('common.delete')" @click="deleteServiceOption(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -98,6 +94,11 @@ export default Vue.extend({
 
     serviceOptions: {
       type: Array as () => IExtendedServiceOption[],
+      required: true,
+    },
+
+    isEditMode: {
+      type: Boolean,
       required: true,
     },
   },
@@ -204,6 +205,23 @@ export default Vue.extend({
       this.showServiceOptionDialog = true;
     },
 
+    // TODO - finalize in next story (#9800), this is a draft
+    deleteServiceOption(serviceOption: IExtendedServiceOption) {
+      if (this.isEditMode) {
+        const res = useAppointmentProgramStore().deleteServiceOption(this.appointmentProgramId, serviceOption.id);
+        if (res) {
+          this.$toasted.global.success(this.$t('appointmentProgram.serviceOption.delete.success'));
+        } else {
+          this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.delete.error'));
+        }
+      } else {
+        const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
+        const updatedServiceOptions = [...this.serviceOptions];
+        updatedServiceOptions.splice(index, 1);
+        this.$emit('update:serviceOptions', updatedServiceOptions);
+      }
+    },
+
     onCloseDialog() {
       this.showServiceOptionDialog = false;
       this.selectedServiceOption = null;
@@ -216,14 +234,15 @@ export default Vue.extend({
 
     // When the program is being created, the service options need to be added to the creation payload
     onUpdateServiceOption(serviceOption: IExtendedServiceOption) {
-        const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
+      const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
+      const updatedServiceOptions = [...this.serviceOptions];
+      if (index > -1) {
+        updatedServiceOptions.splice(index, 1, serviceOption);
+      } else {
+        updatedServiceOptions.push(serviceOption);
+      }
 
-        if (index > -1) {
-          this.serviceOptions.splice(index, 1, serviceOption);
-        } else {
-          this.serviceOptions.push(serviceOption);
-        }
-
+      this.$emit('update:serviceOptions', updatedServiceOptions);
       this.onCloseDialog();
     },
   },

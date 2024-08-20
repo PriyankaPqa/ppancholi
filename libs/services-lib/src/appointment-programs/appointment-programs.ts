@@ -32,6 +32,10 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
     return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options/${item.id}`, item);
   }
 
+  async deleteServiceOption(appointmentProgramId:string, itemId: string): Promise<IAppointmentProgram> {
+    return this.http.delete<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options/${itemId}`);
+  }
+
   async setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: Status, rationale: string): Promise<IAppointmentProgram> {
     return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${id}/appointment-program-status`, { appointmentProgramStatus, rationale });
   }
