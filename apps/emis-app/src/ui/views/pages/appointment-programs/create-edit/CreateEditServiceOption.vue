@@ -44,7 +44,7 @@
           <v-row justify="center">
             <v-col cols="12" xl="8" lg="9" md="11">
               <v-select-with-validation
-                v-model="selectedModalitiesId"
+                v-model="selectedModalitiesIds"
                 :label="`${$t('appointmentProgram.serviceOption.dialog.appointmentModalities')} *`"
                 :items="appointmentModalities"
                 multiple
@@ -93,6 +93,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { IServiceOption } from '@libs/entities-lib/appointment';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import helpers from '@libs/entities-lib/helpers';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IExtendedServiceOption } from '../components/ServiceOptionsTable.vue';
 
 export default Vue.extend({
@@ -101,6 +102,7 @@ export default Vue.extend({
   components: {
     RcDialog,
     VSelectWithValidation,
+    StatusSelect,
   },
 
   props: {
@@ -109,6 +111,7 @@ export default Vue.extend({
       required: true,
     },
 
+    // If the appointment program is already created, it has an id
     appointmentProgramId: {
       type: String,
       default: '',
@@ -124,6 +127,7 @@ export default Vue.extend({
       required: true,
     },
 
+    // Whether this service option is being created or updated
     isEditMode: {
       type: Boolean,
       required: true,
@@ -150,7 +154,7 @@ export default Vue.extend({
     return {
       Status,
       loading: false,
-      selectedModalitiesId: this.serviceOption?.appointmentModalities.map((m) => m.optionItemId) || [],
+      selectedModalitiesIds: this.serviceOption?.appointmentModalities.map((m) => m.optionItemId) || [],
       localServiceOption: _cloneDeep(this.serviceOption) || emptyServiceOption as IServiceOption | Partial<IServiceOption>,
     };
   },
@@ -171,23 +175,27 @@ export default Vue.extend({
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        this.localServiceOption.appointmentModalities = this.selectedModalitiesId.map((id) => ({ optionItemId: id, specifiedOther: null }));
+        this.localServiceOption.appointmentModalities = this.selectedModalitiesIds.map((id) => ({ optionItemId: id, specifiedOther: null }));
 
+        // If there is an appointmentProgramId, it means the appointment program is already created, so creating and updating service options
+        // is done by calling directly the respective endpoints
         if (this.appointmentProgramId) {
           this.loading = true;
           const res = !this.isEditMode ? await useAppointmentProgramStore().createServiceOption(this.appointmentProgramId, this.localServiceOption as IServiceOption)
           : await useAppointmentProgramStore().updateServiceOption(this.appointmentProgramId, this.localServiceOption as IServiceOption);
 
           if (res) {
-            this.$toasted.global.success(this.isEditMode ? this.$t('appointmentProgram.serviceOption.dialog.update.success')
-            : this.$t('appointmentProgram.serviceOption.dialog.create.success'));
+            this.$toasted.global.success(!this.isEditMode ? this.$t('appointmentProgram.serviceOption.dialog.create.success')
+            : this.$t('appointmentProgram.serviceOption.dialog.update.success'));
             this.$emit('update:show', false);
           } else {
-            this.isEditMode ? this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.dialog.update.error'))
-            : this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.dialog.create.error'));
+            !this.isEditMode ? this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.dialog.create.error'))
+            : this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.dialog.update.error'));
           }
           this.loading = false;
           this.$emit('close');
+
+        // When the appointment program is being created now, the service option data is being added to the creation payload
         } else {
           this.$emit('submit', this.localServiceOption);
         }
@@ -199,7 +207,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style>
-
-</style>
