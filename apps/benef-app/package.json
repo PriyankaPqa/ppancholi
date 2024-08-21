@@ -60,6 +60,8 @@
   "devDependencies": {
     "@babel/core": "7.17.5",
     "@cypress/grep": "^3.1.5",
+    "@cypress/webpack-preprocessor": "^6.0.2",
+    "babel-loader": "8.2.5",
     "@faker-js/faker": "^7.6.0",
     "@pinia/testing": "^0.0.14",
     "@types/lodash": "4.14.179",
@@ -81,10 +83,12 @@
     "mocha-junit-reporter": "^2.2.0",
     "sass": "1.32.13",
     "start-server-and-test": "^1.15.2",
+    "ts-loader": "8.2.0",
     "tsconfig-paths": "^4.1.1",
     "unplugin-vue-components": "^0.22.12",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-vue-inspector": "^3.3.0",
-    "vue-typed-mixins": "^0.2.0"
+    "vue-typed-mixins": "^0.2.0",
+    "webpack": "4.47.0"
   }
 }
