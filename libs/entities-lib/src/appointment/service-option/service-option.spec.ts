@@ -18,7 +18,7 @@ const mockData = mockServiceOption();
         it('should instantiate on empty', () => {
           const item = new ServiceOption();
 
-          expect(item.serviceOptionType).toEqual(null);
+          expect(item.serviceOptionType).toEqual({ optionItemId: null, specifiedOther: null });
           expect(item.appointmentModalities).toEqual([]);
           expect(item.serviceOptionStatus).toEqual(Status.Active);
         });

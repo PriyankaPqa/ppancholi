@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
-import { AppointmentProgram, mockAppointmentProgram } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, mockAppointmentProgram, mockServiceOption } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
 import Component from './CreateEditAppointmentProgram.vue';
@@ -219,18 +219,32 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
       });
 
-      it('calls the store createAppointmentProgram with the right payload', async () => {
+      it('does not call create unless program has service options', async () => {
+        await mountWrapper(false);
         const program = new AppointmentProgram();
-        program.eventId = 'EVENT_ID';
-        program.businessHours = defaultBusinessHours;
+        program.serviceOptions = [];
+        wrapper.vm.appointmentProgram = program;
+        wrapper.vm.createAppointmentProgram = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
+        expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
+      });
+
+      it('calls the store createAppointmentProgram with the right payload', async () => {
         mountWrapper(false);
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(appointmentProgramStore.createAppointmentProgram).toHaveBeenCalledWith(program);
       });
 
       it('calls a toaster after creating', async () => {
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
         mountWrapper(false);
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.appointmentProgram.created');
@@ -238,6 +252,9 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('sends to details page after creating', async () => {
         mountWrapper(false);
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$refs.form.reset = jest.fn();
         appointmentProgramStore.createAppointmentProgram = jest.fn(() => mockAppointmentProgram({ id: '1' }));
@@ -249,6 +266,9 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('sends to details page after editing', async () => {
         mountWrapper();
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$refs.form.reset = jest.fn();
         appointmentProgramStore.updateAppointmentProgram = jest.fn(() => mockAppointmentProgram({ id: '1' }));
@@ -260,6 +280,9 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls an error toaster if creating fails', async () => {
         mountWrapper(false);
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         appointmentProgramStore.createAppointmentProgram = jest.fn();
         await wrapper.vm.submit();
@@ -268,6 +291,9 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls the store updateAppointmentProgram with the right payload in edit mode', async () => {
         mountWrapper();
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(appointmentProgramStore.updateAppointmentProgram).toHaveBeenCalledWith(mockAppointmentProgram());
@@ -275,6 +301,9 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls a toaster after updating', async () => {
         mountWrapper();
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.appointmentProgram.updated');
@@ -290,6 +319,9 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls an error toaster if updating fails', async () => {
         mountWrapper();
+        const program = new AppointmentProgram();
+        program.serviceOptions = [mockServiceOption()];
+        wrapper.vm.appointmentProgram = program;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         appointmentProgramStore.updateAppointmentProgram = jest.fn();
         await wrapper.vm.submit();

@@ -6,7 +6,7 @@
       :loading="loading"
       :cancel-action-label="$t('common.buttons.cancel')"
       :submit-action-label="isEditMode ? $t('common.buttons.save') : $t('common.buttons.add')"
-      :submit-button-disabled="failed || (isEditMode && !changed)"
+      :submit-button-disabled="failed || (isEditMode && !changed && !modalityDeleted)"
       :persistent="true"
       data-test="service-option-form-dialog"
       :tooltip-label="$t('common.tooltip_label')"
@@ -48,10 +48,12 @@
                 :label="`${$t('appointmentProgram.serviceOption.dialog.appointmentModalities')} *`"
                 :items="appointmentModalities"
                 multiple
+                clearable
                 :rules="{ required: true }"
                 :item-value="(item) => item.id"
                 :item-text="(item) => $m(item.name)"
-                data-test="service-option-form-modalities">
+                data-test="service-option-form-modalities"
+                @delete="modalityDeleted = true">
                 <template #item=" { item, attrs }">
                   <div class="v-list-item__action">
                     <div class="v-simple-checkbox">
@@ -154,6 +156,7 @@ export default Vue.extend({
     return {
       Status,
       loading: false,
+      modalityDeleted: false,
       selectedModalitiesIds: this.serviceOption?.appointmentModalities.map((m) => m.optionItemId) || [],
       localServiceOption: _cloneDeep(this.serviceOption) || emptyServiceOption as IServiceOption | Partial<IServiceOption>,
     };

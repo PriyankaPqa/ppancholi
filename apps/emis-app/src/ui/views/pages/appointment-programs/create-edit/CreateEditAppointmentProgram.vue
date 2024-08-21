@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts">
-import { RcPageContent, VSelectWithValidation, VTextFieldWithValidation,
+import { MessageBox, RcPageContent, VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { Status, VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
@@ -167,6 +167,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     StatusSelect,
     LanguageTabs,
     RationaleDialog,
+    MessageBox,
   },
 
   props: {
