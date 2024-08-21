@@ -83,6 +83,42 @@ describe('CreateEditServiceOption.vue', () => {
           expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.serviceOption.dialog.create.error');
         });
       });
+
+      describe('appointment program is not created yet', () => {
+        it('emits the updated service option', async () => {
+          mountWrapper(true, true, null);
+          wrapper.setData({ selectedModalitiesIds: ['mod-id-1', 'mod-id-2'] });
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.$emit = jest.fn();
+          await wrapper.vm.onSubmit();
+          expect(wrapper.vm.$emit).toHaveBeenCalledWith('submit', wrapper.vm.localServiceOption);
+        });
+      });
+    });
+  });
+
+  describe('Template', () => {
+    describe('type', () => {
+      it('renders', () => {
+        mountWrapper(false, false);
+        const element = wrapper.findDataTest('service-option-form-serviceOptionType');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+    describe('timeZone', () => {
+      it('renders', () => {
+        mountWrapper(false, false);
+        const element = wrapper.findDataTest('service-option-form-modalities');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('status', () => {
+      it('renders', () => {
+        mountWrapper(false, false);
+        const element = wrapper.findDataTest('service-option-status');
+        expect(element.exists()).toBeTruthy();
+      });
     });
   });
 });
