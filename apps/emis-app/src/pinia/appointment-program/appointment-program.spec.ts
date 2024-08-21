@@ -158,6 +158,20 @@ describe('Appointment program store', () => {
       });
     });
 
+    describe('deleteServiceOption', () => {
+      it('should call service delete and commit the result', async () => {
+        const store = createTestStore();
+        const serviceOptionId = 'so-id';
+        const apptProgramId = 'id';
+        const mockProgram = new AppointmentProgram(mockAppointmentProgram());
+        entityService.deleteServiceOption = jest.fn(() => mockProgram);
+        await store.deleteServiceOption(apptProgramId, serviceOptionId);
+
+        expect(entityService.deleteServiceOption).toBeCalledWith(apptProgramId, serviceOptionId);
+        expect(store.items).toContainEqual(mockProgram);
+      });
+    });
+
     describe('setAppointmentProgramStatus', () => {
       it('should call the right service and commit the result', async () => {
         const store = createTestStore();
