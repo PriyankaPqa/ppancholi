@@ -1,4 +1,4 @@
-import { Status } from '@libs/shared-lib/src/types';
+import { Status } from '@libs/shared-lib/types';
 import { ApprovalBaseEntity } from './approval';
 import { mockBaseApprovalData } from './approval.mock';
 import { ApprovalGroup, mockApprovalGroupData } from '../approvals-group';

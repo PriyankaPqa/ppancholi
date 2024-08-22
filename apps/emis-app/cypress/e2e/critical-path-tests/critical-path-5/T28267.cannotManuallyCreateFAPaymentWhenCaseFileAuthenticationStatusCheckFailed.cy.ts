@@ -4,7 +4,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
-import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
+import { verifyAndReturnAddFaPaymentPage } from '../../helpers/page';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';

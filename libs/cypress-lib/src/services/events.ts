@@ -1,6 +1,6 @@
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import { ICombinedSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
-import { IHttpClient } from '@libs/services-lib/src/http-client';
+import { IHttpClient } from '@libs/services-lib/http-client';
 
 export class CypressEventsService {
   constructor(protected readonly http: IHttpClient) {}

@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import sanitizeHtml from 'sanitize-html';
+import DOMPurify from 'dompurify';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
 import { utcToZonedTime, format } from 'date-fns-tz';
 import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
@@ -46,7 +46,7 @@ export default Vue.extend({
   },
 
   data() {
-    return { sanitizeHtml };
+    return { sanitizeHtml: DOMPurify.sanitize };
   },
 
   computed: {

@@ -1,5 +1,5 @@
 import { IProvider } from '@/services/provider';
-import { useProvider } from 'cypress/provider/provider';
+import { useProvider } from '../../provider/provider';
 import { removeTeamMembersFromTeam } from '../helpers/teams';
 import { teamIdData } from './team-ids';
 

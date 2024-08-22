@@ -79,10 +79,12 @@ describe('[T28347] Update Cheque payment group status- L6 and C2.', { tags: ['@f
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Inprogress',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
@@ -92,6 +94,7 @@ describe('[T28347] Update Cheque payment group status- L6 and C2.', { tags: ['@f
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
+            roleName,
           });
         });
       });

@@ -4,7 +4,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { IdentificationIdProvided } from '@libs/cypress-lib/helpers/optionLists';
-import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
+import { verifyAndReturnAddFaPaymentPage } from '../../helpers/page';
 import { fixturePrepaidCardPaymentLine } from '../../../fixtures/financial-assistance';
 import {
   createProgramWithTableWithItemAndSubItem,

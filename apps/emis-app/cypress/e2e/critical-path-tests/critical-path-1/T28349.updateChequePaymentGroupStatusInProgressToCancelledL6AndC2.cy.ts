@@ -80,6 +80,7 @@ describe('[T28349] Update Cheque payment group status from In Progress to Cancel
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Inprogress',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({

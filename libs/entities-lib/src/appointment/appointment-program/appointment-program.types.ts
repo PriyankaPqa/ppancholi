@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 import { IServiceOption } from '../service-option/service-option.types';
 

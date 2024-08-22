@@ -23,8 +23,6 @@ import registerCypressGrep from '@cypress/grep';
 import { slowCypressDown } from 'cypress-slow-down';
 import { IMassActionMetadata, MassActionRunStatus } from '@libs/entities-lib/mass-action';
 
-require('cypress-xpath');
-
 installLogsCollector();
 registerCypressGrep();
 slowCypressDown();

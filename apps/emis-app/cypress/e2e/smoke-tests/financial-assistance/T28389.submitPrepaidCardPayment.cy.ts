@@ -1,8 +1,8 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
 import { EPaymentModalities } from '@libs/entities-lib/program';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {
   createProgramWithTableWithItemAndSubItem,
