@@ -1,4 +1,4 @@
-import { mockBaseData } from '@libs/entities-lib/src/base';
+import { mockBaseData } from '@libs/entities-lib/base';
 import {
   AssessmentFormType,
   AssessmentFrequencyType,
@@ -12,7 +12,7 @@ import {
   SurveyJsAssessmentFormState,
   SurveyJsAssessmentResponseState,
 } from '@libs/entities-lib/assessment-template/assessment-template.types';
-import { IRegistrationAssessment } from '@libs/entities-lib/src/event';
+import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { getRandomNumber } from '../../helpers';
 import {
   propertyStateMockEditAssessmentData,

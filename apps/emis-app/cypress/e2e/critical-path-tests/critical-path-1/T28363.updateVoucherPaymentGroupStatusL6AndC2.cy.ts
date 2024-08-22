@@ -80,6 +80,7 @@ describe('[T28363] Update Voucher payment group status - L6 and C2 only.', { tag
 
            updatePaymentGroupStatusTo({
             paymentStatus: 'Issued',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({

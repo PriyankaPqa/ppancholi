@@ -9,9 +9,9 @@ import {
   IGroupingInformation,
   PayeeType,
   PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { mockBaseData } from '@libs/entities-lib/src/base';
-import { EPaymentModalities } from '@libs/entities-lib/src/program';
-import { IAddress } from '@libs/entities-lib/src/value-objects/address/address.types';
+import { mockBaseData } from '@libs/entities-lib/base';
+import { EPaymentModalities } from '@libs/entities-lib/program';
+import { IAddress } from '@libs/entities-lib/value-objects/address/address.types';
 import { IUpdatePaymentStatusParams } from '@libs/services-lib/src/financial-assistance-payments/entity';
 import { mockBaseAddressData } from '../household/household';
 

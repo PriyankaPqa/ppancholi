@@ -5,7 +5,7 @@ import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
 import { IProvider } from '@/services/provider';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
-import { useProvider } from 'cypress/provider/provider';
+import { useProvider } from '../../../provider/provider';
 import { massActionFinancialAssistanceUploadFilePassesProcessCanSteps } from './canStep';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import {

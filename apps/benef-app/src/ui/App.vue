@@ -33,7 +33,7 @@ import Vue from 'vue';
 import { localStorageKeys } from '@/constants/localStorage';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { RcConfirmationDialog, RcErrorDialog } from '@libs/component-lib/components';
-import sanitizeHtml from 'sanitize-html';
+import DOMPurify from 'dompurify';
 
 export default {
   name: 'App',
@@ -60,7 +60,7 @@ export default {
   },
 
   async created() {
-    // The values of environment variables are currently not loaded in components in production ...
+    // The values of environment variables are currently not loaded in components in production
     localStorage.setItem(
       localStorageKeys.googleMapsAPIKey.name,
       process.env.VITE_GOOGLE_API_KEY,
@@ -89,7 +89,7 @@ export default {
         this.submitActionLabel = submitActionLabel || this.$t('common.buttons.yes');
         this.cancelActionLabel = cancelActionLabel || this.$t('common.buttons.no');
         this.showCancelButton = showCancelButton;
-        this.dialogHtml = sanitizeHtml(htmlContent, { allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] } });
+        this.dialogHtml = DOMPurify.sanitize(htmlContent, { allowedAttributes: { ALLOWED_ATTR: ['class'] } });
         this.showConfirm = true;
 
         const userChoice = await this.$refs.defaultConfirm.open();

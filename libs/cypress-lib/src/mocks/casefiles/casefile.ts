@@ -1,5 +1,5 @@
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
-import { IListOption } from '@libs/shared-lib/src/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { CaseFileStatusUpdateReason } from '@libs/cypress-lib/helpers';
 
 export interface IMockSetCaseFileStatusToRequestParam {

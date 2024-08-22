@@ -1,13 +1,15 @@
+import { IProvider } from '@/services/provider';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication } from '@libs/entities-lib/case-file';
-import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
+import { verifyAndReturnAddFaPaymentPage } from '../../helpers/page';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold, updateAuthenticationOfIdentity } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
+import { useProvider } from '../../../provider/provider';
 
 const canRoles = [
   UserRoles.level6,
@@ -57,6 +59,7 @@ describe('[T28267] Cannot create manual FA payment when Case File Authentication
       cy.wrap(resultCreatedEvent.provider).as('provider');
       cy.wrap(resultCreatedEvent.event).as('event');
       cy.wrap(resultCreatedEvent.team).as('teamCreated');
+      cy.wrap(accessTokenL6).as('accessTokenL6');
       cy.wrap(resultCreateProgram.table).as('faTable');
       cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('caseFileId');
     });
@@ -83,6 +86,15 @@ describe('[T28267] Cannot create manual FA payment when Case File Authentication
           cy.waitForStatusCode('**/household/potential-duplicates/*/duplicates', 200, 45000); // addFaPayment Button activates after this GET request has status code 200, an improvement over using static wait
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+
+          cy.callSearchUntilMeetCondition({
+            provider: useProvider(this.accessTokenL6),
+            searchCallBack: (provider: IProvider) => (provider.financialAssistanceTables.search({
+              filter: { Entity: { EventId: { value: this.event.id, type: 'guid' } } },
+            })),
+            conditionCallBack: (value: IFinancialAssistanceTableEntity[]) => value.length > 0,
+          });
+
           financialAssistanceHomePage.addNewFaPayment();
 
           const addFinancialAssistancePage = verifyAndReturnAddFaPaymentPage();
