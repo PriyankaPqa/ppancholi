@@ -3735,5 +3735,15 @@
     "appointmentProgram.serviceOption.dialog.update.error": "There was an issue updating the service option",
     "appointmentProgram.serviceOption.dialog.create.error": "There was an issue creating the service option",
     "appointments.serviceOptions.shouldNotBeEmpty": "At least one service option must be provided",
-    "appointmentProgram.serviceOption.table.type": "Type"
+    "appointmentProgram.serviceOption.table.type": "Type",
+    "appointmentProgram.serviceOption.details.backToPrograms": "Back to appointment program",
+    "appointmentProgram.serviceOption.details.title": "Service option details",
+    "appointmentProgram.serviceOption.details.modalities": "Modalities",
+    "appointmentProgram.serviceOption.details.name": "Modality name",
+    "appointmentProgram.serviceOption.details.isOnline": "Is online",
+    "appointmentProgram.serviceOption.confirm.delete.title": "Delete service option",
+    "appointmentProgram.serviceOption.confirm.delete.message": "Are you sure that you want to delete this service option?",
+    "appointmentProgram.serviceOption.delete.success": "The service option was successfully deleted",
+    "appointmentProgram.serviceOption.delete.error": "There  was an error deleting the service option",
+    "appointmentProgram.serviceOption.deleteUniqueServiceOption.error": "You cannot delete this service option. At least one service option must be provided"
 }
