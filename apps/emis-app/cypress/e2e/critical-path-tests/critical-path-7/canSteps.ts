@@ -2,8 +2,8 @@ import { getToday } from '@libs/cypress-lib/helpers';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
-import { CaseFilesHomePage } from 'cypress/pages/casefiles/caseFilesHome.page';
-import { MassCaseFileStatusUpdateDetailsPage } from 'cypress/pages/mass-action/mass-case-file-status/massCaseFileStatusUpdateDetails.page';
+import { MassCaseFileStatusUpdateDetailsPage } from '../../../pages/mass-action/mass-case-file-status/massCaseFileStatusUpdateDetails.page';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
 export interface ProcessMassActionCaseFileStatusUpdateCanStepsParams {
   massActionName: string,

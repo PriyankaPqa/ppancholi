@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { fixtureApprovalTable } from 'cypress/fixtures/events';
+import { fixtureApprovalTable } from '../../../fixtures/events';
 import { CreateApprovalTablePage } from '../../../pages/approvals/createApprovalTable.page';
 import { useProvider } from '../../../provider/provider';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';

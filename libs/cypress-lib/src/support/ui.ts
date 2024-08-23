@@ -1,4 +1,3 @@
-/// <reference types="cypress-xpath" />
 Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => cy.get(`${type}[data-test=${selector}]`, ...options));
 
 Cypress.Commands.add('getByDataTestLike', ({ selector, type = '' }, ...options) => cy.get(`${type}[data-test*=${selector}]`, ...options));
@@ -57,15 +56,23 @@ Cypress.Commands.add('setDatePicker', (dataTest: string, { year, month, day }: {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500);
     cy.get('@header').click({ multiple: true });
-    cy.xpath(`//div[@data-test='${dataTest}-date-picker']//ul[@class='v-date-picker-years']/*[contains(text(), '${year.toString()}')]`).click();
+    cy.get(`div[data-test='${dataTest}-date-picker'] ul.v-date-picker-years`)
+    .contains(`${year.toString()}`)
+    .click();
 
-    cy.xpath(`//div[@data-test='${dataTest}-date-picker']//*[contains(@class, 'v-date-picker-table--month')]/node()/tbody/tr/td/button`).as('months');
-    //
+    cy.get(`div[data-test='${dataTest}-date-picker']`)
+    .find('.v-date-picker-table--month')
+    .find('tbody tr td button')
+    .as('months');
+
     cy.get('@months').then((months) => {
       const monthSelector = months[month - 1];
       monthSelector.click();
-      cy.xpath(`//div[@data-test='${dataTest}-date-picker']//div[contains(@class, 'v-btn__content') and .='${day}']`).click();
-    });
+      cy.get(`div[data-test='${dataTest}-date-picker']`)
+            .find('div.v-btn__content')
+            .contains(`${day}`)
+            .click();
+      });
   });
 });
 

@@ -72,7 +72,7 @@
 
       <template #[`item.${customColumns.taskCategory}`]="{ item }">
         <div>
-          <v-icon :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
+          <v-icon data-test="task-category-icon" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
             mdi-account-check
           </v-icon>
           <router-link

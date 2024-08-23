@@ -19,7 +19,6 @@
     "types": [
       "node",
       "cypress",
-      "cypress-xpath"
     ],
     "paths": {
       "@/*": [
@@ -30,6 +29,9 @@
       ],
       "@libs/entities-lib/*": [
         "../../libs/entities-lib/src/*"
+      ],
+      "@libs/services-lib/*": [
+        "../../libs/services-lib/src/*"
       ],
       "@libs/shared-lib/*": [
         "../../libs/shared-lib/src/*"

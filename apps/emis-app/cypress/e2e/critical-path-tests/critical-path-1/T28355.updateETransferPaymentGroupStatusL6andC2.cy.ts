@@ -74,6 +74,7 @@ describe('[T28355] Update E-Transfer payment group status- L6 and C2', { tags: [
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
@@ -83,14 +84,17 @@ describe('[T28355] Update E-Transfer payment group status- L6 and C2', { tags: [
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Inprogress',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Sent',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Inprogress',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
@@ -100,14 +104,17 @@ describe('[T28355] Update E-Transfer payment group status- L6 and C2', { tags: [
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Sent',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Sent',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
@@ -117,10 +124,12 @@ describe('[T28355] Update E-Transfer payment group status- L6 and C2', { tags: [
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Sent',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({

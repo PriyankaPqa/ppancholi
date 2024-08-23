@@ -48,7 +48,7 @@ import Vue from 'vue';
 
 import { EEventSummarySections } from '@/types';
 import { VForm } from '@libs/shared-lib/types';
-import sanitizeHtml from 'sanitize-html';
+import DOMPurify from 'dompurify';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { RcDialog } from '@libs/component-lib/components';
 import { IConsentStatementData } from '@libs/entities-lib/tenantSettings';
@@ -75,7 +75,7 @@ export default Vue.extend({
 
   data() {
     return {
-      sanitizeHtml,
+      sanitizeHtml: DOMPurify.sanitize,
       languageMode: 'en',
       statements: [] as IConsentStatementData[],
       selectedStatement: null as IConsentStatementData,

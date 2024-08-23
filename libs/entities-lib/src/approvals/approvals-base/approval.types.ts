@@ -1,4 +1,4 @@
-import { IMultilingual, Status } from '@libs/shared-lib/src/types';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 import { IApprovalGroup } from '../approvals-group';
 

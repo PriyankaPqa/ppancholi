@@ -2,7 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria } from '@libs/entities-lib/program';
-import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
+import { verifyAndReturnAddFaPaymentPage } from '../../helpers/page';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';

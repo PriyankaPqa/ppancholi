@@ -1,4 +1,4 @@
-import { IHttpClient } from '@libs/services-lib/src/http-client';
+import { IHttpClient } from '@libs/services-lib/http-client';
 import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 
 export class CypressMassActionsService {
