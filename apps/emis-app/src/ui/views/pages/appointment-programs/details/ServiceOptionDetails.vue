@@ -25,7 +25,7 @@
           {{ $t('appointmentProgram.serviceOption.details.modalities') }}
         </div>
         <v-sheet rounded outlined>
-          <v-simple-table>
+          <v-simple-table data-test="serviceOption_modalities_table">
             <thead>
               <tr>
                 <th scope="col">
@@ -38,8 +38,10 @@
             </thead>
             <tbody>
               <tr v-for="modality in appointmentModalities" :key="modality.id">
-                <td>{{ $m(modality.name) }}</td>
-                <td class="d-flex justify-end align-center">
+                <td :data-test="`serviceOption_modalities_name_${modality.id}`">
+                  {{ $m(modality.name) }}
+                </td>
+                <td :data-test="`serviceOption_modalities_isOnline_${modality.id}`" class="d-flex justify-end align-center">
                   {{ modality.isOnline ? $t('appointmentProgram.serviceOption.details.isOnline') : '' }}
                 </td>
               </tr>
@@ -107,7 +109,7 @@ export default Vue.extend({
  computed: {
    // TODO : remove once appointment program search is fixed and it returns service options
     initialAppointmentProgram(): IAppointmentProgram {
-      return new AppointmentProgram(useAppointmentProgramStore().getById(this.appointmentProgramId));
+      return useAppointmentProgramStore().getById(this.appointmentProgramId);
     },
 
     serviceOptionTypeName(): IMultilingual {
