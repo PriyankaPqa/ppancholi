@@ -3,12 +3,15 @@ import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 import zephyrPlugin from '@libs/cypress-lib/src/reporter/cypress-zephyr/plugin';
 import { initPlugins } from 'cypress-plugin-init';
 import fs from 'fs';
-import vitePreprocessor from 'cypress-vite';
-import path from 'path';
 import reporterConfig from './cypress-reporter-config';
 
-require('tsconfig-paths').register();
 const { cloudPlugin } = require('cypress-cloud/plugin');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const webpackPreprocessor = require('@cypress/webpack-preprocessor');
+const webpackConfig = require('../../cypress.webpack.config');
+
+require('tsconfig-paths').register();
+
 require('dotenv').config({ path: `${__dirname}/../../.env.local`, override: true });
 
 const zephyrReporter = process.env.ZEPHYR_REPORTER !== 'false';
@@ -36,13 +39,9 @@ export default defineConfig({
         },
       );
 
-      on(
-        'file:preprocessor',
-        vitePreprocessor({
-          configFile: path.resolve(__dirname, './vite.config.cypress.js'),
-          mode: 'development',
-        }),
-      );
+      on('file:preprocessor', webpackPreprocessor({
+        webpackOptions: webpackConfig,
+      }));
 
       installLogsPrinter(on, {
         printLogsToConsole: 'onFail',
