@@ -207,7 +207,6 @@ export default Vue.extend({
       this.showServiceOptionDialog = true;
     },
 
-    // TODO - finalize in next story (#9800), this is a draft
     async deleteServiceOption(serviceOption: IExtendedServiceOption) {
       if (this.isEditMode) {
         if (this.serviceOptions.length === 1) {
@@ -227,12 +226,12 @@ export default Vue.extend({
           } else {
             this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.delete.error'));
           }
-        } else {
-          const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
-          const updatedServiceOptions = [...this.serviceOptions];
-          updatedServiceOptions.splice(index, 1);
-          this.$emit('update:serviceOptions', updatedServiceOptions);
         }
+      } else {
+        const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
+        const updatedServiceOptions = [...this.serviceOptions];
+        updatedServiceOptions.splice(index, 1);
+        this.$emit('update:serviceOptions', updatedServiceOptions);
       }
     },
 
