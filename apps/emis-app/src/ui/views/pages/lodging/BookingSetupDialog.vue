@@ -108,6 +108,7 @@
                         <impacted-individual-address-template-v2
                           :address="address"
                           :shelter-locations-list="shelterLocations"
+                          full-width-read-only-view
                           is-previous-temporary-address />
                       </v-col>
                     </v-row>

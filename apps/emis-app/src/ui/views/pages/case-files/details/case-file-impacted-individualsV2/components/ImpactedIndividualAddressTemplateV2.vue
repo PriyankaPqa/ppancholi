@@ -1,6 +1,6 @@
 <template>
   <v-row class="px-4 rc-body14 border box">
-    <v-col lg="4" cols="6">
+    <v-col :lg="fullWidthReadOnlyView ? 6 : 4" cols="6">
       <div class="font-weight-bold" data-test="current_temporary_address_title">
         {{ isPreviousTemporaryAddress ? '' : $t('impactedIndividuals.current_temporary_address') }}
       </div>
@@ -8,7 +8,7 @@
         <current-address-template :current-address="currentAddress" hide-title />
       </div>
     </v-col>
-    <v-col lg="4" cols="6">
+    <v-col :lg="fullWidthReadOnlyView ? 6 : 4" cols="6">
       <div class="d-flex">
         <div>
           <span class="font-weight-bold">{{ $t('impactedIndividuals.temporary_address.check_in') + ':' }}</span>
@@ -37,7 +37,7 @@
         </v-chip>
       </div>
     </v-col>
-    <v-col lg="4" cols="12" class="pt-2 d-flex justify-end">
+    <v-col v-if="!fullWidthReadOnlyView" lg="4" cols="12" class="pt-2 d-flex justify-end">
       <template v-if="!$hasFeature($featureKeys.Lodging)">
         <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address', true)">
           <v-icon>
@@ -94,6 +94,11 @@ export default Vue.extend({
     shelterLocationsList: {
       type: Array as () => IEventGenericLocation[],
       default: null,
+    },
+
+    fullWidthReadOnlyView: {
+      type: Boolean,
+      default: false,
     },
   },
 
