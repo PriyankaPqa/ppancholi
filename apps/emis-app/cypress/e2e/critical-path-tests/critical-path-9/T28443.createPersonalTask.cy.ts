@@ -83,7 +83,7 @@ describe('[T28443] Create a Personal Task', { tags: ['@teams', '@tasks'] }, () =
           personalTaskDetailsPage.getBackToTasksButton().should('be.visible');
 
           const tasksHistoryPage = personalTaskDetailsPage.goToTaskHistory();
-          assertTaskHistorySteps(roleName);
+          assertTaskHistorySteps(roleName, 'Task created');
           tasksHistoryPage.getCloseButton().click();
 
           personalTaskDetailsPage.getBackToTasksButton().should('be.visible');

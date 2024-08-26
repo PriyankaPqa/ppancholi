@@ -122,7 +122,7 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
           teamTaskDetailsPage.getBackToTasksButton().should('be.visible');
 
           const tasksHistoryPage = teamTaskDetailsPage.goToTaskHistory();
-          assertTaskHistorySteps(roleName);
+          assertTaskHistorySteps(roleName, 'Task created');
           tasksHistoryPage.getCloseButton().click();
 
           teamTaskDetailsPage.getBackToTasksButton().should('be.visible');

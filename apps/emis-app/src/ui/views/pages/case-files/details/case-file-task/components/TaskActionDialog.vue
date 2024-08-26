@@ -65,14 +65,14 @@
               @change="resetForm()">
               <div class="d-flex flex-nowrap">
                 <div v-for="(item, $index) in actionItems" :key="$index" class="mx-1 py-2" :class="{ 'action-select-radio': actionItems.length > 1 }">
-                  <v-radio :value="item.value" :class="{ 'flex-column': actionItems.length > 1 }">
+                  <v-radio :value="item.value" :data-test="`task-action-dialog-radio-${item.label}`" :class="{ 'flex-column': actionItems.length > 1 } ">
                     <template #label>
-                      <div class="font-weight-bold">
+                      <div class="font-weight-bold" :data-test="`task-action-dialog-radio-label-${item.label}`">
                         {{ item.label }}
                       </div>
                     </template>
                   </v-radio>
-                  <div v-if="item.description" class="rc-body12 px-2 text-center">
+                  <div v-if="item.description" class="rc-body12 px-2 text-center" :data-test="`task-action-dialog-radio-description-${item.label}`">
                     {{ item.description }}
                   </div>
                 </div>
@@ -98,6 +98,7 @@
             v-model="rationale"
             :label="`${$t('task.task_action_dialog.rationale_for_decision')} *`"
             rows="4"
+            data-test="task-action-dialog-rationale"
             :rules="rules.rationale" />
         </div>
       </div>

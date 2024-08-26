@@ -1,6 +1,7 @@
 import { CaseFileDetailsPage } from '../casefiles/caseFileDetails.page';
 import { CreatePersonalTaskPage } from './createPersonalTask.page';
 import { CreateTeamTaskPage } from './createTeamTask.page';
+import { PersonalTaskDetailsPage } from './personalTaskDetails.page';
 
 export enum DataTest {
   tableTitle = 'table_title',
@@ -17,6 +18,16 @@ export enum DataTest {
   createdTaskSubCategory = 'task-table-task-sub-category',
   createdTaskUserWorkingOn = 'task-table-user-working-on',
   createdTaskDateAdded = 'task-table-date-added',
+  dialogTitle = 'dialog-title',
+  dialogRadioCompleted = 'task-action-dialog-radio-Completed',
+  dialogRadioCancel = 'task-action-dialog-radio-Cancel',
+  dialogRadioLabelCompleted = 'task-action-dialog-radio-label-Completed',
+  dialogRadioLabelCancel = 'task-action-dialog-radio-label-Cancel',
+  dialogRadioDescriptionCancel = 'task-action-dialog-radio-description-Cancel',
+  dialogRationale = 'task-action-dialog-rationale',
+  dialogRationaleInput = 'task-action-dialog-rationale_input',
+  dialogSubmitButton = 'dialog-submit-action',
+  dialogCancelButton = 'dialog-cancel-action',
 }
 
 export class TasksHomePage {
@@ -47,6 +58,26 @@ export class TasksHomePage {
   private createdTaskUserWorkingOn = { selector: DataTest.createdTaskUserWorkingOn };
 
   private createdTaskDateAdded = { selector: DataTest.createdTaskDateAdded };
+
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private dialogRadioCompleted = { selector: DataTest.dialogRadioCompleted, type: 'input' };
+
+  private dialogRadioCancel = { selector: DataTest.dialogRadioCancel, type: 'input' };
+
+  private dialogRadioLabelCompleted = { selector: DataTest.dialogRadioLabelCompleted };
+
+  private dialogRadioLabelCancel = { selector: DataTest.dialogRadioLabelCancel };
+
+  private dialogRadioDescriptionCancel = { selector: DataTest.dialogRadioDescriptionCancel };
+
+  private dialogRationale = { selector: DataTest.dialogRationale };
+
+  private dialogRationaleInput = { selector: DataTest.dialogRationaleInput, type: 'textarea' };
+
+  private dialogSubmitButton = { selector: DataTest.dialogSubmitButton };
+
+  private dialogCancelButton = { selector: DataTest.dialogCancelButton };
 
   public getTableTitleElement() {
     return cy.getByDataTest(this.tableTitle);
@@ -113,5 +144,62 @@ export class TasksHomePage {
 
   public getCreatedTaskDateAdded() {
     return cy.getByDataTest(this.createdTaskDateAdded).getAndTrimText();
+  }
+
+  public getCreatedTaskActionButtonById(taskId: string) {
+    cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryActionButton}-${taskId}` }).click();
+  }
+
+  public getPersonalTaskById(taskId: string) {
+    cy.getByDataTest({ selector: `${DataTest.createdTaskCategory}-${taskId}` }).click();
+    return new PersonalTaskDetailsPage();
+  }
+
+  public getDialogTitleElement() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public getDialogCompletedCheckbox() {
+    return cy.getByDataTest(this.dialogRadioCompleted);
+  }
+
+  public getDialogCancelledCheckbox() {
+    return cy.getByDataTest(this.dialogRadioCancel);
+  }
+
+  public cancelTask() {
+    return cy.getByDataTest(this.dialogRadioCancel).check({ force: true });
+  }
+
+  public getDialogCompletedCheckboxLabel() {
+    return cy.getByDataTest(this.dialogRadioLabelCompleted).getAndTrimText();
+  }
+
+  public getDialogCancelledCheckboxLabel() {
+    return cy.getByDataTest(this.dialogRadioLabelCancel).getAndTrimText();
+  }
+
+  public getDialogCancelledCheckboxDescription() {
+    return cy.getByDataTest(this.dialogRadioDescriptionCancel).getAndTrimText();
+  }
+
+  public getDialogRationaleElement() {
+    return cy.getByDataTest(this.dialogRationale);
+  }
+
+  public getDialogRationaleInput() {
+    return cy.getByDataTest(this.dialogRationaleInput);
+  }
+
+  public enterRationale(rationale: string) {
+    return cy.getByDataTest(this.dialogRationaleInput).type(rationale);
+  }
+
+  public getDialogApplyButton() {
+    return cy.getByDataTest(this.dialogSubmitButton);
+  }
+
+  public getDialogCancelButton() {
+    return cy.getByDataTest(this.dialogCancelButton);
   }
 }

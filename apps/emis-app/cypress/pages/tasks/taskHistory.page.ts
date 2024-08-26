@@ -27,20 +27,20 @@ export class TasksHistoryPage {
     return cy.getByDataTest(this.dialogTitle);
   }
 
-  public getHistoryTableEditedByElement() {
-    return cy.getByDataTest(this.historyTableEditedBy);
+  public getHistoryTableEditedByElementByIndex(index = 0) {
+    return cy.getByDataTest(this.historyTableEditedBy).eq(index);
   }
 
-  public getHistoryTableActionTaken() {
-    return cy.getByDataTest(this.historyTableActionTaken).getAndTrimText();
+  public getHistoryTableActionTakenByIndex(index = 0) {
+    return cy.getByDataTest(this.historyTableActionTaken).eq(index).getAndTrimText();
   }
 
-  public getHistoryTableDateOfChange() {
-    return cy.getByDataTest(this.historyTableChangeDate).getAndTrimText();
+  public getHistoryTableDateOfChangeByIndex(index = 0) {
+    return cy.getByDataTest(this.historyTableChangeDate).eq(index).getAndTrimText();
   }
 
-  public getHistoryTableRationale() {
-    return cy.getByDataTest(this.historyTableRationale).getAndTrimText();
+  public getHistoryTableRationaleByIndex(index = 0) {
+    return cy.getByDataTest(this.historyTableRationale).eq(index).getAndTrimText();
   }
 
   public getHistoryTable() {

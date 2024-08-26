@@ -50,6 +50,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
 import { TeamType } from '@libs/entities-lib/team';
+import { mockCreatePersonalTaskRequest } from '@libs/cypress-lib/mocks/tasks/tasks';
 import {
   fixtureGenerateCaseFileStatusCsvFile,
   fixtureGenerateFaCsvFile,
@@ -1107,4 +1108,15 @@ export const createEventWithAssignableTeam = async (accessToken: string, roles: 
   };
   const team = await linkEventToTeamForManyRoles(linkEventToTeamParamData);
   return { provider, event, team };
+};
+
+/**
+ * Creates a Personal Task
+ * @param provider
+ * @param caseFileId
+ */
+export const createPersonalTask = async (provider: IProvider, caseFileId: string) => {
+  const mockCreatePersonalTask = mockCreatePersonalTaskRequest({ caseFileId });
+  const personalTaskCreated = await provider.task.createTask(mockCreatePersonalTask);
+  return personalTaskCreated;
 };
