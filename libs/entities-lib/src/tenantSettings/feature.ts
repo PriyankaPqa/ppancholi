@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import utils from '../utils';
 import { FeatureType, FeatureVisibility, IFeatureEntity } from './tenantSettings.types';

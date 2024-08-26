@@ -6,10 +6,12 @@ import fs from 'fs';
 import reporterConfig from './cypress-reporter-config';
 
 const { cloudPlugin } = require('cypress-cloud/plugin');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const webpackPreprocessor = require('@cypress/webpack-preprocessor');
+
+const webpackConfig = require('../../cypress.webpack.config');
 
 const zephyrReporter = process.env.ZEPHYR_REPORTER !== 'false';
-
-require('tsconfig-paths').register();
 
 require('dotenv').config({ path: `${__dirname}/../../.env.local`, override: true });
 
@@ -35,6 +37,10 @@ export default defineConfig({
           }
         },
       );
+
+      on('file:preprocessor', webpackPreprocessor({
+        webpackOptions: webpackConfig,
+      }));
 
       installLogsPrinter(on, { // https://github.com/archfz/cypress-terminal-report
         printLogsToConsole: 'onFail', // 'never'

@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { createEventWithAssignableTeam, createHousehold } from '../../helpers/prepareState';
 import { TasksHomePage } from '../../../pages/tasks/tasksHome.page';
 import { linkEventToTeamForManyRoles, LinkEventToTeamParams, removeTeamMembersFromTeam } from '../../helpers/teams';
+import { assertTaskHistorySteps } from './canSteps';
 
 const escalationRole = [
   UserRoles.level6,
@@ -121,12 +122,7 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
           teamTaskDetailsPage.getBackToTasksButton().should('be.visible');
 
           const tasksHistoryPage = teamTaskDetailsPage.goToTaskHistory();
-          tasksHistoryPage.getDialogTitleElement().contains('Task history').should('be.visible');
-          tasksHistoryPage.getCloseButton().should('be.visible');
-          tasksHistoryPage.getHistoryTableEditedByElement().contains(getUserName(roleName)).should('be.visible');
-          tasksHistoryPage.getHistoryTableEditedByElement().contains(getUserRoleDescription(roleName)).should('be.visible');
-          tasksHistoryPage.getHistoryTableActionTaken().should('eq', 'Task created');
-          tasksHistoryPage.getHistoryTableDateOfChange().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+          assertTaskHistorySteps(roleName, 'Task created');
           tasksHistoryPage.getCloseButton().click();
 
           teamTaskDetailsPage.getBackToTasksButton().should('be.visible');

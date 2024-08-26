@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/src/types';
+import { IMultilingual, Status } from '@libs/shared-lib/src/types';
 import { IEntity } from '../../base';
 import { IServiceOption } from '../service-option/service-option.types';
 
@@ -13,11 +13,6 @@ export enum DayOfWeek {
   Thursday = 4,
   Friday = 5,
   Saturday = 6,
-}
-
-export enum AppointmentProgramStatus {
-  Active = 1,
-  Inactive = 2,
 }
 
 /**
@@ -51,7 +46,7 @@ export interface IAppointmentProgram extends IEntity {
   timeZone: string;
   businessHours: IDaySchedule[];
   serviceOptions: IServiceOption[];
-  appointmentProgramStatus:AppointmentProgramStatus;
+  appointmentProgramStatus: Status;
   emailConfirmationSubject: IMultilingual;
   emailConfirmationMessage: IMultilingual;
 }

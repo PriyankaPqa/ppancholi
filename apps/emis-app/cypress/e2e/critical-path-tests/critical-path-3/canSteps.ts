@@ -1,8 +1,8 @@
 import { AuthenticationExceptionalType, getToday, IdentificationIdProvided } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
-import { BaseDetailsMassAction } from 'cypress/pages/mass-action/base/baseDetailsMassAction';
 import { IIdentityAuthentication, IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@libs/entities-lib/case-file';
+import { BaseDetailsMassAction } from '../../../pages/mass-action/base/baseDetailsMassAction';
 import { fixtureBaseMassAction } from '../../../fixtures/mass-actions';
 import { NewDataCorrectionPage } from '../../../pages/mass-action/data-correction/newDataCorrection.page';
 

@@ -1,4 +1,4 @@
-import { AddFinancialAssistancePage } from 'cypress/pages/financial-assistance-payment/addFinancialAssistance.page';
+import { AddFinancialAssistancePage } from '../../pages/financial-assistance-payment/addFinancialAssistance.page';
 import { CreateNewTeamPage } from '../../pages/teams/createNewTeam.page';
 
   export const verifyAndReturnAddFaPaymentPage = (): AddFinancialAssistancePage | null => {

@@ -14,7 +14,6 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { mockApprovalTableData, mockApprovalTableWithMultipleApprovalGroupData, mockCreateApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
-import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import {
   mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest,
@@ -41,12 +40,6 @@ import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockU
 import { EPaymentModalities, IProgramEntity, IProgramEntityData } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
-import {
-  fixtureGenerateCaseFileStatusCsvFile,
-  fixtureGenerateFaCsvFile,
-  fixtureGenerateMassAssessmentsCsvFile,
-  fixtureGenerateMassCommunicationCsvFile,
-} from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication, IImpactStatusValidation } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
@@ -57,6 +50,14 @@ import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
 import { TeamType } from '@libs/entities-lib/team';
+import { mockCreatePersonalTaskRequest } from '@libs/cypress-lib/mocks/tasks/tasks';
+import {
+  fixtureGenerateCaseFileStatusCsvFile,
+  fixtureGenerateFaCsvFile,
+  fixtureGenerateMassAssessmentsCsvFile,
+  fixtureGenerateMassCommunicationCsvFile,
+} from '../../fixtures/mass-actions';
+import { useProvider } from '../../provider/provider';
 import { LinkEventToTeamParams, linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
@@ -1107,4 +1108,15 @@ export const createEventWithAssignableTeam = async (accessToken: string, roles: 
   };
   const team = await linkEventToTeamForManyRoles(linkEventToTeamParamData);
   return { provider, event, team };
+};
+
+/**
+ * Creates a Personal Task
+ * @param provider
+ * @param caseFileId
+ */
+export const createPersonalTask = async (provider: IProvider, caseFileId: string) => {
+  const mockCreatePersonalTask = mockCreatePersonalTaskRequest({ caseFileId });
+  const personalTaskCreated = await provider.task.createTask(mockCreatePersonalTask);
+  return personalTaskCreated;
 };

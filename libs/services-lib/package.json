@@ -8,7 +8,7 @@
   "dependencies": {
     "@libs/entities-lib": "*",
     "@libs/shared-lib": "*",
-    "axios": "1.6.4",
+    "axios": "1.7.4",
     "date-fns-tz": "^2.0.0",
     "js-convert-case": "^4.1.1",
     "lodash": "^4.17.21",

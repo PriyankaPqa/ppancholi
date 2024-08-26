@@ -5,9 +5,9 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { MassCaseFileStatusUpdateDetailsPage } from 'cypress/pages/mass-action/mass-case-file-status/massCaseFileStatusUpdateDetails.page';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
+import { MassCaseFileStatusUpdateDetailsPage } from '../../../pages/mass-action/mass-case-file-status/massCaseFileStatusUpdateDetails.page';
 import { caseFileDetailsPageAssertionSteps } from './canSteps';
 import {
   AddFinancialAssistancePaymentForMultipleCaseFilesParams,

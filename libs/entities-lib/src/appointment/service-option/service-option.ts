@@ -1,27 +1,29 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IListOption, IMultilingual } from '@libs/shared-lib/types';
+import { IListOption, Status } from '@libs/shared-lib/types';
 
 import { BaseEntity } from '../../base';
 import { IServiceOption } from './service-option.types';
 
 export class ServiceOption extends BaseEntity {
-  name: IMultilingual;
+  serviceOptionType: IListOption;
 
   duration: Duration;
 
   appointmentModalities: IListOption[];
 
+  serviceOptionStatus: Status;
+
   constructor(data?: IServiceOption) {
     if (data) {
       super(data);
-      this.name = data?.name;
-      this.duration = data?.duration;
+      this.serviceOptionType = data?.serviceOptionType;
       this.appointmentModalities = data?.appointmentModalities ? _cloneDeep(data.appointmentModalities) : [];
+      this.serviceOptionStatus = data?.serviceOptionStatus;
     } else {
       super();
-      this.name = null;
-      this.duration = null;
+      this.serviceOptionType = { optionItemId: null, specifiedOther: null };
       this.appointmentModalities = [];
+      this.serviceOptionStatus = Status.Active;
     }
   }
 }

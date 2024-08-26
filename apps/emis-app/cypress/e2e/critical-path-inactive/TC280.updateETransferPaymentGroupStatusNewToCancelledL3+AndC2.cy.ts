@@ -3,7 +3,7 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
+import { FinancialAssistanceHomePage } from '../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../helpers/teams';
 import { AddSubmitUpdateFaPaymentParams, prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../helpers/prepareState';
 import { updatePaymentGroupStatusTo } from '../critical-path-tests/critical-path-1/canSteps';
@@ -75,6 +75,7 @@ describe('#TC280# - Update E-Transfer payment group status from New to Cancelled
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
             paymentModality: 'E-Transfer',
+            roleName,
           });
         });
       });

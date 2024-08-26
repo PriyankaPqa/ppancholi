@@ -1,4 +1,4 @@
-import { IListOption, IMultilingual } from '@libs/shared-lib/src/types';
+import { IListOption, IMultilingual } from '@libs/shared-lib/types';
 import { CaseFileStatus } from '../case-file';
 import { EPaymentModalities } from '../program';
 import { IEntity, IEntityCombined } from '../base';

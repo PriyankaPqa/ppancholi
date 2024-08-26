@@ -1,10 +1,11 @@
+import { Status } from '@libs/shared-lib/types';
 import { mockBaseData } from '../../base';
 import { mockServiceOption } from '../service-option/service-option.mock';
-import { AppointmentProgramStatus, DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
+import { DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
 
 export const mockBookingHour = (force?: Partial<IDaySchedule>): IDaySchedule => ({
   day: DayOfWeek.Monday,
-  timeSlots: [{ start: '09:00', end: '12:00' }, { start: '13:00', end: '17:00' }],
+  timeSlots: [{ start: '09:00:00', end: '12:00:00' }, { start: '13:00:00', end: '17:00:00' }],
   ...force,
 });
 
@@ -23,10 +24,10 @@ export const mockAppointmentProgram = (force? : Partial<IAppointmentProgram>): I
   ...mockBaseData(),
   eventId: 'mock-eventId',
   name: { translation: { en: 'mock-appointment-program-name-en', fr: 'mock-appointment-program-name-fr' } },
-  timeZone: 'America/Toronto',
+  timeZone: 'Eastern Standard Time',
   businessHours: mockBusinessHours(),
   serviceOptions: [mockServiceOption()],
-  appointmentProgramStatus: AppointmentProgramStatus.Active,
+  appointmentProgramStatus: Status.Active,
   emailConfirmationSubject: { translation: { en: 'mock-emailConfirmationSubject-en', fr: 'mock-emailConfirmationSubject-fr' } },
   emailConfirmationMessage: { translation: { en: 'mock-emailConfirmationMessage-en', fr: 'mock-emailConfirmationMessage-fr' } },
   ...force,

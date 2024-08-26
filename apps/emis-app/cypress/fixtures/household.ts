@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
 import { IPersonalInfoFields, PreferredLanguage } from '@libs/cypress-lib/pages/registration/personalInformation.page';
-import { IHouseholdMemberFields } from 'cypress/pages/casefiles/addHouseholdMember.page';
 import { format } from 'date-fns';
 import { generateName, removeSpecialCharacters } from '@libs/cypress-lib/helpers';
+import { IHouseholdMemberFields } from '../pages/casefiles/addHouseholdMember.page';
 import { ICRCPrivacyStatementPageFields, PrivacyRegistrationMethod } from '../pages/registration/crcPrivacyStatement.page';
 
 export const fixturePrivacy = (): ICRCPrivacyStatementPageFields => ({

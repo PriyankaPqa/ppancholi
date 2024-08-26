@@ -4,7 +4,7 @@ import { formatDateToMmmDdYyyy, getToday } from '@libs/cypress-lib/helpers';
 import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { IProvider } from '@/services/provider';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
-import { useProvider } from 'cypress/provider/provider';
+import { useProvider } from '../../../provider/provider';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';

@@ -1,8 +1,8 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual, Status } from '@libs/shared-lib/types';
 import utils from '../../utils';
 import { BaseEntity } from '../../base';
-import { AppointmentProgramStatus, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
+import { IAppointmentProgram, IDaySchedule } from './appointment-program.types';
 import { IServiceOption } from '../service-option/service-option.types';
 
 export class AppointmentProgram extends BaseEntity {
@@ -16,7 +16,7 @@ export class AppointmentProgram extends BaseEntity {
 
   serviceOptions: IServiceOption[];
 
-  appointmentProgramStatus: AppointmentProgramStatus;
+  appointmentProgramStatus: Status;
 
   emailConfirmationSubject: IMultilingual;
 
@@ -40,13 +40,15 @@ export class AppointmentProgram extends BaseEntity {
       this.timeZone = null;
       this.businessHours = [];
       this.serviceOptions = [];
-      this.appointmentProgramStatus = AppointmentProgramStatus.Active;
-      this.emailConfirmationMessage = null;
-      this.emailConfirmationSubject = null;
+      this.appointmentProgramStatus = Status.Active;
+      this.emailConfirmationMessage = utils.initMultilingualAttributes();
+      this.emailConfirmationSubject = utils.initMultilingualAttributes();
     }
   }
 
   public fillEmptyMultilingualAttributes() {
     this.name = utils.getFilledMultilingualField(this.name);
+    this.emailConfirmationMessage = utils.getFilledMultilingualField(this.emailConfirmationMessage);
+    this.emailConfirmationSubject = utils.getFilledMultilingualField(this.emailConfirmationSubject);
   }
 }

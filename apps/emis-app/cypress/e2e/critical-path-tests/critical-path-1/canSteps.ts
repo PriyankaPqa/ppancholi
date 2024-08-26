@@ -1,9 +1,9 @@
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
-import { FinancialAssistanceDetailsPage } from 'cypress/pages/financial-assistance-payment/financialAssistanceDetails.page';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { getToday } from '@libs/cypress-lib/helpers';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FinancialAssistanceDetailsPage } from '../../../pages/financial-assistance-payment/financialAssistanceDetails.page';
 import { IAddNewPaymentLineFields } from '../../../pages/financial-assistance-payment/addNewPaymentLine.page';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 
@@ -18,7 +18,7 @@ export interface PaymentLineCanStepsParams {
 export interface PaymentGroupStatusUpdateParam {
   paymentStatus: string,
   paymentModality: string,
-  roleName?: string,
+  roleName: string,
 }
 
 const paymentLineItemEditButtonVisibleForRoles = [

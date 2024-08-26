@@ -23,8 +23,6 @@ import installLogsCollector from 'cypress-terminal-report/src/installLogsCollect
 import registerCypressGrep from '@cypress/grep';
 import { slowCypressDown } from 'cypress-slow-down';
 
-require('cypress-xpath');
-
 installLogsCollector();
 
 registerCypressGrep();

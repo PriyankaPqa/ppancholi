@@ -81,6 +81,7 @@ describe('[T28352] Update Direct Deposit payment group status - L6 and C2.', { t
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
@@ -95,6 +96,7 @@ describe('[T28352] Update Direct Deposit payment group status - L6 and C2.', { t
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
+            roleName,
           });
 
           updatePaymentGroupStatusTo({
