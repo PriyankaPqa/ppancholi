@@ -71,71 +71,118 @@
               </v-row>
             </template>
 
-            <v-row class="mt-8">
-              <v-col cols="12">
-                <div class="rc-heading-5">
-                  {{ $t('impactedIndividuals.newAddress') }}
-                </div>
-              </v-col>
-              <v-col cols="12" sm="6" md="8">
-                <v-select-with-validation
-                  v-model="addressType"
-                  background-color="white"
-                  rules="required"
-                  hide-details
-                  item-value="value"
-                  :data-test="'currentAddressType'"
-                  :label="`${$t('registration.addresses.addressType')} *`"
-                  :items="currentAddressTypeItems"
-                  @change="changeType(true)" />
-              </v-col>
-            </v-row>
-            <v-row v-if="showCrcProvidedSelection">
-              <validation-provider v-slot="{ errors }" class="cb-validation" :rules="{ required: isCrcProvided == null }">
-                <v-col cols="12" sm="6" md="8">
-                  <div class="font-weight-bold ">
-                    {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
-                  </div>
-                  <div class="pb-8">
-                    <v-radio-group
-                      v-model="isCrcProvided"
-                      :error-messages="errors"
-                      :disabled="lockCrcProvided"
-                      row
-                      hide-details
-                      @change="changeType(false)">
-                      <v-radio :label="$t('common.yes')" :value="true" data-test="CRC_provided_yes" />
-                      <v-radio :label="$t('common.no')" :value="false" data-test="CRC_provided_no" />
-                    </v-radio-group>
+            <template v-if="lodgingMode === LodgingMode.MoveCrcProvidedAllowed || lodgingMode === LodgingMode.MoveCrcProvidedNotAllowed">
+              <v-row class="mt-8">
+                <validation-provider v-slot="{ errors }" class="cb-validation" :rules="{ required: moveIntoExistingAddress == null }">
+                  <v-col cols="12" sm="6" md="8">
+                    <div class="font-weight-bold ">
+                      {{ $t('impactedIndividuals.moveIntoExistingAddress') }}
+                    </div>
+                    <div>
+                      <v-radio-group
+                        v-model="moveIntoExistingAddress"
+                        :error-messages="errors"
+                        row
+                        hide-details>
+                        <v-radio :label="$t('common.yes')" :value="true" data-test="moveIntoExistingAddress_yes" />
+                        <v-radio :label="$t('common.no')" :value="false" data-test="moveIntoExistingAddress_no" />
+                      </v-radio-group>
+                    </div>
+                  </v-col>
+                </validation-provider>
+              </v-row>
+            </template>
+
+            <template v-if="moveIntoExistingAddress === true">
+              <div class="mt-8">
+                <validation-provider v-slot="{ errors }" class="cb-validation" rules="required">
+                  <v-radio-group
+                    v-model="existingAddress"
+                    :error-messages="errors"
+                    hide-details>
+                    <v-row v-for="(address, index) in uniqueAddresses" :key="index">
+                      <v-col cols="1" class="d-flex justify-center">
+                        <v-radio :value="address" :data-test="'moveIntoExistingAddress_' + index" />
+                      </v-col>
+                      <v-col cols="11">
+                        <impacted-individual-address-template-v2
+                          :address="address"
+                          :shelter-locations-list="shelterLocations"
+                          is-previous-temporary-address />
+                      </v-col>
+                    </v-row>
+                  </v-radio-group>
+                </validation-provider>
+              </div>
+            </template>
+
+            <template v-if="moveIntoExistingAddress === false">
+              <v-row class="mt-8">
+                <v-col cols="12">
+                  <div class="rc-heading-5">
+                    {{ $t('impactedIndividuals.newAddress') }}
                   </div>
                 </v-col>
-              </validation-provider>
-            </v-row>
-            <crc-provided-lodging
-              v-if="isCrcProvided && selectedPaymentDetails && !showSelectTable && addressType"
-              :id="caseFileId"
-              ref="crcProvidedLodging"
-              :address-type="addressType"
-              :default-amount="defaultAmount"
-              :bookings="bookings"
-              :people-to-lodge="peopleToLodge"
-              :program="selectedPaymentDetails.program"
-              :table-id="selectedPaymentDetails.table.id" />
-            <current-address-form
-              v-if="isCrcProvided === false && bookings[0]"
-              :shelter-locations="shelterLocations"
-              :canadian-provinces-items="canadianProvincesItems"
-              :current-address-type-items="[]"
-              :no-fixed-home="false"
-              :api-key="apiKey"
-              :disable-autocomplete="false"
-              :current-address="bookings[0].address"
-              lock-crc-provided
-              hide-title
-              booking-mode
-              compact-view
-              show-crc-provided-and-check-in-check-out
-              @change="bookings[0].address = $event" />
+                <v-col cols="12" sm="6" md="8">
+                  <v-select-with-validation
+                    v-model="addressType"
+                    background-color="white"
+                    rules="required"
+                    hide-details
+                    item-value="value"
+                    :data-test="'currentAddressType'"
+                    :label="`${$t('registration.addresses.addressType')} *`"
+                    :items="currentAddressTypeItems"
+                    @change="changeType(true)" />
+                </v-col>
+              </v-row>
+              <v-row v-if="showCrcProvidedSelection">
+                <validation-provider v-slot="{ errors }" class="cb-validation" :rules="{ required: isCrcProvided == null }">
+                  <v-col cols="12" sm="6" md="8">
+                    <div class="font-weight-bold ">
+                      {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
+                    </div>
+                    <div class="pb-8">
+                      <v-radio-group
+                        v-model="isCrcProvided"
+                        :error-messages="errors"
+                        :disabled="lockCrcProvided"
+                        row
+                        hide-details
+                        @change="changeType(false)">
+                        <v-radio :label="$t('common.yes')" :value="true" data-test="CRC_provided_yes" />
+                        <v-radio :label="$t('common.no')" :value="false" data-test="CRC_provided_no" />
+                      </v-radio-group>
+                    </div>
+                  </v-col>
+                </validation-provider>
+              </v-row>
+              <crc-provided-lodging
+                v-if="isCrcProvided && selectedPaymentDetails && !showSelectTable && addressType"
+                :id="caseFileId"
+                ref="crcProvidedLodging"
+                :address-type="addressType"
+                :default-amount="defaultAmount"
+                :bookings="bookings"
+                :people-to-lodge="peopleToLodge"
+                :program="selectedPaymentDetails.program"
+                :table-id="selectedPaymentDetails.table.id" />
+              <current-address-form
+                v-if="isCrcProvided === false && bookings[0]"
+                :shelter-locations="shelterLocations"
+                :canadian-provinces-items="canadianProvincesItems"
+                :current-address-type-items="[]"
+                :no-fixed-home="false"
+                :api-key="apiKey"
+                :disable-autocomplete="false"
+                :current-address="bookings[0].address"
+                lock-crc-provided
+                hide-title
+                booking-mode
+                compact-view
+                show-crc-provided-and-check-in-check-out
+                @change="bookings[0].address = $event" />
+            </template>
           </v-col>
         </v-row>
       </div>
@@ -188,7 +235,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@libs/entities-lib/helpers';
 import { IBookingRequest, RoomOption, RoomType, IBooking } from '@libs/entities-lib/booking-request';
 import { IMemberForSelection } from '@libs/entities-lib/value-objects/member';
-import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
+import { MembershipStatus, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import mixins from 'vue-typed-mixins';
 import { IProgramEntity } from '@libs/entities-lib/program';
@@ -270,6 +317,9 @@ export default mixins(caseFileDetail).extend({
       isCrcProvided: false,
       showCrcProvidedSelection: false,
       lockCrcProvided: false,
+      LodgingMode,
+      moveIntoExistingAddress: null as boolean,
+      existingAddress: null as TemporaryAddress,
     };
   },
 
@@ -281,6 +331,13 @@ export default mixins(caseFileDetail).extend({
         default:
           return this.$t('impactedIndividuals.moveNewAddress');
       }
+    },
+
+    uniqueAddresses(): TemporaryAddress[] {
+      const addresses = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active)
+        .map((m) => ({ address: m.currentAddress, stringified: JSON.stringify(new CurrentAddress(m.currentAddress)) }));
+      return addresses.filter((a, index) => !addresses.find((a2, index2) => index > index2 && a.stringified === a2.stringified))
+        .map((a) => a.address);
     },
 
     shelterLocations(): IEventGenericLocation[] {
@@ -307,6 +364,7 @@ export default mixins(caseFileDetail).extend({
       return individuals.map((i) => ({
         ...this.members.find((m) => m.id === i.personId && m.status === Status.Active),
         caseFileIndividualId: i.id,
+        caseFileIndividual: i,
         receivingAssistance: i.receivingAssistance,
         isPrimary: i.personId === this.primaryMember?.id,
        })).filter((m) => m.id);
@@ -346,6 +404,10 @@ export default mixins(caseFileDetail).extend({
     this.selectPaymentDetails(this.paymentDetails[0]);
 
     this.showSelectTable = this.paymentDetails.length > 1;
+
+    if (this.lodgingMode === LodgingMode.BookingMode) {
+      this.moveIntoExistingAddress = false;
+    }
   },
 
   methods: {
@@ -422,9 +484,24 @@ export default mixins(caseFileDetail).extend({
     },
 
     async onSubmit() {
-      this.bookings.forEach((b) => {
-        b.address.crcProvided = this.isCrcProvided;
-      });
+      if (this.moveIntoExistingAddress && this.existingAddress) {
+        if (this.existingAddress.crcProvided && this.peopleToLodge.find((p) => !p.receivingAssistance)) {
+          this.$message({
+            title: this.$t('impactedIndividuals.crcProvided.notReceivingAssistance.title'),
+            message: this.$t('impactedIndividuals.crcProvided.notReceivingAssistance.message'),
+            maxWidth: 750,
+          });
+          return;
+        }
+
+        // the address might be crc provided but this move will not require creating payments since the address is already paid for
+        this.isCrcProvided = false;
+        this.bookings = [{ address: new CurrentAddress(this.existingAddress), peopleInRoom: [] }];
+      } else {
+        this.bookings.forEach((b) => {
+          b.address.crcProvided = this.isCrcProvided;
+        });
+      }
 
       const crcProvidedSection = (this.$refs.crcProvidedLodging as any) as ICrcProvidedLodging;
       const isValid = await (this.$refs.form as VForm).validate();
@@ -499,7 +576,10 @@ export default mixins(caseFileDetail).extend({
         if (!b.address.hasCrcProvided()) {
           b.address.crcProvided = null;
         }
-        await this.peopleToLodge.forEach(async (p) => {
+        await this.peopleToLodge
+          // no need to send people to the same address if they've picked the same one that some already have
+          .filter((p) => JSON.stringify(new CurrentAddress(p.caseFileIndividual.currentAddress)) !== JSON.stringify(b.address))
+          .forEach(async (p) => {
           const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p.caseFileIndividualId, b.address);
           if (!moveResult) {
             throw new Error('addTemporaryAddress failed');

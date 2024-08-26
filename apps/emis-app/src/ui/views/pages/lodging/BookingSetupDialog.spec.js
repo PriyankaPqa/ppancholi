@@ -13,7 +13,8 @@ import { mockBookingRequest } from '@libs/entities-lib/booking-request';
 import { createTestingPinia } from '@pinia/testing';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockMember } from '@libs/entities-lib/household-create';
-import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
+import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
+import { CurrentAddress, ECurrentAddressTypes, mockOther } from '@libs/entities-lib/value-objects/current-address';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 
 import Component, { LodgingMode } from './BookingSetupDialog.vue';
@@ -103,15 +104,34 @@ describe('BookingSetupDialog.vue', () => {
       it('returns the people receiving assistance when no preselected people in props, or preselected people', async () => {
         expect(wrapper.vm.peopleToLodge.length).toEqual(wrapper.vm.individuals.length - 1);
         expect(wrapper.vm.peopleToLodge).toEqual([
-          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true },
-          { ...mockMember({ id: 'pid3' }), caseFileIndividualId: individuals[2].id, isPrimary: false, receivingAssistance: true },
+          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[0] },
+          { ...mockMember({ id: 'pid3' }), caseFileIndividualId: individuals[2].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[2] },
         ]);
 
         await wrapper.setProps({ preselectedIndividuals: [individuals[0].id] });
         expect(wrapper.vm.peopleToLodge.length).toEqual(1);
         expect(wrapper.vm.peopleToLodge).toEqual([
-          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true },
+          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[0] },
         ]);
+      });
+    });
+
+    describe('uniqueAddresses', () => {
+      it('returns the addresses that differ from the list of current addresses', async () => {
+        const individuals = individualStore.getByCaseFile();
+        individuals[0].membershipStatus = MembershipStatus.Active;
+        individuals[1].membershipStatus = MembershipStatus.Active;
+        individuals[2].membershipStatus = MembershipStatus.Active;
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { individuals: () => individuals });
+        expect(wrapper.vm.uniqueAddresses).toEqual([individuals[0].currentAddress]);
+
+        individuals[1].currentAddress = mockOther();
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { individuals: () => individuals });
+        expect(wrapper.vm.uniqueAddresses).toEqual([individuals[0].currentAddress, individuals[1].currentAddress]);
+
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { individuals: () => individuals });
+        individuals[1].membershipStatus = MembershipStatus.Removed;
+        expect(wrapper.vm.uniqueAddresses).toEqual([individuals[0].currentAddress]);
       });
     });
   });
@@ -274,6 +294,44 @@ describe('BookingSetupDialog.vue', () => {
     });
 
     describe('onSubmit', () => {
+      it('when moving into an existing address, show message if crc provided and not receiving assistance', async () => {
+        const peopleToLodge = wrapper.vm.peopleToLodge;
+
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { peopleToLodge() {
+          return peopleToLodge;
+        } });
+
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        wrapper.vm.provideCrcAddress = jest.fn();
+        wrapper.vm.provideNonCrcAddress = jest.fn();
+        peopleToLodge[0].receivingAssistance = false;
+
+        await wrapper.setData({ moveIntoExistingAddress: true, existingAddress: { crcProvided: false } });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+        expect(wrapper.vm.provideCrcAddress).not.toHaveBeenCalled();
+        expect(wrapper.vm.provideNonCrcAddress).toHaveBeenCalled();
+        jest.clearAllMocks();
+
+        await wrapper.setData({ moveIntoExistingAddress: true, existingAddress: { crcProvided: true } });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({
+          maxWidth: 750, message: 'impactedIndividuals.crcProvided.notReceivingAssistance.message', title: 'impactedIndividuals.crcProvided.notReceivingAssistance.title',
+        });
+        expect(wrapper.vm.provideCrcAddress).not.toHaveBeenCalled();
+        expect(wrapper.vm.provideNonCrcAddress).not.toHaveBeenCalled();
+        jest.clearAllMocks();
+
+        peopleToLodge[0].receivingAssistance = true;
+        await wrapper.setData({ moveIntoExistingAddress: true, existingAddress: { crcProvided: true } });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+        expect(wrapper.vm.provideCrcAddress).not.toHaveBeenCalled();
+        expect(wrapper.vm.provideNonCrcAddress).toHaveBeenCalled();
+        expect(wrapper.vm.bookings).toEqual([{ address: new CurrentAddress(wrapper.vm.existingAddress), peopleInRoom: [] }]);
+      });
+
       it('shows confirm when not everyone is lodged', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;

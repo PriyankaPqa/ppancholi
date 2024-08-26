@@ -44,12 +44,12 @@ export interface IBookingRequest extends IEntity {
 }
 
 export interface IBooking {
-  nightlyRate: number,
-  confirmationNumber: string,
-  numberOfNights: number,
+  nightlyRate?: number,
+  confirmationNumber?: string,
+  numberOfNights?: number,
   peopleInRoom: string[],
   address: CurrentAddress,
-  uniqueNb: number,
+  uniqueNb?: number,
 }
 
 export type IdParams = { id: uuid, caseFileId: uuid };

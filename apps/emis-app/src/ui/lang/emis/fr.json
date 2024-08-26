@@ -2742,6 +2742,7 @@
     "householdDetails.manageDuplicates.table.household": "Ménage",
     "householdDetails.manageDuplicates.table.name": "Nom",
     "bookingRequest.totalEstimatedAmount": "Coût total estimé",
+    "impactedIndividuals.moveIntoExistingAddress": "Déplacer à une adresse temporaire existante",
     "householdDetails.manageDuplicates.table.potentialDuplicates": "Doublons potentiels",
     "householdDetails.manageDuplicates.title.flagCaseFilePotential": "Signaler le dossier comme étant un doublon potentiel",
     "householdDetails.manageDuplicates.title.flagCaseFileResolved": "Signaler comme étant un doublon résolu",
