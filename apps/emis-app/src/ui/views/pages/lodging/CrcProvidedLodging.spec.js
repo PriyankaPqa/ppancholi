@@ -82,6 +82,31 @@ describe('CrcProvidedLodging.vue', () => {
         expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(wrapper.vm.$i18n));
       });
     });
+
+    describe('currentAmount', () => {
+      it('sets up the right payment', async () => {
+        wrapper.vm.addRoom();
+        wrapper.vm.addRoom();
+        wrapper.vm.addRoom();
+        let b = wrapper.vm.bookings[0];
+        b.numberOfNights = 2;
+        b.nightlyRate = 100;
+        b = wrapper.vm.bookings[1];
+        b.numberOfNights = 1;
+        b.nightlyRate = 200;
+        b = wrapper.vm.bookings[2];
+        b.numberOfNights = 6;
+        b.nightlyRate = 200;
+        b = wrapper.vm.bookings[3];
+        b.numberOfNights = 6;
+        b.nightlyRate = 200;
+
+        expect(wrapper.vm.currentAmount).toEqual(2800);
+
+        b.nightlyRate = 0;
+        expect(wrapper.vm.currentAmount).toEqual(1600);
+      });
+    });
   });
 
   describe('Methods', () => {
