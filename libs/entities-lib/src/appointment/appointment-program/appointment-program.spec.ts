@@ -1,6 +1,6 @@
+import { Status } from '@libs/shared-lib/types';
 import { AppointmentProgram } from './appointment-program';
 import { mockAppointmentProgram } from './appointment-program.mock';
-import { AppointmentProgramStatus } from './appointment-program.types';
 import utils from '../../utils';
 
 const mockData = mockAppointmentProgram();
@@ -29,7 +29,7 @@ const mockData = mockAppointmentProgram();
           expect(item.timeZone).toEqual(null);
           expect(item.businessHours).toEqual([]);
           expect(item.serviceOptions).toEqual([]);
-          expect(item.appointmentProgramStatus).toEqual(AppointmentProgramStatus.Active);
+          expect(item.appointmentProgramStatus).toEqual(Status.Active);
           expect(item.emailConfirmationSubject).toEqual({ translation: { en: '', fr: '' } });
           expect(item.emailConfirmationMessage).toEqual({ translation: { en: '', fr: '' } });
         });

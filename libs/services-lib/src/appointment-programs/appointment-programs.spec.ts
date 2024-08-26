@@ -1,4 +1,4 @@
-import { AppointmentProgram, mockAppointmentProgram } from '@libs/entities-lib/src/appointment';
+import { AppointmentProgram, mockAppointmentProgram, mockServiceOption } from '@libs/entities-lib/src/appointment';
 import { IHttpMock, mockHttp, GlobalHandler } from '../http-client';
 import { AppointmentProgramsService } from './appointment-programs';
 
@@ -56,6 +56,22 @@ describe('>>> Appointment Programs Service', () => {
       await service.update(entity);
       expect(http.patch).toHaveBeenCalledWith(`www.test.com/appointment/appointment-programs/${entity.id}`, entity, {
         globalHandler: GlobalHandler.Partial });
+    });
+  });
+
+  describe('createServiceOption', () => {
+    it('should call the proper endpoint', async () => {
+      const serviceOption = mockServiceOption();
+      await service.createServiceOption('program-id', serviceOption);
+      expect(http.patch).toHaveBeenCalledWith('appointment/program-id/service-options', serviceOption);
+    });
+  });
+
+  describe('updateServiceOption', () => {
+    it('should call the proper endpoint', async () => {
+      const serviceOption = mockServiceOption();
+      await service.updateServiceOption('program-id', serviceOption);
+      expect(http.patch).toHaveBeenCalledWith(`appointment/program-id/service-options/${serviceOption.id}`, serviceOption);
     });
   });
 

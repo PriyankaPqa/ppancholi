@@ -1,7 +1,6 @@
-import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
+import { ISearchParams, ICombinedSearchResult, Status } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
-import { IAppointmentProgram, AppointmentProgram, IdParams } from '@libs/entities-lib/appointment';
-import { AppointmentProgramStatus } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
+import { IAppointmentProgram, AppointmentProgram, IdParams, IServiceOption } from '@libs/entities-lib/appointment';
 import { GlobalHandler, IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentProgramsService } from './appointment-programs.types';
@@ -22,12 +21,22 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
 
   async update(item: AppointmentProgram): Promise<IAppointmentProgram> {
     const payload = this.parsePayload(item);
-    return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, payload, {
-      globalHandler: GlobalHandler.Partial,
-    });
+    return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
-  async setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: AppointmentProgramStatus, rationale: string): Promise<IAppointmentProgram> {
+  async createServiceOption(appointmentProgramId:string, item: Partial<IServiceOption>): Promise<IAppointmentProgram> {
+    return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options`, item);
+  }
+
+  async updateServiceOption(appointmentProgramId:string, item: Partial<IServiceOption>): Promise<IAppointmentProgram> {
+    return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options/${item.id}`, item);
+  }
+
+  async deleteServiceOption(appointmentProgramId:string, itemId: string): Promise<IAppointmentProgram> {
+    return this.http.delete<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options/${itemId}`);
+  }
+
+  async setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: Status, rationale: string): Promise<IAppointmentProgram> {
     return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${id}/appointment-program-status`, { appointmentProgramStatus, rationale });
   }
 
