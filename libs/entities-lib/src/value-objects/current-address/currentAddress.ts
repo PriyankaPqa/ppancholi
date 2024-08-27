@@ -16,6 +16,8 @@ export const addressTypeHasCrcProvided = [
 ];
 
 export class CurrentAddress implements ICurrentAddress {
+  id?: string;
+
   addressType: ECurrentAddressTypes;
 
   placeName?: string;
@@ -34,6 +36,8 @@ export class CurrentAddress implements ICurrentAddress {
 
   takeover: boolean;
 
+  relatedBookingRequest?: string;
+
   relatedPaymentIds?: string[];
 
   private bookingRequestMode: boolean;
@@ -43,6 +47,7 @@ export class CurrentAddress implements ICurrentAddress {
       this.relatedPaymentIds = [];
       this.reset();
     } else {
+      this.id = data.id;
       this.addressType = data.addressType;
       this.placeName = data.placeName;
       this.placeNumber = data.placeNumber;
@@ -53,6 +58,7 @@ export class CurrentAddress implements ICurrentAddress {
       this.checkOut = data.checkOut ? new Date(data.checkOut) : null;
       this.takeover = data.takeover;
       this.relatedPaymentIds = data.relatedPaymentIds;
+      this.relatedBookingRequest = data.relatedBookingRequest;
     }
   }
 
@@ -217,6 +223,7 @@ export class CurrentAddress implements ICurrentAddress {
       checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,
       takeover: currentAddress.takeover,
       relatedPaymentIds: currentAddress.relatedPaymentIds || [],
+      relatedBookingRequest: currentAddress.relatedBookingRequest,
     };
   }
 
@@ -232,5 +239,9 @@ export class CurrentAddress implements ICurrentAddress {
       latitude: address.latitude,
       longitude: address.longitude,
     };
+  }
+
+  public static areSimilar(address1: ICurrentAddressData, address2: ICurrentAddressData): boolean {
+    return JSON.stringify(new CurrentAddress({ ...address1, id: null })) === JSON.stringify(new CurrentAddress({ ...address2, id: null }));
   }
 }

@@ -88,6 +88,8 @@ describe('BookingSetupDialog.vue', () => {
       it('depends on lodging mode', async () => {
         await wrapper.setProps({ lodgingMode: LodgingMode.BookingMode });
         expect(wrapper.vm.title).toEqual('bookingRequest.setup.title');
+        await wrapper.setProps({ lodgingMode: LodgingMode.ExtendStay });
+        expect(wrapper.vm.title).toEqual('impactedIndividuals.extendStay');
         await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedAllowed });
         expect(wrapper.vm.title).toEqual('impactedIndividuals.moveNewAddress');
         await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedNotAllowed });
@@ -181,6 +183,59 @@ describe('BookingSetupDialog.vue', () => {
   });
 
   describe('Methods', () => {
+    describe('setupBookingsForExtendStay', () => {
+      it('creates bookings per address', async () => {
+        const individuals = individualStore.getByCaseFile();
+        individuals[0].membershipStatus = MembershipStatus.Active;
+        individuals[1].membershipStatus = MembershipStatus.Active;
+        individuals[2].membershipStatus = MembershipStatus.Active;
+        await mountWrapper(false, 5, LodgingMode.ExtendStay, { individuals: () => individuals });
+        wrapper.vm.setupBookingsForExtendStay();
+        const address = new CurrentAddress(individuals[0].currentAddress);
+        address.checkIn = '';
+        address.checkOut = '';
+        expect(wrapper.vm.bookings).toEqual([{
+          address,
+          peopleInRoom: ['1', '2', '3'],
+          confirmationNumber: '',
+          nightlyRate: wrapper.vm.defaultAmount,
+          numberOfNights: null,
+          uniqueNb: 0,
+          originalCheckoutDate: '',
+        }]);
+
+        individuals[0].currentAddress.checkIn = new Date('2002-02-02');
+        individuals[0].currentAddress.checkOut = new Date('2002-02-05');
+
+        wrapper.vm.setupBookingsForExtendStay();
+        const address2 = new CurrentAddress(individuals[0].currentAddress);
+        address2.checkIn = '2002-02-02';
+        address2.checkOut = '2002-02-05';
+        expect(wrapper.vm.bookings).toEqual([{
+          address: address2,
+          peopleInRoom: ['1'],
+          confirmationNumber: '',
+          nightlyRate: wrapper.vm.defaultAmount,
+          numberOfNights: null,
+          uniqueNb: 0,
+          originalCheckoutDate: '2002-02-05',
+        }, {
+          address,
+          peopleInRoom: ['2', '3'],
+          confirmationNumber: '',
+          nightlyRate: wrapper.vm.defaultAmount,
+          numberOfNights: null,
+          uniqueNb: 1,
+          originalCheckoutDate: '',
+        }]);
+
+        expect(wrapper.vm.isCrcProvided).toBeTruthy();
+        expect(wrapper.vm.addressType).toBeTruthy();
+        expect(wrapper.vm.showCrcProvidedSelection).toBeTruthy();
+        expect(wrapper.vm.lockCrcProvided).toBeTruthy();
+      });
+    });
+
     describe('changeType', () => {
       it('clears bookings and adds 1', async () => {
         wrapper.vm.$refs.form.reset = jest.fn();
@@ -255,6 +310,7 @@ describe('BookingSetupDialog.vue', () => {
     describe('selectPaymentDetails', () => {
       it('sets the payment details', async () => {
         wrapper.vm.defaultAmount = 0;
+        wrapper.vm.setupBookingsForExtendStay = jest.fn();
         jest.clearAllMocks();
         const detail = wrapper.vm.paymentDetails[0];
         wrapper.vm.selectPaymentDetails(detail);
@@ -263,6 +319,13 @@ describe('BookingSetupDialog.vue', () => {
         expect(tableStore.setFinancialAssistance).toHaveBeenCalledWith({
           fa: detail.table, categories: paymentStore.getFinancialAssistanceCategories(), newProgram: detail.program, removeInactiveItems: true,
         });
+        expect(wrapper.vm.setupBookingsForExtendStay).not.toHaveBeenCalled();
+
+        await mountWrapper(false, 5, LodgingMode.ExtendStay);
+        wrapper.vm.setupBookingsForExtendStay = jest.fn();
+        jest.clearAllMocks();
+        wrapper.vm.selectPaymentDetails(detail);
+        expect(wrapper.vm.setupBookingsForExtendStay).toHaveBeenCalled();
       });
     });
 
@@ -374,6 +437,8 @@ describe('BookingSetupDialog.vue', () => {
         crcProvidedLodging.generatePayment = jest.fn(() => payment);
         const address = new CurrentAddress();
         address.reset(ECurrentAddressTypes.HotelMotel);
+        address.checkIn = '2022-01-01';
+        address.checkOut = '2022-02-01';
         await wrapper.setData({ bookings: [{ address, peopleInRoom: ['someone', 'someother'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideCrcAddress();
@@ -407,6 +472,29 @@ describe('BookingSetupDialog.vue', () => {
         expect(paymentStore.submitFinancialAssistancePayment).toHaveBeenCalledWith('some payment');
         expect(bookingStore.fulfillBooking).not.toHaveBeenCalled();
         expect(individualStore.addTemporaryAddress).toHaveBeenCalled();
+
+        await mountWrapper(false, 5, LodgingMode.ExtendStay);
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        crcProvidedLodging.generatePayment = jest.fn(() => payment);
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-01-05' }] });
+
+        jest.clearAllMocks();
+        await wrapper.vm.provideCrcAddress();
+
+        expect(crcProvidedLodging.generatePayment).toHaveBeenCalled();
+        expect(paymentStore.addFinancialAssistancePayment).toHaveBeenCalledWith(payment);
+        expect(paymentStore.submitFinancialAssistancePayment).toHaveBeenCalledWith('some payment');
+        expect(individualStore.editTemporaryAddress).toHaveBeenCalledTimes(2);
+
+        // when checkout date hasnt changed, we dont save the booking (not extended)
+        await mountWrapper(false, 5, LodgingMode.ExtendStay);
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        crcProvidedLodging.generatePayment = jest.fn(() => payment);
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-02-01' }] });
+
+        jest.clearAllMocks();
+        await wrapper.vm.provideCrcAddress();
+        expect(individualStore.editTemporaryAddress).not.toHaveBeenCalled();
       });
     });
 

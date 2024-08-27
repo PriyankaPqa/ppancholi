@@ -40,6 +40,7 @@ const doMount = (currentAddress = mockCampGround(), computed = {}, featureList =
 
   wrapper = shallowMount(Component, options);
 };
+
 describe('CurrentAddressForm.vue', () => {
   beforeEach(() => {
     doMount();
@@ -368,10 +369,9 @@ describe('CurrentAddressForm.vue', () => {
   describe('lifecycle', () => {
     describe('created', () => {
       it('should set value properly when component created', async () => {
-        const mockCurrentAddress = mockCampGround({
-          checkIn: '2023-05-01T00:00:00.000Z',
-          checkOut: '2023-05-20T00:00:00.000Z',
-        });
+        const mockCurrentAddress = mockCampGround();
+        mockCurrentAddress.checkIn = '2023-05-01';
+        mockCurrentAddress.checkOut = '2023-05-20';
         await wrapper.setProps({
           currentAddress: mockCurrentAddress,
         });
@@ -379,7 +379,23 @@ describe('CurrentAddressForm.vue', () => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.form).toEqual(mockCurrentAddress);
-        expect(wrapper.vm.checkInCheckOutDate).toEqual([new Date('2023-05-01T00:00:00.000Z'), new Date('2023-05-20T00:00:00.000Z')]);
+        expect(wrapper.vm.checkInCheckOutDate).toEqual(['2023-05-01', '2023-05-20']);
+      });
+
+      it('extend stay - should set value properly when component created for newCheckOutDate', async () => {
+        const mockCurrentAddress = mockCampGround();
+        mockCurrentAddress.checkIn = '2023-05-01';
+        mockCurrentAddress.checkOut = '2023-05-20';
+        await wrapper.setProps({
+          currentAddress: mockCurrentAddress,
+          extendStayMode: true,
+        });
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.form).toEqual(mockCurrentAddress);
+        expect(wrapper.vm.checkInCheckOutDate).toEqual(['2023-05-01', '2023-05-20']);
+        expect(wrapper.vm.newCheckOutDate).toEqual(['2023-05-21', null]);
       });
     });
   });
@@ -430,6 +446,15 @@ describe('CurrentAddressForm.vue', () => {
         expect(wrapper.vm.form.checkIn).toEqual('2023-05-01');
         expect(wrapper.vm.form.checkOut).toEqual('2023-05-20');
         expect(wrapper.vm.checkInCheckOutDate).toEqual(['2023-05-01', '2023-05-20']);
+      });
+    });
+
+    describe('setNewCheckOut', () => {
+      it('should set value properly', () => {
+        wrapper.vm.setNewCheckOut(['2023-05-01', '2023-05-20']);
+        expect(wrapper.vm.form.checkIn).not.toEqual('2023-05-01');
+        expect(wrapper.vm.form.checkOut).toEqual('2023-05-20');
+        expect(wrapper.vm.newCheckOutDate).toEqual(['2023-05-01', '2023-05-20']);
       });
     });
 

@@ -2749,6 +2749,8 @@
     "householdDetails.manageDuplicates.rationale": "Rationale",
     "householdDetails.manageDuplicates.referenceCaseFile": "Reference case file",
     "householdDetails.manageDuplicates.referenceHousehold": "Reference household",
+    "impactedIndividuals.temporary_address.new_check_out": "New check out",
+    "impactedIndividuals.extendStay": "Extend stay",
     "householdDetails.manageDuplicates.resolvedByTheSystem": "Resolved by the system",
     "householdDetails.manageDuplicates.resolvedDuplicate": "Resolved duplicate",
     "householdDetails.manageDuplicates.resolvedDuplicates": "Resolved duplicates",

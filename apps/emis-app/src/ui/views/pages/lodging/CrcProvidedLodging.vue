@@ -10,13 +10,14 @@
           <v-checkbox
             v-model="booking.address.takeover"
             class="mt-0"
+            :disabled="lodgingMode === LodgingMode.ExtendStay"
             :label="$t('bookingRequest.takeover')"
             hide-details />
         </div>
       </v-col>
       <v-col cols="1" class="float-right">
         <v-btn
-          v-if="index > 0"
+          v-if="index > 0 && lodgingMode !== LodgingMode.ExtendStay"
           icon
           @click="removeRoom(booking)">
           <v-icon size="24" color="grey darken-2">
@@ -40,7 +41,7 @@
                   class="mt-0"
                   :label="individual.identitySet.firstName + ' ' + individual.identitySet.lastName"
                   :value="individual.caseFileIndividualId"
-                  :disabled="isMemberAlreadySelected(booking, individual.caseFileIndividualId)"
+                  :disabled="lodgingMode === LodgingMode.ExtendStay || isMemberAlreadySelected(booking, individual.caseFileIndividualId)"
                   hide-details />
               </v-col>
             </v-radio-group>
@@ -83,6 +84,7 @@
           :api-key="apiKey"
           :disable-autocomplete="false"
           :current-address="booking.address"
+          :extend-stay-mode="lodgingMode === LodgingMode.ExtendStay"
           lock-crc-provided
           booking-mode
           hide-title
@@ -91,7 +93,7 @@
           @change="setCurrentAddress($event, index)" />
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="lodgingMode !== LodgingMode.ExtendStay">
       <v-col>
         <v-btn class="secondary" @click="addRoom()">
           <v-icon class="mr-2">
@@ -131,6 +133,7 @@ import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity, Pa
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
+import { LodgingMode } from './BookingSetupDialog.vue';
 
 export interface ICrcProvidedLodging {
   generatePayment(): IFinancialAssistancePaymentEntity;
@@ -154,6 +157,10 @@ export default mixins(caseFileDetail).extend({
   props: {
     addressType: {
       type: Number as () => ECurrentAddressTypes,
+      required: true,
+    },
+    lodgingMode: {
+      type: Number as () => LodgingMode,
       required: true,
     },
     defaultAmount: {
@@ -189,6 +196,7 @@ export default mixins(caseFileDetail).extend({
       uniqueNb: 0,
       showSelectTable: false,
       MAX_LENGTH_SM,
+      LodgingMode,
     };
   },
 
@@ -233,8 +241,17 @@ export default mixins(caseFileDetail).extend({
 
     setCurrentAddress(form: CurrentAddress, index: number) {
       this.bookings[index].address = form;
-      this.bookings[index].numberOfNights = form.checkOut && form.checkIn
-        ? (differenceInDays(parseISO(`${form.checkOut}Z`), parseISO(`${form.checkIn}Z`)) || 1) : null;
+      if ((form.hasPlaceNumber() || form.requiresShelterLocation()) && !form.placeNumber) {
+        form.placeNumber = this.$t('bookingRequest.roomNumber', { index: index + 1 }) as string;
+      }
+
+      if (this.lodgingMode !== LodgingMode.ExtendStay) {
+        this.bookings[index].numberOfNights = form.checkOut && form.checkIn
+          ? (differenceInDays(parseISO(`${form.checkOut}Z`), parseISO(`${form.checkIn}Z`)) || 1) : null;
+      } else {
+        this.bookings[index].numberOfNights = form.checkOut && this.bookings[index].originalCheckoutDate
+        ? differenceInDays(parseISO(`${form.checkOut}Z`), parseISO(`${this.bookings[index].originalCheckoutDate}Z`)) : null;
+      }
     },
 
     isMemberAlreadySelected(booking: IBooking, id: string) {

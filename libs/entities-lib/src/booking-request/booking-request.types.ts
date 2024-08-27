@@ -50,6 +50,7 @@ export interface IBooking {
   peopleInRoom: string[],
   address: CurrentAddress,
   uniqueNb?: number,
+  originalCheckoutDate?: string,
 }
 
 export type IdParams = { id: uuid, caseFileId: uuid };

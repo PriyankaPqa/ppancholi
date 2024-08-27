@@ -38,10 +38,19 @@ export function getExtensionComponents(
     return result;
   }
 
+  async function editTemporaryAddress(caseFileId: uuid, id: uuid, item: ICurrentAddressData): Promise<ICaseFileIndividualEntity> {
+    const result = await service.editTemporaryAddress(caseFileId, id, item);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
   return {
     getByCaseFile,
     createIndividual,
     addReceiveAssistanceDetails,
     addTemporaryAddress,
+    editTemporaryAddress,
   };
 }

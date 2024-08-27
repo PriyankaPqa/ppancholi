@@ -12,6 +12,7 @@ import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockMember } from '@libs/entities-lib/household-create';
 import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
 
+import { LodgingMode } from './BookingSetupDialog.vue';
 import Component from './CrcProvidedLodging.vue';
 
 const localVue = createLocalVue();
@@ -56,6 +57,7 @@ describe('CrcProvidedLodging.vue', () => {
         defaultAmount: 125,
         id: 'cf-id',
         tableId: 'table-id',
+        lodgingMode: LodgingMode.BookingMode,
         peopleToLodge: [
           { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id },
           { ...mockMember({ id: 'pid3' }), caseFileIndividualId: individuals[2].id },
@@ -151,9 +153,10 @@ describe('CrcProvidedLodging.vue', () => {
     });
 
     describe('setCurrentAddress', () => {
-      it('sets the number of nights', async () => {
+      it('sets the number of nights based on check in checkout', async () => {
         wrapper.vm.addRoom();
         const c = new CurrentAddress();
+        c.addressType = ECurrentAddressTypes.HotelMotel;
         c.checkIn = '2024-01-01';
         c.checkOut = '2024-01-06';
         wrapper.vm.setCurrentAddress(c, 1);
@@ -169,6 +172,32 @@ describe('CrcProvidedLodging.vue', () => {
         wrapper.vm.setCurrentAddress(c, 1);
         expect(wrapper.vm.bookings[1].numberOfNights).toEqual(1);
         expect(wrapper.vm.bookings[1].address).toEqual(c);
+      });
+
+      it('sets the number of nights based on original chekout for ExtendStay', async () => {
+        await wrapper.setProps({ lodgingMode: LodgingMode.ExtendStay });
+        wrapper.vm.addRoom();
+        const c = new CurrentAddress();
+        c.addressType = ECurrentAddressTypes.HotelMotel;
+        c.checkIn = '2024-01-01';
+        c.checkOut = '2024-01-06';
+        wrapper.vm.bookings[1].originalCheckoutDate = '2024-01-05';
+        wrapper.vm.setCurrentAddress(c, 1);
+        expect(wrapper.vm.bookings[1].numberOfNights).toEqual(1);
+
+        c.checkOut = '';
+        wrapper.vm.setCurrentAddress(c, 1);
+        expect(wrapper.vm.bookings[1].numberOfNights).toEqual(null);
+      });
+
+      it('defaults the place name if it got wiped', async () => {
+        wrapper.vm.addRoom();
+        const c = new CurrentAddress();
+        c.addressType = ECurrentAddressTypes.HotelMotel;
+        c.checkIn = '2024-01-01';
+        c.checkOut = '2024-01-06';
+        wrapper.vm.setCurrentAddress(c, 1);
+        expect(wrapper.vm.bookings[1].address.placeNumber).toEqual({ key: 'bookingRequest.roomNumber', params: [{ index: 2 }] });
       });
     });
 

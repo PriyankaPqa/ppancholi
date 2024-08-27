@@ -220,5 +220,29 @@ describe('ImpactedIndividualsV2.vue', () => {
         expect(wrapper.vm.canMoveToNewAddress).toBeTruthy();
       });
     });
+
+    describe('canExtendStay', () => {
+      it('depends on userCanDoBookings and a current address thats crcprovided', async () => {
+        featureList = [wrapper.vm.$featureKeys.Lodging];
+        const individual = mockCaseFileIndividualEntity();
+        individual.currentAddress.crcProvided = false;
+        await doMount(false, 1, {}, {
+          individuals() {
+            return [individual];
+          },
+        });
+        await wrapper.setData({ userCanDoBookings: false });
+        expect(wrapper.vm.canExtendStay).toBeFalsy();
+        await wrapper.setData({ userCanDoBookings: true });
+        expect(wrapper.vm.canExtendStay).toBeFalsy();
+
+        individual.currentAddress.crcProvided = true;
+
+        await wrapper.setData({ userCanDoBookings: false });
+        expect(wrapper.vm.canExtendStay).toBeFalsy();
+        await wrapper.setData({ userCanDoBookings: true });
+        expect(wrapper.vm.canExtendStay).toBeTruthy();
+      });
+    });
   });
 });

@@ -27,6 +27,12 @@
             </v-icon>
             {{ $t('impactedIndividuals.moveNewAddress') }}
           </v-btn>
+          <v-btn v-if="canExtendStay" class="mb-6 ml-4 secondary" @click="startExtendStay()">
+            <v-icon class="mr-2">
+              mdi-calendar-blank
+            </v-icon>
+            {{ $t('impactedIndividuals.extendStay') }}
+          </v-btn>
         </div>
       </div>
       <div v-for="individual in individuals" :key="individual.id">
@@ -119,6 +125,11 @@ export default mixins(caseFileDetail).extend({
     canMoveToNewAddress(): boolean {
       return this.$hasFeature(this.$featureKeys.Lodging) && (this.userCanDoBookings || this.canRequestBooking);
     },
+
+    canExtendStay(): boolean {
+      return this.$hasFeature(this.$featureKeys.Lodging) && this.userCanDoBookings
+        && !!this.individuals.find((i) => i.membershipStatus === MembershipStatus.Active && i.currentAddress.crcProvided);
+    },
   },
 
   async created() {
@@ -162,6 +173,17 @@ export default mixins(caseFileDetail).extend({
         this.showMoveDialog = true;
       }
       dialog.close();
+    },
+
+    async startExtendStay() {
+      const peopleToMove = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active && i.currentAddress.crcProvided)
+          .map((i) => ({
+            ...this.members.find((m) => m.id === i.personId && m.status === Status.Active),
+            caseFileIndividualId: i.id,
+          })).filter((m) => m.id);
+      this.selectedIndividuals = peopleToMove.map((p) => p.caseFileIndividualId);
+      this.lodgingMode = LodgingMode.ExtendStay;
+      this.showMoveDialog = true;
     },
   },
 });

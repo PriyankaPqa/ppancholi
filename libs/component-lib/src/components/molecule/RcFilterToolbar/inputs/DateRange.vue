@@ -4,6 +4,7 @@
     class="pa-0">
     <v-row>
       <v-col
+        v-if="!hideStartDate"
         class="py-0"
         cols="6">
         <div class="flex-grow-1">
@@ -20,6 +21,7 @@
                 outlined
                 readonly
                 clearable
+                :disabled="disabled"
                 :background-color="backgroundColor"
                 :label="startLabel"
                 :rules="rules.startRequired"
@@ -32,6 +34,7 @@
               v-model="pickerStart"
               :data-test="`filterToolbar__input-${id}-dateRange-start-date-picker`"
               :locale="locale"
+              :disabled="disabled"
               :max="pickerEnd"
               @change="menuStart = false" />
           </v-menu>
@@ -40,7 +43,7 @@
 
       <v-col
         class="py-0"
-        cols="6">
+        :cols="hideStartDate ? 12 : 6">
         <div class="flex-grow-1">
           <v-menu
             v-model="menuEnd"
@@ -55,6 +58,7 @@
                 outlined
                 readonly
                 clearable
+                :disabled="disabled"
                 :background-color="backgroundColor"
                 :label="endLabel"
                 :value="inputTo"
@@ -67,6 +71,7 @@
               v-model="pickerEnd"
               :data-test="`filterToolbar__input-${id}-dateRange-end-date-picker`"
               :locale="locale"
+              :disabled="disabled"
               :min="pickerStart"
               @change="menuEnd = false" />
           </v-menu>
@@ -135,6 +140,16 @@ export default Vue.extend({
     },
 
     required: {
+      type: Boolean,
+      default: false,
+    },
+
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+
+    hideStartDate: {
       type: Boolean,
       default: false,
     },

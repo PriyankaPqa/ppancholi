@@ -7,5 +7,6 @@ export function getMockCaseFileIndividualExtensionComponents() {
     getByCaseFile: jest.fn(() => mockCaseFileIndividualEntities()),
     addTemporaryAddress: jest.fn(() => mockCaseFileIndividualEntity()),
     addReceiveAssistanceDetails: jest.fn(() => mockCaseFileIndividualEntity()),
+    editTemporaryAddress: jest.fn(() => mockCaseFileIndividualEntity()),
   };
 }

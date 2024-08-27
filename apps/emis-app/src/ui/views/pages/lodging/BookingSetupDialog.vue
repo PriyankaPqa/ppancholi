@@ -20,7 +20,7 @@
       <div v-if="!loading" class="px-16 mx-8">
         <v-row justify="center" no-gutters>
           <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
-            <template v-if="preselectedIndividuals && preselectedIndividuals.length">
+            <template v-if="lodgingMode === LodgingMode.MoveCrcProvidedAllowed || lodgingMode === LodgingMode.MoveCrcProvidedNotAllowed">
               <v-row>
                 <v-col cols="12">
                   <div class="rc-heading-5">
@@ -118,7 +118,7 @@
             </template>
 
             <template v-if="moveIntoExistingAddress === false">
-              <v-row class="mt-8">
+              <v-row v-if="lodgingMode !== LodgingMode.ExtendStay" class="mt-8">
                 <v-col cols="12">
                   <div class="rc-heading-5">
                     {{ $t('impactedIndividuals.newAddress') }}
@@ -165,6 +165,7 @@
                 :address-type="addressType"
                 :default-amount="defaultAmount"
                 :bookings="bookings"
+                :lodging-mode="lodgingMode"
                 :people-to-lodge="peopleToLodge"
                 :program="selectedPaymentDetails.program"
                 :table-id="selectedPaymentDetails.table.id" />
@@ -221,12 +222,14 @@
 
 <script lang='ts'>
 import { TranslateResult } from 'vue-i18n';
+import _groupBy from 'lodash/groupBy';
 import {
   RcDialog,
   VTextFieldWithValidation,
   VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
+import uiHelpers from '@/ui/helpers/helpers';
 import { Status, VForm } from '@libs/shared-lib/types';
 import { IEventGenericLocation, EEventLocationStatus } from '@libs/entities-lib/event';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
@@ -257,6 +260,7 @@ export enum LodgingMode {
   BookingMode,
   MoveCrcProvidedAllowed,
   MoveCrcProvidedNotAllowed,
+  ExtendStay,
 }
 
 export default mixins(caseFileDetail).extend({
@@ -329,6 +333,8 @@ export default mixins(caseFileDetail).extend({
       switch (this.lodgingMode) {
         case LodgingMode.BookingMode:
           return this.$t('bookingRequest.setup.title');
+        case LodgingMode.ExtendStay:
+          return this.$t('impactedIndividuals.extendStay');
         default:
           return this.$t('impactedIndividuals.moveNewAddress');
       }
@@ -336,9 +342,8 @@ export default mixins(caseFileDetail).extend({
 
     uniqueAddresses(): TemporaryAddress[] {
       const addresses = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active)
-        .map((m) => ({ address: m.currentAddress, stringified: JSON.stringify(new CurrentAddress(m.currentAddress)) }));
-      return addresses.filter((a, index) => !addresses.find((a2, index2) => index > index2 && a.stringified === a2.stringified))
-        .map((a) => a.address);
+        .map((m) => m.currentAddress);
+      return addresses.filter((a, index) => !addresses.find((a2, index2) => index > index2 && CurrentAddress.areSimilar(a, a2)));
     },
 
     shelterLocations(): IEventGenericLocation[] {
@@ -406,12 +411,38 @@ export default mixins(caseFileDetail).extend({
 
     this.showSelectTable = this.paymentDetails.length > 1;
 
-    if (this.lodgingMode === LodgingMode.BookingMode) {
+    if (this.lodgingMode === LodgingMode.BookingMode || this.lodgingMode === LodgingMode.ExtendStay) {
       this.moveIntoExistingAddress = false;
     }
   },
 
   methods: {
+    setupBookingsForExtendStay() {
+      const groupedAddresses = _groupBy(this.peopleToLodge, (p) => JSON.stringify(new CurrentAddress({ ...p.caseFileIndividual.currentAddress, id: null })));
+
+      this.bookings = Object.values(groupedAddresses).map((group, index) => (
+        {
+          address: new CurrentAddress(group[0].caseFileIndividual.currentAddress),
+          peopleInRoom: group.map((p) => p.caseFileIndividualId),
+          confirmationNumber: '',
+          nightlyRate: this.defaultAmount,
+          numberOfNights: null,
+          uniqueNb: index,
+        }
+      ));
+
+      this.bookings.forEach((b) => {
+        b.originalCheckoutDate = uiHelpers.getLocalStringDate(b.address.checkOut, 'CaseFileIndividual.checkOut');
+        b.address.checkIn = uiHelpers.getLocalStringDate(b.address.checkIn, 'CaseFileIndividual.checkIn');
+        b.address.checkOut = uiHelpers.getLocalStringDate(b.address.checkOut, 'CaseFileIndividual.checkOut');
+      });
+
+      this.isCrcProvided = true;
+      this.addressType = this.bookings[0].address.addressType;
+      this.showCrcProvidedSelection = true;
+      this.lockCrcProvided = true;
+    },
+
     async changeType(clearCrcProvided = false) {
       if (this.lodgingMode === LodgingMode.MoveCrcProvidedAllowed || this.lodgingMode === LodgingMode.MoveCrcProvidedNotAllowed) {
         if (addressTypeHasCrcProvided.indexOf(this.addressType) === -1) {
@@ -465,6 +496,10 @@ export default mixins(caseFileDetail).extend({
 
         this.showSelectTable = false;
         this.selectedPaymentDetails = detail;
+
+        if (this.lodgingMode === LodgingMode.ExtendStay) {
+          this.setupBookingsForExtendStay();
+        }
       }
     },
 
@@ -559,12 +594,24 @@ export default mixins(caseFileDetail).extend({
           throw new Error('fulfillBooking failed');
         }
       } else {
-        this.bookings.forEach(async (b) => {
-          b.address.relatedPaymentIds = paymentId ? [paymentId] : [];
+        this.bookings.filter((b) => this.lodgingMode !== LodgingMode.ExtendStay || b.address.checkOut !== b.originalCheckoutDate).forEach(async (b) => {
+          b.address.relatedPaymentIds = b.address.relatedPaymentIds || [];
+          if (paymentId) {
+            b.address.relatedPaymentIds.push(paymentId);
+          }
           await b.peopleInRoom.forEach(async (p) => {
-            const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p, b.address);
-            if (!moveResult) {
-              throw new Error('addTemporaryAddress failed');
+            if (this.lodgingMode === LodgingMode.ExtendStay) {
+              const editResult = await useCaseFileIndividualStore()
+                          .editTemporaryAddress(this.caseFileId, p, { ...b.address, id: this.individuals.find((i) => i.id === p).currentAddress.id });
+
+              if (!editResult) {
+                throw new Error('editTemporaryAddress failed');
+              }
+            } else {
+              const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p, b.address);
+              if (!moveResult) {
+                throw new Error('addTemporaryAddress failed');
+              }
             }
           });
         });
@@ -579,7 +626,7 @@ export default mixins(caseFileDetail).extend({
         }
         await this.peopleToLodge
           // no need to send people to the same address if they've picked the same one that some already have
-          .filter((p) => JSON.stringify(new CurrentAddress(p.caseFileIndividual.currentAddress)) !== JSON.stringify(b.address))
+          .filter((p) => !CurrentAddress.areSimilar(p.caseFileIndividual.currentAddress, b.address))
           .forEach(async (p) => {
           const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p.caseFileIndividualId, b.address);
           if (!moveResult) {

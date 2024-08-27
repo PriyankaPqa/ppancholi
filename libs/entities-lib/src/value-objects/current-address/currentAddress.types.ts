@@ -18,6 +18,8 @@ export interface IEventGenericLocationWithEventName extends IEventGenericLocatio
 }
 
 export interface ICurrentAddressData {
+    id?: string;
+
     addressType: ECurrentAddressTypes;
 
     placeName?: string;
@@ -39,6 +41,8 @@ export interface ICurrentAddressData {
     takeover?: boolean;
 
     relatedPaymentIds?: string[];
+
+    relatedBookingRequest?: string;
 }
 
 export interface ICurrentAddressCreateRequest {
@@ -63,6 +67,8 @@ export interface ICurrentAddressCreateRequest {
     takeover?: boolean;
 
     relatedPaymentIds?: string[];
+
+    relatedBookingRequest?: string;
 }
 
 export interface ICurrentAddress extends ICurrentAddressData {
