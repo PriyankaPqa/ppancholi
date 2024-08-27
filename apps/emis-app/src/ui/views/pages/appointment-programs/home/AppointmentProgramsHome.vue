@@ -211,7 +211,13 @@ export default mixins(TablePaginationSearchMixin).extend({
       });
 
       if (doDelete) {
-        await useAppointmentProgramStore().deactivate(program.id);
+        const res = await useAppointmentProgramStore().deleteAppointmentProgram(program.id);
+        if (res) {
+          this.$toasted.global.success(this.$t('appointmentProgram.deleted'));
+          this.$router.push({ name: routes.events.appointmentPrograms.home.name });
+        } else {
+          this.$toasted.global.error(this.$t('appointmentProgram.deleted.failed'));
+        }
       }
     },
   },

@@ -1,4 +1,5 @@
 import { Status } from '@libs/shared-lib/types';
+import { mockUserInformation } from '../../user-account';
 import { mockBaseData } from '../../base';
 import { mockServiceOption } from '../service-option/service-option.mock';
 import { DayOfWeek, IAppointmentProgram, IDaySchedule } from './appointment-program.types';
@@ -28,6 +29,7 @@ export const mockAppointmentProgram = (force? : Partial<IAppointmentProgram>): I
   businessHours: mockBusinessHours(),
   serviceOptions: [mockServiceOption()],
   appointmentProgramStatus: Status.Active,
+  appointmentProgramStatusHistory: { userInformation: mockUserInformation(), rationale: 'rationale', dateOfAction: '2021-01-01' },
   emailConfirmationSubject: { translation: { en: 'mock-emailConfirmationSubject-en', fr: 'mock-emailConfirmationSubject-fr' } },
   emailConfirmationMessage: { translation: { en: 'mock-emailConfirmationMessage-en', fr: 'mock-emailConfirmationMessage-fr' } },
   ...force,

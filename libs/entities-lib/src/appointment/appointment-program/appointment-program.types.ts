@@ -1,4 +1,4 @@
-import { IMultilingual, Status } from '@libs/shared-lib/src/types';
+import { IMultilingual, IUserInformation, Status } from '@libs/shared-lib/src/types';
 import { IEntity } from '../../base';
 import { IServiceOption } from '../service-option/service-option.types';
 
@@ -40,6 +40,12 @@ export interface IDaySchedule {
   custom?: boolean;
 }
 
+export interface IAppointmentProgramStatusHistory {
+  userInformation: IUserInformation;
+  dateOfAction: string | Date;
+  rationale: string;
+}
+
 export interface IAppointmentProgram extends IEntity {
   eventId: uuid;
   name: IMultilingual;
@@ -47,6 +53,7 @@ export interface IAppointmentProgram extends IEntity {
   businessHours: IDaySchedule[];
   serviceOptions: IServiceOption[];
   appointmentProgramStatus: Status;
+  appointmentProgramStatusHistory: IAppointmentProgramStatusHistory;
   emailConfirmationSubject: IMultilingual;
   emailConfirmationMessage: IMultilingual;
 }

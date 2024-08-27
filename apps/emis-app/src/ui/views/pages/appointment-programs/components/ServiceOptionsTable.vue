@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-4">
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn color="primary" data-test="add-service-option" @click="onAdd">
         {{ $t('appointmentProgram.serviceOption.table.addServiceOption') }}
@@ -98,6 +98,9 @@ export default Vue.extend({
       required: true,
     },
 
+    /**
+     * Is the appointment program being created or edited
+     */
     isEditMode: {
       type: Boolean,
       required: true,

@@ -295,6 +295,13 @@ describe('AvailabilityHours.vue', () => {
         const element = wrapper.findDataTest('delete-time-slot_1_0');
         expect(element.exists()).toBeTruthy();
       });
+
+      it('does not render when not isEdit mode', async () => {
+        mountWrapper(false);
+        await wrapper.setProps({ isEditMode: false });
+        const element = wrapper.findDataTest('delete-time-slot_1_0');
+        expect(element.exists()).toBeFalsy();
+      });
     });
 
     describe('add button', () => {
@@ -306,6 +313,14 @@ describe('AvailabilityHours.vue', () => {
         expect(element1.exists()).toBeFalsy();
         const element2 = wrapper.findDataTest('add-time-slot_1_1');
         expect(element2.exists()).toBeTruthy();
+      });
+
+      it('does not render when not isEdit mode', async () => {
+        mountWrapper(false);
+        const element = wrapper.findDataTest('add-time-slot_1_0');
+        expect(element.exists()).toBeTruthy();
+        await wrapper.setProps({ isEditMode: false });
+        expect(element.exists()).toBeFalsy();
       });
     });
   });
