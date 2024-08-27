@@ -32,7 +32,7 @@
       </template>
 
       <template #[`item.${customColumns.successful}`]="{ item }">
-        {{ getLastRunMetadata(item) && getLastRunMetadata(item).results ? getLastRunMetadata(item).results.successes : $t('common.toBeDetermined') }}
+        {{ !isFailed(item) && getLastRunMetadata(item) && getLastRunMetadata(item).results ? getLastRunMetadata(item).results.successes : $t('common.toBeDetermined') }}
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">

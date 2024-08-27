@@ -57,6 +57,8 @@ export enum MassActionRunStatus {
   PreProcessed = 2,
   Processing = 3,
   Processed = 4,
+  FailedPreProcessing = 5,
+  FailedProcessing = 6,
 }
 
 export enum MassActionCommunicationMethod {

@@ -297,6 +297,12 @@ export default Vue.extend({
         case MassActionRunStatus.PreProcessed:
           return colors.chips.green_pale;
 
+        case MassActionRunStatus.FailedProcessing:
+          return colors.chips.red;
+
+        case MassActionRunStatus.FailedPreProcessing:
+          return colors.chips.red;
+
         default:
           return colors.chips.green;
       }

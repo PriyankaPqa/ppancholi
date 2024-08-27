@@ -51,6 +51,14 @@ export default Vue.extend({
     processed(): boolean {
       return this.lastRunEntity?.runStatus === MassActionRunStatus.Processed;
     },
+
+    failedPreProcessing(): boolean {
+      return this.lastRunEntity?.runStatus === MassActionRunStatus.FailedPreProcessing;
+    },
+
+    failedProcessing(): boolean {
+      return this.lastRunEntity?.runStatus === MassActionRunStatus.FailedProcessing;
+    },
   },
 
   async created() {
