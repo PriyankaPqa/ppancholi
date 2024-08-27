@@ -45,6 +45,10 @@ export class OptionItemsService implements IOptionItemsService {
         return '/event/exceptional-authentication-types';
       case EOptionLists.TaskCategories:
         return '/case-file/task-categories';
+      case EOptionLists.AppointmentModalities:
+        return '/appointment/appointment-modalities';
+      case EOptionLists.ServiceOptionTypes:
+        return '/appointment/service-option-types';
       default:
         return '';
     }
@@ -131,6 +135,12 @@ export class OptionItemsService implements IOptionItemsService {
   async setOptionItemLodging(list: EOptionLists, id: string, isLodging: boolean): Promise<IOptionItemData> {
     return this.http.patch(`${this.getPrefix(list)}/${id}/is-lodging`, {
       value: isLodging,
+    });
+  }
+
+  async setOptionItemIsOnline(list: EOptionLists, id: string, isOnline: boolean): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${id}/is-online`, {
+      value: isOnline,
     });
   }
 }

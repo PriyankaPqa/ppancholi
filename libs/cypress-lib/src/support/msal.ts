@@ -1,7 +1,7 @@
 import { AccountInfo } from '@azure/msal-browser';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { TokenClaims, ServerAuthorizationTokenResponse } from '@azure/msal-common';
-import { localStorageKeys } from '@libs/shared-lib/src/constants/localStorage';
+import { localStorageKeys } from '@libs/shared-lib/constants/localStorage';
 
 export interface ITokens {
   accountKey: string,

@@ -1,16 +1,8 @@
-import type { Duration } from 'date-fns';
-import { IListOption, IMultilingual } from '@libs/shared-lib/src/types';
+import { IListOption, Status } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 
-export interface IAppointmentModality {
-  name: IMultilingual;
-  isOnline: boolean;
-}
-
 export interface IServiceOption extends IEntity {
-  name: IMultilingual;
-  duration: Duration;
-  emailConfirmationSubject: IMultilingual;
-  emailConfirmationContent: IMultilingual;
+  serviceOptionType: IListOption;
   appointmentModalities: IListOption[];
+  serviceOptionStatus: Status;
 }

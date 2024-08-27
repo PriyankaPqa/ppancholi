@@ -14,7 +14,6 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { mockApprovalTableData, mockApprovalTableWithMultipleApprovalGroupData, mockCreateApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
-import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import {
   mockCreateDuplicateHouseholdWithGivenPhoneNumberRequest,
@@ -41,12 +40,6 @@ import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockU
 import { EPaymentModalities, IProgramEntity, IProgramEntityData } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
-import {
-  fixtureGenerateCaseFileStatusCsvFile,
-  fixtureGenerateFaCsvFile,
-  fixtureGenerateMassAssessmentsCsvFile,
-  fixtureGenerateMassCommunicationCsvFile,
-} from 'cypress/fixtures/mass-actions';
 import { CaseFileStatus, ICaseFileEntity, IIdentityAuthentication, IImpactStatusValidation } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { HouseholdStatus, IDetailedRegistrationResponse } from '@libs/entities-lib/household';
@@ -56,7 +49,16 @@ import { EFilterKeyType } from '@libs/component-lib/types';
 import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
-import { linkEventToTeamForManyRoles } from './teams';
+import { TeamType } from '@libs/entities-lib/team';
+import { mockCreatePersonalTaskRequest } from '@libs/cypress-lib/mocks/tasks/tasks';
+import {
+  fixtureGenerateCaseFileStatusCsvFile,
+  fixtureGenerateFaCsvFile,
+  fixtureGenerateMassAssessmentsCsvFile,
+  fixtureGenerateMassCommunicationCsvFile,
+} from '../../fixtures/mass-actions';
+import { useProvider } from '../../provider/provider';
+import { LinkEventToTeamParams, linkEventToTeamForManyRoles } from './teams';
 
 export interface MassActionFinancialAssistanceXlsxFileParams {
   provider: any,
@@ -193,7 +195,13 @@ export interface MassAssessmentsViaUploadFileParams {
  */
 export const createEventWithTeamWithUsers = async (provider: IProvider, roles = Object.values(UserRoles)) => {
   const event = await provider.events.createEvent(mockCreateEvent());
-  const team = await linkEventToTeamForManyRoles(event, provider, roles);
+  const linkEventToTeamParamData: LinkEventToTeamParams = {
+    event,
+    provider,
+    roles,
+    teamType: TeamType.Standard,
+  };
+  const team = await linkEventToTeamForManyRoles(linkEventToTeamParamData);
   return { event, team };
 };
 
@@ -1080,4 +1088,35 @@ export const prepareStateMassAssessmentsViaUploadFile = async (params: MassAsses
   // eslint-disable-next-line
   const responseMassAssessmentsUpdate = await params.provider.cypress.massAction.createWithFile('assessment', mockCreateMassAssessmentsFile);
   return { responseMassAssessmentsUpdate, mockRequestParamData };
+};
+
+/**
+ * Creates an Event with Assignable Team
+ * @param accessToken
+ * @param roles
+ */
+export const createEventWithAssignableTeam = async (accessToken: string, roles: UserRoles[]) => {
+  const provider = useProvider(accessToken);
+  const event = await provider.events.createEvent(mockCreateEvent());
+  const linkEventToTeamParamData: LinkEventToTeamParams = {
+    event,
+    provider,
+    roles,
+    teamType: TeamType.Standard,
+    isAssignable: true,
+    isEscalation: false,
+  };
+  const team = await linkEventToTeamForManyRoles(linkEventToTeamParamData);
+  return { provider, event, team };
+};
+
+/**
+ * Creates a Personal Task
+ * @param provider
+ * @param caseFileId
+ */
+export const createPersonalTask = async (provider: IProvider, caseFileId: string) => {
+  const mockCreatePersonalTask = mockCreatePersonalTaskRequest({ caseFileId });
+  const personalTaskCreated = await provider.task.createTask(mockCreatePersonalTask);
+  return personalTaskCreated;
 };

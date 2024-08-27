@@ -30,51 +30,51 @@ describe('helpers', () => {
   describe('createDropdownTimeIntervals', () => {
     it('creates a list of time intervals with the required start and end and duration - 30 minutes', () => {
       expect(helpers.createDropdownTimeIntervals('08:00', '11:00')).toEqual([
-        { text: '08:00 AM', value: '08:00' },
-        { text: '08:30 AM', value: '08:30' },
-        { text: '09:00 AM', value: '09:00' },
-        { text: '09:30 AM', value: '09:30' },
-        { text: '10:00 AM', value: '10:00' },
-        { text: '10:30 AM', value: '10:30' },
-        { text: '11:00 AM', value: '11:00' },
+        { text: '08:00 AM', value: '08:00:00' },
+        { text: '08:30 AM', value: '08:30:00' },
+        { text: '09:00 AM', value: '09:00:00' },
+        { text: '09:30 AM', value: '09:30:00' },
+        { text: '10:00 AM', value: '10:00:00' },
+        { text: '10:30 AM', value: '10:30:00' },
+        { text: '11:00 AM', value: '11:00:00' },
       ]);
 
       expect(helpers.createDropdownTimeIntervals('17:00', '19:00')).toEqual([
-        { text: '05:00 PM', value: '17:00' },
-        { text: '05:30 PM', value: '17:30' },
-        { text: '06:00 PM', value: '18:00' },
-        { text: '06:30 PM', value: '18:30' },
-        { text: '07:00 PM', value: '19:00' },
+        { text: '05:00 PM', value: '17:00:00' },
+        { text: '05:30 PM', value: '17:30:00' },
+        { text: '06:00 PM', value: '18:00:00' },
+        { text: '06:30 PM', value: '18:30:00' },
+        { text: '07:00 PM', value: '19:00:00' },
       ]);
     });
 
     it('creates a list of time intervals with the required start and end and duration - 20 minutes', () => {
       expect(helpers.createDropdownTimeIntervals('08:00', '10:00', 20)).toEqual([
-        { text: '08:00 AM', value: '08:00' },
-        { text: '08:20 AM', value: '08:20' },
-        { text: '08:40 AM', value: '08:40' },
-        { text: '09:00 AM', value: '09:00' },
-        { text: '09:20 AM', value: '09:20' },
-        { text: '09:40 AM', value: '09:40' },
-        { text: '10:00 AM', value: '10:00' },
+        { text: '08:00 AM', value: '08:00:00' },
+        { text: '08:20 AM', value: '08:20:00' },
+        { text: '08:40 AM', value: '08:40:00' },
+        { text: '09:00 AM', value: '09:00:00' },
+        { text: '09:20 AM', value: '09:20:00' },
+        { text: '09:40 AM', value: '09:40:00' },
+        { text: '10:00 AM', value: '10:00:00' },
       ]);
     });
     it('creates a list of time intervals with the required start and end and duration - 15 minutes', () => {
       expect(helpers.createDropdownTimeIntervals('08:00', '09:00', 15)).toEqual([
-        { text: '08:00 AM', value: '08:00' },
-        { text: '08:15 AM', value: '08:15' },
-        { text: '08:30 AM', value: '08:30' },
-        { text: '08:45 AM', value: '08:45' },
-        { text: '09:00 AM', value: '09:00' },
+        { text: '08:00 AM', value: '08:00:00' },
+        { text: '08:15 AM', value: '08:15:00' },
+        { text: '08:30 AM', value: '08:30:00' },
+        { text: '08:45 AM', value: '08:45:00' },
+        { text: '09:00 AM', value: '09:00:00' },
       ]);
     });
     it('creates a list of time intervals with the required start and end and duration - 60 minutes', () => {
       expect(helpers.createDropdownTimeIntervals('08:30', '12:30', 60)).toEqual([
-        { text: '08:30 AM', value: '08:30' },
-        { text: '09:30 AM', value: '09:30' },
-        { text: '10:30 AM', value: '10:30' },
-        { text: '11:30 AM', value: '11:30' },
-        { text: '12:30 PM', value: '12:30' },
+        { text: '08:30 AM', value: '08:30:00' },
+        { text: '09:30 AM', value: '09:30:00' },
+        { text: '10:30 AM', value: '10:30:00' },
+        { text: '11:30 AM', value: '11:30:00' },
+        { text: '12:30 PM', value: '12:30:00' },
       ]);
     });
   });

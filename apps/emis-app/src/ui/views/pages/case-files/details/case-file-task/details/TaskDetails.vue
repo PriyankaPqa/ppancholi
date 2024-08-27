@@ -14,7 +14,7 @@
                 <v-divider vertical class="ml-4" />
               </template>
 
-              <v-btn icon color="primary" :aria-label="$t('common.buttons.history')" class="mx-2" @click="showTaskHistoryDialog = true">
+              <v-btn icon color="primary" :aria-label="$t('common.buttons.history')" class="mx-2" data-test="task-details-history-button" @click="showTaskHistoryDialog = true">
                 <v-icon>
                   mdi-history
                 </v-icon>
@@ -152,7 +152,7 @@
                 {{ $t('task.create_edit.task_description') }}
               </v-col>
               <v-col cols="8">
-                <div class="task-details-description">
+                <div data-test="task-details-description" class="task-details-description">
                   {{ task.description }}
                 </div>
               </v-col>

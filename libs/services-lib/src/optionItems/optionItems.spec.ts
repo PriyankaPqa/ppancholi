@@ -72,6 +72,12 @@ describe('>>> OptionItems Service', () => {
     it('returns correct prefix for EOptionLists.ExceptionalAuthenticationTypes', () => {
       expect(service.getPrefix(EOptionLists.ExceptionalAuthenticationTypes)).toBe('/event/exceptional-authentication-types');
     });
+    it('returns correct prefix for EOptionLists.AppointmentModalities', () => {
+      expect(service.getPrefix(EOptionLists.AppointmentModalities)).toBe('/appointment/appointment-modalities');
+    });
+    it('returns correct prefix for EOptionLists.ServiceOptionTypes', () => {
+      expect(service.getPrefix(EOptionLists.ServiceOptionTypes)).toBe('/appointment/service-option-types');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {
@@ -178,5 +184,11 @@ describe('>>> OptionItems Service', () => {
     const list = EOptionLists.CaseFileTags;
     await service.setOptionItemLodging(list, 'ID', true);
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/is-lodging`, { value: true });
+  });
+
+  test('setOptionItemIsOnline is linked to the correct URL', async () => {
+    const list = EOptionLists.AppointmentModalities;
+    await service.setOptionItemIsOnline(list, 'ID', true);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/is-online`, { value: true });
   });
 });

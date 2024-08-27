@@ -152,383 +152,402 @@ describe('OptionListItem.vue', () => {
         });
       });
     });
-  });
 
-  test('form is not visible if edit mode is false', async () => {
-    expect(wrapper.find('[data-test="optionsListItem__nameInput"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test="optionsListItem__saveBtn"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test="optionsListItem__cancelBtn"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test="optionsListItem__editBtn"]').exists()).toBe(true);
+    describe('setIsDefault', () => {
+      it('calls the right action', async () => {
+        await wrapper.setData({ item: { ...wrapper.vm.item, isDefault: false } });
+        optionListStore.setIsDefault = jest.fn();
+        wrapper.vm.setIsDefault();
+        expect(optionListStore.setIsDefault).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isDefault: true });
+      });
 
-    await wrapper.setProps({
-      editMode: true,
+      it('doesnt do anything in readonly', async () => {
+        await wrapper.setProps({ isSubItem: false, readonly: true });
+        await wrapper.setData({ item: { ...wrapper.vm.item, isDefault: false } });
+        optionListStore.setIsDefault = jest.fn();
+        wrapper.vm.setIsDefault();
+        expect(optionListStore.setIsDefault).not.toHaveBeenCalled();
+      });
     });
 
-    expect(wrapper.find('[data-test="optionsListItem__nameInput"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="optionsListItem__saveBtn"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="optionsListItem__cancelBtn"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="optionsListItem__editBtn"]').exists()).toBe(false);
-  });
+    describe('setRestrictFinancial', () => {
+      it('calls the right action', async () => {
+        await wrapper.setData({ item: { ...wrapper.vm.item, restrictFinancial: false } });
+        optionListStore.setRestrictFinancial = jest.fn();
+        wrapper.vm.setRestrictFinancial();
+        expect(optionListStore.setRestrictFinancial).toHaveBeenCalledWith({ id: wrapper.vm.item.id, restrictFinancial: true });
+      });
 
-  test('name renders correctly in different language modes', async () => {
-    const name = wrapper.find('[data-test="optionsListItem__name"]');
-
-    expect(name.text().indexOf('Flood')).toBe(0);
-
-    await wrapper.setProps({
-      languageMode: 'fr',
+      it('doesnt do anything in readonly', async () => {
+        await wrapper.setProps({ isSubItem: false, readonly: true });
+        await wrapper.setData({ item: { ...wrapper.vm.item, restrictFinancial: false } });
+        optionListStore.setRestrictFinancial = jest.fn();
+        wrapper.vm.setRestrictFinancial();
+        expect(optionListStore.setRestrictFinancial).not.toHaveBeenCalled();
+      });
     });
 
-    expect(name.text().indexOf('Inundation')).toBe(0);
-  });
+    describe('setLodging', () => {
+      it('calls the right action', async () => {
+        await wrapper.setData({ item: { ...wrapper.vm.item, isLodging: false } });
+        optionListStore.setLodging = jest.fn();
+        wrapper.vm.setLodging();
+        expect(optionListStore.setLodging).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isLodging: true });
+      });
 
-  test('the expand button shows/hides the children', async () => {
-    const expandButton = wrapper.find('[data-test="optionsListItem__expandBtn"]');
-
-    expect(wrapper.vm.$data.subItemsExpanded).toBe(true);
-
-    await expandButton.trigger('click');
-
-    expect(wrapper.vm.$data.subItemsExpanded).toBe(false);
-  });
-
-  test('selecting a status opens the status dialog, submitting dialog triggers the method confirmChangeStatus', async () => {
-    wrapper.vm.confirmChangeStatus = jest.fn();
-
-    await wrapper.find('[data-test="statusSelect__chip"]').trigger('click');
-
-    await wrapper.find('[data-test="statusSelect__2"]').trigger('click');
-
-    const dialog = wrapper.find('[data-test="optionsListItem__statusDialog"]');
-
-    expect(dialog.exists()).toBe(true);
-
-    await dialog.find('[data-test="dialog-submit-action"]').trigger('click');
-
-    expect(wrapper.vm.confirmChangeStatus).toHaveBeenCalledTimes(1);
-  });
-
-  test('the save button emits the save event if a name is present', async () => {
-    await wrapper.setProps({
-      editMode: true,
-      hasDescription: true,
+      it('doesnt do anything in readonly', async () => {
+        await wrapper.setProps({ isSubItem: false, readonly: true });
+        await wrapper.setData({ item: { ...wrapper.vm.item, isLodging: false } });
+        optionListStore.setLodging = jest.fn();
+        wrapper.vm.setLodging();
+        expect(optionListStore.setLodging).not.toHaveBeenCalled();
+      });
     });
 
-    await wrapper.setData({
-      name: entityUtils.initMultilingualAttributes(),
+    describe('setIsOnline', () => {
+      it('calls the right action', async () => {
+        await wrapper.setData({ item: { ...wrapper.vm.item, isOnline: false } });
+        optionListStore.setIsOnline = jest.fn();
+        wrapper.vm.setIsOnline();
+        expect(optionListStore.setIsOnline).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isOnline: true });
+      });
+
+      it('doesnt do anything in readonly', async () => {
+        await wrapper.setProps({ isSubItem: false, readonly: true });
+        await wrapper.setData({ item: { ...wrapper.vm.item, isOnline: false } });
+        optionListStore.setIsOnline = jest.fn();
+        wrapper.vm.setIsOnline();
+        expect(optionListStore.setIsOnline).not.toHaveBeenCalled();
+      });
     });
 
-    const saveButton = wrapper.find('[data-test="optionsListItem__saveBtn"]');
+    describe('setIsOther', () => {
+      it('calls the right action when is not subitem', async () => {
+        await wrapper.setProps({ isSubItem: false });
+        await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+        optionListStore.setIsOther = jest.fn();
+        wrapper.vm.setIsOther();
+        expect(optionListStore.setIsOther).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isOther: true });
+      });
 
-    await saveButton.trigger('click');
+      it('doesnt do anything in readonly', async () => {
+        await wrapper.setProps({ isSubItem: false, readonly: true });
+        await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+        optionListStore.setIsOther = jest.fn();
+        wrapper.vm.setIsOther();
+        expect(optionListStore.setIsOther).not.toHaveBeenCalled();
+      });
 
-    expect(wrapper.emitted('save-item')).toBeFalsy();
+      it('calls the right action when is  subitem', async () => {
+        await wrapper.setProps({ isSubItem: true });
+        await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+        optionListStore.setSubItemIsOther = jest.fn();
+        wrapper.vm.getParentItem = jest.fn(() => ({ id: 'p-id-1' }));
+        wrapper.vm.setIsOther();
+        expect(optionListStore.setSubItemIsOther).toHaveBeenCalledWith({ itemId: 'p-id-1', subItemId: wrapper.vm.item.id, isOther: true });
+      });
 
-    await wrapper.setData({
-      name: {
-        translation: {
-          en: 'Name EN',
-          fr: 'Name FR',
-        },
-      },
-      description: {
-        translation: {
-          en: 'Desc EN',
-          fr: 'Desc FR',
-        },
-      },
+      it('displays error if no response', async () => {
+        await wrapper.setProps({ isSubItem: false });
+        optionListStore.setIsOther = jest.fn();
+        await wrapper.vm.setIsOther();
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('system_management.lists.errorUpdating');
+      });
+
+      it('displays right message if isOther is set to false', async () => {
+        await wrapper.setProps({ isSubItem: false });
+        optionListStore.setIsOther = jest.fn(() => ({ res: '' }));
+        await wrapper.setData({ item: { ...wrapper.vm.item, isOther: true } });
+        await wrapper.vm.setIsOther();
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.lists.otherOptionRemoved');
+      });
+
+      it('displays right message if isOther is set to true', async () => {
+        await wrapper.setProps({ isSubItem: false });
+        await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+        optionListStore.setIsOther = jest.fn(() => ({ res: '' }));
+        await wrapper.vm.setIsOther();
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.lists.otherOptionSet');
+      });
     });
-
-    await wrapper.vm.saveItem();
-
-    await flushPromises();
-
-    expect(wrapper.emitted('save-item')).toBeTruthy();
-    expect(wrapper.emitted('save-item')[0]).toEqual([
-      wrapper.vm.$props.item,
-      {
-        translation: {
-          en: 'Name EN',
-          fr: 'Name FR',
-        },
-      },
-      {
-        translation: {
-          en: 'Desc EN',
-          fr: 'Desc FR',
-        },
-      },
-    ]);
   });
 
-  test('the cancel button emits the cancel event', async () => {
-    await wrapper.setProps({
-      editMode: true,
-    });
+  describe('Template', () => {
+    test('form is not visible if edit mode is false', async () => {
+      expect(wrapper.find('[data-test="optionsListItem__nameInput"]').exists()).toBe(false);
+      expect(wrapper.find('[data-test="optionsListItem__saveBtn"]').exists()).toBe(false);
+      expect(wrapper.find('[data-test="optionsListItem__cancelBtn"]').exists()).toBe(false);
+      expect(wrapper.find('[data-test="optionsListItem__editBtn"]').exists()).toBe(true);
 
-    expect(wrapper.emitted('cancel-edit')).toBeFalsy();
-
-    await wrapper.find('[data-test="optionsListItem__cancelBtn"]').trigger('click');
-
-    expect(wrapper.emitted('cancel-edit')).toBeTruthy();
-  });
-
-  test('the keyboard events for enter and esc emit the proper events', async () => {
-    // wrapper.vm.$refs.form.validate = jest.fn(() => true);
-    wrapper = mount(Component, {
-      localVue,
-      pinia,
-      propsData: {
-        item: mockOptionItemData()[0],
-        isSubItem: true,
+      await wrapper.setProps({
         editMode: true,
-        languageMode: 'en',
-      },
-      computed: {
-        allNames() {
-          return [{
-            translation: {
-              en: 'name 1 en',
-              fr: 'name 1 fr',
-            },
-          }, {
-            translation: {
-              en: 'name 2 en',
-              fr: 'name 2 fr  ',
-            },
-          }];
-        },
-      },
+      });
+
+      expect(wrapper.find('[data-test="optionsListItem__nameInput"]').exists()).toBe(true);
+      expect(wrapper.find('[data-test="optionsListItem__saveBtn"]').exists()).toBe(true);
+      expect(wrapper.find('[data-test="optionsListItem__cancelBtn"]').exists()).toBe(true);
+      expect(wrapper.find('[data-test="optionsListItem__editBtn"]').exists()).toBe(false);
     });
 
-    await wrapper.setProps({
-      editMode: true,
+    test('name renders correctly in different language modes', async () => {
+      const name = wrapper.find('[data-test="optionsListItem__name"]');
+
+      expect(name.text().indexOf('Flood')).toBe(0);
+
+      await wrapper.setProps({
+        languageMode: 'fr',
+      });
+
+      expect(name.text().indexOf('Inundation')).toBe(0);
     });
 
-    await wrapper.setData({
-      name: {
-        translation: {
-          en: 'Name EN',
-          fr: 'Name FR',
-        },
-      },
+    test('the expand button shows/hides the children', async () => {
+      const expandButton = wrapper.find('[data-test="optionsListItem__expandBtn"]');
+
+      expect(wrapper.vm.$data.subItemsExpanded).toBe(true);
+
+      await expandButton.trigger('click');
+
+      expect(wrapper.vm.$data.subItemsExpanded).toBe(false);
     });
 
-    const textInput = wrapper.find('[data-test="optionsListItem__nameInput"]');
+    test('selecting a status opens the status dialog, submitting dialog triggers the method confirmChangeStatus', async () => {
+      wrapper.vm.confirmChangeStatus = jest.fn();
 
-    await textInput.trigger('keydown.enter');
+      await wrapper.find('[data-test="statusSelect__chip"]').trigger('click');
 
-    await wrapper.vm.$refs.form.validate();
+      await wrapper.find('[data-test="statusSelect__2"]').trigger('click');
 
-    await flushPromises();
+      const dialog = wrapper.find('[data-test="optionsListItem__statusDialog"]');
 
-    expect(wrapper.emitted('save-item')).toBeTruthy();
+      expect(dialog.exists()).toBe(true);
 
-    await textInput.trigger('keydown.esc');
+      await dialog.find('[data-test="dialog-submit-action"]').trigger('click');
 
-    expect(wrapper.emitted('cancel-edit')).toBeTruthy();
-  });
-
-  test('the description is displayed if the hasDescription prop is true', async () => {
-    expect(wrapper.find('.optionsList__description').exists()).toBe(false);
-
-    await wrapper.setProps({
-      hasDescription: true,
+      expect(wrapper.vm.confirmChangeStatus).toHaveBeenCalledTimes(1);
     });
 
-    expect(wrapper.find('.optionsList__description').exists()).toBe(true);
-  });
-
-  test('the description input is displayed if hasDescription and editMode are true', async () => {
-    expect(wrapper.find('[data-test="optionsListItem__descriptionInput"]').exists()).toBe(false);
-
-    await wrapper.setProps({
-      editMode: true,
-      hasDescription: true,
-    });
-
-    expect(wrapper.find('[data-test="optionsListItem__descriptionInput"]').exists()).toBe(true);
-  });
-
-  test('the description allows a maximum number of 250 characters', async () => {
-    await wrapper.setProps({
-      editMode: true,
-      hasDescription: true,
-    });
-
-    const description = wrapper.find('[data-test="optionsListItem__descriptionInput"]');
-
-    await description.setValue('x'.repeat(251));
-
-    await wrapper.vm.$refs.form.validate();
-    await flushPromises();
-
-    expect(description.element.previousElementSibling.classList).toContain('error--text');
-
-    await description.setValue('x'.repeat(250));
-
-    await wrapper.vm.$refs.form.validate();
-    await flushPromises();
-
-    expect(description.element.previousElementSibling.classList).not.toContain('error--text');
-  });
-
-  test('when the edit mode is changed the name and language data is reset to the original value from the item prop', async () => {
-    await wrapper.setProps({
-      editMode: true,
-      hasDescription: true,
-    });
-
-    const name = wrapper.find('[data-test="optionsListItem__nameInput"]');
-
-    expect(name.element.value).toBe(items[0].name.translation.en);
-
-    await name.setValue('Hello Name');
-
-    expect(name.element.value).toBe('Hello Name');
-
-    await wrapper.setProps({
-      editMode: false,
-    });
-
-    await wrapper.setProps({
-      editMode: true,
-    });
-
-    expect(wrapper.find('[data-test="optionsListItem__nameInput"]').element.value).toBe(items[0].name.translation.en);
-  });
-
-  test('when the component mounts, the name and description IMultilingual fields are filled with available values', async () => {
-    wrapper = mount(Component, {
-      localVue,
-      pinia,
-      propsData: {
+    test('the save button emits the save event if a name is present', async () => {
+      await wrapper.setProps({
         editMode: true,
         hasDescription: true,
-        isCascading: true,
-        isSubItem: false,
-        languageMode: 'en',
-        item: {
-          ...items[0],
-          name: {
-            translation: {
-              en: 'Clementine',
-              fr: '',
-            },
+      });
+
+      await wrapper.setData({
+        name: entityUtils.initMultilingualAttributes(),
+      });
+
+      const saveButton = wrapper.find('[data-test="optionsListItem__saveBtn"]');
+
+      await saveButton.trigger('click');
+
+      expect(wrapper.emitted('save-item')).toBeFalsy();
+
+      await wrapper.setData({
+        name: {
+          translation: {
+            en: 'Name EN',
+            fr: 'Name FR',
           },
-          description: {
-            translation: {
-              en: 'Description Clementine',
-              fr: '',
+        },
+        description: {
+          translation: {
+            en: 'Desc EN',
+            fr: 'Desc FR',
+          },
+        },
+      });
+
+      await wrapper.vm.saveItem();
+
+      await flushPromises();
+
+      expect(wrapper.emitted('save-item')).toBeTruthy();
+      expect(wrapper.emitted('save-item')[0]).toEqual([
+        wrapper.vm.$props.item,
+        {
+          translation: {
+            en: 'Name EN',
+            fr: 'Name FR',
+          },
+        },
+        {
+          translation: {
+            en: 'Desc EN',
+            fr: 'Desc FR',
+          },
+        },
+      ]);
+    });
+
+    test('the cancel button emits the cancel event', async () => {
+      await wrapper.setProps({
+        editMode: true,
+      });
+
+      expect(wrapper.emitted('cancel-edit')).toBeFalsy();
+
+      await wrapper.find('[data-test="optionsListItem__cancelBtn"]').trigger('click');
+
+      expect(wrapper.emitted('cancel-edit')).toBeTruthy();
+    });
+
+    test('the keyboard events for enter and esc emit the proper events', async () => {
+    // wrapper.vm.$refs.form.validate = jest.fn(() => true);
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          item: mockOptionItemData()[0],
+          isSubItem: true,
+          editMode: true,
+          languageMode: 'en',
+        },
+        computed: {
+          allNames() {
+            return [{
+              translation: {
+                en: 'name 1 en',
+                fr: 'name 1 fr',
+              },
+            }, {
+              translation: {
+                en: 'name 2 en',
+                fr: 'name 2 fr  ',
+              },
+            }];
+          },
+        },
+      });
+
+      await wrapper.setProps({
+        editMode: true,
+      });
+
+      await wrapper.setData({
+        name: {
+          translation: {
+            en: 'Name EN',
+            fr: 'Name FR',
+          },
+        },
+      });
+
+      const textInput = wrapper.find('[data-test="optionsListItem__nameInput"]');
+
+      await textInput.trigger('keydown.enter');
+
+      await wrapper.vm.$refs.form.validate();
+
+      await flushPromises();
+
+      expect(wrapper.emitted('save-item')).toBeTruthy();
+
+      await textInput.trigger('keydown.esc');
+
+      expect(wrapper.emitted('cancel-edit')).toBeTruthy();
+    });
+
+    test('the description is displayed if the hasDescription prop is true', async () => {
+      expect(wrapper.find('.optionsList__description').exists()).toBe(false);
+
+      await wrapper.setProps({
+        hasDescription: true,
+      });
+
+      expect(wrapper.find('.optionsList__description').exists()).toBe(true);
+    });
+
+    test('the description input is displayed if hasDescription and editMode are true', async () => {
+      expect(wrapper.find('[data-test="optionsListItem__descriptionInput"]').exists()).toBe(false);
+
+      await wrapper.setProps({
+        editMode: true,
+        hasDescription: true,
+      });
+
+      expect(wrapper.find('[data-test="optionsListItem__descriptionInput"]').exists()).toBe(true);
+    });
+
+    test('the description allows a maximum number of 250 characters', async () => {
+      await wrapper.setProps({
+        editMode: true,
+        hasDescription: true,
+      });
+
+      const description = wrapper.find('[data-test="optionsListItem__descriptionInput"]');
+
+      await description.setValue('x'.repeat(251));
+
+      await wrapper.vm.$refs.form.validate();
+      await flushPromises();
+
+      expect(description.element.previousElementSibling.classList).toContain('error--text');
+
+      await description.setValue('x'.repeat(250));
+
+      await wrapper.vm.$refs.form.validate();
+      await flushPromises();
+
+      expect(description.element.previousElementSibling.classList).not.toContain('error--text');
+    });
+
+    test('when the edit mode is changed the name and language data is reset to the original value from the item prop', async () => {
+      await wrapper.setProps({
+        editMode: true,
+        hasDescription: true,
+      });
+
+      const name = wrapper.find('[data-test="optionsListItem__nameInput"]');
+
+      expect(name.element.value).toBe(items[0].name.translation.en);
+
+      await name.setValue('Hello Name');
+
+      expect(name.element.value).toBe('Hello Name');
+
+      await wrapper.setProps({
+        editMode: false,
+      });
+
+      await wrapper.setProps({
+        editMode: true,
+      });
+
+      expect(wrapper.find('[data-test="optionsListItem__nameInput"]').element.value).toBe(items[0].name.translation.en);
+    });
+
+    test('when the component mounts, the name and description IMultilingual fields are filled with available values', async () => {
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          editMode: true,
+          hasDescription: true,
+          isCascading: true,
+          isSubItem: false,
+          languageMode: 'en',
+          item: {
+            ...items[0],
+            name: {
+              translation: {
+                en: 'Clementine',
+                fr: '',
+              },
+            },
+            description: {
+              translation: {
+                en: 'Description Clementine',
+                fr: '',
+              },
             },
           },
         },
-      },
-    });
+      });
 
-    expect(wrapper.vm.name).toEqual({ translation: { en: 'Clementine', fr: 'Clementine' } });
-    expect(wrapper.vm.description).toEqual({ translation: { en: 'Description Clementine', fr: 'Description Clementine' } });
-  });
-
-  describe('setIsDefault', () => {
-    it('calls the right action', async () => {
-      await wrapper.setData({ item: { ...wrapper.vm.item, isDefault: false } });
-      optionListStore.setIsDefault = jest.fn();
-      wrapper.vm.setIsDefault();
-      expect(optionListStore.setIsDefault).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isDefault: true });
-    });
-
-    it('doesnt do anything in readonly', async () => {
-      await wrapper.setProps({ isSubItem: false, readonly: true });
-      await wrapper.setData({ item: { ...wrapper.vm.item, isDefault: false } });
-      optionListStore.setIsDefault = jest.fn();
-      wrapper.vm.setIsDefault();
-      expect(optionListStore.setIsDefault).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('setRestrictFinancial', () => {
-    it('calls the right action', async () => {
-      await wrapper.setData({ item: { ...wrapper.vm.item, restrictFinancial: false } });
-      optionListStore.setRestrictFinancial = jest.fn();
-      wrapper.vm.setRestrictFinancial();
-      expect(optionListStore.setRestrictFinancial).toHaveBeenCalledWith({ id: wrapper.vm.item.id, restrictFinancial: true });
-    });
-
-    it('doesnt do anything in readonly', async () => {
-      await wrapper.setProps({ isSubItem: false, readonly: true });
-      await wrapper.setData({ item: { ...wrapper.vm.item, restrictFinancial: false } });
-      optionListStore.setRestrictFinancial = jest.fn();
-      wrapper.vm.setRestrictFinancial();
-      expect(optionListStore.setRestrictFinancial).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('setLodging', () => {
-    it('calls the right action', async () => {
-      await wrapper.setData({ item: { ...wrapper.vm.item, isLodging: false } });
-      optionListStore.setLodging = jest.fn();
-      wrapper.vm.setLodging();
-      expect(optionListStore.setLodging).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isLodging: true });
-    });
-
-    it('doesnt do anything in readonly', async () => {
-      await wrapper.setProps({ isSubItem: false, readonly: true });
-      await wrapper.setData({ item: { ...wrapper.vm.item, isLodging: false } });
-      optionListStore.setLodging = jest.fn();
-      wrapper.vm.setLodging();
-      expect(optionListStore.setLodging).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('setIsOther', () => {
-    it('calls the right action when is not subitem', async () => {
-      await wrapper.setProps({ isSubItem: false });
-      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
-      optionListStore.setIsOther = jest.fn();
-      wrapper.vm.setIsOther();
-      expect(optionListStore.setIsOther).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isOther: true });
-    });
-
-    it('doesnt do anything in readonly', async () => {
-      await wrapper.setProps({ isSubItem: false, readonly: true });
-      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
-      optionListStore.setIsOther = jest.fn();
-      wrapper.vm.setIsOther();
-      expect(optionListStore.setIsOther).not.toHaveBeenCalled();
-    });
-
-    it('calls the right action when is  subitem', async () => {
-      await wrapper.setProps({ isSubItem: true });
-      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
-      optionListStore.setSubItemIsOther = jest.fn();
-      wrapper.vm.getParentItem = jest.fn(() => ({ id: 'p-id-1' }));
-      wrapper.vm.setIsOther();
-      expect(optionListStore.setSubItemIsOther).toHaveBeenCalledWith({ itemId: 'p-id-1', subItemId: wrapper.vm.item.id, isOther: true });
-    });
-
-    it('displays error if no response', async () => {
-      await wrapper.setProps({ isSubItem: false });
-      optionListStore.setIsOther = jest.fn();
-      await wrapper.vm.setIsOther();
-      expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('system_management.lists.errorUpdating');
-    });
-
-    it('displays right message if isOther is set to false', async () => {
-      await wrapper.setProps({ isSubItem: false });
-      optionListStore.setIsOther = jest.fn(() => ({ res: '' }));
-      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: true } });
-      await wrapper.vm.setIsOther();
-      expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.lists.otherOptionRemoved');
-    });
-
-    it('displays right message if isOther is set to true', async () => {
-      await wrapper.setProps({ isSubItem: false });
-      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
-      optionListStore.setIsOther = jest.fn(() => ({ res: '' }));
-      await wrapper.vm.setIsOther();
-
-      expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.lists.otherOptionSet');
+      expect(wrapper.vm.name).toEqual({ translation: { en: 'Clementine', fr: 'Clementine' } });
+      expect(wrapper.vm.description).toEqual({ translation: { en: 'Description Clementine', fr: 'Description Clementine' } });
     });
   });
 });

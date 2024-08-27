@@ -83,6 +83,7 @@ export default defineConfig(({ mode }) => {
         '@libs/entities-lib': path.resolve(__dirname, '../../libs/entities-lib/src'),
         '@libs/stores-lib': path.resolve(__dirname, '../../libs/stores-lib/src'),
         '@libs/services-lib': path.resolve(__dirname, '../../libs/services-lib/src'),
+        '@libs/cypress-lib': path.resolve(__dirname, '../../libs/cypress-lib/src'),
         '@libs/assets': path.resolve(__dirname, '../../libs/assets'),
         'devextreme/ui': 'devextreme/esm/ui',
       },

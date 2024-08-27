@@ -322,6 +322,28 @@ const routes = {
         name: 'events.assessments.complete',
       },
     },
+    appointmentPrograms: {
+        home: {
+          path: 'appointment-programs',
+          name: 'events.appointmentPrograms.home',
+        },
+        create: {
+          path: 'appointment-programs/create',
+          name: 'events.appointmentPrograms.create',
+        },
+        edit: {
+          path: 'appointment-programs/:appointmentProgramId/edit',
+          name: 'events.appointmentPrograms.edit',
+        },
+        details: {
+          path: 'appointment-programs/details/:appointmentProgramId',
+          name: 'events.appointmentPrograms.details',
+        },
+        serviceOptionDetails: {
+          path: 'appointment-programs/:appointmentProgramId/service-option/:serviceOptionId',
+          name: 'events.appointmentPrograms.serviceOption.details',
+        },
+    },
   },
   household: {
     householdProfile: {
@@ -657,6 +679,14 @@ const routes = {
     taskCategories: {
       path: 'lists/task-categories',
       name: 'systemManagement.lists.taskCategories',
+    },
+    appointmentModalities: {
+      path: 'lists/appointment-modalities',
+      name: 'systemManagement.lists.appointmentModalities',
+    },
+    serviceOptionTypes: {
+      path: 'lists/service-option-types',
+      name: 'systemManagement.lists.serviceOptionTypes',
     },
   },
   teams: {

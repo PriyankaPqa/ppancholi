@@ -253,7 +253,18 @@ export default Vue.extend({
         to: routes.events.assessments.home.name,
         level: UserRoles.level6,
         exact: false,
-      }];
+      },
+      {
+        text: this.$t('eventDetail.menu_appointments'),
+        test: 'event-appointments',
+        icon: '',
+        disabled: false,
+        to: routes.events.appointmentPrograms.home.name,
+        level: UserRoles.level6,
+        exact: false,
+        feature: this.$featureKeys.AppointmentBooking,
+      },
+    ];
 
       return tabs;
     },

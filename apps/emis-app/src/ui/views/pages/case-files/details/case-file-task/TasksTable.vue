@@ -72,7 +72,7 @@
 
       <template #[`item.${customColumns.taskCategory}`]="{ item }">
         <div>
-          <v-icon :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
+          <v-icon data-test="task-category-icon" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
             mdi-account-check
           </v-icon>
           <router-link
@@ -132,6 +132,7 @@
           icon
           small
           :aria-label="$t('common.edit')"
+          :data-test="`task-table-edit-btn-${item.entity.id}`"
           @click="getEditTaskRoute(item.entity)">
           <v-icon>
             mdi-pencil

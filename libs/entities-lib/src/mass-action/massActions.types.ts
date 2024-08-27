@@ -1,4 +1,4 @@
-import { IListOption, IMultilingual } from '@libs/shared-lib/src/types';
+import { IListOption, IMultilingual } from '@libs/shared-lib/types';
 import { CaseFileStatus } from '../case-file';
 import { EPaymentModalities } from '../program';
 import { IEntity, IEntityCombined } from '../base';
@@ -57,6 +57,8 @@ export enum MassActionRunStatus {
   PreProcessed = 2,
   Processing = 3,
   Processed = 4,
+  FailedPreProcessing = 5,
+  FailedProcessing = 6,
 }
 
 export enum MassActionCommunicationMethod {

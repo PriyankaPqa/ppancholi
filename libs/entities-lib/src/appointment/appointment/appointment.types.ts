@@ -1,4 +1,4 @@
-import { IUserInformation } from '@libs/shared-lib/src/types';
+import { IUserInformation } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 
 /**

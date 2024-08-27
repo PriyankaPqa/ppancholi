@@ -113,7 +113,7 @@ import { usePersonStore } from '@/pinia/person/person';
 import { useUserStore } from '@/pinia/user/user';
 import { IMemberEntity } from '@libs/entities-lib/household-create';
 import { APPOINTMENTS, APPOINTMENT_PROGRAM_TIMEZONE, STAFF_MEMBER_IDS, STAFF_AVAILABILITIES } from './mocks';
-import appointmentHelpers from './appointmentHelpers';
+import appointmentHelpers from '../utils/appointmentHelpers';
 
 export interface ICalendarEvent extends IAppointment {
   name: string,

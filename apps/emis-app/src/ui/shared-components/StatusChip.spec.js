@@ -191,6 +191,18 @@ describe('StatusChip.vue', () => {
       });
     });
 
+    describe('AppointmentProgramStatus', () => {
+      it('should render proper color and text', () => {
+        mountWithStatus('AppointmentProgramStatus', Status.Active);
+        expect(wrapper.vm.color).toEqual(colors.chips.green);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.Status.Active'));
+
+        mountWithStatus('AppointmentProgramStatus', Status.Inactive);
+        expect(wrapper.vm.color).toEqual(colors.chips.light_grey);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.Status.Inactive'));
+      });
+    });
+
     describe('MassActionRunStatus', () => {
       it('should render proper color and text', () => {
         mountWithStatus('MassActionRunStatus', MassActionRunStatus.Processed);
@@ -208,6 +220,14 @@ describe('StatusChip.vue', () => {
         mountWithStatus('MassActionRunStatus', MassActionRunStatus.PreProcessed);
         expect(wrapper.vm.color).toEqual(colors.chips.green_pale);
         expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.MassActionRunStatus.PreProcessed'));
+
+        mountWithStatus('MassActionRunStatus', MassActionRunStatus.FailedPreProcessing);
+        expect(wrapper.vm.color).toEqual(colors.chips.red);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.MassActionRunStatus.FailedPreProcessing'));
+
+        mountWithStatus('MassActionRunStatus', MassActionRunStatus.FailedProcessing);
+        expect(wrapper.vm.color).toEqual(colors.chips.red);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.MassActionRunStatus.FailedProcessing'));
       });
     });
 

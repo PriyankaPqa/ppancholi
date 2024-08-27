@@ -14,6 +14,7 @@ import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/c
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 
 import Component from './MassActionBaseDetails.vue';
+import MassActionFailedBase from './MassActionFailedBase.vue';
 
 const localVue = createLocalVue();
 
@@ -23,7 +24,7 @@ let wrapper;
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
 const doMount = (fullMount = false, {
-  processing, preProcessing, preProcessed, processed, showValidDownload = false,
+  processing, preProcessing, preProcessed, processed, failedPreProcessing = false, failedProcessing = false, showValidDownload = false,
 }) => {
   const options = {
     localVue,
@@ -33,6 +34,8 @@ const doMount = (fullMount = false, {
       preProcessing: () => preProcessing,
       preProcessed: () => preProcessed,
       processed: () => processed,
+      failedPreProcessing: () => failedPreProcessing,
+      failedProcessing: () => failedProcessing,
       massAction: () => mockMassActionEntity(),
       massActionMetadata: () => mockMassActionMetadata(),
 
@@ -80,6 +83,37 @@ describe('MassActionBaseDetails.vue', () => {
         const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
         expect(component.exists()).toBe(true);
         expect(component.props('massActionStatus')).toBe(MassActionRunStatus.PreProcessed);
+      });
+    });
+
+    describe('Failed pre-processing', () => {
+      it('should render failed pre-processing component if failed pre-processing', () => {
+        doMount(true, {
+          processing: false,
+          preProcessing: false,
+          preProcessed: false,
+          processed: false,
+          failedPreProcessing: true,
+        });
+        const component = wrapper.findComponent(MassActionFailedBase);
+        expect(component.exists()).toBe(true);
+        expect(component.props('massActionStatus')).toBe(MassActionRunStatus.FailedPreProcessing);
+      });
+    });
+
+    describe('Failed processing', () => {
+      it('should render failed processing component if failed processing', () => {
+        doMount(true, {
+          processing: false,
+          preProcessing: false,
+          preProcessed: false,
+          processed: false,
+          failedPreProcessing: false,
+          failedProcessing: true,
+        });
+        const component = wrapper.findComponent(MassActionFailedBase);
+        expect(component.exists()).toBe(true);
+        expect(component.props('massActionStatus')).toBe(MassActionRunStatus.FailedProcessing);
       });
     });
 

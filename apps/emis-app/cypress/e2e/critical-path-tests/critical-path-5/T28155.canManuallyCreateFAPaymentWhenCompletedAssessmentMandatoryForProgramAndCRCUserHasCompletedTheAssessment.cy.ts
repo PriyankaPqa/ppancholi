@@ -4,8 +4,8 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { IEligibilityCriteria, ProgramEntity } from '@libs/entities-lib/program';
 import { IProvider } from '@/services/provider';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
-import { useProvider } from 'cypress/provider/provider';
-import { verifyAndReturnAddFaPaymentPage } from 'cypress/e2e/helpers/page';
+import { verifyAndReturnAddFaPaymentPage } from '../../helpers/page';
+import { useProvider } from '../../../provider/provider';
 import {
   addAssessmentToCasefile, CasefileAssessmentParams,
   completeAndSubmitCasefileAssessmentByCrcUser,

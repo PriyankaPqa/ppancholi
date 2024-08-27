@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/src/types';
+import { IMultilingual, Status } from '@libs/shared-lib/src/types';
 import { IEntity } from '../../base';
 import { IServiceOption } from '../service-option/service-option.types';
 
@@ -46,6 +46,9 @@ export interface IAppointmentProgram extends IEntity {
   timeZone: string;
   businessHours: IDaySchedule[];
   serviceOptions: IServiceOption[];
+  appointmentProgramStatus: Status;
+  emailConfirmationSubject: IMultilingual;
+  emailConfirmationMessage: IMultilingual;
 }
 
 export type IdParams = uuid;

@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { IAnsweredQuestion, IAssessmentQuestion } from '@libs/entities-lib/src/assessment-template';
+import { IAnsweredQuestion, IAssessmentQuestion } from '@libs/entities-lib/assessment-template';
 
 export const propertyStateMockAllComponentsData = {
   logo: {

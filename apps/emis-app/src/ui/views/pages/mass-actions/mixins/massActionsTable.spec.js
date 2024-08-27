@@ -75,11 +75,59 @@ describe('massActionsTable', () => {
       });
     });
 
+    describe('isFailedPreProcessing', () => {
+      it('should return true if the last run has failed pre-processing', () => {
+        wrapper.vm.getLastRunEntity = jest.fn(() => mockMassActionRun({ runStatus: MassActionRunStatus.FailedPreProcessing }));
+        expect(wrapper.vm.isFailed({})).toBe(true);
+      });
+
+      it('should return true if the last run has failed processing', () => {
+        wrapper.vm.getLastRunEntity = jest.fn(() => mockMassActionRun({ runStatus: MassActionRunStatus.FailedPreProcessing }));
+        expect(wrapper.vm.isFailed({})).toBe(true);
+      });
+    });
+
+    describe('isFailedPreProcessing', () => {
+      it('should return true if the last run has failed pre-processing', () => {
+        wrapper.vm.getLastRunEntity = jest.fn(() => mockMassActionRun({ runStatus: MassActionRunStatus.FailedPreProcessing }));
+        expect(wrapper.vm.isFailedPreProcessing({})).toBe(true);
+      });
+    });
+
+    describe('isFailedProcessing', () => {
+      it('should return true if the last run has failed processing', () => {
+        wrapper.vm.getLastRunEntity = jest.fn(() => mockMassActionRun({ runStatus: MassActionRunStatus.FailedProcessing }));
+        expect(wrapper.vm.isFailedProcessing({})).toBe(true);
+      });
+    });
+
     describe('showDeleteIcon', () => {
-      it('should return true if the last run is pre-processed or pre-processing', () => {
+      it('should return true if the last run is pre-processing', () => {
         wrapper.vm.isPreprocessing = jest.fn(() => true);
         wrapper.vm.isPreprocessed = jest.fn(() => false);
+        wrapper.vm.isFailedPreProcessing = jest.fn(() => false);
         expect(wrapper.vm.showDeleteIcon({})).toBe(true);
+      });
+
+      it('should return true if the last run is pre-processed', () => {
+        wrapper.vm.isPreprocessing = jest.fn(() => false);
+        wrapper.vm.isPreprocessed = jest.fn(() => true);
+        wrapper.vm.isFailedPreProcessing = jest.fn(() => false);
+        expect(wrapper.vm.showDeleteIcon({})).toBe(true);
+      });
+
+      it('should return true if the last run is failed pre-processing', () => {
+        wrapper.vm.isPreprocessing = jest.fn(() => false);
+        wrapper.vm.isPreprocessed = jest.fn(() => false);
+        wrapper.vm.isFailedPreProcessing = jest.fn(() => true);
+        expect(wrapper.vm.showDeleteIcon({})).toBe(true);
+      });
+
+      it('should return false if none of the states return true', () => {
+        wrapper.vm.isPreprocessing = jest.fn(() => false);
+        wrapper.vm.isPreprocessed = jest.fn(() => false);
+        wrapper.vm.isFailedPreProcessing = jest.fn(() => false);
+        expect(wrapper.vm.showDeleteIcon({})).toBe(false);
       });
     });
 

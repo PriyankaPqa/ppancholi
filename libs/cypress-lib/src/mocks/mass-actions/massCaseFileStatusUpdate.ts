@@ -1,7 +1,7 @@
 import { CaseFileStatusUpdateReason, getCurrentDateString, getRandomNumber } from '@libs/cypress-lib/helpers';
-import { CaseFileStatus } from '@libs/entities-lib/src/case-file';
-import { IEventEntity } from '@libs/entities-lib/src/event';
-import { IMassActionCaseFileStatusCreatePayload } from '@libs/services-lib/src/mass-actions/entity';
+import { CaseFileStatus } from '@libs/entities-lib/case-file';
+import { IEventEntity } from '@libs/entities-lib/event';
+import { IMassActionCaseFileStatusCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { IListOption } from '@libs/shared-lib/src/types';
 
 // eslint-disable-next-line

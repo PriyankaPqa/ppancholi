@@ -33,6 +33,17 @@ const splitBeneficiaryRequest = mockSplitHouseholdRequest();
 let service: HouseholdsService = null;
 
 describe('>>> Household Service', () => {
+  const mockDate = new Date('2024-08-22T17:18:06Z');
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(mockDate);
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   beforeEach(async () => {
     jest.clearAllMocks();
     service = new HouseholdsService(http as never);
