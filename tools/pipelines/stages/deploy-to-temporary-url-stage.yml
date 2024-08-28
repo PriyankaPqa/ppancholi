@@ -40,52 +40,28 @@ stages:
                     scriptType: "pscore"
                     scriptLocation: "inlineScript"
                     inlineScript: |
-                      $accountName = '${{ parameters.storage }}$(environment)'
-                      $containerName = '$web'
-                      $sourcePrefix = "$(branchId)/$(branchId)/"
-                      $sourcePath = "$(Pipeline.Workspace)/dist"
+                      # Define the destination directory
+                      $branchId = "$(branchId)"
+                      $destinationDir = '$web/' + $branchId
+                      
+                      # Upload branchId folder content
+                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name '${{ variables.storageAccountName }}$(environment)' --source "$(Pipeline.Workspace)/dist/$branchId"
 
-                        echo "accountName is:" $accountName
+                      # Create a temporary directory
+                      $tempDir = [System.IO.Path]::Combine($env:TEMP, [System.Guid]::NewGuid().ToString())
+                      New-Item -ItemType Directory -Path $tempDir | Out-Null
 
-                      # Upload files to Azure Storage
-                      az storage blob upload-batch --overwrite --destination "$containerName/$(branchId)" --account-name $accountName --source $sourcePath
-
-                      # List blobs in the source directory
-                      $blobs = az storage blob list --account-name $accountName --container-name $containerName --prefix $sourcePrefix --query '[].{name:name}' --output tsv
-
-                      # Move each blob to the target directory
-                      foreach ($blob in $blobs) {
-                        $sourceBlobName = $blob
-                        $sourceUri = "https://$accountName.blob.core.windows.net/$containerName/$sourceBlobName"
-                        $destinationBlobName = $sourceBlobName.Substring($sourceBlobName.IndexOf($sourcePrefix) + $sourcePrefix.Length)
-                        $destinationUri = "https://$accountName.blob.core.windows.net/$containerName/$(branchId)/$destinationBlobName"
-
-                        echo "sourceBlobName is:" $sourceBlobName
-                        echo "sourceUri is:" $sourceUri
-                        echo "destinationBlobName is:" $destinationBlobName
-                        echo "destinationUri is:" $destinationUri
-
-                        # Start the copy operation
-                        $copyResult = az storage blob copy start --source-uri $sourceUri --destination-blob $(branchId)/$destinationBlobName --destination-container $containerName --account-name $accountName
-
-                        # Check the copy status
-                        $copyStatus = "pending"
-                        while ($copyStatus -eq "pending") {
-                          $blobProperties = az storage blob show --account-name $accountName --container-name $containerName --name $(branchId)/$destinationBlobName --query 'properties.copy.status' --output tsv
-                          if ($blobProperties -eq "success") {
-                            $copyStatus = "complete"
-                          } elseif ($blobProperties -eq "failed") {
-                            Write-Error "Blob copy failed for $sourceUri to $destinationUri"
-                            exit 1
-                          } else {
-                            # Wait before rechecking
-                            Start-Sleep -Seconds 5
-                          }
-                        }
-
-                        # Delete the source blob
-                        az storage blob delete --account-name $accountName --container-name $containerName --name $sourceBlobName
+                      # Copy all other contents to the temporary directory
+                      Get-ChildItem -Path "$(Pipeline.Workspace)/dist" | Where-Object { $_.Name -ne $branchId } | ForEach-Object {
+                        Copy-Item -Path $_.FullName -Destination $tempDir -Recurse
                       }
+
+                      # Upload the remaining content
+                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name '${{ variables.storageAccountName }}$(environment)' --source $tempDir
+
+                      # Clean up temporary directory
+                      Remove-Item -Path $tempDir -Recurse -Force
+                    failOnStderr: true
 
                 ## TODO Check what to do with this specifically with the content-path
                 - task: AzureCLI@2
