@@ -43,9 +43,10 @@ stages:
                       # Define the destination directory
                       $branchId = "$(branchId)"
                       $destinationDir = '$web/' + $branchId
+                      $accountName = '${{ parameters.storage }}$(environment)'
                       
                       # Upload branchId folder content
-                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name '${{ variables.storageAccountName }}$(environment)' --source "$(Pipeline.Workspace)/dist/$branchId"
+                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name $accountName --source "$(Pipeline.Workspace)/dist/$branchId"
 
                       # Create a temporary directory
                       $tempDir = [System.IO.Path]::Combine($env:TEMP, [System.Guid]::NewGuid().ToString())
@@ -57,7 +58,7 @@ stages:
                       }
 
                       # Upload the remaining content
-                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name '${{ variables.storageAccountName }}$(environment)' --source $tempDir
+                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name $accountName --source $tempDir
 
                       # Clean up temporary directory
                       Remove-Item -Path $tempDir -Recurse -Force
