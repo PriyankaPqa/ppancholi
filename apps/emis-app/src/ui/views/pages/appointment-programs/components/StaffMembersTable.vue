@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="table_top_header border-radius-top no-bottom-border">
-      <v-btn color="primary" data-test="add-staff-member" @click="showAddStaffMembersDialog = true">
+      <v-btn color="primary" data-test="add-staff-member" @click="showManageStaffDialog = true">
         {{ $t('appointmentProgram.staffMembers.table.addStaff') }}
       </v-btn>
     </div>
@@ -27,6 +27,12 @@
         <span data-test="staffMembers__serviceOption"> {{ item.serviceOption }} </span>
       </template>
     </v-data-table-a11y>
+
+    <manage-staff-members
+      v-if="showManageStaffDialog"
+      :show.sync="showManageStaffDialog"
+      :event-id="appointmentProgram.eventId"
+      :appointment-program-id="appointmentProgramId" />
   </div>
 </template>
 
@@ -36,12 +42,14 @@ import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { IAppointmentProgram } from '@libs/entities-lib/appointment';
+import ManageStaffMembers from './ManageStaffMembers.vue';
 
 export default Vue.extend({
   name: 'StaffMembersTable',
 
   components: {
     VDataTableA11y,
+    ManageStaffMembers,
   },
 
   props: {
@@ -49,14 +57,13 @@ export default Vue.extend({
       type: String,
       required: true,
     },
-
   },
 
   data() {
     return {
       sortDesc: false,
       sortBy: 'metadata.displayName',
-      showAddStaffMembersDialog: false,
+      showManageStaffDialog: false,
       loading: false,
       staffMembers: [],
     };

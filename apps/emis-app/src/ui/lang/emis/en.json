@@ -3785,5 +3785,11 @@
     "zendesk.question.create_case_note": "How to create a case note?",
     "zendesk.question.forgot_password": "Forgot password?",
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
-    "zendesk.question.select_language_preferences": "How do I select my language preferences?"
+    "zendesk.question.select_language_preferences": "How do I select my language preferences?",
+    "appointmentProgram.manageStaff.title.teamMembers": "Team members",
+    "appointmentProgram.manageStaff.title": "Manage staff",
+    "appointmentProgram.manageStaff.title.assignStaff": "Assign selected staff to service options",
+    "appointmentProgram.manageStaff.select.team": "Team",
+    "appointmentProgram.manageStaff.quickSearch": "Quick team member search",
+    "appointmentProgram.manageStaff.name": "Name"
 }
