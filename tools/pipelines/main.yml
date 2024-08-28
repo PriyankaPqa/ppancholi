@@ -22,7 +22,6 @@ stages:
   - template: "./stages/pre-build-stage.yml"
 
   # Build the application and publish the artifact
-  ## TO DO   - ${{ if eq( variables['build.reason'], 'PullRequest') }}:, we want to have a stage build-for-temporary. Before the build, in this stage, we need to set VITE_TEMP_BRANCH_ID to the current branch
   - template: "./stages/build-stage.yml"
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
