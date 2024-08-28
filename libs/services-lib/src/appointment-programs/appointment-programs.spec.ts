@@ -59,6 +59,14 @@ describe('>>> Appointment Programs Service', () => {
     });
   });
 
+  describe('delete', () => {
+    it('should call the proper endpoint', async () => {
+      const id = 'id';
+      await service.delete(id);
+      expect(http.delete).toHaveBeenCalledWith(`www.test.com/appointment/appointment-programs/${id}`);
+    });
+  });
+
   describe('createServiceOption', () => {
     it('should call the proper endpoint', async () => {
       const serviceOption = mockServiceOption();

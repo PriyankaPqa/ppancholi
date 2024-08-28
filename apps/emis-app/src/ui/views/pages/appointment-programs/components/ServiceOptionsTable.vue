@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-4">
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn color="primary" data-test="add-service-option" @click="onAdd">
         {{ $t('appointmentProgram.serviceOption.table.addServiceOption') }}
@@ -71,6 +71,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import routes from '@/constants/routes';
 import CreateEditServiceOption from '../create-edit/CreateEditServiceOption.vue';
 
 export interface IExtendedServiceOption extends IServiceOption {
@@ -97,6 +98,9 @@ export default Vue.extend({
       required: true,
     },
 
+    /**
+     * Is the appointment program being created or edited
+     */
     isEditMode: {
       type: Boolean,
       required: true,
@@ -185,7 +189,7 @@ export default Vue.extend({
   methods: {
     getDetailsRoute(id: string) {
       return {
-        name: '',
+        name: routes.events.appointmentPrograms.serviceOptionDetails.name,
         params: {
            appointmentProgramId: this.appointmentProgramId,
            serviceOptionId: id,
@@ -206,14 +210,25 @@ export default Vue.extend({
       this.showServiceOptionDialog = true;
     },
 
-    // TODO - finalize in next story (#9800), this is a draft
-    deleteServiceOption(serviceOption: IExtendedServiceOption) {
+    async deleteServiceOption(serviceOption: IExtendedServiceOption) {
       if (this.isEditMode) {
-        const res = useAppointmentProgramStore().deleteServiceOption(this.appointmentProgramId, serviceOption.id);
-        if (res) {
-          this.$toasted.global.success(this.$t('appointmentProgram.serviceOption.delete.success'));
-        } else {
-          this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.delete.error'));
+        if (this.serviceOptions.length === 1) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.serviceOption.deleteUniqueServiceOption.error') });
+          return;
+        }
+
+        const userChoice = await this.$confirm({
+          title: this.$t('appointmentProgram.serviceOption.confirm.delete.title'),
+          messages: this.$t('appointmentProgram.serviceOption.confirm.delete.message'),
+         });
+
+        if (userChoice) {
+          const res = await useAppointmentProgramStore().deleteServiceOption(this.appointmentProgramId, serviceOption.id);
+          if (res) {
+            this.$toasted.global.success(this.$t('appointmentProgram.serviceOption.delete.success'));
+          } else {
+            this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.delete.error'));
+          }
         }
       } else {
         const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
@@ -264,6 +279,11 @@ export default Vue.extend({
 
 .no-bottom-border {
   border-bottom: none;
+}
+
+::v-deep .v-data-table > .v-data-table__wrapper tbody tr td:has(> button){
+  padding-left: 0;
+  padding-right: 0;
 }
 
 </style>

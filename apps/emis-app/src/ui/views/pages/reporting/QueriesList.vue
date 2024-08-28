@@ -280,6 +280,11 @@ export default mixins(TablePaginationSearchMixin).extend({
           description: this.$t('reporting.query.theme.LatestCaseFileActivities.description'),
         },
         {
+          id: ReportingTopic.LocationOfLogActivitiesEmailEvents,
+          name: this.$t('reporting.query.theme.LocationOfLogActivitiesEmailEvents'),
+          description: this.$t('reporting.query.theme.LocationOfLogActivitiesEmailEvents.description'),
+        },
+        {
           id: ReportingTopic.HouseholdActivities,
           name: this.$t('reporting.query.theme.HouseholdActivities'),
           description: this.$t('reporting.query.theme.HouseholdActivities.description'),

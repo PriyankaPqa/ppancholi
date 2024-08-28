@@ -220,6 +220,14 @@ describe('StatusChip.vue', () => {
         mountWithStatus('MassActionRunStatus', MassActionRunStatus.PreProcessed);
         expect(wrapper.vm.color).toEqual(colors.chips.green_pale);
         expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.MassActionRunStatus.PreProcessed'));
+
+        mountWithStatus('MassActionRunStatus', MassActionRunStatus.FailedPreProcessing);
+        expect(wrapper.vm.color).toEqual(colors.chips.red);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.MassActionRunStatus.FailedPreProcessing'));
+
+        mountWithStatus('MassActionRunStatus', MassActionRunStatus.FailedProcessing);
+        expect(wrapper.vm.color).toEqual(colors.chips.red);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.MassActionRunStatus.FailedProcessing'));
       });
     });
 

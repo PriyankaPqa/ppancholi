@@ -330,20 +330,24 @@ const routes = {
     },
     appointmentPrograms: {
         home: {
-          path: 'appointmentPrograms',
+          path: 'appointment-programs',
           name: 'events.appointmentPrograms.home',
         },
         create: {
-          path: 'appointmentPrograms/create',
+          path: 'appointment-programs/create',
           name: 'events.appointmentPrograms.create',
         },
         edit: {
-          path: 'appointmentPrograms/:appointmentProgramId/edit',
+          path: 'appointment-programs/:appointmentProgramId/edit',
           name: 'events.appointmentPrograms.edit',
         },
         details: {
-          path: 'appointmentPrograms/details/:appointmentProgramId',
+          path: 'appointment-programs/details/:appointmentProgramId',
           name: 'events.appointmentPrograms.details',
+        },
+        serviceOptionDetails: {
+          path: 'appointment-programs/:appointmentProgramId/service-option/:serviceOptionId',
+          name: 'events.appointmentPrograms.serviceOption.details',
         },
     },
   },

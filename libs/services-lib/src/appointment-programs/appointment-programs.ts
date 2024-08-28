@@ -24,6 +24,10 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
     return this.http.patch<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, payload, { globalHandler: GlobalHandler.Partial });
   }
 
+  async delete(id: string): Promise<IAppointmentProgram> {
+    return this.http.delete<IAppointmentProgram>(`${this.baseUrl}/${id}`);
+  }
+
   async createServiceOption(appointmentProgramId:string, item: Partial<IServiceOption>): Promise<IAppointmentProgram> {
     return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options`, item);
   }

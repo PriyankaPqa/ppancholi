@@ -13,10 +13,12 @@
         <thead>
           <tr>
             <th><span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.day') }}</span></th>
-            <th><span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.from') }}</span></th>
+            <th>
+              <span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.from') }}</span>
+            </th>
             <th><span class="fw-bold rc-body14">{{ $t('appointments.scheduleHours.to') }}</span></th>
-            <th />
-            <th />
+            <th v-if="isEditMode" />
+            <th v-if="isEditMode" />
           </tr>
         </thead>
         <tbody v-for="day in Object.keys(scheduleCopy)" :key="day" class="border">
@@ -29,6 +31,7 @@
               </td>
               <td class="px-0 py-2 select-cell">
                 <v-select-a11y
+                  v-if="isEditMode"
                   :value="timeSlot.start"
                   :items="INTERVALS"
                   outlined
@@ -39,9 +42,11 @@
                   :data-test="`appointments-availability-hours_${day}_${timeSlotIndex}_start`"
                   :item-value="(item) => item.value"
                   @change="updateTime($event, +day, timeSlotIndex, 'start')" />
+                <span v-else> {{ format(new Date(`01/01/2001 ${timeSlot.start}`), 'hh:mm a') }} </span>
               </td>
               <td class="px-0 py-2 select-cell">
                 <v-select-a11y
+                  v-if="isEditMode"
                   :value="timeSlot.end"
                   :items="INTERVALS"
                   :data-test="`appointments-availability-hours_${day}_${timeSlotIndex}_end`"
@@ -52,15 +57,16 @@
                   class="select"
                   :item-value="(item) => item.value"
                   @change="updateTime($event, +day, timeSlotIndex, 'end')" />
+                <span v-else> {{ format(new Date(`01/01/2001 ${timeSlot.end}`), 'hh:mm a') }} </span>
               </td>
-              <td class="px-0 py-1 action-cell">
+              <td v-if="isEditMode" class="px-0 py-1 action-cell">
                 <v-btn icon :data-test="`delete-time-slot_${day}_${timeSlotIndex}`" :aria-label="$t('common.delete')" @click="deleteSlot(+day, timeSlotIndex)">
                   <v-icon size="24" color="grey darken-2">
                     mdi-delete
                   </v-icon>
                 </v-btn>
               </td>
-              <td class="px-0 py-1 action-cell">
+              <td v-if="isEditMode" class="px-0 py-1 action-cell">
                 <v-btn
                   v-if="timeSlotIndex === scheduleCopy[+day].timeSlots.length - 1"
                   icon
@@ -81,12 +87,12 @@
                   {{ $t(`enums.DayOfWeek.${DayOfWeek[+day]}`) }}
                 </div>
               </td>
-              <td>
+              <td class="px-0 py-2">
                 {{ $t('common.N/A') }}
               </td>
               <td />
-              <td />
-              <td class="px-0 py-1 action-cell">
+              <td v-if="isEditMode" />
+              <td v-if="isEditMode" class="px-0 py-1 action-cell">
                 <v-btn icon data-test="delete-link" :aria-label="$t('common.delete')" @click="addSlot(+day)">
                   <v-icon size="24" color="grey darken-2">
                     mdi-plus
@@ -106,6 +112,8 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { MessageBox, VSelectA11y } from '@libs/component-lib/components';
 import { DayOfWeek, IDaySchedule, ITimeSlot } from '@libs/entities-lib/appointment';
+import { format } from 'date-fns';
+
 import appointmentHelpers from '../utils/appointmentHelpers';
 
 const INTERVALS = appointmentHelpers.createDropdownTimeIntervals('00:00', '24:00');
@@ -128,12 +136,21 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    /**
+     * The avaialbility hours are being edited or displayed
+     */
+    isEditMode: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
     return {
       INTERVALS,
       DayOfWeek,
+      format,
       showError: false,
       scheduleCopy: _cloneDeep(this.schedule),
     };

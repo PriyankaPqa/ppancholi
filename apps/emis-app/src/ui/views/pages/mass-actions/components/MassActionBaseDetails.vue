@@ -65,6 +65,25 @@
       </template>
     </mass-action-pre-processed-processed-base>
 
+    <mass-action-failed-base
+      v-else-if="failedPreProcessing"
+      :mass-action-status="MassActionRunStatus.FailedPreProcessing"
+      :mass-action="massAction"
+      @delete:success="back()">
+      <template #payment-details>
+        <slot name="pre-processed" />
+      </template>
+    </mass-action-failed-base>
+
+    <mass-action-failed-base
+      v-else-if="failedProcessing"
+      :mass-action-status="MassActionRunStatus.FailedProcessing"
+      :mass-action="massAction">
+      <template #payment-details>
+        <slot name="processed" />
+      </template>
+    </mass-action-failed-base>
+
     <template #actions>
       <v-btn color="primary" data-test="back_to_mass_action_list_button" @click="back()">
         {{ $t('massActions.backToList.label') }}
@@ -77,6 +96,7 @@
 import { RcPageContent } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import mixins from 'vue-typed-mixins';
+import MassActionFailedBase from '@/ui/views/pages/mass-actions/components/MassActionFailedBase.vue';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionPreProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessingBase.vue';
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
@@ -102,6 +122,7 @@ export default mixins(massActionDetails).extend({
   name: 'MassActionBaseDetails',
 
   components: {
+    MassActionFailedBase,
     MassActionProcessingBase,
     MassActionPreProcessingBase,
     MassActionPreProcessedProcessedBase,

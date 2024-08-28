@@ -25,6 +25,8 @@ const FinancialAssistanceDetails = () => import('@/ui/views/pages/financial-assi
 
 const AppointmentProgramsHome = () => import('@/ui/views/pages/appointment-programs/home/AppointmentProgramsHome.vue');
 const CreateEditAppointmentProgram = () => import('@/ui/views/pages/appointment-programs/create-edit/CreateEditAppointmentProgram.vue');
+const AppointmentProgramDetails = () => import('@/ui/views/pages/appointment-programs/details/AppointmentProgramDetails.vue');
+const ServiceOptionDetails = () => import('@/ui/views/pages/appointment-programs/details/ServiceOptionDetails.vue');
 
 export const events: RouteConfig = {
   path: Routes.events.layout.path,
@@ -221,9 +223,16 @@ export const events: RouteConfig = {
           props: true,
         },
         {
+          path: Routes.events.appointmentPrograms.serviceOptionDetails.path,
+          name: Routes.events.appointmentPrograms.serviceOptionDetails.name,
+          component: ServiceOptionDetails,
+          meta: { level: UserRoles.level6 },
+          props: true,
+        },
+        {
           path: Routes.events.appointmentPrograms.details.path,
           name: Routes.events.appointmentPrograms.details.name,
-          // component: AppointmentProgramDetails,
+          component: AppointmentProgramDetails,
           meta: { level: UserRoles.level6 },
           props: true,
         }],

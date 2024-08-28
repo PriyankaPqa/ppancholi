@@ -261,22 +261,30 @@ describe('AppointmentProgramsHome.vue', () => {
     });
 
     describe('deleteAppointmentProgram', () => {
-      it('calls deactivate after confirmation', async () => {
+      it('calls store delete after confirmation and displays a toast message', async () => {
         const mock = mockAppointmentProgram();
         await wrapper.vm.deleteAppointmentProgram(mock);
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
           title: 'appointmentPrograms.confirm.delete.title',
           messages: 'appointmentPrograms.confirm.delete.message',
         });
-        expect(appointmentProgramStore.deactivate)
+        expect(appointmentProgramStore.deleteAppointmentProgram)
           .toHaveBeenCalledWith(mock.id);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('appointmentProgram.deleted');
       });
-      it('doesnt call deactivate if no confirmation', async () => {
+      it('doesnt call delete if no confirmation', async () => {
         const mock = mockAppointmentProgram();
         wrapper.vm.$confirm = jest.fn(() => false);
-        await wrapper.vm.deleteAppointmentProgram(mock);
-        expect(appointmentProgramStore.deactivate)
+        await wrapper.vm.deleteAppointmentProgram(mock.id);
+        expect(appointmentProgramStore.deleteAppointmentProgram)
           .toHaveBeenCalledTimes(0);
+      });
+
+      it('displays an error message on store call error', async () => {
+        wrapper.vm.$confirm = jest.fn(() => true);
+        appointmentProgramStore.deleteAppointmentProgram = jest.fn();
+        await wrapper.vm.deleteAppointmentProgram('id');
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.deleted.failed');
       });
     });
   });

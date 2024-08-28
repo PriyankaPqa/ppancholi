@@ -68,6 +68,14 @@ export function getExtensionComponents(
     return result;
   }
 
+  async function deleteAppointmentProgram(appointmentId: string): Promise<IAppointmentProgram> {
+    const result = await service.delete(appointmentId);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
   async function createServiceOption(appointmentProgramId: string, serviceOption:IServiceOption) : Promise<IAppointmentProgram> {
     const result = await service.createServiceOption(appointmentProgramId, serviceOption);
     if (result) {
@@ -112,6 +120,7 @@ export function getExtensionComponents(
     fetchAppointmentModalities,
     createAppointmentProgram,
     updateAppointmentProgram,
+    deleteAppointmentProgram,
     createServiceOption,
     updateServiceOption,
     deleteServiceOption,

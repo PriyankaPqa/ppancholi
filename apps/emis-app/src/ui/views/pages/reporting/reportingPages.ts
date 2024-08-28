@@ -72,7 +72,8 @@ export class ReportingPages {
       level: UserRoles.level6,
       roles: [UserRoles.contributorIM],
       feature: FeatureKeys.GeographicMapping,
-    }, {
+    },
+    {
       title: 'reporting.customQueries',
       button: 'reporting.start',
       route: {

@@ -112,8 +112,20 @@ export default Vue.extend({
       return this.getLastRunEntity(massAction).runStatus === MassActionRunStatus.PreProcessed;
     },
 
+    isFailed(massAction: IMassActionCombined) {
+      return this.isFailedPreProcessing(massAction) || this.isFailedProcessing(massAction);
+    },
+
+    isFailedPreProcessing(massAction: IMassActionCombined) {
+      return this.getLastRunEntity(massAction).runStatus === MassActionRunStatus.FailedPreProcessing;
+    },
+
+    isFailedProcessing(massAction: IMassActionCombined) {
+      return this.getLastRunEntity(massAction).runStatus === MassActionRunStatus.FailedProcessing;
+    },
+
     showDeleteIcon(massAction: IMassActionCombined) {
-      return this.isPreprocessing(massAction) || this.isPreprocessed(massAction);
+      return this.isPreprocessing(massAction) || this.isPreprocessed(massAction) || this.isFailedPreProcessing(massAction);
     },
 
     async fetchData(params: ISearchParams) {

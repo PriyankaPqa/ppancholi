@@ -2,7 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { IMultilingual, Status } from '@libs/shared-lib/types';
 import utils from '../../utils';
 import { BaseEntity } from '../../base';
-import { IAppointmentProgram, IDaySchedule } from './appointment-program.types';
+import { IAppointmentProgram, IAppointmentProgramStatusHistory, IDaySchedule } from './appointment-program.types';
 import { IServiceOption } from '../service-option/service-option.types';
 
 export class AppointmentProgram extends BaseEntity {
@@ -22,6 +22,8 @@ export class AppointmentProgram extends BaseEntity {
 
   emailConfirmationMessage: IMultilingual;
 
+  appointmentProgramStatusHistory: IAppointmentProgramStatusHistory;
+
   constructor(data?: IAppointmentProgram) {
     if (data) {
       super(data);
@@ -33,6 +35,7 @@ export class AppointmentProgram extends BaseEntity {
       this.appointmentProgramStatus = data?.appointmentProgramStatus;
       this.emailConfirmationSubject = data?.emailConfirmationSubject;
       this.emailConfirmationMessage = data?.emailConfirmationMessage;
+      this.appointmentProgramStatusHistory = _cloneDeep(data?.appointmentProgramStatusHistory);
     } else {
       super();
       this.eventId = null;
@@ -43,6 +46,7 @@ export class AppointmentProgram extends BaseEntity {
       this.appointmentProgramStatus = Status.Active;
       this.emailConfirmationMessage = utils.initMultilingualAttributes();
       this.emailConfirmationSubject = utils.initMultilingualAttributes();
+      this.appointmentProgramStatusHistory = null;
     }
   }
 

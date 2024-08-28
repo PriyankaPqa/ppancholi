@@ -161,6 +161,56 @@ describe('massActions', () => {
         expect(wrapper.vm.processed).toBe(false);
       });
     });
+
+    describe('failedPreProcessing', () => {
+      it('should return true if lastRun is failed pre-processing', () => {
+        doMount(true, {
+          otherComputed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.FailedPreProcessing }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+          otherOptions: null,
+        });
+        expect(wrapper.vm.failedPreProcessing).toBe(true);
+      });
+
+      it('should return false otherwise', () => {
+        doMount(true, {
+          otherData: null,
+          otherComputed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+          otherOptions: null,
+        });
+        expect(wrapper.vm.failedPreProcessing).toBe(false);
+      });
+    });
+
+    describe('failedProcessing', () => {
+      it('should return true if lastRun is failed processing', () => {
+        doMount(true, {
+          otherComputed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.FailedProcessing }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+          otherOptions: null,
+        });
+        expect(wrapper.vm.failedProcessing).toBe(true);
+      });
+
+      it('should return false otherwise', () => {
+        doMount(true, {
+          otherData: null,
+          otherComputed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processing }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+          otherOptions: null,
+        });
+        expect(wrapper.vm.failedProcessing).toBe(false);
+      });
+    });
   });
 
   describe('Lifecycle', () => {
