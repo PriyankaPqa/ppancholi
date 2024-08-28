@@ -640,6 +640,22 @@ export const logActivitiesEmailEventsViewDs : IDatasourceBase = {
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.logActivitiesEmailEvents.${x.dataField}` })),
 };
 
+export const locationOfLogActivitiesEmailEventsViewDs : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'email', dataType: 'string' },
+    { dataField: 'emailAction', dataType: 'string', visible: true, allowHeaderFiltering: true, allowFiltering: true, allowSearch: true },
+    { dataField: 'ipLocation', dataType: 'string', visible: true },
+    { dataField: 'latitude', dataType: 'number', visible: true },
+    { dataField: 'longitude', dataType: 'number', visible: true },
+    { dataField: 'city', dataType: 'string', visible: true },
+    { dataField: 'region', dataType: 'string', visible: true },
+    { dataField: 'countryCode', dataType: 'string', visible: true },
+    { dataField: 'householdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.locationOfLogActivitiesEmailEvents.${x.dataField}` })),
+};
+
 export const teamTaskDs : IDatasourceSettings = {
   url: 'common/data-providers/team-tasks',
   reportingTopic: ReportingTopic.Tasks,
@@ -880,6 +896,19 @@ export const logActivitiesEmailEventsDs : IDatasourceSettings = {
   ],
 };
 
+export const locationOfLogActivitiesEmailEventsDs : IDatasourceSettings = {
+  url: 'common/data-providers/location-of-log-activities-email-events',
+  reportingTopic: ReportingTopic.LocationOfLogActivitiesEmailEvents,
+  key: { locationOfLogActivitiesEmailEventsId: 'Guid' },
+  columns: [
+    ...(locationOfLogActivitiesEmailEventsViewDs.columns.filter((c) => c.dataField !== 'caseFileNumber'  && c.dataField !== 'caseFileId'   && c.dataField !== 'householdId' )
+          .map((x) => ({ ...x, dataField: `locationOfLogActivitiesEmailEvents.${x.dataField}` }))),
+    ...(caseFileViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),
+    ...(householdViewDs.columns.map((x) => ({ ...x, dataField: `household.${x.dataField}` }))),
+  ],
+};
+
 export const datasources = [
   householdMembersDs,
   householdMembersAddressHistoryDs,
@@ -899,4 +928,5 @@ export const datasources = [
   assignedCaseFilesDs,
   documentsDs,
   logActivitiesEmailEventsDs,
+  locationOfLogActivitiesEmailEventsDs,
 ];

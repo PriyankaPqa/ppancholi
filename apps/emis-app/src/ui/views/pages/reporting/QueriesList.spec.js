@@ -264,6 +264,11 @@ describe('QueriesList.vue', () => {
             description: 'reporting.query.theme.LatestCaseFileActivities.description',
           },
           {
+            id: ReportingTopic.LocationOfLogActivitiesEmailEvents,
+            name: 'reporting.query.theme.LocationOfLogActivitiesEmailEvents',
+            description: 'reporting.query.theme.LocationOfLogActivitiesEmailEvents.description',
+          },
+          {
             id: ReportingTopic.PaymentGroup,
             name: 'reporting.query.theme.PaymentGroup',
             description: 'reporting.query.theme.PaymentGroup.description',
