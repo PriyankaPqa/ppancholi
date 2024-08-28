@@ -14,8 +14,8 @@ import { mockBookingRequest } from '@libs/entities-lib/booking-request';
 import { createTestingPinia } from '@pinia/testing';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockMember } from '@libs/entities-lib/household-create';
-import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import { CurrentAddress, ECurrentAddressTypes, mockOther } from '@libs/entities-lib/value-objects/current-address';
+import { MembershipStatus, mockTemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 
 import Component, { LodgingMode } from './BookingSetupDialog.vue';
@@ -259,6 +259,15 @@ describe('BookingSetupDialog.vue', () => {
         expect(wrapper.vm.bookings).toEqual([{ address, peopleInRoom: [], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }]);
       });
 
+      describe('temporaryAddressAsCurrentAddress', () => {
+        it('sets the shelter id', () => {
+          let result = wrapper.vm.temporaryAddressAsCurrentAddress(mockTemporaryAddress());
+          expect(result).toEqual(new CurrentAddress(mockTemporaryAddress()));
+          result = wrapper.vm.temporaryAddressAsCurrentAddress({ ...mockTemporaryAddress(), shelterLocationId: wrapper.vm.shelterLocations[0].id });
+          expect(result).toEqual({ ...new CurrentAddress(mockTemporaryAddress()), shelterLocation: wrapper.vm.shelterLocations[0] });
+        });
+      });
+
       it('sets up crc provided depending on address type', async () => {
         await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
         wrapper.vm.$refs.form.reset = jest.fn();
@@ -443,7 +452,7 @@ describe('BookingSetupDialog.vue', () => {
         address.reset(ECurrentAddressTypes.HotelMotel);
         address.checkIn = '2022-01-01';
         address.checkOut = '2022-02-01';
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['someone', 'someother'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideCrcAddress();
 
@@ -466,7 +475,7 @@ describe('BookingSetupDialog.vue', () => {
         await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
         crcProvidedLodging.generatePayment = jest.fn(() => payment);
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['someone', 'someother'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         jest.clearAllMocks();
         await wrapper.vm.provideCrcAddress();
@@ -510,7 +519,7 @@ describe('BookingSetupDialog.vue', () => {
         const address = new CurrentAddress();
         address.reset(ECurrentAddressTypes.HotelMotel);
 
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['someone', 'someother'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideNonCrcAddress();
 

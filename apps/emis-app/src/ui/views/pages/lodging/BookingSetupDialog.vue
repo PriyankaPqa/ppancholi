@@ -420,11 +420,11 @@ export default mixins(caseFileDetail).extend({
 
   methods: {
     setupBookingsForExtendStay() {
-      const groupedAddresses = _groupBy(this.peopleToLodge, (p) => JSON.stringify(new CurrentAddress({ ...p.caseFileIndividual.currentAddress, id: null })));
+      const groupedAddresses = _groupBy(this.peopleToLodge, (p) => JSON.stringify(this.temporaryAddressAsCurrentAddress({ ...p.caseFileIndividual.currentAddress, id: null })));
 
       this.bookings = Object.values(groupedAddresses).map((group, index) => (
         {
-          address: new CurrentAddress(group[0].caseFileIndividual.currentAddress),
+          address: this.temporaryAddressAsCurrentAddress(group[0].caseFileIndividual.currentAddress),
           peopleInRoom: group.map((p) => p.caseFileIndividualId),
           confirmationNumber: '',
           nightlyRate: this.defaultAmount,
@@ -443,6 +443,13 @@ export default mixins(caseFileDetail).extend({
       this.addressType = this.bookings[0].address.addressType;
       this.showCrcProvidedSelection = true;
       this.lockCrcProvided = true;
+    },
+
+    temporaryAddressAsCurrentAddress(address: TemporaryAddress) : CurrentAddress {
+      const currentAddress = new CurrentAddress(address);
+      // find when not found return undefined which is not equal to the default null
+      currentAddress.shelterLocation = this.shelterLocations.find((s) => s.id === address?.shelterLocationId) || null;
+      return currentAddress;
     },
 
     async changeType(clearCrcProvided = false) {
@@ -534,7 +541,7 @@ export default mixins(caseFileDetail).extend({
 
         // the address might be crc provided but this move will not require creating payments since the address is already paid for
         this.isCrcProvided = false;
-        this.bookings = [{ address: new CurrentAddress(this.existingAddress), peopleInRoom: [] }];
+        this.bookings = [{ address: this.temporaryAddressAsCurrentAddress(this.existingAddress), peopleInRoom: [] }];
       } else {
         this.bookings.forEach((b) => {
           b.address.crcProvided = this.isCrcProvided;
@@ -595,47 +602,68 @@ export default mixins(caseFileDetail).extend({
         if (!bookingresult) {
           throw new Error('fulfillBooking failed');
         }
-      } else {
-        this.bookings.filter((b) => this.lodgingMode !== LodgingMode.ExtendStay || b.address.checkOut !== b.originalCheckoutDate).forEach(async (b) => {
-          b.address.relatedPaymentIds = b.address.relatedPaymentIds || [];
-          if (paymentId) {
-            b.address.relatedPaymentIds.push(paymentId);
-          }
-          await b.peopleInRoom.forEach(async (p) => {
-            if (this.lodgingMode === LodgingMode.ExtendStay) {
-              const editResult = await useCaseFileIndividualStore()
-                          .editTemporaryAddress(this.caseFileId, p, { ...b.address, id: this.individuals.find((i) => i.id === p).currentAddress.id });
-
-              if (!editResult) {
-                throw new Error('editTemporaryAddress failed');
-              }
-            } else {
-              const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p, b.address);
-              if (!moveResult) {
-                throw new Error('addTemporaryAddress failed');
-              }
-            }
-          });
-        });
-      }
+      } else if (this.lodgingMode === LodgingMode.ExtendStay) {
+          await this.provideCrcAddressAsEdit(paymentId);
+        } else {
+          await this.provideCrcAddressAsMove(paymentId);
+        }
       this.$toasted.global.success(this.$t(paymentId ? 'bookingRequest.fulfilledAndPaid' : 'impactedIndividuals.membersMoved'));
     },
 
-    async provideNonCrcAddress() {
-      this.bookings.forEach(async (b) => {
-        if (!b.address.hasCrcProvided()) {
-          b.address.crcProvided = null;
+    async provideCrcAddressAsEdit(paymentId: string) {
+      const bookings = this.bookings.filter((b) => this.lodgingMode !== LodgingMode.ExtendStay || b.address.checkOut !== b.originalCheckoutDate);
+      for (const b of bookings) {
+        b.address.relatedPaymentIds = b.address.relatedPaymentIds || [];
+        if (paymentId) {
+          b.address.relatedPaymentIds.push(paymentId);
         }
-        await this.peopleToLodge
-          // no need to send people to the same address if they've picked the same one that some already have
-          .filter((p) => !CurrentAddress.areSimilar(p.caseFileIndividual.currentAddress, b.address))
-          .forEach(async (p) => {
+        for (const p of b.peopleInRoom) {
+          // eslint-disable-next-line no-await-in-loop
+          const editResult = await useCaseFileIndividualStore()
+                      .editTemporaryAddress(this.caseFileId, p, { ...b.address, id: this.individuals.find((i) => i.id === p).currentAddress.id });
+
+          if (!editResult) {
+            throw new Error('editTemporaryAddress failed');
+          }
+        }
+      }
+    },
+
+    async provideCrcAddressAsMove(paymentId: string) {
+      for (const b of this.bookings) {
+        b.address.relatedPaymentIds = b.address.relatedPaymentIds || [];
+        if (paymentId) {
+          b.address.relatedPaymentIds.push(paymentId);
+        }
+        // no need to send people to the same address if they've picked the same one that some already have
+        const peopleToMove = this.peopleToLodge.filter((p) => b.peopleInRoom.indexOf(p.caseFileIndividualId) > -1
+            && !CurrentAddress.areSimilar(p.caseFileIndividual.currentAddress, b.address));
+        for (const p of peopleToMove) {
+          // eslint-disable-next-line no-await-in-loop
           const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p.caseFileIndividualId, b.address);
           if (!moveResult) {
             throw new Error('addTemporaryAddress failed');
           }
-        });
-      });
+        }
+      }
+    },
+
+    async provideNonCrcAddress() {
+      for (const b of this.bookings) {
+        if (!b.address.hasCrcProvided()) {
+          b.address.crcProvided = null;
+        }
+
+        // no need to send people to the same address if they've picked the same one that some already have
+        const peopleToMove = this.peopleToLodge.filter((p) => !CurrentAddress.areSimilar(p.caseFileIndividual.currentAddress, b.address));
+        for (const p of peopleToMove) {
+          // eslint-disable-next-line no-await-in-loop
+          const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p.caseFileIndividualId, b.address);
+          if (!moveResult) {
+            throw new Error('addTemporaryAddress failed');
+          }
+        }
+      }
       this.$toasted.global.success(this.$t('impactedIndividuals.membersMoved'));
     },
   },

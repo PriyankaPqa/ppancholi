@@ -81,6 +81,17 @@ describe('>>> CurrentAddress', () => {
   });
 
   describe('>> Methods', () => {
+    describe('areSimilar', () => {
+      it('should return true when same, not considering id, and allow for shelterlocationid to be present in different forms', () => {
+        expect(CurrentAddress.areSimilar(mockCampgroundData(), mockCampgroundData())).toBeTruthy();
+        expect(CurrentAddress.areSimilar(mockShelter(), mockShelter())).toBeTruthy();
+        expect(CurrentAddress.areSimilar({ ...mockShelter(), id: 'abc' }, mockShelter())).toBeTruthy();
+        expect(CurrentAddress.areSimilar({ ...mockShelter(), checkIn: '1999-05-20T00:00:00.000Z' }, mockShelter())).toBeFalsy();
+        expect(CurrentAddress.areSimilar({ ...mockShelter(), shelterLocation: null, shelterLocationId: mockShelter().shelterLocation.id }, mockShelter())).toBeTruthy();
+        expect(CurrentAddress.areSimilar({ ...mockShelter(), shelterLocation: null, shelterLocationId: 'some other' }, mockShelter())).toBeFalsy();
+      });
+    });
+
     describe('hasPlaceNumber', () => {
       it('should return false in bookingRequestMode', () => {
         const p = mockCampGround() as CurrentAddress;
