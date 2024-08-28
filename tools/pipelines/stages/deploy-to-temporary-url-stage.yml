@@ -66,7 +66,7 @@ stages:
                         echo "destinationUri is:" $destinationUri
 
                         # Start the copy operation
-                        $copyResult = az storage blob copy start --source-uri $sourceUri --destination-blob $(branchId)/$destinationBlobName --account-name $accountName --container-name $containerName
+                        $copyResult = az storage blob copy start --source-uri $sourceUri --destination-blob $(branchId)/$destinationBlobName --destination-container $containerName --account-name $accountName --container-name $containerName
 
                         # Check the copy status
                         $copyStatus = "pending"
