@@ -242,7 +242,8 @@ export class CurrentAddress implements ICurrentAddress {
   }
 
   public static areSimilar(address1: ICurrentAddressData, address2: ICurrentAddressData): boolean {
-    // compares the addresses without id.  also because we have a weird way of maintaining shelterlocation we need the comparison by id
+    // compares the addresses without id.  also because sometimes we keep the shelterlocation object and sometimes the id
+    // we need to compare the shelter location id
     return JSON.stringify(new CurrentAddress({ ...address1, shelterLocation: null, id: null }))
       === JSON.stringify(new CurrentAddress({ ...address2, shelterLocation: null, id: null }))
       && (address1.shelterLocationId || address1.shelterLocation?.id) === (address2.shelterLocationId || address2.shelterLocation?.id);
