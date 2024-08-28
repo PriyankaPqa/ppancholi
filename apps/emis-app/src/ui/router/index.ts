@@ -177,6 +177,7 @@ const notifyUserRefresh = () => {
   }, 3000);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkAppVersion = () => {
   const currentVersion = process.env.VITE_VERSION;
   if (isCheckingAppVersion || !currentVersion || currentVersion === 'Local build') {
@@ -254,10 +255,12 @@ router.beforeEach(async (to, from, next) => {
         next(from);
       }
       // We don't want to check app version when testing a feature branch
-      const isTemporaryBranch = !!process.env.VITE_TEMP_BRANCH_ID;
-      if (!isTemporaryBranch) {
-        checkAppVersion();
-      }
+      // const isTemporaryBranch = !!process.env.VITE_TEMP_BRANCH_ID;
+      // eslint-disable-next-line no-console
+      console.log(process.env.VITE_TEMP_BRANCH_ID);
+      // if (!isTemporaryBranch) {
+      //   checkAppVersion();
+      // }
     }
   } catch (e) {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
