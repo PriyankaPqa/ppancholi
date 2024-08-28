@@ -64,7 +64,6 @@ stages:
                       Remove-Item -Path $tempDir -Recurse -Force
                     failOnStderr: true
 
-                ## TODO Check what to do with this specifically with the content-path
                 - task: AzureCLI@2
                   displayName: "Purge CDN"
                   continueOnError: true
