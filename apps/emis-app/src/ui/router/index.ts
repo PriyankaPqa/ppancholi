@@ -255,9 +255,11 @@ router.beforeEach(async (to, from, next) => {
         next(from);
       }
       // We don't want to check app version when testing a feature branch
-      // const isTemporaryBranch = !!process.env.VITE_TEMP_BRANCH_ID;
+      const isTemporaryBranch = !!process.env.VITE_TEMP_BRANCH_ID;
       // eslint-disable-next-line no-console
       console.log(process.env.VITE_TEMP_BRANCH_ID);
+       // eslint-disable-next-line no-console
+      console.log(isTemporaryBranch);
       // if (!isTemporaryBranch) {
       //   checkAppVersion();
       // }
