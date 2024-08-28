@@ -2,6 +2,7 @@
 /* eslint-disable vue/max-len */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
+import _cloneDeep from 'lodash/cloneDeep';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockBookingRequestStore } from '@/pinia/booking-request/booking-request.mock';
@@ -36,12 +37,8 @@ const table = tableStore.getById();
 const program = mockProgramEntity({ id: table.programId });
 programStore.search = jest.fn(() => ({ values: [program] }));
 const bookingRequest = mockBookingRequest();
-const individuals = individualStore.getByCaseFile();
-personStore.getByIds = jest.fn(() => [mockMember({ id: 'pid1' }), mockMember({ id: 'pid2' }), mockMember({ id: 'pid3' })]);
-individuals[0].personId = 'pid1';
-individuals[1].personId = 'pid2';
-individuals[2].personId = 'pid3';
-individualStore.getByCaseFile = jest.fn(() => individuals);
+const originalIndividuals = individualStore.getByCaseFile();
+let individuals = individualStore.getByCaseFile();
 
 describe('BookingSetupDialog.vue', () => {
   let wrapper;
@@ -79,6 +76,13 @@ describe('BookingSetupDialog.vue', () => {
   };
 
   beforeEach(async () => {
+    individuals = _cloneDeep(originalIndividuals);
+    personStore.getByIds = jest.fn(() => [mockMember({ id: 'pid1' }), mockMember({ id: 'pid2' }), mockMember({ id: 'pid3' })]);
+    individuals[0].personId = 'pid1';
+    individuals[1].personId = 'pid2';
+    individuals[2].personId = 'pid3';
+    individualStore.getByCaseFile = jest.fn(() => individuals);
+
     jest.clearAllMocks();
     await mountWrapper(false);
   });

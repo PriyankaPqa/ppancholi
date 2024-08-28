@@ -254,6 +254,7 @@ import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-fi
 import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
 import CrcProvidedLodging, { ICrcProvidedLodging } from './CrcProvidedLodging.vue';
+import ImpactedIndividualAddressTemplateV2 from '../case-files/details/case-file-impacted-individualsV2/components/ImpactedIndividualAddressTemplateV2.vue';
 
 interface IPaymentDetails { program: IProgramEntity, table: IFinancialAssistanceTableEntity, name: string }
 export enum LodgingMode {
@@ -275,6 +276,7 @@ export default mixins(caseFileDetail).extend({
     RationaleDialog,
     VSelectWithValidation,
     CrcProvidedLodging,
+    ImpactedIndividualAddressTemplateV2,
   },
 
   props: {
