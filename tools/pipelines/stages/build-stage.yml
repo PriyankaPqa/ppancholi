@@ -17,9 +17,9 @@ stages:
         steps:
           - powershell: |
               $branchname = '$(System.PullRequest.SourceBranch)'.Split('/')[3]
-              echo $branchname
-              Write-Host "##vso[task.setvariable variable=VITE_BRANCH_ID]$branchname"
-            displayName: 'Set VITE_BRANCH_ID for Pull Request'
+              echo "Branch id is:" + $branchname
+              Write-Host "##vso[task.setvariable variable=VITE_TEMP_BRANCH_ID]$branchname"
+            displayName: 'Set VITE_TEMP_BRANCH_ID'
             condition: eq(variables['Build.Reason'], 'PullRequest')
           
           - template: '../steps/build-vue-steps.yml'
