@@ -22,4 +22,29 @@ export const mockCreatePersonalTaskRequest = (force?: Partial<ITaskEntity>): ITa
   taskActionHistories: [],
   financialAssistancePaymentId: '',
   ...force,
-  });
+});
+
+export const mockCreateTeamTaskRequest = (force?: Partial<ITaskEntity>): ITaskEntity => ({
+  ...mockBaseData(),
+  category: {
+    optionItemId: 'b8ce7629-5e6c-4663-9c2c-180c2e1b9fbc',
+    specifiedOther: null,
+  },
+  caseFileId: 'cfb5e8d7-5aa1-4b19-971f-eef0ebc4055',
+  isUrgent: true,
+  subCategory: {
+    optionItemId: '9f10b2ef-27a0-41ed-ab08-e5a07467a8c5',
+    specifiedOther: null,
+  },
+  description: 'Test Team Task Description',
+  assignedTeamId: 'fd89b9ef-da43-4be5-9a7c-30589a2be135',
+  taskStatus: TaskStatus.InProgress,
+  taskType: TaskType.Team,
+  dateAdded: '',
+  dueDate: null,
+  userWorkingOn: null,
+  actionTaken: null,
+  taskActionHistories: [],
+  financialAssistancePaymentId: null,
+  ...force,
+});

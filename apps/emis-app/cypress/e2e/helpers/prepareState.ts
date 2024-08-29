@@ -50,7 +50,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
 import { TeamType } from '@libs/entities-lib/team';
-import { mockCreatePersonalTaskRequest } from '@libs/cypress-lib/mocks/tasks/tasks';
+import { mockCreatePersonalTaskRequest, mockCreateTeamTaskRequest } from '@libs/cypress-lib/mocks/tasks/tasks';
 import {
   fixtureGenerateCaseFileStatusCsvFile,
   fixtureGenerateFaCsvFile,
@@ -1119,4 +1119,16 @@ export const createPersonalTask = async (provider: IProvider, caseFileId: string
   const mockCreatePersonalTask = mockCreatePersonalTaskRequest({ caseFileId });
   const personalTaskCreated = await provider.task.createTask(mockCreatePersonalTask);
   return personalTaskCreated;
+};
+
+/**
+ * Creates a Team Task
+ * @param provider
+ * @param caseFileId
+ * @param assignedTeamId
+ */
+export const createTeamTask = async (provider: IProvider, caseFileId: string, assignedTeamId: string) => {
+  const mockCreateTeamTask = mockCreateTeamTaskRequest({ caseFileId, assignedTeamId });
+  const teamTaskCreated = await provider.task.createTask(mockCreateTeamTask);
+  return teamTaskCreated;
 };
