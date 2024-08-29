@@ -4,7 +4,7 @@
     :show.sync="show"
     :loading="loading"
     :cancel-action-label="$t('common.buttons.cancel')"
-    :submit-action-label=" $t('common.save')"
+    :submit-action-label=" $t('common.confirm')"
     :submit-button-disabled="false"
     :persistent="true"
     data-test="manage-staff-dialog"
@@ -15,7 +15,9 @@
     @submit="onSubmit">
     <v-row class="pa-0">
       <v-col cols="12" md="4" class="py-0 d-flex flex-column">
-        <span class="rc-body16 fw-bold mb-2">{{ $t('appointmentProgram.manageStaff.title.teamMembers') }}</span>
+        <div class="rc-body16 fw-bold mb-2">
+          {{ $t('appointmentProgram.manageStaff.title.teamMembers') }}
+        </div>
         <v-select-with-validation
           v-model="selectedTeam"
           dense
@@ -47,6 +49,7 @@
             class="flex-grow-1 scrollable individuals-table"
             :headers="headers"
             hide-header
+            dense
             :table-props="{ loading: teamMembersLoading }"
             :count="itemsCount"
             must-sort
@@ -65,7 +68,7 @@
 
             <template #[`item.${customColumns.name}`]="{ item }">
               <div class="d-flex flex-column">
-                <span class="rc-body14 fw-bold primary--text text--darken-1">  {{ item.displayName }} </span>
+                <span class="rc-body14 fw-bold">  {{ item.displayName }} </span>
                 <span class="rc-body12">  {{ $m(item.roleName) }} </span>
               </div>
             </template>
@@ -74,16 +77,17 @@
               <v-simple-checkbox
                 :data-test="`select_${item.id}`"
                 :ripple="false"
-                :class="{ disabled: isUserDisabled(item) }"
-                :value="isUserDisabled(item) ? false : isMemberSelected(item)"
-                :disabled="isUserDisabled(item)"
+                :value="isMemberSelected(item)"
                 @input="onSelectTeamMember({ item, value: $event })" />
             </template>
           </rc-data-table>
         </v-sheet>
       </v-col>
-      <v-col cols="12" md="8" class="py-0">
-        <span class="rc-body16 fw-bold">{{ $t('appointmentProgram.manageStaff.title.assignStaff') }}</span>
+      <v-col cols="12" md="8" class="py-0 d-flex flex-column">
+        <div class="rc-body16 fw-bold mb-2">
+          {{ $t('appointmentProgram.manageStaff.title.assignStaff') }}
+        </div>
+        <assign-service-options :service-options="SERVICE_OPTIONS" :staff-members="allStaffMembers" />
       </v-col>
     </v-row>
   </rc-dialog>
@@ -104,12 +108,14 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { EFilterKeyType } from '@libs/component-lib/types';
 import { IServiceOption } from '@libs/entities-lib/appointment';
 import { SERVICE_OPTIONS } from '../../appointments/home/mocks';
+import AssignServiceOptions from './AssignServiceOptions.vue';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
 
   components: {
     RcDialog,
+    AssignServiceOptions,
   },
 
   props: {
@@ -142,10 +148,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       teamMembersLoading: false,
       selectedTeam: null as ITeamEntity,
       teamMembers: [] as IUserAccountMetadata[],
-      selectedTeamMembers: [] as IUserAccountMetadata[],
       teams: [mockTeamEntity()] as ITeamEntity[],
       allStaffMembers: [] as IUserAccountMetadata[],
       localServiceOptions: [] as IServiceOption[],
+      SERVICE_OPTIONS,
     };
   },
 
@@ -217,10 +223,9 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     onSelectTeamMember({ item, value }:{ item: IUserAccountMetadata, value: boolean }) {
       if (value) {
-        this.allStaffMembers.push(item);
+        this.allStaffMembers = [...this.allStaffMembers, item];
       } else {
-        const memberIndex = this.allStaffMembers.findIndex((m) => m.id === item.id);
-        this.allStaffMembers.splice(memberIndex, 1);
+        this.allStaffMembers = this.allStaffMembers.filter((m) => m.id! === item.id);
       }
     },
 
@@ -235,8 +240,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-    addAllTeamMembers() {
-
+    async addAllTeamMembers() {
+      const teamMemberIds = this.selectedTeam.teamMembers.map((m) => m.id).filter((id) => !this.allStaffMembers.some((m) => m.id === id));
+      const allMembersData = await useUserAccountMetadataStore().fetchByIds(teamMemberIds, true);
+      this.allStaffMembers.push(...allMembersData);
     },
 
     async getInitialStaffMembers() {
@@ -246,7 +253,6 @@ export default mixins(TablePaginationSearchMixin).extend({
         return ids;
       }, []);
       const uniqueIds = [...new Set(allIds)];
-
       this.allStaffMembers = await useUserAccountMetadataStore().fetchByIds(uniqueIds, true);
     },
 
@@ -279,9 +285,6 @@ export default mixins(TablePaginationSearchMixin).extend({
 
 </script>
 <style scoped lang='scss'>
-.member-list-item {
-  border-bottom: 1px solid var(--v-grey-lighten2);
-}
 
 .active-item {
   background-color: var(--v-primary-lighten2);;

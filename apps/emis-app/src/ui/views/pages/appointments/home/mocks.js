@@ -75,7 +75,14 @@ export const STAFF_MEMBER_AVAILABILITIES = [
 export const SERVICE_OPTIONS = [
   mockServiceOption({
     id: '1',
+    serviceOptionType: { optionItemId: 'bcee1023-3425-4b0b-a7ab-007c494c1206' },
     staffMembers: ['4eb26c9e-6eb7-46c3-96f1-6c9aeee7bc88', 'f6881215-bf50-45c9-a154-6d48d7d89afb'] }),
   mockServiceOption({
     id: 2,
-    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678', '7e6a2022-b8a4-40e5-a0f0-b8721712e3c3'] })];
+    serviceOptionType: { optionItemId: 'a5f4e694-753a-494f-ade6-ffdefc99bdf8' },
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678', '7e6a2022-b8a4-40e5-a0f0-b8721712e3c3', '9941b9eb-9a77-4e60-921c-111153c2f7e8'] }),
+
+  mockServiceOption({
+    id: 3,
+    serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] })];
