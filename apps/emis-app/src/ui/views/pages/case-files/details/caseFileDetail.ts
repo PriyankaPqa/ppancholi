@@ -9,8 +9,9 @@ import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { usePersonStore } from '@/pinia/person/person';
-import { CaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
+import { CaseFileIndividualEntity, MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
+import { Status } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   props: {
@@ -67,6 +68,10 @@ export default Vue.extend({
         [(x) => this.household?.primaryBeneficiary === x.personId, (x) => x.membershipStatus],
         ['desc', 'asc'],
       );
+    },
+
+    activeIndividuals(): CaseFileIndividualEntity[] {
+      return this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active && this.members.find((m) => m.id === i.personId && m.status === Status.Active));
     },
   },
   watch: {

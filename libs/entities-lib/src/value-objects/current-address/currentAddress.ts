@@ -57,7 +57,7 @@ export class CurrentAddress implements ICurrentAddress {
       this.checkIn = data.checkIn ? new Date(data.checkIn) : null;
       this.checkOut = data.checkOut ? new Date(data.checkOut) : null;
       this.takeover = data.takeover;
-      this.relatedPaymentIds = data.relatedPaymentIds;
+      this.relatedPaymentIds = data.relatedPaymentIds || [];
       this.relatedBookingRequest = data.relatedBookingRequest;
     }
   }

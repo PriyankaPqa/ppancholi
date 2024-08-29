@@ -39,14 +39,14 @@
     </v-col>
     <v-col v-if="!fullWidthReadOnlyView" lg="4" cols="12" class="pt-2 d-flex justify-end">
       <template v-if="!$hasFeature($featureKeys.Lodging)">
-        <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address', true)">
+        <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address')">
           <v-icon>
             mdi-pencil
           </v-icon>
         </v-btn>
       </template>
       <template v-else>
-        <v-btn v-if="showEditButton && !disableEditing" color="secondary" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address', false)">
+        <v-btn v-if="showEditButton && !disableEditing" color="secondary" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address')">
           {{ $t('impactedIndividuals.updateExistingAddress') }}
         </v-btn>
       </template>

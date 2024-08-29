@@ -153,7 +153,7 @@ export default Vue.extend({
       default: false,
     },
 
-    userCanDoBookings: {
+    userCanProvideCrcAddress: {
       type: Boolean,
       default: false,
     },
@@ -217,9 +217,12 @@ export default Vue.extend({
   },
 
   methods: {
-    openEditAddress(newAddress: boolean = false) {
-      this.newAddress = newAddress;
-      this.showEditMemberDialog = true;
+    openEditAddress() {
+      if (!this.$hasFeature(this.$featureKeys.Lodging)) {
+        this.showEditMemberDialog = true;
+      } else {
+        this.$emit('open-edit-address');
+      }
     },
 
     async onReceivingAssistanceChange() {

@@ -20,11 +20,11 @@
       <div v-if="!loading" class="px-16 mx-8">
         <v-row justify="center" no-gutters>
           <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
-            <template v-if="lodgingMode === LodgingMode.MoveCrcProvidedAllowed || lodgingMode === LodgingMode.MoveCrcProvidedNotAllowed">
+            <template v-if="lodgingMode !== LodgingMode.BookingMode && lodgingMode !== LodgingMode.ExtendStay">
               <v-row>
                 <v-col cols="12">
                   <div class="rc-heading-5">
-                    {{ $t('impactedIndividuals.selectedMembersToMove') }}
+                    {{ isEditOfAddress ? $t('impactedIndividuals.selectedMembersToEdit') : $t('impactedIndividuals.selectedMembersToMove') }}
                   </div>
                 </v-col>
                 <v-col cols="12" class="grey-container">
@@ -121,7 +121,7 @@
               <v-row v-if="lodgingMode !== LodgingMode.ExtendStay" class="mt-8">
                 <v-col cols="12">
                   <div class="rc-heading-5">
-                    {{ $t('impactedIndividuals.newAddress') }}
+                    {{ isEditOfAddress ? $t('impactedIndividuals.editedAddress') : $t('impactedIndividuals.newAddress') }}
                   </div>
                 </v-col>
                 <v-col cols="12" sm="6" md="8">
@@ -131,6 +131,7 @@
                     rules="required"
                     hide-details
                     item-value="value"
+                    :disabled="isEditOfAddress"
                     :data-test="'currentAddressType'"
                     :label="`${$t('registration.addresses.addressType')} *`"
                     :items="currentAddressTypeItems"
@@ -159,7 +160,7 @@
                 </validation-provider>
               </v-row>
               <crc-provided-lodging
-                v-if="isCrcProvided && selectedPaymentDetails && !showSelectTable && addressType"
+                v-if="isCrcProvided && (!mayTriggerPayment || selectedPaymentDetails && !showSelectPaymentDetails) && addressType"
                 :id="caseFileId"
                 ref="crcProvidedLodging"
                 :address-type="addressType"
@@ -167,8 +168,8 @@
                 :bookings="bookings"
                 :lodging-mode="lodgingMode"
                 :people-to-lodge="peopleToLodge"
-                :program="selectedPaymentDetails.program"
-                :table-id="selectedPaymentDetails.table.id" />
+                :program="selectedPaymentDetails ? selectedPaymentDetails.program : null"
+                :table-id="selectedPaymentDetails ? selectedPaymentDetails.table.id : null" />
               <current-address-form
                 v-if="isCrcProvided === false && bookings[0]"
                 :shelter-locations="shelterLocations"
@@ -190,9 +191,9 @@
       </div>
     </rc-dialog>
     <rc-dialog
-      v-if="showSelectTable && isCrcProvided"
+      v-if="showSelectPaymentDetails && isCrcProvided"
       :title="$t('bookingRequest.selectPaymentDetails')"
-      :show.sync="showSelectTable"
+      :show.sync="showSelectPaymentDetails"
       :cancel-action-label="$t('common.buttons.cancel')"
       :submit-action-label="$t('common.buttons.ok')"
       :persistent="true"
@@ -221,6 +222,9 @@
 </template>
 
 <script lang='ts'>
+/* eslint-disable max-depth */
+/* eslint-disable no-await-in-loop */
+
 import { TranslateResult } from 'vue-i18n';
 import _groupBy from 'lodash/groupBy';
 import {
@@ -239,7 +243,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@libs/entities-lib/helpers';
 import { IBookingRequest, RoomOption, RoomType, IBooking } from '@libs/entities-lib/booking-request';
 import { IMemberForSelection } from '@libs/entities-lib/value-objects/member';
-import { MembershipStatus, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
+import { TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import mixins from 'vue-typed-mixins';
 import { IProgramEntity } from '@libs/entities-lib/program';
@@ -257,11 +261,23 @@ import CrcProvidedLodging, { ICrcProvidedLodging } from './CrcProvidedLodging.vu
 import ImpactedIndividualAddressTemplateV2 from '../case-files/details/case-file-impacted-individualsV2/components/ImpactedIndividualAddressTemplateV2.vue';
 
 interface IPaymentDetails { program: IProgramEntity, table: IFinancialAssistanceTableEntity, name: string }
+
 export enum LodgingMode {
   BookingMode,
   MoveCrcProvidedAllowed,
   MoveCrcProvidedNotAllowed,
   ExtendStay,
+  EditCrcProvidedAsNonLodging,
+  EditCrcProvidedAsLodging,
+  EditNotCrcProvided,
+}
+
+export function isEditMode(mode: LodgingMode): boolean {
+  return [LodgingMode.EditCrcProvidedAsLodging, LodgingMode.EditCrcProvidedAsNonLodging, LodgingMode.EditNotCrcProvided, LodgingMode.ExtendStay].indexOf(mode) > -1;
+}
+
+export function modeMayTriggerPayment(mode: LodgingMode): boolean {
+  return [LodgingMode.BookingMode, LodgingMode.MoveCrcProvidedAllowed, LodgingMode.ExtendStay].indexOf(mode) > -1;
 }
 
 export default mixins(caseFileDetail).extend({
@@ -317,7 +333,7 @@ export default mixins(caseFileDetail).extend({
       helpers,
       paymentDetails: [] as IPaymentDetails[],
       selectedPaymentDetails: null as IPaymentDetails,
-      showSelectTable: false,
+      showSelectPaymentDetails: false,
       MAX_LENGTH_SM,
       defaultAmount: 0,
       addressType: null as ECurrentAddressTypes,
@@ -331,6 +347,14 @@ export default mixins(caseFileDetail).extend({
   },
 
   computed: {
+    isEditOfAddress(): boolean {
+      return isEditMode(this.lodgingMode);
+    },
+
+    mayTriggerPayment(): boolean {
+      return modeMayTriggerPayment(this.lodgingMode);
+    },
+
     title(): TranslateResult {
       switch (this.lodgingMode) {
         case LodgingMode.BookingMode:
@@ -338,13 +362,12 @@ export default mixins(caseFileDetail).extend({
         case LodgingMode.ExtendStay:
           return this.$t('impactedIndividuals.extendStay');
         default:
-          return this.$t('impactedIndividuals.moveNewAddress');
+          return this.isEditOfAddress ? this.$t('impactedIndividuals.editAddress') : this.$t('impactedIndividuals.moveNewAddress');
       }
     },
 
     uniqueAddresses(): TemporaryAddress[] {
-      const addresses = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active)
-        .map((m) => m.currentAddress);
+      const addresses = this.activeIndividuals.map((m) => m.currentAddress);
       return addresses.filter((a, index) => !addresses.find((a2, index2) => index > index2 && CurrentAddress.areSimilar(a, a2)));
     },
 
@@ -362,7 +385,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     peopleToLodge(): IMemberForSelection[] {
-      let individuals = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active);
+      let individuals = this.activeIndividuals;
       if (!this.preselectedIndividuals?.length) {
         individuals = individuals.filter((i) => i.receivingAssistance);
       } else {
@@ -386,40 +409,46 @@ export default mixins(caseFileDetail).extend({
       this.isCrcProvided = true;
     }
 
-    this.lockCrcProvided = this.lodgingMode === LodgingMode.MoveCrcProvidedNotAllowed;
+    this.lockCrcProvided = this.lodgingMode !== LodgingMode.MoveCrcProvidedAllowed && this.lodgingMode !== LodgingMode.BookingMode;
 
     await this.loadMissingCaseFileDetails();
-    await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
-    const programs = (await useProgramStore().search({ params: {
-        filter: {
-          'Entity/EventId': { type: EFilterKeyType.Guid, value: this.caseFile.eventId },
-          'Entity/UseForLodging': true,
+
+    if (this.mayTriggerPayment) {
+      await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
+      const programs = (await useProgramStore().search({ params: {
+          filter: {
+            'Entity/EventId': { type: EFilterKeyType.Guid, value: this.caseFile.eventId },
+            'Entity/UseForLodging': true,
+          },
         },
-      },
-    })).values;
-    const faTables = (await useFinancialAssistanceStore().search({ params: {
-        filter: {
-          'Entity/UseForLodging': true,
-          'Entity/ProgramId': { in: programs.map((p) => p.id) },
+      })).values;
+      const faTables = (await useFinancialAssistanceStore().search({ params: {
+          filter: {
+            'Entity/UseForLodging': true,
+            'Entity/ProgramId': { in: programs.map((p) => p.id) },
+          },
         },
-      },
-    })).values;
+      })).values;
 
-    this.paymentDetails = faTables.map((t) => ({ table: t, program: programs.find((p) => t.programId === p.id) }))
-      .map((tp) => ({ ...tp, name: `${this.$m(tp.program.name)} - ${this.$m(tp.table.name)}` }));
-    this.loading = false;
+      this.paymentDetails = faTables.map((t) => ({ table: t, program: programs.find((p) => t.programId === p.id) }))
+        .map((tp) => ({ ...tp, name: `${this.$m(tp.program.name)} - ${this.$m(tp.table.name)}` }));
+      this.loading = false;
 
-    this.selectPaymentDetails(this.paymentDetails[0]);
+      this.selectPaymentDetails(this.paymentDetails[0]);
 
-    this.showSelectTable = this.paymentDetails.length > 1;
+      this.showSelectPaymentDetails = this.paymentDetails.length > 1;
+    } else if (this.isEditOfAddress) {
+      this.loading = false;
+      this.setupBookingsForEdit();
+    }
 
-    if (this.lodgingMode === LodgingMode.BookingMode || this.lodgingMode === LodgingMode.ExtendStay) {
+    if (this.lodgingMode !== LodgingMode.MoveCrcProvidedAllowed && this.lodgingMode !== LodgingMode.MoveCrcProvidedNotAllowed) {
       this.moveIntoExistingAddress = false;
     }
   },
 
   methods: {
-    setupBookingsForExtendStay() {
+    setupBookingsForEdit() {
       const groupedAddresses = _groupBy(this.peopleToLodge, (p) => JSON.stringify(this.temporaryAddressAsCurrentAddress({ ...p.caseFileIndividual.currentAddress, id: null })));
 
       this.bookings = Object.values(groupedAddresses).map((group, index) => (
@@ -439,7 +468,7 @@ export default mixins(caseFileDetail).extend({
         b.address.checkOut = uiHelpers.getLocalStringDate(b.address.checkOut, 'CaseFileIndividual.checkOut');
       });
 
-      this.isCrcProvided = true;
+      this.isCrcProvided = this.bookings[0].address.crcProvided;
       this.addressType = this.bookings[0].address.addressType;
       this.showCrcProvidedSelection = true;
       this.lockCrcProvided = true;
@@ -503,11 +532,11 @@ export default mixins(caseFileDetail).extend({
 
         this.defaultAmount = useFinancialAssistanceStore().mainItems[0].subItems[0].maximumAmount;
 
-        this.showSelectTable = false;
+        this.showSelectPaymentDetails = false;
         this.selectedPaymentDetails = detail;
 
-        if (this.lodgingMode === LodgingMode.ExtendStay) {
-          this.setupBookingsForExtendStay();
+        if (this.isEditOfAddress) {
+          this.setupBookingsForEdit();
         }
       }
     },
@@ -569,7 +598,9 @@ export default mixins(caseFileDetail).extend({
           if (this.isCrcProvided) {
             await this.provideCrcAddress();
           } else {
-            await this.provideNonCrcAddress();
+            // non crc provided is always one booking only with everyone in it
+            this.bookings[0].peopleInRoom = this.peopleToLodge.map((p) => p.caseFileIndividualId);
+            await this.provideAddress();
           }
         } catch (e) {
           this.loading = false;
@@ -602,72 +633,51 @@ export default mixins(caseFileDetail).extend({
         if (!bookingresult) {
           throw new Error('fulfillBooking failed');
         }
-      } else if (this.lodgingMode === LodgingMode.ExtendStay) {
-          await this.provideCrcAddressAsEdit(paymentId);
-        } else {
-          await this.provideCrcAddressAsMove(paymentId);
-        }
-      this.$toasted.global.success(this.$t(paymentId ? 'bookingRequest.fulfilledAndPaid' : 'impactedIndividuals.membersMoved'));
-    },
-
-    async provideCrcAddressAsEdit(paymentId: string) {
-      const bookings = this.bookings.filter((b) => this.lodgingMode !== LodgingMode.ExtendStay || b.address.checkOut !== b.originalCheckoutDate);
-      for (const b of bookings) {
-        b.address.relatedPaymentIds = b.address.relatedPaymentIds || [];
-        if (paymentId) {
-          b.address.relatedPaymentIds.push(paymentId);
-        }
-        for (const p of b.peopleInRoom) {
-          // eslint-disable-next-line no-await-in-loop
-          const editResult = await useCaseFileIndividualStore()
-                      .editTemporaryAddress(this.caseFileId, p, { ...b.address, id: this.individuals.find((i) => i.id === p).currentAddress.id });
-
-          if (!editResult) {
-            throw new Error('editTemporaryAddress failed');
-          }
-        }
+        this.$toasted.global.success(this.$t(paymentId ? 'bookingRequest.fulfilledAndPaid' : 'impactedIndividuals.membersMoved'));
+      } else {
+        await this.provideAddress(paymentId);
       }
     },
 
-    async provideCrcAddressAsMove(paymentId: string) {
+    async provideAddress(paymentId: string = null) {
+      let saveOccured = false;
       for (const b of this.bookings) {
-        b.address.relatedPaymentIds = b.address.relatedPaymentIds || [];
-        if (paymentId) {
-          b.address.relatedPaymentIds.push(paymentId);
-        }
-        // no need to send people to the same address if they've picked the same one that some already have
+        // no need to send people to the same address if they've picked the same one that some already have or havent made a change
         const peopleToMove = this.peopleToLodge.filter((p) => b.peopleInRoom.indexOf(p.caseFileIndividualId) > -1
             && !CurrentAddress.areSimilar(p.caseFileIndividual.currentAddress, b.address));
-        for (const p of peopleToMove) {
-          // eslint-disable-next-line no-await-in-loop
-          const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p.caseFileIndividualId, b.address);
-          if (!moveResult) {
-            throw new Error('addTemporaryAddress failed');
-          }
-        }
-      }
-    },
 
-    async provideNonCrcAddress() {
-      for (const b of this.bookings) {
-        if (!b.address.hasCrcProvided()) {
-          b.address.crcProvided = null;
+        if (paymentId) {
+          b.address.relatedPaymentIds.push(paymentId);
         }
 
-        // no need to send people to the same address if they've picked the same one that some already have
-        const peopleToMove = this.peopleToLodge.filter((p) => !CurrentAddress.areSimilar(p.caseFileIndividual.currentAddress, b.address));
         for (const p of peopleToMove) {
-          // eslint-disable-next-line no-await-in-loop
-          const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p.caseFileIndividualId, b.address);
-          if (!moveResult) {
-            throw new Error('addTemporaryAddress failed');
+          if (this.isEditOfAddress) {
+            const editResult = await useCaseFileIndividualStore()
+                                  .editTemporaryAddress(this.caseFileId, p.caseFileIndividualId, { ...b.address, id: p.caseFileIndividual.currentAddress.id });
+            if (!editResult) {
+              throw new Error('editTemporaryAddress failed');
+            }
+          } else {
+            const moveResult = await useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, p.caseFileIndividualId, b.address);
+            if (!moveResult) {
+              throw new Error('addTemporaryAddress failed');
+            }
           }
+          saveOccured = true;
         }
       }
-      this.$toasted.global.success(this.$t('impactedIndividuals.membersMoved'));
+
+      if (saveOccured) {
+        // eslint-disable-next-line no-nested-ternary
+        let message = this.$t(this.lodgingMode === LodgingMode.ExtendStay ? 'impactedIndividuals.extendedStay'
+          : (this.isEditOfAddress ? 'impactedIndividuals.updatedAddress' : 'impactedIndividuals.membersMoved')) as string;
+        if (paymentId) {
+          message += this.$t('impactedIndividuals.andPaid');
+        }
+        this.$toasted.global.success(message);
+      }
     },
   },
-
 });
 
 </script>

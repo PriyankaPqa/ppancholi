@@ -10,14 +10,14 @@
           <v-checkbox
             v-model="booking.address.takeover"
             class="mt-0"
-            :disabled="lodgingMode === LodgingMode.ExtendStay"
+            :disabled="lodgingMode === LodgingMode.ExtendStay || lodgingMode === LodgingMode.EditCrcProvidedAsNonLodging"
             :label="$t('bookingRequest.takeover')"
             hide-details />
         </div>
       </v-col>
       <v-col cols="1" class="float-right">
         <v-btn
-          v-if="index > 0 && lodgingMode !== LodgingMode.ExtendStay"
+          v-if="index > 0 && !isEditOfAddress"
           icon
           @click="removeRoom(booking)">
           <v-icon size="24" color="grey darken-2">
@@ -26,7 +26,7 @@
         </v-btn>
       </v-col>
       <v-col cols="12" class="grey-container pa-4">
-        <v-row>
+        <v-row :class="program ? '' : 'pb-4'">
           <validation-provider v-slot="{ errors }" class="cb-validation" :rules="{ required: { messageKey: 'bookingRequest.mustSelectIndividuals' } }">
             <!-- there are no v-checkbox-group - this does the same for error handling-->
             <v-radio-group :error-messages="errors" row class="ma-0 pa-0">
@@ -41,13 +41,13 @@
                   class="mt-0"
                   :label="individual.identitySet.firstName + ' ' + individual.identitySet.lastName"
                   :value="individual.caseFileIndividualId"
-                  :disabled="lodgingMode === LodgingMode.ExtendStay || isMemberAlreadySelected(booking, individual.caseFileIndividualId)"
+                  :disabled="isEditOfAddress || isMemberAlreadySelected(booking, individual.caseFileIndividualId)"
                   hide-details />
               </v-col>
             </v-radio-group>
           </validation-provider>
         </v-row>
-        <v-row>
+        <v-row v-if="program">
           <v-col cols="3" class="pb-0">
             <v-text-field-with-validation
               v-model="booking.nightlyRate"
@@ -85,6 +85,7 @@
           :disable-autocomplete="false"
           :current-address="booking.address"
           :extend-stay-mode="lodgingMode === LodgingMode.ExtendStay"
+          :room-edit-mode="lodgingMode === LodgingMode.EditCrcProvidedAsNonLodging"
           lock-crc-provided
           booking-mode
           hide-title
@@ -93,7 +94,7 @@
           @change="setCurrentAddress($event, index)" />
       </v-col>
     </v-row>
-    <v-row v-if="lodgingMode !== LodgingMode.ExtendStay">
+    <v-row v-if="!isEditOfAddress">
       <v-col>
         <v-btn class="secondary" @click="addRoom()">
           <v-icon class="mr-2">
@@ -103,7 +104,7 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-card outlined class="mt-8 pa-4 text-right rc-heading-5">
+    <v-card v-if="program" outlined class="mt-8 pa-4 text-right rc-heading-5">
       {{ $t('bookingRequest.totalEstimatedAmount') }}: {{ $formatCurrency(currentAmount) }}
     </v-card>
   </div>
@@ -133,7 +134,7 @@ import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity, Pa
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
-import { LodgingMode } from './BookingSetupDialog.vue';
+import { LodgingMode, isEditMode } from './BookingSetupDialog.vue';
 
 export interface ICrcProvidedLodging {
   generatePayment(): IFinancialAssistancePaymentEntity;
@@ -173,11 +174,11 @@ export default mixins(caseFileDetail).extend({
     },
     program: {
       type: Object as () => IProgramEntity,
-      required: true,
+      required: false,
     },
     tableId: {
       type: String,
-      required: true,
+      required: false,
     },
     peopleToLodge: {
       type: Array as () => IMemberForSelection[],
@@ -194,13 +195,16 @@ export default mixins(caseFileDetail).extend({
       RoomOption,
       helpers,
       uniqueNb: 0,
-      showSelectTable: false,
       MAX_LENGTH_SM,
       LodgingMode,
     };
   },
 
   computed: {
+    isEditOfAddress(): boolean {
+      return isEditMode(this.lodgingMode);
+    },
+
     shelterLocations(): IEventGenericLocation[] {
       const locations = this.event?.shelterLocations || [];
       return locations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
@@ -259,7 +263,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     generatePayment() : IFinancialAssistancePaymentEntity {
-      if (this.currentAmount === 0) {
+      if (this.currentAmount === 0 || !this.program) {
         return null;
       }
       const paymentPayload = {

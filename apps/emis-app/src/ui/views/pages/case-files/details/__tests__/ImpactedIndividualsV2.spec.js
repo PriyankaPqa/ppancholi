@@ -76,27 +76,27 @@ describe('ImpactedIndividualsV2.vue', () => {
         expect(wrapper.vm.bookingTeams).toEqual(teamStore.search().values);
         expect(bookingRequestStore.fetchAll).toHaveBeenCalledWith({ caseFileId: wrapper.vm.caseFileId });
 
-        expect(wrapper.vm.userCanDoBookings).toBeFalsy();
+        expect(wrapper.vm.userCanProvideCrcAddress).toBeFalsy();
 
         await doMount(false, 6);
-        expect(wrapper.vm.userCanDoBookings).toBeFalsy();
+        expect(wrapper.vm.userCanProvideCrcAddress).toBeFalsy();
 
         featureList = [wrapper.vm.$featureKeys.Lodging];
         await doMount(false, 6);
-        expect(wrapper.vm.userCanDoBookings).toBeTruthy();
+        expect(wrapper.vm.userCanProvideCrcAddress).toBeTruthy();
 
         await doMount(false, 5);
-        expect(wrapper.vm.userCanDoBookings).toBeFalsy();
+        expect(wrapper.vm.userCanProvideCrcAddress).toBeFalsy();
 
         teamStore.search = jest.fn(() => ({ values: [mockTeamEntity({ teamMembers: [{ id: userStore.getUserId() }] })] }));
         await doMount(false, 5);
-        expect(wrapper.vm.userCanDoBookings).toBeTruthy();
+        expect(wrapper.vm.userCanProvideCrcAddress).toBeTruthy();
 
         caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
         await doMount(false, 5);
-        expect(wrapper.vm.userCanDoBookings).toBeFalsy();
+        expect(wrapper.vm.userCanProvideCrcAddress).toBeFalsy();
         await doMount(false, 6);
-        expect(wrapper.vm.userCanDoBookings).toBeTruthy();
+        expect(wrapper.vm.userCanProvideCrcAddress).toBeTruthy();
       });
     });
   });
@@ -136,17 +136,17 @@ describe('ImpactedIndividualsV2.vue', () => {
         featureList = [wrapper.vm.$featureKeys.Lodging];
         bookingRequestStore.getByCaseFile = jest.fn(() => []);
         await doMount();
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeTruthy();
-        await wrapper.setData({ userCanDoBookings: true });
+        await wrapper.setData({ userCanProvideCrcAddress: true });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
 
         await doMount(false, 1);
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeTruthy();
 
         await doMount(false, 0);
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
         bookingRequestStore.getByCaseFile = bck;
       });
@@ -154,17 +154,17 @@ describe('ImpactedIndividualsV2.vue', () => {
       it('returns false when a pending request or case file disabled', async () => {
         featureList = [wrapper.vm.$featureKeys.Lodging];
         await doMount();
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
 
         bookingRequestStore.getByCaseFile = jest.fn(() => []);
         await doMount(false, 5);
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeTruthy();
 
         caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
         await doMount(false, 5);
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
       });
 
@@ -181,7 +181,7 @@ describe('ImpactedIndividualsV2.vue', () => {
             return [individual];
           },
         });
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeTruthy();
         individual.currentAddress.crcProvided = true;
         await doMount(false, 1, {}, {
@@ -189,7 +189,7 @@ describe('ImpactedIndividualsV2.vue', () => {
             return [individual];
           },
         });
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
 
         bookingRequestStore.getByCaseFile = bck;
@@ -197,16 +197,16 @@ describe('ImpactedIndividualsV2.vue', () => {
     });
 
     describe('canMoveToNewAddress', () => {
-      it('depends on userCanDoBookings and canRequestBooking', async () => {
+      it('depends on userCanProvideCrcAddress and canRequestBooking', async () => {
         featureList = [wrapper.vm.$featureKeys.Lodging];
         await doMount(false, 1, {}, {
           canRequestBooking() {
             return false;
           },
         });
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canMoveToNewAddress).toBeFalsy();
-        await wrapper.setData({ userCanDoBookings: true });
+        await wrapper.setData({ userCanProvideCrcAddress: true });
         expect(wrapper.vm.canMoveToNewAddress).toBeTruthy();
 
         await doMount(false, 1, {}, {
@@ -214,15 +214,15 @@ describe('ImpactedIndividualsV2.vue', () => {
             return true;
           },
         });
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canMoveToNewAddress).toBeTruthy();
-        await wrapper.setData({ userCanDoBookings: true });
+        await wrapper.setData({ userCanProvideCrcAddress: true });
         expect(wrapper.vm.canMoveToNewAddress).toBeTruthy();
       });
     });
 
     describe('canExtendStay', () => {
-      it('depends on userCanDoBookings and a current address thats crcprovided', async () => {
+      it('depends on userCanProvideCrcAddress and a current address thats crcprovided', async () => {
         featureList = [wrapper.vm.$featureKeys.Lodging];
         const individual = mockCaseFileIndividualEntity();
         individual.currentAddress.crcProvided = false;
@@ -231,17 +231,39 @@ describe('ImpactedIndividualsV2.vue', () => {
             return [individual];
           },
         });
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canExtendStay).toBeFalsy();
-        await wrapper.setData({ userCanDoBookings: true });
+        await wrapper.setData({ userCanProvideCrcAddress: true });
         expect(wrapper.vm.canExtendStay).toBeFalsy();
 
         individual.currentAddress.crcProvided = true;
 
-        await wrapper.setData({ userCanDoBookings: false });
+        await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canExtendStay).toBeFalsy();
-        await wrapper.setData({ userCanDoBookings: true });
+        await wrapper.setData({ userCanProvideCrcAddress: true });
         expect(wrapper.vm.canExtendStay).toBeTruthy();
+      });
+    });
+  });
+
+  describe('methods', () => {
+    describe('startMoveProcess', () => {
+      it('should be true when case file status is closed or archived or inactive', async () => {
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        await doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Archived });
+        await doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive });
+        await doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open });
+        await doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(false);
       });
     });
   });

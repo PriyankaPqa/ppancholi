@@ -23,6 +23,7 @@ export const mockCampgroundData = (): TemporaryAddress => ({
   from: '2023-05-01T11:11:11.000Z',
   to: null,
   shelterLocationId: null,
+  relatedPaymentIds: [],
 });
 
 export const mockHotelMotelData = (): TemporaryAddress => ({
@@ -37,6 +38,7 @@ export const mockHotelMotelData = (): TemporaryAddress => ({
   from: '2023-05-01T11:11:11.000Z',
   to: null,
   shelterLocationId: null,
+  relatedPaymentIds: [],
 });
 
 export const mockMedicalFacilityCurrentAddressData = (): TemporaryAddress => ({
@@ -51,6 +53,7 @@ export const mockMedicalFacilityCurrentAddressData = (): TemporaryAddress => ({
   from: '2023-05-01T11:11:11.000Z',
   to: null,
   shelterLocationId: null,
+  relatedPaymentIds: [],
 });
 
 export const mockFriendsFamilyData = (): TemporaryAddress => ({
@@ -65,6 +68,7 @@ export const mockFriendsFamilyData = (): TemporaryAddress => ({
   from: '2023-05-01T11:11:11.000Z',
   to: null,
   shelterLocationId: null,
+  relatedPaymentIds: [],
 });
 
 export const mockUnknownData = (): TemporaryAddress => ({
@@ -79,6 +83,7 @@ export const mockUnknownData = (): TemporaryAddress => ({
   from: '2023-05-01T11:11:11.000Z',
   to: null,
   shelterLocationId: null,
+  relatedPaymentIds: [],
 });
 
 export const mockRemainingHomeData = (): TemporaryAddress => ({
@@ -93,6 +98,7 @@ export const mockRemainingHomeData = (): TemporaryAddress => ({
   from: '2023-05-01T11:11:11.000Z',
   to: null,
   shelterLocationId: null,
+  relatedPaymentIds: [],
 });
 
 export const mockOtherData = (): TemporaryAddress => ({
@@ -107,6 +113,7 @@ export const mockOtherData = (): TemporaryAddress => ({
   from: '2023-05-01T11:11:11.000Z',
   to: null,
   shelterLocationId: null,
+  relatedPaymentIds: [],
 });
 
 export const mockShelterData = (): TemporaryAddress => ({
@@ -121,6 +128,7 @@ export const mockShelterData = (): TemporaryAddress => ({
   crcProvided: null,
   from: '2023-05-01T11:11:11.000Z',
   to: null,
+  relatedPaymentIds: [],
 });
 
 export const mockTemporaryAddress = (force?: Partial<TemporaryAddress>) : TemporaryAddress => ({

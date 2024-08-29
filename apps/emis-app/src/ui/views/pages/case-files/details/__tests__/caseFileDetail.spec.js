@@ -7,6 +7,8 @@ import { mockCaseFileIndividualEntities } from '@libs/entities-lib/case-file-ind
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { CaseFileStatus, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
+import { mockMember } from '@libs/entities-lib/household-create';
+import { Status } from '@libs/shared-lib/types';
 
 import caseFileDetail from '../caseFileDetail';
 
@@ -88,6 +90,21 @@ describe('caseFileDetail mixin', () => {
       it('returns the right data int the right order (membership status)', () => {
         const cfi = mockCaseFileIndividualEntities();
         expect(wrapper.vm.individuals).toEqual([cfi[0], cfi[2], cfi[1]]);
+      });
+    });
+
+    describe('activeIndividuals', () => {
+      it('returns the individuals that are active and persons arent deleted', async () => {
+        const cfi = mockCaseFileIndividualEntities();
+        await mountWrapper(false, 5, { computed: { members() {
+          return [mockMember({ id: cfi[0].personId }), mockMember({ id: cfi[1].personId }), mockMember({ id: cfi[2].personId, status: Status.Inactive })];
+        } } });
+        expect(wrapper.vm.activeIndividuals).toEqual([cfi[0]]);
+
+        await mountWrapper(false, 5, { computed: { members() {
+          return [mockMember({ id: cfi[0].personId }), mockMember({ id: cfi[1].personId }), mockMember({ id: cfi[2].personId })];
+        } } });
+        expect(wrapper.vm.activeIndividuals).toEqual([cfi[0], cfi[2]]);
       });
     });
 

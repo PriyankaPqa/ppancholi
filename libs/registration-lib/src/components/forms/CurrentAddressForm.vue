@@ -60,7 +60,7 @@
             :locale="$i18n.locale"
             :value="checkInCheckOutDate"
             :required="bookingMode && form.crcProvided"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             background-color="white"
             display-format="MMM d, yyyy"
             :start-label="$t('impactedIndividuals.temporary_address.check_in') + (bookingMode && form.crcProvided ? ' *' : '')"
@@ -85,7 +85,7 @@
           @input="setNewCheckOut($event)" />
       </v-col>
 
-      <v-col v-if="form.hasStreet() && !extendStayMode" cols="12" :class="{ 'py-0': compactView }">
+      <v-col v-if="form.hasStreet() && !extendStayMode && !roomEditMode" cols="12" :class="{ 'py-0': compactView }">
         <rc-google-autocomplete-with-validation
           prepend-inner-icon="mdi-map-marker"
           background-color="white"
@@ -103,7 +103,7 @@
           <v-text-field-with-validation
             v-model="form.placeName"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.placeName"
             :data-test="`${prefixDataTest}__placeName`"
             :label="placeNameLabel"
@@ -116,7 +116,7 @@
             background-color="white"
             :rules="rules.shelterLocation"
             :item-text="(e) => $m(e.name)"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             return-object
             :data-test="`${prefixDataTest}__shelterLocation`"
             :label="`${$t('registration.addresses.temporaryAddressTypes.Shelter')} *`"
@@ -138,7 +138,7 @@
           <v-text-field-with-validation
             v-model="form.address.streetAddress"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :data-test="`${prefixDataTest}__street`"
             :rules="rules.streetAddress"
             :label="`${$t('registration.addresses.streetAddress')}`"
@@ -150,7 +150,7 @@
           <v-text-field-with-validation
             v-model="form.address.unitSuite"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.unitSuite"
             :data-test="`${prefixDataTest}__unitSuite`"
             :label="$t('registration.addresses.unit')" />
@@ -161,7 +161,7 @@
           <v-text-field-with-validation
             v-model="form.address.city"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.city"
             :data-test="`${prefixDataTest}__city`"
             :label="`${$t('registration.addresses.city')} *`"
@@ -174,7 +174,7 @@
             v-if="isCanada"
             v-model="form.address.province"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.province"
             :data-test="`${prefixDataTest}__province`"
             :label="`${$t('registration.addresses.province')} *`"
@@ -184,7 +184,7 @@
             v-else
             v-model="form.address.specifiedOtherProvince"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.specifiedOtherProvince"
             :data-test="`${prefixDataTest}__specifiedOtherProvince`"
             :label="`${$t('registration.addresses.province')}*`"
@@ -195,7 +195,7 @@
           <v-text-field-with-validation
             v-model="form.address.postalCode"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.postalCode"
             :data-test="`${prefixDataTest}__postalCode`"
             :label="`${$t('registration.addresses.postalCode')}`"
@@ -207,7 +207,7 @@
           <rc-country-select-with-validation
             v-model="form.address.country"
             background-color="white"
-            :disabled="extendStayMode"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.country"
             :data-test="`${prefixDataTest}__country`"
             :label="`${$t('registration.addresses.country')} *`"
@@ -318,6 +318,11 @@ export default Vue.extend({
     },
 
     extendStayMode: {
+      type: Boolean,
+      default: false,
+    },
+
+    roomEditMode: {
       type: Boolean,
       default: false,
     },

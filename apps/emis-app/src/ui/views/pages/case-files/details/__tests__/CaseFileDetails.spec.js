@@ -30,7 +30,8 @@ const { personStore } = useMockPersonStore(pinia);
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
-  const doMount = async (featureList = [], otherComputed = {}) => {
+  const cfi = caseFileIndividualStore.getByIds();
+  const doMount = async (fullMount = true, featureList = [], otherComputed = {}) => {
     const params = {
       localVue,
       pinia,
@@ -45,13 +46,14 @@ describe('CaseFileDetails.vue', () => {
         event() {
           return mockEvent;
         },
+        members: () => [mockMember({ id: cfi[0].personId }), mockMember({ id: cfi[1].personId }), mockMember({ id: cfi[2].personId })],
         ...otherComputed,
       },
       mocks: {
         $services: services,
       },
     };
-    wrapper = mount(Component, params);
+    wrapper = (fullMount ? mount : shallowMount)(Component, params);
     wrapper.vm.getPrimaryMemberFullName = jest.fn(() => 'mock-full-name');
     wrapper.vm.hasPhoneNumbers = jest.fn(() => true);
     wrapper.vm.getAddressFirstLine = jest.fn(() => '100 Right ave');
@@ -494,7 +496,7 @@ describe('CaseFileDetails.vue', () => {
     describe('receivingAssistanceMembersCount', () => {
       it('should return proper data', async () => {
         expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(1);
-        await doMount([wrapper.vm.$featureKeys.CaseFileIndividual]);
+        await doMount(false, [wrapper.vm.$featureKeys.CaseFileIndividual]);
         expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(2);
       });
     });
@@ -652,7 +654,7 @@ describe('CaseFileDetails.vue', () => {
   describe('watcher', () => {
     describe('id', () => {
       it('should call fetchData when changed', async () => {
-        await doMount();
+        await doMount(false);
         wrapper.vm.fetchData = jest.fn();
         expect(wrapper.vm.fetchData).not.toHaveBeenCalled();
         await wrapper.setProps({

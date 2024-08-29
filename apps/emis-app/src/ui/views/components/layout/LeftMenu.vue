@@ -77,7 +77,7 @@ export default Vue.extend({
     return {
       leftMenu: true,
       routes,
-      userCanDoBookings: false,
+      userCanProvideCrcAddress: false,
     };
   },
 
@@ -188,7 +188,7 @@ export default Vue.extend({
         },
       ];
 
-      if (this.userCanDoBookings) {
+      if (this.userCanProvideCrcAddress) {
         tabs.splice(9, 0, {
           to: routes.lodging.home.name,
           icon: 'mdi-bed',
@@ -243,7 +243,7 @@ export default Vue.extend({
             'Entity/UseForLodging': true,
             Entity: { TeamMembers: { any: { UserId: { value: useUserStore().getUserId(), type: 'guid' } } } },
           } } })).values;
-      this.userCanDoBookings = (this.$hasLevel(UserRoles.level6) || bookingTeams.length > 0);
+      this.userCanProvideCrcAddress = (this.$hasLevel(UserRoles.level6) || bookingTeams.length > 0);
     }
   },
 

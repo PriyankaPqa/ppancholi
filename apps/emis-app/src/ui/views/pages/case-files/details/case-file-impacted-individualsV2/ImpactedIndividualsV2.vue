@@ -41,10 +41,11 @@
           :is-primary-member="household && household.primaryBeneficiary === individual.personId"
           :shelter-locations-list="event && event.shelterLocations"
           :case-file-id="caseFileId"
-          :user-can-do-bookings="userCanDoBookings"
+          :user-can-do-bookings="userCanProvideCrcAddress"
           :pending-booking-request="pendingBookingRequest"
           :data-test="household && household.primaryBeneficiary === individual.personId ? 'primary_impacted_individual_card' : 'non_primary_impacted_individual_card'"
-          :disable-editing-by-status="disableEditingByStatus" />
+          :disable-editing-by-status="disableEditingByStatus"
+          @open-edit-address="startEditAddress(individual)" />
       </div>
     </template>
     <booking-request-dialog
@@ -75,7 +76,8 @@ import mixins from 'vue-typed-mixins';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useTeamStore } from '@/pinia/team/team';
 import { ITeamEntity } from '@libs/entities-lib/team';
-import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
+import { CurrentAddress } from '@libs/entities-lib/household-create';
+import { ICaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
 import { Status } from '@libs/shared-lib/types';
 import { useUserStore } from '@/pinia/user/user';
 import caseFileDetail from '../caseFileDetail';
@@ -98,7 +100,7 @@ export default mixins(caseFileDetail).extend({
     return {
       loading: false,
       showBookingDialog: false,
-      userCanDoBookings: false,
+      userCanProvideCrcAddress: false,
       bookingTeams: [] as ITeamEntity[],
       showModifyLodging: false,
       selectedIndividuals: [] as string[],
@@ -119,16 +121,16 @@ export default mixins(caseFileDetail).extend({
 
     canRequestBooking(): boolean {
       return this.$hasFeature(this.$featureKeys.Lodging) && !this.individuals.find((i) => i.personId === this.primaryMember.id && i.currentAddress.crcProvided)
-        && !this.pendingBookingRequest && !this.readonly && !this.userCanDoBookings && this.$hasLevel(UserRoles.level1) && !this.disableEditingByStatus;
+        && !this.pendingBookingRequest && !this.readonly && !this.userCanProvideCrcAddress && this.$hasLevel(UserRoles.level1) && !this.disableEditingByStatus;
     },
 
     canMoveToNewAddress(): boolean {
-      return this.$hasFeature(this.$featureKeys.Lodging) && (this.userCanDoBookings || this.canRequestBooking);
+      return this.$hasFeature(this.$featureKeys.Lodging) && (this.userCanProvideCrcAddress || this.canRequestBooking);
     },
 
     canExtendStay(): boolean {
-      return this.$hasFeature(this.$featureKeys.Lodging) && this.userCanDoBookings
-        && !!this.individuals.find((i) => i.membershipStatus === MembershipStatus.Active && i.currentAddress.crcProvided);
+      return this.$hasFeature(this.$featureKeys.Lodging) && this.userCanProvideCrcAddress
+        && !!this.activeIndividuals.find((i) => i.currentAddress.crcProvided);
     },
   },
 
@@ -139,7 +141,7 @@ export default mixins(caseFileDetail).extend({
           Entity: { Events: { any: { Id: { value: this.caseFile.eventId, type: 'guid' } } } },
           'Entity/UseForLodging': true,
         } } })).values;
-    this.userCanDoBookings = this.$hasFeature(this.$featureKeys.Lodging) && (this.$hasLevel(UserRoles.level6)
+    this.userCanProvideCrcAddress = this.$hasFeature(this.$featureKeys.Lodging) && (this.$hasLevel(UserRoles.level6)
       || (!this.disableEditingByStatus && !!this.bookingTeams.find((t) => !!t.teamMembers.find((tm) => tm.id === useUserStore().getUserId()))));
 
     this.loading = false;
@@ -155,12 +157,12 @@ export default mixins(caseFileDetail).extend({
 
     async startMoveProcess() {
       const dialog = this.$refs.selectIndividualsDialog as any;
-      const peopleToMove = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active)
+      const peopleToMove = this.activeIndividuals
           .map((i) => ({
-            ...this.members.find((m) => m.id === i.personId && m.status === Status.Active),
+            ...this.members.find((m) => m.id === i.personId),
             caseFileIndividualId: i.id,
             isPrimary: i.personId === this.primaryMember?.id,
-          })).filter((m) => m.id);
+          }));
       const userInput = await (dialog.open({
         title: this.$t('impactedIndividuals.selectMove.title'),
         textUserSelection: this.$t('impactedIndividuals.selectMove.content'),
@@ -169,20 +171,29 @@ export default mixins(caseFileDetail).extend({
 
       if (userInput.answered) {
         this.selectedIndividuals = userInput.selectedIndividuals;
-        this.lodgingMode = this.userCanDoBookings ? LodgingMode.MoveCrcProvidedAllowed : LodgingMode.MoveCrcProvidedNotAllowed;
+        this.lodgingMode = this.userCanProvideCrcAddress ? LodgingMode.MoveCrcProvidedAllowed : LodgingMode.MoveCrcProvidedNotAllowed;
         this.showMoveDialog = true;
       }
       dialog.close();
     },
 
     async startExtendStay() {
-      const peopleToMove = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active && i.currentAddress.crcProvided)
+      const peopleToMove = this.activeIndividuals.filter((i) => i.currentAddress.crcProvided)
           .map((i) => ({
             ...this.members.find((m) => m.id === i.personId && m.status === Status.Active),
             caseFileIndividualId: i.id,
           })).filter((m) => m.id);
       this.selectedIndividuals = peopleToMove.map((p) => p.caseFileIndividualId);
       this.lodgingMode = LodgingMode.ExtendStay;
+      this.showMoveDialog = true;
+    },
+
+    async startEditAddress(individual: ICaseFileIndividualEntity) {
+      const peopleToMove = this.activeIndividuals.filter((i) => CurrentAddress.areSimilar(individual.currentAddress, i.currentAddress));
+      this.selectedIndividuals = peopleToMove.map((p) => p.id);
+      // eslint-disable-next-line no-nested-ternary
+      this.lodgingMode = individual.currentAddress.crcProvided
+        ? (this.userCanProvideCrcAddress ? LodgingMode.EditCrcProvidedAsLodging : LodgingMode.EditCrcProvidedAsNonLodging) : LodgingMode.EditNotCrcProvided;
       this.showMoveDialog = true;
     },
   },
