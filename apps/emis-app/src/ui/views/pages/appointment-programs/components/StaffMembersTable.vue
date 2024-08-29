@@ -32,6 +32,7 @@
       v-if="showManageStaffDialog"
       :show.sync="showManageStaffDialog"
       :event-id="appointmentProgram.eventId"
+      :service-options="serviceOptions"
       :appointment-program-id="appointmentProgramId" />
   </div>
 </template>
@@ -41,7 +42,7 @@ import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { IAppointmentProgram } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import ManageStaffMembers from './ManageStaffMembers.vue';
 
 export default Vue.extend({
@@ -55,6 +56,11 @@ export default Vue.extend({
   props: {
     appointmentProgramId: {
       type: String,
+      required: true,
+    },
+
+    serviceOptions: {
+      type: Array as ()=> IServiceOption[],
       required: true,
     },
   },

@@ -1,4 +1,4 @@
-import { mockAppointment, DayOfWeek, mockStaffMemberAvailability } from '@libs/entities-lib/appointment';
+import { mockAppointment, DayOfWeek, mockStaffMemberAvailability, mockServiceOption } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
 
 const today = helpers.getLocalStringDate(new Date(), 'local');
@@ -71,3 +71,11 @@ export const STAFF_MEMBER_AVAILABILITIES = [
   { startDateTime: `${today}T14:15:00.000Z`, endDateTime: `${today}T16:00:00.000Z` },
   { startDateTime: `${today}T17:00:00.000Z`, endDateTime: `${today}T20:00:00.000Z` },
 ];
+
+export const SERVICE_OPTIONS = [
+  mockServiceOption({
+    id: '1',
+    staffMembers: ['4eb26c9e-6eb7-46c3-96f1-6c9aeee7bc88', 'f6881215-bf50-45c9-a154-6d48d7d89afb'] }),
+  mockServiceOption({
+    id: 2,
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678', '7e6a2022-b8a4-40e5-a0f0-b8721712e3c3'] })];

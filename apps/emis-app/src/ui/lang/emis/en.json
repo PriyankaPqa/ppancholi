@@ -51,7 +51,7 @@
     "appointmentProgram.serviceOption.table.name": "Name",
     "appointmentProgram.serviceOption.table.status": "Status",
     "appointmentProgram.serviceOption.table.type": "Type",
-    "appointmentProgram.staffMembers.table.addStaff": "Add staff",
+    "appointmentProgram.staffMembers.table.addStaff": "Manage staff",
     "appointmentProgram.staffMembers.table.name": "Name",
     "appointmentProgram.staffMembers.table.role": "Role",
     "appointmentProgram.staffMembers.table.serviceOption": "Service option",
@@ -3791,5 +3791,6 @@
     "appointmentProgram.manageStaff.title.assignStaff": "Assign selected staff to service options",
     "appointmentProgram.manageStaff.select.team": "Team",
     "appointmentProgram.manageStaff.quickSearch": "Quick team member search",
-    "appointmentProgram.manageStaff.name": "Name"
+    "appointmentProgram.manageStaff.name": "Name",
+    "appointmentProgram.manageStaff.title.addAll": "Add all"
 }

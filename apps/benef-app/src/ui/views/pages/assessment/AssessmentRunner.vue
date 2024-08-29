@@ -19,7 +19,7 @@ import 'survey-core/defaultV2.min.css';
 import Vue from 'vue';
 import _debounce from 'lodash/debounce';
 import { AssessmentFormEntity, IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
-import { cloneDeep } from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
 import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
@@ -77,7 +77,7 @@ export default Vue.extend({
 
   methods: {
     async saveAnswers(sender: ISurveyModel) {
-      this.response = cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, this.response));
+      this.response = _cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, this.response));
       if (this.assessmentResponseId) {
         const result = await this.$services.assessmentResponses.saveAssessmentAnsweredQuestions(this.response);
         if (result) {
@@ -139,7 +139,7 @@ export default Vue.extend({
 
     async loadDetails() {
       try {
-        this.response = cloneDeep((await this.$services.assessmentResponses.getForBeneficiary(this.assessmentResponseId)));
+        this.response = _cloneDeep((await this.$services.assessmentResponses.getForBeneficiary(this.assessmentResponseId)));
         const res = await this.$services.assessmentForms.getForBeneficiary(this.assessmentTemplateId);
         const form = new AssessmentFormEntity(res);
 

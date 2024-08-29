@@ -61,7 +61,9 @@
         <div class="fw-bold py-4">
           {{ $t('appointmentProgram.section.staffMembers') }}
         </div>
-        <staff-members-table :appointment-program-id="appointmentProgram.id" />
+        <staff-members-table
+          :appointment-program-id="appointmentProgram.id"
+          :service-options="appointmentProgram.serviceOptions" />
       </v-col>
     </v-row>
   </rc-page-content>
