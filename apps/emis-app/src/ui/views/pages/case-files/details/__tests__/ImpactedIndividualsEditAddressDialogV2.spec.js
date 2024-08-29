@@ -207,6 +207,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
           placeName: 'test',
           placeNumber: '',
           shelterLocation: null,
+          relatedPaymentIds: [],
         };
         await wrapper.setData({ editedAddress: mockCampGround() });
         expect(wrapper.vm.currentAddressWithFormattedDate).toEqual(expectResult);

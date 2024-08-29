@@ -863,6 +863,7 @@ describe('HouseholdProfile.vue', () => {
               placeName: 'test',
               placeNumber: '',
               shelterLocation: null,
+              relatedPaymentIds: [],
             },
             genderName: {
               translation: {

@@ -94,7 +94,6 @@
       :id="individual.caseFileId"
       :show.sync="showEditMemberDialog"
       :individual="individual"
-      :new-address="newAddress"
       :member="member"
       :is-primary-member="isPrimaryMember"
       :shelter-locations-list="shelterLocationsList" />
@@ -168,7 +167,6 @@ export default Vue.extend({
     return {
       showPreviousTemporaryAddress: false,
       showEditMemberDialog: false,
-      newAddress: false,
       isReceivingAssistance: true,
       UserRoles,
       MembershipStatus,

@@ -71,7 +71,7 @@ export default Vue.extend({
     },
 
     activeIndividuals(): CaseFileIndividualEntity[] {
-      return this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active && this.members.find((m) => m.id === i.personId && m.status === Status.Active));
+      return this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active && this.members?.find((m) => m.id === i.personId && m.status === Status.Active));
     },
   },
   watch: {

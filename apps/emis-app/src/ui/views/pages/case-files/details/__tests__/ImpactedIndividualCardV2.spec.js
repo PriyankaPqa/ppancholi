@@ -13,10 +13,11 @@ const { caseFileIndividualStore } = useMockCaseFileIndividualStore(pinia);
 
 describe('ImpactedIndividualCardV2.vue', () => {
   let wrapper;
-  const doMount = async (otherComputed = {}, otherProps = {}, level = 5) => {
+  const doMount = async (otherComputed = {}, otherProps = {}, level = 5, featureList = []) => {
     const options = {
       localVue,
       pinia,
+      featureList,
       propsData: {
         isPrimaryMember: false,
         individual: mockCaseFileIndividualEntity(),
@@ -234,15 +235,18 @@ describe('ImpactedIndividualCardV2.vue', () => {
 
   describe('Method', () => {
     describe('openEditAddress', () => {
-      it('should set newAddress and open dialog', () => {
-        expect(wrapper.vm.newAddress).toBeFalsy();
+      it('should open dialog or emit', async () => {
+        wrapper.vm.$emit = jest.fn();
         expect(wrapper.vm.showEditMemberDialog).toBeFalsy();
-        wrapper.vm.openEditAddress(true);
-        expect(wrapper.vm.newAddress).toBeTruthy();
+        wrapper.vm.openEditAddress();
         expect(wrapper.vm.showEditMemberDialog).toBeTruthy();
-        wrapper.vm.openEditAddress(false);
-        expect(wrapper.vm.newAddress).toBeFalsy();
-        expect(wrapper.vm.showEditMemberDialog).toBeTruthy();
+        expect(wrapper.vm.$emit).not.toHaveBeenCalledWith('open-edit-address');
+
+        await doMount(null, null, 5, wrapper.vm.$featureKeys.Lodging);
+        wrapper.vm.$emit = jest.fn();
+        wrapper.vm.openEditAddress();
+        expect(wrapper.vm.showEditMemberDialog).toBeFalsy();
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('open-edit-address');
       });
     });
 
