@@ -20,6 +20,8 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
 
   useForLodging: boolean;
 
+  useForAppointments: boolean;
+
   constructor(data?: ITeamEntity) {
     if (data) {
       super(data);
@@ -30,6 +32,7 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
       this.isEscalation = data.isEscalation;
       this.isAssignable = data.isAssignable;
       this.useForLodging = data.useForLodging;
+      this.useForAppointments = data.useForAppointments;
     } else {
       super();
       this.eventIds = [];
@@ -37,6 +40,7 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
       this.isEscalation = false;
       this.isAssignable = false;
       this.useForLodging = false;
+      this.useForAppointments = false;
     }
   }
 

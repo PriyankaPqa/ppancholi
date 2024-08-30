@@ -79,7 +79,7 @@
                   </div>
                 </v-col>
                 <v-col
-                  v-if="displayEscalationLabel"
+                  v-if="!$hasFeature($featureKeys.AppointmentBooking) && displayEscalationLabel"
                   cols="4"
                   class="team_data"
                   data-test="team_escalation">
@@ -91,7 +91,7 @@
                   </div>
                 </v-col>
                 <v-col
-                  v-if="displayUseLodging"
+                  v-if="!$hasFeature($featureKeys.AppointmentBooking) && displayUseLodging"
                   cols="4"
                   class="team_data"
                   data-test="team_lodging">
@@ -100,6 +100,18 @@
                   </div>
                   <div class="rc-body14">
                     {{ $t('teams.lodging') }}
+                  </div>
+                </v-col>
+                <v-col
+                  v-if="displayAllSetAs"
+                  cols="4"
+                  class="team_data"
+                  data-test="team_all_sets">
+                  <div class="rc-body14 fw-bold">
+                    {{ $t('teams.set_as') }}
+                  </div>
+                  <div class="rc-body14" data-test="team_all_sets_label">
+                    {{ labelForSetAs }}
                   </div>
                 </v-col>
               </v-row>
@@ -201,6 +213,18 @@ export default Vue.extend({
 
     displayUseLodging(): boolean {
       return this.$hasFeature(this.$featureKeys.Lodging) && this.team.useForLodging;
+    },
+
+    displayAllSetAs(): boolean {
+      return this.$hasFeature(this.$featureKeys.AppointmentBooking) && (this.displayUseLodging || this.displayEscalationLabel || this.team.useForAppointments);
+    },
+
+    labelForSetAs(): string {
+      const lodgingLabel = this.displayUseLodging ? this.$t('teams.lodging') : null;
+      const escalationLabel = this.displayEscalationLabel ? this.$t('teams.escalation') : null;
+      const appointmentsLabel = this.team.useForAppointments ? this.$t('teams.appointments') : null;
+
+      return [lodgingLabel, escalationLabel, appointmentsLabel].filter((x) => x).join(', ');
     },
   },
 

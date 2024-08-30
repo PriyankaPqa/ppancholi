@@ -140,6 +140,17 @@ describe('TeamDetails.vue', () => {
         const element = wrapper.findDataTest('team_escalation');
         expect(element.exists()).toBeFalsy();
       });
+
+      it('should not be rendered if feature flag for appointments is on', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+          computed: {
+            displayEscalationLabel: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('team_escalation');
+        expect(element.exists()).toBeFalsy();
+      });
     });
 
     describe('team_lodging', () => {
@@ -161,6 +172,50 @@ describe('TeamDetails.vue', () => {
         });
         const element = wrapper.findDataTest('team_lodging');
         expect(element.exists()).toBeFalsy();
+      });
+
+      it('should not be rendered if feature flag for appointments is on', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+          computed: {
+            displayUseLodging: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('team_lodging');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('Label for all set properties', () => {
+      it('should be rendered if displayAllSetAs is true', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayAllSetAs: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('team_all_sets');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered if displayAllSetAs is false', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayAllSetAs: () => false,
+          },
+        });
+        const element = wrapper.findDataTest('team_all_sets');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('should contain the labelForSetAs', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayAllSetAs: () => true,
+            labelForSetAs: () => 'Lodging, Escalation',
+          },
+        });
+        const element = wrapper.findDataTest('team_all_sets_label');
+        expect(element.text()).toContain('Lodging, Escalation');
       });
     });
   });
@@ -295,37 +350,138 @@ describe('TeamDetails.vue', () => {
         expect(wrapper.vm.displayEscalationLabel).toBeFalsy();
       });
     });
-  });
 
-  describe('displayUseLodging', () => {
-    it('should be true if has feature flag Lodging and useForLodging is true', async () => {
-      await mountWrapper(false, 5, {
-        featureList: [wrapper.vm.$featureKeys.Lodging],
-        computed: {
-          team: () => mockTeamsDataAddHoc({ useForLodging: true }),
-        },
+    describe('displayUseLodging', () => {
+      it('should be true if has feature flag Lodging and useForLodging is true', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.Lodging],
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForLodging: true }),
+          },
+        });
+        expect(wrapper.vm.displayUseLodging).toBeTruthy();
       });
-      expect(wrapper.vm.displayUseLodging).toBeTruthy();
+
+      it('should be false if has no feature flag Lodging', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [],
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForLodging: true }),
+          },
+        });
+        expect(wrapper.vm.displayUseLodging).toBeFalsy();
+      });
+
+      it('should be false if useForLodging is false', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForLodging: false }),
+          },
+        });
+        expect(wrapper.vm.displayUseLodging).toBeFalsy();
+      });
     });
 
-    it('should be false if has no feature flag Lodging', async () => {
-      await mountWrapper(false, 5, {
-        featureList: [],
-        computed: {
-          team: () => mockTeamsDataAddHoc({ useForLodging: true }),
-        },
+    describe('displayAllSetAs', () => {
+      it('should be true if has feature flag AppointmentBooking and useForAppointments is true', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForAppointments: true }),
+          },
+        });
+        expect(wrapper.vm.displayAllSetAs).toBeTruthy();
       });
-      expect(wrapper.vm.displayUseLodging).toBeFalsy();
+
+      it('should be true if has feature flag AppointmentBooking and displayUseLodging is true', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+          computed: {
+            displayUseLodging: () => true,
+          },
+        });
+        expect(wrapper.vm.displayAllSetAs).toBeTruthy();
+      });
+      it('should be true if has feature flag AppointmentBooking and displayEscalationLabel is true', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+          computed: {
+            displayEscalationLabel: () => true,
+          },
+        });
+        expect(wrapper.vm.displayAllSetAs).toBeTruthy();
+      });
+
+      it('should be false if has feature flag AppointmentBooking off ', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [],
+          computed: {
+            displayEscalationLabel: () => true,
+          },
+        });
+        expect(wrapper.vm.displayAllSetAs).toBeFalsy();
+      });
+      it('should be false if has feature flag AppointmentBooking on and none of the properties are true', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+          computed: {
+            displayEscalationLabel: () => false,
+            displayUseLodging: () => false,
+            team: () => mockTeamsDataAddHoc({ useForAppointments: false }),
+          },
+        });
+        expect(wrapper.vm.displayAllSetAs).toBeFalsy();
+      });
     });
 
-    it('should be false if useForLodging is false', async () => {
-      await mountWrapper(false, 5, {
-        featureList: [wrapper.vm.$featureKeys.TaskManagement],
-        computed: {
-          team: () => mockTeamsDataAddHoc({ useForLodging: false }),
-        },
+    describe('labelForSetAs', () => {
+      it('should return the corect label for each property', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForAppointments: true }),
+            displayEscalationLabel: () => false,
+            displayUseLodging: () => false,
+          },
+        });
+        expect(wrapper.vm.labelForSetAs).toEqual('teams.appointments');
+
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForAppointments: true }),
+            displayEscalationLabel: () => true,
+            displayUseLodging: () => false,
+          },
+        });
+        expect(wrapper.vm.labelForSetAs).toEqual('teams.escalation, teams.appointments');
+
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForAppointments: true }),
+            displayEscalationLabel: () => true,
+            displayUseLodging: () => true,
+          },
+        });
+        expect(wrapper.vm.labelForSetAs).toEqual('teams.lodging, teams.escalation, teams.appointments');
+
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForAppointments: false }),
+            displayEscalationLabel: () => true,
+            displayUseLodging: () => true,
+          },
+        });
+        expect(wrapper.vm.labelForSetAs).toEqual('teams.lodging, teams.escalation');
+
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockTeamsDataAddHoc({ useForAppointments: false }),
+            displayEscalationLabel: () => false,
+            displayUseLodging: () => true,
+          },
+        });
+        expect(wrapper.vm.labelForSetAs).toEqual('teams.lodging');
       });
-      expect(wrapper.vm.displayUseLodging).toBeFalsy();
     });
   });
 });

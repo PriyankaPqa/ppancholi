@@ -60,6 +60,14 @@ describe('>>> Team', () => {
       const teamEntity = new TeamEntity();
       expect(teamEntity.useForLodging).toEqual(false);
     });
+
+    it('should instantiate useForAppointments', () => {
+      const team = new TeamEntity({ ...mockTeamData, useForAppointments: true });
+      expect(team.useForAppointments).toEqual(true);
+
+      const teamEntity = new TeamEntity();
+      expect(teamEntity.useForAppointments).toEqual(false);
+    });
   });
 
   describe('Methods', () => {
