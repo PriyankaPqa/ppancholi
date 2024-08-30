@@ -15,13 +15,6 @@ beforeAll(() => {
         This will reveal which URL was called.
       `);
     }
-
-    if (error.length === 1 && typeof error[0] === 'string' && error[0].startsWith('[Vue warn]: Invalid prop: type check failed')
-      // kinda specific to $t mocked
-      && error[0].indexOf('Expected String, got Object') > -1) {
-      return;
-    }
-
     // Call the original console.error with its arguments
     originalConsoleError(error);
   });
