@@ -215,8 +215,8 @@ describe('CreatEditEvent.vue', () => {
   });
 
   describe('Created', () => {
-    doMount(true, true);
-    it('calls the fetch action on created', async () => {
+    it('calls the fetch action on created if edit mode', async () => {
+      doMount(true, true);
       expect(eventStore.fetch).toHaveBeenCalledWith('');
     });
   });
