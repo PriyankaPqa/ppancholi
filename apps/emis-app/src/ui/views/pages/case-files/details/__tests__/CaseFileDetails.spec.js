@@ -1,8 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
@@ -12,14 +11,14 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
+import { CaseFileDetailsMock } from './caseFileDetailsMock.mock';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 
-const mockCaseFile = mockCaseFileEntity({ id: '1' });
-const mockEvent = mockEventEntity();
-mockEvent.schedule.status = EEventStatus.Open;
+let detailsMock = new CaseFileDetailsMock();
+let mockCaseFile = detailsMock.mocks.caseFile;
 
 const pinia = getPiniaForUser(UserRoles.level1);
 const { caseFileStore } = useMockCaseFileStore(pinia);
@@ -30,23 +29,14 @@ const { personStore } = useMockPersonStore(pinia);
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
-  const cfi = caseFileIndividualStore.getByIds();
   const doMount = async (fullMount = true, featureList = [], otherComputed = {}) => {
     const params = {
       localVue,
       pinia,
       featureList,
-      propsData: {
-        id: mockCaseFile.id,
-      },
+      propsData: detailsMock.propsData,
       computed: {
-        caseFile() {
-          return mockCaseFile;
-        },
-        event() {
-          return mockEvent;
-        },
-        members: () => [mockMember({ id: cfi[0].personId }), mockMember({ id: cfi[1].personId }), mockMember({ id: cfi[2].personId })],
+        ...detailsMock.computed,
         ...otherComputed,
       },
       mocks: {
@@ -78,6 +68,12 @@ describe('CaseFileDetails.vue', () => {
 
     await flushPromises();
   };
+
+  beforeEach(async () => {
+    detailsMock = new CaseFileDetailsMock();
+    mockCaseFile = detailsMock.mocks.caseFile;
+    jest.clearAllMocks();
+  });
 
   describe('Template', () => {
     beforeEach(async () => {
@@ -115,7 +111,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(mockEvent.name.translation.en);
+        expect(element.text()).toEqual(detailsMock.mocks.event.name.translation.en);
       });
     });
 
@@ -184,17 +180,9 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
+          propsData: detailsMock.propsData,
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -226,17 +214,10 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
+          propsData: detailsMock.propsData,
 
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -265,16 +246,9 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
+          propsData: detailsMock.propsData,
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -303,16 +277,9 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
+          propsData: detailsMock.propsData,
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -396,22 +363,6 @@ describe('CaseFileDetails.vue', () => {
         mocks: {
           $services: services,
         },
-      });
-    });
-
-    describe('caseFile', () => {
-      it('return the case file by id from the storage', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-        expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFile));
       });
     });
 
@@ -581,7 +532,7 @@ describe('CaseFileDetails.vue', () => {
     it('should call fetch', () => {
       expect(caseFileStore.fetch).toHaveBeenCalledWith(wrapper.vm.id);
 
-      expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: '1' });
+      expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'cf-id' });
       expect(personStore.fetchByIds).toHaveBeenCalledWith(['pid-1', 'pid-2', 'pid-3'], true);
     });
 
@@ -608,16 +559,9 @@ describe('CaseFileDetails.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        propsData: {
-          id: mockCaseFile.id,
-        },
+        propsData: detailsMock.propsData,
         computed: {
-          caseFile() {
-            return mockCaseFile;
-          },
-          event() {
-            return mockEvent;
-          },
+          ...detailsMock.computed,
         },
         mocks: {
           $services: services,
@@ -631,9 +575,9 @@ describe('CaseFileDetails.vue', () => {
         await wrapper.vm.getHouseholdInfo();
         expect(householdStore.fetch).toBeCalledWith(mockCaseFile.householdId);
         expect(caseFileIndividualStore.fetchAll).toBeCalledWith({ caseFileId: wrapper.vm.caseFileId });
-        expect(personStore.fetchByIds).toBeCalledWith(householdStore.fetch().members, true);
+        expect(personStore.fetchByIds).toBeCalledWith(wrapper.vm.household.members, true);
         expect(personStore.fetchByIds).toBeCalledWith(caseFileIndividualStore.fetchAll().map((x) => x.personId), true);
-        expect(services.potentialDuplicates.getPotentialDuplicatesCount).toBeCalledWith(householdStore.fetch().id);
+        expect(services.potentialDuplicates.getPotentialDuplicatesCount).toBeCalledWith(wrapper.vm.household.id);
       });
     });
 

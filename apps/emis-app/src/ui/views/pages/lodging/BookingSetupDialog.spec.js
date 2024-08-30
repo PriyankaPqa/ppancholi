@@ -2,7 +2,6 @@
 /* eslint-disable vue/max-len */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
-import _cloneDeep from 'lodash/cloneDeep';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockBookingRequestStore } from '@/pinia/booking-request/booking-request.mock';
@@ -13,10 +12,10 @@ import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { mockBookingRequest } from '@libs/entities-lib/booking-request';
 import { createTestingPinia } from '@pinia/testing';
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { mockMember } from '@libs/entities-lib/household-create';
 import { CurrentAddress, ECurrentAddressTypes, mockOther } from '@libs/entities-lib/value-objects/current-address';
 import { MembershipStatus, mockTemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { CaseFileDetailsMock } from '../case-files/details/__tests__/caseFileDetailsMock.mock';
 
 import Component, { LodgingMode } from './BookingSetupDialog.vue';
 
@@ -37,14 +36,14 @@ const table = tableStore.getById();
 const program = mockProgramEntity({ id: table.programId });
 programStore.search = jest.fn(() => ({ values: [program] }));
 const bookingRequest = mockBookingRequest();
-const originalIndividuals = individualStore.getByCaseFile();
-let individuals = individualStore.getByCaseFile();
+
+let detailsMock = new CaseFileDetailsMock();
 
 describe('BookingSetupDialog.vue', () => {
   let wrapper;
   let crcProvidedLodging;
 
-  const mountWrapper = async (fullMount = true, level = 5, lodgingMode = LodgingMode.BookingMode, additionalComputeds = {}) => {
+  const mountWrapper = async (fullMount = false, level = 5, lodgingMode = LodgingMode.BookingMode, additionalComputeds = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       pinia,
@@ -57,12 +56,13 @@ describe('BookingSetupDialog.vue', () => {
         };
       },
       propsData: {
+        ...detailsMock.propsData,
         bookingRequest: lodgingMode === LodgingMode.BookingMode ? bookingRequest : null,
-        id: 'cf-id',
         show: true,
         lodgingMode,
       },
       computed: {
+        ...detailsMock.computed,
         ...additionalComputeds,
       },
     });
@@ -76,30 +76,69 @@ describe('BookingSetupDialog.vue', () => {
   };
 
   beforeEach(async () => {
-    individuals = _cloneDeep(originalIndividuals);
-    personStore.getByIds = jest.fn(() => [mockMember({ id: 'pid1' }), mockMember({ id: 'pid2' }), mockMember({ id: 'pid3' })]);
-    individuals[0].personId = 'pid1';
-    individuals[1].personId = 'pid2';
-    individuals[2].personId = 'pid3';
-    individualStore.getByCaseFile = jest.fn(() => individuals);
-
+    detailsMock = new CaseFileDetailsMock();
     jest.clearAllMocks();
     await mountWrapper(false);
   });
 
   describe('Computed', () => {
+    describe('isEditOfAddress', () => {
+      it('should return according to mode', async () => {
+        await wrapper.setProps({ lodgingMode: LodgingMode.BookingMode });
+        expect(wrapper.vm.isEditOfAddress).toEqual(false);
+        await wrapper.setProps({ lodgingMode: LodgingMode.ExtendStay });
+        expect(wrapper.vm.isEditOfAddress).toEqual(true);
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditCrcProvidedAsLodging });
+        expect(wrapper.vm.isEditOfAddress).toEqual(true);
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditCrcProvidedAsNonLodging });
+        expect(wrapper.vm.isEditOfAddress).toEqual(true);
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditNotCrcProvided });
+        expect(wrapper.vm.isEditOfAddress).toEqual(true);
+        await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedAllowed });
+        expect(wrapper.vm.isEditOfAddress).toEqual(false);
+        await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedNotAllowed });
+        expect(wrapper.vm.isEditOfAddress).toEqual(false);
+      });
+    });
+
+    describe('mayTriggerPayment', () => {
+      it('should return according to mode', async () => {
+        await wrapper.setProps({ lodgingMode: LodgingMode.BookingMode });
+        expect(wrapper.vm.mayTriggerPayment).toEqual(true);
+        await wrapper.setProps({ lodgingMode: LodgingMode.ExtendStay });
+        expect(wrapper.vm.mayTriggerPayment).toEqual(true);
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditCrcProvidedAsLodging });
+        expect(wrapper.vm.mayTriggerPayment).toEqual(false);
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditCrcProvidedAsNonLodging });
+        expect(wrapper.vm.mayTriggerPayment).toEqual(false);
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditNotCrcProvided });
+        expect(wrapper.vm.mayTriggerPayment).toEqual(false);
+        await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedAllowed });
+        expect(wrapper.vm.mayTriggerPayment).toEqual(true);
+        await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedNotAllowed });
+        expect(wrapper.vm.mayTriggerPayment).toEqual(false);
+      });
+    });
+
     describe('title', () => {
       it('depends on lodging mode', async () => {
         await wrapper.setProps({ lodgingMode: LodgingMode.BookingMode });
         expect(wrapper.vm.title).toEqual('bookingRequest.setup.title');
         await wrapper.setProps({ lodgingMode: LodgingMode.ExtendStay });
         expect(wrapper.vm.title).toEqual('impactedIndividuals.extendStay');
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditCrcProvidedAsLodging });
+        expect(wrapper.vm.title).toEqual('impactedIndividuals.editAddress');
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditCrcProvidedAsNonLodging });
+        expect(wrapper.vm.title).toEqual('impactedIndividuals.editAddress');
+        await wrapper.setProps({ lodgingMode: LodgingMode.EditNotCrcProvided });
+        expect(wrapper.vm.title).toEqual('impactedIndividuals.editAddress');
         await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedAllowed });
         expect(wrapper.vm.title).toEqual('impactedIndividuals.moveNewAddress');
         await wrapper.setProps({ lodgingMode: LodgingMode.MoveCrcProvidedNotAllowed });
         expect(wrapper.vm.title).toEqual('impactedIndividuals.moveNewAddress');
       });
     });
+
     describe('shelterLocations', () => {
       it('should return active shelters', async () => {
         expect(wrapper.vm.shelterLocations).toEqual([eventStore.getById().shelterLocations[1]]);
@@ -108,23 +147,32 @@ describe('BookingSetupDialog.vue', () => {
 
     describe('peopleToLodge', () => {
       it('returns the people receiving assistance when no preselected people in props, or preselected people', async () => {
-        expect(wrapper.vm.peopleToLodge.length).toEqual(wrapper.vm.individuals.length - 1);
+        const individuals = detailsMock.mocks.individuals;
+        const members = detailsMock.mocks.members;
+        expect(wrapper.vm.peopleToLodge.length).toEqual(2);
         expect(wrapper.vm.peopleToLodge).toEqual([
-          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[0] },
-          { ...mockMember({ id: 'pid3' }), caseFileIndividualId: individuals[2].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[2] },
+          { ...members[0], caseFileIndividualId: individuals[0].id, isPrimary: true, receivingAssistance: true, caseFileIndividual: individuals[0] },
+          { ...members[1], caseFileIndividualId: individuals[1].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[1] },
+        ]);
+
+        individuals[0].receivingAssistance = false;
+        await mountWrapper();
+        expect(wrapper.vm.peopleToLodge.length).toEqual(1);
+        expect(wrapper.vm.peopleToLodge).toEqual([
+          { ...members[1], caseFileIndividualId: individuals[1].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[1] },
         ]);
 
         await wrapper.setProps({ preselectedIndividuals: [individuals[0].id] });
         expect(wrapper.vm.peopleToLodge.length).toEqual(1);
         expect(wrapper.vm.peopleToLodge).toEqual([
-          { ...mockMember({ id: 'pid1' }), caseFileIndividualId: individuals[0].id, isPrimary: false, receivingAssistance: true, caseFileIndividual: individuals[0] },
+          { ...members[0], caseFileIndividualId: individuals[0].id, isPrimary: true, receivingAssistance: false, caseFileIndividual: individuals[0] },
         ]);
       });
     });
 
     describe('uniqueAddresses', () => {
       it('returns the addresses that differ from the list of current addresses', async () => {
-        const individuals = individualStore.getByCaseFile();
+        const individuals = detailsMock.mocks.individuals;
         individuals[0].membershipStatus = MembershipStatus.Active;
         individuals[1].membershipStatus = MembershipStatus.Active;
         individuals[2].membershipStatus = MembershipStatus.Active;
@@ -189,7 +237,7 @@ describe('BookingSetupDialog.vue', () => {
   describe('Methods', () => {
     describe('setupBookingsForEdit', () => {
       it('creates bookings per address', async () => {
-        const individuals = individualStore.getByCaseFile();
+        const individuals = detailsMock.mocks.individuals;
         individuals[0].membershipStatus = MembershipStatus.Active;
         individuals[1].membershipStatus = MembershipStatus.Active;
         individuals[2].membershipStatus = MembershipStatus.Active;
@@ -198,14 +246,14 @@ describe('BookingSetupDialog.vue', () => {
         individuals[1].currentAddress.crcProvided = true;
         individuals[2].currentAddress.crcProvided = true;
 
-        await mountWrapper(false, 5, LodgingMode.ExtendStay, { individuals: () => individuals });
+        await mountWrapper(false, 5, LodgingMode.ExtendStay);
         wrapper.vm.setupBookingsForEdit();
         const address = new CurrentAddress(individuals[0].currentAddress);
         address.checkIn = '';
         address.checkOut = '';
         expect(wrapper.vm.bookings).toEqual([{
           address,
-          peopleInRoom: ['1', '2', '3'],
+          peopleInRoom: ['indv-1', 'indv-2', 'indv-3'],
           confirmationNumber: '',
           nightlyRate: wrapper.vm.defaultAmount,
           numberOfNights: null,
@@ -222,7 +270,7 @@ describe('BookingSetupDialog.vue', () => {
         address2.checkOut = '2002-02-05';
         expect(wrapper.vm.bookings).toEqual([{
           address: address2,
-          peopleInRoom: ['1'],
+          peopleInRoom: ['indv-1'],
           confirmationNumber: '',
           nightlyRate: wrapper.vm.defaultAmount,
           numberOfNights: null,
@@ -230,7 +278,7 @@ describe('BookingSetupDialog.vue', () => {
           originalCheckoutDate: '2002-02-05',
         }, {
           address,
-          peopleInRoom: ['2', '3'],
+          peopleInRoom: ['indv-2', 'indv-3'],
           confirmationNumber: '',
           nightlyRate: wrapper.vm.defaultAmount,
           numberOfNights: null,
@@ -406,7 +454,7 @@ describe('BookingSetupDialog.vue', () => {
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$message).not.toHaveBeenCalled();
         expect(wrapper.vm.provideAddress).toHaveBeenCalled();
-        expect(wrapper.vm.bookings).toEqual([{ address: new CurrentAddress(wrapper.vm.existingAddress), peopleInRoom: ['1', '3'] }]);
+        expect(wrapper.vm.bookings).toEqual([{ address: new CurrentAddress(wrapper.vm.existingAddress), peopleInRoom: ['indv-1', 'indv-2'] }]);
       });
 
       it('shows confirm when not everyone is lodged', async () => {
@@ -454,7 +502,7 @@ describe('BookingSetupDialog.vue', () => {
         address.reset(ECurrentAddressTypes.HotelMotel);
         address.checkIn = '2022-01-01';
         address.checkOut = '2022-02-01';
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1', 'indv-2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideCrcAddress();
 
@@ -477,7 +525,7 @@ describe('BookingSetupDialog.vue', () => {
         await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
         crcProvidedLodging.generatePayment = jest.fn(() => payment);
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '3'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1', 'indv-2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         jest.clearAllMocks();
         await wrapper.vm.provideCrcAddress();
@@ -491,7 +539,7 @@ describe('BookingSetupDialog.vue', () => {
         await mountWrapper(false, 5, LodgingMode.ExtendStay);
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
         crcProvidedLodging.generatePayment = jest.fn(() => payment);
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '3'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-01-05' }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1', 'indv-2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-01-05' }] });
 
         jest.clearAllMocks();
         await wrapper.vm.provideCrcAddress();
@@ -505,7 +553,7 @@ describe('BookingSetupDialog.vue', () => {
         await mountWrapper(false, 5, LodgingMode.ExtendStay);
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
         crcProvidedLodging.generatePayment = jest.fn(() => payment);
-        await wrapper.setData({ bookings: [{ address: individuals[0].currentAddress, peopleInRoom: ['1'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-02-01' }] });
+        await wrapper.setData({ bookings: [{ address: detailsMock.mocks.individuals[0].currentAddress, peopleInRoom: ['indv-1'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-02-01' }] });
 
         jest.clearAllMocks();
         await wrapper.vm.provideCrcAddress();
@@ -519,7 +567,7 @@ describe('BookingSetupDialog.vue', () => {
         address.reset(ECurrentAddressTypes.HotelMotel);
 
         await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed);
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1', 'indv-2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideAddress();
 
@@ -528,7 +576,7 @@ describe('BookingSetupDialog.vue', () => {
 
         jest.clearAllMocks();
         await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedNotAllowed);
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1', 'indv-2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideAddress();
 
@@ -537,7 +585,7 @@ describe('BookingSetupDialog.vue', () => {
 
         jest.clearAllMocks();
         await mountWrapper(false, 5, LodgingMode.ExtendStay);
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1', 'indv-2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideAddress();
 
@@ -546,7 +594,7 @@ describe('BookingSetupDialog.vue', () => {
 
         jest.clearAllMocks();
         await mountWrapper(false, 5, LodgingMode.EditCrcProvidedAsLodging);
-        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['1', '2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1', 'indv-2'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
 
         await wrapper.vm.provideAddress();
 

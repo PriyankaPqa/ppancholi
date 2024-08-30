@@ -78,7 +78,6 @@ import { useTeamStore } from '@/pinia/team/team';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { CurrentAddress } from '@libs/entities-lib/household-create';
 import { ICaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
-import { Status } from '@libs/shared-lib/types';
 import { useUserStore } from '@/pinia/user/user';
 import caseFileDetail from '../caseFileDetail';
 import ImpactedIndividualCardV2 from './components/ImpactedIndividualCardV2.vue';
@@ -178,12 +177,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     async startExtendStay() {
-      const peopleToMove = this.activeIndividuals.filter((i) => i.currentAddress.crcProvided)
-          .map((i) => ({
-            ...this.members.find((m) => m.id === i.personId && m.status === Status.Active),
-            caseFileIndividualId: i.id,
-          })).filter((m) => m.id);
-      this.selectedIndividuals = peopleToMove.map((p) => p.caseFileIndividualId);
+      this.selectedIndividuals = this.activeIndividuals.filter((i) => i.currentAddress.crcProvided).map((i) => i.id);
       this.lodgingMode = LodgingMode.ExtendStay;
       this.showMoveDialog = true;
     },

@@ -192,7 +192,7 @@ export default mixins(caseFileDetail).extend({
     hasPhoneNumbers,
     getCountry,
      } = useHouseholdDetails(household, members);
-    return { household, members, getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
+    return { getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
   },
 
   data() {

@@ -6,21 +6,19 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockBookingRequestStore } from '@/pinia/booking-request/booking-request.mock';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import { useMockUserStore } from '@/pinia/user/user.mock';
-import { mockMember } from '@libs/entities-lib/household-create';
-import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
-import { mockCaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
 import Component from '../case-file-impacted-individualsV2/ImpactedIndividualsV2.vue';
+import { CaseFileDetailsMock } from './caseFileDetailsMock.mock';
+import { LodgingMode } from '../../../lodging/BookingSetupDialog.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
-let caseFile = mockCaseFileEntity({ id: 'test-id-01' });
-const event = mockEventEntity({ id: 'test-id-01' });
-event.schedule.status = EEventStatus.Open;
 
 const { pinia } = useMockPersonStore();
 const teamStore = useMockTeamStore(pinia).teamStore;
 const bookingRequestStore = useMockBookingRequestStore(pinia).bookingRequestStore;
 const userStore = useMockUserStore(pinia).userStore;
+
+let detailsMock = new CaseFileDetailsMock();
 
 let featureList = [];
 
@@ -31,19 +29,9 @@ describe('ImpactedIndividualsV2.vue', () => {
       localVue,
       pinia,
       featureList,
-      propsData: {
-        id: 'cf-id',
-      },
+      propsData: detailsMock.propsData,
       computed: {
-        caseFile() {
-          return caseFile;
-        },
-        event() {
-          return event;
-        },
-        primaryMember() {
-          return mockMember();
-        },
+        ...detailsMock.computed,
         ...additionalComputeds,
       },
       mocks: {
@@ -58,7 +46,7 @@ describe('ImpactedIndividualsV2.vue', () => {
 
   beforeEach(async () => {
     featureList = [];
-    caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open });
+    detailsMock = new CaseFileDetailsMock();
     jest.clearAllMocks();
     await doMount();
   });
@@ -67,7 +55,7 @@ describe('ImpactedIndividualsV2.vue', () => {
     describe('created', () => {
       it('checks whether user is part of booking team', async () => {
         jest.clearAllMocks();
-        caseFile = mockCaseFileEntity({ id: 'test-id-01', eventId: 'some event' });
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ id: 'test-id-01', eventId: 'some event' });
         await doMount();
         expect(teamStore.search).toHaveBeenCalledWith({ params: { filter: {
           Entity: { Events: { any: { Id: { value: 'some event', type: 'guid' } } } },
@@ -92,7 +80,7 @@ describe('ImpactedIndividualsV2.vue', () => {
         await doMount(false, 5);
         expect(wrapper.vm.userCanProvideCrcAddress).toBeTruthy();
 
-        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
         await doMount(false, 5);
         expect(wrapper.vm.userCanProvideCrcAddress).toBeFalsy();
         await doMount(false, 6);
@@ -104,19 +92,19 @@ describe('ImpactedIndividualsV2.vue', () => {
   describe('computed', () => {
     describe('disableEditingByStatus', () => {
       it('should be true when case file status is closed or archived or inactive', async () => {
-        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
         await doMount();
         expect(wrapper.vm.disableEditingByStatus).toEqual(true);
 
-        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Archived });
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Archived });
         await doMount();
         expect(wrapper.vm.disableEditingByStatus).toEqual(true);
 
-        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive });
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive });
         await doMount();
         expect(wrapper.vm.disableEditingByStatus).toEqual(true);
 
-        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open });
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open });
         await doMount();
         expect(wrapper.vm.disableEditingByStatus).toEqual(false);
       });
@@ -162,7 +150,7 @@ describe('ImpactedIndividualsV2.vue', () => {
         await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeTruthy();
 
-        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
         await doMount(false, 5);
         await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
@@ -173,22 +161,13 @@ describe('ImpactedIndividualsV2.vue', () => {
         featureList = [wrapper.vm.$featureKeys.Lodging];
         bookingRequestStore.getByCaseFile = jest.fn(() => []);
 
-        const individual = mockCaseFileIndividualEntity();
-        individual.personId = mockMember().id;
+        const individual = detailsMock.mocks.individuals[0];
         individual.currentAddress.crcProvided = false;
-        await doMount(false, 1, {}, {
-          individuals() {
-            return [individual];
-          },
-        });
+        await doMount(false, 1);
         await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeTruthy();
         individual.currentAddress.crcProvided = true;
-        await doMount(false, 1, {}, {
-          individuals() {
-            return [individual];
-          },
-        });
+        await doMount(false, 1);
         await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
 
@@ -224,13 +203,9 @@ describe('ImpactedIndividualsV2.vue', () => {
     describe('canExtendStay', () => {
       it('depends on userCanProvideCrcAddress and a current address thats crcprovided', async () => {
         featureList = [wrapper.vm.$featureKeys.Lodging];
-        const individual = mockCaseFileIndividualEntity();
+        const individual = detailsMock.mocks.individuals[0];
         individual.currentAddress.crcProvided = false;
-        await doMount(false, 1, {}, {
-          activeIndividuals() {
-            return [individual];
-          },
-        });
+        await doMount(false, 1);
         await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canExtendStay).toBeFalsy();
         await wrapper.setData({ userCanProvideCrcAddress: true });
@@ -246,25 +221,105 @@ describe('ImpactedIndividualsV2.vue', () => {
     });
   });
 
-  // describe('methods', () => {
-  //   describe('startMoveProcess', () => {
-  //     it('should be true when case file status is closed or archived or inactive', async () => {
-  //       // caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
-  //       // await doMount();
-  //       // expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+  describe('methods', () => {
+    describe('startMoveProcess', () => {
+      it('should start the process with the selected people', async () => {
+        wrapper.vm.$refs.selectIndividualsDialog = {
+          open: jest.fn(() => ({ answered: true, selectedIndividuals: [detailsMock.mocks.individuals[0].id] })), close: jest.fn(),
+        };
 
-  //       // caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Archived });
-  //       // await doMount();
-  //       // expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+        await wrapper.vm.startMoveProcess();
+        const params = wrapper.vm.$refs.selectIndividualsDialog.open.mock.calls[0];
+        expect(params[0].title).toEqual('impactedIndividuals.selectMove.title');
+        expect(params[0].textUserSelection).toEqual('impactedIndividuals.selectMove.content');
+        expect(params[0].individuals).toEqual([
+          {
+            ...detailsMock.mocks.members[0],
+            caseFileIndividualId: detailsMock.mocks.individuals[0].id,
+            isPrimary: true,
+          }, {
+            ...detailsMock.mocks.members[1],
+            caseFileIndividualId: detailsMock.mocks.individuals[1].id,
+            isPrimary: false,
+          },
+        ]);
 
-  //       // caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive });
-  //       // await doMount();
-  //       // expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.MoveCrcProvidedNotAllowed);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
 
-  //       // caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open });
-  //       // await doMount();
-  //       // expect(wrapper.vm.disableEditingByStatus).toEqual(false);
-  //     });
-  //   });
-  // });
+        await wrapper.setData({ userCanProvideCrcAddress: true, selectedIndividuals: [], showMoveDialog: false });
+        await wrapper.vm.startMoveProcess();
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.MoveCrcProvidedAllowed);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+
+        wrapper.vm.$refs.selectIndividualsDialog = {
+          open: jest.fn(() => ({ answered: false, selectedIndividuals: [] })), close: jest.fn(),
+        };
+        await wrapper.setData({ userCanProvideCrcAddress: true, selectedIndividuals: [], showMoveDialog: false });
+        jest.clearAllMocks();
+        await wrapper.vm.startMoveProcess();
+        expect(wrapper.vm.showMoveDialog).toBeFalsy();
+      });
+    });
+
+    describe('startExtendStay', () => {
+      it('should start the process with people with crc provided addresses', async () => {
+        detailsMock.mocks.individuals[0].currentAddress.crcProvided = true;
+        // inactive person filtered out
+        detailsMock.mocks.individuals[3].currentAddress.crcProvided = true;
+        await wrapper.vm.startExtendStay();
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.ExtendStay);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+
+        detailsMock.mocks.individuals[1].currentAddress.crcProvided = true;
+        await doMount();
+        await wrapper.vm.startExtendStay();
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id, detailsMock.mocks.individuals[1].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.ExtendStay);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+      });
+    });
+
+    describe('startEditAddress', () => {
+      it('should start the process with people same addresses', async () => {
+        detailsMock.mocks.individuals[0].currentAddress.crcProvided = true;
+        await wrapper.vm.startEditAddress(detailsMock.mocks.individuals[0]);
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.EditCrcProvidedAsNonLodging);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+
+        detailsMock.mocks.individuals[1].currentAddress.crcProvided = true;
+        await doMount();
+        await wrapper.vm.startEditAddress(detailsMock.mocks.individuals[0]);
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id, detailsMock.mocks.individuals[1].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.EditCrcProvidedAsNonLodging);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+
+        detailsMock.mocks.individuals[0].currentAddress.crcProvided = false;
+        await doMount();
+        await wrapper.vm.startEditAddress(detailsMock.mocks.individuals[0]);
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.EditNotCrcProvided);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+
+        detailsMock.mocks.individuals[0].currentAddress.crcProvided = true;
+        detailsMock.mocks.individuals[0].currentAddress.takeover = true;
+        await doMount();
+        await wrapper.vm.startEditAddress(detailsMock.mocks.individuals[0]);
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.EditCrcProvidedAsNonLodging);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+
+        await doMount();
+        await wrapper.setData({ userCanProvideCrcAddress: true });
+        await wrapper.vm.startEditAddress(detailsMock.mocks.individuals[0]);
+        expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id]);
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.EditCrcProvidedAsLodging);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
+      });
+    });
+  });
 });
