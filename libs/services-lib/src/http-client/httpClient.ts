@@ -179,6 +179,7 @@ export class HttpClient implements IHttpClient {
   }
 
   private requestHandler(request: any) {
+    // console.log(request.url); // For Jest debuging in case of XMLHttpRequest error
     this.mapRequestForLocalhost(request, this.localApiPortMap);
 
     if (this.options.authentication) {
