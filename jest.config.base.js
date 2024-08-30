@@ -12,6 +12,8 @@ module.exports = {
     '!**/*.types.ts',
     '!**/index.ts',
   ],
+  workerIdleMemoryLimit: '512MB',
+  clearMocks: true,
   coverageReporters: ['cobertura'],
   transform: {
     'vee-validate/dist/rules': 'babel-jest',

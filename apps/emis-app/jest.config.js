@@ -6,8 +6,6 @@ module.exports = {
   roots: [
     '<rootDir>/src',
   ],
-  workerIdleMemoryLimit: '512MB',
-  clearMocks: true,
   transformIgnorePatterns: [
     '<roodDir>/node_modules/(?!vee-validate/dist/rules)',
   ],

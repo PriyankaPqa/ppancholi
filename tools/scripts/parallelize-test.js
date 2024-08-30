@@ -104,7 +104,7 @@ if (files.length === 0) {
 
 const listOfFiles = getBlobPattern(files);
 
-const script = `jest "${listOfFiles}" --coverage --coverageDirectory=coverage --maxWorkers=2 --logHeapUsage --passWithNoTests`;
+const script = `jest "${listOfFiles}" --coverage --coverageDirectory=coverage --maxWorkers=2 --logHeapUsage --passWithNoTests --clearMocks --workerIdleMemoryLimit=512MB`;
 
 shellAsync(script)
   .then()
