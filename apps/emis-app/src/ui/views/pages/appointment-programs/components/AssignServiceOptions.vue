@@ -161,7 +161,7 @@ export default Vue.extend({
       return this.serviceOptions.find((so) => so.id === soId).staffMembers.includes(memberId);
     },
 
-    updateLocalServiceOptionOnNewAssign(memberId: string, soId: string, value: boolean) {
+    updateServiceOptionOnAssign(memberId: string, soId: string, value: boolean) {
        // Don't mutate the props serviceOptions
       const clonedServiceOptions = _cloneDeep(this.serviceOptions);
       const updatedServiceOption = clonedServiceOptions.find((so) => so.id === soId);
@@ -174,7 +174,7 @@ export default Vue.extend({
     },
 
     onCheckAssign({ memberId, soId, value }: { memberId: string, soId: string, value: boolean }) {
-      this.updateLocalServiceOptionOnNewAssign(memberId, soId, value);
+      this.updateServiceOptionOnAssign(memberId, soId, value);
       if (this.inTeamManagement) {
         // call endpoints to update service option
       }

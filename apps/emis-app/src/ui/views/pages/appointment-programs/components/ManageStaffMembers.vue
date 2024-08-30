@@ -68,7 +68,12 @@
 
             <template #[`item.${customColumns.name}`]="{ item }">
               <div class="d-flex flex-column">
-                <span class="rc-body14 fw-bold">  {{ item.displayName }} </span>
+                <div class="d-flex align-center">
+                  <v-icon v-if="isPrimaryContact(item.id)" data-test="primary_icon" size="14" color="red">
+                    mdi-account
+                  </v-icon>
+                  <span class="rc-body14 fw-bold ml-1">  {{ item.displayName }} </span>
+                </div>
                 <span class="rc-body12">  {{ $m(item.roleName) }} </span>
               </div>
             </template>
@@ -160,12 +165,11 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   async created() {
     this.localServiceOptions = SERVICE_OPTIONS;// _cloneDeep(this.serviceOptions);
-    await this.getAssignableTeams();
-    await this.getInitialStaffMembers();
+    await this.fetchAssignableTeams();
+    await this.fetchInitialStaffMembers();
   },
 
   computed: {
-
     customColumns(): Record<string, string> {
       return {
         name: 'Metadata/DisplayName',
@@ -212,8 +216,32 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   methods: {
+    async fetchAssignableTeams() {
+     const res = await useTeamStore().search({ params: {
+        filter: { Entity: { UseForAppointments: true, Events: { any: { Id: { value: this.eventId, type: EFilterKeyType.Guid } } } } },
+        orderBy: 'Entity/Name asc',
+      },
+      includeInactiveItems: false });
+      if (res) {
+        this.teams = res.values;
+      }
+    },
+
+    async fetchInitialStaffMembers() {
+      const allIds = this.localServiceOptions.reduce((ids, so) => {
+        ids.push(...so.staffMembers);
+        return ids;
+      }, []);
+      const uniqueIds = [...new Set(allIds)];
+      this.allStaffMembers = await useUserAccountMetadataStore().fetchByIds(uniqueIds, true);
+    },
+
     isMemberSelected(teamMember: IUserAccountMetadata) {
       return this.allStaffMembers.some((m) => m.id === teamMember.id);
+    },
+
+    isPrimaryContact(teamMemberId: string) {
+      return this.selectedTeam.teamMembers.find((m) => m.id === teamMemberId).isPrimaryContact;
     },
 
     onSelectTeamMember({ item, value }:{ item: IUserAccountMetadata, value: boolean }) {
@@ -227,33 +255,13 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-   async getAssignableTeams() {
-     const res = await useTeamStore().search({ params: {
-        filter: { Entity: { UseForAppointments: true, Events: { any: { Id: { value: this.eventId, type: EFilterKeyType.Guid } } } } },
-        orderBy: 'Entity/Name asc',
-      },
-      includeInactiveItems: false });
-      if (res) {
-        this.teams = res.values;
-      }
-    },
-
     async addAllTeamMembers() {
       const teamMemberIds = this.selectedTeam.teamMembers.map((m) => m.id).filter((id) => !this.allStaffMembers.some((m) => m.id === id));
       const allMembersData = await useUserAccountMetadataStore().fetchByIds(teamMemberIds, true);
       this.allStaffMembers.push(...allMembersData);
     },
 
-    async getInitialStaffMembers() {
-      // const allIds = this.serviceOptions.reduce((ids, so) => {
-      const allIds = SERVICE_OPTIONS.reduce((ids, so) => {
-        ids.push(...so.staffMembers);
-        return ids;
-      }, []);
-      const uniqueIds = [...new Set(allIds)];
-      this.allStaffMembers = await useUserAccountMetadataStore().fetchByIds(uniqueIds, true);
-    },
-
+    // Fetch the team members of a selected team
     async fetchData(params: ISearchParams) {
       this.teamMembersLoading = true;
       const filter = {
@@ -279,19 +287,17 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     onSubmit() {
-      const allUsersAreAssigned = this.checkAllUsersAreAssigned();
-      if (allUsersAreAssigned) {
+      if (this.allUsersAreAssigned()) {
         // make call to update service options
       } else {
         this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.notAllMembersAreAssigned') });
       }
     },
 
-    checkAllUsersAreAssigned() {
+    allUsersAreAssigned():boolean {
       return !this.allStaffMembers.some((m) => !this.localServiceOptions.some((so) => so.staffMembers.includes(m.id)));
     },
   },
-
 });
 
 </script>
