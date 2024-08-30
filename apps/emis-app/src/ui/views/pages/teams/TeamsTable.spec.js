@@ -23,7 +23,6 @@ describe('TeamsTable.vue', () => {
       pinia,
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-
       },
     });
     await wrapper.vm.$nextTick();

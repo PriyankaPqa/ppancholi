@@ -179,7 +179,10 @@ export class HttpClient implements IHttpClient {
   }
 
   private requestHandler(request: any) {
-    // console.log(request.url); // For Jest debuging in case of XMLHttpRequest error
+    if (process.env.NODE_ENV === 'test') {
+      // eslint-disable-next-line no-console
+      console.warn(`API call detected: ${request.method} ${request.url} params: ${JSON.stringify(request.params, null, 2)}. Please mock accordingly`);
+    }
     this.mapRequestForLocalhost(request, this.localApiPortMap);
 
     if (this.options.authentication) {
