@@ -44,7 +44,7 @@
                   {{ selectedSubCategoryName }}
                 </v-col>
               </v-row>
-              <v-row class="ma-0 flex-nowrap flex px-2">
+              <v-row class="ma-0 flex-nowrap flex px-2" data-test="task-action-dialog-description">
                 <v-col cols="4" class="font-weight-bold">
                   {{ $t('task.create_edit.task_description') }}
                 </v-col>

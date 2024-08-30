@@ -39,7 +39,7 @@
                   </validation-provider>
                 </div>
 
-                <div v-if="$hasFeature($featureKeys.TaskManagement) || $hasFeature($featureKeys.Lodging)" class="mb-4">
+                <div v-if="hasCheckBoxes" class="mb-4 d-flex flex-column">
                   <div v-if="$hasFeature($featureKeys.TaskManagement)">
                     <v-checkbox-with-validation
                       v-if="teamType === 'adhoc'"
@@ -53,16 +53,25 @@
                       :disabled="team.isEscalation || !$hasLevel(UserRoles.level5)"
                       :label="$t('teams.set_assignable_team')"
                       data-test="team-isAssignable-checkbox"
-                      class="is-assignable-checkbox" />
+                      class="team-checkbox" />
                   </div>
 
-                  <div v-if="$hasFeature($featureKeys.Lodging)" class="mb-4">
+                  <div v-if="$hasFeature($featureKeys.Lodging)">
                     <v-checkbox-with-validation
                       v-model="team.useForLodging"
                       :disabled="!$hasLevel(UserRoles.level5)"
                       :label="$t('teams.set_useForLodging')"
                       data-test="team-useForLodging-checkbox"
-                      class="is-assignable-checkbox" />
+                      class="team-checkbox" />
+                  </div>
+
+                  <div v-if="$hasFeature($featureKeys.AppointmentBooking)">
+                    <v-checkbox-with-validation
+                      v-model="team.useForAppointments"
+                      :label="$t('teams.set_appointments_team')"
+                      data-test="team-isAppointmentBooking-checkbox"
+                      :disabled="!$hasLevel(UserRoles.level5)"
+                      class="team-checkbox" />
                   </div>
                 </div>
 
@@ -291,6 +300,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         isEscalation: null as boolean,
         isAssignable: null as boolean,
         useForLodging: null as boolean,
+        useForAppointments: null as boolean,
       },
       showErrorDialog: false,
       errorMessage: '' as TranslateResult,
@@ -360,6 +370,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         isEscalation: this.team.isEscalation,
         isAssignable: this.team.isAssignable,
         useForLodging: this.team.useForLodging,
+        useForAppointments: this.team.useForAppointments,
       });
     },
 
@@ -369,6 +380,11 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
     canBeEmpty(): boolean {
       return this.isEditMode && this.team.status === Status.Inactive && !this.original.primaryContact;
+    },
+
+    hasCheckBoxes(): boolean {
+      return this.$hasFeature(this.$featureKeys.TaskManagement) || this.$hasFeature(this.$featureKeys.Lodging)
+      || this.$hasFeature(this.$featureKeys.AppointmentBooking);
     },
   },
 
@@ -404,6 +420,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         isEscalation: this.team.isEscalation,
         isAssignable: this.team.isAssignable,
         useForLodging: this.team.useForLodging,
+        useForAppointments: this.team.useForAppointments,
       });
     },
 
@@ -624,7 +641,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
   }
 }
 
-::v-deep .is-assignable-checkbox > .v-input.theme--light.v-input--selection-controls.v-input--checkbox {
+::v-deep .team-checkbox > .v-input.theme--light.v-input--selection-controls.v-input--checkbox {
   margin-top: 0px !important;
 }
 

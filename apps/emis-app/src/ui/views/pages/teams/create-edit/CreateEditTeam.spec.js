@@ -411,6 +411,22 @@ describe('CreateEditTeam.vue', () => {
         expect(element.attributes('disabled')).toEqual('true');
       });
     });
+    describe('set as Appointments team checkbox', () => {
+      it('should be rendered when feature flag AppointMentBooking is on', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+        });
+        const element = wrapper.findDataTest('team-isAppointmentBooking-checkbox');
+        expect(element.exists()).toBeTruthy();
+      });
+      it('should be disabled if user is less than level 5', async () => {
+        await mountWrapper(false, 4, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+        });
+        const element = wrapper.findDataTest('team-isAppointmentBooking-checkbox');
+        expect(element.attributes('disabled')).toBeTruthy();
+      });
+    });
   });
 
   describe('Template continued... shallowMount', () => {
@@ -861,6 +877,30 @@ describe('CreateEditTeam.vue', () => {
         });
         await wrapper.setData({ team: { ...mockTeamEntity(), status: Status.Inactive }, original: { primaryContact: { id: '1' } } });
         expect(wrapper.vm.canBeEmpty).toBeFalsy();
+      });
+    });
+
+    describe('hasCheckBoxes', () => {
+      it('should return true if at least one of the feature flags is on', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+        });
+        expect(wrapper.vm.hasCheckBoxes).toBeTruthy();
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.TaskManagement],
+        });
+        expect(wrapper.vm.hasCheckBoxes).toBeTruthy();
+        await mountWrapper(false, 5, {
+          featureList: [wrapper.vm.$featureKeys.Lodging],
+        });
+        expect(wrapper.vm.hasCheckBoxes).toBeTruthy();
+      });
+
+      it('should return false if all feature flags are off', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [],
+        });
+        expect(wrapper.vm.hasCheckBoxes).toBeFalsy();
       });
     });
   });

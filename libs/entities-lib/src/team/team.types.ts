@@ -37,6 +37,7 @@ export interface ITeamEntity extends IEntity {
   isEscalation: boolean;
   isAssignable: boolean;
   useForLodging: boolean;
+  useForAppointments: boolean;
   setPrimaryContact?(member: ITeamMember): void;
   getPrimaryContact?(): ITeamMember;
   validate?(): Array<string> | boolean;
