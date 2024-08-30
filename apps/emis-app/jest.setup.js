@@ -7,7 +7,7 @@ beforeAll(() => {
   const originalConsoleError = console.error;
 
   // Spy on console.error
-  jest.spyOn(console, 'error').mockImplementation((...error) => {
+  jest.spyOn(console, 'error').mockImplementation((error) => {
     if (typeof error[0] === 'object' && error[0].type === 'XMLHttpRequest') {
       throw new Error(`
         The test failed due to an XMLHttpRequest error, likely because something is not correctly mocked.

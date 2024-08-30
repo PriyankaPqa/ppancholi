@@ -4,6 +4,7 @@ import { mockTeamEntity } from '@libs/entities-lib/team';
 import flushPromises from 'flush-promises';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './TeamsTable.vue';
 
 const localVue = createLocalVue();
@@ -11,6 +12,7 @@ const localVue = createLocalVue();
 const team = mockTeamEntity();
 const teamId = team.id;
 const { pinia, teamStore } = useMockTeamStore();
+useMockUserAccountStore(pinia);
 
 describe('TeamsTable.vue', () => {
   let wrapper;
