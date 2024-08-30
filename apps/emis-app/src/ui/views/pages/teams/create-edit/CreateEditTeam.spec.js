@@ -958,6 +958,7 @@ describe('CreateEditTeam.vue', () => {
       it('returns true when in edit mode and isDirty is false', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
           },
@@ -974,6 +975,7 @@ describe('CreateEditTeam.vue', () => {
             };
           },
         });
+
         expect(wrapper.vm.isSubmitDisabled(false, false)).toBeTruthy();
         expect(wrapper.vm.isSubmitDisabled(true, false)).toBeTruthy();
       });
@@ -981,6 +983,7 @@ describe('CreateEditTeam.vue', () => {
       it('return false when isFailed is false in create mode', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
           },
@@ -1243,6 +1246,7 @@ describe('CreateEditTeam.vue', () => {
 
         beforeEach(async () => {
           wrapper = shallowMount(Component, {
+            pinia,
             localVue,
             propsData: {
               teamType: 'standard',
@@ -1289,6 +1293,7 @@ describe('CreateEditTeam.vue', () => {
         beforeEach(() => {
           wrapper = shallowMount(Component, {
             localVue,
+            pinia,
             propsData: {
               teamType: 'standard',
             },
