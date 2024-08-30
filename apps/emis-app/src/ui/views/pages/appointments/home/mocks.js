@@ -85,4 +85,54 @@ export const SERVICE_OPTIONS = [
   mockServiceOption({
     id: 3,
     serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] })];
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  mockServiceOption({
+    id: 4,
+    serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  // mockServiceOption({
+  //   id: 3,
+  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+
+];

@@ -14,7 +14,7 @@
     @close="$emit('update:show', false)"
     @submit="onSubmit">
     <v-row class="pa-0">
-      <v-col cols="12" md="4" class="py-0 d-flex flex-column">
+      <v-col cols="12" md="4" class="pt-0 d-flex flex-column">
         <div class="rc-body16 fw-bold mb-2">
           {{ $t('appointmentProgram.manageStaff.title.teamMembers') }}
         </div>
@@ -56,7 +56,7 @@
             :options.sync="options"
             :initial-search="params && params.search"
             :custom-columns="Object.values(customColumns)"
-            :item-class="(item)=> isUserDisabled(item) ? 'disabled' : isMemberSelected(item) ? 'row_active' : ''"
+            :item-class="(item)=> isMemberSelected(item) ? 'row_active' : ''"
             :has-border="false"
             :items="tableData"
             @search="search">
@@ -83,11 +83,14 @@
           </rc-data-table>
         </v-sheet>
       </v-col>
-      <v-col cols="12" md="8" class="py-0 d-flex flex-column">
+      <v-col cols="12" md="8" class="pt-0 d-flex flex-column">
         <div class="rc-body16 fw-bold mb-2">
           {{ $t('appointmentProgram.manageStaff.title.assignStaff') }}
         </div>
-        <assign-service-options :service-options="SERVICE_OPTIONS" :staff-members="allStaffMembers" />
+        <assign-service-options
+          :service-options.sync="localServiceOptions"
+          :staff-members.sync="allStaffMembers"
+          :teams="teams" />
       </v-col>
     </v-row>
   </rc-dialog>
@@ -209,14 +212,6 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   methods: {
-    onSubmit() {
-
-    },
-
-    isUserDisabled() {
-      return false;
-    },
-
     isMemberSelected(teamMember: IUserAccountMetadata) {
       return this.allStaffMembers.some((m) => m.id === teamMember.id);
     },
@@ -225,7 +220,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (value) {
         this.allStaffMembers = [...this.allStaffMembers, item];
       } else {
-        this.allStaffMembers = this.allStaffMembers.filter((m) => m.id! === item.id);
+        this.allStaffMembers = this.allStaffMembers.filter((m) => m.id !== item.id);
+        this.localServiceOptions.forEach((so) => {
+          so.staffMembers = so.staffMembers.filter((m) => m !== item.id);
+        });
       }
     },
 
@@ -278,6 +276,19 @@ export default mixins(TablePaginationSearchMixin).extend({
 
       this.teamMembersLoading = false;
       return res;
+    },
+
+    onSubmit() {
+      const allUsersAreAssigned = this.checkAllUsersAreAssigned();
+      if (allUsersAreAssigned) {
+        // make call to update service options
+      } else {
+        this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.notAllMembersAreAssigned') });
+      }
+    },
+
+    checkAllUsersAreAssigned() {
+      return !this.allStaffMembers.some((m) => !this.localServiceOptions.some((so) => so.staffMembers.includes(m.id)));
     },
   },
 

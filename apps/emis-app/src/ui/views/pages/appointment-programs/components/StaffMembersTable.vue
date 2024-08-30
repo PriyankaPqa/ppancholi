@@ -2,7 +2,7 @@
   <div>
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn color="primary" data-test="add-staff-member" @click="showManageStaffDialog = true">
-        {{ $t('appointmentProgram.staffMembers.table.addStaff') }}
+        {{ isEditMode ? $t('appointmentProgram.staffMembers.table.manageStaff') : $t('appointmentProgram.staffMembers.table.addStaff') }}
       </v-btn>
     </div>
     <v-data-table-a11y
@@ -61,6 +61,13 @@ export default Vue.extend({
 
     serviceOptions: {
       type: Array as ()=> IServiceOption[],
+      required: true,
+    },
+        /**
+     * Is the appointment program being created or edited
+     */
+     isEditMode: {
+      type: Boolean,
       required: true,
     },
   },

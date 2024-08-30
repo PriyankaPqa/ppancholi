@@ -104,7 +104,10 @@
                   <div class="fw-bold pb-4">
                     {{ $t('appointmentProgram.section.staffMembers') }}
                   </div>
-                  <staff-members-table :appointment-program-id="appointmentProgram.id" />
+                  <staff-members-table
+                    :appointment-program-id="appointmentProgram.id"
+                    :is-edit-mode="isEditMode"
+                    :service-options="appointmentProgram.serviceOptions" />
                 </v-col>
               </v-row>
             </v-col>

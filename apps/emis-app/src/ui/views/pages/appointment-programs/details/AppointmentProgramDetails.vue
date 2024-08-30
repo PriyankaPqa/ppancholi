@@ -63,6 +63,7 @@
         </div>
         <staff-members-table
           :appointment-program-id="appointmentProgram.id"
+          is-edit-mode
           :service-options="appointmentProgram.serviceOptions" />
       </v-col>
     </v-row>
