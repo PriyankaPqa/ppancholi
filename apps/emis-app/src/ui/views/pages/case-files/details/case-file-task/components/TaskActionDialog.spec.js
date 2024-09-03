@@ -49,6 +49,7 @@ describe('TaskActionDialog.vue', () => {
     wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
     await wrapper.vm.$nextTick();
   };
+
   beforeEach(async () => {
     await doMount();
   });

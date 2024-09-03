@@ -8,12 +8,27 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from './CaseFileReferralDetails.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
-const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
+
+const initPinia = (userRole = UserRoles.level6) => {
+  const pinia = getPiniaForUser(userRole);
+  const { caseFileReferralStore } = useMockCaseFileReferralStore(pinia);
+  useMockOptionListStore(pinia);
+  useMockCaseFileStore(pinia);
+
+  return {
+    pinia,
+    caseFileReferralStore,
+  };
+};
+
+const { pinia, caseFileReferralStore } = initPinia();
+
 describe('CaseFileReferralDetails', () => {
   let wrapper;
   const referral = mockCaseFileReferralEntity({ id: '1' });
@@ -38,8 +53,7 @@ describe('CaseFileReferralDetails', () => {
 
     describe('canEdit', () => {
       it('returns false if user does not have level 1', async () => {
-        const pinia = getPiniaForUser(UserRoles.contributorIM);
-        useMockCaseFileStore(pinia);
+        const { pinia } = initPinia(UserRoles.contributorIM);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -65,8 +79,7 @@ describe('CaseFileReferralDetails', () => {
       });
 
       it('returns true if user has level 1', async () => {
-        const pinia = getPiniaForUser(UserRoles.level1);
-        useMockCaseFileStore(pinia);
+        const { pinia } = initPinia(UserRoles.level1);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -217,7 +230,6 @@ describe('CaseFileReferralDetails', () => {
             return mockEvent;
           },
         },
-
       });
     });
 

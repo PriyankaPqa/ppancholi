@@ -151,6 +151,7 @@ describe('AssignCaseFile.vue', () => {
     it('goes to first page and calls search if the current team changes ', async () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
           show: true,

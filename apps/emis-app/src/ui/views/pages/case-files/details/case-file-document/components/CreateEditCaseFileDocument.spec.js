@@ -206,6 +206,7 @@ describe('CreateEditDocument', () => {
       it('returns true if the route is edit', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'CASEFILE_ID',
             documentId: 'REF_ID',
@@ -227,6 +228,7 @@ describe('CreateEditDocument', () => {
       it('returns false if the route is create', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'CASEFILE_ID',
             documentId: 'REF_ID',

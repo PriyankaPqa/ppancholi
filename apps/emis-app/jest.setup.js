@@ -11,8 +11,7 @@ beforeAll(() => {
     if (typeof error === 'object' && error.type === 'XMLHttpRequest') {
       throw new Error(`
         The test failed due to an XMLHttpRequest error, likely because something is not correctly mocked.
-        To debug, uncomment the console.log in the requestHandler function within service/lib/httpClient.ts.
-        This will reveal which URL was called.
+        Another console.warn displayed the URL, please check it out
       `);
     }
     // Call the original console.error with its arguments
