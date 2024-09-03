@@ -669,4 +669,4 @@ export default mixins(caseFileDetail).extend({
     padding-left: 16px;
     padding-bottom: 4px;
   }
-</style>IPaymentDetails, isEditMode, , modeMayTriggerPayment
+</style>
