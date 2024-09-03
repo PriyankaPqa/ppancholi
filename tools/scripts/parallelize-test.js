@@ -104,7 +104,8 @@ if (files.length === 0) {
 
 const listOfFiles = getBlobPattern(files);
 
-const script = `jest "${listOfFiles}" --coverage --coverageDirectory=coverage --maxWorkers=2 --logHeapUsage --passWithNoTests --clearMocks --workerIdleMemoryLimit=512MB`;
+// eslint-disable-next-line vue/max-len
+const script = `./node_modules/.bin/jest "${listOfFiles}" --coverage --coverageDirectory=coverage --maxWorkers=2 --logHeapUsage --passWithNoTests --clearMocks --workerIdleMemoryLimit=1.5GB`;
 
 shellAsync(script)
   .then()
