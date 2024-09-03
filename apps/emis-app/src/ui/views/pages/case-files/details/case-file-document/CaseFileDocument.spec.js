@@ -163,6 +163,7 @@ describe('CaseFileDocument.vue', () => {
         expect(wrapper.vm.canAdd).toBeTruthy();
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -282,6 +283,7 @@ describe('CaseFileDocument.vue', () => {
       it('returns true if user does not have level but hasRole is called with contributor3', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -301,6 +303,7 @@ describe('CaseFileDocument.vue', () => {
         expect(wrapper.vm.canDownload).toBeTruthy();
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -346,6 +349,7 @@ describe('CaseFileDocument.vue', () => {
       it('returns true if user has level 6 and not readonly', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -363,6 +367,7 @@ describe('CaseFileDocument.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -382,6 +387,7 @@ describe('CaseFileDocument.vue', () => {
         const { pinia } = initPinia(UserRoles.level5);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -392,8 +398,6 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          pinia,
-
         });
 
         expect(wrapper.vm.canDelete).toBeFalsy();

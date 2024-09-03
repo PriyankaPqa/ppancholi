@@ -12,7 +12,7 @@ module.exports = {
     '!**/*.types.ts',
     '!**/index.ts',
   ],
-  workerIdleMemoryLimit: '512MB',
+  workerIdleMemoryLimit: '1.5GB',
   clearMocks: true,
   coverageReporters: ['cobertura'],
   transform: {
