@@ -7,6 +7,7 @@ import { useMockTaskStore } from '@/pinia/task/task.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import Component from './TaskActionDialog.vue';
 
 const localVue = createLocalVue();
@@ -14,6 +15,7 @@ const services = mockProvider();
 const { pinia, taskStore } = useMockTaskStore();
 const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 const { teamStore } = useMockTeamStore(pinia);
+useFinancialAssistancePaymentStore(pinia);
 
 teamStore.getTeamsByEvent = jest.fn(() => ([
   mockTeamsDataStandard({ id: '1', isAssignable: true }),
@@ -427,7 +429,6 @@ describe('TaskActionDialog.vue', () => {
         await wrapper.setProps({
           eventId: 'mock-id-123',
         });
-        userAccountMetadataStore.fetch = jest.fn();
         wrapper.vm.getAssignableTeams = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);

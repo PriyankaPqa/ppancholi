@@ -78,7 +78,6 @@ describe('TaskDetails.vue', () => {
             isTeamTask: () => true,
           },
         });
-        await flushPromises();
         const element = wrapper.findDataTest('task-details-is-urgent');
         expect(element.exists()).toBeTruthy();
       });
