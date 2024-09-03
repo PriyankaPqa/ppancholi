@@ -102,7 +102,8 @@ import { useHouseholdStore } from '@/pinia/household/household';
 import { BookingRequestState, IBookingRequest, RoomOption } from '@libs/entities-lib/booking-request';
 import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
-import BookingSetupDialog, { LodgingMode } from './BookingSetupDialog.vue';
+import BookingSetupDialog from './BookingSetupDialog.vue';
+import { LodgingMode } from './bookingHelper';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'TeamsTable',
