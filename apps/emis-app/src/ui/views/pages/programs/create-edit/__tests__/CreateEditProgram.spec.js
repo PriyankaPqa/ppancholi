@@ -144,6 +144,7 @@ describe('CreateEditProgram', () => {
       it('returns true if the route is edit', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'EVENT_ID',
             programId: 'PROGRAM_ID',
@@ -171,6 +172,7 @@ describe('CreateEditProgram', () => {
       it('returns common.save if in edit mode', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'EVENT_ID',
             programId: 'PROGRAM_ID',
@@ -188,6 +190,7 @@ describe('CreateEditProgram', () => {
       it('returns common.buttons.create if not in edit mode', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'EVENT_ID',
             programId: 'PROGRAM_ID',
@@ -207,6 +210,7 @@ describe('CreateEditProgram', () => {
       it('returns the correct url in edit mode', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'EVENT_ID',
             programId: 'PROGRAM_ID',
@@ -224,6 +228,7 @@ describe('CreateEditProgram', () => {
       it('returns the correct url in create mode', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'EVENT_ID',
             programId: 'PROGRAM_ID',
@@ -245,6 +250,7 @@ describe('CreateEditProgram', () => {
       beforeEach(() => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'EVENT_ID',
           },
