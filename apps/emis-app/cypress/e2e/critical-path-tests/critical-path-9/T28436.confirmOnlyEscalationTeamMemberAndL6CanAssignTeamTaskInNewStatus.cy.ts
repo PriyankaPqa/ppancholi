@@ -74,7 +74,7 @@ describe('[T28436] Confirm that only an Escalation Team member and L6 can assign
             await cy.callSearchUntilMeetCondition({
               provider: useProvider(accessTokenL6),
               searchCallBack: (provider: IProvider) => (provider.teams.search({
-                filter: { Entity: { Id: { value: escalationTeam.id, type: 'guid' } } },
+                filter: { Entity: { Id: { value: team.id, type: 'guid' } } },
                 top: 1,
               })),
               conditionCallBack: (value: []) => (value.length > 0),
