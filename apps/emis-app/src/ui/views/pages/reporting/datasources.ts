@@ -901,7 +901,7 @@ export const locationOfLogActivitiesEmailEventsDs : IDatasourceSettings = {
   reportingTopic: ReportingTopic.LocationOfLogActivitiesEmailEvents,
   key: { locationOfLogActivitiesEmailEventsId: 'Guid' },
   columns: [
-    ...(locationOfLogActivitiesEmailEventsViewDs.columns.filter((c) => c.dataField !== 'caseFileNumber'  && c.dataField !== 'caseFileId'   && c.dataField !== 'householdId' )
+    ...(locationOfLogActivitiesEmailEventsViewDs.columns.filter((c) => c.dataField !== 'caseFileNumber' && c.dataField !== 'caseFileId' && c.dataField !== 'householdId')
           .map((x) => ({ ...x, dataField: `locationOfLogActivitiesEmailEvents.${x.dataField}` }))),
     ...(caseFileViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
     ...(caseFileAuthenticationIdsCsvViewDS.columns.filter((c) => c.dataField !== 'caseFileId').map((x) => ({ ...x, dataField: `caseFileAuthenticationIdsCsv.${x.dataField}` }))),

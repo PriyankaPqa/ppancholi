@@ -57,7 +57,7 @@ describe('[T29786] Personal task can be cancelled by the person who created It',
           const tasksHomePage = new TasksHomePage();
           tasksHomePage.getTableTitleElement().contains('Tasks').should('be.visible');
           cy.contains('Refresh').should('be.visible');
-          tasksHomePage.getCreatedTaskActionButtonById(this.taskId);
+          tasksHomePage.goToTaskActionById(this.taskId);
           tasksHomePage.getDialogTitleElement().contains('Task action').should('be.visible');
           tasksHomePage.getDialogCompletedCheckbox().should('not.be.checked');
           tasksHomePage.getDialogCancelledCheckbox().should('not.be.checked');
@@ -74,7 +74,7 @@ describe('[T29786] Personal task can be cancelled by the person who created It',
           tasksHomePage.getDialogTitleElement().should('not.exist');
           tasksHomePage.getCreatedTaskStatusElement().contains('Cancelled').should('be.visible');
 
-          const personalTaskDetailsPage = tasksHomePage.getPersonalTaskById(this.taskId);
+          const personalTaskDetailsPage = tasksHomePage.goToPersonalTaskById(this.taskId);
           personalTaskDetailsPage.getPageTitleElement().contains('Personal task details').should('be.visible');
 
           const tasksHistoryPage = personalTaskDetailsPage.goToTaskHistory();

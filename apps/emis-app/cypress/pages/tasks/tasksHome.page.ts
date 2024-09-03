@@ -2,6 +2,7 @@ import { CaseFileDetailsPage } from '../casefiles/caseFileDetails.page';
 import { CreatePersonalTaskPage } from './createPersonalTask.page';
 import { CreateTeamTaskPage } from './createTeamTask.page';
 import { PersonalTaskDetailsPage } from './personalTaskDetails.page';
+import { TeamTaskDetailsPage } from './teamTaskDetails.page';
 
 export enum DataTest {
   tableTitle = 'table_title',
@@ -19,6 +20,13 @@ export enum DataTest {
   createdTaskUserWorkingOn = 'task-table-user-working-on',
   createdTaskDateAdded = 'task-table-date-added',
   dialogTitle = 'dialog-title',
+  dialogTeamTaskInfo = 'task-action-dialog-team-task-info',
+  dialogTeamTaskSubCategory = 'task-action-dialog-sub-category',
+  dialogTeamTaskDescription = 'task-action-dialog-description',
+  dialogRadioAssign = 'task-action-dialog-radio-Assign',
+  dialogTeamToAssign = 'task-action-dialog-team-assign-to',
+  dialogRadioTaskCompleted = '"task-action-dialog-radio-Task completed"',
+  dialogRadioActionCompleted = '"task-action-dialog-radio-Action completed"',
   dialogRadioCompleted = 'task-action-dialog-radio-Completed',
   dialogRadioCancel = 'task-action-dialog-radio-Cancel',
   dialogRadioLabelCompleted = 'task-action-dialog-radio-label-Completed',
@@ -60,6 +68,20 @@ export class TasksHomePage {
   private createdTaskDateAdded = { selector: DataTest.createdTaskDateAdded };
 
   private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private dialogTeamTaskInfo = { selector: DataTest.dialogTeamTaskInfo };
+
+  private dialogTeamTaskSubCategory = { selector: DataTest.dialogTeamTaskSubCategory };
+
+  private dialogTeamTaskDescription = { selector: DataTest.dialogTeamTaskDescription };
+
+  private dialogRadioAssign = { selector: DataTest.dialogRadioAssign, type: 'input' };
+
+  private dialogTeamToAssign = { selector: DataTest.dialogTeamToAssign };
+
+  private dialogRadioTaskCompleted = { selector: DataTest.dialogRadioTaskCompleted, type: 'input' };
+
+  private dialogRadioActionCompleted = { selector: DataTest.dialogRadioActionCompleted, type: 'input' };
 
   private dialogRadioCompleted = { selector: DataTest.dialogRadioCompleted, type: 'input' };
 
@@ -146,17 +168,58 @@ export class TasksHomePage {
     return cy.getByDataTest(this.createdTaskDateAdded).getAndTrimText();
   }
 
+  public goToTaskActionById(taskId: string) {
+    cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryActionButton}-${taskId}` }).click();
+  }
+
+  public getTaskActionButtonById(taskId: string) {
+    return cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryActionButton}-${taskId}` });
+  }
+
   public getCreatedTaskActionButtonById(taskId: string) {
     cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryActionButton}-${taskId}` }).click();
   }
 
-  public getPersonalTaskById(taskId: string) {
+  public goToPersonalTaskById(taskId: string) {
     cy.getByDataTest({ selector: `${DataTest.createdTaskCategory}-${taskId}` }).click();
     return new PersonalTaskDetailsPage();
   }
 
+  public goToTeamTaskById(taskId: string) {
+    cy.getByDataTest({ selector: `${DataTest.createdTaskCategory}-${taskId}` }).click();
+    return new TeamTaskDetailsPage();
+  }
+
+  public getTaskById(taskId: string) {
+    return cy.getByDataTest({ selector: `${DataTest.createdTaskCategory}-${taskId}` });
+  }
+
   public getDialogTitleElement() {
     return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public getDialogTeamTaskSubCategoryElement() {
+    return cy.getByDataTest(this.dialogTeamTaskSubCategory);
+  }
+
+  public getDialogTeamTaskDescriptionElement() {
+    return cy.getByDataTest(this.dialogTeamTaskDescription);
+  }
+
+  public getDialogTeamTaskInfoElement() {
+    return cy.getByDataTest(this.dialogTeamTaskInfo);
+  }
+
+  public getDialogAssignCheckbox() {
+    return cy.getByDataTest(this.dialogRadioAssign);
+  }
+
+  public getDialogActionCompletedCheckbox() {
+    return cy.getByDataTest(this.dialogRadioActionCompleted);
+  }
+
+  public getDialogTaskCompletedCheckbox() {
+    return cy.getByDataTest(this.dialogRadioTaskCompleted);
   }
 
   public getDialogCompletedCheckbox() {
@@ -165,6 +228,14 @@ export class TasksHomePage {
 
   public getDialogCancelledCheckbox() {
     return cy.getByDataTest(this.dialogRadioCancel);
+  }
+
+  public getDialogSelectTeamToAssignElement() {
+    return cy.getByDataTest(this.dialogTeamToAssign);
+  }
+
+  public selectTeamToAssign(teamName: string) {
+    return cy.selectListElementByValue(DataTest.dialogTeamToAssign, teamName);
   }
 
   public cancelTask() {

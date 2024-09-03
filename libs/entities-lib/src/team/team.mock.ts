@@ -50,6 +50,7 @@ export const mockTeamsDataStandard = (force? : Partial<IEntity>): ITeamEntity =>
   isEscalation: false,
   isAssignable: false,
   useForLodging: false,
+  useForAppointments: false,
   ...force,
 });
 
@@ -64,6 +65,7 @@ export const mockTeamsDataAddHoc = (force? : Partial<IEntity>): ITeamEntity => (
   isEscalation: false,
   isAssignable: false,
   useForLodging: false,
+  useForAppointments: false,
   ...force,
 });
 
