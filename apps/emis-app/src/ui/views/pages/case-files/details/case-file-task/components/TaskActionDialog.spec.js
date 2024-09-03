@@ -474,23 +474,6 @@ describe('TaskActionDialog.vue', () => {
         expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).not.toHaveBeenCalled();
       });
 
-      it('should call fetchSelectedFAPaymentAndSetName if there is no fa name from prop, and there is financialAssistancePaymentId', async () => {
-        await doMount({
-          computed: {
-            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress, financialAssistancePaymentId: 'mock-fa-id-123' }),
-          },
-        });
-        await wrapper.setProps({
-          financialAssistancePaymentNameProp: '',
-        });
-        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).toHaveBeenCalled();
-      });
-
       it('should not call fetchSelectedFAPaymentAndSetName if there is no fa name from prop, and there is no financialAssistancePaymentId', async () => {
         await doMount({
           computed: {
@@ -506,6 +489,24 @@ describe('TaskActionDialog.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).not.toHaveBeenCalled();
+      });
+
+      it('should call fetchSelectedFAPaymentAndSetName if there is no fa name from prop, and there is financialAssistancePaymentId', async () => {
+        await doMount({
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress, financialAssistancePaymentId: 'mock-fa-id-123' }),
+          },
+        });
+        await wrapper.setProps({
+          financialAssistancePaymentNameProp: '',
+        });
+        await flushPromises();
+        wrapper.vm.fetchSelectedFAPaymentAndSetName = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.fetchSelectedFAPaymentAndSetName).toHaveBeenCalled();
       });
     });
   });
