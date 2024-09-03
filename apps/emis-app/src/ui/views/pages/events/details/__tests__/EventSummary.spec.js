@@ -18,6 +18,8 @@ import { Status } from '@libs/shared-lib/types';
 
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../EventSummary.vue';
 import { EDialogComponent } from '../components/DialogComponents';
 
@@ -27,18 +29,21 @@ const localVue = createLocalVue();
 const mockEvent = mockEventEntities()[0];
 const services = mockProvider();
 
-const pinia = getPiniaForUser(UserRoles.level5);
-let eventStore;
-
-const initEventStore = (pinia) => {
+const initPiniaForUser = (userRole = UserRoles.level6) => {
+  const pinia = getPiniaForUser(userRole);
   const { eventStore } = useMockEventStore(pinia);
+  useMockAssessmentFormStore(pinia);
+  useMockOptionListStore(pinia);
 
-  return eventStore;
+  return {
+    pinia,
+    eventStore,
+  };
 };
 
-const mountWithStatus = (status) => {
+const mountWithStatus = (status, userRole = UserRoles.level6) => {
   const event = mockEventEntity();
-  eventStore = initEventStore(pinia);
+  const { pinia } = initPiniaForUser(userRole);
   return shallowMount(Component, {
     localVue,
     pinia,
@@ -67,8 +72,7 @@ const mountWithStatus = (status) => {
 
 describe('EventSummary.vue', () => {
   let wrapper;
-  const doMount = async (pinia = getPiniaForUser(UserRoles.level5), otherComputed = {}, initialFeatures = [], shallow = true) => {
-    eventStore = initEventStore(pinia);
+  const doMount = async (pinia = initPiniaForUser(UserRoles.level5).pinia, otherComputed = {}, initialFeatures = [], shallow = true) => {
     const options = {
       localVue,
       pinia,
@@ -106,7 +110,7 @@ describe('EventSummary.vue', () => {
 
     describe('exceptional-authentication-section', () => {
       it('renders', async () => {
-        await doMount(getPiniaForUser(UserRoles.level5), {}, [], false);
+        await doMount(initPiniaForUser(UserRoles.level5).pinia, {}, [], false);
         const element = wrapper.findDataTest('exceptional-authentication-section');
         expect(element.exists()).toBeTruthy();
       });
@@ -119,7 +123,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('is disabled for users with level below 5', async () => {
-        doMount(getPiniaForUser(UserRoles.level4));
+        doMount(initPiniaForUser(UserRoles.level4).pinia);
         const element = wrapper.findDataTest('event-detail-status');
         expect(element.props('disabled')).toBeTruthy();
       });
@@ -151,7 +155,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when canEditSections is false', async () => {
-        doMount(getPiniaForUser(UserRoles.level5), {
+        doMount(initPiniaForUser(UserRoles.level5).pinia, {
           canEdit() {
             return false;
           },
@@ -183,13 +187,13 @@ describe('EventSummary.vue', () => {
 
     describe('call centre section', () => {
       it('renders when the event has call centres', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         const element = wrapper.findDataTest('call-centre-section');
         expect(element.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('call-centre-section');
         element.vm.$emit('edit');
@@ -197,7 +201,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when the event has no call centres', () => {
-        doMount(getPiniaForUser(UserRoles.level5), {
+        doMount(initPiniaForUser(UserRoles.level5).pinia, {
           event() {
             const event = _cloneDeep(mockEvent);
             event.callCentres = [];
@@ -211,7 +215,7 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle-call-centre', () => {
         it('should display when showToggleForL0Access is true', () => {
-          doMount(getPiniaForUser(UserRoles.level6), {
+          doMount(initPiniaForUser(UserRoles.level6).pinia, {
             showToggleForL0Access() {
               return true;
             },
@@ -223,7 +227,7 @@ describe('EventSummary.vue', () => {
         });
 
         it('should display Appointment booking toggle when feature flag is on', () => {
-          doMount(getPiniaForUser(UserRoles.level6), {
+          doMount(initPiniaForUser(UserRoles.level6).pinia, {
             showToggleForL0Access() {
               return true;
             },
@@ -233,7 +237,7 @@ describe('EventSummary.vue', () => {
         });
 
         it('shouldnot display Appointment booking toggle when feature flag is off', () => {
-          doMount(getPiniaForUser(UserRoles.level6), {
+          doMount(initPiniaForUser(UserRoles.level6).pinia, {
             showToggleForL0Access() {
               return true;
             },
@@ -245,7 +249,7 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle-assessment', () => {
         it('should call toggleAccessAssessment when changed ', () => {
-          doMount(getPiniaForUser(UserRoles.level6), {
+          doMount(initPiniaForUser(UserRoles.level6).pinia, {
             showToggleForL0Access() {
               return true;
             },
@@ -261,7 +265,7 @@ describe('EventSummary.vue', () => {
         });
 
         it('should pass correct Props to EventSummaryToggle for call centre', async () => {
-          doMount(getPiniaForUser(UserRoles.level6), {
+          doMount(initPiniaForUser(UserRoles.level6).pinia, {
             showToggleForL0Access() {
               return true;
             },
@@ -282,7 +286,7 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle-registration', () => {
         it('should call toggleRegistration when changed', () => {
-          doMount(getPiniaForUser('level6'), {
+          doMount(initPiniaForUser(UserRoles.level6).pinia, {
             showToggleForL0Access() {
               return true;
             },
@@ -298,7 +302,7 @@ describe('EventSummary.vue', () => {
         });
 
         it('should pass correct Props to EventSummaryToggle for call centre', async () => {
-          doMount(getPiniaForUser('level6'), {
+          doMount(initPiniaForUser(UserRoles.level6).pinia, {
             showToggleForL0Access() {
               return true;
             },
@@ -320,13 +324,13 @@ describe('EventSummary.vue', () => {
 
     describe('agreement section', () => {
       it('renders when the event has agreements', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         const element = wrapper.findDataTest('agreement-section');
         expect(element.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('agreement-section');
         element.vm.$emit('edit');
@@ -334,7 +338,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when the event has no agreements', () => {
-        doMount(getPiniaForUser('level5'), {
+        doMount(initPiniaForUser(UserRoles.level5).pinia, {
           event() {
             const event = _cloneDeep(mockEvent);
             event.agreements = [];
@@ -349,13 +353,13 @@ describe('EventSummary.vue', () => {
 
     describe('registration location section', () => {
       it('renders when the event has registration locations', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         const section = wrapper.findDataTest('registration-location-section');
         expect(section.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('registration-location-section');
         element.vm.$emit('edit');
@@ -363,7 +367,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when the event has no registration locations', () => {
-        doMount(getPiniaForUser('level5'), {
+        doMount(initPiniaForUser(UserRoles.level5).pinia, {
           event() {
             const event = _cloneDeep(mockEvent);
             event.registrationLocations = [];
@@ -378,13 +382,13 @@ describe('EventSummary.vue', () => {
 
     describe('shelter location section', () => {
       it('renders when the event has shelter locations', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         const section = wrapper.findDataTest('shelter-location-section');
         expect(section.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
-        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('shelter-location-section');
         element.vm.$emit('edit');
@@ -392,8 +396,10 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when the event has no shelter locations', () => {
+        const { pinia } = initPiniaForUser(UserRoles.level5);
         wrapper = mount(Component, {
           localVue,
+          pinia,
           computed: {
             event() {
               const event = _cloneDeep(mockEvent);
@@ -460,12 +466,12 @@ describe('EventSummary.vue', () => {
 
     describe('consent statement section', () => {
       it('should render if user is a level 6', async () => {
-        await doMount(getPiniaForUser(UserRoles.level6), null, [], false);
+        await doMount(initPiniaForUser(UserRoles.level6).pinia, null, [], false);
         const element = wrapper.findDataTest('event-summary-section-title-EventConsent');
         expect(element.exists()).toBeTruthy();
       });
       it('should not render if user is lower than level 6', async () => {
-        await doMount(getPiniaForUser(UserRoles.level5), null, [], false);
+        await doMount(initPiniaForUser(UserRoles.level5).pinia, null, [], false);
         const element = wrapper.findDataTest('event-summary-section-title-EventConsent');
         expect(element.exists()).toBeFalsy();
       });
@@ -473,11 +479,8 @@ describe('EventSummary.vue', () => {
   });
 
   describe('Computed', () => {
-    let eventStore;
-    let pinia;
+    const { pinia, eventStore } = initPiniaForUser(UserRoles.level5);
     beforeEach(() => {
-      pinia = getPiniaForUser(UserRoles.level5);
-      eventStore = initEventStore(pinia);
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
@@ -504,6 +507,7 @@ describe('EventSummary.vue', () => {
         const event = mockEventEntities()[0];
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -523,6 +527,7 @@ describe('EventSummary.vue', () => {
         event.registrationAssessments[0].status = Status.Inactive;
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -624,7 +629,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -640,7 +645,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 6 and event is not open or on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -662,7 +667,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 5 and event is not open', () => {
-        doMount(getPiniaForUser(UserRoles.level5), {
+        doMount(initPiniaForUser(UserRoles.level5).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -678,7 +683,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
-        doMount(getPiniaForUser(UserRoles.level3));
+        doMount(initPiniaForUser(UserRoles.level3).pinia);
 
         expect(wrapper.vm.canEditSections).toBeFalsy();
       });
@@ -691,7 +696,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -707,7 +712,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 6 and event is not open or on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -723,7 +728,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is open', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -739,7 +744,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 5', () => {
-        wrapper = mountWithStatus(EEventStatus.Open);
+        wrapper = mountWithStatus(EEventStatus.Open, UserRoles.level5);
 
         expect(wrapper.vm.canEditAssessmentSection).toBeFalsy();
       });
@@ -752,7 +757,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -768,7 +773,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 6 and event is not open or on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -784,7 +789,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is open', () => {
-        doMount(getPiniaForUser(UserRoles.level6), {
+        doMount(initPiniaForUser(UserRoles.level6).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -800,7 +805,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 5', () => {
-        wrapper = mountWithStatus(EEventStatus.Open);
+        wrapper = mountWithStatus(EEventStatus.Open, UserRoles.level5);
 
         expect(wrapper.vm.canEditConsentSection).toBeFalsy();
       });
@@ -813,7 +818,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 5 and event is on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level5), {
+        doMount(initPiniaForUser(UserRoles.level5).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -829,7 +834,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 5 and event is not open or on hold', () => {
-        doMount(getPiniaForUser(UserRoles.level5), {
+        doMount(initPiniaForUser(UserRoles.level5).pinia, {
           event() {
             return new EventEntity({
               ...event,
@@ -851,7 +856,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
-        doMount(getPiniaForUser(UserRoles.level3));
+        doMount(initPiniaForUser(UserRoles.level3).pinia);
 
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
@@ -859,12 +864,12 @@ describe('EventSummary.vue', () => {
 
     describe('showToggleForL0Access', () => {
       it('should return true when user has level6 and event has call centre', async () => {
-        doMount(getPiniaForUser(UserRoles.level6), null, [wrapper.vm.$featureKeys.L0Access]);
+        doMount(initPiniaForUser(UserRoles.level6).pinia, null, [wrapper.vm.$featureKeys.L0Access]);
         expect(wrapper.vm.showToggleForL0Access).toBeTruthy();
       });
 
       it('should return false when user doesnt have level 6,', async () => {
-        doMount(getPiniaForUser(UserRoles.level5), null);
+        doMount(initPiniaForUser(UserRoles.level5).pinia, null);
         await wrapper.setFeature(wrapper.vm.$featureKeys.L0Access, true);
         expect(wrapper.vm.showToggleForL0Access).toBeFalsy();
       });
@@ -895,7 +900,7 @@ describe('EventSummary.vue', () => {
   });
 
   describe('Methods', () => {
-    const eventStore = initEventStore(pinia);
+    const { pinia, eventStore } = initPiniaForUser(UserRoles.level6);
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
@@ -1033,7 +1038,8 @@ describe('EventSummary.vue', () => {
 
   describe('lifecycle', () => {
     it('calls store and services', async () => {
-      await doMount();
+      const { pinia, eventStore } = initPiniaForUser(UserRoles.level6);
+      await doMount(pinia);
       expect(eventStore.fetchAgreementTypes).toHaveBeenCalled();
       expect(eventStore.fetchExceptionalAuthenticationTypes).toHaveBeenCalled();
       expect(services.caseFiles.getExceptionalTypeCounts).toHaveBeenCalledWith(wrapper.vm.event.id);
