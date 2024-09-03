@@ -22,13 +22,6 @@ module.exports = {
     // '^.+\\.(ts|tsx)$': 'ts-jest',
     '^.+\\.(ts|tsx)$': [
       '@swc/jest',
-      // {
-      //   jsc: {
-      //     experimental: {
-      //       plugins: [['jest_workaround', {}]],
-      //     },
-      //   },
-      // },
     ],
     '^.+\\.jsx?$': 'babel-jest',
   },
