@@ -2,6 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { TeamType } from '@libs/entities-lib/team';
+import { IProvider } from '@/services/provider';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithAssignableTeam, createHousehold, createTeamTask } from '../../helpers/prepareState';
 import { linkEventToTeamForManyRoles, LinkEventToTeamParams, removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -69,6 +70,14 @@ describe('[T28436] Confirm that only an Escalation Team member and L6 can assign
               const provider = useProvider(tokenResponse.access_token);
               const resultTeamTaskCreated = await createTeamTask(provider, caseFileId, escalationTeam.id);
               cy.wrap(resultTeamTaskCreated.id).as('teamTaskId');
+            });
+            await cy.callSearchUntilMeetCondition({
+              provider: useProvider(accessTokenL6),
+              searchCallBack: (provider: IProvider) => (provider.teams.search({
+                filter: { Entity: { Id: { value: escalationTeam.id, type: 'guid' } } },
+                top: 1,
+              })),
+              conditionCallBack: (value: []) => (value.length > 0),
             });
             cy.login(roleName);
             cy.goTo(`casefile/${caseFileId}/task`);
