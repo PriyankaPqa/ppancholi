@@ -12,7 +12,7 @@ import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockMember } from '@libs/entities-lib/household-create';
 import { CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
 
-import { LodgingMode } from './BookingSetupDialog.vue';
+import { LodgingMode } from './bookingHelper';
 import Component from './CrcProvidedLodging.vue';
 
 const localVue = createLocalVue();

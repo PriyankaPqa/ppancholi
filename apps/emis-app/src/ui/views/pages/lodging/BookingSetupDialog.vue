@@ -246,9 +246,7 @@ import { IMemberForSelection } from '@libs/entities-lib/value-objects/member';
 import { TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import mixins from 'vue-typed-mixins';
-import { IProgramEntity } from '@libs/entities-lib/program';
 import { EFilterKeyType } from '@libs/component-lib/types';
-import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
@@ -259,26 +257,7 @@ import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
 import CrcProvidedLodging, { ICrcProvidedLodging } from './CrcProvidedLodging.vue';
 import ImpactedIndividualAddressTemplateV2 from '../case-files/details/case-file-impacted-individualsV2/components/ImpactedIndividualAddressTemplateV2.vue';
-
-interface IPaymentDetails { program: IProgramEntity, table: IFinancialAssistanceTableEntity, name: string }
-
-export enum LodgingMode {
-  BookingMode,
-  MoveCrcProvidedAllowed,
-  MoveCrcProvidedNotAllowed,
-  ExtendStay,
-  EditCrcProvidedAsNonLodging,
-  EditCrcProvidedAsLodging,
-  EditNotCrcProvided,
-}
-
-export function isEditMode(mode: LodgingMode): boolean {
-  return [LodgingMode.EditCrcProvidedAsLodging, LodgingMode.EditCrcProvidedAsNonLodging, LodgingMode.EditNotCrcProvided, LodgingMode.ExtendStay].indexOf(mode) > -1;
-}
-
-export function modeMayTriggerPayment(mode: LodgingMode): boolean {
-  return [LodgingMode.BookingMode, LodgingMode.MoveCrcProvidedAllowed, LodgingMode.ExtendStay].indexOf(mode) > -1;
-}
+import { IPaymentDetails, isEditMode, LodgingMode, modeMayTriggerPayment } from './bookingHelper';
 
 export default mixins(caseFileDetail).extend({
   name: 'BookingSetupDialog',
@@ -690,4 +669,4 @@ export default mixins(caseFileDetail).extend({
     padding-left: 16px;
     padding-bottom: 4px;
   }
-</style>
+</style>IPaymentDetails, isEditMode, , modeMayTriggerPayment

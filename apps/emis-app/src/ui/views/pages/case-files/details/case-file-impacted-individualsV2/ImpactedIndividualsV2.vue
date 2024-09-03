@@ -82,7 +82,8 @@ import { useUserStore } from '@/pinia/user/user';
 import caseFileDetail from '../caseFileDetail';
 import ImpactedIndividualCardV2 from './components/ImpactedIndividualCardV2.vue';
 import SelectIndividualsDialog from './components/SelectIndividualsDialog.vue';
-import BookingSetupDialog, { LodgingMode } from '../../../lodging/BookingSetupDialog.vue';
+import BookingSetupDialog from '../../../lodging/BookingSetupDialog.vue';
+import { LodgingMode } from '../../../lodging/bookingHelper';
 
 export default mixins(caseFileDetail).extend({
   name: 'ImpactedIndividuals',

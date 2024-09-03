@@ -16,8 +16,9 @@ import { CurrentAddress, ECurrentAddressTypes, mockOther } from '@libs/entities-
 import { MembershipStatus, mockTemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { CaseFileDetailsMock } from '../case-files/details/__tests__/caseFileDetailsMock.mock';
+import { LodgingMode } from './bookingHelper';
 
-import Component, { LodgingMode } from './BookingSetupDialog.vue';
+import Component from './BookingSetupDialog.vue';
 
 const localVue = createLocalVue();
 

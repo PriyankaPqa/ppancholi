@@ -134,7 +134,7 @@ import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity, Pa
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
-import { LodgingMode, isEditMode } from './BookingSetupDialog.vue';
+import { LodgingMode, isEditMode } from './bookingHelper';
 
 export interface ICrcProvidedLodging {
   generatePayment(): IFinancialAssistancePaymentEntity;

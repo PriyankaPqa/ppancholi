@@ -8,7 +8,7 @@ import { mockTeamEntity } from '@libs/entities-lib/team';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from '../case-file-impacted-individualsV2/ImpactedIndividualsV2.vue';
 import { CaseFileDetailsMock } from './caseFileDetailsMock.mock';
-import { LodgingMode } from '../../../lodging/BookingSetupDialog.vue';
+import { LodgingMode } from '../../../lodging/bookingHelper';
 
 const localVue = createLocalVue();
 const services = mockProvider();
