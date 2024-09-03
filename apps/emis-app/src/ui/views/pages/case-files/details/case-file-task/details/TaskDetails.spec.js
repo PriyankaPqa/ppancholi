@@ -66,6 +66,8 @@ describe('TaskDetails.vue', () => {
   describe('Template', () => {
     describe('task-details-is-urgent', () => {
       it('should be rendered when task isUrgent is true', async () => {
+        const pinia = getPiniaForRole(UserRoles.level6);
+        const { taskStore } = useMockTaskStore(pinia);
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ isUrgent: true }));
         await doMount(false, {
           data() {
@@ -77,7 +79,9 @@ describe('TaskDetails.vue', () => {
             task: () => mockTeamTaskEntity({ isUrgent: true }),
             isTeamTask: () => true,
           },
+          pinia,
         });
+        await flushPromises();
         const element = wrapper.findDataTest('task-details-is-urgent');
         expect(element.exists()).toBeTruthy();
       });
