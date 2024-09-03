@@ -19,7 +19,17 @@ module.exports = {
     'vee-validate/dist/rules': 'babel-jest',
     '.+\\.(css|styl|less|sass|scss|jpg|jpeg|png|svg|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|avif)$': 'jest-transform-stub',
     '.*\\.(vue)$': '@vue/vue2-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    // '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': [
+      '@swc/jest',
+      // {
+      //   jsc: {
+      //     experimental: {
+      //       plugins: [['jest_workaround', {}]],
+      //     },
+      //   },
+      // },
+    ],
     '^.+\\.jsx?$': 'babel-jest',
   },
   testMatch: [
