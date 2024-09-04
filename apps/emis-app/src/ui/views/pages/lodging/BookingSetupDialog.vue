@@ -447,6 +447,7 @@ export default mixins(caseFileDetail).extend({
         b.address.checkOut = uiHelpers.getLocalStringDate(b.address.checkOut, 'CaseFileIndividual.checkOut');
       });
 
+      // some addresses are set as "crcprovided = null" - these we'll consider as a "false"
       this.isCrcProvided = this.bookings[0].address.crcProvided || false;
       this.addressType = this.bookings[0].address.addressType;
       this.showCrcProvidedSelection = true;
