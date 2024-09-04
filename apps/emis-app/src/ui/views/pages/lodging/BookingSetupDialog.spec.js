@@ -554,7 +554,7 @@ describe('BookingSetupDialog.vue', () => {
         await mountWrapper(false, 5, LodgingMode.ExtendStay);
         wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
         crcProvidedLodging.generatePayment = jest.fn(() => payment);
-        await wrapper.setData({ bookings: [{ address: detailsMock.mocks.individuals[0].currentAddress, peopleInRoom: ['indv-1'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-02-01' }] });
+        await wrapper.setData({ bookings: [{ address: new CurrentAddress(detailsMock.mocks.individuals[0].currentAddress), peopleInRoom: ['indv-1'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1, originalCheckoutDate: '2022-02-01' }] });
 
         jest.clearAllMocks();
         await wrapper.vm.provideCrcAddress();

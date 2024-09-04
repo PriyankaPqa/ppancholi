@@ -447,7 +447,7 @@ export default mixins(caseFileDetail).extend({
         b.address.checkOut = uiHelpers.getLocalStringDate(b.address.checkOut, 'CaseFileIndividual.checkOut');
       });
 
-      this.isCrcProvided = this.bookings[0].address.crcProvided;
+      this.isCrcProvided = this.bookings[0].address.crcProvided || false;
       this.addressType = this.bookings[0].address.addressType;
       this.showCrcProvidedSelection = true;
       this.lockCrcProvided = true;
@@ -621,6 +621,9 @@ export default mixins(caseFileDetail).extend({
     async provideAddress(paymentId: string = null) {
       let saveOccured = false;
       for (const b of this.bookings) {
+        if (!b.address.hasCrcProvided()) {
+          b.address.crcProvided = null;
+        }
         // no need to send people to the same address if they've picked the same one that some already have or havent made a change
         const peopleToMove = this.peopleToLodge.filter((p) => b.peopleInRoom.indexOf(p.caseFileIndividualId) > -1
             && !CurrentAddress.areSimilar(p.caseFileIndividual.currentAddress, b.address));
