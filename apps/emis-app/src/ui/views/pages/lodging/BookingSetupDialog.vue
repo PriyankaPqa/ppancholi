@@ -419,6 +419,8 @@ export default mixins(caseFileDetail).extend({
     } else if (this.isEditOfAddress) {
       this.loading = false;
       this.setupBookingsForEdit();
+    } else {
+      this.loading = false;
     }
 
     if (this.lodgingMode !== LodgingMode.MoveCrcProvidedAllowed && this.lodgingMode !== LodgingMode.MoveCrcProvidedNotAllowed) {
