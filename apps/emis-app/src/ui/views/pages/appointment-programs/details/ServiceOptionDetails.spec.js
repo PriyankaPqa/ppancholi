@@ -3,8 +3,11 @@ import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appo
 import { mockAppointmentProgram, mockServiceOption } from '@libs/entities-lib/appointment';
 import { mockOptionItem } from '@libs/entities-lib/optionItem';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { validateCanDeleteServiceOptionPolicy } from '../appointmentProgramsHelper';
+
 import Component from './ServiceOptionDetails.vue';
 
+jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 
@@ -100,13 +103,9 @@ describe('ServiceOptionDetails.vue', () => {
 
     describe('deleteServiceOption', () => {
       it(' shows an error when deleting the last service option', async () => {
-        const so = mockServiceOption({ id: '2' });
-        appointmentProgramStore.fetch = jest.fn(() => mockAppointmentProgram({ serviceOptions: [so] }));
-        await mountWrapper(true, { computed: { serviceOption() {
-          return so;
-        } } });
-        await wrapper.setData({ appointmentProgram: mockAppointmentProgram({ serviceOptions: [so] }) });
-        wrapper.vm.deleteServiceOption();
+        await mountWrapper();
+        validateCanDeleteServiceOptionPolicy.mockImplementation(() => false);
+        await wrapper.vm.deleteServiceOption();
         expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.serviceOption.deleteUniqueServiceOption.error' });
       });
 
@@ -116,6 +115,7 @@ describe('ServiceOptionDetails.vue', () => {
           return so2;
         } } });
         wrapper.vm.$confirm = jest.fn(() => true);
+        validateCanDeleteServiceOptionPolicy.mockImplementation(() => true);
         await wrapper.vm.deleteServiceOption();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: 'appointmentProgram.serviceOption.confirm.delete.title',
           messages: 'appointmentProgram.serviceOption.confirm.delete.message' });

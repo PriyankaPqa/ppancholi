@@ -317,11 +317,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
         }
 
         const dialog = this.$refs.rationaleDialog as any;
-        const userInput = (await dialog.open({
+        const userInput = (await dialog?.open({
           title: this.$t('appointmentProgram.edit.changeStatus.rationale.title'),
           userBoxText: this.$t('appointmentProgram.edit.changeStatus.rationale.message'),
         })) as { answered: boolean, rationale: string };
-        if (userInput.answered) {
+        if (userInput?.answered) {
           const res = await useAppointmentProgramStore().setAppointmentProgramStatus(this.appointmentProgram.id, status, userInput.rationale);
           if (res) {
             this.appointmentProgram.appointmentProgramStatus = status;

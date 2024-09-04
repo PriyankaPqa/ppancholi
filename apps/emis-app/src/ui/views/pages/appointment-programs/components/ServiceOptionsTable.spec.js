@@ -2,9 +2,10 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { mockServiceOption } from '@libs/entities-lib/appointment';
 import { VDataTableA11y } from '@libs/component-lib/components';
-
+import { validateCanDeleteServiceOptionPolicy } from '../appointmentProgramsHelper';
 import Component from './ServiceOptionsTable.vue';
 
+jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 
@@ -151,12 +152,14 @@ describe('ServiceOptionsTable.vue', () => {
     describe('deleteServiceOption', () => {
       describe('in edit mode', () => {
         it(' shows an error when deleting the last service option', () => {
+          validateCanDeleteServiceOptionPolicy.mockImplementation(() => false);
           mountWrapper(true, true);
           wrapper.vm.deleteServiceOption(mockServiceOption());
           expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.serviceOption.deleteUniqueServiceOption.error' });
         });
 
         it('calls confirm and calls store delete and a success message is displayed', async () => {
+          validateCanDeleteServiceOptionPolicy.mockImplementation(() => true);
           mountWrapper(true, true);
           const so1 = mockServiceOption({ id: '1' });
           const so2 = mockServiceOption({ id: '2' });
@@ -170,6 +173,7 @@ describe('ServiceOptionsTable.vue', () => {
         });
 
         it('displays an error message on store call error', async () => {
+          validateCanDeleteServiceOptionPolicy.mockImplementation(() => true);
           mountWrapper(true, true);
           const so1 = mockServiceOption({ id: '1' });
           const so2 = mockServiceOption({ id: '2' });
@@ -205,9 +209,9 @@ describe('ServiceOptionsTable.vue', () => {
     describe('onAdd', () => {
       it('sets serviceOptionTempId and showServiceOptionDialog values', async () => {
         mountWrapper();
-        await wrapper.setData({ serviceOptionTempId: 4 });
+        await wrapper.setData({ serviceOptionTempId: '4' });
         await wrapper.vm.onAdd();
-        expect(wrapper.vm.serviceOptionTempId).toEqual(5);
+        expect(wrapper.vm.serviceOptionTempId).toEqual('5');
         expect(wrapper.vm.showServiceOptionDialog).toBeTruthy();
       });
     });

@@ -116,7 +116,6 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { EFilterKeyType } from '@libs/component-lib/types';
 import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { SERVICE_OPTIONS } from '../../appointments/home/mocks';
 import AssignServiceOptions from './AssignServiceOptions.vue';
 import { validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
 
@@ -173,12 +172,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       teams: [mockTeamEntity()] as ITeamEntity[],
       allStaffMembers: [] as IUserAccountMetadata[],
       localServiceOptions: [] as IServiceOption[],
-      SERVICE_OPTIONS,
     };
   },
 
   async created() {
-    // this.localServiceOptions = SERVICE_OPTIONS;// _cloneDeep(this.serviceOptions);
     this.localServiceOptions = _cloneDeep(this.serviceOptions);
     this.allStaffMembers = _cloneDeep(this.initialStaffMembers);
     await this.fetchAssignableTeams();
