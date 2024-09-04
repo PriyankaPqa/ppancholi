@@ -46,6 +46,10 @@ export interface IAppointmentProgramStatusHistory {
   rationale: string;
 }
 
+export interface StaffMemberUpdatePayload {
+  serviceOptions: { serviceOptionId: uuid, staffMembers: string[] }[]
+}
+
 export interface IAppointmentProgram extends IEntity {
   eventId: uuid;
   name: IMultilingual;

@@ -136,8 +136,8 @@ export default Vue.extend({
     },
 
     tempId: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '0',
     },
 
   },
@@ -147,6 +147,7 @@ export default Vue.extend({
       serviceOptionType: { optionItemId: '', specifiedOther: null },
       appointmentModalities: [],
       serviceOptionStatus: Status.Active,
+      staffMembers: [],
     };
 
     if (!this.appointmentProgramId) {

@@ -1,6 +1,6 @@
 import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
 import { ref, Ref } from 'vue';
-import { IAppointmentProgram, IDateRange, IDaySchedule, IdParams, AppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IDateRange, IDaySchedule, IdParams, AppointmentProgram, IServiceOption, StaffMemberUpdatePayload } from '@libs/entities-lib/appointment';
 import { AppointmentProgramsService, IAppointmentProgramsServiceMock } from '@libs/services-lib/appointment-programs';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
@@ -76,6 +76,14 @@ export function getExtensionComponents(
     return result;
   }
 
+  async function setAppointmentProgramStatus(appointmentId: uuid, aapointmentStatus: Status, rationale: string): Promise<IAppointmentProgram> {
+    const result = await service.setAppointmentProgramStatus(appointmentId, aapointmentStatus, rationale);
+    if (result) {
+      baseComponents.set(result);
+    }
+    return result;
+  }
+
   async function createServiceOption(appointmentProgramId: string, serviceOption:IServiceOption) : Promise<IAppointmentProgram> {
     const result = await service.createServiceOption(appointmentProgramId, serviceOption);
     if (result) {
@@ -100,8 +108,8 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function setAppointmentProgramStatus(appointmentId: uuid, aapointmentStatus: Status, rationale: string): Promise<IAppointmentProgram> {
-    const result = await service.setAppointmentProgramStatus(appointmentId, aapointmentStatus, rationale);
+  async function updateStaffMembers(appointmentProgramId: string, payload: StaffMemberUpdatePayload): Promise<IAppointmentProgram> {
+    const result = await service.updateStaffMembers(appointmentProgramId, payload);
     if (result) {
       baseComponents.set(result);
     }
@@ -124,6 +132,7 @@ export function getExtensionComponents(
     createServiceOption,
     updateServiceOption,
     deleteServiceOption,
+    updateStaffMembers,
     setAppointmentProgramStatus,
   };
 }

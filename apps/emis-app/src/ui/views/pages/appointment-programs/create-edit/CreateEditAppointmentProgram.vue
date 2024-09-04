@@ -104,10 +104,17 @@
                   <div class="fw-bold pb-4">
                     {{ $t('appointmentProgram.section.staffMembers') }}
                   </div>
+                  <message-box
+                    v-if="showStaffMembersError"
+                    icon="mdi-alert"
+                    class="failed"
+                    data-test="appointment-program-service-options-error"
+                    :message=" $t('appointments.staffMembers.shouldNotBeEmpty')" />
                   <staff-members-table
                     :appointment-program-id="appointmentProgram.id"
                     :is-edit-mode="isEditMode"
-                    :service-options="appointmentProgram.serviceOptions" />
+                    :event-id="id"
+                    :service-options.sync="appointmentProgram.serviceOptions" />
                 </v-col>
               </v-row>
             </v-col>
@@ -143,7 +150,7 @@ import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { AppointmentProgram, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, DayOfWeek, IDaySchedule, IServiceOption } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
@@ -151,6 +158,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { NavigationGuardNext, Route } from 'vue-router';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
+import { validateCanSetActiveStatus, validateHasServiceOptionsPolicy, validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -200,15 +208,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
       timeZoneOptions: canadaTimeZones,
       scheduleHasError: false,
       showServiceOptionsError: false,
+      showStaffMembersError: false,
       initialBusinessHours: null as IDaySchedule[],
     };
   },
 
   computed: {
-    serviceOptions() {
-      return this.appointmentProgram.serviceOptions;
-    },
-
     initialAppointmentProgram() {
       return this.appointmentProgramId ? new AppointmentProgram(useAppointmentProgramStore().getById(this.appointmentProgramId)) : new AppointmentProgram();
     },
@@ -275,11 +280,23 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.appointmentProgram = newVal;
     },
 
-   serviceOptions(newVal, oldVal) {
-    if (newVal.length && !oldVal.length) {
-      this.showServiceOptionsError = false;
-    }
-   },
+    'appointmentProgram.serviceOptions': {
+      handler(newVal, oldVal) {
+        if (newVal.length && !oldVal.length) {
+          this.showServiceOptionsError = false;
+        }
+        if (newVal.some((so: IServiceOption) => so.staffMembers?.length)) {
+          this.showStaffMembersError = false;
+        }
+      },
+    },
+
+    'appointmentProgram.appointmentProgramStatus': {
+      handler() {
+          this.showServiceOptionsError = false;
+          this.showStaffMembersError = false;
+      },
+    },
   },
 
   methods: {
@@ -294,6 +311,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async onStatusChange(status: Status) {
       if (this.isEditMode) {
+        if (!validateCanSetActiveStatus(this.appointmentProgram, status)) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.edit.changeStatus.error') });
+          return;
+        }
+
         const dialog = this.$refs.rationaleDialog as any;
         const userInput = (await dialog.open({
           title: this.$t('appointmentProgram.edit.changeStatus.rationale.title'),
@@ -305,7 +327,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
             this.appointmentProgram.appointmentProgramStatus = status;
             this.$toasted.global.success(this.$t('appointmentProgram.edit.changeStatus.success'));
           } else {
-            this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.error'));
+            this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.failed'));
           }
           dialog.close();
         }
@@ -315,12 +337,17 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submit() {
-      const hasServiceOptions = !!this.appointmentProgram.serviceOptions.length;
-      if (!hasServiceOptions) {
+      const hasServiceOptionsPolicyIsValid = validateHasServiceOptionsPolicy(this.appointmentProgram);
+      if (!hasServiceOptionsPolicyIsValid) {
         this.showServiceOptionsError = true;
       }
 
-      const isValid = await (this.$refs.form as VForm).validate() && hasServiceOptions;
+      const hasStaffMembersPolicyIsValid = validateHasStaffMembersPolicy(this.appointmentProgram);
+      if (!hasStaffMembersPolicyIsValid) {
+        this.showStaffMembersError = true;
+      }
+
+      const isValid = await (this.$refs.form as VForm).validate() && hasServiceOptionsPolicyIsValid && hasStaffMembersPolicyIsValid;
 
       if (!isValid) {
         helpers.scrollToFirstError('app');

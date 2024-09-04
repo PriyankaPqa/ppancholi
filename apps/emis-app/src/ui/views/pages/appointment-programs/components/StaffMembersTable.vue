@@ -1,7 +1,11 @@
 <template>
   <div>
     <div class="table_top_header border-radius-top no-bottom-border">
-      <v-btn color="primary" data-test="add-staff-member" @click="showManageStaffDialog = true">
+      <v-btn
+        color="primary"
+        data-test="add-staff-member"
+        :disabled="!serviceOptions.length"
+        @click="showManageStaffDialog = true">
         {{ isEditMode ? $t('appointmentProgram.staffMembers.table.manageStaff') : $t('appointmentProgram.staffMembers.table.addStaff') }}
       </v-btn>
     </div>
@@ -9,31 +13,32 @@
       :class="{ 'table border-radius-bottom': true, loading }"
       data-test="staffMembers__table"
       must-sort
-      hide-default-footer
       :loading="loading"
       :headers="headers"
-      :items="staffMembers"
-      @update:sort-by="sortBy = $event"
-      @update:sort-desc="sortDesc = $event">
+      :options.sync="options"
+      :items="staffMembers">
       <template #[`item.${customColumns.name}`]="{ item }">
-        <span data-test="staffMembers__name">{{ item.name }}</span>
+        <span data-test="staffMembers__name">{{ item.displayName }}</span>
       </template>
 
       <template #[`item.${customColumns.role}`]="{ item }">
-        <span data-test="staffMembers__role"> {{ item.role }} </span>
+        <span data-test="staffMembers__role"> {{ $m(item.roleName) }} </span>
       </template>
 
       <template #[`item.${customColumns.serviceOption}`]="{ item }">
-        <span data-test="staffMembers__serviceOption"> {{ item.serviceOption }} </span>
+        <span data-test="staffMembers__serviceOption"> {{ getServiceOptionNames(item.id) }} </span>
       </template>
     </v-data-table-a11y>
 
     <manage-staff-members
       v-if="showManageStaffDialog"
       :show.sync="showManageStaffDialog"
-      :event-id="appointmentProgram.eventId"
+      :event-id="eventId"
+      :is-edit-mode="isEditMode"
       :service-options="serviceOptions"
-      :appointment-program-id="appointmentProgramId" />
+      :appointment-program-id="appointmentProgramId"
+      :initial-staff-members.sync="staffMembers"
+      @submit="onUpdateStaffMembers" />
   </div>
 </template>
 
@@ -43,6 +48,8 @@ import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import ManageStaffMembers from './ManageStaffMembers.vue';
 
 export default Vue.extend({
@@ -57,6 +64,11 @@ export default Vue.extend({
     appointmentProgramId: {
       type: String,
       required: true,
+    },
+
+    eventId: {
+      type: String,
+      default: '',
     },
 
     serviceOptions: {
@@ -74,8 +86,10 @@ export default Vue.extend({
 
   data() {
     return {
-      sortDesc: false,
-      sortBy: 'metadata.displayName',
+      options: {
+        page: 1,
+        sortBy: ['displayName'],
+      },
       showManageStaffDialog: false,
       loading: false,
       staffMembers: [],
@@ -85,7 +99,7 @@ export default Vue.extend({
   computed: {
     customColumns(): Record<string, string> {
       return {
-        name: 'name',
+        name: 'displayName',
         role: 'role',
         serviceOption: 'serviceOption',
       };
@@ -118,10 +132,38 @@ export default Vue.extend({
       return useAppointmentProgramStore().getById(this.appointmentProgramId);
     },
 
+    serviceOptionTypes(): IOptionItem[] {
+      return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.serviceOptionType?.optionItemId));
+    },
+  },
+
+  async created() {
+    await useAppointmentProgramStore().fetchServiceOptionTypes();
   },
 
   methods: {
+    onUpdateStaffMembers(serviceOptions: IServiceOption[]) {
+      this.$emit('update:serviceOptions', serviceOptions);
+    },
 
+    getServiceOptionNames(memberId: string): string {
+      const serviceOptionsContainingMember = this.serviceOptions.filter((so) => so.staffMembers.includes(memberId));
+      const serviceOptionTypes = this.serviceOptionTypes.filter((t) => serviceOptionsContainingMember.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
+      return serviceOptionTypes.map((t) => this.$m(t.name)).join(', ');
+    },
+
+    async fetchInitialStaffMembers() {
+      const allIds = this.serviceOptions.reduce((ids, so) => {
+        if (so.staffMembers?.length) {
+          ids.push(...so.staffMembers);
+        }
+        return ids;
+      }, []);
+      if (allIds.length) {
+        const uniqueIds = [...new Set(allIds)];
+        this.staffMembers = await useUserAccountMetadataStore().fetchByIds(uniqueIds, true);
+      }
+    },
   },
 });
 

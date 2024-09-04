@@ -7,9 +7,8 @@
       :class="{ 'in-program': !inTeamManagement }"
       dense
       :options.sync="options"
-      :items="staffMembers"
-      must-sort>
-      <template #body="props">
+      :items="staffMembers">
+      <template v-if="staffMembers.length" #body="props">
         <tr v-for="item in props.items" :key="item.id">
           <td>
             <div class="d-flex flex-column px-4 py-1 no-wrap">
@@ -17,12 +16,12 @@
               <span v-if="!inTeamManagement" class="rc-body12">  {{ getTeamNames(item) }} </span>
             </div>
           </td>
-          <td v-for="so in serviceOptions" :key="so.id" class="checkbox-cell">
+          <td v-for="so in serviceOptions" :key="so.id || so.tempId" class="checkbox-cell">
             <v-simple-checkbox
-              :data-test="`assign_service_option_${so.id}_${item.id}`"
+              :data-test="`assign_service_option_${so.id}_${item.id || item.tempId}`"
               :ripple="false"
-              :value=" isMemberAssigned(so.id, item.id)"
-              @input="onCheckAssign({ memberId: item.id, soId: so.id, value: $event })" />
+              :value=" isMemberAssigned(so.id || so.tempId, item.id)"
+              @input="onCheckAssign({ memberId: item.id, soId: so.id || so.tempId, value: $event })" />
           </td>
           <td v-if="!inTeamManagement" class="checkbox-cell">
             <rc-tooltip bottom>
@@ -51,13 +50,13 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VDataTableA11y, RcTooltip } from '@libs/component-lib/components';
-import { IServiceOption } from '@libs/entities-lib/appointment';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { DataTableHeader } from 'vuetify';
 import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { ITeamEntity } from '@libs/entities-lib/team';
+import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
 
 export default Vue.extend({
   name: 'ServiceOptionsTable',
@@ -74,7 +73,7 @@ export default Vue.extend({
     },
 
     serviceOptions: {
-      type: Array as () => IServiceOption[],
+      type: Array as () => IExtendedServiceOption[],
       required: true,
     },
 
@@ -158,13 +157,13 @@ export default Vue.extend({
     },
 
     isMemberAssigned(soId: string, memberId: string): boolean {
-      return this.serviceOptions.find((so) => so.id === soId).staffMembers.includes(memberId);
+      return this.serviceOptions.find((so) => (so.id || so.tempId) === soId)?.staffMembers.includes(memberId);
     },
 
     updateServiceOptionOnAssign(memberId: string, soId: string, value: boolean) {
        // Don't mutate the props serviceOptions
       const clonedServiceOptions = _cloneDeep(this.serviceOptions);
-      const updatedServiceOption = clonedServiceOptions.find((so) => so.id === soId);
+      const updatedServiceOption = clonedServiceOptions.find((so) => (so.id || so.tempId) === soId);
       if (value) {
         updatedServiceOption.staffMembers.push(memberId);
       } else {

@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-// import _cloneDeep from 'lodash/cloneDeep';
+import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@libs/component-lib/components';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useTeamStore } from '@/pinia/team/team';
@@ -114,9 +114,11 @@ import { DataTableHeader } from 'vuetify';
 import { ISearchParams } from '@libs/shared-lib/types';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { EFilterKeyType } from '@libs/component-lib/types';
-import { IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { SERVICE_OPTIONS } from '../../appointments/home/mocks';
 import AssignServiceOptions from './AssignServiceOptions.vue';
+import { validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
@@ -146,6 +148,18 @@ export default mixins(TablePaginationSearchMixin).extend({
       type: Array as ()=> IServiceOption[],
       required: true,
     },
+    /**
+     * Is the appointment program being created or edited
+     */
+     isEditMode: {
+      type: Boolean,
+      required: true,
+    },
+
+    initialStaffMembers: {
+      type: Array as ()=> IUserAccountMetadata[],
+      required: true,
+    },
   },
 
   data() {
@@ -164,9 +178,10 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   async created() {
-    this.localServiceOptions = SERVICE_OPTIONS;// _cloneDeep(this.serviceOptions);
+    // this.localServiceOptions = SERVICE_OPTIONS;// _cloneDeep(this.serviceOptions);
+    this.localServiceOptions = _cloneDeep(this.serviceOptions);
+    this.allStaffMembers = _cloneDeep(this.initialStaffMembers);
     await this.fetchAssignableTeams();
-    await this.fetchInitialStaffMembers();
   },
 
   computed: {
@@ -199,6 +214,10 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableData(): IUserAccountMetadata[] {
       return this.combinedUserAccountStore.getByIds(this.searchResultIds).map((i) => i.metadata);
     },
+
+    appointmentProgram(): IAppointmentProgram {
+      return useAppointmentProgramStore().getById(this.appointmentProgramId);
+    },
   },
 
   watch: {
@@ -225,15 +244,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (res) {
         this.teams = res.values;
       }
-    },
-
-    async fetchInitialStaffMembers() {
-      const allIds = this.localServiceOptions.reduce((ids, so) => {
-        ids.push(...so.staffMembers);
-        return ids;
-      }, []);
-      const uniqueIds = [...new Set(allIds)];
-      this.allStaffMembers = await useUserAccountMetadataStore().fetchByIds(uniqueIds, true);
     },
 
     isMemberSelected(teamMember: IUserAccountMetadata) {
@@ -286,11 +296,33 @@ export default mixins(TablePaginationSearchMixin).extend({
       return res;
     },
 
-    onSubmit() {
-      if (this.allUsersAreAssigned()) {
-        // make call to update service options
-      } else {
+    async onSubmit() {
+      if (!this.allUsersAreAssigned()) {
         this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.notAllMembersAreAssigned') });
+        return;
+      }
+
+      if (this.isEditMode) {
+        if (!validateHasStaffMembersPolicy({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.atLeastOneStaffMember') });
+          return;
+        }
+
+        this.loading = true;
+        const res = await useAppointmentProgramStore().updateStaffMembers(this.appointmentProgramId, { serviceOptions: this.localServiceOptions
+            .map((so) => ({ serviceOptionId: so.id, staffMembers: so.staffMembers })) });
+        if (res) {
+          this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
+          this.$emit('update:show', false);
+        } else {
+          this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
+          this.loading = false;
+        }
+      // The appointment program is being created, the staff members are being added to the payload
+      } else {
+        this.$emit('submit', this.localServiceOptions);
+        this.$emit('update:initialStaffMembers', this.allStaffMembers);
+        this.$emit('update:show', false);
       }
     },
 

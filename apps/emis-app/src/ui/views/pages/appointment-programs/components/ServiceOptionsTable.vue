@@ -66,16 +66,17 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
-import { IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
+import { validateCanDeleteServiceOptionPolicy } from '../appointmentProgramsHelper';
 import CreateEditServiceOption from '../create-edit/CreateEditServiceOption.vue';
 
 export interface IExtendedServiceOption extends IServiceOption {
-  tempId?: Number;
+  tempId?: string;
 }
 
 export default Vue.extend({
@@ -114,7 +115,7 @@ export default Vue.extend({
       loading: false,
       selectedServiceOption: null,
       showServiceOptionDialog: false,
-      serviceOptionTempId: 0,
+      serviceOptionTempId: '0',
     };
   },
 
@@ -177,6 +178,9 @@ export default Vue.extend({
       return useAppointmentProgramStore().getAppointmentModalities(this.serviceOptions.map((o) => o.appointmentModalities?.map((m) => m.optionItemId)).flat());
     },
 
+    appointmentProgram(): IAppointmentProgram {
+      return useAppointmentProgramStore().getById(this.appointmentProgramId);
+    },
   },
 
   async created() {
@@ -212,7 +216,7 @@ export default Vue.extend({
 
     async deleteServiceOption(serviceOption: IExtendedServiceOption) {
       if (this.isEditMode) {
-        if (this.serviceOptions.length === 1) {
+        if (!validateCanDeleteServiceOptionPolicy(this.appointmentProgram)) {
           this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.serviceOption.deleteUniqueServiceOption.error') });
           return;
         }
@@ -244,7 +248,7 @@ export default Vue.extend({
     },
 
     onAdd() {
-      this.serviceOptionTempId += 1;
+      this.serviceOptionTempId = (+this.serviceOptionTempId + 1).toString();
       this.showServiceOptionDialog = true;
     },
 

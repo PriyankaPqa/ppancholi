@@ -77,6 +77,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { AppointmentProgram, IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { IMultilingual } from '@libs/shared-lib/types';
+import { validateCanDeleteServiceOptionPolicy } from '@/ui/views/pages/appointment-programs/appointmentProgramsHelper';
 
 export default Vue.extend({
   name: 'ServiceOptionDetails',
@@ -162,7 +163,7 @@ export default Vue.extend({
     },
 
    async deleteServiceOption() {
-      if (this.appointmentProgram.serviceOptions.length === 1) {
+      if (!validateCanDeleteServiceOptionPolicy(this.appointmentProgram)) {
           this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.serviceOption.deleteUniqueServiceOption.error') });
           return;
       }
