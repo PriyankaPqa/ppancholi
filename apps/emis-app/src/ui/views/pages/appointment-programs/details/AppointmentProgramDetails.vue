@@ -64,6 +64,7 @@
         <staff-members-table
           :appointment-program-id="appointmentProgram.id"
           is-edit-mode
+          :event-id="id"
           :service-options="appointmentProgram.serviceOptions" />
       </v-col>
     </v-row>
@@ -98,6 +99,10 @@ export default Vue.extend({
   },
 
   props: {
+    id: {
+      type: String,
+      required: true,
+    },
     appointmentProgramId: {
       type: String,
       required: true,

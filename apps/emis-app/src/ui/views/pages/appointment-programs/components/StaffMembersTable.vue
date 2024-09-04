@@ -140,6 +140,7 @@ export default Vue.extend({
 
   async created() {
     await useAppointmentProgramStore().fetchServiceOptionTypes();
+    await this.fetchInitialStaffMembers();
   },
 
   methods: {

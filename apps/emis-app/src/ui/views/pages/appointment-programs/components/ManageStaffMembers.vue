@@ -69,7 +69,7 @@
             <template #[`item.${customColumns.name}`]="{ item }">
               <div class="d-flex flex-column">
                 <div class="d-flex align-center">
-                  <v-icon v-if="isPrimaryContact(item.id)" data-test="primary_icon" size="14" color="red">
+                  <v-icon v-if="item && isPrimaryContact(item.id)" data-test="primary_icon" size="14" color="red">
                     mdi-account
                   </v-icon>
                   <span class="rc-body14 fw-bold ml-1">  {{ item.displayName }} </span>
@@ -82,7 +82,7 @@
               <v-simple-checkbox
                 :data-test="`select_${item.id}`"
                 :ripple="false"
-                :value="isMemberSelected(item)"
+                :value="isMemberSelected(item.id)"
                 @input="onSelectTeamMember({ item, value: $event })" />
             </template>
           </rc-data-table>
@@ -251,7 +251,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     isPrimaryContact(teamMemberId: string) {
-      return this.selectedTeam?.teamMembers?.find((m) => m.id === teamMemberId).isPrimaryContact;
+      return this.selectedTeam?.teamMembers?.find((m) => m.id === teamMemberId)?.isPrimaryContact;
     },
 
     onSelectTeamMember({ item, value }:{ item: IUserAccountMetadata, value: boolean }) {
