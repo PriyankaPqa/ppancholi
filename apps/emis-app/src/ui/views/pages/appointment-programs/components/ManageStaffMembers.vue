@@ -56,7 +56,7 @@
             :options.sync="options"
             :initial-search="params && params.search"
             :custom-columns="Object.values(customColumns)"
-            :item-class="(item)=> isMemberSelected(item) ? 'row_active' : ''"
+            :item-class="(item)=> isMemberSelected(item.id) ? 'row_active' : ''"
             :has-border="false"
             :items="tableData"
             @search="search">
@@ -107,7 +107,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@libs/component-lib/components';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useTeamStore } from '@/pinia/team/team';
-import { ITeamEntity, mockTeamEntity } from '@libs/entities-lib/team';
+import { ITeamEntity } from '@libs/entities-lib/team';
 import { IdParams, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { DataTableHeader } from 'vuetify';
@@ -116,6 +116,8 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { EFilterKeyType } from '@libs/component-lib/types';
 import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
+import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
+import RcDataTable from '@libs/component-lib/components/organism/RcDataTable/RcDataTable.vue';
 import AssignServiceOptions from './AssignServiceOptions.vue';
 import { validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
 
@@ -125,6 +127,8 @@ export default mixins(TablePaginationSearchMixin).extend({
   components: {
     RcDialog,
     AssignServiceOptions,
+    VSelectWithValidation,
+    RcDataTable,
   },
 
   props: {
@@ -169,7 +173,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       teamMembersLoading: false,
       selectedTeam: null as ITeamEntity,
       teamMembers: [] as IUserAccountMetadata[],
-      teams: [mockTeamEntity()] as ITeamEntity[],
+      teams: [] as ITeamEntity[],
       allStaffMembers: [] as IUserAccountMetadata[],
       localServiceOptions: [] as IServiceOption[],
     };
@@ -236,19 +240,18 @@ export default mixins(TablePaginationSearchMixin).extend({
      const res = await useTeamStore().search({ params: {
         filter: { Entity: { UseForAppointments: true, Events: { any: { Id: { value: this.eventId, type: EFilterKeyType.Guid } } } } },
         orderBy: 'Entity/Name asc',
-      },
-      includeInactiveItems: false });
+      } });
       if (res) {
         this.teams = res.values;
       }
     },
 
-    isMemberSelected(teamMember: IUserAccountMetadata) {
-      return this.allStaffMembers.some((m) => m.id === teamMember.id);
+    isMemberSelected(teamMemberId:string) {
+      return this.allStaffMembers.some((m) => m.id === teamMemberId);
     },
 
     isPrimaryContact(teamMemberId: string) {
-      return this.selectedTeam.teamMembers.find((m) => m.id === teamMemberId).isPrimaryContact;
+      return this.selectedTeam?.teamMembers?.find((m) => m.id === teamMemberId).isPrimaryContact;
     },
 
     onSelectTeamMember({ item, value }:{ item: IUserAccountMetadata, value: boolean }) {
@@ -257,7 +260,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       } else {
         this.allStaffMembers = this.allStaffMembers.filter((m) => m.id !== item.id);
         this.localServiceOptions.forEach((so) => {
-          so.staffMembers = so.staffMembers.filter((m) => m !== item.id);
+          so.staffMembers = so.staffMembers?.filter((m) => m !== item.id);
         });
       }
     },
@@ -273,12 +276,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       this.teamMembersLoading = true;
       const filter = {
           Metadata: {
-            TeamsAsString: {
-              contains: this.selectedTeam.id,
-            },
-            DisplayName: {
-              contains: this.searchTerm || '',
-            },
+            TeamsAsString: { contains: this.selectedTeam.id },
+            DisplayName: { contains: this.searchTerm || '' },
           },
       };
       const res = await this.combinedUserAccountStore.search({

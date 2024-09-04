@@ -4,7 +4,7 @@ import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appo
 import { AppointmentProgram, mockAppointmentProgram, mockServiceOption } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
-import { validateCanSetActiveStatus, validateHasServiceOptionsPolicy, validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
+import { validateCanSetActiveStatus, validateMustHaveServiceOptionsPolicy, validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
 import Component from './CreateEditAppointmentProgram.vue';
 
 jest.mock('../appointmentProgramsHelper');
@@ -227,7 +227,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
       beforeEach(async () => {
         await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        validateHasServiceOptionsPolicy.mockImplementation(() => true);
+        validateMustHaveServiceOptionsPolicy.mockImplementation(() => true);
         validateHasStaffMembersPolicy.mockImplementation(() => true);
       });
 
@@ -240,11 +240,11 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('does not call create unless all policy validations succeed', async () => {
         wrapper.vm.createAppointmentProgram = jest.fn();
-        validateHasServiceOptionsPolicy.mockImplementation(() => false);
+        validateMustHaveServiceOptionsPolicy.mockImplementation(() => false);
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.showServiceOptionsError).toBeTruthy();
-        validateHasServiceOptionsPolicy.mockImplementation(() => true);
+        validateMustHaveServiceOptionsPolicy.mockImplementation(() => true);
         validateHasStaffMembersPolicy.mockImplementation(() => false);
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);

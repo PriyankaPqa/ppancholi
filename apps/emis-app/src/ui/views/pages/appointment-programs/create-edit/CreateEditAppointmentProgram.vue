@@ -158,7 +158,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { NavigationGuardNext, Route } from 'vue-router';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
-import { validateCanSetActiveStatus, validateHasServiceOptionsPolicy, validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
+import { validateCanSetActiveStatus, validateMustHaveServiceOptionsPolicy, validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -337,7 +337,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submit() {
-      const hasServiceOptionsPolicyIsValid = validateHasServiceOptionsPolicy(this.appointmentProgram);
+      const hasServiceOptionsPolicyIsValid = validateMustHaveServiceOptionsPolicy(this.appointmentProgram);
       if (!hasServiceOptionsPolicyIsValid) {
         this.showServiceOptionsError = true;
       }
