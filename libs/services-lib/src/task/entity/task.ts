@@ -12,8 +12,8 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
     super(http, API_URL_SUFFIX, CONTROLLER);
   }
 
-  async createTask(task: ITaskEntityData): Promise<ITaskEntityData> {
-    const parseTask = this.parseTaskPayload(task);
+  async createTask(task: ITaskEntityData, sendNotification = false): Promise<ITaskEntityData> {
+    const parseTask = this.parseTaskPayload(task, sendNotification);
     return this.http.post(this.getItemUrl(`${this.baseUrl}`, task), parseTask, { globalHandler: GlobalHandler.Partial });
   }
 
@@ -60,11 +60,11 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
 
   /** Private methods * */
 
-  parseTaskPayload(task: ITaskEntityData | IUpdateTaskRequest): ITaskEntityData | IUpdateTaskRequest {
+  parseTaskPayload(task: ITaskEntityData | IUpdateTaskRequest, sendNotification = false) {
     if (!task?.subCategory?.optionItemId) {
       task.subCategory = null;
     }
     task.dueDate = task.dueDate ? new Date(task.dueDate).toISOString() : null;
-    return { ...task };
+    return { ...task, sendNotification };
   }
 }

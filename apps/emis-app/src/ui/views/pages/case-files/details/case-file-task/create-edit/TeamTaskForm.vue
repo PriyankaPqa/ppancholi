@@ -1,5 +1,5 @@
 <template>
-  <v-row v-if="task" justify="center" class="my-8 rc-body14">
+  <v-row v-if="task" justify="center" class="rc-body14">
     <v-col>
       <v-row class="mb-6 ml-0 align-center">
         <v-checkbox
@@ -30,7 +30,7 @@
             :item-value="(item) => item ? item.id : null"
             :rules="rules.teamTaskCategory"
             :label="$t('task.task_category') + ' *'"
-            :disabled="formDisabled"
+            :disabled="formDisabled || lockCategory"
             data-test="task-category-team-task"
             @change="setTaskCategoryIdAndResetForm($event)" />
           <div v-if="selectedTaskCategory && $m(selectedTaskCategory.description)" class="ml-1 mb-4 option-list-description" data-test="task-category-description">
@@ -163,6 +163,11 @@ export default mixins(caseFileTask).extend({
       type: String,
       required: true,
     },
+
+    lockCategory: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -224,11 +229,9 @@ export default mixins(caseFileTask).extend({
   async created() {
     await useTaskStore().fetchTaskCategories();
     await this.fetchFAPayments();
-    if (this.isEditMode) {
-      this.selectedTaskCategoryId = this.taskData.category.optionItemId;
-      this.selectedSubCategoryId = this.taskData.subCategory ? this.taskData.subCategory.optionItemId : '';
-      this.localTeamTaskForm.financialAssistancePaymentId = this.taskData.financialAssistancePaymentId;
-    }
+    this.selectedTaskCategoryId = this.taskData?.category?.optionItemId || '';
+    this.selectedSubCategoryId = this.taskData?.subCategory?.optionItemId || '';
+    this.localTeamTaskForm.financialAssistancePaymentId = this.taskData?.financialAssistancePaymentId;
   },
 
   methods: {

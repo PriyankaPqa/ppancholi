@@ -140,6 +140,7 @@ describe('ImpactedIndividualsV2.vue', () => {
       });
 
       it('returns false when a pending request or case file disabled', async () => {
+        const bck = bookingRequestStore.getByCaseFile;
         featureList = [wrapper.vm.$featureKeys.Lodging];
         await doMount();
         await wrapper.setData({ userCanProvideCrcAddress: false });
@@ -154,9 +155,10 @@ describe('ImpactedIndividualsV2.vue', () => {
         await doMount(false, 5);
         await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
+        bookingRequestStore.getByCaseFile = bck;
       });
 
-      it('returns false when primary has crc provided', async () => {
+      it('returns false when anyone has crc provided', async () => {
         const bck = bookingRequestStore.getByCaseFile;
         featureList = [wrapper.vm.$featureKeys.Lodging];
         bookingRequestStore.getByCaseFile = jest.fn(() => []);
@@ -170,6 +172,71 @@ describe('ImpactedIndividualsV2.vue', () => {
         await doMount(false, 1);
         await wrapper.setData({ userCanProvideCrcAddress: false });
         expect(wrapper.vm.canRequestBooking).toBeFalsy();
+
+        bookingRequestStore.getByCaseFile = bck;
+      });
+    });
+
+    describe('canRequestUpdate', () => {
+      it('returns true for non booking people l1+', async () => {
+        const bck = bookingRequestStore.getByCaseFile;
+        featureList = [wrapper.vm.$featureKeys.Lodging];
+        bookingRequestStore.getByCaseFile = jest.fn(() => []);
+        const individual = detailsMock.mocks.individuals[0];
+        individual.currentAddress.crcProvided = true;
+
+        await doMount();
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeTruthy();
+        await wrapper.setData({ userCanProvideCrcAddress: true });
+        expect(wrapper.vm.canRequestUpdate).toBeFalsy();
+
+        await doMount(false, 1);
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeTruthy();
+
+        await doMount(false, 0);
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeFalsy();
+        bookingRequestStore.getByCaseFile = bck;
+      });
+
+      it('returns false when a pending request or case file disabled', async () => {
+        const bck = bookingRequestStore.getByCaseFile;
+        featureList = [wrapper.vm.$featureKeys.Lodging];
+        const individual = detailsMock.mocks.individuals[0];
+        individual.currentAddress.crcProvided = true;
+
+        await doMount();
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeFalsy();
+
+        bookingRequestStore.getByCaseFile = jest.fn(() => []);
+        await doMount(false, 5);
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeTruthy();
+
+        detailsMock.mocks.caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        await doMount(false, 5);
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeFalsy();
+        bookingRequestStore.getByCaseFile = bck;
+      });
+
+      it('returns true when anyone has crc provided', async () => {
+        const bck = bookingRequestStore.getByCaseFile;
+        featureList = [wrapper.vm.$featureKeys.Lodging];
+        bookingRequestStore.getByCaseFile = jest.fn(() => []);
+
+        const individual = detailsMock.mocks.individuals[0];
+        individual.currentAddress.crcProvided = false;
+        await doMount(false, 1);
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeFalsy();
+        individual.currentAddress.crcProvided = true;
+        await doMount(false, 1);
+        await wrapper.setData({ userCanProvideCrcAddress: false });
+        expect(wrapper.vm.canRequestUpdate).toBeTruthy();
 
         bookingRequestStore.getByCaseFile = bck;
       });
@@ -280,6 +347,16 @@ describe('ImpactedIndividualsV2.vue', () => {
         expect(wrapper.vm.selectedIndividuals).toEqual([detailsMock.mocks.individuals[0].id, detailsMock.mocks.individuals[1].id]);
         expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.ExtendStay);
         expect(wrapper.vm.showMoveDialog).toBeTruthy();
+      });
+    });
+
+    describe('taskSaved', () => {
+      it('hides the dialog and shows a confirmation', async () => {
+        wrapper.vm.$toasted.global.success = jest.fn();
+        await wrapper.setData({ showTaskDialog: true });
+        wrapper.vm.taskSaved();
+        expect(wrapper.vm.showTaskDialog).toBeFalsy();
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('impactedIndividuals.requestSent');
       });
     });
 

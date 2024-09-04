@@ -92,6 +92,15 @@ describe('>>> Teams Service', () => {
       );
     });
 
+    it('should link to correct URL when isLodging', async () => {
+      await service.getTeamsByEvent({ eventId: '1234', isLodging: true });
+      expect(http.get).toHaveBeenCalledWith(
+        'team/search/teamsV2?manageableTeamsOnly=false',
+        { params: { filter: { Entity: { Events: { any: { Id: { value: '1234', type: 'guid' } } } }, 'Entity/Status': 'Active', 'Entity/UseForLodging': true } },
+        isOData: true },
+      );
+    });
+
     it('should link to correct URL with teamIds', async () => {
       const teamIds = ['mock-team-id-1, mock-team-id-2'];
       await service.getTeamsByEvent({ eventId: '1234', teamIds });

@@ -14,6 +14,11 @@
           </v-icon>
           {{ $t('impactedIndividuals.bookingRequest') }}
         </v-btn>
+
+        <v-btn v-if="canRequestUpdate" class="primary mb-6" @click="showTaskDialog = true">
+          {{ $t('impactedIndividuals.requestUpdate') }}
+        </v-btn>
+
         <div class="ml-auto mb-6 d-flex">
           <v-chip v-if="pendingBookingRequest" label color="orange">
             <v-icon class="mr-2" small>
@@ -64,11 +69,26 @@
       :show.sync="showMoveDialog"
       :lodging-mode="lodgingMode"
       @close="showMoveDialog = false;" />
+
+    <rc-dialog
+      v-if="showTaskDialog"
+      :title="$t('impactedIndividuals.requestUpdate')"
+      :show.sync="showTaskDialog"
+      :show-submit="false"
+      :show-cancel="false"
+      content-only-scrolling
+      content-padding="0"
+      min-height="620"
+      width="1000"
+      persistent
+      @close="showTaskDialog = false;">
+      <create-edit-task :id="caseFileId" task-type="team" :dialog-mode="true" :lodging-task="true" @cancel="showTaskDialog = false;" @saved="taskSaved" />
+    </rc-dialog>
   </rc-page-content>
 </template>
 
 <script lang="ts">
-import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
+import { RcPageContent, RcPageLoading, RcDialog } from '@libs/component-lib/components';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { BookingRequestState, IBookingRequest } from '@libs/entities-lib/booking-request';
 import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
@@ -84,6 +104,7 @@ import ImpactedIndividualCardV2 from './components/ImpactedIndividualCardV2.vue'
 import SelectIndividualsDialog from './components/SelectIndividualsDialog.vue';
 import BookingSetupDialog from '../../../lodging/BookingSetupDialog.vue';
 import { LodgingMode } from '../../../lodging/bookingHelper';
+import CreateEditTask from '../case-file-task/create-edit/CreateEditTask.vue';
 
 export default mixins(caseFileDetail).extend({
   name: 'ImpactedIndividuals',
@@ -94,6 +115,8 @@ export default mixins(caseFileDetail).extend({
     RcPageLoading,
     SelectIndividualsDialog,
     BookingSetupDialog,
+    CreateEditTask,
+    RcDialog,
   },
 
   data() {
@@ -105,6 +128,7 @@ export default mixins(caseFileDetail).extend({
       showModifyLodging: false,
       selectedIndividuals: [] as string[],
       showMoveDialog: false,
+      showTaskDialog: false,
       lodgingMode: null as LodgingMode,
     };
   },
@@ -119,9 +143,17 @@ export default mixins(caseFileDetail).extend({
       return useBookingRequestStore().getByCaseFile(this.caseFileId).find((b) => b.state === BookingRequestState.Pending);
     },
 
+    canAskForHelpFromLodging(): boolean {
+      return this.$hasFeature(this.$featureKeys.Lodging) && !this.pendingBookingRequest && !this.readonly && !this.userCanProvideCrcAddress
+        && this.$hasLevel(UserRoles.level1) && !this.disableEditingByStatus;
+    },
+
     canRequestBooking(): boolean {
-      return this.$hasFeature(this.$featureKeys.Lodging) && !this.individuals.find((i) => i.personId === this.primaryMember.id && i.currentAddress.crcProvided)
-        && !this.pendingBookingRequest && !this.readonly && !this.userCanProvideCrcAddress && this.$hasLevel(UserRoles.level1) && !this.disableEditingByStatus;
+      return this.canAskForHelpFromLodging && !this.individuals.find((i) => i.currentAddress.crcProvided);
+    },
+
+    canRequestUpdate(): boolean {
+      return this.canAskForHelpFromLodging && !!this.individuals.find((i) => i.currentAddress.crcProvided);
     },
 
     canMoveToNewAddress(): boolean {
@@ -190,6 +222,11 @@ export default mixins(caseFileDetail).extend({
       this.lodgingMode = individual.currentAddress.crcProvided
         ? (this.userCanProvideCrcAddress ? LodgingMode.EditCrcProvidedAsLodging : LodgingMode.EditCrcProvidedAsNonLodging) : LodgingMode.EditNotCrcProvided;
       this.showMoveDialog = true;
+    },
+
+    taskSaved() {
+      this.showTaskDialog = false;
+      this.$toasted.global.success(this.$t('impactedIndividuals.requestSent'));
     },
   },
 });

@@ -1,15 +1,20 @@
 <template>
   <validation-observer ref="form" v-slot="{ failed }" slim>
     <page-template ref="pageTemplate" :show-left-menu="false" :loading="loading">
-      <rc-page-content :title="isEditMode ? $t(`task.edit.title.${taskType}`) : $t(`task.create.title.${taskType}`)" :show-help="false">
+      <rc-page-content
+        :title="isEditMode ? $t(`task.edit.title.${taskType}`) : $t(`task.create.title.${taskType}`)"
+        :show-help="false"
+        :show-title="!dialogMode"
+        :fullscreen="dialogMode">
         <v-row class="justify-center">
-          <v-col cols="12" lg="7">
-            <v-container>
+          <v-col cols="12" :lg="dialogMode ? 12 : 7">
+            <v-container :class="dialogMode ? '' : 'my-8'">
               <team-task-form
                 v-if="taskType === 'team'"
                 :case-file-id="id"
                 :task-data.sync="localTask"
                 :is-edit-mode="isEditMode"
+                :lock-category="lodgingTask"
                 @reset-form-validation="resetFormValidation()">
                 <template #actionSection>
                   <v-row
@@ -174,15 +179,19 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
   },
 
   props: {
-    // case file id
-    id: {
-      type: String,
-      required: true,
+    dialogMode: {
+      type: Boolean,
+      default: false,
     },
 
     taskType: {
       type: String,
       default: '',
+    },
+
+    lodgingTask: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -279,7 +288,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       await this.loadTask();
       this.setOriginalData();
     } else {
-      this.prepareCreateTask();
+      await this.prepareCreateTask();
     }
     if (this.taskType === 'team') {
       await this.fetchAssignedTeam();
@@ -293,7 +302,11 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     back(): void {
-      this.$router.replace({ name: routes.caseFile.task.home.name });
+      if (this.dialogMode) {
+        this.$emit('cancel');
+      } else {
+        this.$router.replace({ name: routes.caseFile.task.home.name });
+      }
     },
 
     setOriginalData() {
@@ -314,14 +327,19 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       }
       try {
         this.isSubmitting = true;
-        const res = await useTaskStore().createTask(this.localTask);
+        const res = await useTaskStore().createTask(this.localTask, this.lodgingTask);
         if (res) {
           const message: TranslateResult = res.taskType === TaskType.Team
             ? this.$t('task.team_task_created')
             : this.$t('task.personal_task_created');
 
           this.$toasted.global.success(message);
-          await this.$router.replace({ name: routes.caseFile.task.details.name, params: { taskId: res.id } });
+
+          if (this.dialogMode) {
+            this.$emit('saved');
+          } else {
+            await this.$router.replace({ name: routes.caseFile.task.details.name, params: { taskId: res.id } });
+          }
         }
 
         this.resetFormValidation();
@@ -374,18 +392,26 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       }
     },
 
-    prepareCreateTask() {
+    async prepareCreateTask() {
       const task = new TaskEntity();
       task.caseFileId = this.id;
       task.taskType = this.taskType === 'team' ? TaskType.Team : TaskType.Personal;
       task.taskStatus = TaskStatus.InProgress;
+      if (this.lodgingTask) {
+        const categ = (await useTaskStore().fetchTaskCategories()).find((c) => c.isLodging);
+        if (categ) {
+          task.category = { optionItemId: categ.id, specifiedOther: null };
+          this.selectedTaskCategoryId = categ.id;
+        }
+      }
       this.localTask = task;
     },
 
     async fetchAssignedTeam() {
       if (!this.isEditMode) {
-        const escalationTeamRes = await useTeamStore().getTeamsByEvent({ eventId: this.caseFile.eventId, isEscalation: true });
-        this.localTask.assignedTeamId = escalationTeamRes?.[0]?.id;
+        const params = this.lodgingTask ? { eventId: this.caseFile.eventId, isLodging: true } : { eventId: this.caseFile.eventId, isEscalation: true };
+        const defaultTeamResult = await useTeamStore().getTeamsByEvent(params);
+        this.localTask.assignedTeamId = defaultTeamResult?.[0]?.id;
       } else {
         await useTeamStore().fetchByIds([this.task.assignedTeamId], true);
         this.localTask.assignedTeamId = this.task.assignedTeamId;

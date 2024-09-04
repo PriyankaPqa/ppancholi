@@ -67,9 +67,12 @@ describe('Task Store', () => {
         const res = mockTeamTaskEntity({ id: 'mock-id-1' });
         entityService.createTask = jest.fn(() => res);
         await store.createTask(payload);
-        expect(entityService.createTask).toHaveBeenCalledWith(payload);
+        expect(entityService.createTask).toHaveBeenCalledWith(payload, false);
         expect(bComponents.addNewlyCreatedId).toBeCalledWith(res);
         expect(bComponents.set).toBeCalledWith(res);
+
+        await store.createTask(payload, true);
+        expect(entityService.createTask).toHaveBeenCalledWith(payload, true);
       });
     });
 

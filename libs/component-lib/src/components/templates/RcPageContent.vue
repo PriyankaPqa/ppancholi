@@ -8,7 +8,7 @@
       <slot name="top" />
 
       <v-card :class="{ 'pageContentCard full-width pageContent__card': true, height100: fullHeight }">
-        <v-toolbar color="primary darken-1" dark flat class="flex-grow-0 toolbar">
+        <v-toolbar v-if="showTitle" color="primary darken-1" dark flat class="flex-grow-0 toolbar">
           <rc-tooltip v-if="showAddButton" bottom>
             <template #activator="{ on }">
               <v-btn
@@ -242,6 +242,10 @@ export default Vue.extend({
     loading: {
       type: Boolean,
       default: false,
+    },
+    showTitle: {
+      type: Boolean,
+      default: true,
     },
   },
 
