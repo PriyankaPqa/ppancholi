@@ -2850,6 +2850,8 @@
     "impactedIndividuals.bookingRequest": "Requête de logement",
     "impactedIndividuals.crcProvided.notReceivingAssistance.message": "Un ou plusieurs individus sélectionné(s) sont indiqué comme ne recevant pas d'aide",
     "impactedIndividuals.crcProvided.notReceivingAssistance.title": "On ne peut sélectionner une adresse fournie par la CRC",
+    "impactedIndividuals.checkInDateDoesntMatch.confirm.title": "Date de départ précédente ne correspond pas à la nouvelle date d'arrivée",
+    "impactedIndividuals.checkInDateDoesntMatch.confirm": "Une personne ou plus étant déplacée a une adresse précédente fournie par la CRC mais la date de départ ne correspond pas à la nouvelle date d'arrivée.<br\/><br\/><ul><li><b>PRÉCÉDENT<\/b> - Retourne à l'écran pour modifier les informations.<\/li><li><b>CONTINUER<\/b> - Continuer avec les informations actuelles.<\/li><\/ul>",
     "impactedIndividuals.current_temporary_address": "Adresse temporaire actuelle",
     "impactedIndividuals.editAddress": "Corriger l'adresse",
     "impactedIndividuals.editedAddress": "Adresse corrigée",

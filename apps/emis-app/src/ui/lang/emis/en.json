@@ -2854,6 +2854,8 @@
     "impactedIndividuals.editAddress": "Edit address",
     "impactedIndividuals.editedAddress": "Edited address",
     "impactedIndividuals.extendStay": "Extend stay",
+    "impactedIndividuals.checkInDateDoesntMatch.confirm.title": "Previous check out date and new check in date do not match",
+    "impactedIndividuals.checkInDateDoesntMatch.confirm": "One or more of the people being moved have a previous address provided by the CRC but the check out date doesn't match the new check in date.<br\/><br\/><ul><li><b>GO BACK<\/b> - Return to the previous step to modify the information.<\/li><li><b>CONTINUE<\/b> - Proceed with the current information.<\/li><\/ul>",
     "impactedIndividuals.extendedStay": "Check out date updated",
     "impactedIndividuals.impactedIndividuals": "Impacted individuals",
     "impactedIndividuals.membersMoved": "Move completed",

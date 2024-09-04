@@ -470,6 +470,38 @@ describe('BookingSetupDialog.vue', () => {
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ cancelActionLabel: 'common.buttons.back', htmlContent: 'bookingRequest.notAllMembersPicked.confirm', messages: null, submitActionLabel: 'common.buttons.continue', title: 'bookingRequest.notAllMembersPicked.confirm.title' });
       });
 
+      it('shows confirm when someone\'s old address was crc provided, the new one also, BUT the dates dont match', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        crcProvidedLodging.isMemberAlreadySelected = jest.fn(() => true);
+        detailsMock.mocks.individuals[0].currentAddress.crcProvided = true;
+        detailsMock.mocks.individuals[0].currentAddress.checkOut = '2022-01-02';
+
+        const address = new CurrentAddress();
+        address.reset(ECurrentAddressTypes.HotelMotel);
+        address.checkIn = '2022-01-01';
+        address.checkOut = '2022-02-01';
+        await wrapper.setData({ isCrcProvided: true });
+        await wrapper.setData({ bookings: [{ address, peopleInRoom: ['indv-1'], confirmationNumber: '', nightlyRate: wrapper.vm.defaultAmount, numberOfNights: null, uniqueNb: -1 }] });
+
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ cancelActionLabel: 'common.buttons.back', htmlContent: 'impactedIndividuals.checkInDateDoesntMatch.confirm', messages: null, submitActionLabel: 'common.buttons.continue', title: 'impactedIndividuals.checkInDateDoesntMatch.confirm.title' });
+
+        address.checkIn = '2022-01-02';
+        jest.clearAllMocks();
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+
+        address.checkIn = '2022-01-01';
+        await wrapper.setData({ isCrcProvided: false });
+
+        jest.clearAllMocks();
+        wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+      });
+
       it('does the calls to save data', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         crcProvidedLodging.isMemberAlreadySelected = jest.fn(() => true);

@@ -552,7 +552,7 @@ export default mixins(caseFileDetail).extend({
 
         // the address might be crc provided but this move will not require creating payments since the address is already paid for
         this.isCrcProvided = false;
-        this.bookings = [{ address: this.temporaryAddressAsCurrentAddress(this.existingAddress), peopleInRoom: [] }];
+        this.bookings = [{ address: this.temporaryAddressAsCurrentAddress(this.existingAddress), peopleInRoom: this.peopleToLodge.map((p) => p.caseFileIndividualId) }];
       } else {
         this.bookings.forEach((b) => {
           b.address.crcProvided = this.isCrcProvided;
@@ -567,6 +567,23 @@ export default mixins(caseFileDetail).extend({
               title: this.$t('bookingRequest.notAllMembersPicked.confirm.title'),
               messages: null,
               htmlContent: this.$t('bookingRequest.notAllMembersPicked.confirm') as string,
+              submitActionLabel: this.$t('common.buttons.continue'),
+              cancelActionLabel: this.$t('common.buttons.back'),
+            }))) {
+            return;
+          }
+        }
+
+        if (!this.isEditOfAddress
+            // checks if anyone was booked into a new crc address and had a current crc address but with a checkout date thats not the new checkin date
+            && this.bookings.find((b) => b.address.crcProvided
+                && b.peopleInRoom.find((cId) => this.peopleToLodge.find((p) => p.caseFileIndividualId === cId
+                    && p.caseFileIndividual.currentAddress.crcProvided
+                    && new Date(p.caseFileIndividual.currentAddress.checkOut).toISOString() !== new Date(b.address.checkIn).toISOString())))) {
+          if (!(await this.$confirm({
+              title: this.$t('impactedIndividuals.checkInDateDoesntMatch.confirm.title'),
+              messages: null,
+              htmlContent: this.$t('impactedIndividuals.checkInDateDoesntMatch.confirm') as string,
               submitActionLabel: this.$t('common.buttons.continue'),
               cancelActionLabel: this.$t('common.buttons.back'),
             }))) {
