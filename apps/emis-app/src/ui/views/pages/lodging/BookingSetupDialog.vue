@@ -642,6 +642,7 @@ export default mixins(caseFileDetail).extend({
       let saveOccured = false;
       for (const b of this.bookings) {
         if (!b.address.hasCrcProvided()) {
+          // BE doesnt allow this to false for addresses which cant be true or false...
           b.address.crcProvided = null;
         }
         // no need to send people to the same address if they've picked the same one that some already have or havent made a change

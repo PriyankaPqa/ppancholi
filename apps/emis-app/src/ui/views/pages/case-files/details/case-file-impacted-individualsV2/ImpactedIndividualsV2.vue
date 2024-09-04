@@ -82,7 +82,7 @@
       width="1000"
       persistent
       @close="showTaskDialog = false;">
-      <create-edit-task :id="caseFileId" task-type="team" :dialog-mode="true" :lodging-task="true" @cancel="showTaskDialog = false;" @saved="taskSaved" />
+      <create-edit-task :id="caseFileId" task-type="team" :dialog-mode="true" :is-lodging-task="true" @cancel="showTaskDialog = false;" @saved="taskSaved" />
     </rc-dialog>
   </rc-page-content>
 </template>

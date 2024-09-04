@@ -283,7 +283,7 @@ describe('CreateEditTask.vue', () => {
           propsData: {
             id: 'mock-case-file-id-1',
             taskType: 'team',
-            lodgingTask: true,
+            isLodgingTask: true,
           },
           computed: {
             caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
@@ -359,7 +359,7 @@ describe('CreateEditTask.vue', () => {
         expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: 'mock-event-id', isEscalation: true });
         expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-id-1');
 
-        await wrapper.setProps({ lodgingTask: true });
+        await wrapper.setProps({ isLodgingTask: true });
         await wrapper.vm.fetchAssignedTeam();
         expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: 'mock-event-id', isLodging: true });
         expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-id-1');
@@ -428,7 +428,7 @@ describe('CreateEditTask.vue', () => {
         expect(taskStore.createTask).toHaveBeenCalledWith(mockTeamTaskEntity(), false);
 
         await wrapper.setProps({
-          lodgingTask: true,
+          isLodgingTask: true,
         });
         await wrapper.vm.submitCreateTask();
         expect(taskStore.createTask).toHaveBeenCalledWith(mockTeamTaskEntity(), true);

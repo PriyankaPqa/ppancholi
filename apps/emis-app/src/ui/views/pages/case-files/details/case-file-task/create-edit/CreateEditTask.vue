@@ -14,7 +14,7 @@
                 :case-file-id="id"
                 :task-data.sync="localTask"
                 :is-edit-mode="isEditMode"
-                :lock-category="lodgingTask"
+                :lock-category="isLodgingTask"
                 @reset-form-validation="resetFormValidation()">
                 <template #actionSection>
                   <v-row
@@ -189,7 +189,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       default: '',
     },
 
-    lodgingTask: {
+    isLodgingTask: {
       type: Boolean,
       default: false,
     },
@@ -327,7 +327,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       }
       try {
         this.isSubmitting = true;
-        const res = await useTaskStore().createTask(this.localTask, this.lodgingTask);
+        const res = await useTaskStore().createTask(this.localTask, this.isLodgingTask);
         if (res) {
           const message: TranslateResult = res.taskType === TaskType.Team
             ? this.$t('task.team_task_created')
@@ -397,7 +397,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       task.caseFileId = this.id;
       task.taskType = this.taskType === 'team' ? TaskType.Team : TaskType.Personal;
       task.taskStatus = TaskStatus.InProgress;
-      if (this.lodgingTask) {
+      if (this.isLodgingTask) {
         const categ = (await useTaskStore().fetchTaskCategories()).find((c) => c.isLodging);
         if (categ) {
           task.category = { optionItemId: categ.id, specifiedOther: null };
@@ -409,7 +409,7 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
 
     async fetchAssignedTeam() {
       if (!this.isEditMode) {
-        const params = this.lodgingTask ? { eventId: this.caseFile.eventId, isLodging: true } : { eventId: this.caseFile.eventId, isEscalation: true };
+        const params = this.isLodgingTask ? { eventId: this.caseFile.eventId, isLodging: true } : { eventId: this.caseFile.eventId, isEscalation: true };
         const defaultTeamResult = await useTeamStore().getTeamsByEvent(params);
         this.localTask.assignedTeamId = defaultTeamResult?.[0]?.id;
       } else {
