@@ -4,13 +4,17 @@ import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-f
 import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
 import { createTestingPinia } from '@pinia/testing';
 
+import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './CreateEditAssessmentTemplate.vue';
 
 const localVue = createLocalVue();
 
-let pinia = createTestingPinia({ stubActions: false });
-let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
-let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+const pinia = createTestingPinia({ stubActions: false });
+const assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+const assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+useMockEventStore(pinia);
+useMockProgramStore(pinia);
 
 describe('CreateEditAssessmentTemplate.vue', () => {
   let wrapper;
@@ -40,9 +44,6 @@ describe('CreateEditAssessmentTemplate.vue', () => {
   };
 
   beforeEach(async () => {
-    pinia = createTestingPinia({ stubActions: false });
-    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
-    assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
     jest.clearAllMocks();
   });
 
@@ -246,7 +247,6 @@ describe('CreateEditAssessmentTemplate.vue', () => {
           propsData: {
             id: 'EVENTID',
           },
-
         });
       });
 

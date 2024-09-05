@@ -504,6 +504,36 @@ describe('CaseFilesTable.vue', () => {
       });
     });
 
+    describe('fetchData', () => {
+      let params;
+
+      beforeEach(() => {
+        params = {
+          filter: 'filter',
+          top: 10,
+          skip: 10,
+          orderBy: 'name asc',
+        };
+      });
+
+      it('should call storage actions with proper parameters', async () => {
+        await wrapper.vm.fetchData(params);
+
+        expect(services.caseFiles.searchOptimized)
+          .toHaveBeenCalledWith({
+            filter: params.filter,
+            top: params.top,
+            skip: params.skip,
+            orderBy: params.orderBy,
+            count: true,
+          }, true);
+
+        expect(householdStore.fetchByIds).toHaveBeenCalledWith(['mock-household-id-1', 'mock-household-id-1'], true);
+        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['e70da37e-67cd-4afb-9c36-530c7d8b191f', 'e70da37e-67cd-4afb-9c36-530c7d8b191f'], true);
+        expect(personStore.fetchByIds).toHaveBeenCalledWith(['3fa85f64-5717-4562-b3fc-2c963f66afa6', null], true);
+      });
+    });
+
     describe('applyCustomFilter', () => {
       describe('when value is True', () => {
         it('should call onApplyFilter with filters from the panel + filter', async () => {
@@ -543,36 +573,6 @@ describe('CaseFilesTable.vue', () => {
           expect(wrapper.vm.onApplyFilter)
             .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel, searchFilters: wrapper.vm.userSearchFilters }, null);
         });
-      });
-    });
-
-    describe('fetchData', () => {
-      let params;
-
-      beforeEach(() => {
-        params = {
-          filter: 'filter',
-          top: 10,
-          skip: 10,
-          orderBy: 'name asc',
-        };
-      });
-
-      it('should call storage actions with proper parameters', async () => {
-        await wrapper.vm.fetchData(params);
-
-        expect(services.caseFiles.searchOptimized)
-          .toHaveBeenCalledWith({
-            filter: params.filter,
-            top: params.top,
-            skip: params.skip,
-            orderBy: params.orderBy,
-            count: true,
-          }, true);
-
-        expect(householdStore.fetchByIds).toHaveBeenCalledWith(['mock-household-id-1', 'mock-household-id-1'], true);
-        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['e70da37e-67cd-4afb-9c36-530c7d8b191f', 'e70da37e-67cd-4afb-9c36-530c7d8b191f'], true);
-        expect(personStore.fetchByIds).toHaveBeenCalledWith(['3fa85f64-5717-4562-b3fc-2c963f66afa6', null], true);
       });
     });
 

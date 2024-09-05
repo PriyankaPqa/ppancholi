@@ -7,7 +7,7 @@ export function getMockExtensionComponents() {
   const options = mockOptionItemData();
   const subItems = [mockOptionSubItem()];
   return {
-    taskCategories: jest.fn(() => options),
+    taskCategories: options,
     createTask: jest.fn(() => entity),
     editTask: jest.fn(() => entity),
     fetchTaskCategories: jest.fn(() => options),

@@ -12,9 +12,11 @@ export enum DataTest {
   taskDetailsActionButton = 'task-details-action-button',
   taskDetailsActionWorkingOnItText = 'task-details-working-on-it',
   taskDetailsActionWorkingOnItToggle = 'task-details-working-on-it-toggle',
+  taskDetailsSubCategory = 'task-details-sub-category',
   taskDetailsDateAdded = 'task-details-date-added',
   backToTaskButton = 'task_details_back_btn',
   caseFileActivityTab = 'case-file-activity',
+  taskStatus = 'chip-text',
 }
 
 export class TeamTaskDetailsPage {
@@ -37,6 +39,10 @@ export class TeamTaskDetailsPage {
   private taskDetailsActionWorkingOnItText = { selector: DataTest.taskDetailsActionWorkingOnItText };
 
   private taskDetailsActionWorkingOnItToggle = { selector: DataTest.taskDetailsActionWorkingOnItToggle, type: 'input' };
+
+  private taskDetailsSubCategory = { selector: DataTest.taskDetailsSubCategory };
+
+  private taskStatus = { selector: DataTest.taskStatus };
 
   private taskDetailsDateAdded = { selector: DataTest.taskDetailsDateAdded };
 
@@ -87,6 +93,14 @@ export class TeamTaskDetailsPage {
 
   public getTeamTaskActionWorkingOnItToggle() {
     return cy.getByDataTest(this.taskDetailsActionWorkingOnItToggle);
+  }
+
+  public getTeamTaskSubCategoryElement() {
+    return cy.getByDataTest(this.taskDetailsSubCategory);
+  }
+
+  public getTeamTaskStatusElement() {
+    return cy.getByDataTest(this.taskStatus);
   }
 
   public getTeamTaskDateAdded() {

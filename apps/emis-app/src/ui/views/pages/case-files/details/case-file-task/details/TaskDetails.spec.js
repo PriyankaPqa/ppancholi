@@ -13,14 +13,31 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { GlobalHandler } from '@libs/services-lib/http-client';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './TaskDetails.vue';
 
 const localVue = createLocalVue();
+
 const { pinia, taskStore } = useMockTaskStore();
 const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 const { userStore } = useMockUserStore(pinia);
 const { teamStore } = useMockTeamStore(pinia);
 const services = mockProvider();
+useMockOptionListStore(pinia);
+useMockFinancialAssistancePaymentStore(pinia);
+
+const getPiniaForRole = (userRole) => {
+  const pinia = getPiniaForUser(userRole);
+  useMockUserStore(pinia);
+  useMockTeamStore(pinia);
+  useMockFinancialAssistancePaymentStore(pinia);
+  useMockTaskStore(pinia);
+  useMockUserAccountStore(pinia);
+  useMockCaseFileStore(pinia);
+  return pinia;
+};
 
 describe('TaskDetails.vue', () => {
   let wrapper;
@@ -49,6 +66,8 @@ describe('TaskDetails.vue', () => {
   describe('Template', () => {
     describe('task-details-is-urgent', () => {
       it('should be rendered when task isUrgent is true', async () => {
+        const pinia = getPiniaForRole(UserRoles.level6);
+        const { taskStore } = useMockTaskStore(pinia);
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ isUrgent: true }));
         await doMount(false, {
           data() {
@@ -60,6 +79,7 @@ describe('TaskDetails.vue', () => {
             task: () => mockTeamTaskEntity({ isUrgent: true }),
             isTeamTask: () => true,
           },
+          pinia,
         });
         await flushPromises();
         const element = wrapper.findDataTest('task-details-is-urgent');
@@ -93,8 +113,9 @@ describe('TaskDetails.vue', () => {
 
     describe('task-details-edit-button', () => {
       it('should be render when user has level 1 and is team task', async () => {
+        const pinia = getPiniaForRole(UserRoles.level1);
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
           data() {
             return {
               loading: false,
@@ -139,8 +160,9 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should call getEditTaskRoute when click', async () => {
+        const pinia = getPiniaForRole(UserRoles.level1);
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
           data() {
             return {
               loading: false,
@@ -526,6 +548,9 @@ describe('TaskDetails.vue', () => {
   });
 
   describe('Computed', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
     describe('title', () => {
       it('should return proper data when task type is team', async () => {
         await doMount(true, {
@@ -628,15 +653,17 @@ describe('TaskDetails.vue', () => {
 
     describe('canEdit', () => {
       it('should be true when user has Level6', async () => {
+        const pinia = getPiniaForRole(UserRoles.level6);
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
         }, 6);
         expect(wrapper.vm.canEdit).toEqual(true);
       });
 
       it('should be false when cancelled even when user has Level6', async () => {
+        const pinia = getPiniaForRole(UserRoles.level6);
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           computed: {
             task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled }),
           },
@@ -656,9 +683,10 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should be true when task type is team, status is InProgress and user has L1', async () => {
+        const pinia = getPiniaForRole(UserRoles.level1);
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
           computed: {
             task: () => mockTeamTaskEntity({ createdBy: 'user-2' }),
             isTeamTask: () => true,
@@ -669,9 +697,10 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should be true when task type is team, status is New and user has L1', async () => {
+        const pinia = getPiniaForRole(UserRoles.level1);
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
           computed: {
             task: () => mockTeamTaskEntity({ createdBy: 'user-2', taskStatus: TaskStatus.New }),
             isTeamTask: () => true,
@@ -682,9 +711,10 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should be true when task type is team, status is InProgress and user has no L1 but is creator', async () => {
+        const pinia = getPiniaForRole(UserRoles.level0);
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level0),
+          pinia,
           computed: {
             task: () => mockTeamTaskEntity({ createdBy: 'user-1' }),
             isTeamTask: () => true,
@@ -694,9 +724,10 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should be true when task type is team, status is New and user has no L1 but is creator', async () => {
+        const pinia = getPiniaForRole(UserRoles.level0);
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level0),
+          pinia,
           computed: {
             task: () => mockTeamTaskEntity({ createdBy: 'user-1', taskStatus: TaskStatus.New }),
             isTeamTask: () => true,
@@ -706,8 +737,9 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should be false if task is Completed and user has no L6', async () => {
+        const pinia = getPiniaForRole(UserRoles.level1);
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
           computed: {
             task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
             isTeamTask: () => true,
@@ -717,9 +749,10 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should be false if task is Completed and user has no L6 and user is the creator', async () => {
+        const pinia = getPiniaForRole(UserRoles.level1);
         userStore.getUserId = jest.fn(() => 'user-1');
         await doMount(true, {
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
           computed: {
             task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'user-1' }),
             isTeamTask: () => true,
@@ -743,8 +776,10 @@ describe('TaskDetails.vue', () => {
       });
 
       it('should return the name of creator when user is not creator', async () => {
+        const pinia = getPiniaForRole(UserRoles.level6);
         userStore.getUserId = jest.fn(() => 'mock-user-2');
         await doMount(true, {
+          pinia,
           computed: {
             task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
             isTeamTask: () => false,

@@ -5,11 +5,13 @@ import routes from '@/constants/routes';
 import { Status } from '@libs/shared-lib/types';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './ApprovalDetails.vue';
 
 const localVue = createLocalVue();
 const { pinia, approvalTableStore } = useMockApprovalTableStore();
 const { userAccountStore } = useMockUserAccountStore(pinia);
+useMockProgramStore(pinia);
 
 let wrapper;
 
@@ -131,9 +133,9 @@ describe('ApprovalDetails', () => {
     });
 
     describe('loadData', () => {
-      it('should fetch the approval table by id', () => {
+      it('should fetch the approval table by id', async () => {
         doMount();
-        wrapper.vm.loadData();
+        await wrapper.vm.loadData();
         expect(approvalTableStore.fetch).toBeCalledWith('approvalId');
       });
 
@@ -147,9 +149,9 @@ describe('ApprovalDetails', () => {
         expect(wrapper.vm.localApproval).toEqual(approvalTable);
       });
 
-      it('should fetch and set roles', () => {
+      it('should fetch and set roles', async () => {
         doMount();
-        wrapper.vm.loadData();
+        await wrapper.vm.loadData();
         expect(userAccountStore.fetchRoles).toBeCalled();
       });
     });

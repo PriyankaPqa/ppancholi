@@ -18,6 +18,7 @@ import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { DuplicateStatus, mockPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
 import { UserRoles } from '@libs/entities-lib/user';
 
+import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
 import Component from './FinancialAssistancePaymentsList.vue';
 
 const localVue = createLocalVue();
@@ -29,6 +30,7 @@ const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePay
 const { caseFileStore } = useMockCaseFileStore(pinia);
 const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 financialAssistanceStore.search = jest.fn(() => mockFinancialAssistanceTableEntity());
+const potentialDuplicateStore = useMockPotentialDuplicateStore(pinia).potentialDuplicateStore;
 
 describe('FinancialAssistancePaymentsList.vue', () => {
   let wrapper;
@@ -54,7 +56,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       },
       ...additionalOverwrites,
     });
-
+    await flushPromises();
     await wrapper.vm.$nextTick();
   };
 
@@ -351,19 +353,19 @@ describe('FinancialAssistancePaymentsList.vue', () => {
 
     describe('isDuplicate', () => {
       it('returns true if household has potential duplicates', async () => {
+        potentialDuplicateStore.getDuplicates.mockReturnValue([mockPotentialDuplicateEntity({ duplicateStatus: DuplicateStatus.Potential })]);
         await mountWrapper();
-        await wrapper.setData({ householdDuplicates: [mockPotentialDuplicateEntity({ duplicateStatus: DuplicateStatus.Potential })] });
         expect(wrapper.vm.isDuplicate).toEqual(true);
       });
       it('returns false if household has no potential duplicates', async () => {
+        potentialDuplicateStore.getDuplicates.mockReturnValue([mockPotentialDuplicateEntity({ duplicateStatus: DuplicateStatus.Resolved })]);
         await mountWrapper();
-        await wrapper.setData({ householdDuplicates: [mockPotentialDuplicateEntity({ duplicateStatus: DuplicateStatus.Resolved })] });
         expect(wrapper.vm.isDuplicate).toEqual(false);
       });
 
       it('returns falsy if household has  potential duplicates null', async () => {
+        potentialDuplicateStore.getDuplicates.mockReturnValue(null);
         await mountWrapper();
-        await wrapper.setData({ householdDuplicates: null });
         expect(wrapper.vm.isDuplicate).toBeFalsy();
       });
     });

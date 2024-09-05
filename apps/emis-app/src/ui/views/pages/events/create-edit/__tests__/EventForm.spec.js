@@ -25,6 +25,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { mockProvider } from '@/services/provider';
 import { EEventSummarySections } from '@/types';
 import { format, formatISO } from 'date-fns';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../EventForm.vue';
 import { EDialogComponent } from '../../details/components/DialogComponents';
 
@@ -36,11 +37,29 @@ event.fillEmptyMultilingualAttributes = jest.fn();
 
 const localVue = createLocalVue();
 const services = mockProvider();
-const pinia = createTestingPinia({
-  stubActions: false,
-});
 
-useMockTenantSettingsStore(pinia);
+const initPinia = (userRole) => {
+  let pinia;
+  if (userRole) {
+    pinia = getPiniaForUser(userRole);
+  } else {
+    pinia = createTestingPinia({
+      stubActions: false,
+    });
+  }
+
+  const tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
+  const eventStore = useMockEventStore(pinia).eventStore;
+  useMockOptionListStore(pinia);
+
+  return {
+    pinia,
+    eventStore,
+    tenantSettingsStore,
+  };
+};
+
+const { pinia, eventStore } = initPinia();
 
 describe('EventForm.vue', () => {
   let wrapper;
@@ -49,40 +68,36 @@ describe('EventForm.vue', () => {
   });
 
   describe('Mounted', () => {
-    // TODO: Does not work when running yarn test but works when this file is tested.
+    it('sets the default event type if a default value', async () => {
+      eventStore.fetchEventTypes = jest.fn(() => mockOptionItemData());
+      eventStore.getEventTypes = jest.fn(() => mockOptionItemData());
+      eventStore.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
+      eventStore.fetchRegions = jest.fn(() => mockRegionData());
 
-    // it('sets the default event type if a default value', async () => {
-    //   const eventStore = useEventStore(pinia);
-    //
-    //   eventStore.fetchEventTypes = jest.fn(() => mockOptionItemData());
-    //   eventStore.getEventTypes = jest.fn(() => mockOptionItemData());
-    //   eventStore.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
-    //   eventStore.fetchRegions = jest.fn(() => mockRegionData());
-    //
-    //   wrapper = shallowMount(Component, {
-    //     localVue,
-    //     pinia,
-    //     propsData: {
-    //       event,
-    //       isEditMode: false,
-    //       isNameUnique: true,
-    //       isDirty: false,
-    //     },
-    //     computed: {
-    //       prefixRegistrationLink() {
-    //         return 'https://mytest.test/';
-    //       },
-    //     },
-    //   });
-    //
-    //   await flushPromises();
-    //
-    //   const defaultEventType = mockOptionItemData()[1];
-    //
-    //   expect(wrapper.vm.eventType).toEqual(defaultEventType);
-    //
-    //   expect(wrapper.vm.localEvent.responseDetails.eventType.optionItemId).toBe(defaultEventType.id);
-    // });
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          event,
+          isEditMode: false,
+          isNameUnique: true,
+          isDirty: false,
+        },
+        computed: {
+          prefixRegistrationLink() {
+            return 'https://mytest.test/';
+          },
+        },
+      });
+
+      await flushPromises();
+
+      const defaultEventType = mockOptionItemData()[1];
+
+      expect(wrapper.vm.eventType).toEqual(defaultEventType);
+
+      expect(wrapper.vm.localEvent.responseDetails.eventType.optionItemId).toBe(defaultEventType.id);
+    });
 
     it('sets the right value from store into prefixRegistrationLink', async () => {
       wrapper = shallowMount(Component, {
@@ -97,7 +112,6 @@ describe('EventForm.vue', () => {
         mocks: {
           $services: services,
         },
-
       });
       expect(wrapper.vm.prefixRegistrationLink).toEqual('https://registration domain en/en/registration/');
     });
@@ -174,6 +188,7 @@ describe('EventForm.vue', () => {
       it('sets the correct events in the relatedEventsId', async () => {
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: false,
@@ -193,6 +208,7 @@ describe('EventForm.vue', () => {
       it('emits isDirty when called', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             event,
             isEditMode: false,
@@ -277,8 +293,7 @@ describe('EventForm.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      const { pinia } = useMockEventStore();
-      const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+      const { pinia, tenantSettingsStore } = initPinia();
 
       tenantSettingsStore.currentTenantSettings.consentStatements = [{ id: 'id-1',
         name: {
@@ -453,6 +468,7 @@ describe('EventForm.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: true,
@@ -478,6 +494,7 @@ describe('EventForm.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: true,
@@ -507,6 +524,7 @@ describe('EventForm.vue', () => {
           const otherProvinces = mockOtherProvinceData();
           wrapper = shallowMount(Component, {
             localVue: createLocalVue(),
+            pinia,
             propsData: {
               event,
               isEditMode: true,
@@ -559,6 +577,7 @@ describe('EventForm.vue', () => {
         const region2 = { region: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: true,
@@ -584,6 +603,7 @@ describe('EventForm.vue', () => {
         const region2 = { region: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: true,
@@ -613,6 +633,7 @@ describe('EventForm.vue', () => {
           const region2 = { region: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
           wrapper = shallowMount(Component, {
             localVue: createLocalVue(),
+            pinia,
             propsData: {
               event,
               isEditMode: true,
@@ -692,6 +713,7 @@ describe('EventForm.vue', () => {
       it('returns the rule mustBeAfterOrSame if scheduledOpenDate and scheduledCloseDate are defined', async () => {
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: false,
@@ -733,6 +755,7 @@ describe('EventForm.vue', () => {
       it('returns the rule mustBeBeforeOrSame if scheduledOpenDate and scheduledCloseDate are defined', async () => {
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: false,
@@ -774,6 +797,7 @@ describe('EventForm.vue', () => {
       it('returns proper color for editMode', () => {
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: true,
@@ -833,6 +857,7 @@ describe('EventForm.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          pinia,
           propsData: {
             event,
             isEditMode: true,
@@ -867,9 +892,10 @@ describe('EventForm.vue', () => {
 
   describe('Template', () => {
     beforeEach(() => {
+      const { pinia } = initPinia(UserRoles.level6);
       wrapper = shallowMount(Component, {
         localVue: createLocalVue(),
-        pinia: getPiniaForUser(UserRoles.level6),
+        pinia,
         propsData: {
           event,
           isEditMode: false,
@@ -954,10 +980,11 @@ describe('EventForm.vue', () => {
   });
 
   describe('Validation rules', () => {
+    const { pinia } = initPinia(UserRoles.level6);
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
-        pinia: getPiniaForUser(UserRoles.level6),
+        pinia,
         propsData: {
           event,
           isEditMode: false,
@@ -1067,9 +1094,10 @@ describe('EventForm.vue', () => {
     });
 
     test('assistanceNumber is required', async () => {
+      const { pinia } = initPinia(UserRoles.level6);
       wrapper = mount(Component, {
         localVue: createLocalVue(),
-        pinia: getPiniaForUser(UserRoles.level6),
+        pinia,
         propsData: {
           event,
           isEditMode: true,
@@ -1115,7 +1143,7 @@ describe('EventForm.vue', () => {
   });
 
   describe('Permissions', () => {
-    const doMount = (pinia = getPiniaForUser(UserRoles.level6)) => {
+    const doMount = (pinia = initPinia(UserRoles.level6).pinia) => {
       wrapper = mount(Component, {
         localVue,
         pinia,
@@ -1132,12 +1160,12 @@ describe('EventForm.vue', () => {
     };
 
     test('the inputDisabled prop returns false if the user has level lower than 6', async () => {
-      doMount(getPiniaForUser(UserRoles.level5));
+      doMount(initPinia(UserRoles.level5).pinia);
       expect(wrapper.vm.inputDisabled).toBe(true);
     });
 
     test('all the inputs except for description are disabled for level 5', async () => {
-      doMount(getPiniaForUser(UserRoles.level5));
+      doMount(initPinia(UserRoles.level5).pinia);
 
       expect(wrapper.findDataTest('event-name').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-level').attributes('disabled')).toBe('disabled');
@@ -1158,12 +1186,12 @@ describe('EventForm.vue', () => {
 
     describe('consent statement section', () => {
       it('should render if user is a level 6', async () => {
-        await doMount(getPiniaForUser(UserRoles.level6));
+        await doMount(initPinia(UserRoles.level6).pinia);
         const element = wrapper.findDataTest('custom-consent');
         expect(element.exists()).toBeTruthy();
       });
       it('should not render if user is lower than level 6', async () => {
-        await doMount(getPiniaForUser(UserRoles.level5));
+        await doMount(initPinia(UserRoles.level5).pinia);
         const element = wrapper.findDataTest('custom-consent');
         expect(element.exists()).toBeFalsy();
       });

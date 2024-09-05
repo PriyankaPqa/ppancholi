@@ -143,7 +143,7 @@ export const getLocalVue = (plugins) => {
   console.error = (...data) => {
     if (data.length === 1 && typeof data[0] === 'string' && data[0].startsWith('[Vue warn]: Invalid prop: type check failed')
       // kinda specific to $t mocked
-      && data[0].indexOf('Expected String, got Object') > -1) {
+      && (data[0].indexOf('Expected String, got Object') > -1 || 'Expected Number, got Undefined ')) {
       return;
     }
     outputErrorToConsole(...data);

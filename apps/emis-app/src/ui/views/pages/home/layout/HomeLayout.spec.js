@@ -1,6 +1,8 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import { mockProvider } from '@/services/provider';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './HomeLayout.vue';
 
 const localVue = createLocalVue();
@@ -9,6 +11,8 @@ const services = mockProvider();
 let wrapper;
 const doMount = () => {
   const { pinia } = useMockUserStore();
+  useMockTeamStore(pinia);
+  useMockUserAccountStore(pinia);
 
   wrapper = mount(Component, {
     localVue,

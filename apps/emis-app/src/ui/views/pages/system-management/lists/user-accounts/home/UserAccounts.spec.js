@@ -545,6 +545,7 @@ describe('UserAccounts.vue', () => {
       beforeEach(async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           data() {
             return {
               disallowedRoles: [
@@ -610,8 +611,12 @@ describe('UserAccounts.vue', () => {
           },
         };
 
+        const pinia = getPiniaForUser(UserRoles.level5);
+        useMockUserAccountStore(pinia);
+
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           data() {
             return {
               disallowedRoles: [
@@ -632,7 +637,6 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          pinia: getPiniaForUser(UserRoles.level5),
         });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);
@@ -650,9 +654,11 @@ describe('UserAccounts.vue', () => {
             },
           },
         };
-
+        const pinia = getPiniaForUser(UserRoles.level5);
+        useMockUserAccountStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           data() {
             return {
               disallowedRoles: [
@@ -673,7 +679,6 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          pinia: getPiniaForUser(UserRoles.level5),
         });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);

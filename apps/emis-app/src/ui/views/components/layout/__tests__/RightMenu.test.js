@@ -11,11 +11,31 @@ import Component from '../RightMenu.vue';
 
 const localVue = createLocalVue();
 
-const pinia = getPiniaForUser(UserRoles.level6);
-const { userStore } = useMockUserStore(pinia);
-const { dashboardStore } = useMockDashboardStore(pinia);
-const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
-const { userAccountStore, userAccountMetadataStore } = useMockUserAccountStore(pinia);
+const initPinia = (userRole = UserRoles.level6) => {
+  const pinia = getPiniaForUser(userRole);
+  const { userStore } = useMockUserStore(pinia);
+  const { dashboardStore } = useMockDashboardStore(pinia);
+  const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+  const { userAccountStore, userAccountMetadataStore } = useMockUserAccountStore(pinia);
+
+  return {
+    pinia,
+    userStore,
+    dashboardStore,
+    tenantSettingsStore,
+    userAccountStore,
+    userAccountMetadataStore,
+  };
+};
+
+const {
+  pinia,
+  userStore,
+  dashboardStore,
+  tenantSettingsStore,
+  userAccountStore,
+  userAccountMetadataStore,
+} = initPinia(UserRoles.level6);
 
 describe('RightMenu.vue', () => {
   let wrapper;
@@ -76,9 +96,10 @@ describe('RightMenu.vue', () => {
       });
 
       test('no role is displayed correctly ', async () => {
+        const { pinia } = initPinia(UserRoles.no_role);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('noRole'),
+          pinia,
           computed: {
             show: { get() {
               return true;

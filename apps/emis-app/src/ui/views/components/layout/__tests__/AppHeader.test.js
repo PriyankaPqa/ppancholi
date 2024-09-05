@@ -12,15 +12,27 @@ import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { mockProvider } from '@/services/provider';
 import { useNotificationStore } from '@/pinia/notification/notification';
+import { useMockNotificationStore } from '@/pinia/notification/notification.mock';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 const vuetify = new Vuetify();
 
-const pinia = getPiniaForUser(UserRoles.level6);
-const { dashboardStore } = useMockDashboardStore(pinia);
-const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+const initPiniaForUser = (userRole) => {
+  const pinia = getPiniaForUser(userRole);
+  const { dashboardStore } = useMockDashboardStore(pinia);
+  const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+  useMockNotificationStore(pinia);
+
+  return {
+    pinia,
+    dashboardStore,
+    tenantSettingsStore,
+  };
+};
+
+const { pinia, dashboardStore, tenantSettingsStore } = initPiniaForUser(UserRoles.level6);
 
 describe('AppHeader.vue', () => {
   let wrapper;
@@ -63,9 +75,10 @@ describe('AppHeader.vue', () => {
 
     describe('displayRegistrationButton', () => {
       it('should return true if the user has minimum level 0 and the route has the right name', () => {
+        const { pinia } = initPiniaForUser(UserRoles.level0);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level0),
+          pinia,
           vuetify,
           featureList: [wrapper.vm.$featureKeys.L0Access],
           mocks: {
@@ -79,9 +92,10 @@ describe('AppHeader.vue', () => {
       });
 
       it('should return false if the user has not level 0', () => {
+        const { pinia } = initPiniaForUser(UserRoles.contributorIM);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
+          pinia,
           vuetify,
           mocks: {
             $route: {
@@ -95,9 +109,10 @@ describe('AppHeader.vue', () => {
       });
 
       it('should return false for the wrong route - home', () => {
+        const { pinia } = initPiniaForUser(UserRoles.contributorIM);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
+          pinia,
           vuetify,
           mocks: {
             $route: {
@@ -110,9 +125,10 @@ describe('AppHeader.vue', () => {
         expect(wrapper.vm.displayRegistrationButton).toBeFalsy();
       });
       it('should return false for the wrong route - individual', () => {
+        const { pinia } = initPiniaForUser(UserRoles.contributorIM);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
+          pinia,
           vuetify,
           mocks: {
             $route: {
@@ -228,9 +244,10 @@ describe('AppHeader.vue', () => {
       });
 
       test('If the user does not have level 1, the page does not contain a Register beneficiaries button ', () => {
+        const { pinia } = initPiniaForUser(UserRoles.contributor3);
         const wrapper = mount(Component, {
           localVue: createLocalVue(),
-          pinia: getPiniaForUser('contributor'),
+          pinia,
           computed: {
             branding() {
               return mockBrandingEntity();

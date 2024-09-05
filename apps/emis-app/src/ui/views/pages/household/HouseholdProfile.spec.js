@@ -19,6 +19,8 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { mockProvider } from '@/services/provider';
 import { HouseholdActivityType, mockHouseholdActivities } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedActionAndRationale from '@/ui/views/pages/household/components/PinnedStatus.vue';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { useMockPersonStore } from '@/pinia/person/person.mock';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
@@ -28,6 +30,35 @@ const services = mockProvider();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
 const { householdStore } = useMockHouseholdStore(pinia);
+useMockProgramStore(pinia);
+useMockRegistrationStore(pinia);
+useMockPersonStore(pinia);
+
+function createWrapperForRole(userRole, householdStatus = HouseholdStatus.Active) {
+  const pinia = getPiniaForUser(userRole);
+  useMockRegistrationStore(pinia);
+  useMockHouseholdStore(pinia);
+  useMockPersonStore(pinia);
+
+  return shallowMount(Component, {
+    localVue,
+    pinia,
+    propsData: {
+      id: householdEntity.id,
+    },
+    computed: {
+      household() {
+        return householdCreate;
+      },
+      householdEntity() {
+        return { ...householdEntity, householdStatus };
+      },
+    },
+    mocks: {
+      $services: services,
+    },
+  });
+}
 
 const events = [
   mockEventSummary({
@@ -446,250 +477,57 @@ describe('HouseholdProfile.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user has level 1 and feature flag is off', async () => {
-        const pinia = getPiniaForUser(UserRoles.level1);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level1),
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+        wrapper = createWrapperForRole(UserRoles.level1);
         await wrapper.setFeature(wrapper.vm.$featureKeys.L0Access, false);
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
       it('returns true if user has level 0', () => {
-        const pinia = getPiniaForUser(UserRoles.level0);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level0),
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+        wrapper = createWrapperForRole(UserRoles.level0);
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
       it('returns false if user does not have level 1', () => {
-        const pinia = getPiniaForUser(UserRoles.contributorIM);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
+        wrapper = createWrapperForRole(UserRoles.contributorIM);
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
 
     describe('canMove', () => {
       it('returns true if user has level 2', () => {
-        const pinia = getPiniaForUser(UserRoles.level2);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-          pinia,
-        });
-
+        wrapper = createWrapperForRole(UserRoles.level2);
         expect(wrapper.vm.canMove).toBeTruthy();
       });
 
       it('returns false if user does not have level 2', () => {
-        const pinia = getPiniaForUser(UserRoles.level1);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-          pinia,
-        });
-
+        wrapper = createWrapperForRole(UserRoles.level1);
         expect(wrapper.vm.canMove).toBeFalsy();
       });
     });
 
     describe('canManageDuplicates', () => {
-      it('returns true if user has level 6 even if household is archived', async () => {
-        const pinia = getPiniaForUser(UserRoles.level6);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            householdEntity() {
-              return { ...householdEntity, householdStatus: HouseholdStatus.Archived };
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-          pinia,
-        });
-
+      it('returns true if user has level 6 even if household is archived', () => {
+        wrapper = createWrapperForRole(UserRoles.level6, HouseholdStatus.Archived);
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });
 
       it('returns true if user has level 1 and household is not archived', () => {
-        const pinia = getPiniaForUser(UserRoles.level1);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-          pinia,
-        });
-
+        wrapper = createWrapperForRole(UserRoles.level1);
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });
 
       it('returns false if user does not have level 1', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.contributor3),
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
+        wrapper = createWrapperForRole(UserRoles.contributor3);
         expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
 
-      it('returns false if status is archived', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            householdEntity() {
-              return { ...householdEntity, householdStatus: HouseholdStatus.Archived };
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-          pinia,
-        });
+      it('returns false if status is archived', () => {
+        wrapper = createWrapperForRole(UserRoles.level1, HouseholdStatus.Archived);
         expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
 
-      it('returns true if status is not archived', async () => {
-        const pinia = getPiniaForUser(UserRoles.level1);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+      it('returns true if status is not archived', () => {
+        wrapper = createWrapperForRole(UserRoles.level1);
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });
     });
@@ -955,34 +793,34 @@ describe('HouseholdProfile.vue', () => {
   });
 
   describe('lifecycle', () => {
-    describe('created', () => {
-      beforeEach(() => {
-        jest.clearAllMocks();
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+    beforeEach(() => {
+      jest.clearAllMocks();
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          id: householdEntity.id,
+        },
+        data() {
+          return {
+            myEvents: events,
+            casefiles: mockCaseFileEntities(),
+          };
+        },
+        computed: {
+          household() {
+            return householdCreate;
           },
-          data() {
-            return {
-              myEvents: events,
-              casefiles: mockCaseFileEntities(),
-            };
+          householdEntity() {
+            return householdEntity;
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+        },
+        mocks: {
+          $services: services,
+        },
       });
+    });
+    describe('created', () => {
       it('calls registration storage action fetchGenders', () => {
         expect(registrationStore.fetchGenders).toHaveBeenCalledTimes(1);
       });

@@ -102,6 +102,7 @@ describe('CreateEditApprovals', () => {
       it('should return true if route is create table', () => {
         const options = {
           localVue,
+          pinia,
           data: () => ({
             roles: mockRoles(),
           }),
@@ -119,6 +120,7 @@ describe('CreateEditApprovals', () => {
       it('should return true if route is edit table', () => {
         const options = {
           localVue,
+          pinia,
           data: () => ({
             roles: mockRoles(),
           }),
@@ -158,6 +160,7 @@ describe('CreateEditApprovals', () => {
           services.programs.getAllIncludingInactive = jest.fn();
           const options = {
             localVue,
+            pinia,
             data: () => ({
               roles: mockRoles(),
               tablesForCurrentEvent: [{ programId: '10' }],
@@ -189,6 +192,7 @@ describe('CreateEditApprovals', () => {
           services.programs.getAllIncludingInactive = jest.fn();
           const options = {
             localVue,
+            pinia,
             data: () => ({
               roles: mockRoles(),
               tablesForCurrentEvent: [],
@@ -222,6 +226,7 @@ describe('CreateEditApprovals', () => {
           services.programs.getAllIncludingInactive = jest.fn();
           const options = {
             localVue,
+            pinia,
             data: () => ({
               backupUpperForm: {
                 programId: '11',
