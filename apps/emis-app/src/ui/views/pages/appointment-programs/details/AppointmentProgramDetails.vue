@@ -76,7 +76,7 @@ import Vue from 'vue';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { AppointmentProgram, IAppointmentProgram, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
 import { format, parseISO } from 'date-fns';
 import helpers from '@/ui/helpers/helpers';
@@ -115,20 +115,13 @@ export default Vue.extend({
       DayOfWeek,
       showServiceOptionDialog: false,
       loading: false,
-      appointmentProgram: new AppointmentProgram() as IAppointmentProgram,
     };
   },
 
  computed: {
-   // TODO : remove once appointment program search is fixed and it returns service options
-    initialAppointmentProgram(): IAppointmentProgram {
+    appointmentProgram(): IAppointmentProgram {
       return useAppointmentProgramStore().getById(this.appointmentProgramId);
     },
-
-    // TODO : use this once appointment program search is fixed and it returns service options
-    // appointmentProgram(): IAppointmentProgram {
-    //   return useAppointmentProgramStore().getById(this.appointmentProgramId);
-    // },
 
     timeZone(): { label: string, offset: string } {
         return canadaTimeZones.find((z) => z.name === this.appointmentProgram.timeZone);
@@ -163,18 +156,9 @@ export default Vue.extend({
     },
  },
 
-  watch: {
-      // TODO : remove once appointment program search is fixed and it returns service options
-    initialAppointmentProgram(newVal) {
-      this.appointmentProgram = newVal;
-    },
-
-  },
-
  async created() {
     this.loading = true;
-       // TODO : remove once appointment program search is fixed and it returns service options and make just the fetch call
-    this.appointmentProgram = await useAppointmentProgramStore().fetch(this.appointmentProgramId);
+    await useAppointmentProgramStore().fetch(this.appointmentProgramId);
     this.loading = false;
   },
 

@@ -51,6 +51,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import ManageStaffMembers from './ManageStaffMembers.vue';
 
 export default Vue.extend({
@@ -93,7 +94,6 @@ export default Vue.extend({
       },
       showManageStaffDialog: false,
       loading: false,
-      staffMembers: [],
     };
   },
 
@@ -136,14 +136,36 @@ export default Vue.extend({
     serviceOptionTypes(): IOptionItem[] {
       return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.serviceOptionType?.optionItemId));
     },
+
+    staffMemberIds(): string[] {
+      const allIds = this.serviceOptions.reduce((ids, so) => {
+        if (so.staffMembers?.length) {
+          ids.push(...so.staffMembers);
+        }
+        return ids;
+      }, []);
+
+      return [...new Set(allIds)];
+    },
+
+    staffMembers(): IUserAccountMetadata[] {
+      return useUserAccountMetadataStore().getByIds(this.staffMemberIds);
+    },
+  },
+
+  watch: {
+    staffMemberIds(newValue) {
+      useUserAccountMetadataStore().fetchByIds(newValue, true);
+    },
   },
 
   async created() {
     await useAppointmentProgramStore().fetchServiceOptionTypes();
-    await this.fetchInitialStaffMembers();
+    await useUserAccountMetadataStore().fetchByIds(this.staffMemberIds, true);
   },
 
   methods: {
+    // The appointment program is being created, the staff members are being added to the payload
     onUpdateStaffMembers(serviceOptions: IServiceOption[]) {
       this.$emit('update:serviceOptions', serviceOptions);
     },
@@ -152,19 +174,6 @@ export default Vue.extend({
       const serviceOptionsContainingMember = this.serviceOptions.filter((so) => so.staffMembers.includes(memberId));
       const serviceOptionTypes = this.serviceOptionTypes.filter((t) => serviceOptionsContainingMember.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
       return serviceOptionTypes.map((t) => this.$m(t.name)).join(', ');
-    },
-
-    async fetchInitialStaffMembers() {
-      const allIds = this.serviceOptions.reduce((ids, so) => {
-        if (so.staffMembers?.length) {
-          ids.push(...so.staffMembers);
-        }
-        return ids;
-      }, []);
-      if (allIds.length) {
-        const uniqueIds = [...new Set(allIds)];
-        this.staffMembers = await useUserAccountMetadataStore().fetchByIds(uniqueIds, true);
-      }
     },
   },
 });

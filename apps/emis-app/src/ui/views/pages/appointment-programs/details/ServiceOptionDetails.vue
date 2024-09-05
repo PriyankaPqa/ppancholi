@@ -75,7 +75,7 @@ import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { AppointmentProgram, IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { validateCanDeleteServiceOptionPolicy } from '@/ui/views/pages/appointment-programs/appointmentProgramsHelper';
 
@@ -103,16 +103,10 @@ export default Vue.extend({
     return {
       showServiceOptionDialog: false,
       loading: false,
-      appointmentProgram: new AppointmentProgram() as IAppointmentProgram,
     };
   },
 
  computed: {
-   // TODO : remove once appointment program search is fixed and it returns service options
-    initialAppointmentProgram(): IAppointmentProgram {
-      return useAppointmentProgramStore().getById(this.appointmentProgramId);
-    },
-
     serviceOptionTypeName(): IMultilingual {
       const allTypes = useAppointmentProgramStore().getServiceOptionTypes(this.serviceOption.serviceOptionType.optionItemId);
       return allTypes?.find((t) => this.serviceOption.serviceOptionType.optionItemId === t.id)?.name;
@@ -124,10 +118,9 @@ export default Vue.extend({
       return allModalities.filter((mod) => currentModalitiesIds.includes(mod.id));
     },
 
-    // TODO : use this once appointment program search is fixed and it returns service options
-    // appointmentProgram(): IAppointmentProgram {
-    //   return useAppointmentProgramStore().getById(this.appointmentProgramId);
-    // },
+    appointmentProgram(): IAppointmentProgram {
+      return useAppointmentProgramStore().getById(this.appointmentProgramId);
+    },
 
     serviceOption(): IServiceOption {
       return this.appointmentProgram.serviceOptions.find((so) => so.id === this.serviceOptionId);
@@ -139,21 +132,12 @@ export default Vue.extend({
 
  },
 
-  watch: {
-      // TODO : remove once appointment program search is fixed and it returns service options
-    initialAppointmentProgram(newVal) {
-      this.appointmentProgram = newVal;
-    },
-
-  },
-
  async created() {
     this.loading = true;
     await Promise.all([useAppointmentProgramStore().fetchServiceOptionTypes(),
       useAppointmentProgramStore().fetchAppointmentModalities(),
      ]);
-       // TODO : remove once appointment program search is fixed and it returns service options and make just the fetch call
-    this.appointmentProgram = await useAppointmentProgramStore().fetch(this.appointmentProgramId);
+    await useAppointmentProgramStore().fetch(this.appointmentProgramId);
     this.loading = false;
   },
 
