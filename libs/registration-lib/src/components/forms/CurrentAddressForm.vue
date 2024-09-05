@@ -329,8 +329,8 @@ export default Vue.extend({
   },
 
   setup() {
-    const { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry } = useAutocomplete();
-    return { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry };
+    const { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry, toggleResetGeoLocation } = useAutocomplete();
+    return { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry, toggleResetGeoLocation };
   },
 
   data() {
@@ -458,13 +458,17 @@ export default Vue.extend({
     },
   },
 
-  created() {
+  async created() {
+    // done so long/lat is not reset to 0 during initialization
+    this.toggleResetGeoLocation(false);
     this.form = this.currentAddress;
     this.checkInCheckOutDate = [this.form.checkIn, this.form.checkOut];
     if (this.extendStayMode) {
       const minDate = addDays(parseISO(this.form.checkOut as string), 1);
       this.newCheckOutDate = [format(minDate, 'yyyy-MM-dd'), null];
     }
+    await this.$nextTick();
+    this.toggleResetGeoLocation(true);
   },
 
   methods: {

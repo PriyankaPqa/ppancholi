@@ -26,6 +26,11 @@ export function useAutocomplete() {
     }
   };
 
+  // use this so resetGeoLocation will not be active during initialization of data
+  const toggleResetGeoLocation = (active: boolean) => {
+    isAutocompleteAddress.value = !active;
+  };
+
   const setAddressFields = (autocomplete: IAutocomplete, address: IAddress, unitSuitNull = true) => {
     const {
       country, province, postalCode, city, street, location,
@@ -74,6 +79,7 @@ export function useAutocomplete() {
   };
 
   return {
+    toggleResetGeoLocation,
     isAutocompleteAddress,
     resetGeoLocation,
     streetAddressAutocomplete,
