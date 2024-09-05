@@ -293,7 +293,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     async onSubmit() {
-      if (!this.allUsersAreAssigned()) {
+      if (!this.allMembersAreAssigned()) {
         this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.notAllMembersAreAssigned') });
         return;
       }
@@ -322,7 +322,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
     },
 
-    allUsersAreAssigned():boolean {
+    allMembersAreAssigned():boolean {
       return !this.allStaffMembers.some((m) => !this.localServiceOptions.some((so) => so.staffMembers.includes(m.id)));
     },
   },

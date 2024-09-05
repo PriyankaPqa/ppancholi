@@ -129,7 +129,7 @@
             color="primary"
             data-test="appointment-program-create-submit"
             :loading="loading"
-            :disabled="failed || loading || scheduleHasError || showServiceOptionsError"
+            :disabled="failed || loading || scheduleHasError || showServiceOptionsError || showStaffMembersError"
             @click.stop="submit">
             {{ $t('common.buttons.create') }}
           </v-btn>

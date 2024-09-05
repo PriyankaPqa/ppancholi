@@ -1,22 +1,26 @@
-import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockServiceOption } from '@libs/entities-lib/appointment';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { EFilterKeyType } from '@libs/component-lib/types';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
-
+import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
+
 import Component from './ManageStaffMembers.vue';
 
+jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
+const { appointmentProgramStore } = useMockAppointmentProgramStore(pinia);
 
 describe('ManageStaffMembers.vue', () => {
   let wrapper;
 
-  const mountWrapper = async (shallow = true, isEditMode = true, otherOptions = {}) => {
-    wrapper = (shallow ? shallowMount : mount)(Component, {
+  const mountWrapper = async (isEditMode = true, otherOptions = {}) => {
+    wrapper = shallowMount(Component, {
       localVue,
       pinia,
       propsData: {
@@ -168,6 +172,77 @@ describe('ManageStaffMembers.vue', () => {
           count: true,
         }, null, false, true);
         expect(result).toEqual({ values: [mockUserAccountMetadata({ id: 'u-1' }), mockUserAccountMetadata({ id: 'u-2' })] });
+      });
+    });
+
+    describe('onSubmit', () => {
+      it('shows an error message if not all users are assigned', async () => {
+        await mountWrapper();
+        wrapper.vm.allMembersAreAssigned = jest.fn(() => false);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.manageStaff.error.notAllMembersAreAssigned' });
+        expect(appointmentProgramStore.updateStaffMembers).not.toHaveBeenCalled();
+      });
+
+      it('shows an error message in edit mode if validateHasStaffMembersPolicy fails', async () => {
+        await mountWrapper();
+        wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
+        validateHasStaffMembersPolicy.mockImplementation(() => false);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.manageStaff.error.atLeastOneStaffMember' });
+        expect(appointmentProgramStore.updateStaffMembers).not.toHaveBeenCalled();
+      });
+
+      it('calls store method in edit mode if validateHasStaffMembersPolicy passes', async () => {
+        await mountWrapper();
+        wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
+        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        await wrapper.vm.onSubmit();
+        expect(appointmentProgramStore.updateStaffMembers).toHaveBeenCalledWith('appt-program-id', { serviceOptions: [
+          { serviceOptionId: mockServiceOption().id, staffMembers: mockServiceOption().staffMembers },
+        ] });
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.success');
+      });
+
+      it('shows error message if store call fails in edit mode', async () => {
+        await mountWrapper();
+        wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
+        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        appointmentProgramStore.updateStaffMembers = jest.fn();
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.failed');
+      });
+
+      it('emits the data if not in edit mode', async () => {
+        await mountWrapper(false);
+        wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.emitted('submit')[0][0]).toEqual(wrapper.vm.localServiceOptions);
+        expect(wrapper.emitted('update:initialStaffMembers')[0][0]).toEqual(wrapper.vm.allStaffMembers);
+        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+    });
+  });
+
+  describe('Template', () => {
+    describe('teams dropdown', () => {
+      it('renders', async () => {
+        await mountWrapper();
+        const element = wrapper.findDataTest('manage-staff-select-team');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('team members table', () => {
+      it('renders only if a team is selected', async () => {
+        await mountWrapper();
+        await wrapper.setData({ selectedTeam: mockTeamEntity() });
+        const element = wrapper.findDataTest('manage-staff-members-team-members-table');
+        expect(element.exists()).toBeTruthy();
+        await wrapper.setData({ selectedTeam: null });
+        const element2 = wrapper.findDataTest('manage-staff-members-team-members-table');
+        expect(element2.exists()).toBeFalsy();
       });
     });
   });
