@@ -2,12 +2,18 @@ import { RcRouterViewTransition } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockProvider } from '@/services/provider';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
+import { useMockNotificationStore } from '@/pinia/notification/notification.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../MainLayout.vue';
 import AppHeader from '../AppHeader.vue';
 import LeftMenu from '../LeftMenu.vue';
 import GeneralHelpMenu from '../GeneralHelpMenu.vue';
 
 const { pinia, dashboardStore } = useMockDashboardStore();
+useMockNotificationStore(pinia);
+useMockUserAccountStore(pinia);
+useMockTenantSettingsStore(pinia);
 
 describe('MainLayout.vue', () => {
   let wrapper;

@@ -11,6 +11,7 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import { CaseFileDetailsMock } from './caseFileDetailsMock.mock';
 import Component from '../CaseFileDetails.vue';
 
@@ -26,6 +27,36 @@ const { caseFileIndividualStore } = useMockCaseFileIndividualStore(pinia);
 const { householdStore } = useMockHouseholdStore(pinia);
 const { userStore } = useMockUserStore(pinia);
 const { personStore } = useMockPersonStore(pinia);
+useMockEventStore(pinia);
+
+function createWrapper(role, overrides = {}) {
+  const pinia = getPiniaForUser(role);
+
+  useMockCaseFileStore(pinia);
+  useMockCaseFileIndividualStore(pinia);
+  useMockHouseholdStore(pinia);
+  useMockUserStore(pinia);
+  useMockPersonStore(pinia);
+  useMockEventStore(pinia);
+
+  return shallowMount(Component, {
+    localVue,
+    pinia,
+    propsData: {
+      id: mockCaseFile.id,
+      ...overrides.propsData,
+    },
+    computed: {
+      primaryBeneficiary: () => mockMember(),
+      ...overrides.computed,
+    },
+    mocks: {
+      $services: services,
+      ...overrides.mocks,
+    },
+    ...overrides.options,
+  });
+}
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
@@ -123,17 +154,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('is not rendered when level is not 1', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
+        wrapper = createWrapper(UserRoles.contributorIM);
         element = wrapper.findDataTest('caseFileDetails-verify-identity-icon');
         expect(element.exists()).toBeFalsy();
       });
@@ -147,16 +168,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('is not rendered when level is not 1', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+        wrapper = createWrapper(UserRoles.contributorIM);
 
         element = wrapper.findDataTest('caseFileDetails-verify-impact-icon');
         expect(element.exists()).toBeFalsy();
@@ -351,93 +363,40 @@ describe('CaseFileDetails.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        pinia,
-        propsData: {
-          id: mockCaseFile.id,
-        },
-        computed: {
-          primaryBeneficiary: () => mockMember(),
-        },
-        mocks: {
-          $services: services,
-        },
-      });
+      wrapper = createWrapper(UserRoles.level1);
     });
 
     describe('canEdit', () => {
       it('returns true if user has level 1', () => {
-        const pinia = getPiniaForUser(UserRoles.level1);
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
+        wrapper = createWrapper(UserRoles.level1, {
           computed: {
-            primaryBeneficiary: () => mockMember(),
             readonly: () => false,
           },
-          mocks: {
-            $services: services,
-          },
         });
-
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
       it('returns false if user does not have level 1', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
+        wrapper = createWrapper(UserRoles.contributorIM);
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
 
     describe('canL0AccessAssessment', () => {
       it('should return true when user has level 1+', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level1),
-          propsData: {
-            id: mockCaseFile.id,
-          },
+        wrapper = createWrapper(UserRoles.level1, {
           computed: {
-            primaryBeneficiary() {
-              return { email: null };
-            },
-          },
-          mocks: {
-            $services: services,
+            primaryBeneficiary: () => ({ email: null }),
           },
         });
         expect(wrapper.vm.canL0AccessAssessment).toBe(true);
       });
 
-      it('should return false when user has level 0, event.assessmentsForL0usersEnabled it false', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level0),
-          propsData: {
-            id: mockCaseFile.id,
-          },
+      it('should return false when user has level 0 and event.assessmentsForL0usersEnabled is false', async () => {
+        wrapper = createWrapper(UserRoles.level0, {
           computed: {
             event: () => mockEventEntity({ assessmentsForL0usersEnabled: false }),
-            primaryBeneficiary() {
-              return { email: null };
-            },
-          },
-          mocks: {
-            $services: services,
+            primaryBeneficiary: () => ({ email: null }),
           },
         });
         expect(wrapper.vm.canL0AccessAssessment).toBe(false);
@@ -454,61 +413,31 @@ describe('CaseFileDetails.vue', () => {
 
     describe('recoveryPlanInvisible', () => {
       it('should return true when user is L0', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level0),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-        });
+        wrapper = createWrapper(UserRoles.level0);
         userStore.getUser().currentRole = jest.fn(() => 'level0');
         expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
       });
 
       it('should return true when user is readOnly', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser('readOnly'),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-        });
+        wrapper = createWrapper('readOnly');
         userStore.getUser().currentRole = jest.fn(() => 'readonly');
         expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
       });
 
       it('should return true when user is contributorIM', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-        });
+        wrapper = createWrapper(UserRoles.contributorIM);
         userStore.getUser().currentRole = jest.fn(() => 'contributorIM');
         expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
       });
 
       it('should return true when user is contributorFinance', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.contributorFinance),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-        });
+        wrapper = createWrapper(UserRoles.contributorFinance);
         userStore.getUser().currentRole = jest.fn(() => 'contributorFinance');
         expect(wrapper.vm.recoveryPlanInvisible).toEqual(true);
       });
 
       it('should return false when user is level1', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level1),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-        });
+        wrapper = createWrapper(UserRoles.level1);
         userStore.getUser().currentRole = jest.fn(() => 'level1');
         expect(wrapper.vm.recoveryPlanInvisible).toEqual(false);
       });

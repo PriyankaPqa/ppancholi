@@ -18,9 +18,19 @@ const mockFinancialAssistanceTables = [mockFinancialAssistanceTableEntity()];
 
 describe('FinancialAssistanceTablesTable.vue', () => {
   let wrapper;
-  const pinia = getPiniaForUser(UserRoles.level6);
-  const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
-  const { programStore } = useMockProgramStore(pinia);
+  const initPiniaForUser = () => {
+    const pinia = getPiniaForUser(UserRoles.level6);
+    const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+    const { programStore } = useMockProgramStore(pinia);
+
+    return {
+      pinia,
+      financialAssistanceStore,
+      programStore,
+    };
+  };
+
+  const { pinia, financialAssistanceStore, programStore } = initPiniaForUser(UserRoles.level6);
 
   describe('Template', () => {
     beforeEach(() => {
@@ -79,9 +89,10 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
     describe('headers', () => {
       it('returns the correct headers data', () => {
+        const { pinia } = initPiniaForUser(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           computed: {
             customColumns() {
               return {
@@ -124,9 +135,10 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
     describe('filters', () => {
       it('should have correct filters', async () => {
+        const { pinia } = initPiniaForUser(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           computed: {
             programs: () => mockProgramEntities(),
           },
@@ -178,7 +190,6 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-
         });
         financialAssistanceStore.searchLoading = false;
         expect(wrapper.vm.tableProps.loading).toEqual(false);
@@ -206,9 +217,10 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
     describe('eventId', () => {
       it('returns correct data', () => {
+        const { pinia } = initPiniaForUser(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           mocks: {
             $route: {
               params: {

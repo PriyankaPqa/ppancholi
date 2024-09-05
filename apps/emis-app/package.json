@@ -114,7 +114,8 @@
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-vue-inspector": "^3.3.0",
     "vue-typed-mixins": "^0.2.0",
-    "webpack": "4.47.0"
+    "webpack": "4.47.0",
+    "why-is-node-running": "2.3.0"
   },
   "resolutions": {
     "lodash": "4.17.21"

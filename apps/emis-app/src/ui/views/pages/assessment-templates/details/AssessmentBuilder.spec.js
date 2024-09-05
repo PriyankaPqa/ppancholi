@@ -6,6 +6,7 @@ import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/asse
 import { createTestingPinia } from '@pinia/testing';
 import flushPromises from 'flush-promises';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './AssessmentBuilder.vue';
 
 let services = mockProvider();
@@ -45,6 +46,7 @@ describe('AssessmentBuilder', () => {
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
     tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
+    useMockProgramStore(pinia);
     services = mockProvider();
     services.assessmentForms.assessmentTotalSubmissions = jest.fn(() => ({ totalAssigned: 0 }));
     await mountWrapper();

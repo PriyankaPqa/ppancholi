@@ -15,7 +15,6 @@
 import 'survey-core/defaultV2.min.css';
 import 'survey-creator-core/survey-creator-core.min.css';
 import mixins from 'vue-typed-mixins';
-// import { SurveyJsHelper } from './SurveyJsHelper';
 import { SurveyJsHelper, ISurveyCreator } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import { SurveyJsTextExtractor, IExtractedSurveyObject } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
 import metadata from '@/ui/mixins/metadata';

@@ -13,12 +13,14 @@ import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/M
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './MassActionBaseDetails.vue';
 import MassActionFailedBase from './MassActionFailedBase.vue';
 
 const localVue = createLocalVue();
 
 const { pinia } = useMockMassActionStore();
+useMockUserAccountStore(pinia);
 
 let wrapper;
 

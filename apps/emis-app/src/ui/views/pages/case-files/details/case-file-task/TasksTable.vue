@@ -483,7 +483,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
    parsedTableData(): IParsedTaskCombined[] {
      const taskCategoryOptionItems = useTaskStore().taskCategories;
-
       return this.rawTableData?.map((d) => {
         const taskSubcategoryOptionItems = taskCategoryOptionItems?.find((c) => c.id === d.entity.category.optionItemId)?.subitems || [];
         const taskCategory = helpers.getOptionItemNameFromListOption(taskCategoryOptionItems, d.entity.category);

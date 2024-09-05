@@ -1,6 +1,6 @@
 import { EFilterKeyType, EFilterType } from '@libs/component-lib/types';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
-import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { UserRoles } from '@libs/entities-lib/user';
 
@@ -37,7 +37,6 @@ describe('CaseNote.vue', () => {
           return mockEvent;
         },
       },
-
     });
   });
 
@@ -144,7 +143,10 @@ describe('CaseNote.vue', () => {
     const doMount = (level, otherComputed) => {
       const pinia = getPiniaForUser(level);
       useMockCaseFileStore(pinia);
-      wrapper = mount(Component, {
+      useMockUserAccountStore(pinia);
+      useMockCaseNoteStore(pinia);
+
+      return shallowMount(Component, {
         localVue,
         pinia,
         propsData: {
@@ -165,27 +167,32 @@ describe('CaseNote.vue', () => {
 
     describe('showAddButton', () => {
       it('returns correct value', async () => {
-        doMount(UserRoles.level0);
+        wrapper = doMount(UserRoles.level0);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount(UserRoles.level6);
+        wrapper = doMount(UserRoles.level6);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount(UserRoles.contributorFinance);
+        wrapper = doMount(UserRoles.contributorFinance);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount(UserRoles.contributor3);
+        wrapper = doMount(UserRoles.contributor3);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount(UserRoles.contributorIM);
+        wrapper = doMount(UserRoles.contributorIM);
         expect(wrapper.vm.showAddButton).toBe(false);
 
-        doMount('readOnly');
+        wrapper = doMount('readOnly');
         expect(wrapper.vm.showAddButton).toBe(false);
+
+        const pinia = getPiniaForUser(UserRoles.level1);
+        useMockCaseFileStore(pinia);
+        useMockUserAccountStore(pinia);
+        useMockCaseNoteStore(pinia);
 
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
           propsData: {
             id: 'id',
           },

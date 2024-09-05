@@ -13,12 +13,22 @@ import Component from './EventsTable.vue';
 
 const localVue = createLocalVue();
 const mockEvents = () => mockEventEntities();
-let { eventStore } = useMockEventStore();
+
+const initPinia = (userRole = UserRoles.level6) => {
+  const pinia = getPiniaForUser(userRole);
+  const { eventStore } = useMockEventStore(pinia);
+
+  return {
+    pinia,
+    eventStore,
+  };
+};
+
 describe('EventsTable.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    const doMount = (pinia = getPiniaForUser(UserRoles.level6)) => {
+    const doMount = (pinia = initPinia(UserRoles.level6).pinia) => {
       wrapper = mount(Component, {
         pinia,
         localVue,
@@ -71,9 +81,10 @@ describe('EventsTable.vue', () => {
         });
 
         it('is false for level 5 users and lower', () => {
+          const { pinia } = initPinia(UserRoles.level5);
           wrapper = mount(Component, {
             localVue,
-            pinia: getPiniaForUser(UserRoles.level5),
+            pinia,
             propsData: {
               isDashboard: false,
             },
@@ -95,7 +106,7 @@ describe('EventsTable.vue', () => {
         });
 
         it('does not display the help button for users level 5 and below', async () => {
-          doMount(getPiniaForUser(UserRoles.level5));
+          doMount(initPinia(UserRoles.level5).pinia);
           expect(dataTable.props('showHelp')).toBe(false);
         });
       });
@@ -119,9 +130,10 @@ describe('EventsTable.vue', () => {
         });
 
         test('edit button is visible for level 5 users', async () => {
+          const { pinia } = initPinia(UserRoles.level5);
           wrapper = mount(Component, {
             localVue,
-            pinia: getPiniaForUser(UserRoles.level5),
+            pinia,
             propsData: {
               isDashboard: false,
             },
@@ -137,9 +149,10 @@ describe('EventsTable.vue', () => {
         });
 
         test('edit button is not visible for level 4 users', async () => {
+          const { pinia } = initPinia(UserRoles.level4);
           wrapper = mount(Component, {
             localVue,
-            pinia: getPiniaForUser(UserRoles.level4),
+            pinia,
             propsData: {
               isDashboard: false,
             },
@@ -160,9 +173,7 @@ describe('EventsTable.vue', () => {
   describe('Computed', () => {
     describe('tableData', () => {
       it('should return the correct values', () => {
-        const pinia = getPiniaForUser(UserRoles.level6);
-        const { eventStore } = useMockEventStore(pinia);
-
+        const { pinia, eventStore } = initPinia(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
           pinia,
@@ -185,9 +196,10 @@ describe('EventsTable.vue', () => {
 
     describe('customColumns', () => {
       it('should return the correct column names', () => {
+        const { pinia } = initPinia(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           propsData: {
             isDashboard: false,
           },
@@ -208,9 +220,10 @@ describe('EventsTable.vue', () => {
 
     describe('labels', () => {
       it('returns the right labels', () => {
+        const { pinia } = initPinia(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           propsData: {
             isDashboard: false,
           },
@@ -227,9 +240,10 @@ describe('EventsTable.vue', () => {
 
     describe('headers', () => {
       it('returns the correct headers data', () => {
+        const { pinia } = initPinia(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           propsData: {
             isDashboard: false,
           },
@@ -284,9 +298,10 @@ describe('EventsTable.vue', () => {
 
     describe('filters', () => {
       it('should have correct filters', () => {
+        const { pinia } = initPinia(UserRoles.level6);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
+          pinia,
           propsData: {
             isDashboard: false,
           },
@@ -335,7 +350,7 @@ describe('EventsTable.vue', () => {
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
-        const { pinia, eventStore } = useMockEventStore(getPiniaForUser(UserRoles.level6));
+        const { pinia, eventStore } = initPinia(UserRoles.level6);
         eventStore.searchLoading = false;
         wrapper = mount(Component, {
           localVue,
@@ -353,9 +368,10 @@ describe('EventsTable.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user is level 5 and event is on hold', () => {
+        const { pinia } = initPinia(UserRoles.level5);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level5),
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -372,9 +388,10 @@ describe('EventsTable.vue', () => {
       });
 
       it('returns true if user is level 5 and event is on hold', () => {
+        const { pinia } = initPinia(UserRoles.level5);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level5),
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -391,9 +408,10 @@ describe('EventsTable.vue', () => {
       });
 
       it('returns false if user is level 5 and event is not open or on hold', () => {
+        const { pinia } = initPinia(UserRoles.level5);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level5),
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -410,9 +428,10 @@ describe('EventsTable.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
+        const { pinia } = initPinia(UserRoles.level4);
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.level4),
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -431,8 +450,8 @@ describe('EventsTable.vue', () => {
   });
 
   describe('Methods', () => {
-    const doMount = (pinia = getPiniaForUser(UserRoles.level6)) => {
-      eventStore = useMockEventStore(pinia).eventStore;
+    const { pinia, eventStore } = initPinia(UserRoles.level4);
+    const doMount = () => {
       wrapper = mount(Component, {
         localVue,
         pinia,

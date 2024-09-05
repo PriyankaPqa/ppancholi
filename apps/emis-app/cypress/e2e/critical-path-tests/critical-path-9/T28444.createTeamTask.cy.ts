@@ -4,10 +4,12 @@ import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/u
 import { formatDateToMmmDdYyyy } from '@libs/cypress-lib/helpers';
 import { TeamType } from '@libs/entities-lib/team';
 import { format } from 'date-fns';
+import { IProvider } from '@/services/provider';
 import { createEventWithAssignableTeam, createHousehold } from '../../helpers/prepareState';
 import { TasksHomePage } from '../../../pages/tasks/tasksHome.page';
 import { linkEventToTeamForManyRoles, LinkEventToTeamParams, removeTeamMembersFromTeam } from '../../helpers/teams';
 import { assertTaskHistorySteps } from './canSteps';
+import { useProvider } from '../../../provider/provider';
 
 const escalationRole = [
   UserRoles.level6,
@@ -82,6 +84,15 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
           const tasksHomePage = new TasksHomePage();
           tasksHomePage.getTableTitleElement().contains('Tasks').should('be.visible');
           tasksHomePage.getCreateTaskButton().should('be.visible');
+          // searches for escalation team before creating a team task
+          cy.callSearchUntilMeetCondition({
+            provider: useProvider(this.accessTokenL6),
+            searchCallBack: (provider: IProvider) => (provider.teams.search({
+              filter: { Entity: { Events: { any: { Id: { value: this.event.id, type: 'guid' } } }, isEscalation: true } },
+            })),
+            conditionCallBack: (value: []) => value.length > 0,
+          });
+
           tasksHomePage.getCreateTaskButton().click();
           tasksHomePage.getCreateNewTeamTaskOption().should('be.visible');
           tasksHomePage.getCreateNewPersonalTaskOption().should('be.visible');

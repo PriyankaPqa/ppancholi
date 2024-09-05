@@ -7,22 +7,28 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from '../case-file-activity/components/CaseFileAssignments.vue';
 
 const localVue = createLocalVue();
-
 const mockCaseFile = mockCaseFileEntity();
 const mockTeam = mockTeamEntity();
-const { pinia, teamStore } = useMockTeamStore();
+
+let teamStore;
+let pinia;
 
 describe('CaseFileAssignments.vue', () => {
   let wrapper;
-  teamStore.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
   describe('Template', () => {
     beforeEach(async () => {
+      pinia = getPiniaForUser(UserRoles.level3);
+      teamStore = useMockTeamStore(pinia);
+      teamStore.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
+      useMockUserAccountStore(pinia);
+
       wrapper = shallowMount(Component, {
         localVue,
-        pinia: getPiniaForUser(UserRoles.level3),
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
         },
@@ -186,8 +192,12 @@ describe('CaseFileAssignments.vue', () => {
   describe('computed', () => {
     describe('canAssign', () => {
       it('returns true if the user has level 6 ', async () => {
+        const pinia = getPiniaForUser(UserRoles.level6);
+        useMockTeamStore(pinia);
+        useMockUserAccountStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseFile: mockCaseFile,
           },
@@ -196,24 +206,30 @@ describe('CaseFileAssignments.vue', () => {
       });
 
       it('returns true if the user has level between 3 and 5 and case file status is open', async () => {
+        const pinia = getPiniaForUser(UserRoles.level4);
+        useMockTeamStore(pinia);
+        useMockUserAccountStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             caseFile: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open }),
           },
-          pinia: getPiniaForUser(UserRoles.level4),
+          pinia,
         });
         expect(wrapper.vm.canAssign).toBeTruthy();
       });
 
       it('returns false if the user has level between 3 and 5 and property readonly is true', async () => {
+        const pinia = getPiniaForUser(UserRoles.level4);
+        useMockTeamStore(pinia);
+        useMockUserAccountStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             caseFile: mockCaseFileEntity(),
             readonly: false,
           },
-          pinia: getPiniaForUser(UserRoles.level4),
+          pinia,
         });
         expect(wrapper.vm.canAssign).toBeTruthy();
         await wrapper.setProps({ readonly: true });
@@ -221,12 +237,15 @@ describe('CaseFileAssignments.vue', () => {
       });
 
       it('returns false if the user has level below 3', async () => {
+        const pinia = getPiniaForUser(UserRoles.level2);
+        useMockTeamStore(pinia);
+        useMockUserAccountStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             caseFile: mockCaseFile,
           },
-          pinia: getPiniaForUser(UserRoles.level2),
+          pinia,
         });
         expect(wrapper.vm.canAssign).toBeFalsy();
       });
@@ -235,13 +254,18 @@ describe('CaseFileAssignments.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
+      jest.clearAllMocks();
+      pinia = getPiniaForUser(UserRoles.level6);
+      useMockUserAccountStore(pinia);
+      teamStore = useMockTeamStore(pinia).teamStore;
+      teamStore.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
+
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
         propsData: {
           caseFile: mockCaseFile,
         },
-
       });
       wrapper.vm.loading = false;
     });
@@ -282,7 +306,14 @@ describe('CaseFileAssignments.vue', () => {
 
     describe('getAssignedTeamInfo', () => {
       it('calls the store action getTeamsAssigned with the right id', async () => {
-        jest.clearAllMocks();
+        const wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            caseFile: mockCaseFile,
+          },
+        });
+        wrapper.vm.loading = false;
         await wrapper.vm.getAssignedTeamInfo();
         expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith(mockCaseFile.id);
       });

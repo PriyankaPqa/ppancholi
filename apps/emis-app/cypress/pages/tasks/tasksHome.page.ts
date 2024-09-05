@@ -1,6 +1,7 @@
 import { CaseFileDetailsPage } from '../casefiles/caseFileDetails.page';
 import { CreatePersonalTaskPage } from './createPersonalTask.page';
 import { CreateTeamTaskPage } from './createTeamTask.page';
+import { EditTeamTaskPage } from './editTeamTask.page';
 import { PersonalTaskDetailsPage } from './personalTaskDetails.page';
 import { TeamTaskDetailsPage } from './teamTaskDetails.page';
 
@@ -176,8 +177,13 @@ export class TasksHomePage {
     return cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryActionButton}-${taskId}` });
   }
 
-  public getCreatedTaskActionButtonById(taskId: string) {
-    cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryActionButton}-${taskId}` }).click();
+  public goToEditTeamTaskPageById(taskId: string) {
+    cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryEditButton}-${taskId}` }).click();
+    return new EditTeamTaskPage();
+  }
+
+  public getEditTeamTaskButtonById(taskId: string) {
+    return cy.getByDataTest({ selector: `${DataTest.createdTaskCategoryEditButton}-${taskId}` });
   }
 
   public goToPersonalTaskById(taskId: string) {

@@ -6,9 +6,12 @@ import {
 import { mockMassActionEntity, mockMassActionMetadata } from '@libs/entities-lib/mass-action';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './MassActionPreProcessingBase.vue';
 
 const localVue = createLocalVue();
+
+const { pinia } = useMockUserAccountStore();
 
 describe('MassActionPreProcessingBase.vue', () => {
   let wrapper;
@@ -17,6 +20,7 @@ describe('MassActionPreProcessingBase.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         propsData: {
           massAction: mockMassActionEntity(),
           massActionMetadata: mockMassActionMetadata(),

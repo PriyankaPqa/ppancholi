@@ -12,13 +12,17 @@ module.exports = {
     '!**/*.types.ts',
     '!**/index.ts',
   ],
+  workerIdleMemoryLimit: '1.5GB',
+  clearMocks: true,
   coverageReporters: ['cobertura'],
   transform: {
     'vee-validate/dist/rules': 'babel-jest',
     '.+\\.(css|styl|less|sass|scss|jpg|jpeg|png|svg|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|avif)$': 'jest-transform-stub',
     '.*\\.(vue)$': '@vue/vue2-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-    '^.+\\.jsx?$': 'babel-jest'
+    '^.+\\.(ts|tsx)$': [
+      '@swc/jest',
+    ],
+    '^.+\\.jsx?$': 'babel-jest',
   },
   testMatch: [
     '**/*.(spec|test).(js|jsx|ts|tsx)',

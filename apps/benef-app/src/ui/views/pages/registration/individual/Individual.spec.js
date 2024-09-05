@@ -1,4 +1,4 @@
-import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
@@ -19,8 +19,8 @@ useMockRegistrationStore(pinia);
 describe('Individual.vue', () => {
   let wrapper;
 
-  const doMount = async (fullmount = false, otherComputed = {}, featureList = []) => {
-    wrapper = (fullmount ? mount : shallowMount)(Component, {
+  const doMount = async (otherComputed = {}, featureList = []) => {
+    wrapper = shallowMount(Component, {
       localVue,
       pinia,
       featureList,
@@ -35,6 +35,9 @@ describe('Individual.vue', () => {
         'address-form': true,
         'personal-information': true,
         'personal-information-template': true,
+        'v-btn': {
+          template: '<button @click="$emit(\'click\')"><slot /></button>',
+        },
       },
       computed: {
         ...otherComputed,
@@ -89,7 +92,7 @@ describe('Individual.vue', () => {
   describe('Template', () => {
     describe('Event handlers', () => {
       beforeEach(async () => {
-        await doMount(true);
+        await doMount();
       });
       it('Click back button triggers method', async () => {
         wrapper.vm.back = jest.fn();
@@ -116,7 +119,7 @@ describe('Individual.vue', () => {
       let element;
 
       it('google recaptcha is shown if BotProtection is enabled and if ip address is not in allowed list', async () => {
-        await doMount(true, {
+        await doMount({
           isCaptchaAllowedIpAddress: () => false,
         }, [wrapper.vm.$featureKeys.BotProtection]);
 
@@ -125,7 +128,7 @@ describe('Individual.vue', () => {
       });
 
       it('google recaptcha is not shown if BotProtection is disabled', async () => {
-        await doMount(true, {
+        await doMount({
           isCaptchaAllowedIpAddress: () => false,
         });
 
@@ -134,7 +137,7 @@ describe('Individual.vue', () => {
       });
 
       it('google recaptcha is not shown if ip address is in allowed list', async () => {
-        await doMount(true, {
+        await doMount({
           isCaptchaAllowedIpAddress: () => true,
         });
 

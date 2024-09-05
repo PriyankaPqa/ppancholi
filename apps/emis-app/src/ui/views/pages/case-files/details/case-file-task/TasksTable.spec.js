@@ -39,84 +39,106 @@ taskStore.taskCategories = mockOptionItems();
 userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
 userStore.getUserId = jest.fn(() => 'user-1');
 
-describe('TasksTable.vue', () => {
-  let wrapper;
-  const doMount = async (otherOptions = {}, shallow = true, level = 5, hasRole = 'role') => {
-    const options = {
-      localVue,
-      pinia,
-      propsData: {
-        id: 'mock-case-file-id-1',
-      },
-      data() {
-        return {
-          personalTaskOnly: false,
-          teamTaskOnly: false,
-          hasActiveToggle: false,
-          options: {
-            page: 1,
-            sortBy: ['Entity/DateAdded'],
-            sortDesc: [true],
+let wrapper;
+const doMount = async (otherOptions = {}, shallow = true, level = 5, hasRole = 'role') => {
+  const options = {
+    localVue,
+    pinia,
+    propsData: {
+      id: 'mock-case-file-id-1',
+    },
+    data() {
+      return {
+        personalTaskOnly: false,
+        teamTaskOnly: false,
+        hasActiveToggle: false,
+        options: {
+          page: 1,
+          sortBy: ['Entity/DateAdded'],
+          sortDesc: [true],
+        },
+        params: { orderBy: 'asc' },
+      };
+    },
+    computed: {
+      parsedTableData: () => [{
+        entity: mockTeamTaskEntity({
+          id: '1',
+          assignedTeamId: 'mock-team-id-1',
+          assignedTeamName: 'mock-team-name',
+          category: {
+            displayName: {
+              translation: {
+                en: 'case worker 2',
+                fr: 'case worker 2 fr',
+              },
+            },
+            optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
+            specifiedOther: '',
           },
-          params: { orderBy: 'asc' },
+        }),
+        metadata: mockTaskMetadata({ id: '1' }),
+        pinned: false,
+      }],
+      assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
+      personalTaskOnlyFilter() {
+        return {
+          or: {
+            Entity: {
+              TaskType: {
+                [ITEM_ROOT]: TaskType.Personal,
+              },
+              CreatedBy: {
+                [ITEM_ROOT]: 'mock-user-id',
+              },
+            },
+          },
         };
       },
-      computed: {
-        parsedTableData: () => [{
-          entity: mockTeamTaskEntity({
-            id: '1',
-            assignedTeamId: 'mock-team-id-1',
-            assignedTeamName: 'mock-team-name',
-            category: {
-              displayName: {
-                translation: {
-                  en: 'case worker 2',
-                  fr: 'case worker 2 fr',
-                },
-              },
-              optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
-              specifiedOther: '',
-            },
-          }),
-          metadata: mockTaskMetadata({ id: '1' }),
-          pinned: false,
-        }],
-        assignedTeams: () => [mockTeamEntity({ id: 'mock-team-1', teamMembers: [{ id: 'user-1' }] })],
-        personalTaskOnlyFilter() {
-          return {
-            or: {
-              Entity: {
-                TaskType: {
-                  [ITEM_ROOT]: TaskType.Personal,
-                },
-                CreatedBy: {
-                  [ITEM_ROOT]: 'mock-user-id',
-                },
-              },
-            },
-          };
-        },
 
-        teamTaskOnlyFilter() {
-          return {
-            or: [
-              { Entity: {
-                AssignedTeamId: 'id',
-              },
-              }],
-          };
-        },
+      teamTaskOnlyFilter() {
+        return {
+          or: [
+            { Entity: {
+              AssignedTeamId: 'id',
+            },
+            }],
+        };
       },
-      mocks: {
-        $services: services,
-        $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
-        $hasRole: (r) => r === hasRole,
-      },
-      ...otherOptions,
-    };
-    wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
-    await wrapper.vm.$nextTick();
+    },
+    mocks: {
+      $services: services,
+      $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
+      $hasRole: (r) => r === hasRole,
+    },
+    ...otherOptions,
   };
+  wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
+  await wrapper.vm.$nextTick();
+};
+
+const canEditWrapper = async (userRole, userId = null, taskOptions = {}) => {
+  const pinia = getPiniaForUser(userRole);
+  const userStore = useMockUserStore(pinia).userStore;
+  useMockUserAccountStore(pinia);
+  useMockTeamStore(pinia);
+  const taskStore = useMockTaskStore(pinia).taskStore;
+
+  taskStore.getTaskCategory = jest.fn(() => mockOptionItems());
+  taskStore.taskCategories = mockOptionItems();
+  userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
+  userStore.getUserId = jest.fn(() => 'user-1');
+
+  if (userId) {
+    userStore.getUserId = jest.fn(() => userId);
+  }
+
+  await doMount({ pinia });
+
+  return mockTeamTaskEntity(taskOptions);
+};
+
+describe('TasksTable.vue', () => {
   beforeEach(async () => {
     await doMount();
   });
@@ -1071,69 +1093,48 @@ describe('TasksTable.vue', () => {
 
     describe('canEdit', () => {
       it('should be true when user has Level6', async () => {
-        await doMount({
-          pinia: getPiniaForUser(UserRoles.level6),
-        });
-        const taskEntity = mockTeamTaskEntity();
+        const taskEntity = await canEditWrapper(UserRoles.level6);
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be false even when user has Level6 when task cancelled', async () => {
-        await doMount({
-          pinia: getPiniaForUser(UserRoles.level6),
-        });
-        const taskEntity = mockTeamTaskEntity({ taskStatus: TaskStatus.Cancelled });
+        const taskEntity = await canEditWrapper(UserRoles.level6, null, { taskStatus: TaskStatus.Cancelled });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(false);
       });
 
       it('should be true when task type is personal and user is the creator', async () => {
         const taskEntity = mockPersonalTaskEntity({ createdBy: 'user-1' });
+        await canEditWrapper(UserRoles.level0, 'user-1'); // Pass in user role and user ID
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be true when task type is team, status is InProgress and user has no L1 but is creator', async () => {
-        await doMount({
-          pinia: getPiniaForUser(UserRoles.level0),
-        });
-        const taskEntity = mockTeamTaskEntity({ createdBy: 'user-1' });
+        const taskEntity = await canEditWrapper(UserRoles.level0, 'user-1', { taskStatus: TaskStatus.InProgress });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be true when task type is team, status is New and user has no L1 but is creator', async () => {
-        userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount({
-          pinia: getPiniaForUser(UserRoles.level0),
-        });
-        const taskEntity = mockTeamTaskEntity({ createdBy: 'user-1', taskStatus: TaskStatus.New });
+        const taskEntity = await canEditWrapper(UserRoles.level0, 'user-1', { taskStatus: TaskStatus.New });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be false if task is Completed and user has no L6', async () => {
-        await doMount({
-          pinia: getPiniaForUser(UserRoles.level1),
-        });
-        const taskEntity = mockTeamTaskEntity({ taskStatus: TaskStatus.Completed });
+        const taskEntity = await canEditWrapper(UserRoles.level1, null, { taskStatus: TaskStatus.Completed });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(false);
       });
 
       it('should be true when task type is team, status is InProgress and user has L1', async () => {
-        await doMount({}, true, 1);
-        const taskEntity = mockTeamTaskEntity({ createdBy: 'user-2' });
+        const taskEntity = await canEditWrapper(UserRoles.level1, 'user-2', { taskStatus: TaskStatus.InProgress });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be true when task type is team, status is New and user has L1', async () => {
-        userStore.getUserId = jest.fn(() => 'user-1');
-        await doMount({}, true, 1);
-        const taskEntity = mockTeamTaskEntity({ createdBy: 'user-2', taskStatus: TaskStatus.New });
+        const taskEntity = await canEditWrapper(UserRoles.level1, 'user-1', { taskStatus: TaskStatus.New });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(true);
       });
 
       it('should be false if task is Completed and user has no L6 and user is the creator', async () => {
-        await doMount({
-          pinia: getPiniaForUser(UserRoles.level1),
-        });
-        const taskEntity = mockTeamTaskEntity({ taskStatus: TaskStatus.Completed, createdBy: 'user-1' });
+        const taskEntity = await canEditWrapper(UserRoles.level1, 'user-1', { taskStatus: TaskStatus.Completed });
         expect(wrapper.vm.canEdit(taskEntity)).toEqual(false);
       });
     });

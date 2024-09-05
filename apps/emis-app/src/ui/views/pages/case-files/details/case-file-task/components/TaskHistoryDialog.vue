@@ -141,10 +141,11 @@ export default Vue.extend({
       };
     },
   },
-    async created() {
-      await useUserAccountStore().fetchRoles();
-      this.parseTaskHistory();
-    },
+
+  async created() {
+    await useUserAccountStore().fetchRoles();
+    this.parseTaskHistory();
+  },
 
   methods: {
     close() {
