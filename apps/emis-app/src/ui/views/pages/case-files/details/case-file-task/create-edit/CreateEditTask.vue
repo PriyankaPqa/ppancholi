@@ -329,15 +329,15 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         this.isSubmitting = true;
         const res = await useTaskStore().createTask(this.localTask, this.isLodgingTask);
         if (res) {
-          const message: TranslateResult = res.taskType === TaskType.Team
-            ? this.$t('task.team_task_created')
-            : this.$t('task.personal_task_created');
-
-          this.$toasted.global.success(message);
-
           if (this.dialogMode) {
             this.$emit('saved');
           } else {
+            const message: TranslateResult = res.taskType === TaskType.Team
+              ? this.$t('task.team_task_created')
+              : this.$t('task.personal_task_created');
+
+            this.$toasted.global.success(message);
+
             await this.$router.replace({ name: routes.caseFile.task.details.name, params: { taskId: res.id } });
           }
         }
