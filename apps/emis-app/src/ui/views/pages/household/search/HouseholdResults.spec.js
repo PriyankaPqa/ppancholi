@@ -11,6 +11,7 @@ import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { ECurrentAddressTypes, mockHouseholdCreateData } from '@libs/entities-lib/household-create';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
 const localVue = createLocalVue();
@@ -18,6 +19,7 @@ const localVue = createLocalVue();
 const vuetify = new Vuetify();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
+useMockHouseholdStore(pinia);
 
 const parsedHousehold = {
   householdStatus: HouseholdStatus.Open,

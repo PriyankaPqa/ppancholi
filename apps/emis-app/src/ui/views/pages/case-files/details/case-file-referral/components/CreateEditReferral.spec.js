@@ -2,11 +2,13 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CreateEditReferral.vue';
 
 const localVue = createLocalVue();
 
 const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
+useMockCaseFileStore(pinia);
 
 describe('CreateEditReferral', () => {
   let wrapper;
@@ -103,6 +105,7 @@ describe('CreateEditReferral', () => {
       it('returns true if the route is edit', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'CASEFILE_ID',
             referralId: 'REF_ID',
@@ -125,6 +128,7 @@ describe('CreateEditReferral', () => {
       it('returns false if the route is create', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'CASEFILE_ID',
             referralId: 'REF_ID',
@@ -179,6 +183,7 @@ describe('CreateEditReferral', () => {
       beforeEach(() => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'CASEFILE_ID',
           },

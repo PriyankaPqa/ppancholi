@@ -10,8 +10,6 @@ import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/pote
 import { mockMember } from '@libs/entities-lib/household-create';
 import Component, { SelectedTab } from './ManageDuplicates.vue';
 
-const { pinia, potentialDuplicateStore } = useMockPotentialDuplicateStore();
-
 const localVue = createLocalVue();
 const services = mockProvider();
 
@@ -19,6 +17,18 @@ const duplicates = [
   mockHouseholdDuplicateFullData({ id: '1', duplicateStatus: DuplicateStatus.Potential }),
   mockHouseholdDuplicateFullData({ id: '2', duplicateStatus: DuplicateStatus.Resolved }),
 ];
+
+const initPinia = (userRole = UserRoles.level6) => {
+  const pinia = getPiniaForUser(userRole);
+  const { potentialDuplicateStore } = useMockPotentialDuplicateStore(pinia);
+
+  return {
+    pinia,
+    potentialDuplicateStore,
+  };
+};
+
+const { pinia, potentialDuplicateStore } = initPinia();
 
 describe('ManageDuplicates.vue', () => {
   let wrapper;
@@ -91,12 +101,12 @@ describe('ManageDuplicates.vue', () => {
   describe('Computed', () => {
     describe('tabs', () => {
       it('returns 2 tabs if level below 5', () => {
-        doMount(true, { pinia: getPiniaForUser(UserRoles.level4) });
+        doMount(true, { pinia: initPinia(UserRoles.level4).pinia });
         expect(wrapper.vm.tabs).toEqual([SelectedTab.Potential, SelectedTab.FlagNew]);
       });
 
       it('returns 3 tabs if level 5 plus', () => {
-        doMount(true, { pinia: getPiniaForUser(UserRoles.level5) });
+        doMount(true, { pinia: initPinia(UserRoles.level5).pinia });
         expect(wrapper.vm.tabs).toEqual([SelectedTab.Potential, SelectedTab.Resolved, SelectedTab.FlagNew]);
       });
     });

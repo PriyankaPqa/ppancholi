@@ -10,12 +10,14 @@ import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components
 import { mockProvider } from '@/services/provider';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import { mockServerError } from '@libs/services-lib/http-client';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './MassActionFailedBase.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 
 const { pinia, massActionStore } = useMockMassActionStore();
+useMockUserAccountStore(pinia);
 let wrapper;
 
 const doMount = ({ otherProps, otherData }, mountMode = false, runStatus = MassActionRunStatus.FailedPreProcessing) => {
@@ -147,7 +149,7 @@ describe('MassActionFailedBase.vue', () => {
       });
 
       it('should display a report error toast when the call returns another error', async () => {
-        await wrapper.vm.handleResponseError(mockServerError([]));
+        await wrapper.vm.handleResponseError(mockServerError([{}]));
         expect(wrapper.vm.$reportToasted).toBeCalled();
       });
 

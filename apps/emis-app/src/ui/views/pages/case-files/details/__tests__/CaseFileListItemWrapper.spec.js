@@ -127,6 +127,7 @@ describe('CaseFileListItemWrapper.vue', () => {
         const item = mockCaseFileActivities()[0];
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             item: mockCaseFileActivities()[0],
             sidebarIcon: 'mock-icon',

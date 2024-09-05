@@ -32,6 +32,11 @@ import _cloneDeep from 'lodash/cloneDeep';
 import * as registrationUtils from './registrationUtils';
 import { mockTabs } from './tabs.mock';
 
+jest.mock('./registrationUtils', () => ({
+  __esModule: true,
+  ...jest.requireActual('./registrationUtils'),
+}));
+
 let useRegistrationStore = null as ReturnType<typeof storeFactory>;
 
 const member = mockMember();

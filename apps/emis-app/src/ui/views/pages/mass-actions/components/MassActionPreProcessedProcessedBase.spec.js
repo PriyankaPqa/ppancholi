@@ -16,12 +16,14 @@ import { mockServerError } from '@libs/services-lib/http-client';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 
 import { mockProvider } from '@/services/provider';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './MassActionPreProcessedProcessedBase.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 
 const { pinia, massActionStore } = useMockMassActionStore();
+useMockUserAccountStore(pinia);
 let wrapper;
 
 const doMount = ({ otherProps, otherData }, mountMode = false, runStatus = MassActionRunStatus.Processed) => {
@@ -254,7 +256,8 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       });
 
       it('should display a report error toast when the call returns another error', async () => {
-        await wrapper.vm.handleResponseError(mockServerError([]));
+        wrapper.vm.$reportToasted = jest.fn();
+        await wrapper.vm.handleResponseError(mockServerError([{}]));
         expect(wrapper.vm.$reportToasted).toBeCalled();
       });
 

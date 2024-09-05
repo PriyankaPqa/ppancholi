@@ -3,14 +3,18 @@ import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import { mockTaskActionHistories } from '@libs/entities-lib/task';
 import { mockTeamEntity } from '@libs/entities-lib/team';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './TaskHistoryDialog.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 
+const { pinia } = useMockUserAccountStore();
+
 describe('TaskHistoryDialog.vue', () => {
   const wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     propsData: {
       show: true,
       isPersonalTask: false,

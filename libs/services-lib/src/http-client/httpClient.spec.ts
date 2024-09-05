@@ -12,6 +12,11 @@ import {
 
 import * as owasp from '../utils/owasp';
 
+jest.mock('../utils/owasp', () => ({
+  __esModule: true,
+  ...jest.requireActual('../utils/owasp'),
+}));
+
 jest.mock('uuid');
 jest.mock('@/odata-query-sql');
 jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');

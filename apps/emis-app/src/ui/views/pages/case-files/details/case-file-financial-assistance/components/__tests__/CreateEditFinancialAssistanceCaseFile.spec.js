@@ -64,6 +64,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     financialAssistancePaymentStore = useMockFinancialAssistancePaymentStore(pinia).financialAssistancePaymentStore;
     financialAssistanceStore = useMockFinancialAssistanceStore(pinia).financialAssistanceStore;
     useMockCaseFileStore(pinia);
+    useMockAssessmentFormStore(pinia);
     wrapper = (mount)(Component, {
       shallow: true,
       pinia,

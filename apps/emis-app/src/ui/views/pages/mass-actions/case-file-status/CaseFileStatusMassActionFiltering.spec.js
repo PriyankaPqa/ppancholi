@@ -24,6 +24,7 @@ describe('CaseFileStatusMassActionFiltering.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           show: true,
         },
@@ -139,10 +140,10 @@ describe('CaseFileStatusMassActionFiltering.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           show: true,
         },
-        pinia,
         mocks: {
           $services: services,
         },
