@@ -31,6 +31,8 @@ import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financ
 import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { usePersonStore } from '@/pinia/person/person';
+import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
+import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useNotificationStore } from '@/pinia/notification/notification';
@@ -151,6 +153,8 @@ export class SignalR implements ISignalR {
 
     // CaseFile
     this.listenForCaseFileModuleChanges();
+    this.listenForCaseFileIndividualModuleChanges();
+    this.listenForBookingRequestModuleChanges();
     this.listenForCaseNoteModuleChanges();
     this.listenForCaseReferralModuleChanges();
     this.listenForCaseDocumentModuleChanges();
@@ -386,6 +390,26 @@ export class SignalR implements ISignalR {
       prop: 'tagsOptionsFetched',
       store: useCaseFileStore(),
     });
+  }
+
+  private listenForCaseFileIndividualModuleChanges() {
+    this.listenForChanges({
+      domain: 'case-file',
+      entityName: 'CaseFileIndividual',
+      action: useCaseFileIndividualStore().setItemFromOutsideNotification,
+    });
+
+    this.watchedPiniaStores.push(useCaseFileIndividualStore());
+  }
+
+  private listenForBookingRequestModuleChanges() {
+    this.listenForChanges({
+      domain: 'case-file',
+      entityName: 'BookingRequest',
+      action: useBookingRequestStore().setItemFromOutsideNotification,
+    });
+
+    this.watchedPiniaStores.push(useBookingRequestStore());
   }
 
   private listenForCaseNoteModuleChanges() {

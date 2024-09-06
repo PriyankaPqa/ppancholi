@@ -632,6 +632,8 @@ export default mixins(caseFileDetail).extend({
         if (!bookingresult) {
           throw new Error('fulfillBooking failed');
         }
+        // refresh the addresses since they are not returned by the endpoint
+        await useCaseFileIndividualStore().fetchAll({ caseFileId: this.caseFileId });
         this.$toasted.global.success(this.$t(paymentId ? 'bookingRequest.fulfilledAndPaid' : 'impactedIndividuals.membersMoved'));
       } else {
         await this.provideAddress(paymentId);

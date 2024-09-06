@@ -67,6 +67,7 @@
       :id="caseFileId"
       :preselected-individuals="selectedIndividuals"
       :show.sync="showMoveDialog"
+      :booking-request="lodgingMode === LodgingMode.BookingMode ? pendingBookingRequest : null"
       :lodging-mode="lodgingMode"
       @close="showMoveDialog = false;" />
 
@@ -130,6 +131,7 @@ export default mixins(caseFileDetail).extend({
       showMoveDialog: false,
       showTaskDialog: false,
       lodgingMode: null as LodgingMode,
+      LodgingMode,
     };
   },
 
@@ -188,6 +190,12 @@ export default mixins(caseFileDetail).extend({
     },
 
     async startMoveProcess() {
+      if (this.userCanProvideCrcAddress && this.pendingBookingRequest) {
+        this.lodgingMode = LodgingMode.BookingMode;
+        this.showMoveDialog = true;
+        return;
+      }
+
       const dialog = this.$refs.selectIndividualsDialog as any;
       const peopleToMove = this.activeIndividuals
           .map((i) => ({

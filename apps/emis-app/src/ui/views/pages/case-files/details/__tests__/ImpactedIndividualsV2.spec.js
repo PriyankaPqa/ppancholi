@@ -291,6 +291,11 @@ describe('ImpactedIndividualsV2.vue', () => {
   describe('methods', () => {
     describe('startMoveProcess', () => {
       it('should start the process with the selected people', async () => {
+        await doMount(false, 6, {}, {
+          pendingBookingRequest() {
+            return null;
+          },
+        });
         wrapper.vm.$refs.selectIndividualsDialog = {
           open: jest.fn(() => ({ answered: true, selectedIndividuals: [detailsMock.mocks.individuals[0].id] })), close: jest.fn(),
         };
@@ -328,6 +333,18 @@ describe('ImpactedIndividualsV2.vue', () => {
         jest.clearAllMocks();
         await wrapper.vm.startMoveProcess();
         expect(wrapper.vm.showMoveDialog).toBeFalsy();
+      });
+
+      it('when there is a pending request we instead go for booking mode', async () => {
+        wrapper.vm.$refs.selectIndividualsDialog = {
+          open: jest.fn(() => ({ answered: true, selectedIndividuals: [detailsMock.mocks.individuals[0].id] })), close: jest.fn(),
+        };
+        await wrapper.setData({ userCanProvideCrcAddress: true });
+
+        await wrapper.vm.startMoveProcess();
+        expect(wrapper.vm.$refs.selectIndividualsDialog.open).not.toHaveBeenCalled();
+        expect(wrapper.vm.lodgingMode).toEqual(LodgingMode.BookingMode);
+        expect(wrapper.vm.showMoveDialog).toBeTruthy();
       });
     });
 
