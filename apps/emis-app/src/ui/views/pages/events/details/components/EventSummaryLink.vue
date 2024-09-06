@@ -90,10 +90,15 @@ export default Vue.extend({
   computed: {
     registrationUrl(): string {
       const prefixRegistrationLink = useTenantSettingsStore().currentTenantSettings;
+      const isTemporaryBranch = !!process.env.VITE_TEMP_BRANCH_ID;
+
       if (!prefixRegistrationLink?.registrationDomain) {
         return null;
       }
       const urlStart = `https://${this.$m(prefixRegistrationLink.registrationDomain)}`;
+      if (isTemporaryBranch) {
+        return `${urlStart}/${this.$i18n.locale}/registration/${this.$m(this.event.registrationLink)}?fb=${process.env.VITE_TEMP_BRANCH_ID}`;
+      }
       return `${urlStart}/${this.$i18n.locale}/registration/${this.$m(this.event.registrationLink)}`;
     },
 
