@@ -85,6 +85,7 @@
     "appointments.scheduleHours.from": "appointments.scheduleHours.from",
     "appointments.scheduleHours.to": "appointments.scheduleHours.to",
     "appointments.serviceOptions.shouldNotBeEmpty": "appointments.serviceOptions.shouldNotBeEmpty",
+    "appointments.staffMembers.shouldNotBeEmpty": "",
     "approval.requests.action.Approved": "approval.requests.action.Approved",
     "approval.requests.action.Declined": "approval.requests.action.Declined",
     "approval.requests.action.RequestInfo": "approval.requests.action.RequestInfo",

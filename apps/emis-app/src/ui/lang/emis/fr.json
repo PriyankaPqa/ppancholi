@@ -85,6 +85,7 @@
     "appointments.scheduleHours.from": "De",
     "appointments.scheduleHours.to": "À",
     "appointments.serviceOptions.shouldNotBeEmpty": "Au moins une option de service doit être fournie à un programme de rendez-vous actif",
+    "appointments.staffMembers.shouldNotBeEmpty": "Au moins un membre du personnel doit être affecté à un programme de rendez-vous actif",
     "approval.requests.action.Approved": "Approuvé",
     "approval.requests.action.Declined": "Refusé",
     "approval.requests.action.RequestInfo": "Précisions requises",
