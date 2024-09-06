@@ -72,7 +72,7 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
-import { validateCanDeleteServiceOptionPolicy } from '../appointmentProgramsHelper';
+import { canDeleteServiceOption } from '../appointmentProgramsHelper';
 import CreateEditServiceOption from '../create-edit/CreateEditServiceOption.vue';
 
 export interface IExtendedServiceOption extends IServiceOption {
@@ -216,7 +216,7 @@ export default Vue.extend({
 
     async deleteServiceOption(serviceOption: IExtendedServiceOption) {
       if (this.isEditMode) {
-        if (!validateCanDeleteServiceOptionPolicy(this.appointmentProgram)) {
+        if (!canDeleteServiceOption(this.appointmentProgram)) {
           this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.serviceOption.deleteUniqueServiceOption.error') });
           return;
         }

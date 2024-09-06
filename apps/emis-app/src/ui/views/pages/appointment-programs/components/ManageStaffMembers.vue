@@ -119,7 +119,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
 import RcDataTable from '@libs/component-lib/components/organism/RcDataTable/RcDataTable.vue';
 import AssignServiceOptions from './AssignServiceOptions.vue';
-import { validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
+import { mustHaveStaffMembers } from '../appointmentProgramsHelper';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
@@ -299,7 +299,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
 
       if (this.isEditMode) {
-        if (!validateHasStaffMembersPolicy({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
+        if (!mustHaveStaffMembers({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
           this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.atLeastOneStaffMember') });
           return;
         }

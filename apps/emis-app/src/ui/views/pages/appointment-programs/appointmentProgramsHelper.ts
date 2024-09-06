@@ -1,18 +1,18 @@
 import { IAppointmentProgram } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
 
-export function validateMustHaveServiceOptionsPolicy(appointmentProgram: IAppointmentProgram): boolean {
+export function mustHaveServiceOptions(appointmentProgram: IAppointmentProgram): boolean {
   return appointmentProgram.appointmentProgramStatus === Status.Inactive || !!appointmentProgram.serviceOptions.length;
 }
 
-export function validateCanDeleteServiceOptionPolicy(appointmentProgram: IAppointmentProgram): boolean {
+export function canDeleteServiceOption(appointmentProgram: IAppointmentProgram): boolean {
   return appointmentProgram.appointmentProgramStatus === Status.Inactive || appointmentProgram.serviceOptions.length > 1;
 }
 
-export function validateHasStaffMembersPolicy(appointmentProgram: IAppointmentProgram): boolean {
+export function mustHaveStaffMembers(appointmentProgram: IAppointmentProgram): boolean {
   return appointmentProgram.appointmentProgramStatus === Status.Inactive || appointmentProgram.serviceOptions.some((so) => !!so.staffMembers?.length);
 }
 
-export function validateCanSetActiveStatus(appointmentProgram: IAppointmentProgram, status: Status): boolean {
+export function canSetActiveStatus(appointmentProgram: IAppointmentProgram, status: Status): boolean {
   return status === Status.Inactive || appointmentProgram.serviceOptions.some((so) => !!so.staffMembers?.length);
 }
