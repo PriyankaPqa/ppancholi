@@ -212,6 +212,8 @@ describe('QueriesList.vue', () => {
 
     describe('availableThemes', () => {
       it('returns data filtered by searchTheme', async () => {
+        wrapper.vm.$hasFeature = jest.fn((f) => f === wrapper.vm.$featureKeys.Lodging);
+
         expect(wrapper.vm.availableThemes).toEqual([
           {
             id: ReportingTopic.AssignedCaseFiles,
@@ -269,6 +271,11 @@ describe('QueriesList.vue', () => {
             description: 'reporting.query.theme.LocationOfLogActivitiesEmailEvents.description',
           },
           {
+            id: ReportingTopic.Lodging,
+            name: 'reporting.query.theme.Lodging',
+            description: 'reporting.query.theme.Lodging.description',
+          },
+          {
             id: ReportingTopic.PaymentGroup,
             name: 'reporting.query.theme.PaymentGroup',
             description: 'reporting.query.theme.PaymentGroup.description',
@@ -303,7 +310,6 @@ describe('QueriesList.vue', () => {
             name: 'reporting.query.theme.UsersInTeams',
             description: 'reporting.query.theme.UsersInTeams.description',
           },
-
         ]);
         await wrapper.setData({ searchTheme: 'HouseholdPrimary' });
         expect(wrapper.vm.availableThemes).toEqual([
