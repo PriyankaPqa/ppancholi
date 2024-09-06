@@ -55,7 +55,6 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { DataTableHeader } from 'vuetify';
 import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { ITeamEntity } from '@libs/entities-lib/team';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
 
 export default Vue.extend({
@@ -77,9 +76,9 @@ export default Vue.extend({
       required: true,
     },
 
-    teams: {
-      type: Array as () => ITeamEntity[],
-      default: () => [] as ITeamEntity[],
+    assignableTeamsIds: {
+      type: Array as () => String[],
+      default: () => [] as String[],
     },
 
     inTeamManagement: {
@@ -151,8 +150,8 @@ export default Vue.extend({
       return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOptionType?.optionItemId)?.name);
     },
 
-    getTeamNames(member: IUserAccountMetadata) {
-      const assignableTeams = member.teams.filter((t) => this.teams.map((i) => i.id).includes(t.teamId));
+    getTeamNames(member: IUserAccountMetadata): string {
+      const assignableTeams = member.teams.filter((t) => this.assignableTeamsIds.includes(t.teamId));
       return assignableTeams.map((t) => t.name).join(', ');
     },
 
@@ -185,9 +184,9 @@ export default Vue.extend({
       clonedServiceOptions.forEach((so) => {
         so.staffMembers = so.staffMembers.filter((m) => m !== memberId);
       });
-      const updateStaffMembers = [...this.staffMembers].filter((m) => m.id !== memberId);
+      const updatedStaffMembers = [...this.staffMembers].filter((m) => m.id !== memberId);
       this.$emit('update:serviceOptions', clonedServiceOptions);
-      this.$emit('update:staffMembers', updateStaffMembers);
+      this.$emit('update:staffMembers', updatedStaffMembers);
     },
 
   },

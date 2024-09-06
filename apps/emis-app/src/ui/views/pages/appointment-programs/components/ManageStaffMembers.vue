@@ -23,7 +23,7 @@
           dense
           :label="$t('appointmentProgram.manageStaff.select.team')"
           class="mb-3"
-          :items="teams"
+          :items="assignableTeams"
           hide-details
           return-object
           :item-text="(item) => item.name"
@@ -95,7 +95,7 @@
         <assign-service-options
           :service-options.sync="localServiceOptions"
           :staff-members.sync="allStaffMembers"
-          :teams="teams" />
+          :assignable-teams-ids="assignableTeams.map(t=> t.id)" />
       </v-col>
     </v-row>
   </rc-dialog>
@@ -173,7 +173,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       teamMembersLoading: false,
       selectedTeam: null as ITeamEntity,
       teamMembers: [] as IUserAccountMetadata[],
-      teams: [] as ITeamEntity[],
+      assignableTeams: [] as ITeamEntity[],
       allStaffMembers: [] as IUserAccountMetadata[],
       localServiceOptions: [] as IServiceOption[],
     };
@@ -242,7 +242,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         orderBy: 'Entity/Name asc',
       } });
       if (res) {
-        this.teams = res.values;
+        this.assignableTeams = res.values;
       }
     },
 

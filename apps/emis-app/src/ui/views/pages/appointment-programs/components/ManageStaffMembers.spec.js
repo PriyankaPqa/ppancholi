@@ -89,7 +89,7 @@ describe('ManageStaffMembers.vue', () => {
 
   describe('methods', () => {
     describe('fetchAssignableTeams', () => {
-      it('calls team store and stores the result in the teams variable', async () => {
+      it('calls team store and stores the result in the assignableTeams variable', async () => {
         await mountWrapper();
         teamStore.search = jest.fn(() => ({ values: [mockTeamEntity()] }));
         await wrapper.vm.fetchAssignableTeams();
@@ -97,7 +97,7 @@ describe('ManageStaffMembers.vue', () => {
           filter: { Entity: { UseForAppointments: true, Events: { any: { Id: { value: 'eventId', type: EFilterKeyType.Guid } } } } },
           orderBy: 'Entity/Name asc',
         } });
-        expect(wrapper.vm.teams).toEqual([mockTeamEntity()]);
+        expect(wrapper.vm.assignableTeams).toEqual([mockTeamEntity()]);
       });
     });
 
