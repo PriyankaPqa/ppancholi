@@ -68,7 +68,6 @@ stages:
   - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
       - template: "./stages/deploy-to-temporary-url-stage.yml"
         parameters:
-          storage: ${{ parameters.storage }}
           cdnEndpoint: ${{ parameters.cdnEndpoint }}
           cdnProfile: ${{ parameters.cdnProfile }}
 

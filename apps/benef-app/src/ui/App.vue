@@ -79,10 +79,6 @@ export default {
     this.createPrototypes();
   },
 
-  mounted() {
-    this.handleRedirectToBeforeRefreshBranch();
-  },
-
   methods: {
     createPrototypes() {
       Vue.prototype.$confirm = async ({
@@ -122,15 +118,6 @@ export default {
         this.showMessage = true;
         return true;
       };
-    },
-
-    handleRedirectToBeforeRefreshBranch() {
-      // When app refreshed to stay within a branch
-      const pathBeforeRefresh = sessionStorage.getItem(sessionStorageKeys.pathBeforeRefresh.name);
-      if (pathBeforeRefresh) {
-        this.$router.replace({ path: pathBeforeRefresh });
-        sessionStorage.removeItem(sessionStorageKeys.pathBeforeRefresh.name);
-      }
     },
   },
 };

@@ -19,9 +19,7 @@ export default defineConfig(({ mode }) => {
     {},
   );
 
-  const isTemporaryBranch = !!env.VITE_TEMP_BRANCH_ID;
-
-  const options = {
+  return {
     server: {
       port: 8080,
     },
@@ -90,15 +88,4 @@ export default defineConfig(({ mode }) => {
     },
     define: envWithProcessPrefix,
   };
-
-  if (isTemporaryBranch) {
-    return {
-      ...options,
-      build: {
-        assetsDir: env.VITE_TEMP_BRANCH_ID,
-      },
-    };
-  }
-
-  return options;
 });
