@@ -12,11 +12,12 @@ import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { mockBookingRequest } from '@libs/entities-lib/booking-request';
 import { createTestingPinia } from '@pinia/testing';
 import { mockProgramEntity } from '@libs/entities-lib/program';
+import { useMockTaskStore } from '@/pinia/task/task.mock';
 import { CurrentAddress, ECurrentAddressTypes, mockOther } from '@libs/entities-lib/value-objects/current-address';
 import { MembershipStatus, mockTemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { CaseFileDetailsMock } from '../case-files/details/__tests__/caseFileDetailsMock.mock';
-import { LodgingMode } from './bookingHelper';
+import bookingHelper, { LodgingMode } from './bookingHelper';
 
 import Component from './BookingSetupDialog.vue';
 
@@ -28,6 +29,7 @@ const eventStore = useMockEventStore(pinia).eventStore;
 const householdStore = useMockHouseholdStore(pinia).householdStore;
 const bookingStore = useMockBookingRequestStore(pinia).bookingRequestStore;
 useMockCaseFileStore(pinia);
+useMockTaskStore(pinia);
 const individualStore = useMockCaseFileIndividualStore(pinia).caseFileIndividualStore;
 const tableStore = useMockFinancialAssistanceStore(pinia).financialAssistanceStore;
 const paymentStore = useMockFinancialAssistancePaymentStore(pinia).financialAssistancePaymentStore;
@@ -39,6 +41,7 @@ programStore.search = jest.fn(() => ({ values: [program] }));
 const bookingRequest = mockBookingRequest();
 
 let detailsMock = new CaseFileDetailsMock();
+bookingHelper.checkLodgingTaskExists = jest.fn(() => true);
 
 describe('BookingSetupDialog.vue', () => {
   let wrapper;
@@ -200,6 +203,9 @@ describe('BookingSetupDialog.vue', () => {
         expect(eventStore.fetchByIds).toHaveBeenCalled();
         expect(individualStore.fetchAll).toHaveBeenCalled();
 
+        // in checkForCrcProvidedSetupComplete
+        expect(bookingHelper.checkLodgingTaskExists).toHaveBeenCalled();
+
         expect(paymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
         expect(programStore.search).toHaveBeenCalledWith({ params: {
           filter: {
@@ -236,6 +242,40 @@ describe('BookingSetupDialog.vue', () => {
   });
 
   describe('Methods', () => {
+    describe('checkForCrcProvidedSetupComplete', () => {
+      it('doesnt fire when loading or not providing payment', async () => {
+        await mountWrapper(false, 6, LodgingMode.MoveCrcProvidedAllowed);
+        await wrapper.setData({ loading: true, isCrcProvided: true });
+        jest.clearAllMocks();
+        expect(await wrapper.vm.checkForCrcProvidedSetupComplete()).toBeTruthy();
+        expect(bookingHelper.checkLodgingTaskExists).not.toHaveBeenCalled();
+
+        await wrapper.setData({ loading: false, isCrcProvided: false });
+        jest.clearAllMocks();
+        expect(await wrapper.vm.checkForCrcProvidedSetupComplete()).toBeTruthy();
+        expect(bookingHelper.checkLodgingTaskExists).not.toHaveBeenCalled();
+
+        await wrapper.setData({ loading: false, isCrcProvided: true });
+        jest.clearAllMocks();
+        await wrapper.vm.checkForCrcProvidedSetupComplete();
+        expect(bookingHelper.checkLodgingTaskExists).toHaveBeenCalled();
+      });
+
+      it('shows an error if no payment details', async () => {
+        await mountWrapper(false, 6, LodgingMode.MoveCrcProvidedAllowed);
+        wrapper.vm.$message = jest.fn();
+        await wrapper.setData({ loading: false, isCrcProvided: true, paymentDetails: [] });
+        jest.clearAllMocks();
+        expect(await wrapper.vm.checkForCrcProvidedSetupComplete()).toBeFalsy();
+        expect(wrapper.vm.$message).toHaveBeenCalled();
+
+        await wrapper.setData({ loading: false, isCrcProvided: true, paymentDetails: [{}] });
+        jest.clearAllMocks();
+        expect(await wrapper.vm.checkForCrcProvidedSetupComplete()).toBeTruthy();
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+      });
+    });
+
     describe('setupBookingsForEdit', () => {
       it('creates bookings per address', async () => {
         const individuals = detailsMock.mocks.individuals;
@@ -248,7 +288,7 @@ describe('BookingSetupDialog.vue', () => {
         individuals[2].currentAddress.crcProvided = true;
 
         await mountWrapper(false, 5, LodgingMode.ExtendStay);
-        wrapper.vm.setupBookingsForEdit();
+        await wrapper.vm.setupBookingsForEdit();
         const address = new CurrentAddress(individuals[0].currentAddress);
         address.checkIn = '';
         address.checkOut = '';
@@ -265,7 +305,7 @@ describe('BookingSetupDialog.vue', () => {
         individuals[0].currentAddress.checkIn = new Date('2002-02-02');
         individuals[0].currentAddress.checkOut = new Date('2002-02-05');
 
-        wrapper.vm.setupBookingsForEdit();
+        await wrapper.vm.setupBookingsForEdit();
         const address2 = new CurrentAddress(individuals[0].currentAddress);
         address2.checkIn = '2002-02-02';
         address2.checkOut = '2002-02-05';
@@ -380,7 +420,7 @@ describe('BookingSetupDialog.vue', () => {
         wrapper.vm.setupBookingsForEdit = jest.fn();
         jest.clearAllMocks();
         const detail = wrapper.vm.paymentDetails[0];
-        wrapper.vm.selectPaymentDetails(detail);
+        await wrapper.vm.selectPaymentDetails(detail);
         expect(wrapper.vm.defaultAmount).toEqual(1);
         expect(paymentStore.getFinancialAssistanceCategories).toHaveBeenCalled();
         expect(tableStore.setFinancialAssistance).toHaveBeenCalledWith({
@@ -391,7 +431,7 @@ describe('BookingSetupDialog.vue', () => {
         await mountWrapper(false, 5, LodgingMode.ExtendStay);
         wrapper.vm.setupBookingsForEdit = jest.fn();
         jest.clearAllMocks();
-        wrapper.vm.selectPaymentDetails(detail);
+        await wrapper.vm.selectPaymentDetails(detail);
         expect(wrapper.vm.setupBookingsForEdit).toHaveBeenCalled();
       });
     });

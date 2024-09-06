@@ -203,7 +203,7 @@
             @keyup="form.address.postalCode = form.address.postalCode ? form.address.postalCode.toUpperCase() : null" />
         </v-col>
 
-        <v-col v-if="!form.crcProvided && form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
+        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
           <rc-country-select-with-validation
             v-model="form.address.country"
             background-color="white"

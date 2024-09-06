@@ -134,7 +134,7 @@ import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity, Pa
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
-import { LodgingMode, isEditMode } from './bookingHelper';
+import bookingHelper, { LodgingMode } from './bookingHelper';
 
 export interface ICrcProvidedLodging {
   generatePayment(): IFinancialAssistancePaymentEntity;
@@ -202,7 +202,7 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     isEditOfAddress(): boolean {
-      return isEditMode(this.lodgingMode);
+      return bookingHelper.isEditMode(this.lodgingMode);
     },
 
     shelterLocations(): IEventGenericLocation[] {

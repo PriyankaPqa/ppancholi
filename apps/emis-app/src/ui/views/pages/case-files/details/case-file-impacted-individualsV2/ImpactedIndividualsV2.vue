@@ -15,7 +15,7 @@
           {{ $t('impactedIndividuals.bookingRequest') }}
         </v-btn>
 
-        <v-btn v-if="canRequestUpdate" class="primary mb-6" @click="showTaskDialog = true">
+        <v-btn v-if="canRequestUpdate" class="primary mb-6" @click="requestUpdate()">
           {{ $t('impactedIndividuals.requestUpdate') }}
         </v-btn>
 
@@ -104,8 +104,9 @@ import caseFileDetail from '../caseFileDetail';
 import ImpactedIndividualCardV2 from './components/ImpactedIndividualCardV2.vue';
 import SelectIndividualsDialog from './components/SelectIndividualsDialog.vue';
 import BookingSetupDialog from '../../../lodging/BookingSetupDialog.vue';
-import { LodgingMode } from '../../../lodging/bookingHelper';
+import bookingHelper, { LodgingMode } from '../../../lodging/bookingHelper';
 import CreateEditTask from '../case-file-task/create-edit/CreateEditTask.vue';
+import BookingRequestDialog from './components/BookingRequestDialog.vue';
 
 export default mixins(caseFileDetail).extend({
   name: 'ImpactedIndividuals',
@@ -116,6 +117,7 @@ export default mixins(caseFileDetail).extend({
     RcPageLoading,
     SelectIndividualsDialog,
     BookingSetupDialog,
+    BookingRequestDialog,
     CreateEditTask,
     RcDialog,
   },
@@ -182,9 +184,29 @@ export default mixins(caseFileDetail).extend({
   },
 
   methods: {
-    openBookingRequest() : void {
-      this.showBookingDialog = true;
+    async checkLodgingTeamExists() {
+      if (!this.bookingTeams.length) {
+        await this.$message({
+          title: this.$t('impactedIndividuals.noLodgingTeam.title'),
+          message: this.$t('impactedIndividuals.noLodgingTeam.message'),
+        });
+        return false;
+      }
+      return true;
     },
+
+    openBookingRequest() {
+      if (this.checkLodgingTeamExists()) {
+        this.showBookingDialog = true;
+      }
+    },
+
+    async requestUpdate() {
+      if (await this.checkLodgingTeamExists() && await bookingHelper.checkLodgingTaskExists(this)) {
+        this.showTaskDialog = true;
+      }
+    },
+
     onCloseDialog() : void {
       this.showBookingDialog = false;
     },

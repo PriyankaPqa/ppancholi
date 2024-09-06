@@ -257,7 +257,7 @@ import caseFileDetail from '../case-files/details/caseFileDetail';
 import ReviewBookingRequest from './ReviewBookingRequest.vue';
 import CrcProvidedLodging, { ICrcProvidedLodging } from './CrcProvidedLodging.vue';
 import ImpactedIndividualAddressTemplateV2 from '../case-files/details/case-file-impacted-individualsV2/components/ImpactedIndividualAddressTemplateV2.vue';
-import { IPaymentDetails, isEditMode, LodgingMode, modeMayTriggerPayment } from './bookingHelper';
+import bookingHelper, { IPaymentDetails, LodgingMode } from './bookingHelper';
 
 export default mixins(caseFileDetail).extend({
   name: 'BookingSetupDialog',
@@ -327,11 +327,11 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     isEditOfAddress(): boolean {
-      return isEditMode(this.lodgingMode);
+      return bookingHelper.isEditMode(this.lodgingMode);
     },
 
     mayTriggerPayment(): boolean {
-      return modeMayTriggerPayment(this.lodgingMode);
+      return bookingHelper.modeMayTriggerPayment(this.lodgingMode);
     },
 
     title(): TranslateResult {
@@ -381,6 +381,12 @@ export default mixins(caseFileDetail).extend({
     },
   },
 
+  watch: {
+    async isCrcProvided() {
+      await this.checkForCrcProvidedSetupComplete();
+    },
+  },
+
   async mounted() {
     this.loading = true;
     if (this.bookingRequest) {
@@ -411,25 +417,50 @@ export default mixins(caseFileDetail).extend({
 
       this.paymentDetails = faTables.map((t) => ({ table: t, program: programs.find((p) => t.programId === p.id) }))
         .map((tp) => ({ ...tp, name: `${this.$m(tp.program.name)} - ${this.$m(tp.table.name)}` }));
-      this.loading = false;
 
-      this.selectPaymentDetails(this.paymentDetails[0]);
+      await this.selectPaymentDetails(this.paymentDetails[0]);
+    }
 
-      this.showSelectPaymentDetails = this.paymentDetails.length > 1;
-    } else if (this.isEditOfAddress) {
-      this.loading = false;
-      this.setupBookingsForEdit();
-    } else {
-      this.loading = false;
+    if (this.isEditOfAddress) {
+      await this.setupBookingsForEdit();
     }
 
     if (this.lodgingMode !== LodgingMode.MoveCrcProvidedAllowed && this.lodgingMode !== LodgingMode.MoveCrcProvidedNotAllowed) {
       this.moveIntoExistingAddress = false;
     }
+
+    this.loading = false;
+
+    if (!await this.checkForCrcProvidedSetupComplete()) {
+      return;
+    }
+    this.showSelectPaymentDetails = this.paymentDetails.length > 1;
   },
 
   methods: {
-    setupBookingsForEdit() {
+    async checkForCrcProvidedSetupComplete() {
+      if (this.loading || !this.isCrcProvided || !this.mayTriggerPayment) {
+        return true;
+      }
+
+      if (!await bookingHelper.checkLodgingTaskExists(this)) {
+        this.$emit('update:show', false);
+        return false;
+      }
+
+      if (!this.paymentDetails.length) {
+        await this.$message({
+          title: this.$t('impactedIndividuals.noFinancialDetails.title'),
+          message: this.$t('impactedIndividuals.noFinancialDetails.message'),
+        });
+        this.$emit('update:show', false);
+        return false;
+      }
+
+      return true;
+    },
+
+    async setupBookingsForEdit() {
       const groupedAddresses = _groupBy(this.peopleToLodge, (p) => JSON.stringify(this.temporaryAddressAsCurrentAddress({ ...p.caseFileIndividual.currentAddress, id: null })));
 
       this.bookings = Object.values(groupedAddresses).map((group, index) => (
@@ -454,6 +485,9 @@ export default mixins(caseFileDetail).extend({
       this.addressType = this.bookings[0].address.addressType;
       this.showCrcProvidedSelection = true;
       this.lockCrcProvided = true;
+
+      // to allow for isCrcProvided watcher promise to complete
+      await this.$nextTick();
     },
 
     temporaryAddressAsCurrentAddress(address: TemporaryAddress) : CurrentAddress {
@@ -505,7 +539,7 @@ export default mixins(caseFileDetail).extend({
       }
     },
 
-    selectPaymentDetails(detail: IPaymentDetails) {
+    async selectPaymentDetails(detail: IPaymentDetails) {
       if (detail) {
         const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
         useFinancialAssistanceStore().setFinancialAssistance({
@@ -518,7 +552,7 @@ export default mixins(caseFileDetail).extend({
         this.selectedPaymentDetails = detail;
 
         if (this.isEditOfAddress) {
-          this.setupBookingsForEdit();
+          await this.setupBookingsForEdit();
         }
       }
     },

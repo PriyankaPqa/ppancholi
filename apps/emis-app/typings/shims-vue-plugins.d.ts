@@ -46,7 +46,7 @@ declare module 'vue/types/vue' {
       message: TranslateResult,
       submitActionLabel?: TranslateResult,
       minHeight?: number | string,
-      maxWidth?: number | string }) => boolean;
+      maxWidth?: number | string }) => Promise<boolean>;
 
     $reportToasted: (message : TranslateResult, error: IServerError | unknown) => null;
   }

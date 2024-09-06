@@ -8,7 +8,7 @@ import { mockTeamEntity } from '@libs/entities-lib/team';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from '../case-file-impacted-individualsV2/ImpactedIndividualsV2.vue';
 import { CaseFileDetailsMock } from './caseFileDetailsMock.mock';
-import { LodgingMode } from '../../../lodging/bookingHelper';
+import bookingHelper, { LodgingMode } from '../../../lodging/bookingHelper';
 
 const localVue = createLocalVue();
 const services = mockProvider();
@@ -289,6 +289,51 @@ describe('ImpactedIndividualsV2.vue', () => {
   });
 
   describe('methods', () => {
+    describe('checkLodgingTeamExists', () => {
+      it('shows an error if no lodging teams exist', async () => {
+        await wrapper.setData({ bookingTeams: [{}] });
+        expect(await wrapper.vm.checkLodgingTeamExists()).toBeTruthy();
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+
+        await wrapper.setData({ bookingTeams: [] });
+        expect(await wrapper.vm.checkLodgingTeamExists()).toBeFalsy();
+        expect(wrapper.vm.$message).toHaveBeenCalled();
+      });
+    });
+
+    describe('openBookingRequest', () => {
+      it('opens based on checkLodgingTeamExists', async () => {
+        wrapper.vm.checkLodgingTeamExists = () => false;
+        await wrapper.vm.openBookingRequest();
+        expect(wrapper.vm.showBookingDialog).toBeFalsy();
+        wrapper.vm.checkLodgingTeamExists = () => true;
+        await wrapper.vm.openBookingRequest();
+        expect(wrapper.vm.showBookingDialog).toBeTruthy();
+      });
+    });
+
+    describe('requestUpdate', () => {
+      it('opens based on checkLodgingTeamExists and bookingHelper.checkLodgingTaskExists', async () => {
+        bookingHelper.checkLodgingTaskExists = () => true;
+        await doMount();
+        wrapper.vm.checkLodgingTeamExists = () => false;
+        await wrapper.vm.requestUpdate();
+        expect(wrapper.vm.showTaskDialog).toBeFalsy();
+        wrapper.vm.checkLodgingTeamExists = () => true;
+        await wrapper.vm.requestUpdate();
+        expect(wrapper.vm.showTaskDialog).toBeTruthy();
+
+        bookingHelper.checkLodgingTaskExists = () => false;
+        await doMount();
+        wrapper.vm.checkLodgingTeamExists = () => false;
+        await wrapper.vm.requestUpdate();
+        expect(wrapper.vm.showTaskDialog).toBeFalsy();
+        wrapper.vm.checkLodgingTeamExists = () => true;
+        await wrapper.vm.requestUpdate();
+        expect(wrapper.vm.showTaskDialog).toBeFalsy();
+      });
+    });
+
     describe('startMoveProcess', () => {
       it('should start the process with the selected people', async () => {
         await doMount(false, 6, {}, {
