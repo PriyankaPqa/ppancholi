@@ -226,6 +226,7 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'address_CheckIn', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'address_CheckOut', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'address_CrcProvided', dataType: 'boolean', visible: false },
+    { dataField: 'address_Takeover', dataType: 'boolean', visible: false },
     { dataField: 'createDate', dataType: 'datetime', visible: false },
     { dataField: 'updateDate', dataType: 'datetime', visible: false },
     { dataField: 'createdBy', dataType: 'string', visible: false },
@@ -241,6 +242,13 @@ export const personAddressHistoryViewDs : IDatasourceBase = {
     ...x,
     caption: x.dataField.startsWith('address_') || x.dataField.startsWith('shelterLocation') ? `ds.personAddressHistory.${x.dataField}` : x.caption,
   })),
+};
+
+export const personTemporaryAddressHistoryViewDs : IDatasourceBase = {
+  columns: ([
+    ...personViewDs.columns, 
+    { dataField: 'paymentsRelatedNumbersCsv', dataType: 'string', visible: false },
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` }))
 };
 
 export const taskViewDS : IDatasourceBase = {
@@ -640,6 +648,55 @@ export const logActivitiesEmailEventsViewDs : IDatasourceBase = {
   ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.logActivitiesEmailEvents.${x.dataField}` })),
 };
 
+export const bookingRequestViewDs : IDatasourceBase = {
+  columns: ([
+    { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'caseFileId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'householdId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+
+    { dataField: 'addressTypeNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'CurrentAddressType' },
+    { dataField: 'addressTypeNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'CurrentAddressType' },
+    { dataField: 'crcProvided', dataType: 'boolean', visible: false },
+
+    { dataField: 'shelterLocationId', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+    { dataField: 'shelterLocationsNameEn', dataType: 'string', visible: false },
+    { dataField: 'shelterLocationsNameFr', dataType: 'string', visible: false },
+
+    { dataField: 'checkIn', dataType: 'date', visible: false, asUtcDate: true },
+    { dataField: 'checkOut', dataType: 'date', visible: false, asUtcDate: true },
+
+    { dataField: 'numberOfAdults', dataType: 'int', visible: false },
+    { dataField: 'numberOfChildren', dataType: 'int', visible: false },
+    { dataField: 'numberOfRooms', dataType: 'int', visible: false },
+    { dataField: 'notes', dataType: 'string', visible: false },
+
+    { dataField: 'bookingRequestStateNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'BookingRequestState' },
+    { dataField: 'bookingRequestStateNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'BookingRequestState' },
+    { dataField: 'rejectionRationale', dataType: 'string', visible: false },
+
+    { dataField: 'actionedBy', dataType: 'string', visible: false },
+    { dataField: 'actionedOn', dataType: 'datetime', visible: false },
+
+    { dataField: 'address_Country', dataType: 'string', visible: false },
+    { dataField: 'address_StreetAddress', dataType: 'string', visible: false },
+    { dataField: 'address_UnitSuite', dataType: 'string', visible: false },
+    { dataField: 'address_ProvinceNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'Province' },
+    { dataField: 'address_ProvinceNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'Province' },
+    { dataField: 'address_SpecifiedOtherProvince', dataType: 'string', visible: false },
+    { dataField: 'address_City', dataType: 'string', visible: false },
+    { dataField: 'address_PostalCode', dataType: 'string', visible: false },
+    { dataField: 'address_Latitude', dataType: 'number', visible: false },
+    { dataField: 'address_Longitude', dataType: 'number', visible: false },
+
+    { dataField: 'createDate', dataType: 'datetime', visible: false },
+    { dataField: 'updateDate', dataType: 'datetime', visible: false },
+    { dataField: 'createdBy', dataType: 'string', visible: false },
+    { dataField: 'lastUpdatedBy', dataType: 'string', visible: false },
+    { dataField: 'eTag', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
+
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.bookingRequest.${x.dataField}` })),
+};
+
 export const locationOfLogActivitiesEmailEventsViewDs : IDatasourceBase = {
   columns: ([
     { dataField: 'id', dataType: 'string', allowHeaderFiltering: false, allowFiltering: false, allowSearch: false, visible: false },
@@ -896,6 +953,17 @@ export const logActivitiesEmailEventsDs : IDatasourceSettings = {
   ],
 };
 
+export const lodgingDs : IDatasourceSettings = {
+  url: 'common/data-providers/lodging',
+  reportingTopic: ReportingTopic.Lodging,
+  key: { caseFileId: 'Guid', memberId: 'Guid', address_from: 'String' },
+  columns: [
+    ...(caseFileViewDs.columns.filter((c) => c.dataField === 'caseFileNumber' || c.dataField === 'eventNameEn' || c.dataField === 'eventNameFr').map((x) => ({ ...x, dataField: `casefile.${x.dataField}` }))),
+    ...(personTemporaryAddressHistoryViewDs.columns.filter((c) => c.dataField !== 'householdId').map((x) => ({ ...x, dataField: `person.${x.dataField}` }))),
+    ...(bookingRequestViewDs.columns.map((x) => ({ ...x, dataField: `bookingRequest.${x.dataField}` }))),
+  ],
+};
+
 export const locationOfLogActivitiesEmailEventsDs : IDatasourceSettings = {
   url: 'common/data-providers/location-of-log-activities-email-events',
   reportingTopic: ReportingTopic.LocationOfLogActivitiesEmailEvents,
@@ -928,5 +996,6 @@ export const datasources = [
   assignedCaseFilesDs,
   documentsDs,
   logActivitiesEmailEventsDs,
+  lodgingDs,
   locationOfLogActivitiesEmailEventsDs,
 ];

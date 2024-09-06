@@ -167,7 +167,11 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (this.queryType === QueryType.Custom) {
         return null;
       }
-      return AllReports.filter((r) => r.queryType === this.queryType && r.topic !== ReportingTopic.LogActivitiesEmailEvents).map((q) => ({
+
+      return AllReports.filter((r) => r.queryType === this.queryType
+                                      && r.topic !== ReportingTopic.LogActivitiesEmailEvents
+                                      && (this.$hasFeature(this.$featureKeys.Lodging) || r.topic !== ReportingTopic.Lodging))
+      .map((q) => ({
         id: q.id,
         theme: this.$t(`reporting.query.theme.${ReportingTopic[q.topic]}`) as string,
         name: q.name,
@@ -243,7 +247,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     availableThemes(): { name: string, description: string, id: ReportingTopic }[] {
-      const themes = sharedHelpers.filterCollectionByValue([
+      let themes = sharedHelpers.filterCollectionByValue([
         {
           id: ReportingTopic.HouseholdMembersAddressHistory,
           name: this.$t('reporting.query.theme.HouseholdMembersAddressHistory'),
@@ -329,12 +333,21 @@ export default mixins(TablePaginationSearchMixin).extend({
           name: this.$t('reporting.query.theme.AssignedCaseFiles'),
           description: this.$t('reporting.query.theme.AssignedCaseFiles.description'),
         },
-      {
+        {
           id: ReportingTopic.Documents,
           name: this.$t('reporting.query.theme.Documents'),
           description: this.$t('reporting.query.theme.Documents.description'),
         },
+        {
+          id: ReportingTopic.Lodging,
+          name: this.$t('reporting.query.theme.Lodging'),
+          description: this.$t('reporting.query.theme.Lodging.description'),
+        },
       ], this.searchTheme);
+
+      if (!this.$hasFeature(this.$featureKeys.Lodging)) {
+        themes = themes.filter((r) => r.id !== ReportingTopic.Lodging);
+      }
 
       return _orderBy(themes, ['name'], ['asc']);
     },

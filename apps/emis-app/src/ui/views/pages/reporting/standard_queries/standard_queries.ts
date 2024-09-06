@@ -34,8 +34,8 @@ import { DocumentsL6En, DocumentsL6Fr } from './DocumentsL6';
 import { DataCorrectionTriageL6En, DataCorrectionTriageL6Fr } from './DataCorrectionTriageL6';
 import { LodgingOverviewWithHistoryL6En, LodgingOverviewWithHistoryL6Fr } from './LodgingOverviewWithHistoryL6';
 import { SentEmailIssuesL6En, SentEmailIssuesL6Fr } from './SentEmailIssuesL6';
+import { LodgingL6En, LodgingL6Fr } from './LodgingL6';
 import { LocationOfEmailL6En, LocationOfEmailL6Fr } from './LocationOfEmailL6';
-
 
 import { AllPbiReports } from './PowerBiEmbedded';
 
@@ -402,6 +402,42 @@ export const PaymentLinesIMFr = {
   queryType: QueryType.StandardIMfr,
 } as IQuery;
 
+export const LodgingL5En = {
+  ...LodgingL6En,
+  id: 'LodgingL5',
+  queryType: QueryType.StandardL5en,
+} as IQuery;
+
+export const LodgingL5Fr = {
+  ...LodgingL6Fr,
+  id: 'LodgingL5',
+  queryType: QueryType.StandardL5fr,
+} as IQuery;
+
+export const LodgingL4En = {
+  ...LodgingL6En,
+  id: 'LodgingL4',
+  queryType: QueryType.StandardL4en,
+} as IQuery;
+
+export const LodgingL4Fr = {
+  ...LodgingL6Fr,
+  id: 'LodgingL4',
+  queryType: QueryType.StandardL4fr,
+} as IQuery;
+
+export const LodgingIMEn = {
+  ...LodgingL6En,
+  id: 'LodgingIM',
+  queryType: QueryType.StandardIMen,
+} as IQuery;
+
+export const LodgingIMFr = {
+  ...LodgingL6Fr,
+  id: 'LodgingIM',
+  queryType: QueryType.StandardIMfr,
+} as IQuery;
+
 export const AllReports : IQuery[] = [
   ...AllPbiReports,
   LodgingOverviewWithHistoryL6En, LodgingOverviewWithHistoryL6Fr,
@@ -466,5 +502,9 @@ export const AllReports : IQuery[] = [
   DocumentsL4En, DocumentsL4Fr,
   DocumentsIMEn, DocumentsIMFr,
   SentEmailIssuesL6En, SentEmailIssuesL6Fr,
+  LodgingL6En, LodgingL6Fr,
+  LodgingL5En, LodgingL5Fr,
+  LodgingL4En, LodgingL4Fr,
+  LodgingIMEn, LodgingIMFr,
   LocationOfEmailL6En, LocationOfEmailL6Fr
 ];
