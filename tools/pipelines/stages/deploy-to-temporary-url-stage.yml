@@ -2,6 +2,7 @@ parameters:
   cdnEndpoint: ""
   cdnProfile: ""
   dnsName: "crc-tech.ca"
+  storage: ""
 
 stages:
   - stage: "Deploy_to_storage"
@@ -14,66 +15,17 @@ stages:
         environment: "Dev"
         variables:
           - group: Env-Dev
-          - name: featureStorageName
+          - name: branchId
             value: ""
         strategy:
           runOnce:
             deploy:
               steps:
-                - task: AzureCLI@2
-                  displayName: "Storage Account Validation"
-                  inputs:
-                    azureSubscription: "CRC Tech Dev"
-                    scriptType: "pscore"
-                    scriptLocation: "inlineScript"
-                    inlineScript: |
-                      $branchname = '$(System.PullRequest.SourceBranch)'.Split('/')[3]          
-
-                      echo $branchname;
-
-                      $cdnEndpointSplit = '$(cdnEndpoint)'.Split('-');
-                      $cdnProfileSplit = '$(cdnProfile)'.Split('-');          
-                      $application = $cdnEndpointSplit[2]
-
-                      echo $application;
-
-                      $feature = $application + $branchname
-                      $feature_name = $application + "-" + $branchname
-
-                      echo $feature;
-                      echo $feature_name;
-
-                      $redirect_uri = "$(VITE_AUTH_AAD_REDIRECT_URI)" -replace "$(Environment)", $branchname
-
-                      $cdn_endpoint = $cdnEndpointSplit[0] + "-" + $cdnEndpointSplit[1] + "-" + $feature
-                      $cdn_profile = $cdnProfileSplit[0] + "-" + $cdnProfileSplit[1] + "-" + $feature
-
-                      $cdn_endpoint_name = $cdn_endpoint + "-$(environment)"
-                      $cdn_profile_name = $cdn_profile + "-$(environment)"
-                      $resourceGroup = '$(ResourceGroup)' -replace "dev", "features"
-
-                      #Passing the featureStorageName variable with the feature value. So it can be used for the next tasks
-                      echo "##vso[task.setvariable variable=application]$application"
-                      echo "##vso[task.setvariable variable=featureNumber]$branchname"
-                      echo "##vso[task.setvariable variable=cdnProfile]$cdn_profile"
-                      echo "##vso[task.setvariable variable=cdnProfileName]$cdn_profile_name"
-                      echo "##vso[task.setvariable variable=cdnEndpoint]$cdn_endpoint"
-                      echo "##vso[task.setvariable variable=cdnEndpointName]$cdn_endpoint_name"
-                      echo "##vso[task.setvariable variable=featureStorageName]$feature"
-                      echo "##vso[task.setvariable variable=featureName]$feature_name"
-                      echo "##vso[task.setvariable variable=featureResourceGroup]$resourceGroup"
-                      echo "##vso[task.setvariable variable=VITE_AUTH_AAD_POSTLOGOUT_REDIRECT_URI]$redirect_uri"
-                      echo "##vso[task.setvariable variable=VITE_AUTH_AAD_REDIRECT_URI]$redirect_uri"
-
-                      $account = az storage account list --query "[?name=='$feature']" | ConvertFrom-Json
-                      $exists = $account.length -gt 0 
-
-                      if (-not $exists) {
-                          throw "The storage account $feature does not exist. You need to submit a terraform PR to create your storage account"
-                      } 
-
-                      echo "The files will be uploaded to the storage account $feature accessed at $redirect_uri"
-
+                - powershell: |
+                   $branchId = '$(System.PullRequest.SourceBranch)'.Split('/')[3]
+                   echo "Branch id is:" $branchId
+                   echo "##vso[task.setvariable variable=branchId]$branchId"
+                
                 - task: qetza.replacetokens.replacetokens-task.replacetokens@6
                   displayName: "Replace Tokens"
                   inputs:
@@ -82,13 +34,35 @@ stages:
                     telemetryOptout: true
 
                 - task: AzureCLI@2
-                  displayName: "Upload to Azure"
+                  displayName: "Upload and Move Content in Azure Storage"
                   inputs:
                     azureSubscription: "CRC Tech Dev"
                     scriptType: "pscore"
                     scriptLocation: "inlineScript"
                     inlineScript: |
-                      az storage blob upload-batch --overwrite --destination '$web' --account-name $(featureStorageName) --source "$(Pipeline.Workspace)/dist"
+                      # Define the destination directory
+                      $branchId = "$(branchId)"
+                      $destinationDir = '$web/' + $branchId
+                      $accountName = '${{ parameters.storage }}$(environment)'
+                      
+                      # Upload branchId folder content
+                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name $accountName --source "$(Pipeline.Workspace)/dist/$branchId"
+
+                      # Create a temporary directory
+                      $tempDir = [System.IO.Path]::Combine($env:TEMP, [System.Guid]::NewGuid().ToString())
+                      New-Item -ItemType Directory -Path $tempDir | Out-Null
+
+                      # Copy all other contents to the temporary directory
+                      Get-ChildItem -Path "$(Pipeline.Workspace)/dist" | Where-Object { $_.Name -ne $branchId } | ForEach-Object {
+                        Copy-Item -Path $_.FullName -Destination $tempDir -Recurse
+                      }
+
+                      # Upload the remaining content
+                      az storage blob upload-batch --overwrite --destination $destinationDir --account-name $accountName --source $tempDir
+
+                      # Clean up temporary directory
+                      Remove-Item -Path $tempDir -Recurse -Force
+                    failOnStderr: true
 
                 - task: AzureCLI@2
                   displayName: "Purge CDN"
@@ -98,37 +72,6 @@ stages:
                     scriptType: "pscore"
                     scriptLocation: "inlineScript"
                     inlineScript: |
-                      az cdn endpoint purge -n "$(cdnEndpointName)" -g "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" --content-paths "/*" --no-wait
+                       az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
 
-                - task: AzureCLI@2
-                  displayName: "Clean Storage Folder"
-                  inputs:
-                    azureSubscription: "CRC Tech Dev"
-                    scriptType: "pscore"
-                    scriptLocation: "inlineScript"
-                    inlineScript: |
-                      az storage blob delete-batch --source '$web' --account-name $(featureStorageName) --if-unmodified-since (Get-Date).AddDays(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mmZ")
 
-                - task: AzureCLI@2
-                  displayName: "Create Custom Domain"
-                  continueOnError: true
-                  inputs:
-                    azureSubscription: "CRC Tech Dev"
-                    scriptType: "pscore"
-                    scriptLocation: "inlineScript"
-                    inlineScript: |
-                      $customDomain = "$(featureName).${{ parameters.dnsName }}"
-                      $customDomains = az cdn custom-domain list --endpoint-name "$(cdnEndpointName)" --resource-group "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" | ConvertFrom-Json
-                      $exists = $customDomains.count -gt 0
-
-                      echo "##vso[task.setvariable variable=customDomain]$customDomain"
-
-                      if ($exists){
-                        echo "Custom domain of $customDomain for $(cdnEndpointName) exists"
-                      } else {
-                        echo "Creating custom domain of $customDomain for $(cdnEndpointName)"
-                        az cdn custom-domain create --endpoint-name "$(cdnEndpointName)" --resource-group "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" -n "$(featureName)" --hostname "$customDomain"
-
-                        echo "Enabling HTTPS for $customDomain"
-                        az cdn custom-domain enable-https --endpoint-name "$(cdnEndpointName)" --resource-group "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" -n "$(featureName)"
-                      }

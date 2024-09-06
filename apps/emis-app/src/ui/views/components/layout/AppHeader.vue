@@ -18,6 +18,15 @@
         </h1>
       </template>
 
+      <template v-if="isTemporaryBranch">
+        <div class="branch-box">
+          You are on the branch {{ branchId }}
+          <v-btn small class="ml-1" @click="refreshToSameFeatureBranch">
+            Refresh
+          </v-btn>
+        </div>
+      </template>
+
       <v-spacer />
       <v-btn
         v-if="displayRegistrationButton"
@@ -88,6 +97,7 @@ import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useNotificationStore } from '@/pinia/notification/notification';
 import { UserRoles } from '@libs/entities-lib/user';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 const MAX_UNREAD_COUNT = 10; // value for testing, will bump up to 50 after QA is complete
 
@@ -104,6 +114,7 @@ export default Vue.extend({
       showGeneralHelp: false,
       routes,
       maxUnreadCount: MAX_UNREAD_COUNT,
+      branchId: '',
     };
   },
 
@@ -151,10 +162,16 @@ export default Vue.extend({
     showUnreadNotificationBadge(): boolean {
       return useNotificationStore().getUnreadCount() > 0;
     },
+
+    isTemporaryBranch() {
+      return !!process.env.VITE_TEMP_BRANCH_ID;
+    },
   },
 
   async created() {
     await useNotificationStore().fetchCurrentUserUnreadIds();
+
+    this.branchId = process.env.VITE_TEMP_BRANCH_ID;
   },
 
   methods: {
@@ -186,6 +203,12 @@ export default Vue.extend({
         name: routes.registration.home.name,
       });
     },
+    refreshToSameFeatureBranch() {
+      // Save where we are to go back there after the refresh
+      sessionStorage.setItem(sessionStorageKeys.pathBeforeRefresh.name, this.$route.path);
+      const branchId = process.env.VITE_TEMP_BRANCH_ID;
+      window.location.href = `${window.location.origin}/?fb=${branchId}`;
+    },
   },
 });
 </script>
@@ -216,5 +239,14 @@ export default Vue.extend({
       max-width:  160px;
       max-height: 64px;
     }
+  }
+
+  .branch-box {
+    margin-left: 20px;
+    background-color: rgb(232, 151, 10);
+    font-size: 20px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 4px;
   }
 </style>
