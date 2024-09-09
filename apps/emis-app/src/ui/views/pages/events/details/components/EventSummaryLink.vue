@@ -64,6 +64,7 @@ import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { UserRoles } from '@libs/entities-lib/user';
+import { isTemporaryBranch } from '@libs/shared-lib/helpers/temporary-branch';
 
 export default Vue.extend({
   name: 'EventSummaryLink',
@@ -90,10 +91,14 @@ export default Vue.extend({
   computed: {
     registrationUrl(): string {
       const prefixRegistrationLink = useTenantSettingsStore().currentTenantSettings;
+
       if (!prefixRegistrationLink?.registrationDomain) {
         return null;
       }
       const urlStart = `https://${this.$m(prefixRegistrationLink.registrationDomain)}`;
+      if (isTemporaryBranch(process.env.VITE_TEMP_BRANCH_ID)) {
+        return `${urlStart}/${this.$i18n.locale}/registration/${this.$m(this.event.registrationLink)}?fb=${process.env.VITE_TEMP_BRANCH_ID}`;
+      }
       return `${urlStart}/${this.$i18n.locale}/registration/${this.$m(this.event.registrationLink)}`;
     },
 

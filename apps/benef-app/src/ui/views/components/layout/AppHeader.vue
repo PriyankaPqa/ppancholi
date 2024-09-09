@@ -16,6 +16,15 @@
       <span class="rc-heading-4">{{ $m(branding.name) }}</span>
     </div>
 
+    <template v-if="isTemporaryBranch">
+      <div class="branch-box">
+        You are on the branch {{ branchId }}
+        <v-btn small class="ml-1" @click="refreshToSameFeatureBranch">
+          Refresh
+        </v-btn>
+      </div>
+    </template>
+
     <v-spacer />
 
     <div class="d-flex flex-column align-end">
@@ -47,6 +56,8 @@ import helpers from '@/ui/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { IEventSummary } from '@libs/entities-lib/event';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
+import { isTemporaryBranch as checkBranchId } from '@libs/shared-lib/helpers/temporary-branch';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -59,6 +70,8 @@ export default Vue.extend({
   data() {
     return {
       helpLink: 'zendesk.beneficiary_registration.introduction',
+      branchId: '',
+      isTemporaryBranch: false,
     };
   },
 
@@ -88,12 +101,23 @@ export default Vue.extend({
     },
   },
 
+  created() {
+    this.branchId = process.env.VITE_TEMP_BRANCH_ID;
+    this.isTemporaryBranch = checkBranchId(this.branchId);
+  },
+
   methods: {
     toggleLeftMenu() {
       useRegistrationStore().isLeftMenuOpen = !useRegistrationStore().isLeftMenuOpen;
     },
     openHelp() {
       helpers.openHelpCenterWindow(this.$t(this.helpLink) as string, 300);
+    },
+    refreshToSameFeatureBranch() {
+      // Save where we are to go back there after the refresh
+      sessionStorage.setItem(sessionStorageKeys.pathBeforeRefresh.name, this.$route.path);
+      const branchId = process.env.VITE_TEMP_BRANCH_ID;
+      window.location.href = `${window.location.origin}/?fb=${branchId}`;
     },
   },
 });
@@ -151,4 +175,13 @@ export default Vue.extend({
     max-width: 900px;
   }
 }
+
+.branch-box {
+    margin-left: 20px;
+    background-color: rgb(232, 151, 10);
+    font-size: 20px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 4px;
+  }
 </style>

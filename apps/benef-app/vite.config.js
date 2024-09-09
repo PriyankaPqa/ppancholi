@@ -6,7 +6,7 @@ import Components from 'unplugin-vue-components/vite';
 import Inspector from 'vite-plugin-vue-inspector';
 import path from 'path';
 
-// https://vitejs.dev/config/
+const isTemporaryBranch = (env) => env.VITE_TEMP_BRANCH_ID !== '' && env.VITE_TEMP_BRANCH_ID !== '#{VITE_TEMP_BRANCH_ID}#';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
     {},
   );
 
-  return {
+  const options = {
     server: {
       port: 8080,
     },
@@ -88,4 +88,15 @@ export default defineConfig(({ mode }) => {
     },
     define: envWithProcessPrefix,
   };
+
+  if (isTemporaryBranch(env)) {
+    return {
+      ...options,
+      build: {
+        assetsDir: env.VITE_TEMP_BRANCH_ID,
+      },
+    };
+  }
+
+  return options;
 });

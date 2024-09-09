@@ -15,6 +15,9 @@ stages:
           - group: Script
         displayName: 'Build application'
         steps:
+          ## Needed so vite, detect it's a feature branch and build accordingly 
+          - template: '../steps/set-branch-id-env-steps.yml'
+
           - template: '../steps/build-vue-steps.yml'
             parameters:
               packageFeed: ${{ parameters.packageFeed }}
