@@ -5,6 +5,7 @@ parameters:
   workingDir: ''
   nodeJsVersion: ''
   appVersion: ''
+  forceSkipSetBranchId: false
 
 stages:
   - stage: 'Build_Stage'
@@ -17,6 +18,8 @@ stages:
         steps:
           ## Needed so vite, detect it's a feature branch and build accordingly 
           - template: '../steps/set-branch-id-env-steps.yml'
+            parameters:
+              forceSkipSetBranchId: ${{parameters.forceSkipSetBranchId}}
 
           - template: '../steps/build-vue-steps.yml'
             parameters:

@@ -1,7 +1,10 @@
+parameters:
+  forceSkipSetBranchId: false
+
 steps:
   - powershell: |
       $branchId = '$(System.PullRequest.SourceBranch)'.Split('/')[3]
       echo "Branch id is:" $branchId
       Write-Host "##vso[task.setvariable variable=VITE_TEMP_BRANCH_ID]$branchId"
     displayName: 'Set TEMP_BRANCH_ID'
-    condition: eq(variables['Build.Reason'], 'PullRequest')
+    condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.forceSkipSetBranchId }}', false))
