@@ -20,6 +20,7 @@
         </div>
         <v-select-with-validation
           v-model="selectedTeam"
+          :loading="teamsLoading"
           dense
           :label="$t('appointmentProgram.manageStaff.select.team')"
           class="mb-3"
@@ -171,6 +172,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       showAddStaffMembersDialog: false,
       loading: false,
       teamMembersLoading: false,
+      teamsLoading: false,
       selectedTeam: null as ITeamEntity,
       teamMembers: [] as IUserAccountMetadata[],
       assignableTeams: [] as ITeamEntity[],
@@ -237,6 +239,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   methods: {
     async fetchAssignableTeams() {
+      this.teamsLoading = true;
      const res = await useTeamStore().search({ params: {
         filter: { Entity: { UseForAppointments: true, Events: { any: { Id: { value: this.eventId, type: EFilterKeyType.Guid } } } } },
         orderBy: 'Entity/Name asc',
@@ -244,6 +247,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (res) {
         this.assignableTeams = res.values;
       }
+      this.teamsLoading = false;
     },
 
     isMemberSelected(teamMemberId:string) {
