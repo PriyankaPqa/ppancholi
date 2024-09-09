@@ -9,6 +9,7 @@ import Component from '../components/EventSummaryLink.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
+const originalEnv = process.env;
 
 const { pinia, eventStore } = useMockEventStore();
 useMockTenantSettingsStore(pinia);
@@ -132,8 +133,18 @@ describe('EventSummaryLink.vue', () => {
       await mountWrapper();
     });
 
-    describe('registrationUrl', () => {
-      it('returns the right url', () => {
+    describe('registrationUrl EventSummary', () => {
+      it('returns the right url if it is a tempory branch', async () => {
+        jest.resetModules();
+        process.env = {
+          ...originalEnv,
+          VITE_TEMP_BRANCH_ID: '9999',
+        };
+        await mountWrapper();
+        expect(wrapper.vm.registrationUrl).toEqual(`https://registration domain en/en/registration/${mockEvent.registrationLink.translation.en}?fb=9999`);
+        process.env = originalEnv;
+      });
+      it('returns the right url if it is not a tempory branch', () => {
         expect(wrapper.vm.registrationUrl).toEqual(`https://registration domain en/en/registration/${mockEvent.registrationLink.translation.en}`);
       });
     });

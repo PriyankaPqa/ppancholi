@@ -85,7 +85,7 @@ export default {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
       title: this.$t('metaInfo.app.title'),
-      // all titles will be injected into this template.
+      // all titles will be injected into this template
       titleTemplate: `${this.$t('metaInfo.app.short')} | %s`,
     };
   },
@@ -131,10 +131,11 @@ export default {
   },
 
   async created() {
-    // The values of environment variables are currently not loaded in components in production TODO: investigate why and find a fix.
+    // The values of environment variables are currently not loaded in components in production TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VITE_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VITE_API_BASE_URL);
     sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VITE_VERSION);
+
     if (window.Cypress) {
       initializeStores();
     }
@@ -145,11 +146,10 @@ export default {
 
     // The access token will be refreshed automatically every 5 minutes
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
+  },
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // eslint-disable-next-line no-console
-      console.log('DOM ready!');
-    });
+  mounted() {
+    this.handleRedirectToBeforeRefreshBranch();
   },
 
   methods: {
@@ -215,6 +215,14 @@ export default {
       }, this.intervalSignalRSubscriptions);
     },
 
+    handleRedirectToBeforeRefreshBranch() {
+      // When app refreshed to stay within a branch
+      const pathBeforeRefresh = sessionStorage.getItem(sessionStorageKeys.pathBeforeRefresh.name);
+      if (pathBeforeRefresh) {
+        this.$router.replace({ path: pathBeforeRefresh });
+        sessionStorage.removeItem(sessionStorageKeys.pathBeforeRefresh.name);
+      }
+    },
   },
 };
 </script>
