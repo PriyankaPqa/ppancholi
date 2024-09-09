@@ -58,7 +58,7 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
 
 export default Vue.extend({
-  name: 'ServiceOptionsTable',
+  name: 'AssignServiceOptions',
 
   components: {
     VDataTableA11y,
@@ -84,6 +84,11 @@ export default Vue.extend({
     inTeamManagement: {
       type: Boolean,
       default: false,
+    },
+
+    appointmentProgramId: {
+      type: String,
+      default: '',
     },
   },
 
@@ -156,25 +161,35 @@ export default Vue.extend({
     },
 
     isMemberAssigned(soId: string, memberId: string): boolean {
-      return this.serviceOptions.find((so) => (so.id || so.tempId) === soId)?.staffMembers.includes(memberId);
+      return this.serviceOptions.find((so) => (so.id || so.tempId) === soId)?.staffMembers?.includes(memberId);
     },
 
-    updateServiceOptionOnAssign(memberId: string, soId: string, value: boolean) {
+    updateServiceOptionOnAssign(memberId: string, soId: string, value: boolean): IExtendedServiceOption[] {
        // Don't mutate the props serviceOptions
       const clonedServiceOptions = _cloneDeep(this.serviceOptions);
       const updatedServiceOption = clonedServiceOptions.find((so) => (so.id || so.tempId) === soId);
       if (value) {
-        updatedServiceOption.staffMembers.push(memberId);
+        updatedServiceOption.staffMembers?.push(memberId);
       } else {
-        updatedServiceOption.staffMembers = updatedServiceOption.staffMembers.filter((m) => m !== memberId);
+        updatedServiceOption.staffMembers = updatedServiceOption.staffMembers?.filter((m) => m !== memberId);
       }
       this.$emit('update:serviceOptions', clonedServiceOptions);
+      return clonedServiceOptions;
     },
 
-    onCheckAssign({ memberId, soId, value }: { memberId: string, soId: string, value: boolean }) {
-      this.updateServiceOptionOnAssign(memberId, soId, value);
+    async onCheckAssign({ memberId, soId, value }: { memberId: string, soId: string, value: boolean }) {
+      const updatedServiceOptions = this.updateServiceOptionOnAssign(memberId, soId, value);
       if (this.inTeamManagement) {
-        // call endpoints to update service option
+        this.loading = true;
+        const res = await useAppointmentProgramStore().updateStaffMembers(this.appointmentProgramId, { serviceOptions: updatedServiceOptions
+            .map((so) => ({ serviceOptionId: so.id, staffMembers: so.staffMembers })) });
+        if (res) {
+          this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
+          this.$emit('update:show', false);
+        } else {
+          this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
+        }
+        this.loading = false;
       }
     },
 
