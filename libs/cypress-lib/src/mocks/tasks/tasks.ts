@@ -1,4 +1,4 @@
-import { ITaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { ActionTaken, ITaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { mockBaseData } from '@libs/entities-lib/base';
 import { today } from '@libs/cypress-lib/helpers';
 
@@ -47,4 +47,10 @@ export const mockCreateTeamTaskRequest = (force?: Partial<ITaskEntity>): ITaskEn
   taskActionHistories: [],
   financialAssistancePaymentId: null,
   ...force,
+});
+
+export const mockSetTaskActionTakenRequest = (actionTaken: ActionTaken, teamId: string) => ({
+  actionTaken,
+  rationale: 'Rationale test assign team task through api',
+  teamId,
 });

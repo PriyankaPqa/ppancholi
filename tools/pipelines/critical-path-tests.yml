@@ -9,6 +9,7 @@ parameters:
   appVersion: ''
   runE2EStage: true
   parallelJobs: 1
+  forceSkipSetBranchId: true
 
 stages:
   - ${{ if or(eq(variables['build.reason'], 'PullRequest'), eq(variables['build.reason'], 'Manual'), eq(variables['build.reason'], 'Schedule')) }}:
@@ -23,6 +24,7 @@ stages:
         distDir: ${{ parameters.distDir }}
         nodeJsVersion: ${{ parameters.nodeJsVersion }}
         appVersion: ${{ parameters.appVersion }}
+        forceSkipSetBranchId:  ${{ parameters.forceSkipSetBranchId }}
 
     - template: './stages/determine-cypress-tests-stage.yml'
       parameters:

@@ -13,6 +13,7 @@ import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings'
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
 import helpers from '@/ui/helpers/helpers';
+import { isTemporaryBranch } from '@libs/shared-lib/helpers/temporary-branch';
 
 Vue.use(VueRouter);
 
@@ -253,7 +254,10 @@ router.beforeEach(async (to, from, next) => {
       } else {
         next(from);
       }
-      checkAppVersion();
+      // We don't want to check app version when testing a feature branch
+      if (!isTemporaryBranch(process.env.VITE_TEMP_BRANCH_ID)) {
+        checkAppVersion();
+      }
     }
   } catch (e) {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
