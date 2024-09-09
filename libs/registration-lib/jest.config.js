@@ -1,4 +1,5 @@
 const baseConfig = require('../../jest.config.base');
+const coverageConfig = require('../../jest.config.coverage');
 const packageJson = require('./package.json');
 
 module.exports = {
@@ -19,7 +20,7 @@ module.exports = {
     '^@libs/stores-lib/(.*)$': '<rootDir>/../../libs/stores-lib/src/$1',
   },
   collectCoverageFrom: [
-    ...baseConfig.collectCoverageFrom,
+    ...coverageConfig.collectCoverageFrom,
     '**/components/**/*.{js,vue}',
     '**/ui/helpers/**/*.ts',
     '**/ui/mixins/**/*.{ts,js}',
