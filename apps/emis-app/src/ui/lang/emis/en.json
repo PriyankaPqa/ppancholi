@@ -1199,6 +1199,7 @@
     "ds.logActivitiesEmailEvents.reason": "Sent email issues - Reason",
     "ds.logActivitiesEmailEvents.region": "Sent email issues - Region",
     "ds.logActivitiesEmailEvents.type": "Sent email issues - Type",
+    "ds.person.receivingAssistance": "Person - Receiving assistance",
     "ds.person.address_AddressTypeNameEn": "Person - Temp. Addr - Type (en)",
     "ds.person.address_AddressTypeNameEnFr": "Person - Temp. Addr - Type (en\/fr)",
     "ds.person.address_AddressTypeNameFr": "Person - Temp. Addr - Type (fr)",

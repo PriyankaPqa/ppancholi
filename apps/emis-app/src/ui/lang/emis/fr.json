@@ -1199,6 +1199,7 @@
     "ds.logActivitiesEmailEvents.reason": "Problème d’envoi de courriel — Raison",
     "ds.logActivitiesEmailEvents.region": "Problème d’envoi de courriel — Région",
     "ds.logActivitiesEmailEvents.type": "Problème d’envoi de courriel — Type",
+    "ds.person.receivingAssistance": "Personne - Reçoit de l'assistance",
     "ds.person.address_AddressTypeNameEn": "Personne - adress. temp. - type (an)",
     "ds.person.address_AddressTypeNameEnFr": "Personne - adr. temp. - type (an\/fr)",
     "ds.person.address_AddressTypeNameFr": "Personne - adr. temp. - type (fr)",
