@@ -38,7 +38,7 @@
       :is-edit-mode="isEditMode"
       :service-options="serviceOptions"
       :appointment-program-id="appointmentProgramId"
-      :initial-staff-members.sync="staffMembers"
+      :initial-staff-members="staffMembers"
       @submit="onUpdateStaffMembers" />
   </div>
 </template>

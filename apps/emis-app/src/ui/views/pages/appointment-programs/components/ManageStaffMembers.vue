@@ -317,7 +317,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       // The appointment program is being created, the staff members are being added to the payload
       } else {
         this.$emit('submit', this.localServiceOptions);
-        this.$emit('update:initialStaffMembers', this.allStaffMembers);
         this.$emit('update:show', false);
       }
     },

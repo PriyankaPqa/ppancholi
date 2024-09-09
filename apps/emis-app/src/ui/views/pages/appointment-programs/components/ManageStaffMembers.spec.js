@@ -219,7 +219,6 @@ describe('ManageStaffMembers.vue', () => {
         wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
         await wrapper.vm.onSubmit();
         expect(wrapper.emitted('submit')[0][0]).toEqual(wrapper.vm.localServiceOptions);
-        expect(wrapper.emitted('update:initialStaffMembers')[0][0]).toEqual(wrapper.vm.allStaffMembers);
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
       });
     });
