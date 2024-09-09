@@ -399,6 +399,27 @@ export default mixins(caseFileDetail).extend({
     await this.loadMissingCaseFileDetails();
 
     if (this.mayTriggerPayment) {
+      this.initPaymentDetails();
+    }
+
+    if (this.isEditOfAddress) {
+      await this.setupBookingsForEdit();
+    }
+
+    if (this.lodgingMode !== LodgingMode.MoveCrcProvidedAllowed && this.lodgingMode !== LodgingMode.MoveCrcProvidedNotAllowed) {
+      this.moveIntoExistingAddress = false;
+    }
+
+    this.loading = false;
+
+    if (!await this.checkForCrcProvidedSetupComplete()) {
+      return;
+    }
+    this.showSelectPaymentDetails = this.paymentDetails.length > 1;
+  },
+
+  methods: {
+    async initPaymentDetails() {
       await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
       const programs = (await useProgramStore().search({ params: {
           filter: {
@@ -419,25 +440,8 @@ export default mixins(caseFileDetail).extend({
         .map((tp) => ({ ...tp, name: `${this.$m(tp.program.name)} - ${this.$m(tp.table.name)}` }));
 
       await this.selectPaymentDetails(this.paymentDetails[0]);
-    }
+    },
 
-    if (this.isEditOfAddress) {
-      await this.setupBookingsForEdit();
-    }
-
-    if (this.lodgingMode !== LodgingMode.MoveCrcProvidedAllowed && this.lodgingMode !== LodgingMode.MoveCrcProvidedNotAllowed) {
-      this.moveIntoExistingAddress = false;
-    }
-
-    this.loading = false;
-
-    if (!await this.checkForCrcProvidedSetupComplete()) {
-      return;
-    }
-    this.showSelectPaymentDetails = this.paymentDetails.length > 1;
-  },
-
-  methods: {
     async checkForCrcProvidedSetupComplete() {
       if (this.loading || !this.isCrcProvided || !this.mayTriggerPayment) {
         return true;
