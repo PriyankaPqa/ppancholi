@@ -142,11 +142,14 @@ describe('[T28436] Confirm that only an Escalation Team member and L6 can assign
           teamTaskDetailsPage.getStatusTag().should('eq', 'In progress');
           teamTaskDetailsPage.getEditButton().should('be.visible');
           teamTaskDetailsPage.getHistoryButton().should('be.visible');
+          teamTaskDetailsPage.goToTaskHistory();
 
-          const tasksHistoryPage = teamTaskDetailsPage.goToTaskHistory();
-          assertTaskHistorySteps(roleName, `${this.escalationTeamName} assigned to ${this.assignableTeamName}`, 1);
-          tasksHistoryPage.getHistoryTableRationaleByIndex(1).should('eq', 'Test team task assigning');
-          tasksHistoryPage.getCloseButton().should('be.visible');
+          assertTaskHistorySteps({
+            roleName,
+            rationale: 'Test team task assigning',
+            actionTaken: `${this.escalationTeamName} assigned to ${this.assignableTeamName}`,
+            index: 1,
+          });
         });
       });
     }

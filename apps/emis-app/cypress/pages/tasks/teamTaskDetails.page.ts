@@ -10,6 +10,7 @@ export enum DataTest {
   taskDetailsTeamTaskCreator = 'task-details-team-task-creator-info',
   taskDetailsTeamAssignedTo = 'task-details-assigned-to',
   taskDetailsActionButton = 'task-details-action-button',
+  taskDetailsDescription = 'task-details-description',
   taskDetailsActionWorkingOnItText = 'task-details-working-on-it',
   taskDetailsActionWorkingOnItToggle = 'task-details-working-on-it-toggle',
   taskDetailsSubCategory = 'task-details-sub-category',
@@ -35,6 +36,8 @@ export class TeamTaskDetailsPage {
   private taskDetailsTeamAssignedTo = { selector: DataTest.taskDetailsTeamAssignedTo };
 
   private taskDetailsActionButton = { selector: DataTest.taskDetailsActionButton };
+
+  private taskDetailsDescription = { selector: DataTest.taskDetailsDescription };
 
   private taskDetailsActionWorkingOnItText = { selector: DataTest.taskDetailsActionWorkingOnItText };
 
@@ -85,6 +88,10 @@ export class TeamTaskDetailsPage {
 
   public getTeamTaskActionButton() {
     return cy.getByDataTest(this.taskDetailsActionButton);
+  }
+
+  public getTeamTaskDescriptionElement() {
+    return cy.getByDataTest(this.taskDetailsDescription);
   }
 
   public getTeamTaskActionWorkingOnItElement() {
