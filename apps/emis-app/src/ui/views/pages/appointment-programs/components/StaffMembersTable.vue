@@ -38,7 +38,7 @@
       :is-edit-mode="isEditMode"
       :service-options="serviceOptions"
       :appointment-program-id="appointmentProgramId"
-      :initial-staff-members.sync="staffMembers"
+      :initial-staff-members="staffMembers"
       @submit="onUpdateStaffMembers" />
   </div>
 </template>
@@ -173,7 +173,7 @@ export default Vue.extend({
     getServiceOptionNames(memberId: string): string {
       const serviceOptionsContainingMember = this.serviceOptions.filter((so) => so.staffMembers.includes(memberId));
       const serviceOptionTypes = this.serviceOptionTypes.filter((t) => serviceOptionsContainingMember.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
-      return serviceOptionTypes.map((t) => this.$m(t.name)).join(', ');
+      return serviceOptionTypes.map((t) => this.$m(t.name)).sort((a, b) => a.localeCompare(b)).join(', ');
     },
   },
 });

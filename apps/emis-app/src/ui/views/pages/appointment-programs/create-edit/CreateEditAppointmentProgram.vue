@@ -158,7 +158,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { NavigationGuardNext, Route } from 'vue-router';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
-import { validateCanSetActiveStatus, validateMustHaveServiceOptionsPolicy, validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
+import { canSetActiveStatus, mustHaveServiceOptions, mustHaveStaffMembers } from '../appointmentProgramsHelper';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -311,7 +311,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async onStatusChange(status: Status) {
       if (this.isEditMode) {
-        if (!validateCanSetActiveStatus(this.appointmentProgram, status)) {
+        if (!canSetActiveStatus(this.appointmentProgram, status)) {
           this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.edit.changeStatus.error') });
           return;
         }
@@ -337,17 +337,17 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submit() {
-      const hasServiceOptionsPolicyIsValid = validateMustHaveServiceOptionsPolicy(this.appointmentProgram);
-      if (!hasServiceOptionsPolicyIsValid) {
+      const mustHaveServiceOptionsIsValid = mustHaveServiceOptions(this.appointmentProgram);
+      if (!mustHaveServiceOptionsIsValid) {
         this.showServiceOptionsError = true;
       }
 
-      const hasStaffMembersPolicyIsValid = validateHasStaffMembersPolicy(this.appointmentProgram);
-      if (!hasStaffMembersPolicyIsValid) {
+      const mustHaveStaffMembersIsValid = mustHaveStaffMembers(this.appointmentProgram);
+      if (!mustHaveStaffMembersIsValid) {
         this.showStaffMembersError = true;
       }
 
-      const isValid = await (this.$refs.form as VForm).validate() && hasServiceOptionsPolicyIsValid && hasStaffMembersPolicyIsValid;
+      const isValid = await (this.$refs.form as VForm).validate() && mustHaveServiceOptionsIsValid && mustHaveStaffMembersIsValid;
 
       if (!isValid) {
         helpers.scrollToFirstError('app');

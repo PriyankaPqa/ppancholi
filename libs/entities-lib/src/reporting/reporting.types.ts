@@ -40,6 +40,7 @@ export enum ReportingTopic {
   AssignedCaseFiles = 17,
   LogActivitiesEmailEvents = 18,
   LocationOfLogActivitiesEmailEvents = 19,
+  Lodging = 20,
   PowerBi = 99,
 }
 

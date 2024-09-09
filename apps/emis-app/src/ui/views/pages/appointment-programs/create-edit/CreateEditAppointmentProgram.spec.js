@@ -4,7 +4,7 @@ import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appo
 import { AppointmentProgram, mockAppointmentProgram, mockServiceOption } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
-import { validateCanSetActiveStatus, validateMustHaveServiceOptionsPolicy, validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
+import { canSetActiveStatus, mustHaveServiceOptions, mustHaveStaffMembers } from '../appointmentProgramsHelper';
 import Component from './CreateEditAppointmentProgram.vue';
 
 jest.mock('../appointmentProgramsHelper');
@@ -190,14 +190,14 @@ describe('CreateEditAppointmentProgram.vue', () => {
     describe('onStatusChange', () => {
       it('changes the appointment program status when in not edit mode', () => {
         mountWrapper(false);
-        validateCanSetActiveStatus.mockImplementation(() => true);
+        canSetActiveStatus.mockImplementation(() => true);
         wrapper.vm.onStatusChange(2);
         expect(wrapper.vm.appointmentProgram.appointmentProgramStatus).toEqual(2);
       });
 
       it('in edit mode should show the dialog and save if answered', async () => {
         mountWrapper();
-        validateCanSetActiveStatus.mockImplementation(() => true);
+        canSetActiveStatus.mockImplementation(() => true);
         const userInput = { answered: true, rationale: 'some rationale' };
         wrapper.vm.$refs.rationaleDialog.open = jest.fn(() => userInput);
         wrapper.vm.$refs.rationaleDialog.close = jest.fn();
@@ -213,10 +213,10 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(wrapper.vm.$refs.rationaleDialog.close).toHaveBeenCalled();
       });
 
-      it('does not call the endpoint if validateCanSetActiveStatus returns false and shows the right message', async () => {
+      it('does not call the endpoint if canSetActiveStatus returns false and shows the right message', async () => {
         jest.clearAllMocks();
         await mountWrapper();
-        validateCanSetActiveStatus.mockImplementation(() => false);
+        canSetActiveStatus.mockImplementation(() => false);
         await wrapper.vm.onStatusChange(Status.Active);
         expect(appointmentProgramStore.setAppointmentProgramStatus).not.toHaveBeenCalled();
         expect(wrapper.vm.$message).toHaveBeenCalled();
@@ -227,8 +227,8 @@ describe('CreateEditAppointmentProgram.vue', () => {
       beforeEach(async () => {
         await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        validateMustHaveServiceOptionsPolicy.mockImplementation(() => true);
-        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        mustHaveServiceOptions.mockImplementation(() => true);
+        mustHaveStaffMembers.mockImplementation(() => true);
       });
 
       it('does not call create unless form validation succeeds', async () => {
@@ -240,12 +240,12 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('does not call create unless all policy validations succeed', async () => {
         wrapper.vm.createAppointmentProgram = jest.fn();
-        validateMustHaveServiceOptionsPolicy.mockImplementation(() => false);
+        mustHaveServiceOptions.mockImplementation(() => false);
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.showServiceOptionsError).toBeTruthy();
-        validateMustHaveServiceOptionsPolicy.mockImplementation(() => true);
-        validateHasStaffMembersPolicy.mockImplementation(() => false);
+        mustHaveServiceOptions.mockImplementation(() => true);
+        mustHaveStaffMembers.mockImplementation(() => false);
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.showStaffMembersError).toBeTruthy();
@@ -282,8 +282,8 @@ describe('CreateEditAppointmentProgram.vue', () => {
       it('sends to details page after editing', async () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        validateCanSetActiveStatus.mockImplementation(() => true);
-        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        canSetActiveStatus.mockImplementation(() => true);
+        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -307,8 +307,8 @@ describe('CreateEditAppointmentProgram.vue', () => {
       it('calls the store updateAppointmentProgram with the right payload in edit mode', async () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        validateCanSetActiveStatus.mockImplementation(() => true);
-        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        canSetActiveStatus.mockImplementation(() => true);
+        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -319,8 +319,8 @@ describe('CreateEditAppointmentProgram.vue', () => {
       it('calls a toaster after updating', async () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        validateCanSetActiveStatus.mockImplementation(() => true);
-        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        canSetActiveStatus.mockImplementation(() => true);
+        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -331,8 +331,8 @@ describe('CreateEditAppointmentProgram.vue', () => {
       it('resets initialBusinessHours after updating', async () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        validateCanSetActiveStatus.mockImplementation(() => true);
-        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        canSetActiveStatus.mockImplementation(() => true);
+        mustHaveStaffMembers.mockImplementation(() => true);
         await wrapper.setData({ initialBusinessHours: [] });
         await wrapper.vm.submit();
         expect(wrapper.vm.initialBusinessHours).toEqual(wrapper.vm.appointmentProgram.businessHours);
@@ -341,8 +341,8 @@ describe('CreateEditAppointmentProgram.vue', () => {
       it('calls an error toaster if updating fails', async () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        validateCanSetActiveStatus.mockImplementation(() => true);
-        validateHasStaffMembersPolicy.mockImplementation(() => true);
+        canSetActiveStatus.mockImplementation(() => true);
+        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;

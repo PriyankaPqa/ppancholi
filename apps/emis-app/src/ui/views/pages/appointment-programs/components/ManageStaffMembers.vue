@@ -20,6 +20,7 @@
         </div>
         <v-select-with-validation
           v-model="selectedTeam"
+          :loading="teamsLoading"
           dense
           :label="$t('appointmentProgram.manageStaff.select.team')"
           class="mb-3"
@@ -119,7 +120,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
 import RcDataTable from '@libs/component-lib/components/organism/RcDataTable/RcDataTable.vue';
 import AssignServiceOptions from './AssignServiceOptions.vue';
-import { validateHasStaffMembersPolicy } from '../appointmentProgramsHelper';
+import { mustHaveStaffMembers } from '../appointmentProgramsHelper';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
@@ -171,6 +172,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       showAddStaffMembersDialog: false,
       loading: false,
       teamMembersLoading: false,
+      teamsLoading: false,
       selectedTeam: null as ITeamEntity,
       teamMembers: [] as IUserAccountMetadata[],
       assignableTeams: [] as ITeamEntity[],
@@ -237,6 +239,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   methods: {
     async fetchAssignableTeams() {
+      this.teamsLoading = true;
      const res = await useTeamStore().search({ params: {
         filter: { Entity: { UseForAppointments: true, Events: { any: { Id: { value: this.eventId, type: EFilterKeyType.Guid } } } } },
         orderBy: 'Entity/Name asc',
@@ -244,6 +247,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (res) {
         this.assignableTeams = res.values;
       }
+      this.teamsLoading = false;
     },
 
     isMemberSelected(teamMemberId:string) {
@@ -299,7 +303,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
 
       if (this.isEditMode) {
-        if (!validateHasStaffMembersPolicy({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
+        if (!mustHaveStaffMembers({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
           this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.atLeastOneStaffMember') });
           return;
         }
@@ -317,7 +321,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       // The appointment program is being created, the staff members are being added to the payload
       } else {
         this.$emit('submit', this.localServiceOptions);
-        this.$emit('update:initialStaffMembers', this.allStaffMembers);
         this.$emit('update:show', false);
       }
     },
