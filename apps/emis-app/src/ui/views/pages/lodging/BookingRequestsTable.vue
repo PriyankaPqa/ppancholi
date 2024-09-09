@@ -63,6 +63,10 @@
         {{ item.roomOptionsStr }}
       </template>
 
+      <template #[`item.${customColumns.created}`]="{ item }">
+        {{ getLocalStringDate(item.created, 'Entity.created', 'PP') }}
+      </template>
+
       <template #[`item.${customColumns.action}`]="{ item }">
         <v-btn v-if="item.state === BookingRequestState.Pending" :data-test="`action_${item.id}`" @click="actionItem(item)">
           {{ $t('bookingRequest.action') }}
@@ -169,6 +173,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         checkIn: 'Entity/CheckIn',
         checkOut: 'Entity/CheckOut',
         roomOptions: `Metadata/RoomOptionStr/Translation/${this.$i18n.locale}`,
+        created: 'Entity/Created',
         action: 'action',
       };
     },
@@ -209,6 +214,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           text: this.$t('bookingRequest.roomOptions') as string,
           value: this.customColumns.roomOptions,
           sortable: false,
+        },
+        {
+          text: this.$t('bookingRequest.created') as string,
+          value: this.customColumns.created,
+          sortable: true,
         },
         {
           text: '',

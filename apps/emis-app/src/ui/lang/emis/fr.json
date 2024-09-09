@@ -269,6 +269,7 @@
     "bookingRequest.rejected": "Requête rejetée",
     "bookingRequest.roomNumber": "Chambre #{index}",
     "bookingRequest.roomOptions": "Options",
+    "bookingRequest.created": "Soumise le",
     "bookingRequest.roomType": "Type de chambre",
     "bookingRequest.selectPaymentDetails": "Sélection des détails du paiement",
     "bookingRequest.setup.title": "Accorder la requête de logement",

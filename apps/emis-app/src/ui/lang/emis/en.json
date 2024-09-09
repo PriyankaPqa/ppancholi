@@ -269,6 +269,7 @@
     "bookingRequest.rejected": "Request rejected",
     "bookingRequest.roomNumber": "Room #{index}",
     "bookingRequest.roomOptions": "Room options",
+    "bookingRequest.created": "Submitted on",
     "bookingRequest.roomType": "Room type",
     "bookingRequest.selectPaymentDetails": "Select the payment details",
     "bookingRequest.setup.title": "Fulfill the booking request",

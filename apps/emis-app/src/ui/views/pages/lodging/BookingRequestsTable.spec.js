@@ -90,6 +90,7 @@ describe('BookingRequestsTable.vue', () => {
           checkIn: 'Entity/CheckIn',
           checkOut: 'Entity/CheckOut',
           roomOptions: 'Metadata/RoomOptionStr/Translation/en',
+          created: 'Entity/Created',
           action: 'action',
         });
       });
@@ -132,6 +133,11 @@ describe('BookingRequestsTable.vue', () => {
             text: 'bookingRequest.roomOptions',
             value: wrapper.vm.customColumns.roomOptions,
             sortable: false,
+          },
+          {
+            text: 'bookingRequest.created',
+            value: wrapper.vm.customColumns.created,
+            sortable: true,
           },
           {
             text: '',
