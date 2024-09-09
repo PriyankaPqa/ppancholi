@@ -185,6 +185,7 @@ export const personViewDs : IDatasourceBase = {
     { dataField: 'middleName', dataType: 'string', visible: false },
     { dataField: 'preferredName', dataType: 'string', visible: false },
     { dataField: 'fullName', dataType: 'string', visible: false },
+    { dataField: 'receivingAssistance', dataType: 'boolean', visible: false },
     { dataField: 'dateOfBirth', dataType: 'date', visible: false, asUtcDate: true },
     { dataField: 'age', dataType: 'number', visible: false },
     { dataField: 'genderNameEn', dataType: 'string', visible: false, lookupType: LookupType.optionItemEn, lookupKey: 'Gender' },
