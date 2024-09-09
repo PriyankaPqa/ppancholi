@@ -1,6 +1,7 @@
 /* eslint-disable max-statements */
 /* eslint-disable vue/max-len */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import flushPromises from 'flush-promises';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
@@ -76,7 +77,7 @@ describe('BookingSetupDialog.vue', () => {
       wrapper.vm.$refs.crcProvidedLodging = crcProvidedLodging;
     }
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
   };
 
   beforeEach(async () => {
@@ -187,8 +188,8 @@ describe('BookingSetupDialog.vue', () => {
         await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { individuals: () => individuals });
         expect(wrapper.vm.uniqueAddresses).toEqual([individuals[0].currentAddress, individuals[1].currentAddress]);
 
-        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { individuals: () => individuals });
         individuals[1].membershipStatus = MembershipStatus.Removed;
+        await mountWrapper(false, 5, LodgingMode.MoveCrcProvidedAllowed, { individuals: () => individuals });
         expect(wrapper.vm.uniqueAddresses).toEqual([individuals[0].currentAddress]);
       });
     });
