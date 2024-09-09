@@ -18,7 +18,7 @@
         </v-row>
       </v-container>
       <v-container v-else>
-        <v-row justify="center" class="my-8">
+        <v-row justify="center" class="my-4">
           <v-col md="10" sm="12">
             <v-row class="firstSection">
               <v-col md="9" sm="12">
@@ -107,8 +107,8 @@
                   </v-col>
                 </v-row>
 
-                <v-row>
-                  <v-col cols="12">
+                <v-row class="mt-0">
+                  <v-col cols="12" class="pt-1 pb-0">
                     <events-selector
                       async-mode
                       fetch-all-events
@@ -127,7 +127,7 @@
                   </v-col>
                 </v-row>
 
-                <v-row>
+                <v-row class="mt-0">
                   <v-col cols="12" class="firstSection__actions">
                     <v-btn
                       :disabled="!$hasLevel(UserRoles.level5)"
@@ -147,7 +147,7 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-row class="mt-12">
+            <v-row class="mt-6">
               <v-col v-if="!$hasFeature($featureKeys.AppointmentBooking) || !original.useForAppointments" class="pa-0">
                 <team-members-table
                   data-test="team-members-table"

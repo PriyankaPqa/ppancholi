@@ -120,7 +120,7 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
 import RcDataTable from '@libs/component-lib/components/organism/RcDataTable/RcDataTable.vue';
 import AssignServiceOptions from './AssignServiceOptions.vue';
-import { mustHaveStaffMembers } from '../appointmentProgramsHelper';
+import { mustHaveStaffMembers, updateStaffMembers } from '../appointmentProgramsHelper';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
@@ -309,15 +309,11 @@ export default mixins(TablePaginationSearchMixin).extend({
         }
 
         this.loading = true;
-        const res = await useAppointmentProgramStore().updateStaffMembers(this.appointmentProgramId, { serviceOptions: this.localServiceOptions
-            .map((so) => ({ serviceOptionId: so.id, staffMembers: so.staffMembers })) });
+        const res = await updateStaffMembers(this.appointmentProgramId, this.localServiceOptions, this);
         if (res) {
-          this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
           this.$emit('update:show', false);
-        } else {
-          this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
-          this.loading = false;
         }
+        this.loading = false;
       // The appointment program is being created, the staff members are being added to the payload
       } else {
         this.$emit('submit', this.localServiceOptions);

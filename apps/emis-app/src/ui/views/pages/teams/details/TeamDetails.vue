@@ -118,10 +118,10 @@
               <v-row no-gutters class="mt-6 flex">
                 <v-col class="team_data">
                   <div class="rc-body14 fw-bold">
-                    {{ $tc('teams.related_events', eventAmount) }}
+                    {{ $tc('teams.related_events', eventCount) }}
                   </div>
                   <div class="rc-body14" data-test="team_events">
-                    {{ getEventNames(team) }}
+                    {{ getEventNames() }}
                   </div>
                 </v-col>
               </v-row>
@@ -155,6 +155,11 @@
                 :show-add-member="false"
                 :team-members-data.sync="teamMembers"
                 :is-edit-mode="false" />
+              <team-assign-service-options
+                v-if="selectedTab === SelectedTab.AssignServiceOptions"
+                :team-id="team.id"
+                :events="events"
+                :team-members="teamMembers" />
             </v-col>
           </v-row>
         </v-col>
@@ -178,6 +183,7 @@ import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
 import { GlobalHandler } from '@libs/services-lib/http-client';
+import { IEventEntity } from '@libs/entities-lib/event';
 
 export enum SelectedTab {
   TeamMembers = 1,
@@ -224,7 +230,7 @@ export default Vue.extend({
       return useUserAccountMetadataStore().getById(this.primaryContactId)?.displayName || null;
     },
 
-    eventAmount(): number {
+    eventCount(): number {
       return this.team?.eventIds?.length;
     },
 
@@ -255,6 +261,10 @@ export default Vue.extend({
 
       return [lodgingLabel, escalationLabel, appointmentsLabel].filter((x) => x).join(', ');
     },
+
+    events() :IEventEntity[] {
+      return useEventStore().getByIds(this.team.eventIds, false);
+    },
   },
 
   async created() {
@@ -262,9 +272,8 @@ export default Vue.extend({
   },
 
   methods: {
-    getEventNames(team: ITeamEntity) {
-      return useEventStore().getByIds(team.eventIds, false).map((e) => this.$m(e.name)).sort((a, b) => a?.toLowerCase()?.localeCompare(b?.toLowerCase()))
-        .join(', ');
+    getEventNames() {
+      return this.events.map((e) => this.$m(e.name)).sort((a, b) => a?.toLowerCase()?.localeCompare(b?.toLowerCase())).join(', ');
     },
 
     async loadTeam() {

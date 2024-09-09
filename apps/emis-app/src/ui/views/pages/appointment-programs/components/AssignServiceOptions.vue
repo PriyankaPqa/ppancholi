@@ -1,5 +1,5 @@
 <template>
-  <v-sheet rounded outlined class="ma-0 assign-table" height="100%">
+  <v-sheet rounded outlined class="ma-0 assign-table" height="100%" :loading="loading">
     <v-data-table-a11y
       data-test="assign-service-options__table"
       :headers="headers"
@@ -11,9 +11,9 @@
       <template v-if="staffMembers.length" #body="props">
         <tr v-for="item in props.items" :key="item.id">
           <td>
-            <div class="d-flex flex-column px-4 py-1 no-wrap">
+            <div class="d-flex flex-column px-4 no-wrap" :class="inTeamManagement ? 'py-2' : 'py-1'">
               <span class="rc-body14 fw-bold">  {{ item.displayName }} </span>
-              <span v-if="!inTeamManagement" class="rc-body12">  {{ getTeamNames(item) }} </span>
+              <span v-if="!inTeamManagement" class="rc-body12">  {{ getTeamNames(item) || '-' }} </span>
             </div>
           </td>
           <td v-for="so in serviceOptions" :key="so.id || so.tempId" class="checkbox-cell">
@@ -56,6 +56,7 @@ import { DataTableHeader } from 'vuetify';
 import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
+import { updateStaffMembers } from '../appointmentProgramsHelper';
 
 export default Vue.extend({
   name: 'AssignServiceOptions',
@@ -181,14 +182,7 @@ export default Vue.extend({
       const updatedServiceOptions = this.updateServiceOptionOnAssign(memberId, soId, value);
       if (this.inTeamManagement) {
         this.loading = true;
-        const res = await useAppointmentProgramStore().updateStaffMembers(this.appointmentProgramId, { serviceOptions: updatedServiceOptions
-            .map((so) => ({ serviceOptionId: so.id, staffMembers: so.staffMembers })) });
-        if (res) {
-          this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
-          this.$emit('update:show', false);
-        } else {
-          this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
-        }
+        await updateStaffMembers(this.appointmentProgramId, updatedServiceOptions, this);
         this.loading = false;
       }
     },

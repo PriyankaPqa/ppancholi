@@ -1,7 +1,7 @@
 <template>
-  <v-container ref="container">
+  <v-container class="px-0">
     <v-row class="my-2 mx-0">
-      <v-col v-if="team.teamType === TeamType.Standard" md="4" class="pa-0">
+      <v-col v-if="team.teamType === TeamType.Standard" md="4" class="pl-0 py-0">
         <v-select-a11y
           v-model="selectedEvent"
           outlined
@@ -15,7 +15,7 @@
           :item-text="(item) => $m(item.name)"
           return-object />
       </v-col>
-      <v-col md="4" class="py-0">
+      <v-col md="4" class="pa-0">
         <v-select-a11y
           v-model="selectedAppointmentProgram"
           outlined
@@ -119,7 +119,7 @@ export default Vue.extend({
 
     async fetchAppointmentPrograms() {
       const res = await useAppointmentProgramStore().search({ params: {
-        filter: { 'Entity/EventId': { value: this.selectedEvent.id, type: EFilterKeyType.Guid } },
+        filter: { 'Entity/EventId': { value: this.selectedEvent.id, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
         top: 999,
         skip: 0,
       } });
