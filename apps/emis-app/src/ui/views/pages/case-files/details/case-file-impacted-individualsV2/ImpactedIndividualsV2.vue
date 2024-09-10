@@ -195,8 +195,8 @@ export default mixins(caseFileDetail).extend({
       return true;
     },
 
-    openBookingRequest() {
-      if (this.checkLodgingTeamExists()) {
+    async openBookingRequest() {
+      if (await this.checkLodgingTeamExists()) {
         this.showBookingDialog = true;
       }
     },
