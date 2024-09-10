@@ -211,7 +211,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
 
       quicksearchField: 'SearchItem/SearchableText',
-      caseFilesFromSearch: [] as CaseFileSearchOptimized[],
     };
   },
 
@@ -262,8 +261,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     caseFiles() : Array<CaseFileSearchOptimized & { entity: ICaseFileEntity, pinned: boolean }> {
       const storeCaseFile = this.combinedCaseFileStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      const caseFilesFromSearch = useCaseFileStore().getSearchOptimizedByIds(this.searchResultIds);
       return storeCaseFile.map((c) => {
-        const optimized = this.caseFilesFromSearch.find((cs) => c.entity.id === cs.id);
+        const optimized = caseFilesFromSearch.find((cs) => c.entity.id === cs.id);
         return {
           id: c.entity.id,
           caseFileNumber: c.entity.caseFileNumber,
@@ -523,7 +523,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     async fetchData(params: ISearchParams): Promise<ITableSearchResults<ICombinedIndex<ICaseFileEntity, ICaseFileMetadata>>> {
-      const res = await this.$services.caseFiles.searchOptimized({
+      const res = await useCaseFileStore().searchOptimized({
         filter: params.filter,
         top: params.top,
         skip: params.skip,
@@ -532,9 +532,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       }, true);
 
       const ids = res.value.map((x) => x.searchItem.id);
-      this.caseFilesFromSearch = res.value.map((x) => x.searchItem);
-
-      useCaseFileStore().setAll(res.value.map((x) => x.entity));
 
       const casefiles = this.combinedCaseFileStore.getByIds(ids, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
       useHouseholdStore().fetchByIds(casefiles.map((x) => x.entity.householdId), true);

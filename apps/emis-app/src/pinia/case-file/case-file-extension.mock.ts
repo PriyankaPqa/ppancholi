@@ -1,5 +1,5 @@
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { mockCaseFileActivities, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { mockCaseFileActivities, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntity, mockSearchOptimizedResults } from '@libs/entities-lib/case-file';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 
 export function getMockExtensionComponents(entity = mockCaseFileEntity()) {
@@ -27,5 +27,7 @@ export function getMockExtensionComponents(entity = mockCaseFileEntity()) {
     genericSetAction: jest.fn(),
     fetchRecentlyViewed: jest.fn(() => ['mock-id-1', 'mock-id-2']),
     addRecentlyViewed: jest.fn(() => ['mock-id-1', 'mock-id-2']),
+    searchOptimized: jest.fn(() => mockSearchOptimizedResults()),
+    getSearchOptimizedByIds: jest.fn(() => mockSearchOptimizedResults().value.map((x) => x.searchItem)),
   };
 }

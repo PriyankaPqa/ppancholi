@@ -1,5 +1,7 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base/base.types';
+import _cloneDeep from 'lodash/cloneDeep';
 import {
+  CaseFileSearchOptimized,
   CaseFileStatus,
   CaseFileTriage, IAssignedTeamMembers,
   ICaseFileEntity,
@@ -7,13 +9,14 @@ import {
   IdParams,
   IIdentityAuthentication,
   IImpactStatusValidation,
+  SearchOptimizedResults,
 } from '@libs/entities-lib/case-file';
 import { CaseFilesService, ICaseFilesServiceMock, ICreateCaseFileRequest } from '@libs/services-lib/case-files/entity';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { Ref, ref } from 'vue';
 import { filterAndSortActiveItems } from '@libs/stores-lib/base';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
-import { IListOption } from '@libs/shared-lib/types';
+import { IListOption, ISearchParams } from '@libs/shared-lib/types';
 import { IUserAccountEntity } from '@libs/entities-lib/user-account';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 
@@ -32,6 +35,14 @@ export function getExtensionComponents(
   const closeReasonsFetched = ref(false);
   const screeningIdsFetched = ref(false);
   const recentlyViewedCaseFileIds = ref([]) as Ref<string[]>;
+  const searchOptimizedItems = ref([]) as Ref<CaseFileSearchOptimized[]>;
+
+  function getSearchOptimizedByIds(ids: uuid[]): CaseFileSearchOptimized[] {
+    if (!ids?.length) {
+      return [];
+    }
+    return ids.map((id) => _cloneDeep(searchOptimizedItems.value.find((e) => e.id === id)));
+  }
 
   function getTagsOptions(filterOutInactive = true, actualValue?: string[] | string) {
     return filterAndSortActiveItems(tagsOptions.value, filterOutInactive, actualValue);
@@ -183,6 +194,22 @@ export function getExtensionComponents(
     }
   }
 
+  async function searchOptimized(params: ISearchParams, includeCaseFile?: boolean, includeCaseFileAndMetadata?: boolean): Promise<SearchOptimizedResults> {
+    const res = await entityService.searchOptimized(params, includeCaseFile, includeCaseFileAndMetadata);
+    if (res) {
+      res.value.map((r) => r.searchItem).forEach((s) => {
+        const index = searchOptimizedItems.value.findIndex((x) => x?.id === s.id);
+        if (index > -1) {
+          searchOptimizedItems.value[index] = s;
+        } else {
+          searchOptimizedItems.value.push(s);
+        }
+      });
+      baseComponents.setAll(res.value.map((x) => x.entity).filter((x) => x));
+    }
+    return res;
+  }
+
   async function fetchRecentlyViewed(): Promise<string[]> {
     try {
       const res = await entityService.getRecentlyViewed();
@@ -219,6 +246,7 @@ export function getExtensionComponents(
     closeReasonsFetched,
     screeningIdsFetched,
     recentlyViewedCaseFileIds,
+    searchOptimizedItems,
     getTagsOptions,
     getInactiveReasons,
     getCloseReasons,
@@ -242,5 +270,7 @@ export function getExtensionComponents(
     genericSetAction,
     fetchRecentlyViewed,
     addRecentlyViewed,
+    searchOptimized,
+    getSearchOptimizedByIds,
   };
 }

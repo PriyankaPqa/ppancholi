@@ -10,6 +10,7 @@ import {
   IIdentityAuthentication, IImpactStatusValidation, ImpactValidationMethod, mockAssignedTeamMembers,
   mockCaseFileActivities,
   mockCaseFileEntity,
+  mockSearchOptimizedResults,
   mockTagsOptions, ValidationOfImpactStatus,
 } from '@libs/entities-lib/case-file';
 import { getExtensionComponents } from '@/pinia/case-file/case-file-extension';
@@ -52,6 +53,15 @@ const createTestStore = (bComponents = {}) => {
 describe('>>> Case File Store', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('getSearchOptimizedByIds', () => {
+    it('returns the search items', () => {
+      const store = createTestStore();
+      store.searchOptimizedItems = mockSearchOptimizedResults().value.map((x) => x.searchItem);
+      const res = store.getSearchOptimizedByIds(['cf1']);
+      expect(res).toEqual([store.searchOptimizedItems[0]]);
+    });
   });
 
   describe('getTagsOptions', () => {
@@ -316,6 +326,17 @@ describe('>>> Case File Store', () => {
       await store.assignCaseFile({ id, ...payload });
 
       expect(entityService.assignCaseFile).toBeCalledWith(id, payload);
+    });
+  });
+
+  describe('searchOptimized', () => {
+    it('calls the service', async () => {
+      const store = createTestStore();
+      const params = { filter: 'some' };
+      const res = await store.searchOptimized(params, true, false);
+
+      expect(entityService.searchOptimized).toHaveBeenCalledWith(params, true, false);
+      expect(res.value.map((x) => x.searchItem)).toEqual(store.searchOptimizedItems);
     });
   });
 
