@@ -170,11 +170,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent } from '@libs/component-lib/components';
-import {
-  TeamType, ITeamEntity,
-  ITeamMemberAsUser,
-} from '@libs/entities-lib/team';
+import { RcPageContent, RcTab, RcTabs } from '@libs/component-lib/components';
+import { TeamType, ITeamEntity, ITeamMemberAsUser } from '@libs/entities-lib/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -196,6 +193,8 @@ export default Vue.extend({
     StatusChip,
     RcPageContent,
     TeamMembersTable,
+    RcTab,
+    RcTabs,
   },
 
   props: {

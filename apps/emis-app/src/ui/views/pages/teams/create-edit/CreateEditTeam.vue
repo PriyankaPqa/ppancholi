@@ -166,6 +166,7 @@
                     :key="tab"
                     :label="$t(`team.tab.title--${SelectedTab[tab]}`)"
                     :data-test="`team.tab.title--${SelectedTab[tab]}`"
+                    :disabled="!teamMembers.length"
                     :active="selectedTab === tab"
                     @click="selectedTab = tab" />
                 </rc-tabs>
@@ -236,12 +237,8 @@ import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
-  RcConfirmationDialog,
-  RcDialog,
-  RcPageContent,
-  VAutocompleteWithValidation,
-  VCheckboxWithValidation,
-  VTextFieldWithValidation,
+  RcConfirmationDialog, RcDialog, RcPageContent, VAutocompleteWithValidation,
+  VCheckboxWithValidation, VTextFieldWithValidation, RcTab, RcTabs,
 } from '@libs/component-lib/components';
 import _isEqual from 'lodash/isEqual';
 import _sortBy from 'lodash/sortBy';
@@ -296,6 +293,8 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     RcConfirmationDialog,
     VCheckboxWithValidation,
     TeamAssignServiceOptions,
+    RcTab,
+    RcTabs,
   },
 
   beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {

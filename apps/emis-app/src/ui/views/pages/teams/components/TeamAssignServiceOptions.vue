@@ -82,6 +82,7 @@ export default Vue.extend({
       TeamType,
       selectedEvent: null as IEventEntity,
       selectedAppointmentProgram: null as IAppointmentProgram,
+      appointmentProgramIds: [] as string[],
       appointmentPrograms: [] as IAppointmentProgram[],
     };
   },
@@ -91,6 +92,9 @@ export default Vue.extend({
       return useTeamStore().getById(this.teamId);
     },
 
+  //  appointmentPrograms(): IAppointmentProgram[] {
+  //     return useAppointmentProgramStore().getByIds(this.appointmentProgramIds);
+  //   },
   },
 
   watch: {
@@ -124,14 +128,10 @@ export default Vue.extend({
         skip: 0,
       } });
       if (res) {
-        // temp code
+        this.appointmentProgramIds = res.ids;
+
         useAppointmentProgramStore().items = [];
-          const aps = await useAppointmentProgramStore().fetchByIds(res.ids, false);
-
-          this.appointmentPrograms = aps;
-        // end temp code
-
-        // this.appointmentPrograms = res.values;
+        this.appointmentPrograms = await useAppointmentProgramStore().fetchByIds(this.appointmentProgramIds, false);
       }
     },
 

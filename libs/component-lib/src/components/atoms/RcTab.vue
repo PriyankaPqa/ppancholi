@@ -54,6 +54,10 @@ export default Vue.extend({
   outline-color: var(--v-primary-base);
 }
 
+.optionsList__tab:disabled {
+  opacity: 60%;
+}
+
 .optionsList__tab.active {
   background: var(--v-white-base);
   border-top: 4px solid var(--v-secondary-base);
