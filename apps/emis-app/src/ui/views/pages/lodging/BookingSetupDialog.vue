@@ -399,7 +399,7 @@ export default mixins(caseFileDetail).extend({
     await this.loadMissingCaseFileDetails();
 
     if (this.mayTriggerPayment) {
-      this.initPaymentDetails();
+      await this.initPaymentDetails();
     }
 
     if (this.isEditOfAddress) {
@@ -415,7 +415,11 @@ export default mixins(caseFileDetail).extend({
     if (!await this.checkForCrcProvidedSetupComplete()) {
       return;
     }
-    this.showSelectPaymentDetails = this.paymentDetails.length > 1;
+    if (this.paymentDetails.length > 1) {
+      this.showSelectPaymentDetails = true;
+    } else {
+      await this.selectPaymentDetails(this.paymentDetails[0]);
+    }
   },
 
   methods: {
@@ -438,8 +442,6 @@ export default mixins(caseFileDetail).extend({
 
       this.paymentDetails = faTables.map((t) => ({ table: t, program: programs.find((p) => t.programId === p.id) }))
         .map((tp) => ({ ...tp, name: `${this.$m(tp.program.name)} - ${this.$m(tp.table.name)}` }));
-
-      await this.selectPaymentDetails(this.paymentDetails[0]);
     },
 
     async checkForCrcProvidedSetupComplete() {
