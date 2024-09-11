@@ -50,7 +50,8 @@ import { IListOption } from '@libs/shared-lib/types';
 import { mockCreateMassCommunicationFileRequest, MockCreateMassCommunicationFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massCommunication';
 import { mockCreateMassAssessmentsFileRequest, MockCreateMassAssessmentsFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massAssessments';
 import { TeamType } from '@libs/entities-lib/team';
-import { mockCreatePersonalTaskRequest, mockCreateTeamTaskRequest } from '@libs/cypress-lib/mocks/tasks/tasks';
+import { mockCreatePersonalTaskRequest, mockCreateTeamTaskRequest, mockSetTaskActionTakenRequest } from '@libs/cypress-lib/mocks/tasks/tasks';
+import { ActionTaken } from '@libs/entities-lib/task';
 import {
   fixtureGenerateCaseFileStatusCsvFile,
   fixtureGenerateFaCsvFile,
@@ -186,6 +187,14 @@ export interface MassAssessmentsViaUploadFileParams {
   emailSubject: Record<string, string>,
   emailTopCustomContent: Record<string, string>,
   emailAdditionalDescription: Record<string, string>,
+}
+
+export interface SetTeamTaskActionParams {
+  provider: IProvider,
+  caseFileId: string,
+  teamId: string,
+  actionTaken: ActionTaken,
+  taskId: string
 }
 
 /**
@@ -1132,3 +1141,31 @@ export const createTeamTask = async (provider: IProvider, caseFileId: string, as
   const teamTaskCreated = await provider.task.createTask(mockCreateTeamTask);
   return teamTaskCreated;
 };
+
+/**
+ * Assign a Team Task
+ * @param provider
+ * @param taskId
+ * @param caseFileId
+ * @param assignedTeamId
+ */
+export const assignTeamTask = async (provider: IProvider, taskId: string, caseFileId: string, assignedTeamId: string) => {
+  const params = {
+    actionTaken: ActionTaken.Assign,
+    rationale: 'Test rationale',
+    teamId: assignedTeamId,
+  };
+  await provider.task.setTaskActionTaken(taskId, caseFileId, params);
+};
+
+  /**
+   * Set a team task action
+   * @param provider
+   * @param caseFileId
+   * @param assignedTeamId
+   */
+  export const setTeamTaskAction = async (params: SetTeamTaskActionParams) => {
+    const mockSetTaskActionTaken = mockSetTaskActionTakenRequest(params.actionTaken, params.teamId);
+    const setTaskActionTakenResult = await params.provider.task.setTaskActionTaken(params.taskId, params.caseFileId, mockSetTaskActionTaken);
+    return setTaskActionTakenResult;
+  };

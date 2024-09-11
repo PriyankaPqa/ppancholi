@@ -1,7 +1,9 @@
 const baseConfig = require('./jest.config.base');
+const coverageConfig = require('./jest.config.coverage');
 
 module.exports = {
   ...baseConfig,
+  ...coverageConfig,
   projects: [
     '<rootDir>/apps/emis-app',
     '<rootDir>/apps/benef-app',

@@ -131,6 +131,10 @@ export class TasksHomePage {
     return cy.getByDataTest(this.createdTaskAssignedTo).getAndTrimText();
   }
 
+  public verifyCreatedTaskAssignedTeamName(teamName: string) {
+    return cy.getByDataTest(this.createdTaskAssignedTo).contains(teamName).should('be.visible');
+  }
+
   public getCreatedTaskStatusElement() {
     return cy.getByDataTest(this.createdTaskStatus);
   }

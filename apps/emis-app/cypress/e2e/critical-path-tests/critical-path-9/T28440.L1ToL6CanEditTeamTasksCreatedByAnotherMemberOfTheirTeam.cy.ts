@@ -109,16 +109,21 @@ describe('[T28440] L1-L6 can edit Team tasks created by another member of their 
           teamTaskDetailsPage.getPageTitleElement().contains('Team task details').should('be.visible');
           teamTaskDetailsPage.getTeamTaskSubCategoryElement().contains('Duplicate Management').should('be.visible');
           teamTaskDetailsPage.getTeamTaskStatusElement().contains('New').should('be.visible');
-
-          const tasksHistoryPage = teamTaskDetailsPage.goToTaskHistory();
+          teamTaskDetailsPage.goToTaskHistory();
 
           if (roleName === UserRoles.level6) {
-            assertTaskHistorySteps(roleName, `${getUserName(roleName)} updated task details`, 1);
+            assertTaskHistorySteps({
+              roleName,
+              actionTaken: `${getUserName(roleName)} updated task details`,
+              index: 1,
+            });
           } else {
-            assertTaskHistorySteps(roleName, `${getUserName(roleName)} from ${this.assignableTeamName} updated task details`, 1);
+            assertTaskHistorySteps({
+              roleName,
+              actionTaken: `${getUserName(roleName)} from ${this.assignableTeamName} updated task details`,
+              index: 1,
+            });
           }
-          tasksHistoryPage.getHistoryTableRationaleByIndex(1).should('eq', '-');
-          tasksHistoryPage.getCloseButton().should('be.visible');
         });
       });
     }

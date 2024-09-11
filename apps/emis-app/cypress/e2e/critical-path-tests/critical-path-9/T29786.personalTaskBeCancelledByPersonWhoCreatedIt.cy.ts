@@ -78,8 +78,12 @@ describe('[T29786] Personal task can be cancelled by the person who created It',
           personalTaskDetailsPage.getPageTitleElement().contains('Personal task details').should('be.visible');
 
           const tasksHistoryPage = personalTaskDetailsPage.goToTaskHistory();
-          assertTaskHistorySteps(roleName, 'Task cancelled', 1);
-          tasksHistoryPage.getHistoryTableRationaleByIndex(1).should('eq', 'Test rationale - Personal task cancelled');
+          assertTaskHistorySteps({
+            roleName,
+            rationale: 'Test rationale - Personal task cancelled',
+            actionTaken: 'Task cancelled',
+            index: 1,
+          });
           tasksHistoryPage.getCloseButton().click();
           tasksHistoryPage.getCloseButton().should('not.exist');
 

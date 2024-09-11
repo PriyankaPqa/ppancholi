@@ -12,7 +12,6 @@ import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
-import { mockProvider } from '@/services/provider';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import Component from './CaseFilesTable.vue';
@@ -23,7 +22,6 @@ const { caseFileStore, pinia, caseFileMetadataStore } = useMockCaseFileStore(cre
 const householdStore = useMockHouseholdStore(pinia).householdStore;
 const personStore = useMockPersonStore(pinia).personStore;
 const eventStore = useMockEventStore(pinia).eventStore;
-const services = mockProvider();
 
 const mockHouseholds = [
   mockHouseholdEntity({ id: mockCaseFiles[0].entity.householdId }), mockHouseholdEntity({ id: 'empty household', primaryBeneficiary: null }),
@@ -53,7 +51,6 @@ describe('CaseFilesTable.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $services: services,
       },
       ...additionalOverwrites,
     });
@@ -252,9 +249,10 @@ describe('CaseFilesTable.vue', () => {
       it('calls the getter', async () => {
         jest.clearAllMocks();
         wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => [mockCombinedCaseFile({ id: 'cf1' }), mockCombinedCaseFile({ id: 'cf2' })]);
-        await wrapper.setData({ searchResultIds: ['some'], caseFilesFromSearch: mockSearchResults.value.map((x) => x.searchItem) });
+        await wrapper.setData({ searchResultIds: ['some'] });
         const r = wrapper.vm.caseFiles;
         expect(wrapper.vm.combinedCaseFileStore.getByIds).toHaveBeenCalledWith(['some'], { baseDate: null, prependPinnedItems: true });
+        expect(caseFileStore.getSearchOptimizedByIds).toHaveBeenCalledWith(['some']);
         expect(JSON.stringify(r)).toEqual(JSON.stringify(mockSearchResults.value.map((x) => ({ ...x.searchItem, entity: x.entity }))));
       });
     });
@@ -497,7 +495,7 @@ describe('CaseFilesTable.vue', () => {
     beforeEach(async () => {
       await mountWrapper();
       wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => [mockCombinedCaseFile({ id: 'cf1' }), mockCombinedCaseFile({ id: 'cf2' })]);
-      await wrapper.setData({ searchResultIds: ['some'], caseFilesFromSearch: mockSearchResults.value.map((x) => x.searchItem) });
+      await wrapper.setData({ searchResultIds: ['some'] });
 
       await wrapper.setData({
         myCaseFiles: false,
@@ -519,7 +517,7 @@ describe('CaseFilesTable.vue', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(services.caseFiles.searchOptimized)
+        expect(caseFileStore.searchOptimized)
           .toHaveBeenCalledWith({
             filter: params.filter,
             top: params.top,
