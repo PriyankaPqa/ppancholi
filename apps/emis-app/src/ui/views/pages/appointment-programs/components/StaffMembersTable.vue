@@ -17,7 +17,7 @@
       :loading="loading"
       :headers="headers"
       :options.sync="options"
-      :items="staffMembers">
+      :items="users">
       <template #[`item.${customColumns.name}`]="{ item }">
         <span data-test="staffMembers__name">{{ item.displayName }}</span>
       </template>
@@ -48,11 +48,14 @@ import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/appointment';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
+import { EFilterKeyType } from '@libs/component-lib/types';
 import ManageStaffMembers from './ManageStaffMembers.vue';
+import { STAFF_MEMBERS } from '../../appointments/home/mocks';
 
 export default Vue.extend({
   name: 'StaffMembersTable',
@@ -137,31 +140,30 @@ export default Vue.extend({
       return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.serviceOptionType?.optionItemId));
     },
 
-    staffMemberIds(): string[] {
-      const allIds = this.serviceOptions.reduce((ids, so) => {
-        if (so.staffMembers?.length) {
-          ids.push(...so.staffMembers);
-        }
-        return ids;
-      }, []);
-
-      return [...new Set(allIds)];
+    staffMembers(): Partial<IAppointmentStaffMember>[] {
+      // return useAppointmentStaffMemberStore().getByAppointmentProgramId(this.appointmentProgramId);
+      return STAFF_MEMBERS;
     },
 
-    staffMembers(): IUserAccountMetadata[] {
-      return useUserAccountMetadataStore().getByIds(this.staffMemberIds);
+    userAccountIds(): string[] {
+      return this.staffMembers.map((m) => m.userAccountId);
+    },
+
+    users(): IUserAccountMetadata[] {
+      return useUserAccountMetadataStore().getByIds(this.userAccountIds);
     },
   },
 
   watch: {
-    staffMemberIds(newValue) {
+    userAccountIds(newValue) {
       useUserAccountMetadataStore().fetchByIds(newValue, true);
     },
   },
 
   async created() {
     await useAppointmentProgramStore().fetchServiceOptionTypes();
-    await useUserAccountMetadataStore().fetchByIds(this.staffMemberIds, true);
+    // await this.fetchStaffMembers();
+    await useUserAccountMetadataStore().fetchByIds(this.userAccountIds, true);
   },
 
   methods: {
@@ -170,10 +172,19 @@ export default Vue.extend({
       this.$emit('update:serviceOptions', serviceOptions);
     },
 
-    getServiceOptionNames(memberId: string): string {
-      const serviceOptionsContainingMember = this.serviceOptions.filter((so) => so.staffMembers.includes(memberId));
-      const serviceOptionTypes = this.serviceOptionTypes.filter((t) => serviceOptionsContainingMember.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
+    getServiceOptionNames(userId: string): string {
+      const staffMemberServiceOptionsIds = this.staffMembers.find((m) => m.userAccountId === userId)?.serviceOptionIds;
+      const serviceOptionsOfUser = this.serviceOptions.filter((so) => staffMemberServiceOptionsIds?.includes(so.id));
+      const serviceOptionTypes = this.serviceOptionTypes.filter((t) => serviceOptionsOfUser.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
       return serviceOptionTypes.map((t) => this.$m(t.name)).sort((a, b) => a.localeCompare(b)).join(', ');
+    },
+
+    async fetchStaffMembers() {
+      await useAppointmentStaffMemberStore().search({ params: {
+        filter: { 'Entity/AppointmenId': { value: this.appointmentProgramId, type: EFilterKeyType.Guid } },
+        top: 999,
+        skip: 0,
+      } });
     },
   },
 });

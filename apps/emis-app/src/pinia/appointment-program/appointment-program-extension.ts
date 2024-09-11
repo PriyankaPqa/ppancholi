@@ -108,8 +108,8 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function updateStaffMembers(appointmentProgramId: string, payload: StaffMemberUpdatePayload): Promise<IAppointmentProgram> {
-    const result = await service.updateStaffMembers(appointmentProgramId, payload);
+  async function assignStaffMembers(appointmentProgramId: string, payload: StaffMemberUpdatePayload): Promise<IAppointmentProgram> {
+    const result = await service.assignStaffMembers(appointmentProgramId, payload);
     if (result) {
       baseComponents.set(result);
     }
@@ -132,7 +132,7 @@ export function getExtensionComponents(
     createServiceOption,
     updateServiceOption,
     deleteServiceOption,
-    updateStaffMembers,
+    assignStaffMembers,
     setAppointmentProgramStatus,
   };
 }

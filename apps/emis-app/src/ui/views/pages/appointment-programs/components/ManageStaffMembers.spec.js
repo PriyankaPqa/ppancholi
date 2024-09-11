@@ -181,7 +181,7 @@ describe('ManageStaffMembers.vue', () => {
         wrapper.vm.allMembersAreAssigned = jest.fn(() => false);
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.manageStaff.error.notAllMembersAreAssigned' });
-        expect(appointmentProgramStore.updateStaffMembers).not.toHaveBeenCalled();
+        expect(appointmentProgramStore.assignStaffMembers).not.toHaveBeenCalled();
       });
 
       it('shows an error message in edit mode if mustHaveStaffMembers fails', async () => {
@@ -190,7 +190,7 @@ describe('ManageStaffMembers.vue', () => {
         mustHaveStaffMembers.mockImplementation(() => false);
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.manageStaff.error.atLeastOneStaffMember' });
-        expect(appointmentProgramStore.updateStaffMembers).not.toHaveBeenCalled();
+        expect(appointmentProgramStore.assignStaffMembers).not.toHaveBeenCalled();
       });
 
       it('calls store method in edit mode if mustHaveStaffMembers passes', async () => {
@@ -198,7 +198,7 @@ describe('ManageStaffMembers.vue', () => {
         wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
         mustHaveStaffMembers.mockImplementation(() => true);
         await wrapper.vm.onSubmit();
-        expect(appointmentProgramStore.updateStaffMembers).toHaveBeenCalledWith('appt-program-id', { serviceOptions: [
+        expect(appointmentProgramStore.assignStaffMembers).toHaveBeenCalledWith('appt-program-id', { serviceOptions: [
           { serviceOptionId: mockServiceOption().id, staffMembers: mockServiceOption().staffMembers },
         ] });
 
@@ -209,7 +209,7 @@ describe('ManageStaffMembers.vue', () => {
         await mountWrapper();
         wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
         mustHaveStaffMembers.mockImplementation(() => true);
-        appointmentProgramStore.updateStaffMembers = jest.fn();
+        appointmentProgramStore.assignStaffMembers = jest.fn();
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.failed');
       });

@@ -4,6 +4,6 @@ export function getMockExtensionComponents() {
   const appointmentStaffMember = mockAppointmentStaffMember();
 
   return {
-    updateStaffMembers: jest.fn(() => appointmentStaffMember),
+    assignStaffMembers: jest.fn(() => [appointmentStaffMember]),
   };
 }

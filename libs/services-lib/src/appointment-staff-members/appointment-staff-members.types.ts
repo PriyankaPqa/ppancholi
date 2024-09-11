@@ -3,10 +3,10 @@ import { IdParams } from '@libs/entities-lib/src/appointment/appointment-program
 import { IDomainBaseService, IDomainBaseServiceMock } from '../base';
 
 export interface IAppointmentStaffMembersService extends IDomainBaseService<IAppointmentStaffMember, IdParams> {
-  updateStaffMembers(item: IAppointmentStaffMember): Promise<IAppointmentStaffMember>;
+  assignStaffMembers(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]): Promise<IAppointmentStaffMember[]>
 }
 
 export interface IAppointmentStaffMembersServiceMock extends IDomainBaseServiceMock<IAppointmentStaffMember> {
-  updateStaffMembers: jest.Mock<IAppointmentStaffMember>;
+  assignStaffMembers: jest.Mock<IAppointmentStaffMember[]>;
 
 }

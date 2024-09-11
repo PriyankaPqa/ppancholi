@@ -1,5 +1,5 @@
 import { mockAppointmentStaffMember } from '@libs/entities-lib/appointment';
-import { IHttpMock, mockHttp, GlobalHandler } from '../http-client';
+import { IHttpMock, mockHttp } from '../http-client';
 import { AppointmentStaffMembersService } from './appointment-staff-members';
 
 describe('>>> AppointmentStaffMembers Service', () => {
@@ -22,10 +22,9 @@ describe('>>> AppointmentStaffMembers Service', () => {
 
   describe('update', () => {
     it('should call the proper endpoint', async () => {
-      const entity = mockAppointmentStaffMember();
-      await service.updateStaffMembers(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/appointment/AppointmentStaffMembers/${entity.id}`, entity, {
-        globalHandler: GlobalHandler.Partial });
+      const payload = [mockAppointmentStaffMember()];
+      await service.assignStaffMembers('id', payload);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/appointment/AppointmentStaffMembers/id', payload);
     });
   });
 });

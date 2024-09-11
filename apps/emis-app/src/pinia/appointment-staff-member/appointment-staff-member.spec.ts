@@ -38,16 +38,16 @@ describe('Appointment StaffMember store', () => {
     jest.clearAllMocks();
   });
 
-  describe('updateStaffMembers', () => {
-    it('should call updateStaffMembers service with proper params', async () => {
+  describe('assignStaffMembers', () => {
+    it('should call assignStaffMembers service with proper params', async () => {
       const bComponents = { ...baseComponents, addNewlyCreatedId: jest.fn(), set: jest.fn() };
       const store = createTestStore(bComponents);
       const staffMember = mockAppointmentStaffMember();
       const res = {} as IAppointmentStaffMember;
-      entityService.updateStaffMembers = jest.fn(() => res);
-      await store.updateStaffMembers(staffMember);
+      entityService.assignStaffMembers = jest.fn(() => res);
+      await store.assignStaffMembers('id', [staffMember]);
 
-      expect(entityService.updateStaffMembers).toBeCalledWith(staffMember);
+      expect(entityService.assignStaffMembers).toBeCalledWith('id', [staffMember]);
       expect(bComponents.addNewlyCreatedId).toBeCalledWith(res);
       expect(bComponents.set).toBeCalledWith(res);
     });

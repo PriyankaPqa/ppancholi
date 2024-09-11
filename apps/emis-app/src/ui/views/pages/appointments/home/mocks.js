@@ -1,4 +1,4 @@
-import { mockAppointment, DayOfWeek, mockStaffMemberAvailability, mockServiceOption } from '@libs/entities-lib/appointment';
+import { mockAppointment, DayOfWeek, mockServiceOption } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
 
 const today = helpers.getLocalStringDate(new Date(), 'local');
@@ -61,10 +61,10 @@ export const CUSTOM_SCHEDULE = [
 ];
 
 export const STAFF_AVAILABILITIES = [
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[0] }),
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[1], defaultbusinessHours: DEFAULT_SCHEDULE }),
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[2] }),
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[3] }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[0] }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[1], defaultbusinessHours: DEFAULT_SCHEDULE }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[2] }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[3] }),
 ];
 
 export const STAFF_MEMBER_AVAILABILITIES = [
@@ -90,49 +90,25 @@ export const SERVICE_OPTIONS = [
     id: 4,
     serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
     staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
-  // mockServiceOption({
-  //   id: 3,
-  //   serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
-  //   staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+];
 
+export const STAFF_MEMBERS_LAB = [
+  { appointmentProgramId: 'ea0b9336-7056-4de9-9a04-b325beb93846',
+    userAccountId: '8f05945f-0093-447f-80b2-cee1b0826678',
+    serviceOptionIds: ['eeae4bdb-3bad-49d8-b578-fefc0627bd90'],
+  },
+  { appointmentProgramId: 'ea0b9336-7056-4de9-9a04-b325beb93846',
+    userAccountId: '7e6a2022-b8a4-40e5-a0f0-b8721712e3c3',
+    serviceOptionIds: ['eeae4bdb-3bad-49d8-b578-fefc0627bd90'],
+  },
+];
+export const STAFF_MEMBERS = [
+  { appointmentProgramId: 'cc01cd3e-686b-4dbb-bc62-a8093996a669',
+    userAccountId: '4eb26c9e-6eb7-46c3-96f1-6c9aeee7bc88',
+    serviceOptionIds: ['bff48f65-b2c8-460d-9852-d0922fd86aa8'],
+  },
+  { appointmentProgramId: 'cc01cd3e-686b-4dbb-bc62-a8093996a669',
+    userAccountId: 'e7538d62-6b2e-4e09-a8da-6acc92214218',
+    serviceOptionIds: ['bff48f65-b2c8-460d-9852-d0922fd86aa8'],
+  },
 ];

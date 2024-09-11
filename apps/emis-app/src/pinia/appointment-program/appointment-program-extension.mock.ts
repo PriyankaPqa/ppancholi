@@ -18,7 +18,7 @@ export function getMockExtensionComponents() {
     createServiceOption: jest.fn(() => appointment),
     updateServiceOption: jest.fn(() => appointment),
     deleteServiceOption: jest.fn(() => appointment),
-    updateStaffMembers: jest.fn(() => appointment),
+    assignStaffMembers: jest.fn(() => appointment),
     setAppointmentProgramStatus: jest.fn(() => appointment),
   };
 }

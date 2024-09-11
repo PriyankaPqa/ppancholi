@@ -91,7 +91,7 @@ import { utcToZonedTime } from 'date-fns-tz';
 import {
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import { Appointment, IDateRange, ITimeSlot, mockStaffMemberAvailability } from '@libs/entities-lib/appointment';
+import { Appointment, IDateRange, ITimeSlot, mockAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useUserStore } from '@/pinia/user/user';
@@ -270,10 +270,10 @@ export default Vue.extend({
       calculateFirstTimeInterval() {
       if (this.selectedStaffMember) {
         // TODO: call the BE with the selected staff member id
-        const staffAvailability = mockStaffMemberAvailability({ staffMemberId: this.selectedStaffMember.id });
+        const staffAvailability = mockAppointmentStaffMember({ userAccountId: this.selectedStaffMember.id });
         const staffSchedule = appointmentHelpers.calculateSchedule(
           staffAvailability.defaultbusinessHours,
-          staffAvailability.customDateRanges,
+          staffAvailability.customDateRanges as ITimeSlot[],
           this.timeZone,
           this.weekStartDate,
         ).mergedSchedule;

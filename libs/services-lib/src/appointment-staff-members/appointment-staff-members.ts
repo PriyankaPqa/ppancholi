@@ -2,7 +2,7 @@ import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
 import { IdParams } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
 import { IAppointmentStaffMember } from '@libs/entities-lib/src/appointment';
-import { GlobalHandler, IHttpClient } from '../http-client';
+import { IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentStaffMembersService } from './appointment-staff-members.types';
 
@@ -15,10 +15,8 @@ export class AppointmentStaffMembersService extends DomainBaseService<IAppointme
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
-  async updateStaffMembers(item: IAppointmentStaffMember): Promise<IAppointmentStaffMember> {
-    return this.http.patch<IAppointmentStaffMember>(`${this.baseUrl}/${item.id}`, item, {
-      globalHandler: GlobalHandler.Partial,
-    });
+  async assignStaffMembers(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]): Promise<IAppointmentStaffMember[]> {
+    return this.http.patch<IAppointmentStaffMember[]>(`${this.baseUrl}/${appointmentProgramId}`, staffMembers);
   }
 
   async search(params: ISearchParams):

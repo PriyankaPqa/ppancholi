@@ -11,6 +11,6 @@ export const mockAppointmentProgramsService = (): IAppointmentProgramsServiceMoc
   createServiceOption: jest.fn(() => mockAppointmentProgram()),
   updateServiceOption: jest.fn(() => mockAppointmentProgram()),
   deleteServiceOption: jest.fn(() => mockAppointmentProgram()),
-  updateStaffMembers: jest.fn(() => mockAppointmentProgram()),
+  assignStaffMembers: jest.fn(() => mockAppointmentProgram()),
   setAppointmentProgramStatus: jest.fn(() => mockAppointmentProgram()),
 });

@@ -44,7 +44,7 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
     return this.http.delete<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options/${itemId}`);
   }
 
-  async updateStaffMembers(appointmentProgramId:string, payload: StaffMemberUpdatePayload): Promise<IAppointmentProgram> {
+  async assignStaffMembers(appointmentProgramId:string, payload: StaffMemberUpdatePayload): Promise<IAppointmentProgram> {
     return this.http.patch<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/staff-members`, payload);
   }
 

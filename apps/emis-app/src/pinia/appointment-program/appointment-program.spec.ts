@@ -184,15 +184,15 @@ describe('Appointment program store', () => {
       });
     });
 
-    describe('updateStaffMembers', () => {
+    describe('assignStaffMembers', () => {
       it('should call service update and commit the result', async () => {
         const store = createTestStore();
         const mockProgram = new AppointmentProgram(mockAppointmentProgram());
         const payload = { serviceOptions: [{ serviceOptionId: 'id', staffMembers: ['sm-id'] }] };
-        entityService.updateStaffMembers = jest.fn(() => mockProgram);
-        await store.updateStaffMembers('id', payload);
+        entityService.assignStaffMembers = jest.fn(() => mockProgram);
+        await store.assignStaffMembers('id', payload);
 
-        expect(entityService.updateStaffMembers).toBeCalledWith('id', payload);
+        expect(entityService.assignStaffMembers).toBeCalledWith('id', payload);
         expect(store.items).toContainEqual(mockProgram);
       });
     });
