@@ -17,6 +17,7 @@ export enum DataTest {
   taskDetailsDateAdded = 'task-details-date-added',
   backToTaskButton = 'task_details_back_btn',
   caseFileActivityTab = 'case-file-activity',
+  submitActionDialogConfirmation = 'submit-action-dialog-confirmation',
   taskStatus = 'chip-text',
 }
 
@@ -52,6 +53,8 @@ export class TeamTaskDetailsPage {
   private backToTaskButton = { selector: DataTest.backToTaskButton };
 
   private caseFileActivityTab = { selector: DataTest.caseFileActivityTab };
+
+  private confirmRemoveWorkingOnItButton = { selector: DataTest.submitActionDialogConfirmation };
 
   public getPageTitleElement() {
     return cy.getByDataTest(this.pageTitle);
@@ -121,5 +124,9 @@ export class TeamTaskDetailsPage {
   public goToCaseFileDetailsPage() {
     cy.getByDataTest(this.caseFileActivityTab).click();
     return new CaseFileDetailsPage();
+  }
+
+  public confirmRemoveWorkingOnIt() {
+    return cy.getByDataTest(this.confirmRemoveWorkingOnItButton).click();
   }
 }

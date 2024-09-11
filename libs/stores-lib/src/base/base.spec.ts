@@ -162,10 +162,10 @@ describe('Base Store', () => {
   });
 
   describe('fetchByIds', () => {
-    it('should call getByIds method from the service', async () => {
+    it('should call getByIds method from the service with unique ids', async () => {
       service.getByIds = jest.fn();
-      await baseStore.fetchByIds(['1'], false);
-      expect(service.getByIds).toHaveBeenCalledWith(['1']);
+      await baseStore.fetchByIds(['1', '2', '3', '2'], false);
+      expect(service.getByIds).toHaveBeenCalledWith(['1', '2', '3']);
     });
     it('should not call the service when the store already contains all requested items and missing only requested', async () => {
       service.getByIds = jest.fn();
