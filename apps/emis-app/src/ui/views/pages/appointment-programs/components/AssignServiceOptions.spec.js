@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockServiceOption } from '@libs/entities-lib/appointment';
+import { mockAppointmentStaffMember, mockServiceOption } from '@libs/entities-lib/appointment';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 
@@ -16,7 +16,8 @@ describe('ManageStaffMembers.vue', () => {
       localVue,
       pinia,
       propsData: {
-        staffMembers: [mockUserAccountMetadata()],
+        staffMembers: [mockAppointmentStaffMember()],
+        users: [mockUserAccountMetadata()],
         serviceOptions: [mockServiceOption()],
         assignableTeamsIds: ['team-id'],
         inTeamManagement,
@@ -139,18 +140,11 @@ describe('ManageStaffMembers.vue', () => {
       it('return if the member is assigned to the service option passed in the argument', async () => {
         await mountWrapper();
         await wrapper.setProps({
-          serviceOptions: [mockServiceOption({ id: 'so-1', staffMembers: ['m-1'] }), mockServiceOption({ id: 'so-2', staffMembers: ['m-2', 'm-3'] })],
-        });
-
-        expect(wrapper.vm.isMemberAssigned('so-2', 'm-2')).toBeTruthy();
-        expect(wrapper.vm.isMemberAssigned('so-2', 'm-3')).toBeTruthy();
-        expect(wrapper.vm.isMemberAssigned('so-2', 'm-1')).toBeFalsy();
-        expect(wrapper.vm.isMemberAssigned('so-1', 'm-1')).toBeTruthy();
-      });
-      it('return if the member is assigned to the service option passed in the argument if the service option has a temp id', async () => {
-        await mountWrapper();
-        await wrapper.setProps({
-          serviceOptions: [mockServiceOption({ id: '', tempId: 'so-1', staffMembers: ['m-1'] }), mockServiceOption({ id: '', tempId: 'so-2', staffMembers: ['m-2', 'm-3'] })],
+          staffMembers: [
+            { userAccountId: 'm-1', serviceOptionIds: ['so-1'] },
+            { userAccountId: 'm-2', serviceOptionIds: ['so-2'] },
+            { userAccountId: 'm-3', serviceOptionIds: ['so-2'] },
+          ],
         });
 
         expect(wrapper.vm.isMemberAssigned('so-2', 'm-2')).toBeTruthy();
@@ -161,40 +155,41 @@ describe('ManageStaffMembers.vue', () => {
     });
 
     describe('updateServiceOptionOnAssign', () => {
-      it('adds the member to the right service option if the checkbox is checked and emits the updated service option', async () => {
+      it('adds the service option id to the right staff member if the checkbox is checked and emits the updated staff members', async () => {
         await mountWrapper();
         await wrapper.setProps({
-          serviceOptions: [mockServiceOption({ id: 'so-1', staffMembers: ['m-1'] })],
+          staffMembers: [
+            { userAccountId: 'm-1', serviceOptionIds: ['so-1'] },
+            { userAccountId: 'm-2', serviceOptionIds: ['so-2'] },
+          ],
         });
 
         await wrapper.vm.updateServiceOptionOnAssign('m-2', 'so-1', true);
-        expect(wrapper.emitted('update:serviceOptions')[0][0]).toEqual([mockServiceOption({ id: 'so-1', staffMembers: ['m-1', 'm-2'] })]);
+        expect(wrapper.emitted('update:staffMembers')[0][0]).toEqual([{ userAccountId: 'm-1', serviceOptionIds: ['so-1'] },
+          { userAccountId: 'm-2', serviceOptionIds: ['so-2', 'so-1'] }]);
       });
 
-      it('removes the member to the right service option if the checkbox is checked and emits the updated service option', async () => {
+      it('removes the service option from  the right staff member if the checkbox is unchecked and emits the updated staff members', async () => {
         await mountWrapper();
         await wrapper.setProps({
-          serviceOptions: [mockServiceOption({ id: 'so-1', staffMembers: ['m-1', 'm-3'] })],
+          staffMembers: [
+            { userAccountId: 'm-1', serviceOptionIds: ['so-1'] },
+            { userAccountId: 'm-2', serviceOptionIds: ['so-1', 'so-2'] },
+          ],
         });
 
-        await wrapper.vm.updateServiceOptionOnAssign('m-3', 'so-1', false);
-        expect(wrapper.emitted('update:serviceOptions')[0][0]).toEqual([mockServiceOption({ id: 'so-1', staffMembers: ['m-1'] })]);
+        await wrapper.vm.updateServiceOptionOnAssign('m-2', 'so-1', false);
+        expect(wrapper.emitted('update:staffMembers')[0][0]).toEqual([{ userAccountId: 'm-1', serviceOptionIds: ['so-1'] },
+          { userAccountId: 'm-2', serviceOptionIds: ['so-2'] }]);
       });
     });
 
-    describe('onRemoveMember', () => {
-      it('removes the member from the staff members list and from the corresponding service options and emits the updates', async () => {
+    describe('onRemoveUser', () => {
+      it('emits remove with the user id', async () => {
         await mountWrapper();
-        await wrapper.setProps({
-          serviceOptions: [mockServiceOption({ id: 'so-1', staffMembers: ['m-1', 'm-3'] }), mockServiceOption({ id: 'so-2', staffMembers: ['m-1', 'm-2'] })],
-          staffMembers: [mockUserAccountMetadata({ id: 'm-1' }), mockUserAccountMetadata({ id: 'm-2' }), mockUserAccountMetadata({ id: 'm-3' })],
-        });
 
-        await wrapper.vm.onRemoveMember('m-1');
-        expect(wrapper.emitted('update:serviceOptions')[0][0]).toEqual([
-          mockServiceOption({ id: 'so-1', staffMembers: ['m-3'] }), mockServiceOption({ id: 'so-2', staffMembers: ['m-2'] }),
-        ]);
-        expect(wrapper.emitted('update:staffMembers')[0][0]).toEqual([mockUserAccountMetadata({ id: 'm-2' }), mockUserAccountMetadata({ id: 'm-3' })]);
+        await wrapper.vm.onRemoveUser('m-1');
+        expect(wrapper.emitted('removeUser')[0][0]).toEqual('m-1');
       });
     });
   });
