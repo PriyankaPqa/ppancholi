@@ -173,6 +173,10 @@ export class TasksHomePage {
     return cy.getByDataTest(this.createdTaskUserWorkingOn).getAndTrimText();
   }
 
+  public verifyTaskTableUserWorkingOn(userName: string) {
+    return cy.getByDataTest(this.createdTaskUserWorkingOn).contains(userName).should('be.visible');
+  }
+
   public getCreatedTaskUserWorkingOnElement() {
     return cy.getByDataTest(this.createdTaskUserWorkingOn);
   }
