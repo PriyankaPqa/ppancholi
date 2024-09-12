@@ -131,6 +131,10 @@ export class TasksHomePage {
     return cy.getByDataTest(this.createdTaskAssignedTo).getAndTrimText();
   }
 
+  public getCreatedTaskAssignedToElement() {
+    return cy.getByDataTest(this.createdTaskAssignedTo);
+  }
+
   public verifyCreatedTaskAssignedTeamName(teamName: string) {
     return cy.getByDataTest(this.createdTaskAssignedTo).contains(teamName).should('be.visible');
   }
@@ -167,6 +171,10 @@ export class TasksHomePage {
 
   public getCreatedTaskUserWorkingOn() {
     return cy.getByDataTest(this.createdTaskUserWorkingOn).getAndTrimText();
+  }
+
+  public getCreatedTaskUserWorkingOnElement() {
+    return cy.getByDataTest(this.createdTaskUserWorkingOn);
   }
 
   public getCreatedTaskDateAdded() {
