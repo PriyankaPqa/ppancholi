@@ -50,4 +50,8 @@ export class TasksHistoryPage {
   public getCloseButton() {
     return cy.getByDataTest(this.buttonClose);
   }
+
+  public goToTaskDetailsPage() {
+    return cy.getByDataTest(this.buttonClose).click();
+  }
 }

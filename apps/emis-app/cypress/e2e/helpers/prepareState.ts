@@ -1143,13 +1143,29 @@ export const createTeamTask = async (provider: IProvider, caseFileId: string, as
 };
 
 /**
- * Set a team task action
+ * Assign a Team Task
  * @param provider
+ * @param taskId
  * @param caseFileId
  * @param assignedTeamId
  */
-export const setTeamTaskAction = async (params: SetTeamTaskActionParams) => {
-  const mockSetTaskActionTaken = mockSetTaskActionTakenRequest(params.actionTaken, params.teamId);
-  const setTaskActionTakenResult = await params.provider.task.setTaskActionTaken(params.taskId, params.caseFileId, mockSetTaskActionTaken);
-  return setTaskActionTakenResult;
+export const assignTeamTask = async (provider: IProvider, taskId: string, caseFileId: string, assignedTeamId: string) => {
+  const params = {
+    actionTaken: ActionTaken.Assign,
+    rationale: 'Test rationale',
+    teamId: assignedTeamId,
+  };
+  await provider.task.setTaskActionTaken(taskId, caseFileId, params);
 };
+
+  /**
+   * Set a team task action
+   * @param provider
+   * @param caseFileId
+   * @param assignedTeamId
+   */
+  export const setTeamTaskAction = async (params: SetTeamTaskActionParams) => {
+    const mockSetTaskActionTaken = mockSetTaskActionTakenRequest(params.actionTaken, params.teamId);
+    const setTaskActionTakenResult = await params.provider.task.setTaskActionTaken(params.taskId, params.caseFileId, mockSetTaskActionTaken);
+    return setTaskActionTakenResult;
+  };

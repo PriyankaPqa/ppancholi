@@ -173,7 +173,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     if (!ids?.length) {
       return [];
     }
-    let idsToGet = ids.filter((x) => x != null);
+    let idsToGet = [...new Set(ids.filter((x) => x != null))];
     try {
       if (fetchMissingOnly) {
         const stored = getByIds(ids) as IEntity[];

@@ -15,7 +15,7 @@
     </div>
     <rc-router-view-transition v-else />
 
-    <activity-watcher v-if="!isLoading" />
+    <activity-watcher v-if="!isLoading && activateActivityWatcher" />
 
     <!-- eslint-disable -->
     <rc-confirmation-dialog
@@ -66,6 +66,7 @@ import ErrorReportToast from '@/ui/shared-components/ErrorReportToast.vue';
 import { Survey } from 'survey-vue';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { initializeStores } from '@/ui/helpers/cypress';
+import { isTemporaryBranch } from '@libs/shared-lib/helpers/temporary-branch';
 
 Vue.component('Survey', Survey);
 
@@ -118,6 +119,10 @@ export default {
     },
     checkingAccount() {
       return useDashboardStore().checkingAccount;
+    },
+
+    activateActivityWatcher() {
+      return !isTemporaryBranch(process.env.VITE_TEMP_BRANCH_ID) && !window.location.host.startsWith('localhost');
     },
 
   },

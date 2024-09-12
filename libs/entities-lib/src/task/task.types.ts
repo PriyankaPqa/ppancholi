@@ -84,6 +84,7 @@ export interface ITaskMetadata extends IEntity {
   eventId: uuid;
   userWorkingOnName: string;
   userWorkingOnRole: IMultilingual;
+  assignedTeamName: string;
 }
 
 export interface IUpdateTaskRequest {
