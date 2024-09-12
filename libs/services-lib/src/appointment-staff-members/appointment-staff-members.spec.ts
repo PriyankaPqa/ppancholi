@@ -16,15 +16,18 @@ describe('>>> AppointmentStaffMembers Service', () => {
     it('should call the proper endpoint', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith('appointment/search/AppointmentStaffMembers', { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith('appointment/search/appointment-staff-members', { params, isOData: true });
     });
   });
 
   describe('update', () => {
-    it('should call the proper endpoint', async () => {
-      const payload = [mockAppointmentStaffMember()];
-      await service.assignStaffMembers('id', payload);
-      expect(http.patch).toHaveBeenCalledWith('www.test.com/appointment/AppointmentStaffMembers/id', payload);
+    it('should call the proper endpoint with the right payload', async () => {
+      const staffMembers = [mockAppointmentStaffMember()];
+      await service.assignStaffMembers('id', staffMembers);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/appointment/appointment-staff-members/assign-staff-members', {
+        appointmentProgramId: 'id',
+        appointmentStaffMembers: staffMembers,
+      });
     });
   });
 });

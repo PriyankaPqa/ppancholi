@@ -13,7 +13,7 @@
     @cancel="$emit('update:show', false)"
     @close="$emit('update:show', false)"
     @submit="onSubmit">
-    <v-row class="pa-0">
+    <v-row class="pa-0 d-flex align-content-start">
       <v-col cols="12" md="4" class="pt-0 d-flex flex-column">
         <div class="rc-body16 fw-bold mb-2">
           {{ $t('appointmentProgram.manageStaff.title.teamMembers') }}

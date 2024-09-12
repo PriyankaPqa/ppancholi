@@ -6,8 +6,8 @@ import { IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentStaffMembersService } from './appointment-staff-members.types';
 
-const API_URL_SUFFIX = 'appointments';
-const ENTITY = 'staff-members';
+const API_URL_SUFFIX = 'appointment';
+const ENTITY = 'appointment-staff-members';
 
 export class AppointmentStaffMembersService extends DomainBaseService<IAppointmentStaffMember, IdParams>
   implements IAppointmentStaffMembersService {
@@ -16,11 +16,19 @@ export class AppointmentStaffMembersService extends DomainBaseService<IAppointme
   }
 
   async assignStaffMembers(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]): Promise<IAppointmentStaffMember[]> {
-    return this.http.patch<IAppointmentStaffMember[]>(`${this.baseUrl}/${appointmentProgramId}`, staffMembers);
+    const payload = this.parsePayload(appointmentProgramId, staffMembers);
+    return this.http.patch<IAppointmentStaffMember[]>(`${this.baseUrl}/assign-staff-members`, payload);
   }
 
   async search(params: ISearchParams):
     Promise<ICombinedSearchResult<IAppointmentStaffMember, IEntity>> {
-    return this.http.get('appointments/search/staff-members', { params, isOData: true });
+    return this.http.get('appointment/search/appointment-staff-members', { params, isOData: true });
+  }
+
+  parsePayload(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]) {
+    return {
+      appointmentProgramId,
+      appointmentStaffMembers: staffMembers,
+    };
   }
 }

@@ -5,6 +5,6 @@ import { IAppointmentStaffMembersServiceMock } from './appointment-staff-members
 
 export const mockAppointmentStaffMembersService = (): IAppointmentStaffMembersServiceMock => ({
   ...mockDomainBaseService(mockAppointmentStaffMember()),
-  assignStaffMembers: jest.fn(() => mockAppointmentStaffMember()),
+  assignStaffMembers: jest.fn(() => [mockAppointmentStaffMember()]),
 
 });

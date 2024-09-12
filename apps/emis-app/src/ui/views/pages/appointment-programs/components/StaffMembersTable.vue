@@ -162,7 +162,7 @@ export default Vue.extend({
 
   async created() {
     await useAppointmentProgramStore().fetchServiceOptionTypes();
-    // await this.fetchStaffMembers();
+    await this.fetchStaffMembers();
     await useUserAccountMetadataStore().fetchByIds(this.userAccountIds, true);
   },
 
@@ -181,7 +181,7 @@ export default Vue.extend({
 
     async fetchStaffMembers() {
       await useAppointmentStaffMemberStore().search({ params: {
-        filter: { 'Entity/AppointmenId': { value: this.appointmentProgramId, type: EFilterKeyType.Guid } },
+        filter: { 'Entity/AppointmentProgramId': { value: this.appointmentProgramId, type: EFilterKeyType.Guid } },
         top: 999,
         skip: 0,
       } });
