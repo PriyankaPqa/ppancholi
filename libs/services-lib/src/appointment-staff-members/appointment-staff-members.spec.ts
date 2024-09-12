@@ -20,13 +20,15 @@ describe('>>> AppointmentStaffMembers Service', () => {
     });
   });
 
-  describe('update', () => {
+  describe('assignStaffMembers', () => {
     it('should call the proper endpoint with the right payload', async () => {
-      const staffMembers = [mockAppointmentStaffMember()];
+      const staffMembers = [{ userAccountId: mockAppointmentStaffMember().userAccountId,
+        serviceOptionIds: mockAppointmentStaffMember().serviceOptionIds,
+        appointmentProgramId: mockAppointmentStaffMember().appointmentProgramId }];
       await service.assignStaffMembers('id', staffMembers);
       expect(http.patch).toHaveBeenCalledWith('www.test.com/appointment/appointment-staff-members/assign-staff-members', {
         appointmentProgramId: 'id',
-        appointmentStaffMembers: staffMembers,
+        appointmentStaffMembers: [{ userAccountId: mockAppointmentStaffMember().userAccountId, serviceOptionIds: mockAppointmentStaffMember().serviceOptionIds }],
       });
     });
   });

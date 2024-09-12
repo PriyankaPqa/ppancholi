@@ -12,8 +12,8 @@ export function getExtensionComponents(
     return _cloneDeep(baseComponents.items.value.filter((x) => x.appointmentProgramId === appointmentProgramId && x.status === Status.Active));
   }
 
-  async function assignStaffMembers(appointmentId: string, staffMembers: Partial<IAppointmentStaffMember>[]) : Promise<IAppointmentStaffMember[]> {
-    const result = await service.assignStaffMembers(appointmentId, staffMembers);
+  async function assignStaffMembers(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]) : Promise<IAppointmentStaffMember[]> {
+    const result = await service.assignStaffMembers(appointmentProgramId, staffMembers);
     if (result) {
       // baseComponents.addNewlyCreatedId(result);
       baseComponents.setAll(result);

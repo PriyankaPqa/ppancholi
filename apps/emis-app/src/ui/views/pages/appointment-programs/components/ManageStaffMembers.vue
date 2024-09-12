@@ -317,11 +317,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         //   this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.atLeastOneStaffMember') });
         //   return;
         // }
-        const staffMembersPayload = this.staffMembers.map((m) => {
-            const { appointmentProgramId, ...rest } = m;
-            return rest;
-        });
-
+        const staffMembersPayload = [...this.staffMembers];
         const removedUserIds = _difference(this.initialStaffMembers.map((m) => m.userAccountId), this.staffMembers.map((m) => m.userAccountId));
         if (removedUserIds.length) {
           removedUserIds.forEach((id) => staffMembersPayload.push({ userAccountId: id, serviceOptionIds: [] }));

@@ -28,7 +28,10 @@ export class AppointmentStaffMembersService extends DomainBaseService<IAppointme
   parsePayload(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]) {
     return {
       appointmentProgramId,
-      appointmentStaffMembers: staffMembers,
+      appointmentStaffMembers: staffMembers.map((m) => ({
+        userAccountId: m.userAccountId,
+        serviceOptionIds: m.serviceOptionIds,
+      })),
     };
   }
 }

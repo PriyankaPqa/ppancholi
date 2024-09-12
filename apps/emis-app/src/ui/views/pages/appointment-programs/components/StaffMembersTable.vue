@@ -173,9 +173,9 @@ export default Vue.extend({
     },
 
     getServiceOptionNames(userId: string): string {
-      const staffMemberServiceOptionsIds = this.staffMembers.find((m) => m.userAccountId === userId)?.serviceOptionIds;
-      const serviceOptionsOfUser = this.serviceOptions.filter((so) => staffMemberServiceOptionsIds?.includes(so.id));
-      const serviceOptionTypes = this.serviceOptionTypes.filter((t) => serviceOptionsOfUser.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
+      const userServiceOptionsIds = this.staffMembers.find((m) => m.userAccountId === userId)?.serviceOptionIds;
+      const userServiceOptions = this.serviceOptions.filter((so) => userServiceOptionsIds?.includes(so.id));
+      const serviceOptionTypes = this.serviceOptionTypes.filter((t) => userServiceOptions.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
       return serviceOptionTypes.map((t) => this.$m(t.name)).sort((a, b) => a.localeCompare(b)).join(', ');
     },
 
