@@ -182,8 +182,7 @@ export default mixins(massActions).extend({
 
     massActionTypes(): Array<Record<string, unknown>> {
       return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false)
-        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther
-        && (this.$hasFeature(this.$featureKeys.MovePayments) || m.value !== MassActionDataCorrectionType.DataCorrectionMovePayments)));
+        .filter((m) => (m.value !== MassActionDataCorrectionType.DataCorrectionAuthenticationSpecifiedOther));
     },
   },
 });
