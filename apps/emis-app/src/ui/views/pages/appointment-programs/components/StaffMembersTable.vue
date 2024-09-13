@@ -29,6 +29,14 @@
       <template #[`item.${customColumns.serviceOption}`]="{ item }">
         <span data-test="staffMembers__serviceOption"> {{ getServiceOptionNames(item.id) }} </span>
       </template>
+
+      <template #[`item.${customColumns.delete}`]="{ item }">
+        <v-btn icon data-test="serviceOption__delete" :aria-label="$t('common.delete')" @click="removeStaffMember(item.id)">
+          <v-icon size="24" color="grey darken-2">
+            mdi-delete
+          </v-icon>
+        </v-btn>
+      </template>
     </v-data-table-a11y>
 
     <manage-staff-members
@@ -105,6 +113,7 @@ export default Vue.extend({
         name: 'displayName',
         role: 'role',
         serviceOption: 'serviceOption',
+        delete: 'delete',
       };
     },
 
@@ -127,6 +136,13 @@ export default Vue.extend({
           filterable: false,
           sortable: false,
           value: this.customColumns.serviceOption,
+        },
+        {
+          text: this.$t('common.delete') as string,
+          class: 'rc-transparent-text',
+          sortable: false,
+          value: this.customColumns.delete,
+          width: '5%',
         },
       ];
     },
@@ -176,11 +192,32 @@ export default Vue.extend({
     },
 
     async fetchStaffMembers() {
+      this.loading = true;
       await useAppointmentStaffMemberStore().search({ params: {
         filter: { 'Entity/AppointmentProgramId': { value: this.appointmentProgramId, type: EFilterKeyType.Guid } },
         top: 999,
         skip: 0,
       } });
+      this.loading = false;
+    },
+
+    async removeStaffMember(userId: string) {
+      if (this.isEditMode) {
+        const userChoice = await this.$confirm({
+          title: this.$t('appointmentProgram.staffMember.confirm.delete.title'),
+          messages: this.$t('appointmentProgram.staffMember.confirm.delete.message'),
+         });
+
+        if (userChoice) {
+         const payload = [{ userAccountId: userId, serviceOptionIds: [] }] as Partial<IAppointmentStaffMember>[];
+          const res = await useAppointmentStaffMemberStore().assignStaffMembers(this.appointmentProgramId, payload);
+          if (res) {
+            this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
+          } else {
+            this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
+          }
+        }
+      }
     },
   },
 });

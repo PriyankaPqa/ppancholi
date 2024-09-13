@@ -48,7 +48,8 @@ describe('StaffMembersTable.vue', () => {
         expect(wrapper.vm.customColumns).toEqual({
           name: 'displayName',
           role: 'role',
-          serviceOption: 'serviceOption' });
+          serviceOption: 'serviceOption',
+          delete: 'delete' });
       });
     });
 
@@ -74,6 +75,13 @@ describe('StaffMembersTable.vue', () => {
               filterable: false,
               sortable: false,
               value: wrapper.vm.customColumns.serviceOption,
+            },
+            {
+              text: 'common.delete',
+              class: 'rc-transparent-text',
+              sortable: false,
+              value: wrapper.vm.customColumns.delete,
+              width: '5%',
             },
           ],
         ));
@@ -144,6 +152,25 @@ describe('StaffMembersTable.vue', () => {
           top: 999,
           skip: 0,
         } });
+      });
+    });
+
+    describe('removeStaffMember', () => {
+      it('calls the endpoint with the right payload', async () => {
+        await mountWrapper();
+        await wrapper.vm.removeStaffMember('u-1');
+        expect(appointmentStaffMemberStore.assignStaffMembers).toHaveBeenCalledWith('appt-program-id', [{ userAccountId: 'u-1', serviceOptionIds: [] }]);
+      });
+      it('shows success toaster for success', async () => {
+        await mountWrapper();
+        await wrapper.vm.removeStaffMember('u-1');
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.success');
+      });
+      it('shows error toaster for failed call', async () => {
+        await mountWrapper();
+        appointmentStaffMemberStore.assignStaffMembers = jest.fn();
+        await wrapper.vm.removeStaffMember('u-1');
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.failed');
       });
     });
   });
