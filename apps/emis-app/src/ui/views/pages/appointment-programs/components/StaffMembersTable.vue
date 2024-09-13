@@ -4,7 +4,7 @@
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn
         color="primary"
-        data-test="add-staff-member"
+        data-test="add-staff-member-btn"
         :disabled="!serviceOptions.length"
         @click="showManageStaffDialog = true">
         {{ isEditMode ? $t('appointmentProgram.staffMembers.table.manageStaff') : $t('appointmentProgram.staffMembers.table.addStaff') }}
@@ -48,14 +48,13 @@ import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { IAppointmentProgram, IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/appointment';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
 import { EFilterKeyType } from '@libs/component-lib/types';
 import ManageStaffMembers from './ManageStaffMembers.vue';
-import { STAFF_MEMBERS } from '../../appointments/home/mocks';
 
 export default Vue.extend({
   name: 'StaffMembersTable',
@@ -132,17 +131,12 @@ export default Vue.extend({
       ];
     },
 
-    appointmentProgram(): IAppointmentProgram {
-      return useAppointmentProgramStore().getById(this.appointmentProgramId);
-    },
-
     serviceOptionTypes(): IOptionItem[] {
       return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.serviceOptionType?.optionItemId));
     },
 
     staffMembers(): Partial<IAppointmentStaffMember>[] {
-      // return useAppointmentStaffMemberStore().getByAppointmentProgramId(this.appointmentProgramId);
-      return STAFF_MEMBERS;
+      return useAppointmentStaffMemberStore().getByAppointmentProgramId(this.appointmentProgramId);
     },
 
     userAccountIds(): string[] {
@@ -162,14 +156,16 @@ export default Vue.extend({
 
   async created() {
     await useAppointmentProgramStore().fetchServiceOptionTypes();
-    await this.fetchStaffMembers();
-    await useUserAccountMetadataStore().fetchByIds(this.userAccountIds, true);
+    if (this.isEditMode) {
+      await this.fetchStaffMembers();
+      await useUserAccountMetadataStore().fetchByIds(this.userAccountIds, true);
+    }
   },
 
   methods: {
-    // The appointment program is being created, the staff members are being added to the payload
-    onUpdateStaffMembers(serviceOptions: IServiceOption[]) {
-      this.$emit('update:serviceOptions', serviceOptions);
+    // // The appointment program is being created, the staff members are being added to the payload
+    onUpdateStaffMembers() {
+      // this.$emit('update:serviceOptions', serviceOptions);
     },
 
     getServiceOptionNames(userId: string): string {

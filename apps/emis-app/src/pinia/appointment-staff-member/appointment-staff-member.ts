@@ -7,7 +7,7 @@ import { getExtensionComponents } from '@/pinia/appointment-staff-member/appoint
 
 export type Entity = IAppointmentStaffMember;
 
-const storeId = 'appointment-StaffMember';
+const storeId = 'appointment-staff-member';
 const entityService = new AppointmentStaffMembersService(httpClient);
 
 // baseComponents is used as a reference for the extension

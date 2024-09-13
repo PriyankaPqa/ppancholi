@@ -114,7 +114,7 @@
                     :appointment-program-id="appointmentProgram.id"
                     :is-edit-mode="isEditMode"
                     :event-id="id"
-                    :service-options.sync="appointmentProgram.serviceOptions" />
+                    :service-options="appointmentProgram.serviceOptions" />
                 </v-col>
               </v-row>
             </v-col>

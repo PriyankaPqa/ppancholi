@@ -23,6 +23,7 @@ import { mockPotentialDuplicatesService } from '@libs/services-lib/potential-dup
 import { mockNotificationsService } from '@libs/services-lib/notifications/entity';
 import { mockQueriesService } from '@libs/services-lib/queries/entity';
 import { mockPersonsService } from '@libs/services-lib/persons/entity';
+import { mockAppointmentStaffMembersService } from '@libs/services-lib/appointment-staff-members';
 import { IProviderMock } from './provider.types';
 
 export const mockProvider = (): IProviderMock => ({
@@ -51,4 +52,5 @@ export const mockProvider = (): IProviderMock => ({
   notifications: mockNotificationsService(),
   queries: mockQueriesService(),
   persons: mockPersonsService(),
+  appointmentStaffMembers: mockAppointmentStaffMembersService(),
 });

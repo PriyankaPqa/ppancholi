@@ -9,13 +9,13 @@ export function getExtensionComponents(
   service: AppointmentStaffMembersService | IAppointmentStaffMembersServiceMock,
 ) {
   function getByAppointmentProgramId(appointmentProgramId: uuid) {
-    return _cloneDeep(baseComponents.items.value.filter((x) => x.appointmentProgramId === appointmentProgramId && x.status === Status.Active));
+    return _cloneDeep(baseComponents.items.value.filter((x) => x.appointmentProgramId === appointmentProgramId
+    && x.status === Status.Active && !!x.serviceOptionIds.length));
   }
 
   async function assignStaffMembers(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]) : Promise<IAppointmentStaffMember[]> {
     const result = await service.assignStaffMembers(appointmentProgramId, staffMembers);
     if (result) {
-      // baseComponents.addNewlyCreatedId(result);
       baseComponents.setAll(result);
     }
     return result;

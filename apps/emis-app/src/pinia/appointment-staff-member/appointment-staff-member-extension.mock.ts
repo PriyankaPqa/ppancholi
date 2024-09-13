@@ -5,5 +5,6 @@ export function getMockExtensionComponents() {
 
   return {
     assignStaffMembers: jest.fn(() => [appointmentStaffMember]),
+    getByAppointmentProgramId: jest.fn(() => [appointmentStaffMember]),
   };
 }
