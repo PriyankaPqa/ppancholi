@@ -64,7 +64,7 @@
               {{ $t('common.clear') }}
             </v-btn>
             <div class="mb-4 white">
-              <vue-editor
+              <vue-editor-a11y
                 id="communication-message-text-editor"
                 v-model="formCopy.emailMessage.translation[languageMode]"
                 data-test="communication-message-text"
@@ -115,7 +115,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VueEditor } from 'vue2-editor';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
@@ -127,7 +126,7 @@ import utils from '@libs/entities-lib/utils';
 import { ui } from '@/constants/ui';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import {
-VTextFieldWithValidation, VTextAreaWithValidation,
+VTextFieldWithValidation, VTextAreaWithValidation, VueEditorA11y,
 } from '@libs/component-lib/components';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import EmailTemplatePreview from '@/ui/views/pages/mass-actions/components/EmailTemplatePreview.vue';
@@ -138,7 +137,7 @@ export default Vue.extend({
 
   components: {
     EventsSelector,
-    VueEditor,
+    VueEditorA11y,
     LanguageTabs,
     VTextFieldWithValidation,
     VTextAreaWithValidation,

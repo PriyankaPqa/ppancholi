@@ -135,6 +135,19 @@ describe('MassActionsHome.vue', () => {
             onSecondaryClick: 'downloadImportUsersTemplate',
           },
           {
+            title: 'mass_action.card.add_remove_team_members',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
+            button: 'mass_action.card.action.view',
+            secondaryButton: 'mass_action.card.action.download_template',
+            showSecondaryButton: true,
+            route: routes.massActions.addRemoveTeamMembers.home.name,
+            dataTest: 'massAction_add_remove_team_members',
+            level: UserRoles.level5,
+            roles: null,
+            group: MassActionGroup.Group4,
+            feature: 'AddRemoveTeamMembers',
+          },
+          {
             title: 'mass_action.card.data_correction',
             description: wrapper.vm.$t('mass_action.card.group', { x: 5 }),
             button: 'mass_action.card.action.view',
@@ -175,21 +188,12 @@ describe('MassActionsHome.vue', () => {
         expect(maType).toBeFalsy();
       });
 
-      it('should return DataCorrectionMovePayments when feature flag is on', () => {
+      it('should return DataCorrectionMovePayments', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [wrapper.vm.$featureKeys.MovePayments],
         });
         const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionMovePayments);
         expect(maType).toBeTruthy();
-      });
-
-      it('should not return DataCorrectionMovePayments when feature flag is off', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-        });
-        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.DataCorrectionMovePayments);
-        expect(maType).toBeFalsy();
       });
     });
   });

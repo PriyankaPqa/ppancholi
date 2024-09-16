@@ -48,7 +48,7 @@
         :value="true"
         permanent>
         <v-divider v-if="!hideDividers" />
-        <v-list class="full-width" aria-busy="true">
+        <v-list class="full-width" aria-busy="true" role="none">
           <template v-if="groupMode">
             <template v-for="(group, groupIndex) in tabs">
               <div :key="groupIndex" class="rc-body12 rc-grey-text ml-5 my-1">

@@ -626,7 +626,8 @@ export default Vue.extend({
     // this function has 1s delay in order to make sure all the elements of DxDataGrid have been rendered properly
     async setElementA11yAttributeWithDelay(delay = 1000) {
       await helpers.timeout(delay);
-      libHelpers.setElementA11yAttribute('.dx-menu-item.dx-menu-item-has-icon.dx-menu-item-has-submenu', 'aria-label', this.$t('common.search') as string);
+      libHelpers.setElementA11yAttribute('.dx-item.dx-menu-item.dx-menu-item-has-icon.dx-menu-item-has-submenu', 'aria-label', this.$t('common.search') as string);
+      libHelpers.setElementA11yAttribute('.dx-widget.dx-state-readonly.dx-checkbox.dx-datagrid-checkbox-size', 'aria-label', 'checkbox');
     },
   },
 });

@@ -708,7 +708,13 @@ describe('QueryView.vue', () => {
         helpers.timeout = jest.fn();
         await wrapper.vm.setElementA11yAttributeWithDelay();
         expect(helpers.timeout).toHaveBeenCalled();
-        expect(libHelpers.setElementA11yAttribute).toHaveBeenCalledWith('.dx-menu-item.dx-menu-item-has-icon.dx-menu-item-has-submenu', 'aria-label', 'common.search');
+        expect(libHelpers.setElementA11yAttribute).toHaveBeenNthCalledWith(
+          1,
+          '.dx-item.dx-menu-item.dx-menu-item-has-icon.dx-menu-item-has-submenu',
+          'aria-label',
+          'common.search',
+        );
+        expect(libHelpers.setElementA11yAttribute).toHaveBeenNthCalledWith(2, '.dx-widget.dx-state-readonly.dx-checkbox.dx-datagrid-checkbox-size', 'aria-label', 'checkbox');
       });
     });
 

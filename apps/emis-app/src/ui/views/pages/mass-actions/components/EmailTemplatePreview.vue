@@ -123,7 +123,11 @@ export default Vue.extend({
           return this.emailTemplate.translation[this.languageMode]
           .replaceAll('href', 'name')
           .replace('-firstname-', this.$t('massAction.common.name') as string)
-          .replace('[message]', this.message);
+          .replace('[message]', this.message)
+          .replaceAll(' #ee0000', '#cc3300')
+          .replaceAll(' #e00', '#cc3300')
+          .replaceAll('x-size-14', 'en')
+          .replaceAll('x-size-12', 'en');
         case 'AssessmentAssigned':
           return this.emailTemplate.translation[this.languageMode]
           .replaceAll('href', 'name')

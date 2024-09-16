@@ -31,13 +31,15 @@
         :locale="locale"
         :max="$attrs.max"
         :min="$attrs.min"
-        v-on="$listeners" />
+        role="none"
+        v-on="addA11yAttribute($listeners)" />
     </validation-provider>
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import { ValidationProvider } from 'vee-validate';
+import helpers from '@libs/component-lib/helpers';
 import VTextFieldWithValidation from './VTextFieldWithValidation.vue';
 
 export default {
@@ -89,6 +91,13 @@ export default {
     if (this.value) {
       this.innerValue = this.value;
     }
+  },
+
+  methods: {
+    addA11yAttribute(listeners: any) {
+      helpers.setElementA11yAttribute('.v-menu__content.theme--light.menuable__content__active', 'role', 'none');
+      return listeners;
+    },
   },
 };
 </script>
