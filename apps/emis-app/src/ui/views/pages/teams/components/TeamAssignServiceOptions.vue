@@ -10,7 +10,7 @@
           :items="events"
           attach
           hide-details
-          :loading="loading"
+          :loading="loadingPrograms"
           dense
           :menu-props="{ top: !selectedAppointmentProgram, offsetY: true, zIndex: 100 }"
           :item-text="(item) => $m(item.name)"
@@ -24,6 +24,7 @@
           attach
           hide-details
           dense
+          :loading="loadingStaff"
           :menu-props="{ top: !selectedAppointmentProgram, offsetY: true, zIndex: 100 }"
           :label="$t('teams.assignServiceOptions.appointmentProgram')"
           :items="appointmentPrograms"
@@ -38,7 +39,7 @@
           :service-options="selectedAppointmentProgram.serviceOptions"
           :users="teamMembers.map(m=> m.metadata)"
           :appointment-program-id="selectedAppointmentProgram.id"
-          :staff-members.sync="staffMembers"
+          :staff-members="staffMembers"
           in-team-management />
       </v-col>
     </v-row>
@@ -86,7 +87,8 @@ export default Vue.extend({
       selectedEvent: null as IEventEntity,
       selectedAppointmentProgram: null as IAppointmentProgram,
       appointmentProgramIds: [] as string[],
-      loading: false,
+      loadingPrograms: false,
+      loadingStaff: false,
     };
   },
 
@@ -115,8 +117,10 @@ export default Vue.extend({
       this.onSelectEvent();
     },
 
-    selectedAppointmentProgram() {
-      this.fetchStaffMembers();
+    selectedAppointmentProgram(newValue) {
+      if (newValue) {
+        this.fetchStaffMembers();
+      }
     },
   },
 
@@ -133,6 +137,7 @@ export default Vue.extend({
     },
 
     async fetchAppointmentPrograms() {
+      this.loadingPrograms = true;
       const res = await useAppointmentProgramStore().search({ params: {
         filter: { 'Entity/EventId': { value: this.selectedEvent.id, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
         top: 999,
@@ -141,16 +146,17 @@ export default Vue.extend({
       if (res) {
         this.appointmentProgramIds = res.ids;
       }
+      this.loadingPrograms = false;
     },
 
     async fetchStaffMembers() {
-      this.loading = true;
+      this.loadingStaff = true;
       await useAppointmentStaffMemberStore().search({ params: {
         filter: { 'Entity/AppointmentProgramId': { value: this.selectedAppointmentProgram.id, type: EFilterKeyType.Guid } },
         top: 999,
         skip: 0,
       } });
-      this.loading = false;
+      this.loadingStaff = false;
     },
 
   },

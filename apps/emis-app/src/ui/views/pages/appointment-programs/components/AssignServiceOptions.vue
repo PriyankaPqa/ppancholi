@@ -57,6 +57,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
+import { updateStaffMembers } from '../appointmentProgramsHelper';
 
 export default Vue.extend({
   name: 'AssignServiceOptions',
@@ -170,24 +171,32 @@ export default Vue.extend({
       return this.staffMembers.some((m) => m.userAccountId === userId && m.serviceOptionIds.includes(soId));
     },
 
-    updateServiceOptionOnAssign(userId: string, soId: string, value: boolean) {
+    updateStaffMembersOnAssign(userId: string, soId: string, value: boolean) : Partial<IAppointmentStaffMember> {
        // Don't mutate the props staffMembers
-      const updatedStaffMembers = _cloneDeep(this.staffMembers);
-      const member = updatedStaffMembers.find((m) => m.userAccountId === userId);
+      const updatedStaffMembers = _cloneDeep(this.staffMembers) as Partial<IAppointmentStaffMember>[];
+      let member = updatedStaffMembers.find((m) => m.userAccountId === userId) || {} as Partial<IAppointmentStaffMember>;
+
       if (value) {
-        member.serviceOptionIds.push(soId);
+        if (member?.serviceOptionIds) {
+          member.serviceOptionIds.push(soId);
+        } else {
+          member = { userAccountId: userId, serviceOptionIds: [soId] };
+        }
       } else {
-        member.serviceOptionIds = member.serviceOptionIds.filter((id) => id !== soId);
+        member.serviceOptionIds = member.serviceOptionIds?.filter((id) => id !== soId) || [];
       }
-      this.$emit('update:staffMembers', updatedStaffMembers);
+
+      if (!this.inTeamManagement) {
+        this.$emit('update:staffMembers', updatedStaffMembers);
+      }
+      return member;
     },
 
     async onCheckAssign({ memberId, soId, value }: { memberId: string, soId: string, value: boolean }) {
-      // const updatedServiceOptions = this.updateServiceOptionOnAssign(memberId, soId, value);
-      this.updateServiceOptionOnAssign(memberId, soId, value);
+      const updatedStaffMember = this.updateStaffMembersOnAssign(memberId, soId, value);
       if (this.inTeamManagement) {
         this.loading = true;
-        // await updateStaffMembers(this.appointmentProgramId, updatedServiceOptions, this);
+        await updateStaffMembers(this.appointmentProgramId, [updatedStaffMember], this);
         this.loading = false;
       }
     },
