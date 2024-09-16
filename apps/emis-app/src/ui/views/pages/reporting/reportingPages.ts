@@ -5,7 +5,6 @@ import helpers from '@/ui/helpers/helpers';
 import { VuePlugin } from '@/ui/plugins/features';
 import { INavigationTab } from '@libs/shared-lib/types';
 import { IQuery, QueryType, ReportingTopic } from '@libs/entities-lib/reporting';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { AllPbiReports } from './standard_queries/PowerBiEmbedded';
 
 export class ReportingPages {
@@ -71,7 +70,6 @@ export class ReportingPages {
       dataTest: 'sentEmailIssuesQueries',
       level: UserRoles.level6,
       roles: [UserRoles.contributorIM],
-      feature: FeatureKeys.GeographicMapping,
     },
     {
       title: 'reporting.customQueries',

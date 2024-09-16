@@ -3139,6 +3139,7 @@
     "mass_action.card.action.download_template": "Download template",
     "mass_action.card.action.export": "Export",
     "mass_action.card.action.view": "View",
+    "mass_action.card.add_remove_team_members": "Add/remove team members",
     "mass_action.card.assessments": "Assessments",
     "mass_action.card.caseFileStatus": "Case file status",
     "mass_action.card.communications": "Communications",
@@ -3850,5 +3851,7 @@
     "team.tab.title--TeamMembers": "Team members",
     "team.tab.title--AssignServiceOptions": "Assign service options",
     "teams.assignServiceOptions.event": "Event",
-    "teams.assignServiceOptions.appointmentProgram": "Appointment program"
+    "teams.assignServiceOptions.appointmentProgram": "Appointment program",
+    "appointmentProgram.staffMember.confirm.delete.title": "Remove staff member",
+    "appointmentProgram.staffMember.confirm.delete.message": "Are you sure that you want to remove this staff member?"
 }

@@ -4,10 +4,14 @@ import { mockAppointmentProgram } from '@libs/entities-lib/appointment';
 import routes from '@/constants/routes';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
 import { mockUserInformation } from '@libs/entities-lib/user-account';
+import { useMockAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './AppointmentProgramDetails.vue';
 
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
+useMockAppointmentStaffMemberStore(pinia);
+useMockUserAccountStore(pinia);
 
 describe('AppointmentProgramDetails.vue', () => {
   let wrapper;
@@ -20,6 +24,7 @@ describe('AppointmentProgramDetails.vue', () => {
       propsData: {
         show: true,
         appointmentProgramId: 'appt-program-id',
+        id: 'ev-id',
       },
       ...otherOptions,
     });

@@ -13,7 +13,7 @@
     @cancel="$emit('update:show', false)"
     @close="$emit('update:show', false)"
     @submit="onSubmit">
-    <v-row class="pa-0">
+    <v-row class="pa-0 d-flex align-content-start">
       <v-col cols="12" md="4" class="pt-0 d-flex flex-column">
         <div class="rc-body16 fw-bold mb-2">
           {{ $t('appointmentProgram.manageStaff.title.teamMembers') }}
@@ -94,9 +94,11 @@
           {{ $t('appointmentProgram.manageStaff.title.assignStaff') }}
         </div>
         <assign-service-options
-          :service-options.sync="localServiceOptions"
-          :staff-members.sync="allStaffMembers"
-          :assignable-teams-ids="assignableTeams.map(t=> t.id)" />
+          :service-options="serviceOptions"
+          :staff-members.sync="staffMembers"
+          :users="users"
+          :assignable-teams-ids="assignableTeams.map(t=> t.id)"
+          @removeUser="removeUser" />
       </v-col>
     </v-row>
   </rc-dialog>
@@ -105,6 +107,7 @@
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import _cloneDeep from 'lodash/cloneDeep';
+import _difference from 'lodash/difference';
 import { RcDialog } from '@libs/component-lib/components';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useTeamStore } from '@/pinia/team/team';
@@ -115,12 +118,11 @@ import { DataTableHeader } from 'vuetify';
 import { ISearchParams } from '@libs/shared-lib/types';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { EFilterKeyType } from '@libs/component-lib/types';
-import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
-import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
+import { IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/appointment';
 import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
 import RcDataTable from '@libs/component-lib/components/organism/RcDataTable/RcDataTable.vue';
+import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
 import AssignServiceOptions from './AssignServiceOptions.vue';
-import { mustHaveStaffMembers, updateStaffMembers } from '../appointmentProgramsHelper';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
@@ -152,16 +154,17 @@ export default mixins(TablePaginationSearchMixin).extend({
       type: Array as ()=> IServiceOption[],
       required: true,
     },
+
+    initialStaffMembers: {
+      type: Array as ()=> IAppointmentStaffMember[],
+      required: true,
+    },
+
     /**
      * Is the appointment program being created or edited
      */
      isEditMode: {
       type: Boolean,
-      required: true,
-    },
-
-    initialStaffMembers: {
-      type: Array as ()=> IUserAccountMetadata[],
       required: true,
     },
   },
@@ -176,14 +179,12 @@ export default mixins(TablePaginationSearchMixin).extend({
       selectedTeam: null as ITeamEntity,
       teamMembers: [] as IUserAccountMetadata[],
       assignableTeams: [] as ITeamEntity[],
-      allStaffMembers: [] as IUserAccountMetadata[],
-      localServiceOptions: [] as IServiceOption[],
+      staffMembers: [] as Partial<IAppointmentStaffMember>[],
     };
   },
 
   async created() {
-    this.localServiceOptions = _cloneDeep(this.serviceOptions);
-    this.allStaffMembers = _cloneDeep(this.initialStaffMembers);
+    this.staffMembers = _cloneDeep(this.initialStaffMembers);
     await this.fetchAssignableTeams();
   },
 
@@ -218,8 +219,12 @@ export default mixins(TablePaginationSearchMixin).extend({
       return this.combinedUserAccountStore.getByIds(this.searchResultIds).map((i) => i.metadata);
     },
 
-    appointmentProgram(): IAppointmentProgram {
-      return useAppointmentProgramStore().getById(this.appointmentProgramId);
+    userAccountIds(): string[] {
+      return this.staffMembers.map((m) => m.userAccountId);
+    },
+
+    users(): IUserAccountMetadata[] {
+      return useUserAccountMetadataStore().getByIds(this.userAccountIds);
     },
   },
 
@@ -251,7 +256,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     isMemberSelected(teamMemberId:string) {
-      return this.allStaffMembers.some((m) => m.id === teamMemberId);
+      return this.staffMembers.some((m) => m.userAccountId === teamMemberId);
     },
 
     isPrimaryContact(teamMemberId: string) {
@@ -260,19 +265,24 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     onSelectTeamMember({ item, value }:{ item: IUserAccountMetadata, value: boolean }) {
       if (value) {
-        this.allStaffMembers = [...this.allStaffMembers, item];
+        this.addUser(item.id);
       } else {
-        this.allStaffMembers = this.allStaffMembers.filter((m) => m.id !== item.id);
-        this.localServiceOptions.forEach((so) => {
-          so.staffMembers = so.staffMembers?.filter((m) => m !== item.id);
-        });
+        this.removeUser(item.id);
       }
     },
 
+    addUser(userId: string) {
+      this.staffMembers = [...this.staffMembers, { userAccountId: userId, serviceOptionIds: [] }];
+    },
+
+    removeUser(userId: string) {
+      this.staffMembers = this.staffMembers.filter((m) => m.userAccountId !== userId);
+    },
+
     async addAllTeamMembers() {
-      const teamMemberIds = this.selectedTeam.teamMembers.map((m) => m.id).filter((id) => !this.allStaffMembers.some((m) => m.id === id));
-      const allMembersData = await useUserAccountMetadataStore().fetchByIds(teamMemberIds, true);
-      this.allStaffMembers.push(...allMembersData);
+      const teamMemberIds = this.selectedTeam.teamMembers.map((m) => m.id).filter((id) => !this.staffMembers.some((m) => m.userAccountId === id));
+      await useUserAccountMetadataStore().fetchByIds(teamMemberIds, true);
+      teamMemberIds.forEach((id) => this.addUser(id));
     },
 
     // Fetch the team members of a selected team
@@ -303,26 +313,31 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
 
       if (this.isEditMode) {
-        if (!mustHaveStaffMembers({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
-          this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.atLeastOneStaffMember') });
-          return;
+        // if (!mustHaveStaffMembers({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
+        //   this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.atLeastOneStaffMember') });
+        //   return;
+        // }
+        const staffMembersPayload = [...this.staffMembers];
+        const removedUserIds = _difference(this.initialStaffMembers.map((m) => m.userAccountId), this.staffMembers.map((m) => m.userAccountId));
+        if (removedUserIds.length) {
+          removedUserIds.forEach((id) => staffMembersPayload.push({ userAccountId: id, serviceOptionIds: [] }));
         }
 
         this.loading = true;
-        const res = await updateStaffMembers(this.appointmentProgramId, this.localServiceOptions, this);
+        const res = await useAppointmentStaffMemberStore().assignStaffMembers(this.appointmentProgramId, staffMembersPayload);
         if (res) {
           this.$emit('update:show', false);
         }
         this.loading = false;
       // The appointment program is being created, the staff members are being added to the payload
       } else {
-        this.$emit('submit', this.localServiceOptions);
-        this.$emit('update:show', false);
+      //   this.$emit('submit', this.localServiceOptions);
+      //   this.$emit('update:show', false);
       }
     },
 
     allMembersAreAssigned():boolean {
-      return !this.allStaffMembers.some((m) => !this.localServiceOptions.some((so) => so.staffMembers.includes(m.id)));
+      return !this.staffMembers.some((m) => !m.serviceOptionIds.length);
     },
   },
 });

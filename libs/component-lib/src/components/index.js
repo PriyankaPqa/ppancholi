@@ -39,3 +39,4 @@ export { default as RcBtn } from './atoms/RcBtn.vue';
 export { default as VSelectA11y } from './atoms/VSelectA11y.vue';
 export { default as VDataTableA11y } from './atoms/VDataTableA11y.vue';
 export { default as VAutocompleteA11y } from './atoms/VAutocompleteA11y.vue';
+export { default as VueEditorA11y } from './atoms/VueEditorA11y.vue';

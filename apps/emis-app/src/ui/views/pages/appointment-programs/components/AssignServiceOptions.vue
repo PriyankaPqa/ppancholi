@@ -7,8 +7,8 @@
       :class="{ 'in-program': !inTeamManagement }"
       dense
       :options.sync="options"
-      :items="staffMembers">
-      <template v-if="staffMembers.length" #body="props">
+      :items="users">
+      <template v-if="users.length" #body="props">
         <tr v-for="item in props.items" :key="item.id">
           <td>
             <div class="d-flex flex-column px-4 no-wrap" :class="inTeamManagement ? 'py-2' : 'py-1'">
@@ -31,7 +31,7 @@
                   :aria-label="$t('common.delete')"
                   data-test="assign-service-options__deleteMember"
                   v-on="on"
-                  @click="onRemoveMember(item.id)">
+                  @click="onRemoveUser(item.id)">
                   <v-icon>
                     mdi-close
                   </v-icon>
@@ -55,8 +55,8 @@ import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointm
 import { DataTableHeader } from 'vuetify';
 import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { IAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
-import { updateStaffMembers } from '../appointmentProgramsHelper';
 
 export default Vue.extend({
   name: 'AssignServiceOptions',
@@ -68,6 +68,11 @@ export default Vue.extend({
 
   props: {
     staffMembers: {
+      type: Array as () => IAppointmentStaffMember[],
+      required: true,
+    },
+
+    users: {
       type: Array as () => IUserAccountMetadata[],
       required: true,
     },
@@ -157,45 +162,38 @@ export default Vue.extend({
     },
 
     getTeamNames(member: IUserAccountMetadata): string {
-      const assignableTeams = member.teams.filter((t) => this.assignableTeamsIds.includes(t.teamId));
-      return assignableTeams.map((t) => t.name).join(', ');
+      const assignableTeams = member.teams?.filter((t) => this.assignableTeamsIds.includes(t.teamId));
+      return assignableTeams?.map((t) => t.name).join(', ') || '-';
     },
 
-    isMemberAssigned(soId: string, memberId: string): boolean {
-      return this.serviceOptions.find((so) => (so.id || so.tempId) === soId)?.staffMembers?.includes(memberId);
+    isMemberAssigned(soId: string, userId: string): boolean {
+      return this.staffMembers.some((m) => m.userAccountId === userId && m.serviceOptionIds.includes(soId));
     },
 
-    updateServiceOptionOnAssign(memberId: string, soId: string, value: boolean): IExtendedServiceOption[] {
-       // Don't mutate the props serviceOptions
-      const clonedServiceOptions = _cloneDeep(this.serviceOptions);
-      const updatedServiceOption = clonedServiceOptions.find((so) => (so.id || so.tempId) === soId);
+    updateServiceOptionOnAssign(userId: string, soId: string, value: boolean) {
+       // Don't mutate the props staffMembers
+      const updatedStaffMembers = _cloneDeep(this.staffMembers);
+      const member = updatedStaffMembers.find((m) => m.userAccountId === userId);
       if (value) {
-        updatedServiceOption.staffMembers?.push(memberId);
+        member.serviceOptionIds.push(soId);
       } else {
-        updatedServiceOption.staffMembers = updatedServiceOption.staffMembers?.filter((m) => m !== memberId);
+        member.serviceOptionIds = member.serviceOptionIds.filter((id) => id !== soId);
       }
-      this.$emit('update:serviceOptions', clonedServiceOptions);
-      return clonedServiceOptions;
+      this.$emit('update:staffMembers', updatedStaffMembers);
     },
 
     async onCheckAssign({ memberId, soId, value }: { memberId: string, soId: string, value: boolean }) {
-      const updatedServiceOptions = this.updateServiceOptionOnAssign(memberId, soId, value);
+      // const updatedServiceOptions = this.updateServiceOptionOnAssign(memberId, soId, value);
+      this.updateServiceOptionOnAssign(memberId, soId, value);
       if (this.inTeamManagement) {
         this.loading = true;
-        await updateStaffMembers(this.appointmentProgramId, updatedServiceOptions, this);
+        // await updateStaffMembers(this.appointmentProgramId, updatedServiceOptions, this);
         this.loading = false;
       }
     },
 
-    onRemoveMember(memberId: string) {
-      // Don't mutate the props serviceOptions and staffMembers
-      const clonedServiceOptions = _cloneDeep(this.serviceOptions);
-      clonedServiceOptions.forEach((so) => {
-        so.staffMembers = so.staffMembers.filter((m) => m !== memberId);
-      });
-      const updatedStaffMembers = [...this.staffMembers].filter((m) => m.id !== memberId);
-      this.$emit('update:serviceOptions', clonedServiceOptions);
-      this.$emit('update:staffMembers', updatedStaffMembers);
+    onRemoveUser(userId: string) {
+      this.$emit('removeUser', userId);
     },
 
   },

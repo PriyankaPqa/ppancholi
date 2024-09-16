@@ -12,7 +12,7 @@
     <template #default>
       <div>
         <div
-          class=" d-flex pb-5 warning-text"
+          class=" d-flex pb-5 rc-red-text"
           data-test="paymentGroup__cancellationWarning">
           <v-icon size="20" color="red" class="pr-1">
             mdi-alert-outline
@@ -71,10 +71,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped lang="scss">
-  .warning-text {
-    color: red
-  }
-
-</style>

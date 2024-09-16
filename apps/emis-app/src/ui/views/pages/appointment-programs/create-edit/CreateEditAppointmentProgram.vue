@@ -114,7 +114,7 @@
                     :appointment-program-id="appointmentProgram.id"
                     :is-edit-mode="isEditMode"
                     :event-id="id"
-                    :service-options.sync="appointmentProgram.serviceOptions" />
+                    :service-options="appointmentProgram.serviceOptions" />
                 </v-col>
               </v-row>
             </v-col>
@@ -158,7 +158,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { NavigationGuardNext, Route } from 'vue-router';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
-import { canSetActiveStatus, mustHaveServiceOptions, mustHaveStaffMembers } from '../appointmentProgramsHelper';
+import { canSetActiveStatus, mustHaveServiceOptions } from '../appointmentProgramsHelper';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -342,12 +342,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.showServiceOptionsError = true;
       }
 
-      const mustHaveStaffMembersIsValid = mustHaveStaffMembers(this.appointmentProgram);
-      if (!mustHaveStaffMembersIsValid) {
-        this.showStaffMembersError = true;
-      }
+      // const mustHaveStaffMembersIsValid = mustHaveStaffMembers(this.appointmentProgram);
+      // if (!mustHaveStaffMembersIsValid) {
+      //   this.showStaffMembersError = true;
+      // }
 
-      const isValid = await (this.$refs.form as VForm).validate() && mustHaveServiceOptionsIsValid && mustHaveStaffMembersIsValid;
+      const isValid = await (this.$refs.form as VForm).validate() && mustHaveServiceOptionsIsValid;// && mustHaveStaffMembersIsValid;
 
       if (!isValid) {
         helpers.scrollToFirstError('app');

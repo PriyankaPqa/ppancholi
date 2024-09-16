@@ -1,5 +1,5 @@
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
 
 export function mustHaveServiceOptions(appointmentProgram: IAppointmentProgram): boolean {
@@ -16,17 +16,6 @@ export function mustHaveStaffMembers(appointmentProgram: IAppointmentProgram): b
 
 export function canSetActiveStatus(appointmentProgram: IAppointmentProgram, status: Status): boolean {
   return status === Status.Inactive || appointmentProgram.serviceOptions.some((so) => !!so.staffMembers?.length);
-}
-
-export async function updateStaffMembers(appointmentProgramId: string, updatedServiceOptions: IServiceOption[], vue: Vue): Promise<boolean> {
-  const res = await useAppointmentProgramStore().updateStaffMembers(appointmentProgramId, { serviceOptions: updatedServiceOptions
-    .map((so) => ({ serviceOptionId: so.id, staffMembers: so.staffMembers })) });
-  if (res) {
-    vue.$toasted.global.success(vue.$t('appointmentProgram.staffMember.updated.success'));
-    return true;
-  }
-    vue.$toasted.global.error(vue.$t('appointmentProgram.staffMember.updated.failed'));
-    return false;
 }
 
 export async function deleteServiceOption(serviceOptionId: string, appointmentProgram: IAppointmentProgram, vue: Vue): Promise<boolean> {

@@ -4,7 +4,7 @@
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn
         color="primary"
-        data-test="add-staff-member"
+        data-test="add-staff-member-btn"
         :disabled="!serviceOptions.length"
         @click="showManageStaffDialog = true">
         {{ isEditMode ? $t('appointmentProgram.staffMembers.table.manageStaff') : $t('appointmentProgram.staffMembers.table.addStaff') }}
@@ -17,7 +17,7 @@
       :loading="loading"
       :headers="headers"
       :options.sync="options"
-      :items="staffMembers">
+      :items="users">
       <template #[`item.${customColumns.name}`]="{ item }">
         <span data-test="staffMembers__name">{{ item.displayName }}</span>
       </template>
@@ -28,6 +28,14 @@
 
       <template #[`item.${customColumns.serviceOption}`]="{ item }">
         <span data-test="staffMembers__serviceOption"> {{ getServiceOptionNames(item.id) }} </span>
+      </template>
+
+      <template #[`item.${customColumns.delete}`]="{ item }">
+        <v-btn icon data-test="serviceOption__delete" :aria-label="$t('common.delete')" @click="removeStaffMember(item.id)">
+          <v-icon size="24" color="grey darken-2">
+            mdi-delete
+          </v-icon>
+        </v-btn>
       </template>
     </v-data-table-a11y>
 
@@ -48,10 +56,12 @@ import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import { VDataTableA11y } from '@libs/component-lib/components';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
+import { IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/appointment';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
+import { EFilterKeyType } from '@libs/component-lib/types';
 import ManageStaffMembers from './ManageStaffMembers.vue';
 
 export default Vue.extend({
@@ -103,6 +113,7 @@ export default Vue.extend({
         name: 'displayName',
         role: 'role',
         serviceOption: 'serviceOption',
+        delete: 'delete',
       };
     },
 
@@ -126,54 +137,87 @@ export default Vue.extend({
           sortable: false,
           value: this.customColumns.serviceOption,
         },
+        {
+          text: this.$t('common.delete') as string,
+          class: 'rc-transparent-text',
+          sortable: false,
+          value: this.customColumns.delete,
+          width: '5%',
+        },
       ];
-    },
-
-    appointmentProgram(): IAppointmentProgram {
-      return useAppointmentProgramStore().getById(this.appointmentProgramId);
     },
 
     serviceOptionTypes(): IOptionItem[] {
       return useAppointmentProgramStore().getServiceOptionTypes(this.serviceOptions.map((o) => o.serviceOptionType?.optionItemId));
     },
 
-    staffMemberIds(): string[] {
-      const allIds = this.serviceOptions.reduce((ids, so) => {
-        if (so.staffMembers?.length) {
-          ids.push(...so.staffMembers);
-        }
-        return ids;
-      }, []);
-
-      return [...new Set(allIds)];
+    staffMembers(): Partial<IAppointmentStaffMember>[] {
+      return useAppointmentStaffMemberStore().getByAppointmentProgramId(this.appointmentProgramId);
     },
 
-    staffMembers(): IUserAccountMetadata[] {
-      return useUserAccountMetadataStore().getByIds(this.staffMemberIds);
+    userAccountIds(): string[] {
+      return this.staffMembers.map((m) => m.userAccountId);
+    },
+
+    users(): IUserAccountMetadata[] {
+      return useUserAccountMetadataStore().getByIds(this.userAccountIds);
     },
   },
 
   watch: {
-    staffMemberIds(newValue) {
+    userAccountIds(newValue) {
       useUserAccountMetadataStore().fetchByIds(newValue, true);
     },
   },
 
   async created() {
     await useAppointmentProgramStore().fetchServiceOptionTypes();
-    await useUserAccountMetadataStore().fetchByIds(this.staffMemberIds, true);
+    if (this.isEditMode) {
+      await this.fetchStaffMembers();
+      await useUserAccountMetadataStore().fetchByIds(this.userAccountIds, true);
+    }
   },
 
   methods: {
-    // The appointment program is being created, the staff members are being added to the payload
-    onUpdateStaffMembers(serviceOptions: IServiceOption[]) {
-      this.$emit('update:serviceOptions', serviceOptions);
+    // // The appointment program is being created, the staff members are being added to the payload
+    onUpdateStaffMembers() {
+      // this.$emit('update:serviceOptions', serviceOptions);
     },
 
-    getServiceOptionNames(memberId: string): string {
-      const serviceOptionsContainingMember = this.serviceOptions.filter((so) => so.staffMembers.includes(memberId));
-      const serviceOptionTypes = this.serviceOptionTypes.filter((t) => serviceOptionsContainingMember.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
+    getServiceOptionNames(userId: string): string {
+      const userServiceOptionsIds = this.staffMembers.find((m) => m.userAccountId === userId)?.serviceOptionIds;
+      const userServiceOptions = this.serviceOptions.filter((so) => userServiceOptionsIds?.includes(so.id));
+      const serviceOptionTypes = this.serviceOptionTypes.filter((t) => userServiceOptions.map((so) => so.serviceOptionType.optionItemId).includes(t.id));
       return serviceOptionTypes.map((t) => this.$m(t.name)).sort((a, b) => a.localeCompare(b)).join(', ');
+    },
+
+    async fetchStaffMembers() {
+      this.loading = true;
+      await useAppointmentStaffMemberStore().search({ params: {
+        filter: { 'Entity/AppointmentProgramId': { value: this.appointmentProgramId, type: EFilterKeyType.Guid } },
+        top: 999,
+        skip: 0,
+      } });
+      this.loading = false;
+    },
+
+    async removeStaffMember(userId: string) {
+      if (this.isEditMode) {
+        const userChoice = await this.$confirm({
+          title: this.$t('appointmentProgram.staffMember.confirm.delete.title'),
+          messages: this.$t('appointmentProgram.staffMember.confirm.delete.message'),
+         });
+
+        if (userChoice) {
+         const payload = [{ userAccountId: userId, serviceOptionIds: [] }] as Partial<IAppointmentStaffMember>[];
+          const res = await useAppointmentStaffMemberStore().assignStaffMembers(this.appointmentProgramId, payload);
+          if (res) {
+            this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
+          } else {
+            this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
+          }
+        }
+      }
     },
   },
 });

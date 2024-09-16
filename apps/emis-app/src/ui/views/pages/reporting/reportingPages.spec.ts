@@ -4,7 +4,6 @@ import { createLocalVue } from '@/test/testSetup';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import { IQuery, QueryType } from '@libs/entities-lib/reporting';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { ReportingPages } from './reportingPages';
 
 const pinia = createTestingPinia({ stubActions: false });
@@ -98,7 +97,6 @@ describe('reportingPages', () => {
         dataTest: 'sentEmailIssuesQueries',
         level: UserRoles.level6,
         roles: [UserRoles.contributorIM],
-        feature: FeatureKeys.GeographicMapping,
       });
     });
 

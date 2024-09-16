@@ -34,9 +34,10 @@
     <v-row v-if="selectedAppointmentProgram" class="mx-0">
       <v-col md="12" class="px-0">
         <assign-service-options
-          :service-options.sync="selectedAppointmentProgram.serviceOptions"
-          :staff-members="teamMembers.map(m=> m.entity)"
+          :service-options="selectedAppointmentProgram.serviceOptions"
+          :users="teamMembers.map(m=> m.entity)"
           :appointment-program-id="selectedAppointmentProgram.id"
+          :staff-members.sync="staffMembers"
           in-team-management />
       </v-col>
     </v-row>

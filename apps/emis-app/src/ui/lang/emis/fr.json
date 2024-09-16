@@ -3139,6 +3139,7 @@
     "mass_action.card.action.download_template": "Télécharger le modèle",
     "mass_action.card.action.export": "Exporter",
     "mass_action.card.action.view": "Consulter",
+    "mass_action.card.add_remove_team_members": "Ajouter/supprimer des membres de l'équipe",
     "mass_action.card.assessments": "Analyses",
     "mass_action.card.caseFileStatus": "Statut du dossier",
     "mass_action.card.communications": "Communications",

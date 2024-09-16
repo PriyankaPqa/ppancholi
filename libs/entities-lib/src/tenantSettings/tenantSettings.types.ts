@@ -14,9 +14,8 @@ export enum FeatureKeys {
   AppointmentBooking = 'AppointmentBooking',
   Lodging = 'Lodging',
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
-  MovePayments = 'MovePayments',
   CaseFileIndividual = 'CaseFileIndividual',
-  GeographicMapping = 'GeographicMapping',
+  AddRemoveTeamMembers = 'AddRemoveTeamMembers',
 }
 
 export enum FeatureType {
