@@ -455,6 +455,12 @@ describe('CurrentAddressForm.vue', () => {
         expect(wrapper.vm.form.checkIn).not.toEqual('2023-05-01');
         expect(wrapper.vm.form.checkOut).toEqual('2023-05-20');
         expect(wrapper.vm.newCheckOutDate).toEqual(['2023-05-01', '2023-05-20']);
+
+        wrapper.vm.setNewCheckOut(['2023-05-01', '']);
+        expect(wrapper.vm.form.checkIn).not.toEqual('2023-05-01');
+        expect(wrapper.vm.form.checkOut).not.toEqual('2023-05-20');
+        expect(wrapper.vm.form.checkOut).toEqual(wrapper.vm.checkInCheckOutDate[1]);
+        expect(wrapper.vm.newCheckOutDate).toEqual(['2023-05-01', '']);
       });
     });
 

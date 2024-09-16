@@ -495,7 +495,8 @@ export default Vue.extend({
     },
 
     setNewCheckOut(newCheckInCheckOut: string[]) {
-      this.form.checkOut = newCheckInCheckOut[1];
+      // if none was set we reset to old checkout date
+      this.form.checkOut = newCheckInCheckOut[1] || this.checkInCheckOutDate[1];
       this.newCheckOutDate = [newCheckInCheckOut[0], newCheckInCheckOut[1]];
     },
 
