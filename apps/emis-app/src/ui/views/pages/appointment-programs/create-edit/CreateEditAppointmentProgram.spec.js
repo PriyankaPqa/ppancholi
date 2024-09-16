@@ -3,6 +3,8 @@ import routes from '@/constants/routes';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { AppointmentProgram, mockAppointmentProgram, mockServiceOption } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
+import { useMockAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
 import { canSetActiveStatus, mustHaveServiceOptions, mustHaveStaffMembers } from '../appointmentProgramsHelper';
 import Component from './CreateEditAppointmentProgram.vue';
@@ -10,6 +12,8 @@ import Component from './CreateEditAppointmentProgram.vue';
 jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
+useMockAppointmentStaffMemberStore(pinia);
+useMockUserAccountStore(pinia);
 
 describe('CreateEditAppointmentProgram.vue', () => {
   let wrapper;
