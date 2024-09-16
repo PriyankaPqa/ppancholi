@@ -385,6 +385,9 @@ export default mixins(caseFileDetail).extend({
   watch: {
     async isCrcProvided() {
       await this.checkForCrcProvidedSetupComplete();
+      this.bookings.forEach((b) => {
+        b.address.crcProvided = this.isCrcProvided;
+      });
     },
   },
 
