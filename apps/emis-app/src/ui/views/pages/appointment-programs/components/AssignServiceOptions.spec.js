@@ -154,7 +154,7 @@ describe('ManageStaffMembers.vue', () => {
       });
     });
 
-    describe('updateServiceOptionOnAssign', () => {
+    describe('updateStaffMembersOnAssign', () => {
       it('adds the service option id to the right staff member if the checkbox is checked and emits the updated staff members', async () => {
         await mountWrapper();
         await wrapper.setProps({
@@ -164,7 +164,7 @@ describe('ManageStaffMembers.vue', () => {
           ],
         });
 
-        await wrapper.vm.updateServiceOptionOnAssign('m-2', 'so-1', true);
+        await wrapper.vm.updateStaffMembersOnAssign('m-2', 'so-1', true);
         expect(wrapper.emitted('update:staffMembers')[0][0]).toEqual([{ userAccountId: 'm-1', serviceOptionIds: ['so-1'] },
           { userAccountId: 'm-2', serviceOptionIds: ['so-2', 'so-1'] }]);
       });
@@ -178,7 +178,7 @@ describe('ManageStaffMembers.vue', () => {
           ],
         });
 
-        await wrapper.vm.updateServiceOptionOnAssign('m-2', 'so-1', false);
+        await wrapper.vm.updateStaffMembersOnAssign('m-2', 'so-1', false);
         expect(wrapper.emitted('update:staffMembers')[0][0]).toEqual([{ userAccountId: 'm-1', serviceOptionIds: ['so-1'] },
           { userAccountId: 'm-2', serviceOptionIds: ['so-2'] }]);
       });
