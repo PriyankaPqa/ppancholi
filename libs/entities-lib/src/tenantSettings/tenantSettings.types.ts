@@ -15,6 +15,7 @@ export enum FeatureKeys {
   Lodging = 'Lodging',
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
   CaseFileIndividual = 'CaseFileIndividual',
+  AddRemoveTeamMembers = 'AddRemoveTeamMembers',
 }
 
 export enum FeatureType {
