@@ -10,6 +10,7 @@
           :items="events"
           attach
           hide-details
+          :loading="loading"
           dense
           :menu-props="{ top: !selectedAppointmentProgram, offsetY: true, zIndex: 100 }"
           :item-text="(item) => $m(item.name)"
@@ -35,7 +36,7 @@
       <v-col md="12" class="px-0">
         <assign-service-options
           :service-options="selectedAppointmentProgram.serviceOptions"
-          :users="teamMembers.map(m=> m.entity)"
+          :users="teamMembers.map(m=> m.metadata)"
           :appointment-program-id="selectedAppointmentProgram.id"
           :staff-members.sync="staffMembers"
           in-team-management />
@@ -49,9 +50,10 @@ import Vue from 'vue';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { useTeamStore } from '@/pinia/team/team';
 import { EFilterKeyType } from '@libs/component-lib/types';
-import { IAppointmentProgram } from '@libs/entities-lib/appointment';
+import { IAppointmentProgram, IAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { ITeamEntity, ITeamMemberAsUser, TeamType } from '@libs/entities-lib/team';
+import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
 import AssignServiceOptions from '../../appointment-programs/components/AssignServiceOptions.vue';
 
 export default Vue.extend({
@@ -84,7 +86,7 @@ export default Vue.extend({
       selectedEvent: null as IEventEntity,
       selectedAppointmentProgram: null as IAppointmentProgram,
       appointmentProgramIds: [] as string[],
-      appointmentPrograms: [] as IAppointmentProgram[],
+      loading: false,
     };
   },
 
@@ -93,9 +95,13 @@ export default Vue.extend({
       return useTeamStore().getById(this.teamId);
     },
 
-  //  appointmentPrograms(): IAppointmentProgram[] {
-  //     return useAppointmentProgramStore().getByIds(this.appointmentProgramIds);
-  //   },
+    appointmentPrograms(): IAppointmentProgram[] {
+      return useAppointmentProgramStore().getByIds(this.appointmentProgramIds);
+    },
+
+    staffMembers(): Partial<IAppointmentStaffMember>[] {
+      return useAppointmentStaffMemberStore().getByAppointmentProgramId(this.selectedAppointmentProgram.id);
+    },
   },
 
   watch: {
@@ -107,6 +113,10 @@ export default Vue.extend({
 
     selectedEvent() {
       this.onSelectEvent();
+    },
+
+    selectedAppointmentProgram() {
+      this.fetchStaffMembers();
     },
   },
 
@@ -130,10 +140,17 @@ export default Vue.extend({
       } });
       if (res) {
         this.appointmentProgramIds = res.ids;
-
-        useAppointmentProgramStore().items = [];
-        this.appointmentPrograms = await useAppointmentProgramStore().fetchByIds(this.appointmentProgramIds, false);
       }
+    },
+
+    async fetchStaffMembers() {
+      this.loading = true;
+      await useAppointmentStaffMemberStore().search({ params: {
+        filter: { 'Entity/AppointmentProgramId': { value: this.selectedAppointmentProgram.id, type: EFilterKeyType.Guid } },
+        top: 999,
+        skip: 0,
+      } });
+      this.loading = false;
     },
 
   },
