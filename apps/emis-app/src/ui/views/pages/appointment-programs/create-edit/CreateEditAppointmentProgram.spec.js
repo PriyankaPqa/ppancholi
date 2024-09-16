@@ -6,7 +6,7 @@ import { Status } from '@libs/shared-lib/types';
 import { useMockAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
-import { canSetActiveStatus, mustHaveServiceOptions, mustHaveStaffMembers } from '../appointmentProgramsHelper';
+import { canSetActiveStatus, mustHaveServiceOptions } from '../appointmentProgramsHelper';
 import Component from './CreateEditAppointmentProgram.vue';
 
 jest.mock('../appointmentProgramsHelper');
@@ -232,7 +232,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         mustHaveServiceOptions.mockImplementation(() => true);
-        mustHaveStaffMembers.mockImplementation(() => true);
       });
 
       it('does not call create unless form validation succeeds', async () => {
@@ -249,7 +248,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.showServiceOptionsError).toBeTruthy();
         mustHaveServiceOptions.mockImplementation(() => true);
-        mustHaveStaffMembers.mockImplementation(() => false);
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.showStaffMembersError).toBeTruthy();
@@ -287,7 +285,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         canSetActiveStatus.mockImplementation(() => true);
-        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -312,7 +309,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         canSetActiveStatus.mockImplementation(() => true);
-        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -324,7 +320,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         canSetActiveStatus.mockImplementation(() => true);
-        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -336,7 +331,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         canSetActiveStatus.mockImplementation(() => true);
-        mustHaveStaffMembers.mockImplementation(() => true);
         await wrapper.setData({ initialBusinessHours: [] });
         await wrapper.vm.submit();
         expect(wrapper.vm.initialBusinessHours).toEqual(wrapper.vm.appointmentProgram.businessHours);
@@ -346,7 +340,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         canSetActiveStatus.mockImplementation(() => true);
-        mustHaveStaffMembers.mockImplementation(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;

@@ -6,7 +6,6 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member.mock';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
-import { mustHaveStaffMembers } from '../appointmentProgramsHelper';
 
 import Component from './ManageStaffMembers.vue';
 
@@ -19,7 +18,7 @@ const { appointmentStaffMemberStore } = useMockAppointmentStaffMemberStore(pinia
 describe('ManageStaffMembers.vue', () => {
   let wrapper;
 
-  const mountWrapper = async (isEditMode = true, otherOptions = {}) => {
+  const mountWrapper = async (otherOptions = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -28,7 +27,6 @@ describe('ManageStaffMembers.vue', () => {
         appointmentProgramId: 'appt-program-id',
         eventId: 'eventId',
         serviceOptions: [mockServiceOption()],
-        isEditMode,
         initialStaffMembers: [],
       },
       ...otherOptions,
@@ -149,7 +147,6 @@ describe('ManageStaffMembers.vue', () => {
       it(' calls userAccount store fetch with all ids of the members in the selected team and calls add user with each member', async () => {
         await mountWrapper();
         await wrapper.setData({ selectedTeam: mockTeamEntity({ teamMembers: [{ id: 'm-1' }, { id: 'm-2' }] }) });
-        // userAccountMetadataStore.fetchByIds = jest.fn(() => [mockUserAccountMetadata({ id: 'u-1' }), mockUserAccountMetadata({ id: 'u-2' })]);
         wrapper.vm.addUser = jest.fn();
         await wrapper.vm.addAllTeamMembers();
         expect(userAccountMetadataStore.fetchByIds).toHaveBeenCalledWith(['m-1', 'm-2'], true);
@@ -209,19 +206,9 @@ describe('ManageStaffMembers.vue', () => {
         expect(appointmentStaffMemberStore.assignStaffMembers).not.toHaveBeenCalled();
       });
 
-      // it('shows an error message in edit mode if mustHaveStaffMembers fails', async () => {
-      //   await mountWrapper();
-      //   wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
-      //   mustHaveStaffMembers.mockImplementation(() => false);
-      //   await wrapper.vm.onSubmit();
-      //   expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.manageStaff.error.atLeastOneStaffMember' });
-      //   expect(appointmentStaffMemberStore.assignStaffMembers).not.toHaveBeenCalled();
-      // });
-
-      it('calls store method in edit mode', async () => {
+      it('calls store method', async () => {
         await mountWrapper();
         wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
-        // mustHaveStaffMembers.mockImplementation(() => true);
         const staffMembers = [mockAppointmentStaffMember({ userAccountId: 'u-1', serviceOptionIds: ['so-1'] })];
         wrapper.setData({ staffMembers });
         await wrapper.vm.onSubmit();
@@ -244,22 +231,13 @@ describe('ManageStaffMembers.vue', () => {
         ]);
       });
 
-      it('shows error message if store call fails in edit mode', async () => {
+      it('shows error message if store call fails', async () => {
         await mountWrapper();
         wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
-        mustHaveStaffMembers.mockImplementation(() => true);
         appointmentStaffMemberStore.assignStaffMembers = jest.fn();
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.failed');
       });
-
-      // it('emits the data if not in edit mode', async () => {
-      //   await mountWrapper(false);
-      //   wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
-      //   await wrapper.vm.onSubmit();
-      //   expect(wrapper.emitted('submit')[0][0]).toEqual(wrapper.vm.localServiceOptions);
-      //   expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
-      // });
     });
   });
 

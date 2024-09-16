@@ -77,13 +77,9 @@
                   <v-divider />
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
 
-          <v-row justify="center">
-            <v-col>
               <v-row justify="center">
-                <v-col cols="12" xl="8" lg="9" md="11">
+                <v-col cols="12">
                   <div class="fw-bold pb-4">
                     {{ $t('appointmentProgram.section.serviceOptions') }}
                   </div>
@@ -99,20 +95,34 @@
                     :is-edit-mode="isEditMode" />
                 </v-col>
               </v-row>
+
+              <v-row v-if="!isEditMode">
+                <v-col cols="12" class="d-flex justify-end pb-4">
+                  <v-btn class="mr-4" data-test="appointment-program-create-cancel" @click.stop="back()">
+                    {{ $t('common.cancel') }}
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    data-test="appointment-program-create-submit"
+                    :loading="loading"
+                    :disabled="failed || loading || scheduleHasError || showServiceOptionsError"
+                    @click.stop="submit">
+                    {{ $t('common.buttons.create') }}
+                  </v-btn>
+                </v-col>
+                <v-col cols="12">
+                  <v-divider />
+                </v-col>
+              </v-row>
+
               <v-row justify="center">
-                <v-col cols="12" xl="8" lg="9" md="11">
-                  <div class="fw-bold pb-4">
+                <v-col cols="12">
+                  <div class="fw-bold pb-4" :class="{ disabled: !isEditMode }">
                     {{ $t('appointmentProgram.section.staffMembers') }}
                   </div>
-                  <message-box
-                    v-if="showStaffMembersError"
-                    icon="mdi-alert"
-                    class="failed"
-                    data-test="appointment-program-service-options-error"
-                    :message=" $t('appointments.staffMembers.shouldNotBeEmpty')" />
                   <staff-members-table
                     :appointment-program-id="appointmentProgram.id"
-                    :is-edit-mode="isEditMode"
+                    :disabled="!isEditMode"
                     :event-id="id"
                     :service-options="appointmentProgram.serviceOptions" />
                 </v-col>
@@ -120,20 +130,6 @@
             </v-col>
           </v-row>
         </v-container>
-
-        <template v-if="!isEditMode" #actions>
-          <v-btn class="mr-4" data-test="appointment-program-create-cancel" @click.stop="back()">
-            {{ $t('common.cancel') }}
-          </v-btn>
-          <v-btn
-            color="primary"
-            data-test="appointment-program-create-submit"
-            :loading="loading"
-            :disabled="failed || loading || scheduleHasError || showServiceOptionsError || showStaffMembersError"
-            @click.stop="submit">
-            {{ $t('common.buttons.create') }}
-          </v-btn>
-        </template>
       </rc-page-content>
     </validation-observer>
     <rationale-dialog ref="rationaleDialog" />
@@ -150,7 +146,7 @@ import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { AppointmentProgram, DayOfWeek, IDaySchedule, IServiceOption } from '@libs/entities-lib/appointment';
+import { AppointmentProgram, DayOfWeek, IDaySchedule } from '@libs/entities-lib/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { canadaTimeZones } from '@/constants/canadaTimeZones';
@@ -208,7 +204,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
       timeZoneOptions: canadaTimeZones,
       scheduleHasError: false,
       showServiceOptionsError: false,
-      showStaffMembersError: false,
       initialBusinessHours: null as IDaySchedule[],
     };
   },
@@ -285,16 +280,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
         if (newVal.length && !oldVal.length) {
           this.showServiceOptionsError = false;
         }
-        if (newVal.some((so: IServiceOption) => so.staffMembers?.length)) {
-          this.showStaffMembersError = false;
-        }
       },
     },
 
     'appointmentProgram.appointmentProgramStatus': {
       handler() {
           this.showServiceOptionsError = false;
-          this.showStaffMembersError = false;
       },
     },
   },
@@ -342,12 +333,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.showServiceOptionsError = true;
       }
 
-      // const mustHaveStaffMembersIsValid = mustHaveStaffMembers(this.appointmentProgram);
-      // if (!mustHaveStaffMembersIsValid) {
-      //   this.showStaffMembersError = true;
-      // }
-
-      const isValid = await (this.$refs.form as VForm).validate() && mustHaveServiceOptionsIsValid;// && mustHaveStaffMembersIsValid;
+      const isValid = await (this.$refs.form as VForm).validate() && mustHaveServiceOptionsIsValid;
 
       if (!isValid) {
         helpers.scrollToFirstError('app');
@@ -382,3 +368,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 });
 </script>
+
+<style scoped lang='scss'>
+  .disabled {
+    opacity: 50%
+  }
+</style>

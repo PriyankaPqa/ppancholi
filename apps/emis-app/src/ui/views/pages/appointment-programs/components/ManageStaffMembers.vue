@@ -159,14 +159,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       type: Array as ()=> IAppointmentStaffMember[],
       required: true,
     },
-
-    /**
-     * Is the appointment program being created or edited
-     */
-     isEditMode: {
-      type: Boolean,
-      required: true,
-    },
   },
 
   data() {
@@ -312,27 +304,20 @@ export default mixins(TablePaginationSearchMixin).extend({
         return;
       }
 
-      if (this.isEditMode) {
-        // if (!mustHaveStaffMembers({ ...this.appointmentProgram, serviceOptions: this.localServiceOptions })) {
-        //   this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.manageStaff.error.atLeastOneStaffMember') });
-        //   return;
-        // }
-        const staffMembersPayload = [...this.staffMembers];
-        const removedUserIds = _difference(this.initialStaffMembers.map((m) => m.userAccountId), this.staffMembers.map((m) => m.userAccountId));
-        if (removedUserIds.length) {
-          removedUserIds.forEach((id) => staffMembersPayload.push({ userAccountId: id, serviceOptionIds: [] }));
-        }
+      const staffMembersPayload = [...this.staffMembers];
+      const removedUserIds = _difference(this.initialStaffMembers.map((m) => m.userAccountId), this.staffMembers.map((m) => m.userAccountId));
+      if (removedUserIds.length) {
+        removedUserIds.forEach((id) => staffMembersPayload.push({ userAccountId: id, serviceOptionIds: [] }));
+      }
 
-        this.loading = true;
-        const res = await useAppointmentStaffMemberStore().assignStaffMembers(this.appointmentProgramId, staffMembersPayload);
-        if (res) {
-          this.$emit('update:show', false);
-        }
-        this.loading = false;
-      // The appointment program is being created, the staff members are being added to the payload
+      this.loading = true;
+      const res = await useAppointmentStaffMemberStore().assignStaffMembers(this.appointmentProgramId, staffMembersPayload);
+      if (res) {
+        this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
+        this.$emit('update:show', false);
       } else {
-      //   this.$emit('submit', this.localServiceOptions);
-      //   this.$emit('update:show', false);
+        this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
+        this.loading = false;
       }
     },
 

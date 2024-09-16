@@ -1,7 +1,6 @@
 import { mockAppointmentProgram, mockServiceOption } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
-import { canDeleteServiceOption, mustHaveServiceOptions, mustHaveStaffMembers,
-  canSetActiveStatus } from './appointmentProgramsHelper';
+import { canDeleteServiceOption, mustHaveServiceOptions, canSetActiveStatus } from './appointmentProgramsHelper';
 
 describe('appointmentProgramsHelper', () => {
   describe('mustHaveServiceOptions', () => {
@@ -31,25 +30,6 @@ describe('appointmentProgramsHelper', () => {
     it('returns false if the status is active and the program has only one service options', () => {
       const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [mockServiceOption()] });
       expect(canDeleteServiceOption(program)).toBeFalsy();
-    });
-  });
-
-  describe('validateCanDeleteServivalidateHasStaffMembersPolicyceOptionPolicy', () => {
-    it('returns true if the status is inactive', () => {
-      const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Inactive });
-      expect(mustHaveStaffMembers(program)).toBeTruthy();
-    });
-    it('returns true if the status is active and the program has a service option with a staff member', () => {
-      const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [mockServiceOption({ staffMembers: ['1'] })] });
-      expect(mustHaveStaffMembers(program)).toBeTruthy();
-    });
-    it('returns false if the status is active and the program has service options without staff members', () => {
-      const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [mockServiceOption({ staffMembers: [] })] });
-      expect(mustHaveStaffMembers(program)).toBeFalsy();
-    });
-    it('returns false if the status is active and the program has no service options', () => {
-      const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [] });
-      expect(mustHaveStaffMembers(program)).toBeFalsy();
     });
   });
 

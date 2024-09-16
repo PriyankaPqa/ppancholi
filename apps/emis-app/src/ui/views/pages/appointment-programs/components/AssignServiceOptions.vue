@@ -16,12 +16,12 @@
               <span v-if="!inTeamManagement" class="rc-body12">  {{ getTeamNames(item) || '-' }} </span>
             </div>
           </td>
-          <td v-for="so in serviceOptions" :key="so.id || so.tempId" class="checkbox-cell">
+          <td v-for="so in serviceOptions" :key="so.id" class="checkbox-cell">
             <v-simple-checkbox
-              :data-test="`assign_service_option_${so.id}_${item.id || item.tempId}`"
+              :data-test="`assign_service_option_${so.id}_${item.id}`"
               :ripple="false"
-              :value=" isMemberAssigned(so.id || so.tempId, item.id)"
-              @input="onCheckAssign({ memberId: item.id, soId: so.id || so.tempId, value: $event })" />
+              :value=" isMemberAssigned(so.id, item.id)"
+              @input="onCheckAssign({ memberId: item.id, soId: so.id, value: $event })" />
           </td>
           <td v-if="!inTeamManagement" class="checkbox-cell">
             <rc-tooltip bottom>

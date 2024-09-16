@@ -10,10 +10,6 @@ export function canDeleteServiceOption(appointmentProgram: IAppointmentProgram):
   return appointmentProgram.appointmentProgramStatus === Status.Inactive || appointmentProgram.serviceOptions.length > 1;
 }
 
-export function mustHaveStaffMembers(appointmentProgram: IAppointmentProgram): boolean {
-  return appointmentProgram.appointmentProgramStatus === Status.Inactive || appointmentProgram.serviceOptions.some((so) => !!so.staffMembers?.length);
-}
-
 export function canSetActiveStatus(appointmentProgram: IAppointmentProgram, status: Status): boolean {
   return status === Status.Inactive || appointmentProgram.serviceOptions.some((so) => !!so.staffMembers?.length);
 }

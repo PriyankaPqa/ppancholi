@@ -15,31 +15,17 @@ const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 
 describe('StaffMembersTable.vue', () => {
   let wrapper;
-  const mountWrapper = async (shallow = true, isEditMode = true, otherOptions = {}) => {
+  const mountWrapper = async (shallow = true, otherOptions = {}) => {
     wrapper = (shallow ? shallowMount : mount)(Component, {
       localVue,
       pinia,
       propsData: {
         appointmentProgramId: 'appt-program-id',
         serviceOptions: [mockServiceOption({ serviceOptionType: { optionItemId: 'id-1' } })],
-        isEditMode,
       },
       ...otherOptions,
     });
   };
-
-  describe('watcher', () => {
-    describe('userAccountIds', () => {
-      it('calls useUserAccountMetadataStore fetchByIds', async () => {
-        jest.clearAllMocks();
-        appointmentStaffMemberStore.items = [];
-        await mountWrapper();
-        appointmentStaffMemberStore.items = [mockAppointmentStaffMember()];
-        await wrapper.vm.$nextTick();
-        expect(userAccountMetadataStore.fetchByIds).toBeCalledWith([mockAppointmentStaffMember().userAccountId], true);
-      });
-    });
-  });
 
   describe('Computed', () => {
     describe('customColumns', () => {
@@ -109,7 +95,6 @@ describe('StaffMembersTable.vue', () => {
     describe('created', () => {
       it('should call store fetchServiceOptionTypes, fetchStaffMembers and fetchByIds', async () => {
         await mountWrapper();
-
         wrapper.vm.fetchStaffMembers = jest.fn();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
@@ -119,13 +104,25 @@ describe('StaffMembersTable.vue', () => {
         await wrapper.vm.$nextTick();
         expect(userAccountMetadataStore.fetchByIds).toHaveBeenCalled();
       });
+
+      it('doesnt make calls if disabled is true', async () => {
+        await mountWrapper(true, { propsData: {
+          appointmentProgramId: 'appt-program-id',
+          serviceOptions: [mockServiceOption({ serviceOptionType: { optionItemId: 'id-1' } })],
+          disabled: true,
+        } });
+        wrapper.vm.fetchStaffMembers = jest.fn();
+
+        expect(appointmentProgramStore.fetchServiceOptionTypes).not.toHaveBeenCalled();
+        expect(wrapper.vm.fetchStaffMembers).not.toHaveBeenCalled();
+      });
     });
   });
 
   describe('Methods', () => {
     describe('getServiceOptionNames', () => {
       it('returns the right service option names from the userAccount id', async () => {
-        await mountWrapper(true, true, { computed: {
+        await mountWrapper(true, { computed: {
           staffMembers: () => [mockAppointmentStaffMember({ userAccountId: 'user-id-1', serviceOptionIds: ['so-1', 'so-2'] })],
           serviceOptionTypes: () => [
             { id: 'type-id-1', name: { translation: { en: 'z-name' } } },
