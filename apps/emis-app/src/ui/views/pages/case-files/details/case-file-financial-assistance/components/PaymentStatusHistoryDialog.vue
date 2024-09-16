@@ -13,11 +13,11 @@
     @close="close"
     @cancel="close">
     <div class="pb-4 d-flex justify-space-between">
-      <h3 data-test="payment-modality">
+      <div data-test="payment-modality" class="rc-h3">
         {{
           $t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`)
         }}
-      </h3>
+      </div>
       <div>
         <status-chip status-name="FinancialAssistancePaymentStatus" :status="paymentGroup.paymentStatus" />
       </div>
