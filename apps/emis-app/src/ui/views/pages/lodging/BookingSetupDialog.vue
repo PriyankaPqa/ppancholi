@@ -200,9 +200,10 @@
       max-width="750"
       min-height="300"
       :show-close="false"
-      :show-cancel="false"
+      :show-cancel="true"
       data-test="select-table-dialog"
-      @submit="selectPaymentDetails(selectedPaymentDetails)">
+      @submit="selectPaymentDetails(selectedPaymentDetails)"
+      @cancel="$emit('close')">
       <div>
         <div class="pb-4">
           {{ $t('bookingRequest.pleaseSelectPaymentDetails') }}
