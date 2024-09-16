@@ -1,13 +1,12 @@
-<!-- INCOMPLETE COMPONENT -->
 <template>
-  <div>
+  <div :class="{ disabled }">
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn
         color="primary"
         data-test="add-staff-member-btn"
         :disabled="!serviceOptions.length"
         @click="showManageStaffDialog = true">
-        {{ isEditMode ? $t('appointmentProgram.staffMembers.table.manageStaff') : $t('appointmentProgram.staffMembers.table.addStaff') }}
+        {{ $t('appointmentProgram.staffMembers.table.manageStaff') }}
       </v-btn>
     </div>
     <v-data-table-a11y
@@ -43,11 +42,9 @@
       v-if="showManageStaffDialog"
       :show.sync="showManageStaffDialog"
       :event-id="eventId"
-      :is-edit-mode="isEditMode"
       :service-options="serviceOptions"
       :appointment-program-id="appointmentProgramId"
-      :initial-staff-members="staffMembers"
-      @submit="onUpdateStaffMembers" />
+      :initial-staff-members="staffMembers" />
   </div>
 </template>
 
@@ -87,12 +84,10 @@ export default Vue.extend({
       type: Array as ()=> IServiceOption[],
       required: true,
     },
-        /**
-     * Is the appointment program being created or edited
-     */
-     isEditMode: {
+
+     disabled: {
       type: Boolean,
-      required: true,
+      default: false,
     },
   },
 
@@ -171,19 +166,14 @@ export default Vue.extend({
   },
 
   async created() {
-    await useAppointmentProgramStore().fetchServiceOptionTypes();
-    if (this.isEditMode) {
+    if (!this.disabled) {
+      await useAppointmentProgramStore().fetchServiceOptionTypes();
       await this.fetchStaffMembers();
       await useUserAccountMetadataStore().fetchByIds(this.userAccountIds, true);
     }
   },
 
   methods: {
-    // // The appointment program is being created, the staff members are being added to the payload
-    onUpdateStaffMembers() {
-      // this.$emit('update:serviceOptions', serviceOptions);
-    },
-
     getServiceOptionNames(userId: string): string {
       const userServiceOptionsIds = this.staffMembers.find((m) => m.userAccountId === userId)?.serviceOptionIds;
       const userServiceOptions = this.serviceOptions.filter((so) => userServiceOptionsIds?.includes(so.id));
@@ -202,7 +192,6 @@ export default Vue.extend({
     },
 
     async removeStaffMember(userId: string) {
-      if (this.isEditMode) {
         const userChoice = await this.$confirm({
           title: this.$t('appointmentProgram.staffMember.confirm.delete.title'),
           messages: this.$t('appointmentProgram.staffMember.confirm.delete.message'),
@@ -217,7 +206,6 @@ export default Vue.extend({
             this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
           }
         }
-      }
     },
   },
 });
@@ -237,5 +225,9 @@ export default Vue.extend({
 
 .no-bottom-border {
   border-bottom: none;
+}
+
+.disabled {
+  opacity: 50%
 }
 </style>
