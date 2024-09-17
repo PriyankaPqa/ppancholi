@@ -18,18 +18,19 @@
       </v-col>
       <v-col md="4" class="pa-0">
         <v-select-a11y
-          v-model="selectedAppointmentProgram"
+          v-model="selectedAppointmentProgramId"
           outlined
           data-test="team_assignServiceOptions_appointmentProgram"
           attach
           hide-details
           dense
+          :return-object="false"
           :loading="loadingStaff"
           :menu-props="{ top: !selectedAppointmentProgram, offsetY: true, zIndex: 100 }"
           :label="$t('teams.assignServiceOptions.appointmentProgram')"
           :items="appointmentPrograms"
-          :item-text="(item) => $m(item.name)"
-          return-object />
+          :item-value="(item) => item.id"
+          :item-text="(item) => $m(item.name)" />
       </v-col>
     </v-row>
 
@@ -85,7 +86,8 @@ export default Vue.extend({
     return {
       TeamType,
       selectedEvent: null as IEventEntity,
-      selectedAppointmentProgram: null as IAppointmentProgram,
+      appointmentPrograms: [] as IAppointmentProgram[],
+      selectedAppointmentProgramId: '',
       appointmentProgramIds: [] as string[],
       loadingPrograms: false,
       loadingStaff: false,
@@ -97,8 +99,11 @@ export default Vue.extend({
       return useTeamStore().getById(this.teamId);
     },
 
-    appointmentPrograms(): IAppointmentProgram[] {
-      return useAppointmentProgramStore().getByIds(this.appointmentProgramIds);
+    selectedAppointmentProgram(): IAppointmentProgram {
+      if (this.selectedAppointmentProgramId) {
+        return useAppointmentProgramStore().getById(this.selectedAppointmentProgramId);
+      }
+      return null;
     },
 
     staffMembers(): Partial<IAppointmentStaffMember>[] {
@@ -117,7 +122,7 @@ export default Vue.extend({
       this.onSelectEvent();
     },
 
-    selectedAppointmentProgram(newValue) {
+    selectedAppointmentProgramId(newValue) {
       if (newValue) {
         this.fetchStaffMembers();
       }
@@ -132,7 +137,7 @@ export default Vue.extend({
 
   methods: {
     async onSelectEvent() {
-      this.selectedAppointmentProgram = null;
+      this.selectedAppointmentProgramId = '';
       await this.fetchAppointmentPrograms();
     },
 
@@ -144,7 +149,7 @@ export default Vue.extend({
         skip: 0,
       } });
       if (res) {
-        this.appointmentProgramIds = res.ids;
+        this.appointmentPrograms = res.values;
       }
       this.loadingPrograms = false;
     },
@@ -152,7 +157,7 @@ export default Vue.extend({
     async fetchStaffMembers() {
       this.loadingStaff = true;
       await useAppointmentStaffMemberStore().search({ params: {
-        filter: { 'Entity/AppointmentProgramId': { value: this.selectedAppointmentProgram.id, type: EFilterKeyType.Guid } },
+        filter: { 'Entity/AppointmentProgramId': { value: this.selectedAppointmentProgramId, type: EFilterKeyType.Guid } },
         top: 999,
         skip: 0,
       } });
