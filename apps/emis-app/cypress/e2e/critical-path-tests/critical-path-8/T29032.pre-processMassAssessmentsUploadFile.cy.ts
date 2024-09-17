@@ -33,7 +33,7 @@ const { filteredCanRoles, filteredCannotRoles, allRoles } = getRoles(canRoles, c
 let accessTokenL6 = '';
 const filePath = 'cypress/downloads/T29032MassAssessmentsFile.csv';
 
-describe('[T29032] Pre-process mass communication upload file', { tags: ['@assessments', '@mass-actions'] }, () => {
+describe('[T29032] Pre-process mass communication upload file.', { tags: ['@assessments', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
