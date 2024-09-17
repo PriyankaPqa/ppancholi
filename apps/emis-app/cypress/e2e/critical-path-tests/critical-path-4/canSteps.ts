@@ -131,7 +131,6 @@ export const potentialDuplicateCreatedSteps = ({ roleName, firstName, lastName, 
     manageDuplicatesPage.getActionDropdownInput().should('exist');
     manageDuplicatesPage.goToHouseholdProfilePage();
   }
-
   const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
   caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('potential duplicate');
   caseFileDetailsPage.getAllUserName().should('string', flaggedByUserName);
