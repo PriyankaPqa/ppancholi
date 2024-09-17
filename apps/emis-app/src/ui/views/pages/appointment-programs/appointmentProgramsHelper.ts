@@ -10,5 +10,5 @@ export function canDeleteServiceOption(appointmentProgram: IAppointmentProgram):
 }
 
 export function canSetActiveStatus(appointmentProgram: IAppointmentProgram, status: Status): boolean {
-  return status === Status.Inactive || appointmentProgram.serviceOptions.some((so) => !!so.staffMembers?.length);
+  return status === Status.Inactive || !!appointmentProgram.serviceOptions.length;
 }

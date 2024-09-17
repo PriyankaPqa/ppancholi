@@ -17,7 +17,7 @@
     "appointmentProgram.details.statusHistoryText.1": "Status set to active by {name} ({role}) - {date}",
     "appointmentProgram.details.statusHistoryText.2": "Status set to inactive by {name} ({role}) - {date}",
     "appointmentProgram.details.title": "Appointment program details",
-    "appointmentProgram.edit.changeStatus.error": "You cannot change the status of this appointment program. At least one service option and one staff member must be provided.",
+    "appointmentProgram.edit.changeStatus.error": "You cannot change the status of this appointment program. At least one service option must be provided.",
     "appointmentProgram.edit.changeStatus.failed": "There was an issue updating the appointment program status",
     "appointmentProgram.edit.changeStatus.rationale.message": "Updated by:",
     "appointmentProgram.edit.changeStatus.rationale.title": "Change the appointment program status",

@@ -46,9 +46,5 @@ describe('appointmentProgramsHelper', () => {
       const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [] });
       expect(canSetActiveStatus(program)).toBeFalsy();
     });
-    it('returns false if the status is active and the program has  service options without staff members', () => {
-      const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [mockServiceOption({ staffMembers: [] })] });
-      expect(canSetActiveStatus(program)).toBeFalsy();
-    });
   });
 });

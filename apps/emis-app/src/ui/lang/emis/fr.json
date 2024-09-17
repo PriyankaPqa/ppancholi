@@ -17,7 +17,7 @@
     "appointmentProgram.details.statusHistoryText.1": "Programme activé par {name} ({role}) - {date}",
     "appointmentProgram.details.statusHistoryText.2": "Programme désactivé par {name} ({role}) - {date}",
     "appointmentProgram.details.title": "Détails du programme de rendez-vous",
-    "appointmentProgram.edit.changeStatus.error": "Vous ne pouvez pas modifier le statut de ce programme de rendez-vous. Au moins une option de service et un membre du personnel doivent être fournis.",
+    "appointmentProgram.edit.changeStatus.error": "Vous ne pouvez pas modifier le statut de ce programme de rendez-vous. Au moins une option de service doit être fournis.",
     "appointmentProgram.edit.changeStatus.failed": "",
     "appointmentProgram.edit.changeStatus.rationale.message": "Mis à jour par :",
     "appointmentProgram.edit.changeStatus.rationale.title": "Modifier le statut du programme de rendez-vous",
