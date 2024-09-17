@@ -216,7 +216,7 @@ export default Vue.extend({
 
     async deleteServiceOption(serviceOption: IExtendedServiceOption) {
       if (this.isEditMode) {
-        helpers.deleteServiceOption(serviceOption.id, this.appointmentProgram, this);
+        await helpers.deleteServiceOption(serviceOption.id, this.appointmentProgram, this);
       } else {
         const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
         const updatedServiceOptions = [...this.serviceOptions];

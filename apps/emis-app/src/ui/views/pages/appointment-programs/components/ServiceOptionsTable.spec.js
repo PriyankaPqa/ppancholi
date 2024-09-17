@@ -150,37 +150,15 @@ describe('ServiceOptionsTable.vue', () => {
 
     describe('deleteServiceOption', () => {
       describe('in edit mode', () => {
-        it(' shows an error when deleting the last service option', () => {
-          helpers.canDeleteServiceOption = jest.fn(() => false);
-          mountWrapper(true, true);
-          wrapper.vm.deleteServiceOption(mockServiceOption());
-          expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.serviceOption.deleteUniqueServiceOption.error' });
-        });
-
-        it('calls confirm and calls store delete and a success message is displayed', async () => {
+        it('calls helper method', async () => {
           helpers.canDeleteServiceOption = jest.fn(() => true);
-          mountWrapper(true, true);
+          helpers.deleteServiceOption = jest.fn();
+          await mountWrapper(true, true);
           const so1 = mockServiceOption({ id: '1' });
           const so2 = mockServiceOption({ id: '2' });
           await wrapper.setProps({ serviceOptions: [so1, so2] });
-          wrapper.vm.$confirm = jest.fn(() => true);
           await wrapper.vm.deleteServiceOption(so2);
-          expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: 'appointmentProgram.serviceOption.confirm.delete.title',
-            messages: 'appointmentProgram.serviceOption.confirm.delete.message' });
-          expect(appointmentProgramStore.deleteServiceOption).toHaveBeenCalledWith(wrapper.vm.appointmentProgramId, so2.id);
-          expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('appointmentProgram.serviceOption.delete.success');
-        });
-
-        it('displays an error message on store call error', async () => {
-          helpers.canDeleteServiceOption = jest.fn(() => true);
-          mountWrapper(true, true);
-          const so1 = mockServiceOption({ id: '1' });
-          const so2 = mockServiceOption({ id: '2' });
-          await wrapper.setProps({ serviceOptions: [so1, so2] });
-          wrapper.vm.$confirm = jest.fn(() => true);
-          appointmentProgramStore.deleteServiceOption = jest.fn();
-          await wrapper.vm.deleteServiceOption(so2);
-          expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.serviceOption.delete.error');
+          expect(helpers.deleteServiceOption).toHaveBeenCalledWith(so2.id, wrapper.vm.appointmentProgram, wrapper.vm);
         });
       });
 

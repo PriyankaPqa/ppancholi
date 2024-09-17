@@ -180,6 +180,7 @@ export default Vue.extend({
         if (member?.serviceOptionIds) {
           member.serviceOptionIds.push(soId);
         } else {
+          // In team management, some team members are not staff members yet, so they need to be created in order to be passed as payload
           member = { userAccountId: userId, serviceOptionIds: [soId] };
         }
       } else {
@@ -189,6 +190,7 @@ export default Vue.extend({
       if (!this.inTeamManagement) {
         this.$emit('update:staffMembers', updatedStaffMembers);
       }
+      // In team management, only the updated team member is passed in the payload to update the staff members
       return member;
     },
 

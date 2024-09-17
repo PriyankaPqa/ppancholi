@@ -101,36 +101,16 @@ describe('ServiceOptionDetails.vue', () => {
     });
 
     describe('deleteServiceOption', () => {
-      it(' shows an error when deleting the last service option', async () => {
-        await mountWrapper();
-        helpers.canDeleteServiceOption = jest.fn(() => false);
-        await wrapper.vm.deleteServiceOption();
-        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.serviceOption.deleteUniqueServiceOption.error' });
-      });
-
-      it('calls confirm and calls store delete and a success message is displayed', async () => {
+      it('calls helper method and router back if ', async () => {
         const so2 = mockServiceOption({ id: '2' });
         await mountWrapper(true, { computed: { serviceOption() {
           return so2;
         } } });
-        wrapper.vm.$confirm = jest.fn(() => true);
         helpers.canDeleteServiceOption = jest.fn(() => true);
+        helpers.deleteServiceOption = jest.fn(() => true);
         await wrapper.vm.deleteServiceOption();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: 'appointmentProgram.serviceOption.confirm.delete.title',
-          messages: 'appointmentProgram.serviceOption.confirm.delete.message' });
-        expect(appointmentProgramStore.deleteServiceOption).toHaveBeenCalledWith(wrapper.vm.appointmentProgramId, so2.id);
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('appointmentProgram.serviceOption.delete.success');
-      });
-
-      it('displays an error message on store call error', async () => {
-        const so2 = mockServiceOption({ id: '2' });
-        await mountWrapper(true, { computed: { serviceOption() {
-          return so2;
-        } } });
-        wrapper.vm.$confirm = jest.fn(() => true);
-        appointmentProgramStore.deleteServiceOption = jest.fn();
-        await wrapper.vm.deleteServiceOption();
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.serviceOption.delete.error');
+        expect(helpers.deleteServiceOption).toHaveBeenCalledWith(so2.id, wrapper.vm.appointmentProgram, wrapper.vm);
+        expect(wrapper.vm.$router.back).toHaveBeenCalled();
       });
     });
   });
