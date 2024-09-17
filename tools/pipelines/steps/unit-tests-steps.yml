@@ -20,6 +20,7 @@ steps:
 - task: PublishPipelineArtifact@1
   condition: eq(variables['build.sourceBranch'], 'refs/heads/master') # We only publish coverage after merge, so no need to create the artifact here
   displayName: 'Create coverage artifacts'
+  continueOnError: true
   inputs:
     path: $(Build.SourcesDirectory)/coverage/ # Create artifact with what's inside coverage folder
 
