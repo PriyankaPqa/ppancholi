@@ -250,7 +250,6 @@ describe('CreateEditAppointmentProgram.vue', () => {
         mustHaveServiceOptions.mockImplementation(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
-        expect(wrapper.vm.showStaffMembersError).toBeTruthy();
       });
 
       it('calls the store createAppointmentProgram with the right payload', async () => {

@@ -33,6 +33,7 @@ jest.mock('@libs/services-lib/approval-tables/entity');
 jest.mock('@libs/services-lib/assessment-response/entity');
 jest.mock('@libs/services-lib/assessment-form/entity');
 jest.mock('@libs/services-lib/notifications/entity');
+jest.mock('@libs/services-lib/appointment-staff-members');
 
 describe('Provider', () => {
   it('should instantiate UserAccountsService', () => {

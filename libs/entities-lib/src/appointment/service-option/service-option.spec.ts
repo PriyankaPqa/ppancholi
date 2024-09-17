@@ -13,7 +13,6 @@ const mockData = mockServiceOption();
           expect(item.serviceOptionType).toEqual(mockData.serviceOptionType);
           expect(item.appointmentModalities).toEqual(mockData.appointmentModalities);
           expect(item.serviceOptionStatus).toEqual(mockData.serviceOptionStatus);
-          expect(item.staffMembers).toEqual(mockData.staffMembers);
         });
 
         it('should instantiate on empty', () => {
@@ -22,7 +21,6 @@ const mockData = mockServiceOption();
           expect(item.serviceOptionType).toEqual({ optionItemId: null, specifiedOther: null });
           expect(item.appointmentModalities).toEqual([]);
           expect(item.serviceOptionStatus).toEqual(Status.Active);
-          expect(item.staffMembers).toEqual([]);
         });
       });
     });

@@ -28,7 +28,7 @@ describe('>>> AppointmentStaffMembers Service', () => {
       await service.assignStaffMembers('id', staffMembers);
       expect(http.patch).toHaveBeenCalledWith('www.test.com/appointment/appointment-staff-members/assign-staff-members', {
         appointmentProgramId: 'id',
-        appointmentStaffMembers: [{ userAccountId: mockAppointmentStaffMember().userAccountId, serviceOptionIds: mockAppointmentStaffMember().serviceOptionIds }],
+        staffMembers: [{ userAccountId: mockAppointmentStaffMember().userAccountId, serviceOptionIds: mockAppointmentStaffMember().serviceOptionIds }],
       });
     });
   });

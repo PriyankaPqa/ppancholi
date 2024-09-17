@@ -5,5 +5,4 @@ export interface IServiceOption extends IEntity {
   serviceOptionType: IListOption;
   appointmentModalities: IListOption[];
   serviceOptionStatus: Status;
-  staffMembers: uuid[];
 }
