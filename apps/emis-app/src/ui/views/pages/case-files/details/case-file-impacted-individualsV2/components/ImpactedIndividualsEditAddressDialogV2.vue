@@ -71,7 +71,6 @@ import { IMember } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import { localStorageKeys } from '@/constants/localStorage';
-import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@libs/component-lib/components';
 import { useAddresses } from '@libs/registration-lib/components/forms/mixins/useAddresses';
@@ -187,7 +186,7 @@ export default mixins(caseFileDetail).extend({
     if (this.primaryMember) {
       this.backupAddress = this.temporaryAddressAsCurrentAddress(this.individual.currentAddress);
       this.editedAddress = new CurrentAddress(_cloneDeep(this.backupAddress));
-      this.sameAddress = _isEqual(this.editedAddress, this.primaryAddress);
+      this.sameAddress = CurrentAddress.areSimilar(this.editedAddress, this.primaryAddress);
       this.noFixedHome = this.household?.address?.address === null;
     }
   },
@@ -227,7 +226,7 @@ export default mixins(caseFileDetail).extend({
       const promises = [] as Array<Promise<ICaseFileIndividualEntity>>;
 
       const members = this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active
-        && i.id !== this.individual.id && _isEqual(this.temporaryAddressAsCurrentAddress(i.currentAddress), this.backupAddress));
+        && i.id !== this.individual.id && CurrentAddress.areSimilar(this.temporaryAddressAsCurrentAddress(i.currentAddress), this.backupAddress));
       members.forEach((otherMember) => {
         promises.push(useCaseFileIndividualStore().addTemporaryAddress(this.caseFileId, otherMember.id, newAddress));
       });
@@ -239,7 +238,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     setCurrentAddress(form: CurrentAddress) {
-      if (!_isEqual(new CurrentAddress(form), new CurrentAddress(this.backupAddress))) {
+      if (!CurrentAddress.areSimilar(new CurrentAddress(form), new CurrentAddress(this.backupAddress))) {
         this.changedAddress = true;
       } else {
         this.changedAddress = false;
