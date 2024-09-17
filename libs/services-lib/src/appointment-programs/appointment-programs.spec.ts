@@ -83,14 +83,6 @@ describe('>>> Appointment Programs Service', () => {
     });
   });
 
-  describe('assignStaffMembers', () => {
-    it('should call the proper endpoint', async () => {
-      const payload = { serviceOptions: [{ serviceOptionId: 'id', staffMembers: ['sm-id'] }] };
-      await service.assignStaffMembers('program-id', payload);
-      expect(http.patch).toHaveBeenCalledWith('appointment/program-id/staff-members', payload);
-    });
-  });
-
   describe('setAppointmentProgramStatus', () => {
     it('should call the proper endpoint', async () => {
       const entity = new AppointmentProgram(mockAppointmentProgram());

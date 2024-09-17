@@ -147,7 +147,6 @@ export default Vue.extend({
       serviceOptionType: { optionItemId: '', specifiedOther: null },
       appointmentModalities: [],
       serviceOptionStatus: Status.Active,
-      staffMembers: [],
     };
 
     if (!this.appointmentProgramId) {
