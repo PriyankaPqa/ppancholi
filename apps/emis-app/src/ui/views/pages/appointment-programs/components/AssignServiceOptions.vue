@@ -57,7 +57,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
-import { updateStaffMembers } from '../appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 
 export default Vue.extend({
   name: 'AssignServiceOptions',
@@ -196,7 +196,7 @@ export default Vue.extend({
       const updatedStaffMember = this.updateStaffMembersOnAssign(memberId, soId, value);
       if (this.inTeamManagement) {
         this.loading = true;
-        await updateStaffMembers(this.appointmentProgramId, [updatedStaffMember], this);
+        await helpers.updateStaffMembers(this.appointmentProgramId, [updatedStaffMember], this);
         this.loading = false;
       }
     },

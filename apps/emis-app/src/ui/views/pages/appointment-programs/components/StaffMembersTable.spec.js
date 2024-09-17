@@ -7,7 +7,6 @@ import { VDataTableA11y } from '@libs/component-lib/components';
 import { EFilterKeyType } from '@libs/component-lib/types';
 import Component from './StaffMembersTable.vue';
 
-jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 const { appointmentStaffMemberStore } = useMockAppointmentStaffMemberStore(pinia);

@@ -122,7 +122,7 @@ import { IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/appo
 import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
 import RcDataTable from '@libs/component-lib/components/organism/RcDataTable/RcDataTable.vue';
 import AssignServiceOptions from './AssignServiceOptions.vue';
-import { updateStaffMembers } from '../appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
@@ -311,7 +311,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
 
       this.loading = true;
-      const res = updateStaffMembers(this.appointmentProgramId, staffMembersPayload, this);
+      const res = helpers.updateStaffMembers(this.appointmentProgramId, staffMembersPayload, this);
       if (res) {
         this.$emit('update:show', false);
       } else {

@@ -77,7 +77,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { deleteServiceOption as helperDeleteServiceOption } from '../appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 
 export default Vue.extend({
   name: 'ServiceOptionDetails',
@@ -147,7 +147,7 @@ export default Vue.extend({
     },
 
    async deleteServiceOption() {
-      const res = await helperDeleteServiceOption(this.serviceOption.id, this.appointmentProgram, this);
+      const res = await helpers.deleteServiceOption(this.serviceOption.id, this.appointmentProgram, this);
       if (res) {
         this.$router.back();
       }

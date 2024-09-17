@@ -72,7 +72,7 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
-import { deleteServiceOption as helperDeleteServiceOption } from '../appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 import CreateEditServiceOption from '../create-edit/CreateEditServiceOption.vue';
 
 export interface IExtendedServiceOption extends IServiceOption {
@@ -216,7 +216,7 @@ export default Vue.extend({
 
     async deleteServiceOption(serviceOption: IExtendedServiceOption) {
       if (this.isEditMode) {
-        helperDeleteServiceOption(serviceOption.id, this.appointmentProgram, this);
+        helpers.deleteServiceOption(serviceOption.id, this.appointmentProgram, this);
       } else {
         const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
         const updatedServiceOptions = [...this.serviceOptions];

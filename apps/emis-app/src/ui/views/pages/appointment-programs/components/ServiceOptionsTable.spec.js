@@ -2,10 +2,9 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { mockServiceOption } from '@libs/entities-lib/appointment';
 import { VDataTableA11y } from '@libs/component-lib/components';
-import { canDeleteServiceOption } from '../appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 import Component from './ServiceOptionsTable.vue';
 
-jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 
@@ -152,14 +151,14 @@ describe('ServiceOptionsTable.vue', () => {
     describe('deleteServiceOption', () => {
       describe('in edit mode', () => {
         it(' shows an error when deleting the last service option', () => {
-          canDeleteServiceOption.mockImplementation(() => false);
+          helpers.canDeleteServiceOption = jest.fn(() => false);
           mountWrapper(true, true);
           wrapper.vm.deleteServiceOption(mockServiceOption());
           expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.serviceOption.deleteUniqueServiceOption.error' });
         });
 
         it('calls confirm and calls store delete and a success message is displayed', async () => {
-          canDeleteServiceOption.mockImplementation(() => true);
+          helpers.canDeleteServiceOption = jest.fn(() => true);
           mountWrapper(true, true);
           const so1 = mockServiceOption({ id: '1' });
           const so2 = mockServiceOption({ id: '2' });
@@ -173,7 +172,7 @@ describe('ServiceOptionsTable.vue', () => {
         });
 
         it('displays an error message on store call error', async () => {
-          canDeleteServiceOption.mockImplementation(() => true);
+          helpers.canDeleteServiceOption = jest.fn(() => true);
           mountWrapper(true, true);
           const so1 = mockServiceOption({ id: '1' });
           const so2 = mockServiceOption({ id: '2' });

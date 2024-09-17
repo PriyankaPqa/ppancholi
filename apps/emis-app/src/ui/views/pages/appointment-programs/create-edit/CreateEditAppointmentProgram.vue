@@ -154,7 +154,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { NavigationGuardNext, Route } from 'vue-router';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
-import { canSetActiveStatus, mustHaveServiceOptions } from '../appointmentProgramsHelper';
+import appointmentHelpers from '../appointmentProgramsHelpers';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -302,7 +302,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async onStatusChange(status: Status) {
       if (this.isEditMode) {
-        if (!canSetActiveStatus(this.appointmentProgram, status)) {
+        if (!appointmentHelpers.canSetActiveStatus(this.appointmentProgram, status)) {
           this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.edit.changeStatus.error') });
           return;
         }
@@ -328,7 +328,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submit() {
-      const mustHaveServiceOptionsIsValid = mustHaveServiceOptions(this.appointmentProgram);
+      const mustHaveServiceOptionsIsValid = appointmentHelpers.mustHaveServiceOptions(this.appointmentProgram);
       if (!mustHaveServiceOptionsIsValid) {
         this.showServiceOptionsError = true;
       }
