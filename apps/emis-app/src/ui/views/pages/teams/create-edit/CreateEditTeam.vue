@@ -160,7 +160,7 @@
                   @reloadTeam="reloadTeam" />
               </v-col>
               <v-col v-else class="pt-0">
-                <rc-tabs class="mb-0">
+                <rc-tabs class="mb-4">
                   <rc-tab
                     v-for="tab in tabs"
                     :key="tab"

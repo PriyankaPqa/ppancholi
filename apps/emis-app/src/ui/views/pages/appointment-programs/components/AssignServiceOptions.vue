@@ -1,13 +1,26 @@
 <template>
   <v-sheet rounded outlined class="ma-0 assign-table" height="100%" :loading="loading">
+    <div v-if="inTeamManagement" class="px-4 py-3 d-flex justify-end border-bottom">
+      <v-text-field
+        v-model="searchTerm"
+        class="search-field"
+        data-test="search-staff-member"
+        background-color="grey lighten-4"
+        :placeholder="$t('common.search')"
+        clearable
+        prepend-inner-icon="mdi-magnify"
+        outlined
+        hide-details
+        dense
+        @click:clear="searchTerm = ''" />
+    </div>
     <v-data-table-a11y
       data-test="assign-service-options__table"
       :headers="headers"
       :loading="loading"
       :class="{ 'in-program': !inTeamManagement }"
       dense
-      :options.sync="options"
-      :items="users">
+      :items="filteredUsers">
       <template v-if="users.length" #body="props">
         <tr v-for="item in props.items" :key="item.id">
           <td>
@@ -49,6 +62,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { VDataTableA11y, RcTooltip } from '@libs/component-lib/components';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
@@ -101,10 +115,14 @@ export default Vue.extend({
 
   data() {
     return {
+      searchTerm: '',
       loading: false,
-      options: {
-        page: 1,
-      },
+      searchAmong: [
+        'displayName',
+        'emailAddress',
+        'phoneNumber',
+        'roleName',
+      ],
     };
   },
 
@@ -148,6 +166,10 @@ export default Vue.extend({
         }
 
         return headers;
+    },
+
+    filteredUsers(): IUserAccountMetadata[] {
+      return sharedHelpers.filterCollectionByValue(this.users, this.searchTerm, false, this.searchAmong, true);
     },
   },
 
@@ -245,6 +267,15 @@ export default Vue.extend({
 
 .no-wrap{
   white-space: nowrap;
+}
+
+.border-bottom {
+   border-bottom: 1px solid var(--v-grey-lighten2);
+ }
+
+.search-field {
+  max-width: 250px;
+  border: solid 1px var(--v-grey-lighten2);
 }
 
 </style>

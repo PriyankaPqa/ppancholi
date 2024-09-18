@@ -1,6 +1,6 @@
 <template>
   <v-container class="px-0">
-    <v-row class="my-2 mx-0">
+    <v-row class="ma-0">
       <v-col v-if="team.teamType === TeamType.Standard" md="4" class="pl-0 py-0">
         <v-select-a11y
           v-model="selectedEvent"
