@@ -183,6 +183,7 @@
                 <team-assign-service-options
                   v-if="selectedTab === SelectedTab.AssignServiceOptions"
                   :team-id="team.id"
+                  data-test="assign-service-options-table"
                   :events="eventsForServiceOptionAssignment"
                   :team-members="teamMembers" />
               </v-col>

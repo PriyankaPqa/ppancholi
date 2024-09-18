@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockAppointmentStaffMember, mockServiceOption } from '@libs/entities-lib/appointment';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import helpers from '../appointmentProgramsHelpers';
 
 import Component from './AssignServiceOptions.vue';
@@ -113,6 +114,16 @@ describe('ManageStaffMembers.vue', () => {
             value: 'so_id-2',
           },
         ]);
+      });
+    });
+
+    describe('filteredUsers', () => {
+      it('calls filterCollectionByValue with the right arguments and returns the result', async () => {
+        sharedHelpers.filterCollectionByValue = jest.fn(() => [mockUserAccountMetadata()]);
+        await mountWrapper();
+        await wrapper.setData({ searchTerm: 'searchTerm' });
+        expect(sharedHelpers.filterCollectionByValue).toHaveBeenCalledWith(wrapper.vm.users, 'searchTerm', false, wrapper.vm.searchAmong, true);
+        expect(wrapper.vm.filteredUsers).toEqual([mockUserAccountMetadata()]);
       });
     });
   });
@@ -255,6 +266,19 @@ describe('ManageStaffMembers.vue', () => {
         const headers = wrapper.findAll('th');
         expect(headers.length)
           .toBe(3);
+      });
+    });
+
+    describe('search field', () => {
+      it('is rendered  if in team management', async () => {
+        await mountWrapper(true, false);
+        const el = wrapper.findDataTest('search-staff-member');
+        expect(el.exists()).toBeTruthy();
+      });
+      it('is not rendered if not in team management', async () => {
+        await mountWrapper(false, false);
+        const el = wrapper.findDataTest('search-staff-member');
+        expect(el.exists()).toBeFalsy();
       });
     });
   });

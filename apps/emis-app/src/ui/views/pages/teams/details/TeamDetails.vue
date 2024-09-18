@@ -157,6 +157,7 @@
                 :is-edit-mode="false" />
               <team-assign-service-options
                 v-if="selectedTab === SelectedTab.AssignServiceOptions"
+                data-test="assign-service-options-table"
                 :team-id="team.id"
                 :events="events"
                 :team-members="teamMembers" />
@@ -181,6 +182,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
 import { GlobalHandler } from '@libs/services-lib/http-client';
 import { IEventEntity } from '@libs/entities-lib/event';
+import TeamAssignServiceOptions from '../components/TeamAssignServiceOptions.vue';
 
 export enum SelectedTab {
   TeamMembers = 1,
@@ -195,6 +197,7 @@ export default Vue.extend({
     TeamMembersTable,
     RcTab,
     RcTabs,
+    TeamAssignServiceOptions,
   },
 
   props: {
