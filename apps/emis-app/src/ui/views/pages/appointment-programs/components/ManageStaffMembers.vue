@@ -164,7 +164,6 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   data() {
     return {
-      _isEqual,
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
       showAddStaffMembersDialog: false,
       loading: false,
