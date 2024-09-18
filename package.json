@@ -12,8 +12,8 @@
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
     "@vue/eslint-config-airbnb": "^7.0.0",
-    "@vue/eslint-config-typescript": "^8.0.0",
-    "@vue/vue2-jest": "28.0.1",
+    "@vue/eslint-config-typescript": "12.0.0",
+    "@vue/vue2-jest": "29.2.6",
     "adm-zip": "^0.5.10",
     "babel-jest": "29.7.0",
     "cobertura-merge": "^1.0.3",
@@ -26,7 +26,7 @@
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-vue": "^9.7.0",
-    "eslint-plugin-vuejs-accessibility": "^0.7.1",
+    "eslint-plugin-vuejs-accessibility": "2.4.1",
     "flush-promises": "^1.0.2",
     "fs-jetpack": "^4.3.1",
     "husky": ">=6",
@@ -42,7 +42,7 @@
     "jest-trx-results-processor": "^2.2.0",
     "lerna": "^4.0.0",
     "lerna-update-wizard": "^1.1.1",
-    "lint-staged": ">=10",
+    "lint-staged": "15.2.10",
     "node-gyp": "10.0.1",
     "prompt-sync": "^4.2.0",
     "regenerator-runtime": "^0.13.9",
@@ -121,7 +121,7 @@
   },
   "lint-staged": {
     "**/*.+(js|jx|ts|tsx|vue)": [
-      "eslint --fix --max-warnings=0"
+      "eslint --fix --max-warnings=0 --cache"
     ]
   },
   "resolutions": {
