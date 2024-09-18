@@ -29,7 +29,7 @@
     "eslint-plugin-vuejs-accessibility": "2.4.1",
     "flush-promises": "^1.0.2",
     "fs-jetpack": "^4.3.1",
-    "husky": ">=6",
+    "husky": "9.1.6",
     "identity-obj-proxy": "^3.0.0",
     "jest": "29.7.0",
     "jest-docblock": "29.7.0",
@@ -111,7 +111,7 @@
     "stores-lib:lint": "yarn --cwd libs/stores-lib lint",
     "stores-lib:test": "yarn jest --projects libs/stores-lib --maxWorkers=50%",
     "stores-lib:test:graph": "jest-heap-graph 'yarn stores-lib:test --logHeapUsage --no-cache'",
-    "prepare": "husky install",
+    "prepare": "husky",
     "fb": "node tools/scripts/feature-branch.js"
   },
   "workspaces": {
@@ -122,7 +122,7 @@
   },
   "lint-staged": {
     "**/*.+(js|jx|ts|tsx|vue)": [
-      "eslint --fix --max-warnings=0 --cache --debug"
+      "eslint --fix --max-warnings=0 --debug"
     ]
   },
   "resolutions": {
