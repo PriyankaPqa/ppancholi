@@ -351,12 +351,14 @@ export default Vue.extend({
     },
 
     teamMembers(newValue) {
-      this.$emit('update:teamMembersData', newValue);
+      if (this.$hasFeature(this.$featureKeys.AppointmentBooking)) {
+        this.$emit('update:teamMembersData', newValue);
+      }
     },
   },
 
   async created() {
-    if (this.teamMembersData.length) {
+    if (this.$hasFeature(this.$featureKeys.AppointmentBooking) && this.teamMembersData.length) {
       this.teamMembers = this.teamMembersData;
     } else if (!_isEmpty(this.team)) {
       await this.loadTeamMembers();

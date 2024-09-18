@@ -265,17 +265,13 @@ import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-a
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import TeamAssignServiceOptions from '../components/TeamAssignServiceOptions.vue';
+import { SelectedTab } from '../details/TeamDetails.vue';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
   displayName: string,
   id: string,
   email: string,
-}
-
-export enum SelectedTab {
-  TeamMembers = 1,
-  AssignServiceOptions = 2,
 }
 
 export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
