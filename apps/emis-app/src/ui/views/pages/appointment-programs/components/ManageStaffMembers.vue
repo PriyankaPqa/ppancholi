@@ -5,8 +5,8 @@
     :loading="loading"
     :cancel-action-label="$t('common.buttons.cancel')"
     :submit-action-label=" $t('common.confirm')"
-    :submit-button-disabled="false"
     :persistent="true"
+    :submit-button-disabled="submitDisabled"
     data-test="manage-staff-dialog"
     :tooltip-label="$t('common.tooltip_label')"
     fullscreen
@@ -108,6 +108,7 @@
 import mixins from 'vue-typed-mixins';
 import _cloneDeep from 'lodash/cloneDeep';
 import _difference from 'lodash/difference';
+import _isEqual from 'lodash/isEqual';
 import { RcDialog } from '@libs/component-lib/components';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useTeamStore } from '@/pinia/team/team';
@@ -217,6 +218,10 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     users(): IUserAccountMetadata[] {
       return useUserAccountMetadataStore().getByIds(this.userAccountIds);
+    },
+
+    submitDisabled(): boolean {
+      return _isEqual(this.staffMembers, this.initialStaffMembers);
     },
   },
 
