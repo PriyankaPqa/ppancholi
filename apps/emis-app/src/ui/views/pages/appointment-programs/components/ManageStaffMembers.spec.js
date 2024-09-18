@@ -75,6 +75,17 @@ describe('ManageStaffMembers.vue', () => {
         expect(wrapper.vm.userAccountIds).toEqual(['id-1', 'id-2']);
       });
     });
+
+    describe('submitDisabled', () => {
+      it('returns true if iniail staff members and staff members are the same', async () => {
+        await mountWrapper();
+        await wrapper.setProps({ initialStaffMembers: [mockAppointmentStaffMember({ id: 'x' })] });
+        await wrapper.setData({ staffMembers: [mockAppointmentStaffMember({ id: 'x' })] });
+        expect(wrapper.vm.submitDisabled).toBeTruthy();
+        await wrapper.setData({ staffMembers: [mockAppointmentStaffMember({ id: 'a' })] });
+        expect(wrapper.vm.submitDisabled).toBeFalsy();
+      });
+    });
   });
 
   describe('watcher', () => {
