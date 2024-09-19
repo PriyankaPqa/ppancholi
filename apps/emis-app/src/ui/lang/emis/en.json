@@ -3707,6 +3707,8 @@
     "team.event.confirmDeleteDialog.message": "Are you sure you want to delete {name}?",
     "team.event.confirmDeleteDialog.title": "Delete event",
     "team.filter": "Filter teams",
+    "team.tab.title--AssignServiceOptions": "Assign service options",
+    "team.tab.title--TeamMembers": "Team members",
     "team_stats.case_files.label": "Case files",
     "team_stats.closed.label": "Closed",
     "team_stats.event.placeholder": "Event name",
@@ -3720,6 +3722,8 @@
     "teams.add_team": "Add team",
     "teams.adhoc_team_created": "The ad hoc team has been successfully created.",
     "teams.appointments": "Appointments",
+    "teams.assignServiceOptions.appointmentProgram": "Appointment program",
+    "teams.assignServiceOptions.event": "Event",
     "teams.count_file.inactive": "Inactive",
     "teams.count_file.open": "Open",
     "teams.count_file.total": "Case files",
@@ -3860,9 +3864,5 @@
     "zendesk.question.create_case_note": "How to create a case note?",
     "zendesk.question.forgot_password": "Forgot password?",
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
-    "zendesk.question.select_language_preferences": "How do I select my language preferences?",
-    "team.tab.title--TeamMembers": "Team members",
-    "team.tab.title--AssignServiceOptions": "Assign service options",
-    "teams.assignServiceOptions.event": "Event",
-    "teams.assignServiceOptions.appointmentProgram": "Appointment program"
+    "zendesk.question.select_language_preferences": "How do I select my language preferences?"
 }
