@@ -8,7 +8,8 @@ module.exports = {
     ecmaVersion: 'latest',
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
-    project: 'tsconfig.eslint.json',
+    tsconfigRootDir: __dirname,
+    project: ['./tsconfig.eslint.json'],
     extraFileExtensions: ['.vue'],
   },
   extends: [
