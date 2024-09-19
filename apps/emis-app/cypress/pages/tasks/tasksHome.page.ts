@@ -28,6 +28,7 @@ export enum DataTest {
   dialogTeamToAssign = 'task-action-dialog-team-assign-to',
   dialogRadioTaskCompleted = '"task-action-dialog-radio-Task completed"',
   dialogRadioActionCompleted = '"task-action-dialog-radio-Action completed"',
+  dialogRadioActionReOpen = '"task-action-dialog-radio-Re-open task"',
   dialogRadioCompleted = 'task-action-dialog-radio-Completed',
   dialogRadioCancel = 'task-action-dialog-radio-Cancel',
   dialogRadioLabelCompleted = 'task-action-dialog-radio-label-Completed',
@@ -83,6 +84,8 @@ export class TasksHomePage {
   private dialogRadioTaskCompleted = { selector: DataTest.dialogRadioTaskCompleted, type: 'input' };
 
   private dialogRadioActionCompleted = { selector: DataTest.dialogRadioActionCompleted, type: 'input' };
+
+  private dialogRadioActionReOpen = { selector: DataTest.dialogRadioActionReOpen, type: 'input' };
 
   private dialogRadioCompleted = { selector: DataTest.dialogRadioCompleted, type: 'input' };
 
@@ -246,6 +249,10 @@ export class TasksHomePage {
 
   public getDialogCompletedCheckbox() {
     return cy.getByDataTest(this.dialogRadioCompleted);
+  }
+
+  public getDialogReOpenCheckbox() {
+    return cy.getByDataTest(this.dialogRadioActionReOpen);
   }
 
   public getDialogCancelledCheckbox() {
