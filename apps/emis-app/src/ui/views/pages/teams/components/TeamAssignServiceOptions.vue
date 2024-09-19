@@ -37,8 +37,9 @@
     <v-row v-if="selectedAppointmentProgram" class="mx-0">
       <v-col md="12" class="px-0">
         <assign-service-options
+          data-test="team_assignServiceOptions_table"
           :service-options="selectedAppointmentProgram.serviceOptions"
-          :users="teamMembers.map(m=> m.metadata)"
+          :users="teamMembers.map(m => m.metadata)"
           :appointment-program-id="selectedAppointmentProgram.id"
           :staff-members="staffMembers"
           in-team-management />
@@ -56,6 +57,7 @@ import { IAppointmentProgram, IAppointmentStaffMember } from '@libs/entities-lib
 import { IEventEntity } from '@libs/entities-lib/event';
 import { ITeamEntity, ITeamMemberAsUser, TeamType } from '@libs/entities-lib/team';
 import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
+import { VSelectA11y } from '@libs/component-lib/components';
 import AssignServiceOptions from '../../appointment-programs/components/AssignServiceOptions.vue';
 
 export default Vue.extend({
@@ -63,6 +65,7 @@ export default Vue.extend({
 
   components: {
     AssignServiceOptions,
+    VSelectA11y,
   },
 
   props: {
@@ -107,7 +110,10 @@ export default Vue.extend({
     },
 
     staffMembers(): Partial<IAppointmentStaffMember>[] {
-      return useAppointmentStaffMemberStore().getByAppointmentProgramId(this.selectedAppointmentProgram.id);
+      if (this.selectedAppointmentProgramId) {
+        return useAppointmentStaffMemberStore().getByAppointmentProgramId(this.selectedAppointmentProgramId);
+      }
+      return [];
     },
   },
 
@@ -118,8 +124,10 @@ export default Vue.extend({
       }
     },
 
-    selectedEvent() {
-      this.onSelectEvent();
+    selectedEvent(newValue) {
+      if (newValue) {
+        this.onSelectEvent();
+      }
     },
 
     selectedAppointmentProgramId(newValue) {

@@ -33,6 +33,7 @@
             <v-simple-checkbox
               :data-test="`assign_service_option_${so.id}_${item.id}`"
               :ripple="false"
+              :disabled="!$hasLevel(UserRoles.level4)"
               :value=" isMemberAssigned(so.id, item.id)"
               @input="onCheckAssign({ memberId: item.id, soId: so.id, value: $event })" />
           </td>
@@ -70,6 +71,7 @@ import { DataTableHeader } from 'vuetify';
 import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IAppointmentStaffMember } from '@libs/entities-lib/appointment';
+import { UserRoles } from '@libs/entities-lib/user';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
 import helpers from '../appointmentProgramsHelpers';
 
@@ -115,6 +117,7 @@ export default Vue.extend({
 
   data() {
     return {
+      UserRoles,
       searchTerm: '',
       loading: false,
       searchAmong: [
