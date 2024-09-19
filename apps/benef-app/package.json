@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "lint": "eslint . --fix --max-warnings=0",
+    "lint": "eslint . --fix --max-warnings=0 --cache",
     "lokalise:down": "node ../../tools/scripts/lokalise.js down benef-app",
     "lokalise:up": "node ../../tools/scripts/lokalise.js up benef-app",
     "lokalise": "yarn lokalise:up && yarn lokalise:down",

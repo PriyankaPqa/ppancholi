@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "serve": "vite preview",
-    "lint": "eslint . --fix --max-warnings=0",
+    "lint": "eslint . --fix --max-warnings=0 --cache",
     "lokalise:down": "node ../../tools/scripts/lokalise.js down emis-app",
     "lokalise:up": "node ../../tools/scripts/lokalise.js up emis-app",
     "lokalise:upErrors": "node ../../tools/scripts/lokalise.js upErrors",

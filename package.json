@@ -122,7 +122,7 @@
   },
   "lint-staged": {
     "**/*.+(js|jx|ts|tsx|vue)": [
-      "eslint --fix --max-warnings=0 --cache"
+      "eslint --fix --max-warnings=0"
     ]
   },
   "resolutions": {
