@@ -83,13 +83,14 @@ describe('TeamAssignServiceOptions.vue', () => {
 
   describe('watch', () => {
     describe('selectedEvent', () => {
-      it('calls onSelectEvent', async () => {
+      it('calls fetchAppointmentPrograms', async () => {
         teamStore.getById = jest.fn(() => mockTeamEntity());
         await mountWrapper();
-        wrapper.vm.onSelectEvent = jest.fn();
-        expect(wrapper.vm.onSelectEvent).toHaveBeenCalledTimes(0);
+        wrapper.vm.fetchAppointmentPrograms = jest.fn();
+        wrapper.setData({ selectedAppointmentProgramId: 'abc' });
         await wrapper.setData({ selectedEvent: mockEventEntity({ id: 'ev-new-1' }) });
-        expect(wrapper.vm.onSelectEvent).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.selectedAppointmentProgramId).toEqual('');
+        expect(wrapper.vm.fetchAppointmentPrograms).toHaveBeenCalled();
       });
     });
 
@@ -154,17 +155,6 @@ describe('TeamAssignServiceOptions.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('onSelectEvent', () => {
-      it('resets selectedAppointmentProgramId and calls fetchAppointmentProgram', async () => {
-        await mountWrapper();
-        wrapper.vm.fetchAppointmentPrograms = jest.fn();
-        wrapper.setData({ selectedAppointmentProgramId: 'abc' });
-        await wrapper.vm.onSelectEvent();
-        expect(wrapper.vm.selectedAppointmentProgramId).toEqual('');
-        expect(wrapper.vm.fetchAppointmentPrograms).toHaveBeenCalled();
-      });
-    });
-
     describe('fetchAppointmentPrograms', () => {
       it('calls useAppointmentProgramStore and sets the appointmentPrograms', async () => {
         const program = mockAppointmentProgram();

@@ -124,9 +124,10 @@ export default Vue.extend({
       }
     },
 
-    selectedEvent(newValue) {
+    async selectedEvent(newValue) {
       if (newValue) {
-        this.onSelectEvent();
+        this.selectedAppointmentProgramId = '';
+        await this.fetchAppointmentPrograms();
       }
     },
 
@@ -144,11 +145,6 @@ export default Vue.extend({
   },
 
   methods: {
-    async onSelectEvent() {
-      this.selectedAppointmentProgramId = '';
-      await this.fetchAppointmentPrograms();
-    },
-
     async fetchAppointmentPrograms() {
       this.loadingPrograms = true;
       const res = await useAppointmentProgramStore().search({ params: {
