@@ -145,7 +145,6 @@ describe('StaffMembersTable.vue', () => {
         await wrapper.vm.fetchStaffMembers();
         expect(appointmentStaffMemberStore.search).toHaveBeenCalledWith({ params: {
           filter: { 'Entity/AppointmentProgramId': { value: 'appt-program-id', type: EFilterKeyType.Guid } },
-          top: 999,
           skip: 0,
         } });
       });

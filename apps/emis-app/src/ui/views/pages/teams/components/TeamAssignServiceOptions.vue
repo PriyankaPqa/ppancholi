@@ -149,7 +149,6 @@ export default Vue.extend({
       this.loadingPrograms = true;
       const res = await useAppointmentProgramStore().search({ params: {
         filter: { 'Entity/EventId': { value: this.selectedEvent.id, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
-        top: 999,
         skip: 0,
       } });
       if (res) {
@@ -162,7 +161,6 @@ export default Vue.extend({
       this.loadingStaff = true;
       await useAppointmentStaffMemberStore().search({ params: {
         filter: { 'Entity/AppointmentProgramId': { value: this.selectedAppointmentProgramId, type: EFilterKeyType.Guid } },
-        top: 999,
         skip: 0,
       } });
       this.loadingStaff = false;

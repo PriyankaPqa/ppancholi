@@ -164,7 +164,6 @@ describe('TeamAssignServiceOptions.vue', () => {
         await wrapper.vm.fetchAppointmentPrograms();
         expect(appointmentProgramStore.search).toHaveBeenCalledWith({ params: {
           filter: { 'Entity/EventId': { value: mockEventEntity().id, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
-          top: 999,
           skip: 0,
         } });
         expect(wrapper.vm.appointmentPrograms).toEqual([program]);
@@ -178,7 +177,6 @@ describe('TeamAssignServiceOptions.vue', () => {
         await wrapper.vm.fetchStaffMembers();
         expect(appointmentStaffMemberStore.search).toHaveBeenCalledWith({ params: {
           filter: { 'Entity/AppointmentProgramId': { value: 'p-id', type: EFilterKeyType.Guid } },
-          top: 999,
           skip: 0,
         } });
       });
