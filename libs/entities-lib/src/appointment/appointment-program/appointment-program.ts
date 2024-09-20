@@ -27,15 +27,15 @@ export class AppointmentProgram extends BaseEntity {
   constructor(data?: IAppointmentProgram) {
     if (data) {
       super(data);
-      this.eventId = data?.eventId;
-      this.name = data?.name;
-      this.timeZone = data?.timeZone;
-      this.businessHours = data?.businessHours ? _cloneDeep(data.businessHours) : [];
-      this.serviceOptions = data?.serviceOptions ? _cloneDeep(data.serviceOptions) : [];
-      this.appointmentProgramStatus = data?.appointmentProgramStatus;
-      this.emailConfirmationSubject = data?.emailConfirmationSubject;
-      this.emailConfirmationMessage = data?.emailConfirmationMessage;
-      this.appointmentProgramStatusHistory = _cloneDeep(data?.appointmentProgramStatusHistory);
+      this.eventId = data.eventId;
+      this.name = data.name;
+      this.timeZone = data.timeZone;
+      this.businessHours = data.businessHours ? _cloneDeep(data.businessHours) : [];
+      this.serviceOptions = data.serviceOptions ? _cloneDeep(data.serviceOptions) : [];
+      this.appointmentProgramStatus = data.appointmentProgramStatus;
+      this.emailConfirmationSubject = data.emailConfirmationSubject;
+      this.emailConfirmationMessage = data.emailConfirmationMessage;
+      this.appointmentProgramStatusHistory = _cloneDeep(data.appointmentProgramStatusHistory);
     } else {
       super();
       this.eventId = null;

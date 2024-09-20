@@ -12,18 +12,12 @@
     @update:options="$emit('update:options', $event)"
     @click:row="$emit('click:row', $event)"
     @input="$emit('input', $event)">
-    <template #no-data>
-      <slot name="no-data" />
-    </template>
-    <template #expanded-item="data">
-      <slot name="expanded-item" v-bind="data" />
-    </template>
-    <template
-      v-for="col in customColumns"
-      #[`item.${col}`]="data">
-      <slot
-        :name="`item.${col}`"
-        v-bind="data" />
+    <!-- Pass on all named slots -->
+    <slot v-for="slot in Object.keys($slots)" :slot="slot" :name="slot" />
+
+    <!-- Pass on all scoped slots -->
+    <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="scope">
+      <slot :name="slot" v-bind="scope" />
     </template>
   </v-data-table-a11y>
 </template>

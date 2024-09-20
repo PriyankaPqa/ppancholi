@@ -1,10 +1,10 @@
 import { mockBaseData } from '../../base';
 import { mockBusinessHours } from '../appointment-program/appointment-program.mock';
-import { IStaffMemberAvailability } from './staff-member-availability.types';
+import { IAppointmentStaffMember } from './appointment-staff-member.types';
 
-export const mockStaffMemberAvailability = (force? : Partial<IStaffMemberAvailability>): IStaffMemberAvailability => ({
+export const mockAppointmentStaffMember = (force? : Partial<IAppointmentStaffMember>): IAppointmentStaffMember => ({
   ...mockBaseData(),
-  staffMemberId: 'mock-staffMemberId',
+  userAccountId: 'mock-staffMemberId',
   appointmentProgramId: 'mock-appointmentProgramId',
   useBusinessHours: false,
   serviceOptionIds: ['mock-serviceOptionId'],

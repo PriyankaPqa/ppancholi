@@ -246,9 +246,9 @@ export const personAddressHistoryViewDs : IDatasourceBase = {
 
 export const personTemporaryAddressHistoryViewDs : IDatasourceBase = {
   columns: ([
-    ...personViewDs.columns, 
+    ...personViewDs.columns,
     { dataField: 'paymentsRelatedNumbersCsv', dataType: 'string', visible: false },
-  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` }))
+  ] as ExtendedColumn[]).map((x) => ({ ...x, caption: `ds.person.${x.dataField}` })),
 };
 
 export const taskViewDS : IDatasourceBase = {

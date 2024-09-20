@@ -19,6 +19,8 @@ import { usePersonStore } from '@/pinia/person/person';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useTaskStore } from '@/pinia/task/task';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
+import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
 import { SignalR } from './signalR';
 
 const service = mockSignalRService();
@@ -149,6 +151,20 @@ describe('signalR', () => {
       conn.massActionNotifications = jest.fn();
       conn.createBindings();
       expect(conn.massActionNotifications)
+        .toHaveBeenCalled();
+    });
+
+    it('calls listenForAppointmentProgramModuleChanges', () => {
+      conn.listenForAppointmentProgramModuleChanges = jest.fn();
+      conn.createBindings();
+      expect(conn.listenForAppointmentProgramModuleChanges)
+        .toHaveBeenCalled();
+    });
+
+    it('calls listenForAppointmentStaffMemberModuleChanges', () => {
+      conn.listenForAppointmentStaffMemberModuleChanges = jest.fn();
+      conn.createBindings();
+      expect(conn.listenForAppointmentStaffMemberModuleChanges)
         .toHaveBeenCalled();
     });
   });
@@ -508,6 +524,49 @@ describe('signalR', () => {
           domain: 'finance',
           entityName: 'ApprovalTable',
           action: useApprovalTableStore().setItemFromOutsideNotification,
+        });
+    });
+  });
+
+  describe('listenForAppointmentProgramModuleChanges', () => {
+    it('calls listenForChanges', () => {
+      conn.listenForAppointmentProgramModuleChanges();
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'appointment',
+          entityName: 'AppointmentProgram',
+          action: useAppointmentProgramStore().setItemFromOutsideNotification,
+        });
+    });
+
+    it('calls listenForOptionItemChanges', () => {
+      conn.listenForAppointmentProgramModuleChanges();
+      expect(conn.listenForOptionItemChanges)
+        .toHaveBeenCalledWith({
+          domain: 'appointment',
+          optionItemName: 'ServiceOptionType',
+          store: useAppointmentProgramStore(),
+          prop: 'serviceOptionTypesFetched',
+        });
+
+      expect(conn.listenForOptionItemChanges)
+        .toHaveBeenCalledWith({
+          domain: 'appointment',
+          optionItemName: 'AppointmentModality',
+          store: useAppointmentProgramStore(),
+          prop: 'appointmentModalitiesFetched',
+        });
+    });
+  });
+
+  describe('listenForAppointmentStaffMemberModuleChanges', () => {
+    it('calls listenForChanges', () => {
+      conn.listenForAppointmentStaffMemberModuleChanges();
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'appointment',
+          entityName: 'AppointmentStaffMember',
+          action: useAppointmentStaffMemberStore().setItemFromOutsideNotification,
         });
     });
   });

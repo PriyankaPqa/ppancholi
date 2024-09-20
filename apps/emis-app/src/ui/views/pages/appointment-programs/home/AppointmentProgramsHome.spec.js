@@ -233,8 +233,7 @@ describe('AppointmentProgramsHome.vue', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-        },
-        includeInactiveItems: false });
+        } });
       });
     });
 

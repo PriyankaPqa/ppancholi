@@ -1,8 +1,8 @@
 import { IEntity } from '../../base';
 import { IDateRange, IDaySchedule } from '../appointment-program/appointment-program.types';
 
-export interface IStaffMemberAvailability extends IEntity {
-  staffMemberId: uuid;
+export interface IAppointmentStaffMember extends IEntity {
+  userAccountId: uuid;
   appointmentProgramId: uuid;
   useBusinessHours: boolean;
   serviceOptionIds: uuid[];

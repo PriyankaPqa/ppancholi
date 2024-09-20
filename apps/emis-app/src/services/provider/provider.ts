@@ -24,6 +24,7 @@ import { PotentialDuplicatesService } from '@libs/services-lib/potential-duplica
 import { NotificationsService } from '@libs/services-lib/notifications/entity';
 import { QueriesService } from '@libs/services-lib/queries/entity';
 import { PersonsService } from '@libs/services-lib/persons/entity';
+import { AppointmentStaffMembersService } from '@libs/services-lib/appointment-staff-members';
 import { IProvider } from './provider.types';
 
 export const provider = (httpClient = client): IProvider => ({
@@ -52,4 +53,5 @@ export const provider = (httpClient = client): IProvider => ({
   potentialDuplicates: new PotentialDuplicatesService(httpClient),
   notifications: new NotificationsService(httpClient),
   queries: new QueriesService(httpClient),
+  appointmentStaffMembers: new AppointmentStaffMembersService(httpClient),
 });
