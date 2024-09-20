@@ -9,6 +9,7 @@ import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHo
 import helpers from '../appointmentProgramsHelpers';
 import Component from './CreateEditAppointmentProgram.vue';
 
+jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 useMockAppointmentStaffMemberStore(pinia);
