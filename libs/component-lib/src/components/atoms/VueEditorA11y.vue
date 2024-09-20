@@ -1,5 +1,6 @@
 <template>
   <vue-editor
+    :id="`${$attrs['id']}_inner`"
     ref="vueEditorA11y"
     v-bind="$attrs"
     v-on="$listeners" />

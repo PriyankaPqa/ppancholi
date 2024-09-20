@@ -67,7 +67,7 @@ export class NewMassCommunicationPage extends BaseCreateMassAction {
   }
 
   public fillCommunicationMessageText(messageText: string) {
-    cy.get('div[id="communication-message-text-editor"]').type(messageText);
+    cy.get('div[id="communication-message-text-editor_inner"]').type(messageText);
   }
 
   public uploadFile() {
