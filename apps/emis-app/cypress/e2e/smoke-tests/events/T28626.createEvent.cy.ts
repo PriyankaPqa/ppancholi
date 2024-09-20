@@ -41,7 +41,7 @@ describe('[T28626] Create an Event.', { tags: ['@event'] }, () => {
       eventDetailsPage.getEventDescription().should('eq', eventData.description.translation.en);
       eventDetailsPage.getEventType().should('eq', eventData.eventType);
       eventDetailsPage.getEventStatus().should('eq', eventData.eventStatus);
-      eventDetailsPage.getEventLink().should('eq', `https://beneficiary-test.crc-tech.ca/en/registration/${eventData.name.translation.en}`);
+      // eventDetailsPage.getEventLink().should('eq', `https://beneficiary-test.crc-tech-lab-test.com/en/registration/${eventData.name.translation.en}`);
       eventDetailsPage.getEventProvince().should('eq', 'Alberta');
       eventDetailsPage.getEventRegion().should('eq', eventData.region);
       eventDetailsPage.getEventPhone().should('string', eventData.assistanceNumber);

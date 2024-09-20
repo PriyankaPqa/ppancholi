@@ -568,11 +568,11 @@ describe('httpClient', () => {
       });
 
       it('removes GUIDs from url in error name for eventual grouping of similar errors', async () => {
-        const exception = { response: { status: 500, config: { url: 'https://emis-dev.crc-tech.ca/fr/events/da9dde49-8f34-4bab-bac8-bba8008b4005/financial-assistance/0da3d377-36f1-40af-b5c6-a0755fa494d9', method: 'GET' } } };
+        const exception = { response: { status: 500, config: { url: 'https://emis-dev.crc-tech-lab-test.com/fr/events/da9dde49-8f34-4bab-bac8-bba8008b4005/financial-assistance/0da3d377-36f1-40af-b5c6-a0755fa494d9', method: 'GET' } } };
         mockHttpClient.logToAppInsights(null, exception);
         expect(applicationInsights.trackException).toBeCalledWith(
-'https://emis-dev.crc-tech.ca/fr/events/GUID/financial-assistance/GUID http error 500',
-          { error: exception, failedMethod: 'GET', failedRequestUrl: 'https://emis-dev.crc-tech.ca/fr/events/da9dde49-8f34-4bab-bac8-bba8008b4005/financial-assistance/0da3d377-36f1-40af-b5c6-a0755fa494d9' },
+'https://emis-dev.crc-tech-lab-test.com/fr/events/GUID/financial-assistance/GUID http error 500',
+          { error: exception, failedMethod: 'GET', failedRequestUrl: 'https://emis-dev.crc-tech-lab-test.com/fr/events/da9dde49-8f34-4bab-bac8-bba8008b4005/financial-assistance/0da3d377-36f1-40af-b5c6-a0755fa494d9' },
 'httpClient',
 'GET',
 );
@@ -613,17 +613,17 @@ describe('httpClient', () => {
 
       it('should do nothing for unmapped domains', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev.crc-tech-lab-test.com',
           url: '/team/search/teams',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);
-        expect(request.baseURL).toBe('https://api-dev.crc-tech.ca');
+        expect(request.baseURL).toBe('https://api-dev.crc-tech-lab-test.com');
         expect(request.url).toBe('/team/search/teams');
       });
 
       it('should handle absolute urls', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev.crc-tech-lab-test.com',
           url: 'http://localhost/case-file/search/case-files',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);
@@ -633,7 +633,7 @@ describe('httpClient', () => {
 
       it('should handle absolute paths', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev.crc-tech-lab-test.com',
           url: '/case-file/search/case-files',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);
@@ -643,7 +643,7 @@ describe('httpClient', () => {
 
       it('should handle relative paths', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev.crc-tech-lab-test.com',
           url: 'case-file/search/case-files',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);

@@ -137,7 +137,26 @@ export class HouseholdProfilePage {
     return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
   }
 
+  public getCaseFileNumberElement() {
+    return cy.getByDataTest(this.caseFileNumber);
+  }
+
+  public refreshUntilCaseFileNumberLinkClickable() {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => this.getCaseFileNumberElement().should('be.visible'),
+        checkCondition: () => Cypress.$('a[data-test="household_profile_case_file_number"][href^="/en/casefile/"]').length > 0,
+      },
+      {
+        errorMsg: 'case file link unclickable',
+        foundMsg: 'case file link active',
+      },
+    );
+  }
+
   public goToCaseFileDetailsPage() {
+    this.refreshUntilCaseFileNumberLinkClickable(); // refresh until the case file number link changes from span to link
+
     cy.interceptAndValidateCondition({
       httpMethod: 'GET',
       url: '**/case-file/case-files/*/activities',
