@@ -81,14 +81,14 @@ export default Vue.extend({
           if (e?.response?.data.errors) {
             this.errors = e.response.data.errors;
             applicationInsights.trackTrace(
-              `File upload error ${e.response.status}`,
+              `File upload error ${e.response?.status || 'unknown status'}`,
               { error: this.errors },
               'fileUpload',
               'uploadForm',
             );
           } else {
             applicationInsights.trackException(
-              `File upload error ${e.response.status}`,
+              `File upload error ${e.response?.status || 'unknown status'}`,
               { error: e },
               'fileUpload',
               'uploadForm',
