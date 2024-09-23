@@ -61,7 +61,7 @@ export default defineConfig({
       AZURE_TENANT_ID: process.env.CYPRESS_AZURE_TENANT_ID,
       AZURE_CLIENT_SECRET: process.env.CYPRESS_AZURE_CLIENT_SECRET,
       MSAL_API_SCOPES: process.env.CYPRESS_MSAL_API_SCOPES,
-      API_BASE_URL: 'https://api-dev.crc-tech-lab-test.com', // process.env.CYPRESS_API_BASE_URL,
+      API_BASE_URL: process.env.CYPRESS_API_BASE_URL,
       USER_6_MAIL: process.env.CYPRESS_USER_6_MAIL,
       USER_6_PASSWORD: process.env.CYPRESS_USER_6_PASSWORD,
       CUSTOM_ENV: '',
