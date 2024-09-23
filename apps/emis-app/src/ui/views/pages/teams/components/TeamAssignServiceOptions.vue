@@ -120,7 +120,7 @@ export default Vue.extend({
   watch: {
     events() {
       if (this.team.teamType === TeamType.AdHoc) {
-        this.selectedEvent = this.events[0];
+        this.selectedEvent = this.events?.[0];
       }
     },
 
@@ -140,12 +140,16 @@ export default Vue.extend({
 
  async created() {
     if (this.team.teamType === TeamType.AdHoc) {
-      this.selectedEvent = this.events[0];
+      this.selectedEvent = this.events?.[0];
     }
   },
 
   methods: {
     async fetchAppointmentPrograms() {
+      if (!this.selectedEvent?.id) {
+        return;
+      }
+
       this.loadingPrograms = true;
       const res = await useAppointmentProgramStore().search({ params: {
         filter: { 'Entity/EventId': { value: this.selectedEvent.id, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
