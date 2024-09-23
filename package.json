@@ -24,7 +24,7 @@
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-vue": "9.28.0",
     "eslint-plugin-vuejs-accessibility": "2.4.1",
     "flush-promises": "^1.0.2",
