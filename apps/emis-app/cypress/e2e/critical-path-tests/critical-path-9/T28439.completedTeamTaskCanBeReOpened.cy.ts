@@ -164,7 +164,7 @@ describe('[T28439] A completed Team task can be re-opened', { tags: ['@teams', '
           const teamTaskDetailsPage = tasksHomePage.goToTeamTaskById(this.teamTaskId);
           teamTaskDetailsPage.getPageTitleElement().contains('Team task details').should('be.visible');
           teamTaskDetailsPage.getHistoryButton().should('be.visible');
-          teamTaskDetailsPage.goToTaskHistory();
+          const taskHistoryPage = teamTaskDetailsPage.goToTaskHistory();
 
           assertTaskHistorySteps({
             roleName,
@@ -172,6 +172,10 @@ describe('[T28439] A completed Team task can be re-opened', { tags: ['@teams', '
             actionTaken: `Task reopened and assigned to ${this.assignableTeamName}`,
             index: 3,
           });
+
+          taskHistoryPage.getCloseButton().click();
+          taskHistoryPage.getCloseButton().should('not.exist');
+          teamTaskDetailsPage.getPageTitleElement().contains('Team task details').should('be.visible');
         });
       });
     }
