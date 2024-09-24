@@ -240,7 +240,7 @@ describe('TeamMembersTable.vue', () => {
     describe('primaryContact', () => {
       it('should call addMembers with the new primary contact, if it is not included in the team members list', async () => {
         await mountWrapper();
-        await wrapper.setData({ team: { teamMembers: [{ id: '1', isPrimaryContact: true }] } });
+        await wrapper.setData({ team: { teamMembers: [{ id: '123abc', isPrimaryContact: true }] } });
         wrapper.vm.addMembers = jest.fn();
         await wrapper.setProps({ primaryContact: mockCombinedUserAccount({ id: 'new-id' }) });
         expect(wrapper.vm.addMembers).toHaveBeenCalledWith([{ id: 'new-id' }], false);
@@ -254,6 +254,15 @@ describe('TeamMembersTable.vue', () => {
         wrapper.vm.loadTeamMembers = jest.fn();
         await wrapper.setProps({ teamId: 'aaa' });
         expect(wrapper.vm.loadTeamMembers).toBeCalledTimes(1);
+      });
+    });
+
+    describe('teamMembers', () => {
+      it('emits an update to the team members data if the feature flag is on', async () => {
+        await mountWrapper();
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        await wrapper.setData({ teamMembers: mockTeamMembers });
+        expect(wrapper.emitted('update:teamMembersData')[0][0]).toEqual(wrapper.vm.teamMembers);
       });
     });
   });

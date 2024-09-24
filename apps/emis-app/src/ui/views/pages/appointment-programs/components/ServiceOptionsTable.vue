@@ -72,7 +72,7 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
-import { canDeleteServiceOption } from '../appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 import CreateEditServiceOption from '../create-edit/CreateEditServiceOption.vue';
 
 export interface IExtendedServiceOption extends IServiceOption {
@@ -216,24 +216,7 @@ export default Vue.extend({
 
     async deleteServiceOption(serviceOption: IExtendedServiceOption) {
       if (this.isEditMode) {
-        if (!canDeleteServiceOption(this.appointmentProgram)) {
-          this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.serviceOption.deleteUniqueServiceOption.error') });
-          return;
-        }
-
-        const userChoice = await this.$confirm({
-          title: this.$t('appointmentProgram.serviceOption.confirm.delete.title'),
-          messages: this.$t('appointmentProgram.serviceOption.confirm.delete.message'),
-         });
-
-        if (userChoice) {
-          const res = await useAppointmentProgramStore().deleteServiceOption(this.appointmentProgramId, serviceOption.id);
-          if (res) {
-            this.$toasted.global.success(this.$t('appointmentProgram.serviceOption.delete.success'));
-          } else {
-            this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.delete.error'));
-          }
-        }
+        await helpers.deleteServiceOption(serviceOption.id, this.appointmentProgram, this);
       } else {
         const index = this.serviceOptions.findIndex((o) => o.tempId === serviceOption.tempId);
         const updatedServiceOptions = [...this.serviceOptions];

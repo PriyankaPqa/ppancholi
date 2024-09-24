@@ -18,7 +18,7 @@
         </v-row>
       </v-container>
       <v-container v-else>
-        <v-row justify="center" class="my-8">
+        <v-row justify="center" class="my-4">
           <v-col md="10" sm="12">
             <v-row class="firstSection">
               <v-col md="9" sm="12">
@@ -107,8 +107,8 @@
                   </v-col>
                 </v-row>
 
-                <v-row>
-                  <v-col cols="12">
+                <v-row class="mt-0">
+                  <v-col cols="12" class="pt-1 pb-0">
                     <events-selector
                       async-mode
                       fetch-all-events
@@ -127,7 +127,7 @@
                   </v-col>
                 </v-row>
 
-                <v-row>
+                <v-row class="mt-0">
                   <v-col cols="12" class="firstSection__actions">
                     <v-btn
                       :disabled="!$hasLevel(UserRoles.level5)"
@@ -147,8 +147,8 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-row class="mt-12">
-              <v-col class="pa-0">
+            <v-row class="mt-6">
+              <v-col v-if="!$hasFeature($featureKeys.AppointmentBooking) || !original.useForAppointments" class="pa-0">
                 <team-members-table
                   data-test="team-members-table"
                   :team-id="team.id"
@@ -156,7 +156,36 @@
                   :show-search="isEditMode"
                   :disable-add-members="!allowAddMembers"
                   :primary-contact="submittedPrimaryContactUser"
+                  :team-members-data.sync="teamMembers"
                   @reloadTeam="reloadTeam" />
+              </v-col>
+              <v-col v-else class="pt-0">
+                <rc-tabs class="mb-4">
+                  <rc-tab
+                    v-for="tab in tabs"
+                    :key="tab"
+                    :label="$t(`team.tab.title--${SelectedTab[tab]}`)"
+                    :data-test="`team.tab.title--${SelectedTab[tab]}`"
+                    :disabled="!teamMembers.length"
+                    :active="selectedTab === tab"
+                    @click="selectedTab = tab" />
+                </rc-tabs>
+                <team-members-table
+                  v-if="selectedTab === SelectedTab.TeamMembers"
+                  data-test="team-members-table"
+                  :team-id="team.id"
+                  :show-members="isEditMode"
+                  :show-search="isEditMode"
+                  :disable-add-members="!allowAddMembers"
+                  :primary-contact="submittedPrimaryContactUser"
+                  :team-members-data.sync="teamMembers"
+                  @reloadTeam="reloadTeam" />
+                <team-assign-service-options
+                  v-if="selectedTab === SelectedTab.AssignServiceOptions"
+                  :team-id="team.id"
+                  data-test="assign-service-options-table"
+                  :events="eventsForServiceOptionAssignment"
+                  :team-members="teamMembers" />
               </v-col>
             </v-row>
           </v-col>
@@ -202,23 +231,21 @@
 </template>
 
 <script lang="ts">
+
 import mixins from 'vue-typed-mixins';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
-  RcConfirmationDialog,
-  RcDialog,
-  RcPageContent,
-  VAutocompleteWithValidation,
-  VCheckboxWithValidation,
-  VTextFieldWithValidation,
+  RcConfirmationDialog, RcDialog, RcPageContent, VAutocompleteWithValidation,
+  VCheckboxWithValidation, VTextFieldWithValidation, RcTab, RcTabs,
 } from '@libs/component-lib/components';
 import _isEqual from 'lodash/isEqual';
 import _sortBy from 'lodash/sortBy';
 import {
   TeamType, TeamEntity, ITeamEntity,
+  ITeamMemberAsUser,
 } from '@libs/entities-lib/team';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
@@ -238,6 +265,8 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
+import TeamAssignServiceOptions from '../components/TeamAssignServiceOptions.vue';
+import { SelectedTab } from '../details/TeamDetails.vue';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -260,6 +289,9 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     RcDialog,
     RcConfirmationDialog,
     VCheckboxWithValidation,
+    TeamAssignServiceOptions,
+    RcTab,
+    RcTabs,
   },
 
   beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
@@ -280,6 +312,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
   data() {
     return {
       UserRoles,
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
       userAccounts: [] as IUserAccountCombined[],
       currentPrimaryContact: null as UserTeamMember,
       submittedPrimaryContactUser: null as IUserAccountCombined,
@@ -305,7 +338,10 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       showErrorDialog: false,
       errorMessage: '' as TranslateResult,
       isSubmitting: false,
-      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
+      tabs: [SelectedTab.TeamMembers, SelectedTab.AssignServiceOptions],
+      SelectedTab,
+      selectedTab: SelectedTab.TeamMembers,
+      teamMembers: [] as ITeamMemberAsUser[],
     };
   },
 
@@ -385,6 +421,10 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     hasCheckBoxes(): boolean {
       return this.$hasFeature(this.$featureKeys.TaskManagement) || this.$hasFeature(this.$featureKeys.Lodging)
       || this.$hasFeature(this.$featureKeys.AppointmentBooking);
+    },
+
+    eventsForServiceOptionAssignment(): IEventEntity[] {
+      return this.availableEvents.filter((e) => this.original.events.includes(e.id));
     },
   },
 

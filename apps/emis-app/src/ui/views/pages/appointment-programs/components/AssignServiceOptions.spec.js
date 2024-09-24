@@ -2,6 +2,8 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockAppointmentStaffMember, mockServiceOption } from '@libs/entities-lib/appointment';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
+import helpers from '../appointmentProgramsHelpers';
 
 import Component from './AssignServiceOptions.vue';
 
@@ -20,6 +22,7 @@ describe('ManageStaffMembers.vue', () => {
         users: [mockUserAccountMetadata()],
         serviceOptions: [mockServiceOption()],
         assignableTeamsIds: ['team-id'],
+        appointmentProgramId: 'appt-pr-id',
         inTeamManagement,
       },
       ...otherOptions,
@@ -113,6 +116,16 @@ describe('ManageStaffMembers.vue', () => {
         ]);
       });
     });
+
+    describe('filteredUsers', () => {
+      it('calls filterCollectionByValue with the right arguments and returns the result', async () => {
+        sharedHelpers.filterCollectionByValue = jest.fn(() => [mockUserAccountMetadata()]);
+        await mountWrapper();
+        await wrapper.setData({ searchTerm: 'searchTerm' });
+        expect(sharedHelpers.filterCollectionByValue).toHaveBeenCalledWith(wrapper.vm.users, 'searchTerm', false, wrapper.vm.searchAmong, true);
+        expect(wrapper.vm.filteredUsers).toEqual([mockUserAccountMetadata()]);
+      });
+    });
   });
 
   describe('methods', () => {
@@ -169,6 +182,13 @@ describe('ManageStaffMembers.vue', () => {
           { userAccountId: 'm-2', serviceOptionIds: ['so-2', 'so-1'] }]);
       });
 
+      it('creates and returns a new member if it doesnt exist yet', async () => {
+        await mountWrapper();
+        await wrapper.setProps({ staffMembers: [] });
+        const result = await wrapper.vm.updateStaffMembersOnAssign('m-11', 'so-1', true);
+        expect(result).toEqual({ userAccountId: 'm-11', serviceOptionIds: ['so-1'] });
+      });
+
       it('removes the service option from  the right staff member if the checkbox is unchecked and emits the updated staff members', async () => {
         await mountWrapper();
         await wrapper.setProps({
@@ -190,6 +210,26 @@ describe('ManageStaffMembers.vue', () => {
 
         await wrapper.vm.onRemoveUser('m-1');
         expect(wrapper.emitted('removeUser')[0][0]).toEqual('m-1');
+      });
+    });
+
+    describe('onCheckAssign', () => {
+      it('calls updateStaffMembersOnAssign and calls the helper with the result if in team management', async () => {
+        await mountWrapper(true);
+        wrapper.vm.updateStaffMembersOnAssign = jest.fn(() => mockAppointmentStaffMember());
+        helpers.updateStaffMembers = jest.fn();
+        await wrapper.vm.onCheckAssign({ memberId: 'm-1', soId: 'so-2', value: true });
+        expect(wrapper.vm.updateStaffMembersOnAssign).toHaveBeenCalledWith('m-1', 'so-2', true);
+        expect(helpers.updateStaffMembers).toHaveBeenCalledWith('appt-pr-id', [mockAppointmentStaffMember()], wrapper.vm);
+      });
+
+      it('calls updateStaffMembersOnAssign and does not calls the helper  if not in team management', async () => {
+        await mountWrapper(false);
+        wrapper.vm.updateStaffMembersOnAssign = jest.fn();
+        helpers.updateStaffMembers = jest.fn();
+        await wrapper.vm.onCheckAssign({ memberId: 'm-1', soId: 'so-2', value: true });
+        expect(wrapper.vm.updateStaffMembersOnAssign).toHaveBeenCalledWith('m-1', 'so-2', true);
+        expect(helpers.updateStaffMembers).not.toHaveBeenCalled();
       });
     });
   });
@@ -226,6 +266,19 @@ describe('ManageStaffMembers.vue', () => {
         const headers = wrapper.findAll('th');
         expect(headers.length)
           .toBe(3);
+      });
+    });
+
+    describe('search field', () => {
+      it('is rendered  if in team management', async () => {
+        await mountWrapper(true, false);
+        const el = wrapper.findDataTest('search-staff-member');
+        expect(el.exists()).toBeTruthy();
+      });
+      it('is not rendered if not in team management', async () => {
+        await mountWrapper(false, false);
+        const el = wrapper.findDataTest('search-staff-member');
+        expect(el.exists()).toBeFalsy();
       });
     });
   });

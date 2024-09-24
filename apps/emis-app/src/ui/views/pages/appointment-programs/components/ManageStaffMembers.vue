@@ -122,8 +122,8 @@ import { EFilterKeyType } from '@libs/component-lib/types';
 import { IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/appointment';
 import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
 import RcDataTable from '@libs/component-lib/components/organism/RcDataTable/RcDataTable.vue';
-import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
 import AssignServiceOptions from './AssignServiceOptions.vue';
+import helpers from '../appointmentProgramsHelpers';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ManageStaffMembers',
@@ -316,12 +316,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
 
       this.loading = true;
-      const res = await useAppointmentStaffMemberStore().assignStaffMembers(this.appointmentProgramId, staffMembersPayload);
+      const res = helpers.updateStaffMembers(this.appointmentProgramId, staffMembersPayload, this);
       if (res) {
-        this.$toasted.global.success(this.$t('appointmentProgram.staffMember.updated.success'));
         this.$emit('update:show', false);
       } else {
-        this.$toasted.global.error(this.$t('appointmentProgram.staffMember.updated.failed'));
         this.loading = false;
       }
     },
