@@ -111,7 +111,7 @@ export interface ICalendarEvent {
 }
 
 export default Vue.extend({
-  name: 'ReferralForm',
+  name: 'ApptFormPOC',
 
   components: {
     VSelectWithValidation,

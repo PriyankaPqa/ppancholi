@@ -3864,5 +3864,18 @@
     "zendesk.question.create_case_note": "How to create a case note?",
     "zendesk.question.forgot_password": "Forgot password?",
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
-    "zendesk.question.select_language_preferences": "How do I select my language preferences?"
+    "zendesk.question.select_language_preferences": "How do I select my language preferences?",
+    "caseFileDetail.menu_appointments": "Appointments",
+    "caseFile.appointments.title": "Appointments",
+    "caseFile.appointments.addAppointment": "Add appointment",
+    "caseFile.appointments.add.title": "Add appointment",
+    "caseFile.appointments.edit.title": "Edit appointment",
+    "caseFile.appointments.attendee": "Attendee",
+    "caseFile.appointments.duration": "Duration",
+    "caseFile.appointments.modality": "Modality",
+    "caseFile.appointments.setMeetingFor": "Set meeting for",
+    "caseFile.appointments.choseTime": "Chose time",
+    "caseFile.appointments.appointmentProgram": "Appointment program",
+    "caseFile.appointments.serviceOption": "Service option",
+    "caseFile.appointments.date": "Date"
 }

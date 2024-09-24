@@ -226,6 +226,24 @@ const routes = {
         name: 'casefile.task.details',
       },
     },
+    appointments: {
+      home: {
+        path: 'appointments',
+        name: 'casefile.appointments',
+      },
+      details: {
+        path: 'appointments/:appointmentId',
+        name: 'casefile.appointments.details',
+      },
+      edit: {
+        path: 'appointments/:appointmentId/edit',
+        name: 'casefile.appointments.edit',
+      },
+      add: {
+        path: 'appointments/add',
+        name: 'casefile.appointments.add',
+      },
+    },
   },
   events: {
     layout: {
