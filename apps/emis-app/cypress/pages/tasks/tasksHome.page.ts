@@ -28,6 +28,7 @@ export enum DataTest {
   dialogTeamToAssign = 'task-action-dialog-team-assign-to',
   dialogRadioTaskCompleted = '"task-action-dialog-radio-Task completed"',
   dialogRadioActionCompleted = '"task-action-dialog-radio-Action completed"',
+  dialogRadioActionReOpen = '"task-action-dialog-radio-Re-open task"',
   dialogRadioCompleted = 'task-action-dialog-radio-Completed',
   dialogRadioCancel = 'task-action-dialog-radio-Cancel',
   dialogRadioLabelCompleted = 'task-action-dialog-radio-label-Completed',
@@ -84,6 +85,8 @@ export class TasksHomePage {
 
   private dialogRadioActionCompleted = { selector: DataTest.dialogRadioActionCompleted, type: 'input' };
 
+  private dialogRadioActionReOpen = { selector: DataTest.dialogRadioActionReOpen, type: 'input' };
+
   private dialogRadioCompleted = { selector: DataTest.dialogRadioCompleted, type: 'input' };
 
   private dialogRadioCancel = { selector: DataTest.dialogRadioCancel, type: 'input' };
@@ -131,6 +134,10 @@ export class TasksHomePage {
     return cy.getByDataTest(this.createdTaskAssignedTo).getAndTrimText();
   }
 
+  public getCreatedTaskAssignedToElement() {
+    return cy.getByDataTest(this.createdTaskAssignedTo);
+  }
+
   public verifyCreatedTaskAssignedTeamName(teamName: string) {
     return cy.getByDataTest(this.createdTaskAssignedTo).contains(teamName).should('be.visible');
   }
@@ -167,6 +174,14 @@ export class TasksHomePage {
 
   public getCreatedTaskUserWorkingOn() {
     return cy.getByDataTest(this.createdTaskUserWorkingOn).getAndTrimText();
+  }
+
+  public verifyTaskTableUserWorkingOn(userName: string) {
+    return cy.getByDataTest(this.createdTaskUserWorkingOn).contains(userName).should('be.visible');
+  }
+
+  public getCreatedTaskUserWorkingOnElement() {
+    return cy.getByDataTest(this.createdTaskUserWorkingOn);
   }
 
   public getCreatedTaskDateAdded() {
@@ -234,6 +249,10 @@ export class TasksHomePage {
 
   public getDialogCompletedCheckbox() {
     return cy.getByDataTest(this.dialogRadioCompleted);
+  }
+
+  public getDialogReOpenCheckbox() {
+    return cy.getByDataTest(this.dialogRadioActionReOpen);
   }
 
   public getDialogCancelledCheckbox() {

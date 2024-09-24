@@ -37,6 +37,8 @@ import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/ca
 import { UserRoles } from '@libs/entities-lib/user';
 import { useNotificationStore } from '@/pinia/notification/notification';
 import { useTaskStore } from '@/pinia/task/task';
+import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
+import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
 import { INotificationEntity } from '@libs/entities-lib/notification';
 
 export interface IOptions {
@@ -184,6 +186,10 @@ export class SignalR implements ISignalR {
 
     // Approvals Table
     this.listenForApprovalTablesModuleChanges();
+
+    // Appointments
+    this.listenForAppointmentProgramModuleChanges();
+    this.listenForAppointmentStaffMemberModuleChanges();
   }
 
   private listenForUserRoleChanges() {
@@ -531,6 +537,40 @@ export class SignalR implements ISignalR {
     });
 
     this.watchedPiniaStores.push(useTaskStore());
+  }
+
+  private listenForAppointmentProgramModuleChanges() {
+    this.listenForChanges({
+      domain: 'appointment',
+      entityName: 'AppointmentProgram',
+      action: useAppointmentProgramStore().setItemFromOutsideNotification,
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'appointment',
+      optionItemName: 'ServiceOptionType',
+      store: useAppointmentProgramStore(),
+      prop: 'serviceOptionTypesFetched',
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'appointment',
+      optionItemName: 'AppointmentModality',
+      store: useAppointmentProgramStore(),
+      prop: 'appointmentModalitiesFetched',
+    });
+
+    this.watchedPiniaStores.push(useAppointmentProgramStore());
+  }
+
+  private listenForAppointmentStaffMemberModuleChanges() {
+    this.listenForChanges({
+      domain: 'appointment',
+      entityName: 'AppointmentStaffMember',
+      action: useAppointmentStaffMemberStore().setItemFromOutsideNotification,
+    });
+
+    this.watchedPiniaStores.push(useAppointmentStaffMemberStore());
   }
 
   private listenForChanges<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T, byUser: boolean)=> void }) {

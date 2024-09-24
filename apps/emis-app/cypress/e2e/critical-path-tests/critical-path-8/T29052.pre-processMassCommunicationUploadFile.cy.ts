@@ -37,7 +37,7 @@ const filePath = 'cypress/downloads/T29052MassCommunicationFile.csv';
 const attachFileName = 'T29052MockXlxsFile';
 const attachFilePath = `cypress/downloads/${attachFileName}.xlsx`;
 
-describe('[T29052] Pre-process mass communication upload file', { tags: ['@communications', '@mass-actions'] }, () => {
+describe('[T29052] Pre-process mass communication upload file.', { tags: ['@communications', '@mass-actions'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {

@@ -46,6 +46,7 @@ import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/ap
 import { IPowerBiTokenDetails, IQuery, QueryType } from '@libs/entities-lib/reporting';
 import { RcDataTableHeader } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
+import componentHelpers from '@libs/component-lib/helpers';
 import { UserRoles } from '@libs/entities-lib/user';
 import { ReportingPages } from './reportingPages';
 import { AllPbiReports, GeographicEmailMapL6En } from './standard_queries/PowerBiEmbedded';
@@ -113,8 +114,9 @@ export default Vue.extend({
     },
   },
 
-  mounted() {
+  async mounted() {
     this.loadReport();
+    await this.addA11yAttribute();
   },
 
   methods: {
@@ -215,6 +217,12 @@ export default Vue.extend({
           setTimeout(() => this.applyReportStateFromLink(), 1000);
         }
       });
+    },
+
+    addA11yAttribute() {
+      setTimeout(() => {
+        componentHelpers.setElementA11yAttribute('iframe', 'aria-label', 'iframe');
+      }, 1000);
     },
   },
 });

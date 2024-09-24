@@ -84,7 +84,7 @@ export const getCredentials = (as: UserRoles) => {
 
 export const buildAccountInfo = (tokenResponse: ServerAuthorizationTokenResponse): AccountInfo => {
   const useIdentityServer = !!Cypress.env('USE_IDS'); // FeatureKeys.UseIdentityServer
-  const environment = useIdentityServer ? 'ids.crc-tech.ca' : 'login.windows.net';
+  const environment = useIdentityServer ? 'ids.crc-tech-lab-test.com' : 'login.windows.net';
   const tenantId = Cypress.env('AZURE_TENANT_ID');
   const idToken = decode(tokenResponse.id_token) as TokenClaims;
   const localAccountId = idToken.oid || idToken.sid;
@@ -172,7 +172,7 @@ const buildIdTokenEntity = ({
 export const getInjectTokens = (tokenResponse: ServerAuthorizationTokenResponse): ITokens => {
   const useIdentityServer = !!Cypress.env('USE_IDS'); // FeatureKeys.UseIdentityServer
   // environment: could parse the token issuer, but this shouldn't be necessary
-  const environment = useIdentityServer ? 'ids.crc-tech.ca' : 'login.windows.net';
+  const environment = useIdentityServer ? 'ids.crc-tech-lab-test.com' : 'login.windows.net';
   const authorityType = useIdentityServer ? 'Generic' : 'MSSTS';
   const clientId = useIdentityServer ? 'cypress' : Cypress.env('AZURE_CLIENT_ID');
   const apiScopes = (useIdentityServer ? [Cypress.env('IDS_API_SCOPES')] : [Cypress.env('MSAL_API_SCOPES')]) as Array<string>;

@@ -1,4 +1,4 @@
-import { mockAppointment, DayOfWeek, mockStaffMemberAvailability } from '@libs/entities-lib/appointment';
+import { mockAppointment, DayOfWeek, mockServiceOption } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
 
 const today = helpers.getLocalStringDate(new Date(), 'local');
@@ -61,13 +61,54 @@ export const CUSTOM_SCHEDULE = [
 ];
 
 export const STAFF_AVAILABILITIES = [
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[0] }),
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[1], defaultbusinessHours: DEFAULT_SCHEDULE }),
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[2] }),
-  mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[3] }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[0] }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[1], defaultbusinessHours: DEFAULT_SCHEDULE }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[2] }),
+  // mockStaffMemberAvailability({ staffMemberId: STAFF_MEMBER_IDS[3] }),
 ];
 
 export const STAFF_MEMBER_AVAILABILITIES = [
   { startDateTime: `${today}T14:15:00.000Z`, endDateTime: `${today}T16:00:00.000Z` },
   { startDateTime: `${today}T17:00:00.000Z`, endDateTime: `${today}T20:00:00.000Z` },
+];
+
+export const SERVICE_OPTIONS = [
+  mockServiceOption({
+    id: '1',
+    serviceOptionType: { optionItemId: 'bcee1023-3425-4b0b-a7ab-007c494c1206' },
+    staffMembers: ['4eb26c9e-6eb7-46c3-96f1-6c9aeee7bc88', 'f6881215-bf50-45c9-a154-6d48d7d89afb'] }),
+  mockServiceOption({
+    id: 2,
+    serviceOptionType: { optionItemId: 'a5f4e694-753a-494f-ade6-ffdefc99bdf8' },
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678', '7e6a2022-b8a4-40e5-a0f0-b8721712e3c3', '9941b9eb-9a77-4e60-921c-111153c2f7e8'] }),
+
+  mockServiceOption({
+    id: 3,
+    serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+  mockServiceOption({
+    id: 4,
+    serviceOptionType: { optionItemId: 'ef922ec3-41de-476e-8afb-4b9e5d72b806' },
+    staffMembers: ['8f05945f-0093-447f-80b2-cee1b0826678'] }),
+];
+
+export const STAFF_MEMBERS_LAB = [
+  { appointmentProgramId: 'ea0b9336-7056-4de9-9a04-b325beb93846',
+    userAccountId: '8f05945f-0093-447f-80b2-cee1b0826678',
+    serviceOptionIds: ['eeae4bdb-3bad-49d8-b578-fefc0627bd90'],
+  },
+  { appointmentProgramId: 'ea0b9336-7056-4de9-9a04-b325beb93846',
+    userAccountId: '7e6a2022-b8a4-40e5-a0f0-b8721712e3c3',
+    serviceOptionIds: ['eeae4bdb-3bad-49d8-b578-fefc0627bd90'],
+  },
+];
+export const STAFF_MEMBERS = [
+  { appointmentProgramId: 'cc01cd3e-686b-4dbb-bc62-a8093996a669',
+    userAccountId: '4eb26c9e-6eb7-46c3-96f1-6c9aeee7bc88',
+    serviceOptionIds: ['bff48f65-b2c8-460d-9852-d0922fd86aa8'],
+  },
+  { appointmentProgramId: 'cc01cd3e-686b-4dbb-bc62-a8093996a669',
+    userAccountId: 'e7538d62-6b2e-4e09-a8da-6acc92214218',
+    serviceOptionIds: ['bff48f65-b2c8-460d-9852-d0922fd86aa8'],
+  },
 ];

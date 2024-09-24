@@ -66,7 +66,7 @@ describe('[T28820] Split Household.', { tags: ['@household'] }, () => {
           });
         });
         // eslint-disable-next-line
-        it('should successfully split the household', function() {
+        it('should successfully split the household', function () {
           const eventName = event.name.translation.en;
           const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;
           const lastNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.lastName;
@@ -152,7 +152,7 @@ describe('[T28820] Split Household.', { tags: ['@household'] }, () => {
   });
 
   describe('Cannot roles', () => {
-     for (const roleName of filteredCannotRoles) {
+    for (const roleName of filteredCannotRoles) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleName);

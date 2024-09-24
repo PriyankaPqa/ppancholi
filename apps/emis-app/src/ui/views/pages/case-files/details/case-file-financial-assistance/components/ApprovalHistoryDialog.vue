@@ -32,7 +32,7 @@
       <template #[`item.submittedBy.userName`]="{ item }">
         <div class="text-no-wrap" :data-test="`crc-personnel-item`">
           <b class="no-word-break">{{ item.submittedBy.userName }}</b>
-          <span v-if="item.submittedBy.roleName" class="pl-2 no-word-break">({{ $m(item.submittedBy.roleName) }})</span>
+          <span v-if="$m(item.submittedBy.roleName)" class="pl-2 no-word-break">({{ $m(item.submittedBy.roleName) }})</span>
         </div>
       </template>
       <template #[`item.rationale`]="{ item }">

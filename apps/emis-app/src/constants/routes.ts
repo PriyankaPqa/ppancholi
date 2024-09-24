@@ -494,6 +494,20 @@ const routes = {
         name: 'massActions.importUsers.details',
       },
     },
+    addRemoveTeamMembers: {
+      home: {
+        path: 'add-remove-team-members',
+        name: 'massActions.addRemoveTeamMembers.home',
+      },
+      create: {
+        path: 'add-remove-team-members/create',
+        name: 'massActions.addRemoveTeamMembers.create',
+      },
+      details: {
+        path: 'add-remove-team-members/details/:id',
+        name: 'massActions.addRemoveTeamMembers.details',
+      },
+    },
     fundingRequest: {
       home: {
         path: 'funding-request',

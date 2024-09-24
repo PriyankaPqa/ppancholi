@@ -1,5 +1,5 @@
 <template>
-  <v-menu bottom :close-on-click="closeOnClick">
+  <v-menu top :close-on-click="closeOnClick" :attach="true">
     <template #activator="{ on, attrs }">
       <v-btn :color="color" class="secondaryButton" v-bind="attrs" v-on="on">
         {{ buttonLabel }}

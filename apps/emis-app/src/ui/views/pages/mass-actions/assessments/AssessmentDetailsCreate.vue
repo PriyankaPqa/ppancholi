@@ -45,13 +45,13 @@
           <v-btn class="ma-2" small @click="clearEmailText(true)">
             {{ $t('common.clear') }}
           </v-btn>
-          <vue-editor id="content-before-link-editor" v-model="formCopy.emailTopCustomContent.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          <vue-editor-a11y id="content-before-link-editor" v-model="formCopy.emailTopCustomContent.translation[languageMode]" :editor-toolbar="toolbarSettings" />
 
           <span>{{ $t('massActions.assessment.create.emailBottomCustomContent.label') }}</span>
           <v-btn class="ma-2" small @click="clearEmailText(false)">
             {{ $t('common.clear') }}
           </v-btn>
-          <vue-editor id="content-after-link-editor" v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          <vue-editor-a11y id="content-after-link-editor" v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
         </v-col>
         <v-btn
           class="ma-2 preview"
@@ -80,7 +80,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VueEditor } from 'vue2-editor';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
@@ -92,7 +91,7 @@ import utils from '@libs/entities-lib/utils';
 import { ui } from '@/constants/ui';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import {
-  VSelectWithValidation, VTextFieldWithValidation,
+  VSelectWithValidation, VTextFieldWithValidation, VueEditorA11y,
 } from '@libs/component-lib/components';
 import EmailTemplatePreview from '@/ui/views/pages/mass-actions/components/EmailTemplatePreview.vue';
 import { EFilterKeyType } from '@libs/component-lib/types';
@@ -104,7 +103,7 @@ export default Vue.extend({
 
   components: {
     EventsSelector,
-    VueEditor,
+    VueEditorA11y,
     LanguageTabs,
     VSelectWithValidation,
     VTextFieldWithValidation,

@@ -172,8 +172,7 @@ export default mixins(TablePaginationSearchMixin).extend({
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-        },
-        includeInactiveItems: false });
+        } });
         return res;
       } finally {
         useAppointmentProgramStore().searchLoading = false;

@@ -16,9 +16,9 @@ export class ServiceOption extends BaseEntity {
   constructor(data?: IServiceOption) {
     if (data) {
       super(data);
-      this.serviceOptionType = data?.serviceOptionType;
-      this.appointmentModalities = data?.appointmentModalities ? _cloneDeep(data.appointmentModalities) : [];
-      this.serviceOptionStatus = data?.serviceOptionStatus;
+      this.serviceOptionType = data.serviceOptionType;
+      this.appointmentModalities = data.appointmentModalities ? _cloneDeep(data.appointmentModalities) : [];
+      this.serviceOptionStatus = data.serviceOptionStatus;
     } else {
       super();
       this.serviceOptionType = { optionItemId: null, specifiedOther: null };

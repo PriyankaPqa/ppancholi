@@ -77,13 +77,9 @@
                   <v-divider />
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
 
-          <v-row justify="center">
-            <v-col>
               <v-row justify="center">
-                <v-col cols="12" xl="8" lg="9" md="11">
+                <v-col cols="12">
                   <div class="fw-bold pb-4">
                     {{ $t('appointmentProgram.section.serviceOptions') }}
                   </div>
@@ -99,31 +95,41 @@
                     :is-edit-mode="isEditMode" />
                 </v-col>
               </v-row>
+
+              <v-row v-if="!isEditMode">
+                <v-col cols="12" class="d-flex justify-end pb-4">
+                  <v-btn class="mr-4" data-test="appointment-program-create-cancel" @click.stop="back()">
+                    {{ $t('common.cancel') }}
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    data-test="appointment-program-create-submit"
+                    :loading="loading"
+                    :disabled="failed || loading || scheduleHasError || showServiceOptionsError"
+                    @click.stop="submit">
+                    {{ $t('common.buttons.create') }}
+                  </v-btn>
+                </v-col>
+                <v-col cols="12">
+                  <v-divider />
+                </v-col>
+              </v-row>
+
               <v-row justify="center">
-                <v-col cols="12" xl="8" lg="9" md="11">
-                  <div class="fw-bold pb-4">
+                <v-col cols="12">
+                  <div class="fw-bold pb-4" :class="{ disabled: !isEditMode }">
                     {{ $t('appointmentProgram.section.staffMembers') }}
                   </div>
-                  <staff-members-table :appointment-program-id="appointmentProgram.id" />
+                  <staff-members-table
+                    :appointment-program-id="appointmentProgram.id"
+                    :disabled="!isEditMode"
+                    :event-id="id"
+                    :service-options="appointmentProgram.serviceOptions" />
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
         </v-container>
-
-        <template v-if="!isEditMode" #actions>
-          <v-btn class="mr-4" data-test="appointment-program-create-cancel" @click.stop="back()">
-            {{ $t('common.cancel') }}
-          </v-btn>
-          <v-btn
-            color="primary"
-            data-test="appointment-program-create-submit"
-            :loading="loading"
-            :disabled="failed || loading || scheduleHasError || showServiceOptionsError"
-            @click.stop="submit">
-            {{ $t('common.buttons.create') }}
-          </v-btn>
-        </template>
       </rc-page-content>
     </validation-observer>
     <rationale-dialog ref="rationaleDialog" />
@@ -148,6 +154,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { NavigationGuardNext, Route } from 'vue-router';
 import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
+import { canSetActiveStatus, mustHaveServiceOptions } from '../appointmentProgramsHelper';
 import AvailabilityHours from '../../appointments/components/AvailabilityHours.vue';
 import ServiceOptionsTable from '../components/ServiceOptionsTable.vue';
 import StaffMembersTable from '../components/StaffMembersTable.vue';
@@ -202,10 +209,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   computed: {
-    serviceOptions() {
-      return this.appointmentProgram.serviceOptions;
-    },
-
     initialAppointmentProgram() {
       return this.appointmentProgramId ? new AppointmentProgram(useAppointmentProgramStore().getById(this.appointmentProgramId)) : new AppointmentProgram();
     },
@@ -272,11 +275,19 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.appointmentProgram = newVal;
     },
 
-   serviceOptions(newVal, oldVal) {
-    if (newVal.length && !oldVal.length) {
-      this.showServiceOptionsError = false;
-    }
-   },
+    'appointmentProgram.serviceOptions': {
+      handler(newVal, oldVal) {
+        if (newVal.length && !oldVal.length) {
+          this.showServiceOptionsError = false;
+        }
+      },
+    },
+
+    'appointmentProgram.appointmentProgramStatus': {
+      handler() {
+          this.showServiceOptionsError = false;
+      },
+    },
   },
 
   methods: {
@@ -291,18 +302,23 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async onStatusChange(status: Status) {
       if (this.isEditMode) {
+        if (!canSetActiveStatus(this.appointmentProgram, status)) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.edit.changeStatus.error') });
+          return;
+        }
+
         const dialog = this.$refs.rationaleDialog as any;
-        const userInput = (await dialog.open({
+        const userInput = (await dialog?.open({
           title: this.$t('appointmentProgram.edit.changeStatus.rationale.title'),
           userBoxText: this.$t('appointmentProgram.edit.changeStatus.rationale.message'),
         })) as { answered: boolean, rationale: string };
-        if (userInput.answered) {
+        if (userInput?.answered) {
           const res = await useAppointmentProgramStore().setAppointmentProgramStatus(this.appointmentProgram.id, status, userInput.rationale);
           if (res) {
             this.appointmentProgram.appointmentProgramStatus = status;
             this.$toasted.global.success(this.$t('appointmentProgram.edit.changeStatus.success'));
           } else {
-            this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.error'));
+            this.$toasted.global.error(this.$t('appointmentProgram.edit.changeStatus.failed'));
           }
           dialog.close();
         }
@@ -312,12 +328,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submit() {
-      const hasServiceOptions = !!this.appointmentProgram.serviceOptions.length;
-      if (!hasServiceOptions) {
+      const mustHaveServiceOptionsIsValid = mustHaveServiceOptions(this.appointmentProgram);
+      if (!mustHaveServiceOptionsIsValid) {
         this.showServiceOptionsError = true;
       }
 
-      const isValid = await (this.$refs.form as VForm).validate() && hasServiceOptions;
+      const isValid = await (this.$refs.form as VForm).validate() && mustHaveServiceOptionsIsValid;
 
       if (!isValid) {
         helpers.scrollToFirstError('app');
@@ -352,3 +368,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 });
 </script>
+
+<style scoped lang='scss'>
+  .disabled {
+    opacity: 50%
+  }
+</style>

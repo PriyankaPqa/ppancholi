@@ -49,7 +49,7 @@ export default {
 
     let d = window.location.hostname;
     if (d.startsWith('localhost') || (/beneficiary-\d+\.crc-tech\.ca/i).test(d)) {
-      d = 'beneficiary-dev.crc-tech.ca';
+      d = 'beneficiary-dev.crc-tech-lab-test.com';
     }
     return d;
   },

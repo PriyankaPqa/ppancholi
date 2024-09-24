@@ -1,15 +1,15 @@
-import { StaffMemberAvailability } from './staff-member-availability';
-import { mockStaffMemberAvailability } from './staff-member-availability.mock';
+import { AppointmentStaffMember } from './appointment-staff-member';
+import { mockAppointmentStaffMember } from './appointment-staff-member.mock';
 
-const mockData = mockStaffMemberAvailability();
+const mockData = mockAppointmentStaffMember();
 
   describe('>>> StaffMemberAvailability', () => {
     describe('>> constructor', () => {
       describe('instantiate when data is passed', () => {
         it('should instantiate info', () => {
-          const item = new StaffMemberAvailability(mockData);
+          const item = new AppointmentStaffMember(mockData);
 
-          expect(item.staffMemberId).toEqual(mockData.staffMemberId);
+          expect(item.userAccountId).toEqual(mockData.userAccountId);
           expect(item.appointmentProgramId).toEqual(mockData.appointmentProgramId);
           expect(item.useBusinessHours).toEqual(mockData.useBusinessHours);
           expect(item.serviceOptionIds).toEqual(mockData.serviceOptionIds);
@@ -18,9 +18,9 @@ const mockData = mockStaffMemberAvailability();
         });
 
         it('should instantiate on empty', () => {
-          const item = new StaffMemberAvailability();
+          const item = new AppointmentStaffMember();
 
-          expect(item.staffMemberId).toEqual(null);
+          expect(item.userAccountId).toEqual(null);
           expect(item.appointmentProgramId).toEqual(null);
           expect(item.useBusinessHours).toEqual(null);
           expect(item.serviceOptionIds).toEqual([]);

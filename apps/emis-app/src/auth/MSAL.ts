@@ -574,6 +574,8 @@ export class MSAL {
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
    */
   private getAccountForCurrentTenant() : AccountInfo | null {
+    const domain_name = process.env.VITE_DOMAIN;
+    
     if (this.account && (this.account.tenantId === this.currentDomainTenant || this.account.idTokenClaims?.tid === this.currentDomainTenant)) {
       this.showConsole && console.debug("The current account matches tenant id, so we return it");
       return this.account;
@@ -596,7 +598,7 @@ export class MSAL {
 
     if(!this.currentDomainTenant) { // In localhost we return the default tenant
       // FeatureKeys.UseIdentityServer
-      const environmentSwitch = this.identityServerEnabled ? "crc-tech.ca" : "microsoft";
+      const environmentSwitch = this.identityServerEnabled ? domain_name : "microsoft";
       return currentAccounts.find(a => a.environment.includes(environmentSwitch));
     }
 

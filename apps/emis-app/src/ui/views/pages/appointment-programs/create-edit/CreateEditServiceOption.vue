@@ -136,8 +136,8 @@ export default Vue.extend({
     },
 
     tempId: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '0',
     },
 
   },

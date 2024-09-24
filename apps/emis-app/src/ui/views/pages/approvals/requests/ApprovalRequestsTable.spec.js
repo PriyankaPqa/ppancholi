@@ -683,7 +683,6 @@ describe('ApprovalRequestsTable', () => {
         await wrapper.setProps({ isPendingRequests: true });
         await wrapper.setData({ searchLoading: false });
         const headers = wrapper.findAll('th');
-
         expect(headers.length)
           .toBe(8);
 

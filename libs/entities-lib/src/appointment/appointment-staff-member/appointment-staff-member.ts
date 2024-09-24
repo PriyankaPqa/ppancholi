@@ -1,10 +1,10 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '../../base';
 import { IDateRange, IDaySchedule } from '../appointment-program/appointment-program.types';
-import { IStaffMemberAvailability } from './staff-member-availability.types';
+import { IAppointmentStaffMember } from './appointment-staff-member.types';
 
-export class StaffMemberAvailability extends BaseEntity {
-  staffMemberId: uuid;
+export class AppointmentStaffMember extends BaseEntity {
+  userAccountId: uuid;
 
   appointmentProgramId: uuid;
 
@@ -16,10 +16,10 @@ export class StaffMemberAvailability extends BaseEntity {
 
   customDateRanges: IDateRange[];
 
-constructor(data?: IStaffMemberAvailability) {
+constructor(data?: IAppointmentStaffMember) {
   if (data) {
     super(data);
-    this.staffMemberId = data?.staffMemberId;
+    this.userAccountId = data?.userAccountId;
     this.appointmentProgramId = data?.appointmentProgramId;
     this.useBusinessHours = data?.useBusinessHours;
     this.serviceOptionIds = data?.serviceOptionIds;
@@ -27,7 +27,7 @@ constructor(data?: IStaffMemberAvailability) {
     this.customDateRanges = data?.customDateRanges ? _cloneDeep(data.customDateRanges) : [];
   } else {
     super();
-    this.staffMemberId = null;
+    this.userAccountId = null;
     this.appointmentProgramId = null;
     this.useBusinessHours = null;
     this.serviceOptionIds = [];
