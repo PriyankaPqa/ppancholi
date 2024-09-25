@@ -24,6 +24,7 @@ export enum MassActionType {
   FinancialAssistanceCustomOptions = 15,
   CaseFileStatus = 16,
   Communication = 18,
+  AddRemoveTeamMembers = 21,
 }
 
 // this is actually also part of MassActionType!!
@@ -66,6 +67,11 @@ export enum MassActionCommunicationMethod {
   SMS = 2,
 }
 
+export enum TeamMembersMassActionType {
+  AddTeamMember = 1,
+  RemoveTeamMember = 2,
+}
+
 export interface IMassActionDetails {
   paymentModality?: EPaymentModalities;
   amount?: number;
@@ -74,6 +80,11 @@ export interface IMassActionDetails {
   programId?: uuid;
   subCategoryId?: uuid;
   tableId?: uuid;
+}
+
+export interface IMassActionAddRemoveTeamMembersDetails {
+  teamId: string;
+  teamMembersMassActionType: TeamMembersMassActionType;
 }
 
 export interface IMassActionAssessmentDetails {

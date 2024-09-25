@@ -45,6 +45,10 @@ const MassActionsCaseFileStatusHome = () => import('@/ui/views/pages/mass-action
 const MassActionsCaseFileStatusCreate = () => import('@/ui/views/pages/mass-actions/case-file-status/CaseFileStatusMassActionCreate.vue');
 const MassActionsCaseFileStatusDetails = () => import('@/ui/views/pages/mass-actions/case-file-status/CaseFileStatusMassActionDetails.vue');
 
+const MassActionsAddRemoveTeamMembersHome = () => import('@/ui/views/pages/mass-actions/add-remove-team-members/AddRemoveTeamMembersMassActionHome.vue');
+const MassActionsAddRemoveTeamMembersCreate = () => import('@/ui/views/pages/mass-actions/add-remove-team-members/AddRemoveTeamMembersMassActionCreate.vue');
+const MassActionsAddRemoveTeamMembersDetails = () => import('@/ui/views/pages/mass-actions/add-remove-team-members/AddRemoveTeamMembersMassActionDetails.vue');
+
 export const massActions: RouteConfig = {
   path: Routes.massActions.layout.path,
   component: MassActionsLayout,
@@ -248,6 +252,26 @@ export const massActions: RouteConfig = {
       path: Routes.massActions.caseFileStatus.details.path,
       name: Routes.massActions.caseFileStatus.details.name,
       component: MassActionsCaseFileStatusDetails,
+      meta: { level: UserRoles.level5 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.addRemoveTeamMembers.home.path,
+      name: Routes.massActions.addRemoveTeamMembers.home.name,
+      component: MassActionsAddRemoveTeamMembersHome,
+      meta: { level: UserRoles.level5 },
+    },
+    {
+      path: Routes.massActions.addRemoveTeamMembers.create.path,
+      name: Routes.massActions.addRemoveTeamMembers.create.name,
+      component: MassActionsAddRemoveTeamMembersCreate,
+      meta: { level: UserRoles.level5 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.addRemoveTeamMembers.details.path,
+      name: Routes.massActions.addRemoveTeamMembers.details.name,
+      component: MassActionsAddRemoveTeamMembersDetails,
       meta: { level: UserRoles.level5 },
       props: true,
     },

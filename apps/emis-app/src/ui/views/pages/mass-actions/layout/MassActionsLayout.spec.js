@@ -5,6 +5,7 @@ import {
 import { UserRoles } from '@libs/entities-lib/user';
 
 import routes from '@/constants/routes';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsLayout.vue';
 
 const localVue = createLocalVue();
@@ -110,6 +111,14 @@ describe('MassActionsLayout.vue', () => {
                 to: routes.massActions.importUsers.home.name,
                 exact: false,
                 level: UserRoles.level6,
+              },
+              {
+                text: wrapper.vm.$t('massAction.addRemoveTeamMembersTable.title'),
+                test: 'mass_action.card.add_remove_team_members',
+                to: routes.massActions.addRemoveTeamMembers.home.name,
+                exact: false,
+                level: UserRoles.level5,
+                feature: FeatureKeys.AddRemoveTeamMembers,
               },
             ],
           },

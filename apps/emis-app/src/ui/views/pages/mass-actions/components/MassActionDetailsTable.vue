@@ -34,7 +34,12 @@
 import Vue from 'vue';
 import { format, parseISO } from 'date-fns';
 import {
-  IMassActionEntity, MassActionDataCorrectionType, MassActionRunStatus, MassActionType,
+  IMassActionAddRemoveTeamMembersDetails,
+  IMassActionEntity,
+  MassActionDataCorrectionType,
+  MassActionRunStatus,
+  MassActionType,
+  TeamMembersMassActionType,
 } from '@libs/entities-lib/mass-action';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
@@ -65,6 +70,10 @@ export default Vue.extend({
         [MassActionType.FinancialAssistanceCustomOptions]: 'massAction.financialAssistanceCustomTable.title',
         [MassActionType.CaseFileStatus]: 'massActions.type.caseFileStatus',
         [MassActionType.Communication]: 'massActions.type.communication',
+        // eslint-disable-next-line vue/max-len
+        [MassActionType.AddRemoveTeamMembers]: (this.massAction.details as IMassActionAddRemoveTeamMembersDetails).teamMembersMassActionType === TeamMembersMassActionType.AddTeamMember
+          ? 'massActions.type.addTeamMembers'
+          : 'massActions.type.removeTeamMembers',
       } as Record<MassActionType, string>,
     };
   },
