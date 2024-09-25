@@ -5,8 +5,9 @@ import { IEntity } from '../../base';
  * Enums
  */
 export enum AppointmentStatus {
-  Active = 1,
+  Scheduled = 1,
   Cancelled = 2,
+  Rescheduled = 3,
 }
 
 /**

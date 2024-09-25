@@ -2,6 +2,16 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="12" xl="8" lg="9" md="11">
+        <v-row class="mt-0">
+          <v-col cols="12" md="6" class="pb-2">
+            <status-select
+              v-model="appointment.appointmentStatus"
+              data-test="select-appointment-status"
+              :statuses="statuses"
+              status-name="AppointmentStatus" />
+          </v-col>
+        </v-row>
+
         <v-row class="mt-4">
           <v-col cols="12" md="6" class="pb-0">
             <v-select-a11y
@@ -75,7 +85,7 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <v-row class="mt-0">
           <v-col cols="12" class="pt-0">
             <div class="grey-container py-4 px-6">
               <p class="rc-body16 fw-bold">
@@ -97,6 +107,59 @@
             </div>
           </v-col>
         </v-row>
+
+        <v-row class="mt-0">
+          <v-col cols="12">
+            <v-text-area-with-validation
+              v-model="appointment.notes"
+              data-test="appointment-notes"
+              full-width
+              hide-details
+              :aria-label="$t('caseFile.appointments.notes')"
+              :label="$t('caseFile.appointments.notes')"
+              :rules="rules.notes" />
+          </v-col>
+        </v-row>
+
+        <v-row class="my-0">
+          <v-col cols="12" class="pb-0">
+            <div class="grey-container pt-4 px-6">
+              <p class="rc-body16 fw-bold">
+                {{ $t('caseFile.appointments.email.title') }}
+              </p>
+              <p class="rc-body14 mb-0">
+                {{ $t('caseFile.appointments.email.label') }} *
+              </p>
+              <p class="rc-body14 font-italic mb-2">
+                <v-icon size="16" color="grey darken-2">
+                  mdi-information
+                </v-icon>
+                {{ $t('caseFile.appointments.email.label.second') }}
+              </p>
+
+              <validation-provider v-slot="{ errors }" :rules="rules.sendEmail">
+                <v-radio-group v-model="appointment.sendConfirmationEmail" :disabled="isOnline" :error-messages="errors" row class="mt-0 pb-2">
+                  <v-radio
+                    data-test="send-confirmation-email-yes"
+                    :label="$t('common.buttons.yes')"
+                    :value="true" />
+                  <v-radio
+                    data-test="send-confirmation-email-no"
+                    :label="$t('common.buttons.no')"
+                    :value="false" />
+                </v-radio-group>
+              </validation-provider>
+
+              <v-text-field-with-validation
+                v-if="appointment.sendConfirmationEmail"
+                v-model="appointment.attendeeEmail"
+                class="pb-0"
+                data-test="appointment-attendee-email"
+                :label="`${$t('caseFile.appointments.email')}*`"
+                :rules="rules.email" />
+            </div>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -107,7 +170,7 @@ import Vue from 'vue';
 import {
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import { Appointment, IAppointment, IAppointmentProgram, IDateRange } from '@libs/entities-lib/appointment';
+import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IDateRange } from '@libs/entities-lib/appointment';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useUserStore } from '@/pinia/user/user';
@@ -138,6 +201,8 @@ export default Vue.extend({
 
   data() {
     return {
+      // TODO: only scheduled for create mode
+      statuses: [AppointmentStatus.Scheduled, AppointmentStatus.Rescheduled, AppointmentStatus.Cancelled],
       localAppointment: null as IAppointment,
       loading: false,
       getLocalStringDate: helpers.getLocalStringDate,
@@ -160,6 +225,7 @@ export default Vue.extend({
   },
 
   computed: {
+
     today(): string {
       return helpers.getLocalStringDate(new Date(), 'local');
     },
@@ -180,6 +246,10 @@ export default Vue.extend({
       const nextAvailableMember = new BaseEntity();
       nextAvailableMember.id = 'next-available-member';
       return useUserAccountMetadataStore().getByIds(this.staffMemberIds, true).concat([nextAvailableMember]);
+    },
+
+    isOnline(): boolean {
+      return false;
     },
   },
 

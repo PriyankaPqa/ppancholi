@@ -1,7 +1,10 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed, dirty }">
-    <page-template :loading="loading" :show-left-menu="false">
+  <div class="full-height">
+    <rc-page-loading v-if="loading" />
+    <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
       <rc-page-content
+        v-if="!loading"
+        outer-scroll
         :title="isEditMode ? $t('caseFile.appointments.edit.title') : $t('caseFile.appointments.add.title')">
         <appointment-form
           :appointment.sync="appointment"
@@ -17,8 +20,8 @@
           </v-btn>
         </template>
       </rc-page-content>
-    </page-template>
-  </validation-observer>
+    </validation-observer>
+  </div>
 </template>
 
 <script lang="ts">
@@ -36,7 +39,7 @@ import caseFileDetail from '../../caseFileDetail';
 import AppointmentForm from './AppointmentForm.vue';
 
 export default mixins(caseFileDetail).extend({
-  name: 'AddEditAppointment',
+  name: 'CreateEditAppointment',
 
   components: {
     VSelectWithValidation,
