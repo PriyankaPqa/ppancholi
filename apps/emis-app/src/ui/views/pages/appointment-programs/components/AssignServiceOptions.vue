@@ -1,25 +1,39 @@
 <template>
-  <v-sheet rounded outlined class="ma-0 assign-table" height="100%">
+  <v-sheet rounded outlined class="ma-0 assign-table" height="100%" :loading="loading">
+    <div v-if="inTeamManagement" class="px-4 py-3 d-flex justify-end border-bottom">
+      <v-text-field
+        v-model="searchTerm"
+        class="search-field"
+        data-test="search-staff-member"
+        background-color="grey lighten-4"
+        :placeholder="$t('common.search')"
+        clearable
+        prepend-inner-icon="mdi-magnify"
+        outlined
+        hide-details
+        dense
+        @click:clear="searchTerm = ''" />
+    </div>
     <v-data-table-a11y
       data-test="assign-service-options__table"
       :headers="headers"
       :loading="loading"
       :class="{ 'in-program': !inTeamManagement }"
       dense
-      :options.sync="options"
-      :items="users">
+      :items="filteredUsers">
       <template v-if="users.length" #body="props">
         <tr v-for="item in props.items" :key="item.id">
           <td>
-            <div class="d-flex flex-column px-4 py-1 no-wrap">
+            <div class="d-flex flex-column px-4 no-wrap" :class="inTeamManagement ? 'py-2' : 'py-1'">
               <span class="rc-body14 fw-bold">  {{ item.displayName }} </span>
-              <span v-if="!inTeamManagement" class="rc-body12">  {{ getTeamNames(item) }} </span>
+              <span v-if="!inTeamManagement" class="rc-body12">  {{ getTeamNames(item) || '-' }} </span>
             </div>
           </td>
           <td v-for="so in serviceOptions" :key="so.id" class="checkbox-cell">
             <v-simple-checkbox
               :data-test="`assign_service_option_${so.id}_${item.id}`"
               :ripple="false"
+              :disabled="!$hasLevel(UserRoles.level4)"
               :value=" isMemberAssigned(so.id, item.id)"
               @input="onCheckAssign({ memberId: item.id, soId: so.id, value: $event })" />
           </td>
@@ -49,6 +63,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { VDataTableA11y, RcTooltip } from '@libs/component-lib/components';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
@@ -56,7 +71,9 @@ import { DataTableHeader } from 'vuetify';
 import { IListOption } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IAppointmentStaffMember } from '@libs/entities-lib/appointment';
+import { UserRoles } from '@libs/entities-lib/user';
 import { IExtendedServiceOption } from './ServiceOptionsTable.vue';
+import helpers from '../appointmentProgramsHelpers';
 
 export default Vue.extend({
   name: 'AssignServiceOptions',
@@ -91,14 +108,24 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    appointmentProgramId: {
+      type: String,
+      default: '',
+    },
   },
 
   data() {
     return {
+      UserRoles,
+      searchTerm: '',
       loading: false,
-      options: {
-        page: 1,
-      },
+      searchAmong: [
+        'displayName',
+        'emailAddress',
+        'phoneNumber',
+        'roleName',
+      ],
     };
   },
 
@@ -143,6 +170,10 @@ export default Vue.extend({
 
         return headers;
     },
+
+    filteredUsers(): IUserAccountMetadata[] {
+      return sharedHelpers.filterCollectionByValue(this.users, this.searchTerm, false, this.searchAmong, true);
+    },
   },
 
   async created() {
@@ -165,22 +196,35 @@ export default Vue.extend({
       return this.staffMembers.some((m) => m.userAccountId === userId && m.serviceOptionIds.includes(soId));
     },
 
-    updateStaffMembersOnAssign(userId: string, soId: string, value: boolean) {
+    updateStaffMembersOnAssign(userId: string, soId: string, value: boolean) : Partial<IAppointmentStaffMember> {
        // Don't mutate the props staffMembers
-      const updatedStaffMembers = _cloneDeep(this.staffMembers);
-      const member = updatedStaffMembers.find((m) => m.userAccountId === userId);
+      const updatedStaffMembers = _cloneDeep(this.staffMembers) as Partial<IAppointmentStaffMember>[];
+      let member = updatedStaffMembers.find((m) => m.userAccountId === userId) || {} as Partial<IAppointmentStaffMember>;
+
       if (value) {
-        member.serviceOptionIds.push(soId);
+        if (member?.serviceOptionIds) {
+          member.serviceOptionIds.push(soId);
+        } else {
+          // In team management, some team members are not staff members yet, so they need to be created in order to be passed as payload
+          member = { userAccountId: userId, serviceOptionIds: [soId] };
+        }
       } else {
-        member.serviceOptionIds = member.serviceOptionIds.filter((id) => id !== soId);
+        member.serviceOptionIds = member.serviceOptionIds?.filter((id) => id !== soId) || [];
       }
-      this.$emit('update:staffMembers', updatedStaffMembers);
+
+      if (!this.inTeamManagement) {
+        this.$emit('update:staffMembers', updatedStaffMembers);
+      }
+      // In team management, only the updated team member is passed in the payload to update the staff members
+      return member;
     },
 
-    onCheckAssign({ memberId, soId, value }: { memberId: string, soId: string, value: boolean }) {
-      this.updateStaffMembersOnAssign(memberId, soId, value);
+    async onCheckAssign({ memberId, soId, value }: { memberId: string, soId: string, value: boolean }) {
+      const updatedStaffMember = this.updateStaffMembersOnAssign(memberId, soId, value);
       if (this.inTeamManagement) {
-        // call endpoints to update service option
+        this.loading = true;
+        await helpers.updateStaffMembers(this.appointmentProgramId, [updatedStaffMember], this);
+        this.loading = false;
       }
     },
 
@@ -226,6 +270,15 @@ export default Vue.extend({
 
 .no-wrap{
   white-space: nowrap;
+}
+
+.border-bottom {
+   border-bottom: 1px solid var(--v-grey-lighten2);
+ }
+
+.search-field {
+  max-width: 250px;
+  border: solid 1px var(--v-grey-lighten2);
 }
 
 </style>

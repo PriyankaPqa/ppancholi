@@ -21,7 +21,7 @@
       <template v-if="isTemporaryBranch">
         <div class="branch-box">
           You are on the branch {{ branchId }}
-          <v-btn small class="ml-1" @click="refreshToSameFeatureBranch">
+          <v-btn small class="ml-3" @click="refreshToSameFeatureBranch">
             Refresh
           </v-btn>
         </div>
@@ -241,10 +241,11 @@ export default Vue.extend({
 
   .branch-box {
     margin-left: 20px;
-    background-color: rgb(232, 151, 10);
+    background-color: #8a0303;
+    color: white;
     font-size: 20px;
     font-weight: 600;
-    padding: 10px;
+    padding: 10px 15px;
     border-radius: 4px;
   }
 </style>
