@@ -3883,6 +3883,7 @@
     "caseFile.appointments.notes": "Notes/Observations",
     "caseFile.appointments.email.title": "Attendee confirmation email",
     "caseFile.appointments.email": "Attendee email address",
+    "caseFile.appointments.noDate": "No date selected",
     "caseFile.appointments.email.label": "Do you want to send a confirmation email to the attendee?",
     "caseFile.appointments.email.label.second": "Emails are mandatory for online appointments",
     "caseFile.appointments.date": "Date"

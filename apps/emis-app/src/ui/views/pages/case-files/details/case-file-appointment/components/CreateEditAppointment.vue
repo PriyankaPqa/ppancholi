@@ -8,6 +8,7 @@
         :title="isEditMode ? $t('caseFile.appointments.edit.title') : $t('caseFile.appointments.add.title')">
         <appointment-form
           :appointment.sync="appointment"
+          :is-edit-mode="isEditMode"
           :attendees="members" />
 
         <template slot="actions">

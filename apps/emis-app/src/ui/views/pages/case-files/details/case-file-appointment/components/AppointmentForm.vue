@@ -197,12 +197,15 @@ export default Vue.extend({
       type: Object as () => IAppointment,
       required: true,
     },
+    isEditMode: {
+      type: Boolean,
+      required: true,
+    },
+
   },
 
   data() {
     return {
-      // TODO: only scheduled for create mode
-      statuses: [AppointmentStatus.Scheduled, AppointmentStatus.Rescheduled, AppointmentStatus.Cancelled],
       localAppointment: null as IAppointment,
       loading: false,
       getLocalStringDate: helpers.getLocalStringDate,
@@ -225,6 +228,10 @@ export default Vue.extend({
   },
 
   computed: {
+    statuses(): AppointmentStatus[] {
+      return this.isEditMode ? [AppointmentStatus.Scheduled, AppointmentStatus.Rescheduled, AppointmentStatus.Cancelled]
+      : [AppointmentStatus.Scheduled];
+    },
 
     today(): string {
       return helpers.getLocalStringDate(new Date(), 'local');
