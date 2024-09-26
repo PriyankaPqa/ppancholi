@@ -71,7 +71,7 @@ export default Vue.extend({
         [MassActionType.CaseFileStatus]: 'massActions.type.caseFileStatus',
         [MassActionType.Communication]: 'massActions.type.communication',
         // eslint-disable-next-line vue/max-len
-        [MassActionType.AddRemoveTeamMembers]: (this.massAction.details as IMassActionAddRemoveTeamMembersDetails).teamMembersMassActionType === TeamMembersMassActionType.AddTeamMember
+        [MassActionType.AddRemoveTeamMembers]: (this.massAction.details as IMassActionAddRemoveTeamMembersDetails)?.teamMembersMassActionType === TeamMembersMassActionType.AddTeamMember
           ? 'massActions.type.addTeamMembers'
           : 'massActions.type.removeTeamMembers',
       } as Record<MassActionType, string>,
