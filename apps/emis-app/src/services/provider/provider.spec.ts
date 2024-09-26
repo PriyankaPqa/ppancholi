@@ -13,6 +13,7 @@ import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity
 import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { NotificationsService } from '@libs/services-lib/notifications/entity';
+import { AppointmentProgramsService } from '@libs/services-lib/appointment-programs';
 import { AppointmentStaffMembersService } from '@libs/services-lib/appointment-staff-members';
 import { provider } from './index';
 
@@ -33,6 +34,7 @@ jest.mock('@libs/services-lib/approval-tables/entity');
 jest.mock('@libs/services-lib/assessment-response/entity');
 jest.mock('@libs/services-lib/assessment-form/entity');
 jest.mock('@libs/services-lib/notifications/entity');
+jest.mock('@libs/services-lib/appointment-programs');
 jest.mock('@libs/services-lib/appointment-staff-members');
 
 describe('Provider', () => {
@@ -116,6 +118,10 @@ describe('Provider', () => {
     expect(NotificationsService.prototype.constructor).toBeCalled();
   });
 
+  it('should instantiate AppointmentProgramsService', () => {
+    provider();
+    expect(AppointmentProgramsService.prototype.constructor).toBeCalled();
+});
   it('should instantiate AppointmentStaffMembersService', () => {
     provider();
     expect(AppointmentStaffMembersService.prototype.constructor).toBeCalled();

@@ -1,4 +1,4 @@
-import { ISearchParams, ICombinedSearchResult, Status } from '@libs/shared-lib/types';
+import { ISearchParams, ICombinedSearchResult, Status, IMultilingual } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
 import { IAppointmentProgram, AppointmentProgram, IdParams, IServiceOption } from '@libs/entities-lib/appointment';
 import { GlobalHandler, IHttpClient } from '../http-client';
@@ -44,15 +44,16 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
     return this.http.delete<IAppointmentProgram>(`${API_URL_SUFFIX}/${appointmentProgramId}/service-options/${itemId}`);
   }
 
+  async getEmailTemplate(eventId: uuid): Promise<IMultilingual> {
+    return this.http.get(`${this.baseUrl}/email-template`, { params: { eventId } });
+  }
+
   async search(params: ISearchParams):
     Promise<ICombinedSearchResult<IAppointmentProgram, IEntity>> {
     return this.http.get('appointment/search/appointment-programs', { params, isOData: true });
   }
 
   parsePayload(program: AppointmentProgram) {
-    // TODO remove this when email message is implemented
-    program.emailConfirmationMessage = program.emailConfirmationMessage?.translation?.en ? program.emailConfirmationMessage : { translation: { en: 'mock-message' } };
-    program.emailConfirmationSubject = program.emailConfirmationSubject?.translation?.en ? program.emailConfirmationSubject : { translation: { en: 'mock-subject' } };
     program.fillEmptyMultilingualAttributes();
     return program;
   }

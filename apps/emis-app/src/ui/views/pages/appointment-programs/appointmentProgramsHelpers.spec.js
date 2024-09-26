@@ -8,18 +8,18 @@ const { appointmentStaffMemberStore, pinia } = useMockAppointmentStaffMemberStor
 const { appointmentProgramStore } = useMockAppointmentProgramStore(pinia);
 
 describe('appointmentProgramsHelper', () => {
-  describe('mustHaveServiceOptions', () => {
+  describe('validServiceOptionsCount', () => {
     it('returns true if the status is inactive', () => {
       const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Inactive });
-      expect(helpers.mustHaveServiceOptions(program)).toBeTruthy();
+      expect(helpers.validServiceOptionsCount(program)).toBeTruthy();
     });
     it('returns true if the status is active and the program has a service option', () => {
       const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [mockServiceOption()] });
-      expect(helpers.mustHaveServiceOptions(program)).toBeTruthy();
+      expect(helpers.validServiceOptionsCount(program)).toBeTruthy();
     });
     it('returns false if the status is active and the program has no service options', () => {
       const program = mockAppointmentProgram({ appointmentProgramStatus: Status.Active, serviceOptions: [] });
-      expect(helpers.mustHaveServiceOptions(program)).toBeFalsy();
+      expect(helpers.validServiceOptionsCount(program)).toBeFalsy();
     });
   });
 

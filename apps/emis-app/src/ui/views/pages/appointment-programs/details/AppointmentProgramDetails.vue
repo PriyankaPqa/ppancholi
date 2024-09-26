@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <v-sheet rounded outlined class="mb-2">
+        <v-sheet rounded outlined>
           <v-simple-table data-test="appointmentProgram_details_timeZone">
             <tbody>
               <tr>
@@ -49,6 +49,50 @@
           {{ $t('appointmentProgram.section.businessHours') }}
         </div>
         <availability-hours :schedule.sync="schedule" :is-edit-mode="false" />
+
+        <div class="fw-bold py-4">
+          {{ $t('appointmentProgram.section.email.message') }}
+        </div>
+        <v-sheet rounded outlined class="mb-4">
+          <v-simple-table>
+            <tbody>
+              <tr class="rc-body14">
+                <td colspan="2" class="background px-4 py-2">
+                  <v-btn
+                    small
+                    data-test="appointment-program-email-preview-btn"
+                    @click="showPreview = true">
+                    <v-icon left>
+                      mdi-camera-metering-center
+                    </v-icon>
+                    {{ $t('appointmentProgram.email.buttons.preview') }}
+                  </v-btn>
+                </td>
+              </tr>
+              <tr>
+                <th class="first-cell">
+                  {{ $t('appointmentProgram.email.subject') }}
+                </th>
+                <td data-test="appointment-program-email-subject">
+                  {{ $m(appointmentProgram.emailConfirmationSubject) }}
+                </td>
+              </tr>
+              <tr>
+                <th class="first-cell">
+                  {{ $t('appointmentProgram.email.message') }}
+                </th>
+                <td class="py-2">
+                  <!-- eslint is disabled because we purposefully decided to inject html in this -->
+                  <!-- eslint-disable -->
+                      <div v-if="appointmentProgram.emailConfirmationMessage"
+                      data-test="appointment-program-email-message"
+                      v-html=" $m(appointmentProgram.emailConfirmationMessage)"/>
+                        <!-- eslint-enable -->
+                </td>
+              </tr>
+            </tbody>
+          </v-simple-table>
+        </v-sheet>
 
         <div class="fw-bold py-4">
           {{ $t('appointmentProgram.section.serviceOptions') }}
@@ -68,6 +112,15 @@
           :service-options="appointmentProgram.serviceOptions" />
       </v-col>
     </v-row>
+    <email-template-preview
+      v-if="showPreview"
+      email-template-key="AppointmentProgramEmail"
+      :event-id="id"
+      :show.sync="showPreview"
+      :title="$t('appointmentProgram.email.preview.title')"
+      :language-mode="$i18n.locale"
+      :subject="appointmentProgram.emailConfirmationSubject.translation[$i18n.locale]"
+      :message="appointmentProgram.emailConfirmationMessage.translation[$i18n.locale]" />
   </rc-page-content>
 </template>
 
@@ -115,6 +168,7 @@ export default Vue.extend({
       DayOfWeek,
       showServiceOptionDialog: false,
       loading: false,
+      showPreview: false,
     };
   },
 
@@ -187,4 +241,22 @@ export default Vue.extend({
 .status-history{
   background-color: var(--v-status_yellow_pale-base);
 }
+
+.background {
+  background: var(--v-grey-lighten4);
+}
+
+.first-cell {
+  width: 25%
+}
+
+::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > th,
+::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
+  font-size: 14px;
+}
+
+::v-deep p {
+  margin-bottom: 0
+}
+
 </style>

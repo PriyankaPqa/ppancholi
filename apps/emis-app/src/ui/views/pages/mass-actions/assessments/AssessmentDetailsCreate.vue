@@ -69,7 +69,7 @@
         :show.sync="showPreview"
         :title="$t('massAction.assessment.email.preview.title')"
         :language-mode="languageMode"
-        :event="formCopy.event"
+        :event-id="formCopy.event ? formCopy.event.id : ''"
         :assessment="formCopy.assessment"
         :subject="formCopy.emailSubject.translation[languageMode]"
         :message="formCopy.emailTopCustomContent.translation[languageMode]"

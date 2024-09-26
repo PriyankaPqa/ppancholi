@@ -1,7 +1,7 @@
 import { IAppointmentProgram } from '@libs/entities-lib/appointment';
 import { Status } from '@libs/shared-lib/types';
 
-export function mustHaveServiceOptions(appointmentProgram: IAppointmentProgram): boolean {
+export function validServiceOptionsCount(appointmentProgram: IAppointmentProgram): boolean {
   return appointmentProgram.appointmentProgramStatus === Status.Inactive || !!appointmentProgram.serviceOptions.length;
 }
 

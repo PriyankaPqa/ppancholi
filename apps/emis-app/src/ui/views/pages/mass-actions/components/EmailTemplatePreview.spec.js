@@ -1,23 +1,23 @@
 import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
 import { mockProvider } from '@/services/provider';
-import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import Component from './EmailTemplatePreview.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
-const mockEvent = mockEventEntity();
 const mockAssessment = mockAssessmentFormEntity();
 
 let wrapper;
 
 const doMount = (otherOptions = {}, fullMount = false) => {
+  jest.clearAllMocks();
   const options = {
     localVue,
     propsData: {
       show: true,
-      event: mockEventEntity({ id: 'mock-id-1' }),
+      eventId: 'mock-id-1',
       emailTemplateKey: 'mock-key',
+      languageMode: 'en',
     },
     mocks: {
       $services: services,
@@ -49,13 +49,12 @@ describe('EmailTemplatePreview', () => {
   });
 
   describe('Watch', () => {
-    describe('event', () => {
-      it('set email template if event changes', async () => {
+    describe('eventId', () => {
+      it('set email template if eventId changes', async () => {
         doMount();
         wrapper.vm.$services.massActions.getEmailTemplate = jest.fn();
         wrapper.vm.setEmailTemplate = jest.fn();
-        await wrapper.setProps({ event: mockEvent });
-        expect(wrapper.vm.event).toEqual(mockEvent);
+        await wrapper.setProps({ eventId: '1' });
         expect(wrapper.vm.setEmailTemplate).toHaveBeenCalled();
       });
     });
@@ -119,12 +118,33 @@ describe('EmailTemplatePreview', () => {
     });
 
     describe('setEmailTemplate', () => {
-      it('can get email template', async () => {
+      it('calls the right service for the key MassCommunication', async () => {
         const template = { translation: { en: 'en', fr: 'fr' } };
         doMount();
-        wrapper.vm.setEmailTemplate = jest.fn();
+        expect(wrapper.vm.emailTemplate).toEqual(null);
+        await wrapper.setProps({ emailTemplateKey: 'MassCommunication' });
+        await wrapper.vm.setEmailTemplate();
+        expect(wrapper.vm.$services.massActions.getEmailTemplate).toHaveBeenLastCalledWith('MassCommunication', 'mock-id-1');
+        expect(wrapper.vm.emailTemplate).toEqual(template);
+      });
+
+      it('calls the right service for the key AssessmentAssigned', async () => {
+        const template = { translation: { en: 'en', fr: 'fr' } };
+        doMount();
+        await wrapper.setProps({ emailTemplateKey: 'AssessmentAssigned' });
         expect(wrapper.vm.emailTemplate).toEqual(null);
         await wrapper.vm.setEmailTemplate();
+        expect(wrapper.vm.$services.massActions.getEmailTemplate).toHaveBeenLastCalledWith('AssessmentAssigned', 'mock-id-1');
+        expect(wrapper.vm.emailTemplate).toEqual(template);
+      });
+
+      it('calls the right service for the key AppointmentProgramEmail', async () => {
+        const template = { translation: { en: 'email-template-en', fr: 'email-template-fr' } };
+        doMount();
+        expect(wrapper.vm.emailTemplate).toEqual(null);
+        await wrapper.setProps({ emailTemplateKey: 'AppointmentProgramEmail', eventId: 'mock-ev-1' });
+        await wrapper.vm.setEmailTemplate();
+        expect(wrapper.vm.$services.appointmentPrograms.getEmailTemplate).toHaveBeenLastCalledWith('mock-ev-1');
         expect(wrapper.vm.emailTemplate).toEqual(template);
       });
     });

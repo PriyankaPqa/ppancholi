@@ -1,7 +1,7 @@
 <template>
   <div class="mb-4">
     <div class="table_top_header border-radius-top no-bottom-border">
-      <v-btn color="primary" data-test="add-service-option" @click="onAdd">
+      <v-btn small data-test="add-service-option" @click="onAdd">
         {{ $t('appointmentProgram.serviceOption.table.addServiceOption') }}
       </v-btn>
     </div>
@@ -257,7 +257,8 @@ export default Vue.extend({
 
 .table_top_header {
   border: solid 1px var(--v-grey-lighten2);
-  padding: 10px 15px;
+  padding: 8px 16px;
+  background: var(--v-grey-lighten4);
 }
 
 .table {

@@ -5,11 +5,11 @@ import { AppointmentProgram, mockAppointmentProgram, mockServiceOption } from '@
 import { Status } from '@libs/shared-lib/types';
 import { useMockAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import entityUtils from '@libs/entities-lib/utils';
 import { defaultBusinessHours } from '../../appointments/utils/defaultBusinessHours';
 import helpers from '../appointmentProgramsHelpers';
 import Component from './CreateEditAppointmentProgram.vue';
 
-jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 useMockAppointmentStaffMemberStore(pinia);
@@ -141,6 +141,24 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(wrapper.vm.scheduleIsModified).toBeTruthy();
       });
     });
+
+    describe('messageIsModified', () => {
+      it('returns false if not in edit mode', async () => {
+        await mountWrapper(false);
+        expect(wrapper.vm.messageIsModified).toBeFalsy();
+      });
+
+      it('returns false if in edit mode and the initial message is the same as the current one', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.messageIsModified).toBeFalsy();
+      });
+
+      it('returns true if in edit mode and the initial message differ from the current one', async () => {
+        await mountWrapper();
+        await wrapper.setData({ initialMessage: { translation: { en: 'abc' } } });
+        expect(wrapper.vm.messageIsModified).toBeTruthy();
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -154,7 +172,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(wrapper.vm.appointmentProgram.eventId).toEqual('EVENT_ID');
       });
 
-      it('when in edit mode, should fetch the appointment program and set the appointment program and initial business hours', async () => {
+      it('when in edit mode, should fetch the appointment program and set the appointment program and initial data', async () => {
         await mountWrapper();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
@@ -162,6 +180,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
         expect(appointmentProgramStore.fetch).toHaveBeenCalledWith('appt-program-id');
         expect(wrapper.vm.appointmentProgram).toEqual(mockAppointmentProgram());
         expect(wrapper.vm.initialBusinessHours).toEqual(mockAppointmentProgram().businessHours);
+        expect(wrapper.vm.initialMessage).toEqual(mockAppointmentProgram().emailConfirmationMessage);
       });
     });
   });
@@ -227,27 +246,121 @@ describe('CreateEditAppointmentProgram.vue', () => {
       });
     });
 
+    describe('createDisabled', () => {
+      it('returns true if there is an error or loading', async () => {
+        await mountWrapper(false);
+        expect(wrapper.vm.createDisabled(true)).toBeTruthy();
+        await wrapper.setData({ loading: true });
+        expect(wrapper.vm.createDisabled(false)).toBeTruthy();
+        await wrapper.setData({ loading: false, scheduleHasError: true });
+        expect(wrapper.vm.createDisabled(false)).toBeTruthy();
+        await wrapper.setData({ loading: false, scheduleHasError: false, showServiceOptionsError: true });
+        expect(wrapper.vm.createDisabled(false)).toBeTruthy();
+        await wrapper.setData({ loading: false, scheduleHasError: false, showServiceOptionsError: false, editorError: 'error' });
+        expect(wrapper.vm.createDisabled(false)).toBeTruthy();
+      });
+      it('returns true if there is no error', async () => {
+        await mountWrapper(false);
+        await wrapper.setData({ loading: false, scheduleHasError: false, showServiceOptionsError: false, editorError: '' });
+        expect(wrapper.vm.createDisabled(false)).toBeFalsy();
+      });
+    });
+
+    describe('editDisabled', () => {
+      it('returns true if createDisabled returns true', async () => {
+        await mountWrapper(true);
+        wrapper.vm.createDisabled = jest.fn(() => true);
+        expect(wrapper.vm.editDisabled(false, false)).toBeTruthy();
+      });
+
+      it('returns true if nothing is changed', async () => {
+        await mountWrapper(true);
+        wrapper.vm.createDisabled = jest.fn(() => false);
+        expect(wrapper.vm.editDisabled(false, false)).toBeTruthy();
+      });
+
+      it('returns true if createDisabled is false but nothing is changed', async () => {
+        await mountWrapper(true, true, { computed:
+          { scheduleIsModified() {
+            return false;
+          },
+          messageIsModified() {
+            return false;
+          } } });
+        wrapper.vm.createDisabled = jest.fn(() => false);
+        expect(wrapper.vm.editDisabled(false, false)).toBeTruthy();
+      });
+
+      it('returns false if createDisabled is false and something changed', async () => {
+        await mountWrapper(true, true, { computed:
+          { scheduleIsModified() {
+            return true;
+          },
+          messageIsModified() {
+            return false;
+          } } });
+        wrapper.vm.createDisabled = jest.fn(() => false);
+        expect(wrapper.vm.editDisabled(false, false)).toBeFalsy();
+      });
+
+      it('returns false if createDisabled is false and the form changed', async () => {
+        await mountWrapper(true, true);
+        wrapper.vm.createDisabled = jest.fn(() => false);
+        expect(wrapper.vm.editDisabled(false, true)).toBeFalsy();
+      });
+    });
+
+    describe('validateForm', () => {
+      it('returns true if all policy validations succeed', async () => {
+        helpers.validServiceOptionsCount = jest.fn(() => true);
+        entityUtils.validateMultilingualFieldRequired = jest.fn(() => true);
+        await mountWrapper(false);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        expect(wrapper.vm.validateForm()).toBeTruthy();
+      });
+
+      it('returns false if form is invalid', async () => {
+        await mountWrapper(false);
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        expect(await wrapper.vm.validateForm()).toBeFalsy();
+      });
+
+      it('returns false if validServiceOptionsCount is false', async () => {
+        helpers.validServiceOptionsCount = jest.fn(() => false);
+        await mountWrapper(false);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        expect(await wrapper.vm.validateForm()).toBeFalsy();
+      });
+
+      it('returns false if validateMultilingualFieldRequired is false and sets the editor error text', async () => {
+        helpers.validServiceOptionsCount = jest.fn(() => true);
+        entityUtils.validateMultilingualFieldRequired = jest.fn(() => false);
+        await mountWrapper(false);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        expect(await wrapper.vm.validateForm()).toBeFalsy();
+        expect(wrapper.vm.editorError).toEqual('validations.required');
+      });
+
+      it('returns false if validateMultilingualFieldLength is false and sets the editor', async () => {
+        helpers.validServiceOptionsCount = jest.fn(() => true);
+        entityUtils.validateMultilingualFieldRequired = jest.fn(() => true);
+        entityUtils.validateMultilingualFieldLength = jest.fn(() => false);
+        await mountWrapper(false);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        expect(await wrapper.vm.validateForm()).toBeFalsy();
+        expect(wrapper.vm.editorError).toEqual({ key: 'validations.max', params: [{ value: 3000 }] });
+      });
+    });
+
     describe('submit', () => {
       beforeEach(async () => {
         await mountWrapper(false);
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        helpers.mustHaveServiceOptions = jest.fn(() => true);
+        wrapper.vm.validateForm = jest.fn(() => true);
       });
 
       it('does not call create unless form validation succeeds', async () => {
         wrapper.vm.createAppointmentProgram = jest.fn();
-        wrapper.vm.$refs.form.validate = jest.fn(() => false);
-        await wrapper.vm.submit();
-        expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
-      });
-
-      it('does not call create unless all policy validations succeed', async () => {
-        wrapper.vm.createAppointmentProgram = jest.fn();
-        helpers.mustHaveServiceOptions = jest.fn(() => false);
-        await wrapper.vm.submit();
-        expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
-        expect(wrapper.vm.showServiceOptionsError).toBeTruthy();
-        helpers.mustHaveServiceOptions = jest.fn(() => true);
+        wrapper.vm.validateForm = jest.fn(() => false);
         await wrapper.vm.submit();
         expect(wrapper.vm.createAppointmentProgram).toHaveBeenCalledTimes(0);
       });
@@ -306,7 +419,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls the store updateAppointmentProgram with the right payload in edit mode', async () => {
         mountWrapper();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.validateForm = jest.fn(() => true);
         helpers.canSetActiveStatus = jest.fn(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
@@ -317,8 +430,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls a toaster after updating', async () => {
         mountWrapper();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        helpers.canSetActiveStatus = jest.fn(() => true);
+        wrapper.vm.validateForm = jest.fn(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -328,8 +440,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('resets initialBusinessHours after updating', async () => {
         mountWrapper();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        helpers.canSetActiveStatus = jest.fn(() => true);
+        wrapper.vm.validateForm = jest.fn(() => true);
         await wrapper.setData({ initialBusinessHours: [] });
         await wrapper.vm.submit();
         expect(wrapper.vm.initialBusinessHours).toEqual(wrapper.vm.appointmentProgram.businessHours);
@@ -337,8 +448,7 @@ describe('CreateEditAppointmentProgram.vue', () => {
 
       it('calls an error toaster if updating fails', async () => {
         mountWrapper();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        helpers.canSetActiveStatus = jest.fn(() => true);
+        wrapper.vm.validateForm = jest.fn(() => true);
         const program = new AppointmentProgram();
         program.serviceOptions = [mockServiceOption()];
         wrapper.vm.appointmentProgram = program;
@@ -378,6 +488,34 @@ describe('CreateEditAppointmentProgram.vue', () => {
         const element = wrapper.findDataTest('appointment-program-status');
         element.vm.$emit('input');
         expect(wrapper.vm.onStatusChange).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('email subject dropdown', () => {
+      it('renders', async () => {
+        await mountWrapper(true, false);
+        const element = wrapper.findDataTest('appointment-program-edit-email-subject');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+    describe('text editor', () => {
+      it('renders', async () => {
+        await mountWrapper(true, false);
+        const element = wrapper.findDataTest('appointment-program-edit-email-message');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('text editor error', () => {
+      it('renders when there is an error', async () => {
+        await mountWrapper(true, true);
+        const element = wrapper.findDataTest('appointment-program-edit-email-message-error');
+        expect(element.exists()).toBeFalsy();
+        // Wait for the watcher to change values
+        await wrapper.vm.$nextTick();
+        await wrapper.setData({ editorError: 'error' });
+        const element2 = wrapper.findDataTest('appointment-program-edit-email-message-error');
+        expect(element2.exists()).toBeTruthy();
       });
     });
 
