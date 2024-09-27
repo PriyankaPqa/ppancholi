@@ -690,7 +690,7 @@ export const mockEventEntities = () : IEventEntity[] => [
 export const mockSearchEventEntity = (): ICombinedSearchResult<IEventEntity, null> => ({
   odataCount: 2,
   odataContext: 'context',
-  value: [{ entity: mockEventEntity({ id: '1' }), id: '1', metadata: null, tenantId: 't1' }, { entity: mockEventEntity({ id: '2' }, 1), id: '2', metadata: null, tenantId: 't2' }],
+  value: [{ entity: mockEventEntity({ id: '1' }), id: '1', metadata: null }, { entity: mockEventEntity({ id: '2' }, 1), id: '2', metadata: null }],
 });
 
 export const mockSearchEventSummary = (): ISearchResult<IEventSummary> => ({

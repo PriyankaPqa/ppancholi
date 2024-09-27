@@ -33,6 +33,8 @@ export const dateTypes = {
     'ImpactedIndividuals.checkOut',
     'CaseFileIndividual.checkIn',
     'CaseFileIndividual.checkOut',
+    'BookingRequest.checkIn',
+    'BookingRequest.checkOut',
     'Task.dueDate',
   ] as string[],
 

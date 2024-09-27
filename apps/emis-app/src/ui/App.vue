@@ -110,6 +110,7 @@ export default {
       showCancelButton: true,
       waitBeforeSignalRSubscriptions: 5000,
       intervalSignalRSubscriptions: 3 * 1000,
+      messagePromise: null,
     };
   },
 
@@ -120,11 +121,17 @@ export default {
     checkingAccount() {
       return useDashboardStore().checkingAccount;
     },
-
     activateActivityWatcher() {
       return !isTemporaryBranch(process.env.VITE_TEMP_BRANCH_ID) && !window.location.host.startsWith('localhost');
     },
+  },
 
+  watch: {
+    showMessage() {
+      if (!this.showMessage && this.messagePromise) {
+        this.messagePromise(true);
+      }
+    },
   },
 
   async created() {
@@ -175,6 +182,7 @@ export default {
         if (this.showMessage) {
           return false;
         }
+        this.messagePromise = null;
         this.dialogTitle = title;
         this.singleDialogMessage = message;
         this.submitActionLabel = submitActionLabel || this.$t('common.buttons.ok');
@@ -186,7 +194,9 @@ export default {
         }
 
         this.showMessage = true;
-        return true;
+        return new Promise((resolve) => {
+          this.messagePromise = resolve;
+        });
       };
 
       Vue.prototype.$reportToasted = (message, error) => {

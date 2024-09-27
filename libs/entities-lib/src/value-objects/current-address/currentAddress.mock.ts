@@ -56,6 +56,7 @@ export const mockShelterData = (): ICurrentAddressData => ({
   addressType: ECurrentAddressTypes.Shelter,
   address: mockAddress(),
   shelterLocation: {
+    id: 'shelterLocId',
     address: {
       country: 'CA',
       city: 'Gatineau',

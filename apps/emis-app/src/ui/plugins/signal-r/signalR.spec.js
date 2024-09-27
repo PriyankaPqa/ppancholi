@@ -12,6 +12,8 @@ import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useBookingRequestStore } from '@/pinia/booking-request/booking-request';
+import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -389,6 +391,30 @@ describe('signalR', () => {
           optionItemName: 'CaseNoteCategory',
           store: useCaseNoteStore(),
           prop: 'caseNoteCategoriesFetched',
+        });
+    });
+  });
+
+  describe('listenForCaseFileIndividualModuleChanges', () => {
+    it('calls listenForChanges', () => {
+      conn.listenForCaseFileIndividualModuleChanges();
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'case-file',
+          entityName: 'CaseFileIndividual',
+          action: useCaseFileIndividualStore().setItemFromOutsideNotification,
+        });
+    });
+  });
+
+  describe('listenForBookingRequestModuleChanges', () => {
+    it('calls listenForChanges', () => {
+      conn.listenForBookingRequestModuleChanges();
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'case-file',
+          entityName: 'BookingRequest',
+          action: useBookingRequestStore().setItemFromOutsideNotification,
         });
     });
   });

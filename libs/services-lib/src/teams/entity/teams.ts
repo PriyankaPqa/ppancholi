@@ -45,8 +45,8 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     return this.http.patch(`/team/teams/${teamId}/empty-team`);
   }
 
-  async getTeamsByEvent({ eventId, teamIds = [], includeInactive = false, isEscalation = false }
-    : { eventId: uuid, teamIds?:String[], includeInactive?: boolean, isEscalation?: boolean })
+  async getTeamsByEvent({ eventId, teamIds = [], includeInactive = false, isEscalation = false, isLodging = false }
+    : { eventId: uuid, teamIds?:String[], includeInactive?: boolean, isEscalation?: boolean, isLodging?: boolean })
   : Promise<ITeamEntity[]> {
     const filter = { Entity: { Events: { any: { Id: { value: eventId, type: 'guid' } } } } } as any;
     const params = { filter } as ISearchParams;
@@ -58,6 +58,9 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     }
     if (isEscalation) {
       filter['Entity/isEscalation'] = true;
+    }
+    if (isLodging) {
+      filter['Entity/UseForLodging'] = true;
     }
 
     return (await this.search(params))?.value?.map((t) => t.entity);

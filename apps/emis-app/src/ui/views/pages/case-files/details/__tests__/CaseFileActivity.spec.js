@@ -372,7 +372,7 @@ describe('CaseFileActivity', () => {
 
     describe('sortCaseFileActivities', () => {
       beforeEach(async () => {
-        wrapper.vm.caseFileActivities = [{
+        await wrapper.setData({ caseFileActivities: [{
           id: 'mock-activity-id-1',
           caseFileId: 'mock-id-1',
           user: { id: '1', name: 'Jane Doe' },
@@ -386,11 +386,10 @@ describe('CaseFileActivity', () => {
           user: { id: '1', name: 'Jane Doe' },
           role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
           created: '2021-01-10',
-        }];
+        }] });
       });
 
       it('sort CaseFile activities asc', async () => {
-        wrapper.vm.caseFileActivities = mockActivities;
         await wrapper.vm.sortCaseFileActivities('asc');
         expect(wrapper.vm.caseFileActivities[0].id).toEqual('mock-activity-id-1');
       });

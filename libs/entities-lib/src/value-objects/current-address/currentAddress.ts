@@ -7,7 +7,17 @@ import { Address, IAddress, IAddressData } from '../address';
 import { ECurrentAddressTypes, ICurrentAddress, ICurrentAddressCreateRequest, ICurrentAddressData } from './currentAddress.types';
 import { IEventGenericLocation } from '../../event';
 
+export const addressTypeHasCrcProvided = [
+  ECurrentAddressTypes.Campground,
+  ECurrentAddressTypes.HotelMotel,
+  ECurrentAddressTypes.MedicalFacility,
+  ECurrentAddressTypes.Other,
+  ECurrentAddressTypes.Shelter,
+];
+
 export class CurrentAddress implements ICurrentAddress {
+  id?: string;
+
   addressType: ECurrentAddressTypes;
 
   placeName?: string;
@@ -24,10 +34,20 @@ export class CurrentAddress implements ICurrentAddress {
 
   checkOut: Date | string;
 
+  takeover: boolean;
+
+  relatedBookingRequest?: string;
+
+  relatedPaymentIds?: string[];
+
+  private bookingRequestMode: boolean;
+
   constructor(data?: ICurrentAddressData) {
     if (!data) {
+      this.relatedPaymentIds = [];
       this.reset();
     } else {
+      this.id = data.id;
       this.addressType = data.addressType;
       this.placeName = data.placeName;
       this.placeNumber = data.placeNumber;
@@ -36,6 +56,9 @@ export class CurrentAddress implements ICurrentAddress {
       this.crcProvided = this.hasCrcProvided() ? data.crcProvided === true : null;
       this.checkIn = data.checkIn ? new Date(data.checkIn) : null;
       this.checkOut = data.checkOut ? new Date(data.checkOut) : null;
+      this.takeover = data.takeover;
+      this.relatedPaymentIds = data.relatedPaymentIds || [];
+      this.relatedBookingRequest = data.relatedBookingRequest;
     }
   }
 
@@ -85,6 +108,14 @@ export class CurrentAddress implements ICurrentAddress {
     return errors;
   }
 
+  setBookingRequestMode(doReset = true): void {
+    this.bookingRequestMode = true;
+    if (doReset) {
+      this.reset(ECurrentAddressTypes.HotelMotel);
+    }
+    this.crcProvided = true;
+  }
+
   reset(type?: ECurrentAddressTypes, preservePlace = false, country?: string): void {
     this.addressType = type ?? null;
 
@@ -101,16 +132,17 @@ export class CurrentAddress implements ICurrentAddress {
     this.checkIn = null;
     this.checkOut = null;
     this.crcProvided = this.hasCrcProvided() ? false : null;
+    this.takeover = false;
   }
 
   hasPlaceNumber(): boolean {
-    return this.addressType === ECurrentAddressTypes.Campground
+    return !this.bookingRequestMode && (this.addressType === ECurrentAddressTypes.Campground
         || this.addressType === ECurrentAddressTypes.HotelMotel
-        || this.addressType === ECurrentAddressTypes.MedicalFacility;
+        || this.addressType === ECurrentAddressTypes.MedicalFacility);
   }
 
   hasUnitSuite(): boolean {
-    return this.addressType === ECurrentAddressTypes.FriendsFamily;
+    return !this.bookingRequestMode && this.addressType === ECurrentAddressTypes.FriendsFamily;
   }
 
   hasStreet(): boolean {
@@ -118,14 +150,21 @@ export class CurrentAddress implements ICurrentAddress {
   }
 
   hasPostalCode(): boolean {
+    if (this.bookingRequestMode) {
+      return this.addressType !== ECurrentAddressTypes.Other && this.addressType !== ECurrentAddressTypes.Shelter;
+    }
     return this.hasStreet();
   }
 
+  isBookingRequest(): boolean {
+    return this.bookingRequestMode;
+  }
+
   requiresPlaceName(): boolean {
-    return this.addressType === ECurrentAddressTypes.Campground
+    return !this.bookingRequestMode && (this.addressType === ECurrentAddressTypes.Campground
     || this.addressType === ECurrentAddressTypes.HotelMotel
     || this.addressType === ECurrentAddressTypes.MedicalFacility
-    || this.addressType === ECurrentAddressTypes.Other;
+    || this.addressType === ECurrentAddressTypes.Other);
   }
 
   requiresCountry(): boolean {
@@ -148,13 +187,6 @@ export class CurrentAddress implements ICurrentAddress {
   }
 
   hasCrcProvided() {
-    const addressTypeHasCrcProvided = [
-      ECurrentAddressTypes.Campground,
-      ECurrentAddressTypes.HotelMotel,
-      ECurrentAddressTypes.MedicalFacility,
-      ECurrentAddressTypes.Other,
-      ECurrentAddressTypes.Shelter,
-    ];
     return addressTypeHasCrcProvided.indexOf(this.addressType) >= 0;
   }
 
@@ -189,6 +221,9 @@ export class CurrentAddress implements ICurrentAddress {
       crcProvided: currentAddress.crcProvided,
       checkIn: currentAddress.checkIn ? new Date(currentAddress.checkIn).toISOString() : null,
       checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,
+      takeover: currentAddress.takeover,
+      relatedPaymentIds: currentAddress.relatedPaymentIds || [],
+      relatedBookingRequest: currentAddress.relatedBookingRequest,
     };
   }
 
@@ -204,5 +239,13 @@ export class CurrentAddress implements ICurrentAddress {
       latitude: address.latitude,
       longitude: address.longitude,
     };
+  }
+
+  public static areSimilar(address1: ICurrentAddressData, address2: ICurrentAddressData): boolean {
+    // compares the addresses without id.  also because sometimes we keep the shelterlocation object and sometimes the id
+    // we need to compare the shelter location id
+    return JSON.stringify(new CurrentAddress({ ...address1, shelterLocation: null, id: null }))
+      === JSON.stringify(new CurrentAddress({ ...address2, shelterLocation: null, id: null }))
+      && (address1.shelterLocationId || address1.shelterLocation?.id) === (address2.shelterLocationId || address2.shelterLocation?.id);
   }
 }

@@ -66,10 +66,10 @@ export function getExtensionComponents(
       return res;
   }
 
-  async function getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation }
-    : { eventId: uuid, teamIds?:String[], includeInactive?: boolean, isEscalation?: boolean }): Promise<ITeamEntity[]> {
+  async function getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation, isLodging }
+    : { eventId: uuid, teamIds?:String[], includeInactive?: boolean, isEscalation?: boolean, isLodging?: boolean }): Promise<ITeamEntity[]> {
     try {
-      const res = await entityService.getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation });
+      const res = await entityService.getTeamsByEvent({ eventId, teamIds, includeInactive, isEscalation, isLodging });
       if (res) {
         baseComponents.setAll(res);
         return res;

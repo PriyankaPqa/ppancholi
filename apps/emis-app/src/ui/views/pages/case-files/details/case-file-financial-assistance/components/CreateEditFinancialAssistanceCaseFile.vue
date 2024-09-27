@@ -134,7 +134,6 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { format } from 'date-fns';
 import {
   RcPageContent, RcDialog, VCheckboxWithValidation, RcPageLoading, MessageBox,
 } from '@libs/component-lib/components';
@@ -560,26 +559,10 @@ export default mixins(caseFileDetail).extend({
     },
 
     makePaymentName(keepDate?:boolean) {
-      const programName = this.selectedProgram?.name ? this.$m(this.selectedProgram.name) : '';
-      const paymentLineNames = this.makePaymentLineNames();
-      const creationTime = this.isEditMode || keepDate ? this.financialAssistance.name.split('-').pop().trim() : format(new Date(), 'yyyyMMdd HHmmss');
-
-      this.financialAssistance.name = `${programName} - ${paymentLineNames} - ${creationTime}`;
-    },
-
-    makePaymentLineNames(): string {
-      const paymentLineIds = [] as string[];
-      this.financialAssistance.groups.forEach((group) => group.lines.forEach((line) => {
-        if (line.status === Status.Active) {
-          paymentLineIds.push(line.mainCategoryId);
-        }
-      }));
-      const uniquePaymentLineIds = [...new Set(paymentLineIds)];
-
-      return uniquePaymentLineIds.map((id) => {
-        const paymentLineData = this.items.find((i) => i.mainCategory.id === id);
-        return paymentLineData ? this.$m(paymentLineData.mainCategory.name) : '';
-      }).join(' - ');
+      FinancialAssistancePaymentEntity.generateName(
+        { payment: this.financialAssistance, items: this.items, keepCurrentDate: this.isEditMode || keepDate, program: this.selectedProgram },
+        this,
+      );
     },
 
     async submitPaymentNameUpdate() {

@@ -1,8 +1,13 @@
+import { mockProgramEntity } from '@/program';
+import { mockItems } from '@/financial-assistance';
+import { Status } from '@libs/shared-lib/src/types';
+import { format } from 'date-fns';
 import { mockCaseFinancialAssistanceEntity } from './financial-assistance-payment.mock';
 import { FinancialAssistancePaymentEntity } from './index';
 import { ApprovalStatus } from './financial-assistance-payment.types';
 
 const mockData = mockCaseFinancialAssistanceEntity();
+jest.mock('date-fns', () => ({ format: jest.fn() }));
 
 describe('>>> Case Financial Assistance', () => {
   describe('>> constructor', () => {
@@ -116,6 +121,45 @@ describe('>>> Case Financial Assistance', () => {
       caseFinancialAssistanceEntity.caseFileId = null;
 
       expect(caseFinancialAssistanceEntity.validate()).toContain('A linked case-file is required');
+    });
+  });
+
+  describe('generateName', () => {
+    const program = mockProgramEntity();
+    const financialAssistance = mockCaseFinancialAssistanceEntity() as any;
+    const vue = { $m: jest.fn((e) => e.translation.en) };
+    const items = mockItems();
+
+    it('sets the right name to the financial assistance with keepCurrentDate', async () => {
+      const payment = { ...financialAssistance, name: 'programName - lineName - 20220530 101010' };
+      FinancialAssistancePaymentEntity.generateName({ program, keepCurrentDate: true, payment, items }, vue);
+      expect(payment.name).toEqual('Program A - Children\'s Needs - 20220530 101010');
+    });
+
+    it('sets the right name to the financial assistance without keepCurrentDate', async () => {
+      const payment = { ...financialAssistance, name: 'programName - lineName - 20220530 101010' };
+      (format as any).mockImplementation(() => '20220530 101022');
+      FinancialAssistancePaymentEntity.generateName({ program, keepCurrentDate: false, payment, items }, vue);
+      expect(payment.name).toEqual('Program A - Children\'s Needs - 20220530 101022');
+    });
+
+    it('returns the unique names of payment lines', async () => {
+      const items = [{ mainCategory: { id: 'id-1', name: { translation: { en: 'name-1' } } } },
+        { mainCategory: { id: 'id-2', name: { translation: { en: 'name-2' } } } },
+        { mainCategory: { id: 'id-3', name: { translation: { en: 'name-3' } } } },
+        { mainCategory: { id: 'id-4', name: { translation: { en: 'name-4' } } } }] as any;
+
+      const payment = {
+        ...financialAssistance,
+        name: 'programName - lineName - 20220530 101010',
+        groups: [
+          { lines: [{ status: Status.Active, mainCategoryId: 'id-1' }, { status: Status.Active, mainCategoryId: 'id-2' }] },
+          { lines: [{ status: Status.Active, mainCategoryId: 'id-2' }, { status: Status.Active, mainCategoryId: 'id-3' }] },
+        ],
+      };
+      (format as any).mockImplementation(() => '20220530 101022');
+      FinancialAssistancePaymentEntity.generateName({ program, keepCurrentDate: false, payment, items }, vue);
+      expect(payment.name).toEqual('Program A - name-1 - name-2 - name-3 - 20220530 101022');
     });
   });
 });

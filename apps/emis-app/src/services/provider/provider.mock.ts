@@ -10,6 +10,7 @@ import { mockUserAccountsService } from '@libs/services-lib/user-accounts/entity
 import { mockEventsService } from '@libs/services-lib/events/entity';
 import { mockCaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { mockCaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
+import { mockCaseFileIndividualsService } from '@libs/services-lib/case-file-individuals';
 import { mockCaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
 import { mockFinancialAssistanceService } from '@libs/services-lib/financial-assistance-payments/entity';
 import { mockTenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
@@ -23,14 +24,17 @@ import { mockPotentialDuplicatesService } from '@libs/services-lib/potential-dup
 import { mockNotificationsService } from '@libs/services-lib/notifications/entity';
 import { mockQueriesService } from '@libs/services-lib/queries/entity';
 import { mockPersonsService } from '@libs/services-lib/persons/entity';
+import { mockBookingRequestsService } from '@libs/services-lib/booking-requests';
 import { mockAppointmentProgramsService } from '@libs/services-lib/appointment-programs';
 import { mockAppointmentStaffMembersService } from '@libs/services-lib/appointment-staff-members';
 import { IProviderMock } from './provider.types';
 
 export const mockProvider = (): IProviderMock => ({
   approvalTables: mockApprovalTablesService(),
+  bookingRequests: mockBookingRequestsService(),
   caseFiles: mockCaseFilesService(),
   caseFilesMetadata: mockCaseFilesMetadataService(),
+  caseFileIndividuals: mockCaseFileIndividualsService(),
   caseFileNotes: mockCaseNotesService(),
   caseFileReferrals: mockCaseFileReferralsService(),
   caseFileDocuments: mockCaseFileDocumentsService(),

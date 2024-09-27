@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center" class="my-8 rc-body14">
+  <v-row justify="center" class="rc-body14">
     <v-col>
       <v-row v-if="isEditMode" class="mb-6 ml-0 align-center">
         <status-chip

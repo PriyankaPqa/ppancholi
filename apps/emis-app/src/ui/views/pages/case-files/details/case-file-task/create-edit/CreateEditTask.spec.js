@@ -278,6 +278,37 @@ describe('CreateEditTask.vue', () => {
         expect(wrapper.vm.localTask).toEqual(expectedResult);
       });
 
+      it('should set proper data if create lodging task', async () => {
+        await doMount(true, {
+          propsData: {
+            id: 'mock-case-file-id-1',
+            taskType: 'team',
+            isLodgingTask: true,
+          },
+          computed: {
+            caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
+            event: () => mockEventEntity({ id: 'mock-event-id' }),
+            taskCategories: () => [...mockOptionItems(), mockOptionItem({ isLodging: true, id: 'lodging-cat' })],
+          },
+        });
+        await wrapper.setData({
+          localTask: new TaskEntity(),
+        });
+        taskStore.fetchTaskCategories = jest.fn(() => [...mockOptionItems(), mockOptionItem({ isLodging: true, id: 'lodging-cat' })]);
+        teamStore.getByIds = jest.fn(() => [
+          mockTeamsDataStandard({ isEscalation: false, useForLodging: true, id: 'lodging' }),
+          mockTeamsDataAddHoc({ isEscalation: true, id: 'mock-team-id-1' }),
+        ]);
+        const expectedResult = new TaskEntity();
+        expectedResult.taskType = TaskType.Team;
+        expectedResult.taskStatus = TaskStatus.InProgress;
+        expectedResult.caseFileId = 'mock-case-file-id-1';
+        expectedResult.assignedTeamId = '';
+        expectedResult.category.optionItemId = 'lodging-cat';
+        await wrapper.vm.prepareCreateTask();
+        expect(wrapper.vm.localTask).toEqual(expectedResult);
+      });
+
       it('should set proper data if create personal task', async () => {
         await doMount(true, {
           propsData: {
@@ -326,6 +357,11 @@ describe('CreateEditTask.vue', () => {
         ]);
         await wrapper.vm.fetchAssignedTeam();
         expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: 'mock-event-id', isEscalation: true });
+        expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-id-1');
+
+        await wrapper.setProps({ isLodgingTask: true });
+        await wrapper.vm.fetchAssignedTeam();
+        expect(teamStore.getTeamsByEvent).toHaveBeenCalledWith({ eventId: 'mock-event-id', isLodging: true });
         expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-id-1');
       });
 
@@ -389,7 +425,13 @@ describe('CreateEditTask.vue', () => {
           localTask: mockTeamTaskEntity(),
         });
         await wrapper.vm.submitCreateTask();
-        expect(taskStore.createTask).toHaveBeenCalledWith(mockTeamTaskEntity());
+        expect(taskStore.createTask).toHaveBeenCalledWith(mockTeamTaskEntity(), false);
+
+        await wrapper.setProps({
+          isLodgingTask: true,
+        });
+        await wrapper.vm.submitCreateTask();
+        expect(taskStore.createTask).toHaveBeenCalledWith(mockTeamTaskEntity(), true);
       });
 
       it('should toast different message based on taskType', async () => {
@@ -408,6 +450,16 @@ describe('CreateEditTask.vue', () => {
         wrapper.vm.$router.replace = jest.fn();
         await wrapper.vm.submitCreateTask();
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.caseFile.task.details.name, params: { taskId: 'mock-task-id-1' } });
+        expect(wrapper.emitted('saved')).toBeFalsy();
+      });
+
+      it('should emit if in dialog mode', async () => {
+        taskStore.createTask = jest.fn(() => mockTeamTaskEntity({ id: 'mock-task-id-1' }));
+        wrapper.vm.$router.replace = jest.fn();
+        await wrapper.setProps({ dialogMode: true });
+        await wrapper.vm.submitCreateTask();
+        expect(wrapper.vm.$router.replace).not.toHaveBeenCalledWith({ name: routes.caseFile.task.details.name, params: { taskId: 'mock-task-id-1' } });
+        expect(wrapper.emitted('saved')).toBeTruthy();
       });
     });
 

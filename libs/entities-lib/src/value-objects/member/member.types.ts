@@ -2,6 +2,7 @@ import { IEntity } from '../../base';
 import { IIdentitySet, IIdentitySetCreateRequest } from '../identity-set';
 import { IContactInformation, IContactInformationCreateRequest } from '../contact-information';
 import { ICurrentAddress, ICurrentAddressCreateRequest } from '../current-address/currentAddress.types';
+import { CaseFileIndividualEntity } from '../../case-file-individual';
 
 export interface IMemberEntity extends IEntity {
   identitySet: IIdentitySet;
@@ -11,6 +12,13 @@ export interface IMemberEntity extends IEntity {
   contactInformation: IContactInformation;
 
   addressHistory: Array<ICurrentAddress>;
+}
+
+export interface IMemberForSelection extends IMemberEntity {
+  caseFileIndividualId: string;
+  isPrimary?: boolean;
+  receivingAssistance?: boolean;
+  caseFileIndividual?: CaseFileIndividualEntity
 }
 
 export interface MemberCreateRequest {

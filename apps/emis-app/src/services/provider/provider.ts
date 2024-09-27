@@ -24,13 +24,17 @@ import { PotentialDuplicatesService } from '@libs/services-lib/potential-duplica
 import { NotificationsService } from '@libs/services-lib/notifications/entity';
 import { QueriesService } from '@libs/services-lib/queries/entity';
 import { PersonsService } from '@libs/services-lib/persons/entity';
+import { CaseFileIndividualsService } from '@libs/services-lib/case-file-individuals';
+import { BookingRequestsService } from '@libs/services-lib/booking-requests';
 import { AppointmentProgramsService } from '@libs/services-lib/appointment-programs';
 import { AppointmentStaffMembersService } from '@libs/services-lib/appointment-staff-members';
 import { IProvider } from './provider.types';
 
 export const provider = (httpClient = client): IProvider => ({
   approvalTables: new ApprovalTablesService(httpClient),
+  bookingRequests: new BookingRequestsService(httpClient),
   caseFiles: new CaseFilesService(httpClient),
+  caseFileIndividuals: new CaseFileIndividualsService(httpClient),
   caseFilesMetadata: new CaseFilesMetadataService(httpClient),
   caseFileNotes: new CaseNotesService(httpClient),
   caseFileReferrals: new CaseFileReferralsService(httpClient),

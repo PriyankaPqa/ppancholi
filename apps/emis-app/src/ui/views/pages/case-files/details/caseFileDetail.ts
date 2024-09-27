@@ -9,8 +9,9 @@ import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { usePersonStore } from '@/pinia/person/person';
-import { CaseFileIndividualEntity } from '@libs/entities-lib/case-file-individual';
+import { CaseFileIndividualEntity, MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
+import { Status } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   props: {
@@ -68,6 +69,10 @@ export default Vue.extend({
         ['desc', 'asc'],
       );
     },
+
+    activeIndividuals(): CaseFileIndividualEntity[] {
+      return this.individuals.filter((i) => i.membershipStatus === MembershipStatus.Active && this.members?.find((m) => m.id === i.personId && m.status === Status.Active));
+    },
   },
   watch: {
     async household(newValue: IHouseholdEntity, oldValue: IHouseholdEntity) {
@@ -77,6 +82,18 @@ export default Vue.extend({
 
       const individuals = await useCaseFileIndividualStore().fetchAll({ caseFileId: this.caseFileId });
       await usePersonStore().fetchByIds([newValue.primaryBeneficiary, ...individuals.map((i) => i.personId)], true);
+    },
+  },
+
+  methods: {
+    // these are loaded when in the case file page.  if you need this outside of the main page
+    // these insure we have all the getters ready
+    async loadMissingCaseFileDetails() {
+      const cf = (await useCaseFileStore().fetchByIds([this.id], true))[0];
+      await useEventStore().fetchByIds([cf?.eventId], true);
+      const hh = (await useHouseholdStore().fetchByIds([cf?.householdId], true))[0];
+      const individuals = await useCaseFileIndividualStore().fetchAll({ caseFileId: this.caseFileId });
+      await usePersonStore().fetchByIds([hh?.primaryBeneficiary, ...individuals.map((i) => i.personId)], true);
     },
   },
 });

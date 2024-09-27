@@ -50,7 +50,7 @@
           class="mt-1 ml-3"
           :aria-label="$t('impactedIndividuals.receiving_assistance')"
           data-test="receiving_assistance_toggle"
-          @change="onToggleChange($event)" />
+          @change="onReceivingAssistanceChange()" />
         <span class="rc-body12">
           {{ isReceivingAssistance ? $t('impactedIndividuals.receiving_assistance') : $t('impactedIndividuals.not_receiving_assistance') }}
         </span>
@@ -64,8 +64,8 @@
       :address="individual.currentAddress"
       :shelter-locations-list="shelterLocationsList"
       show-edit-button
-      :disable-editing="disableEditing"
-      @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
+      :disable-editing="disableEditingAddress"
+      @open-edit-address="openEditAddress" />
 
     <div v-if="reorderedAddressHistory.length > 0" data-test="previous-address-section">
       <div class="px-4 py-0 rc-body14 fw-bold background">
@@ -98,13 +98,7 @@
       :is-primary-member="isPrimaryMember"
       :shelter-locations-list="shelterLocationsList" />
 
-    <impacted-individuals-require-rationale-dialog-v2
-      v-if="showRequireRationaleDialog"
-      :case-file-individual-id="individual.id"
-      :case-file-id="caseFileId"
-      :is-receiving-assistance-change-to="isReceivingAssistance"
-      :show.sync="showRequireRationaleDialog"
-      @close="onCloseDialog()" />
+    <rationale-dialog ref="rationaleDialog" />
   </v-sheet>
 </template>
 <script lang="ts">
@@ -112,10 +106,12 @@ import Vue from 'vue';
 import { IMemberEntity } from '@libs/entities-lib/household-create';
 import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/shared-lib/types';
+import RationaleDialog from '@/ui/shared-components/RationaleDialog.vue';
 import { IEventGenericLocation } from '@libs/entities-lib/src/event';
 import { CaseFileIndividualEntity, MembershipStatus, ReceivingAssistanceDetail, TemporaryAddress } from '@libs/entities-lib/case-file-individual';
 import { usePersonStore } from '@/pinia/person/person';
-import ImpactedIndividualsRequireRationaleDialogV2 from './ImpactedIndividualsRequireRationaleDialogV2.vue';
+import { IBookingRequest } from '@libs/entities-lib/booking-request';
+import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
 import ImpactedIndividualsCardPinnedRationaleV2 from './ImpactedIndividualsCardPinnedRationaleV2.vue';
 import ImpactedIndividualsEditAddressDialogV2 from './ImpactedIndividualsEditAddressDialogV2.vue';
 import ImpactedIndividualAddressTemplateV2 from './ImpactedIndividualAddressTemplateV2.vue';
@@ -127,7 +123,7 @@ export default Vue.extend({
     ImpactedIndividualAddressTemplateV2,
     ImpactedIndividualsEditAddressDialogV2,
     ImpactedIndividualsCardPinnedRationaleV2,
-    ImpactedIndividualsRequireRationaleDialogV2,
+    RationaleDialog,
   },
 
   props: {
@@ -155,6 +151,16 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    userCanProvideCrcAddress: {
+      type: Boolean,
+      default: false,
+    },
+
+    pendingBookingRequest: {
+      type: Object as () => IBookingRequest,
+      default: null,
+    },
   },
 
   data() {
@@ -162,8 +168,6 @@ export default Vue.extend({
       showPreviousTemporaryAddress: false,
       showEditMemberDialog: false,
       isReceivingAssistance: true,
-      showRequireRationaleDialog: false,
-      backUpIsReceivingAssistance: false,
       UserRoles,
       MembershipStatus,
       Status,
@@ -200,22 +204,45 @@ export default Vue.extend({
       }
       return this.disableEditingByStatus || !this.$hasLevel(UserRoles.level1);
     },
+
+    disableEditingAddress(): boolean {
+      return this.disableEditing || !!this.pendingBookingRequest;
+    },
   },
 
   async created() {
     this.isReceivingAssistance = this.individual.receivingAssistance;
-    this.backUpIsReceivingAssistance = this.isReceivingAssistance;
   },
 
   methods: {
-     async onToggleChange(isReceivingAssistanceChangeTo: boolean) {
-       this.isReceivingAssistance = isReceivingAssistanceChangeTo;
-       this.showRequireRationaleDialog = true;
+    openEditAddress() {
+      if (!this.$hasFeature(this.$featureKeys.Lodging)) {
+        this.showEditMemberDialog = true;
+      } else {
+        this.$emit('open-edit-address');
+      }
     },
 
-    onCloseDialog() {
-      this.isReceivingAssistance = this.backUpIsReceivingAssistance;
-      this.showRequireRationaleDialog = false;
+    async onReceivingAssistanceChange() {
+      const dialog = this.$refs.rationaleDialog as any;
+      const userInput = (await dialog.open({
+        title: this.isReceivingAssistance ? this.$t('impactedIndividuals.remove_member_from_receiving_assistance.title.receiving_assistance')
+            : this.$t('impactedIndividuals.remove_member_from_receiving_assistance.title.not_receiving_assistance'),
+        userBoxText: this.isReceivingAssistance ? this.$t('impactedIndividuals.remove_member_from_receiving_assistance.actioned_by')
+              : this.$t('impactedIndividuals.remove_member_from_receiving_assistance.removed_by'),
+      })) as { answered: boolean, rationale: string };
+      if (userInput.answered) {
+        const params = {
+          receivingAssistance: this.isReceivingAssistance,
+          rationale: userInput.rationale,
+        } as ReceivingAssistanceDetail;
+        const res = await useCaseFileIndividualStore().addReceiveAssistanceDetails(this.caseFileId, this.individual.id, params);
+        if (res) {
+          dialog.close();
+        }
+      } else {
+        this.isReceivingAssistance = !this.isReceivingAssistance;
+      }
     },
   },
 });

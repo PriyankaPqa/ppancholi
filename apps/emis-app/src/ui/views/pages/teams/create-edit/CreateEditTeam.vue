@@ -48,20 +48,20 @@
                       data-test="team-isEscalation-checkbox"
                       :disabled="!$hasLevel(UserRoles.level5)" />
 
+                    <div v-if="$hasFeature($featureKeys.Lodging)">
+                      <v-checkbox-with-validation
+                        v-model="team.useForLodging"
+                        :disabled="!$hasLevel(UserRoles.level5)"
+                        :label="$t('teams.set_useForLodging')"
+                        data-test="team-useForLodging-checkbox"
+                        class="team-checkbox" />
+                    </div>
+
                     <v-checkbox-with-validation
                       v-model="team.isAssignable"
-                      :disabled="team.isEscalation || !$hasLevel(UserRoles.level5)"
+                      :disabled="team.isEscalation || team.useForLodging || !$hasLevel(UserRoles.level5)"
                       :label="$t('teams.set_assignable_team')"
                       data-test="team-isAssignable-checkbox"
-                      class="team-checkbox" />
-                  </div>
-
-                  <div v-if="$hasFeature($featureKeys.Lodging)">
-                    <v-checkbox-with-validation
-                      v-model="team.useForLodging"
-                      :disabled="!$hasLevel(UserRoles.level5)"
-                      :label="$t('teams.set_useForLodging')"
-                      data-test="team-useForLodging-checkbox"
                       class="team-checkbox" />
                   </div>
 
@@ -430,6 +430,14 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
   watch: {
     'team.isEscalation': {
+      handler(newValue, oldValue) {
+        if (newValue && newValue !== oldValue && oldValue !== undefined) {
+          this.team.isAssignable = true;
+        }
+      },
+    },
+
+    'team.useForLodging': {
       handler(newValue, oldValue) {
         if (newValue && newValue !== oldValue && oldValue !== undefined) {
           this.team.isAssignable = true;

@@ -17,7 +17,7 @@
         </div>
       </v-col>
 
-      <v-col cols="12" sm="6" md="8" :class="{ 'pb-0': compactView }">
+      <v-col v-if="!bookingMode" cols="12" sm="6" md="8" :class="{ 'pb-0': compactView }">
         <v-select-with-validation
           ref="addressType"
           background-color="white"
@@ -36,8 +36,9 @@
         data-test="crc_provided_check_in_check_out"
         cols="12"
         sm="6"
-        md="8">
-        <template v-if="form.hasCrcProvided()">
+        md="8"
+        :class="{ 'py-0': compactView }">
+        <template v-if="!bookingMode && form.hasCrcProvided()">
           <div class="font-weight-bold ">
             {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
           </div>
@@ -45,26 +46,46 @@
             <v-radio-group
               v-model="form.crcProvided"
               row
+              :disabled="lockCrcProvided"
               hide-details>
               <v-radio :label="$t('common.yes')" :value="true" data-test="CRC_provided_yes" />
               <v-radio :label="$t('common.no')" :value="false" data-test="CRC_provided_no" />
             </v-radio-group>
           </div>
         </template>
-        <div v-if="form.hasCheckInCheckOut()" class="py-4">
+        <div v-if="form.hasCheckInCheckOut()" :class="{ 'py-3': compactView, 'py-4': !compactView }">
           <date-range
             id="currentAddressForm"
             :attach="true"
             :locale="$i18n.locale"
             :value="checkInCheckOutDate"
+            :required="bookingMode && form.crcProvided"
+            :disabled="extendStayMode || roomEditMode"
+            background-color="white"
             display-format="MMM d, yyyy"
-            :start-label="$t('impactedIndividuals.temporary_address.check_in')"
-            :end-label="$t('impactedIndividuals.temporary_address.check_out')"
+            :start-label="$t('impactedIndividuals.temporary_address.check_in') + (bookingMode && form.crcProvided ? ' *' : '')"
+            :end-label="$t('impactedIndividuals.temporary_address.check_out') + (bookingMode && form.crcProvided ? ' *' : '')"
             @input="setCheckInCheckOut($event)" />
         </div>
       </v-col>
+      <v-col
+        v-if="showCrcProvidedAndCheckInCheckOut && extendStayMode"
+        cols="12"
+        sm="6"
+        md="4">
+        <date-range
+          id="newCheckout"
+          :attach="true"
+          :locale="$i18n.locale"
+          hide-start-date
+          :value="newCheckOutDate"
+          background-color="white"
+          display-format="MMM d, yyyy"
+          :end-label="$t('impactedIndividuals.temporary_address.new_check_out')"
+          @input="setNewCheckOut($event)" />
+      </v-col>
 
-      <v-col v-if="form.hasStreet()" cols="12">
+      <v-col v-if="form.hasStreet() && !extendStayMode && !roomEditMode" cols="12" :class="{ 'py-0': compactView }">
         <rc-google-autocomplete-with-validation
           prepend-inner-icon="mdi-map-marker"
           background-color="white"
@@ -82,6 +103,7 @@
           <v-text-field-with-validation
             v-model="form.placeName"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.placeName"
             :data-test="`${prefixDataTest}__placeName`"
             :label="placeNameLabel"
@@ -94,6 +116,7 @@
             background-color="white"
             :rules="rules.shelterLocation"
             :item-text="(e) => $m(e.name)"
+            :disabled="extendStayMode || roomEditMode"
             return-object
             :data-test="`${prefixDataTest}__shelterLocation`"
             :label="`${$t('registration.addresses.temporaryAddressTypes.Shelter')} *`"
@@ -101,10 +124,11 @@
             @change="form.placeNumber = null" />
         </v-col>
 
-        <v-col v-if="form.hasPlaceNumber() || form.requiresShelterLocation()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
+        <v-col v-if="!form.isBookingRequest() && (form.hasPlaceNumber() || form.requiresShelterLocation())" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.placeNumber"
             background-color="white"
+            :disabled="extendStayMode"
             :rules="rules.placeNumber"
             :data-test="`${prefixDataTest}__placeNumber`"
             :label="placeNumberLabel" />
@@ -114,6 +138,7 @@
           <v-text-field-with-validation
             v-model="form.address.streetAddress"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :data-test="`${prefixDataTest}__street`"
             :rules="rules.streetAddress"
             :label="`${$t('registration.addresses.streetAddress')}`"
@@ -125,6 +150,7 @@
           <v-text-field-with-validation
             v-model="form.address.unitSuite"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.unitSuite"
             :data-test="`${prefixDataTest}__unitSuite`"
             :label="$t('registration.addresses.unit')" />
@@ -135,6 +161,7 @@
           <v-text-field-with-validation
             v-model="form.address.city"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.city"
             :data-test="`${prefixDataTest}__city`"
             :label="`${$t('registration.addresses.city')} *`"
@@ -147,6 +174,7 @@
             v-if="isCanada"
             v-model="form.address.province"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.province"
             :data-test="`${prefixDataTest}__province`"
             :label="`${$t('registration.addresses.province')} *`"
@@ -156,6 +184,7 @@
             v-else
             v-model="form.address.specifiedOtherProvince"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.specifiedOtherProvince"
             :data-test="`${prefixDataTest}__specifiedOtherProvince`"
             :label="`${$t('registration.addresses.province')}*`"
@@ -166,6 +195,7 @@
           <v-text-field-with-validation
             v-model="form.address.postalCode"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.postalCode"
             :data-test="`${prefixDataTest}__postalCode`"
             :label="`${$t('registration.addresses.postalCode')}`"
@@ -177,6 +207,7 @@
           <rc-country-select-with-validation
             v-model="form.address.country"
             background-color="white"
+            :disabled="extendStayMode || roomEditMode"
             :rules="rules.country"
             :data-test="`${prefixDataTest}__country`"
             :label="`${$t('registration.addresses.country')} *`"
@@ -195,6 +226,7 @@ import {
   VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
+import { addDays, parseISO, format } from 'date-fns';
 import { VForm } from '@libs/shared-lib/types';
 import {
   ECurrentAddressTypes,
@@ -274,11 +306,31 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    lockCrcProvided: {
+      type: Boolean,
+      default: false,
+    },
+
+    bookingMode: {
+      type: Boolean,
+      default: false,
+    },
+
+    extendStayMode: {
+      type: Boolean,
+      default: false,
+    },
+
+    roomEditMode: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   setup() {
-    const { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry } = useAutocomplete();
-    return { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry };
+    const { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry, toggleResetGeoLocation } = useAutocomplete();
+    return { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry, toggleResetGeoLocation };
   },
 
   data() {
@@ -286,6 +338,7 @@ export default Vue.extend({
       form: null as ICurrentAddress,
       previousType: null,
       checkInCheckOutDate: [] as string[],
+      newCheckOutDate: [] as string[],
     };
   },
 
@@ -326,6 +379,7 @@ export default Vue.extend({
         },
         placeNumber: {
           max: MAX_LENGTH_SM,
+          required: this.$hasFeature(this.$featureKeys.Lodging) && this.currentAddress.crcProvided,
         },
         unitSuite: {
           max: MAX_LENGTH_SM,
@@ -356,14 +410,15 @@ export default Vue.extend({
     },
 
     placeNumberLabel(): TranslateResult {
+      const required = (this.rules.placeNumber as any).required ? ' *' : '';
       switch (this.addressType) {
         case (ECurrentAddressTypes.Campground):
-          return this.$t('registration.addresses.lotNumber');
+          return this.$t('registration.addresses.lotNumber') + required;
         case (ECurrentAddressTypes.HotelMotel):
         case (ECurrentAddressTypes.MedicalFacility):
-          return this.$t('registration.addresses.roomNumber');
+          return this.$t('registration.addresses.roomNumber') + required;
         case (ECurrentAddressTypes.Shelter):
-          return this.$t('registration.addresses.shelterLocationNumber');
+          return this.$t('registration.addresses.shelterLocationNumber') + required;
         default:
           return '';
       }
@@ -403,16 +458,29 @@ export default Vue.extend({
     },
   },
 
-  created() {
+  async created() {
+    // done so long/lat is not reset to 0 during initialization
+    this.toggleResetGeoLocation(false);
     this.form = this.currentAddress;
     this.checkInCheckOutDate = [this.form.checkIn, this.form.checkOut];
+    if (this.extendStayMode) {
+      const minDate = addDays(parseISO(this.form.checkOut as string), 1);
+      this.newCheckOutDate = [format(minDate, 'yyyy-MM-dd'), null];
+    }
+    await this.$nextTick();
+    this.toggleResetGeoLocation(true);
   },
 
   methods: {
     changeType(type: ECurrentAddressTypes) {
+      const bckCrcProvided = this.form.crcProvided;
       this.form.reset(type);
       (this.$refs.form as VForm).reset();
       this.checkInCheckOutDate = [null, null];
+
+      if (this.lockCrcProvided) {
+        this.form.crcProvided = bckCrcProvided;
+      }
     },
 
     onCountryChange() {
@@ -424,6 +492,12 @@ export default Vue.extend({
       this.form.checkIn = newCheckInCheckOut[0];
       this.form.checkOut = newCheckInCheckOut[1];
       this.checkInCheckOutDate = [newCheckInCheckOut[0], newCheckInCheckOut[1]];
+    },
+
+    setNewCheckOut(newCheckInCheckOut: string[]) {
+      // if none was set we reset to old checkout date
+      this.form.checkOut = newCheckInCheckOut[1] || this.checkInCheckOutDate[1];
+      this.newCheckOutDate = [newCheckInCheckOut[0], newCheckInCheckOut[1]];
     },
 
     formatAddressInput(item: string, path: string = null) {

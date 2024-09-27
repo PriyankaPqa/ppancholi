@@ -1,12 +1,14 @@
 <template>
-  <v-row class="px-4 rc-body14 border box flex-nowrap">
-    <v-col cols="3" class="font-weight-bold" data-test="current_temporary_address_title">
-      {{ isPreviousTemporaryAddress ? '' : $t('impactedIndividuals.current_temporary_address') }}
+  <v-row class="px-4 rc-body14 border box">
+    <v-col :lg="fullWidthReadOnlyView ? 6 : 4" cols="6">
+      <div class="font-weight-bold" data-test="current_temporary_address_title">
+        {{ isPreviousTemporaryAddress ? '' : $t('impactedIndividuals.current_temporary_address') }}
+      </div>
+      <div data-test="current_temporary_address">
+        <current-address-template :current-address="currentAddress" hide-title />
+      </div>
     </v-col>
-    <v-col cols="3" data-test="current_temporary_address">
-      <current-address-template :current-address="currentAddress" hide-title />
-    </v-col>
-    <v-col cols="5">
+    <v-col :lg="fullWidthReadOnlyView ? 6 : 4" cols="6">
       <div class="d-flex">
         <div>
           <span class="font-weight-bold">{{ $t('impactedIndividuals.temporary_address.check_in') + ':' }}</span>
@@ -26,13 +28,28 @@
         <span class="font-weight-bold">{{ $t('impactedIndividuals.temporary_address.crc_provided') + ':' }}</span>
         <span data-test="impacted_individuals_card_template_is_crc_provided">{{ address.crcProvided ? $t('common.yes') : $t('common.no') }}</span>
       </div>
+      <div v-if="address.takeover">
+        <v-chip label color="green" text-color="white">
+          <v-icon class="mr-2" small>
+            mdi-check-circle-outline
+          </v-icon>
+          {{ $t('impactedIndividuals.takeoverCompleted') }}
+        </v-chip>
+      </div>
     </v-col>
-    <v-col cols="1" class="pt-2 d-flex justify-end">
-      <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-temporary-address-dialog')">
-        <v-icon>
-          mdi-pencil
-        </v-icon>
-      </v-btn>
+    <v-col v-if="!fullWidthReadOnlyView" lg="4" cols="12" class="pt-2 d-flex justify-end">
+      <template v-if="!$hasFeature($featureKeys.Lodging)">
+        <v-btn v-if="showEditButton" icon :disabled="disableEditing" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address')">
+          <v-icon>
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+      </template>
+      <template v-else>
+        <v-btn v-if="showEditButton && !disableEditing" color="secondary" :aria-label="$t('common.edit')" data-test="edit_button" @click="$emit('open-edit-address')">
+          {{ $t('impactedIndividuals.updateExistingAddress') }}
+        </v-btn>
+      </template>
     </v-col>
   </v-row>
 </template>
@@ -77,6 +94,11 @@ export default Vue.extend({
     shelterLocationsList: {
       type: Array as () => IEventGenericLocation[],
       default: null,
+    },
+
+    fullWidthReadOnlyView: {
+      type: Boolean,
+      default: false,
     },
   },
 

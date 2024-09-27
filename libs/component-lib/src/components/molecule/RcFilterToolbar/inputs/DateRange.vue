@@ -4,6 +4,7 @@
     class="pa-0">
     <v-row>
       <v-col
+        v-if="!hideStartDate"
         class="py-0"
         cols="6">
         <div class="flex-grow-1">
@@ -14,14 +15,16 @@
             offset-y
             min-width="290px">
             <template #activator="{ on }">
-              <v-text-field
+              <v-text-field-with-validation
                 prepend-inner-icon="mdi-calendar"
                 :data-test="`filterToolbar__input-${id}-dateRange-start`"
                 outlined
                 readonly
                 clearable
+                :disabled="disabled"
+                :background-color="backgroundColor"
                 :label="startLabel"
-                :rules="[rules.startRequired]"
+                :rules="rules.startRequired"
                 :value="inputFrom"
                 v-on="on"
                 @click:clear="clearStart" />
@@ -31,6 +34,7 @@
               v-model="pickerStart"
               :data-test="`filterToolbar__input-${id}-dateRange-start-date-picker`"
               :locale="locale"
+              :disabled="disabled"
               :max="pickerEnd"
               @change="menuStart = false" />
           </v-menu>
@@ -39,7 +43,7 @@
 
       <v-col
         class="py-0"
-        cols="6">
+        :cols="hideStartDate ? 12 : 6">
         <div class="flex-grow-1">
           <v-menu
             v-model="menuEnd"
@@ -48,15 +52,17 @@
             offset-y
             min-width="290px">
             <template #activator="{ on }">
-              <v-text-field
+              <v-text-field-with-validation
                 prepend-inner-icon="mdi-calendar"
                 :data-test="`filterToolbar__input-${id}-dateRange-end`"
                 outlined
                 readonly
                 clearable
+                :disabled="disabled"
+                :background-color="backgroundColor"
                 :label="endLabel"
                 :value="inputTo"
-                :rules="[rules.endRequired]"
+                :rules="rules.endRequired"
                 v-on="on"
                 @click:clear="clearEnd" />
             </template>
@@ -65,6 +71,7 @@
               v-model="pickerEnd"
               :data-test="`filterToolbar__input-${id}-dateRange-end-date-picker`"
               :locale="locale"
+              :disabled="disabled"
               :min="pickerStart"
               @change="menuEnd = false" />
           </v-menu>
@@ -79,11 +86,18 @@ import Vue from 'vue';
 import {
   format, parse,
 } from 'date-fns';
+import {
+  VTextFieldWithValidation,
+} from '@libs/component-lib/components';
 import { IFilterToolbarLabels } from '@libs/component-lib/types';
 import { DEFAULT_DATE, ISO_FORMAT } from '@libs/component-lib/components/molecule/RcFilterToolbar/inputs/constants';
 
 export default Vue.extend({
   name: 'DateRange',
+
+  components: {
+    VTextFieldWithValidation,
+  },
 
   props: {
     // Take start and end as the input. Could be used via v-model.
@@ -119,6 +133,26 @@ export default Vue.extend({
       type: String,
       default: null,
     },
+
+    backgroundColor: {
+      type: String,
+      default: null,
+    },
+
+    required: {
+      type: Boolean,
+      default: false,
+    },
+
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+
+    hideStartDate: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -132,23 +166,11 @@ export default Vue.extend({
 
   computed: {
     rules() {
-      return {
-        startRequired: (value: string) => {
-          if (this.pickerEnd && !value && this.labels) {
-            return this.labels.formRequiredField;
-          }
+      if (this.required) {
+        return { startRequired: { required: true }, endRequired: { required: true } };
+      }
 
-          return true;
-        },
-
-        endRequired: (value: string) => {
-          if (this.pickerStart && !value && this.labels) {
-            return this.labels.formRequiredField;
-          }
-
-          return true;
-        },
-      };
+      return { startRequired: null, endRequired: null };
     },
 
     inputFrom(): string {

@@ -1,4 +1,8 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import { Status } from '@libs/shared-lib/types';
+import { format } from 'date-fns';
+import { IFinancialAssistanceTableItem } from '../financial-assistance';
+import { IProgramEntity } from '../program';
 import { BaseEntity } from '../base';
 import {
   ApprovalAction,
@@ -75,5 +79,31 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
       return true;
     }
     return errors;
+  }
+
+  static generateName(
+    param: { payment: IFinancialAssistancePaymentEntity, program: IProgramEntity, items: IFinancialAssistanceTableItem[], keepCurrentDate: boolean },
+    vue: any,
+  ) {
+    const makePaymentLineNames = () => {
+      const paymentLineIds = [] as string[];
+      param.payment.groups.forEach((group) => group.lines.forEach((line) => {
+        if (line.status === Status.Active) {
+          paymentLineIds.push(line.mainCategoryId);
+        }
+      }));
+      const uniquePaymentLineIds = [...new Set(paymentLineIds)];
+
+      return uniquePaymentLineIds.map((id) => {
+        const paymentLineData = param.items.find((i) => i.mainCategory.id === id);
+        return paymentLineData ? vue.$m(paymentLineData.mainCategory.name) : '';
+      }).join(' - ');
+    };
+
+    const programName = param.program?.name ? vue.$m(param.program.name) : '';
+    const paymentLineNames = makePaymentLineNames();
+
+    const creationTime = param.keepCurrentDate ? param.payment.name.split('-').pop().trim() : format(new Date(), 'yyyyMMdd HHmmss');
+    param.payment.name = `${programName} - ${paymentLineNames} - ${creationTime}`;
   }
 }

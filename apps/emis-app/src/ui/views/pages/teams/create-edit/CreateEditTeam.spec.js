@@ -1691,5 +1691,76 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.team.isAssignable).toEqual(false);
       });
     });
+
+    describe('team.useForLodging', () => {
+      it('should only update isAssignable to true when useForLodging is updated to true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            teamType: 'adhoc',
+          },
+
+          data() {
+            return {
+              team: {
+                useForLodging: false,
+                isAssignable: false,
+              },
+            };
+          },
+
+          computed: {
+            isEditMode() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setData({
+          team: {
+            useForLodging: true,
+          },
+        });
+        expect(wrapper.vm.team.isAssignable).toEqual(true);
+
+        await wrapper.setData({
+          team: {
+            useForLodging: false,
+          },
+        });
+        expect(wrapper.vm.team.isAssignable).toEqual(true);
+      });
+
+      it('should not update isAssignable when useForLodging is undefined by default', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            teamType: 'adhoc',
+          },
+
+          data() {
+            return {
+              team: {
+                useForLodging: undefined,
+                isAssignable: false,
+              },
+            };
+          },
+
+          computed: {
+            isEditMode() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setData({
+          team: {
+            useForLodging: true,
+          },
+        });
+        expect(wrapper.vm.team.isAssignable).toEqual(false);
+      });
+    });
   });
 });

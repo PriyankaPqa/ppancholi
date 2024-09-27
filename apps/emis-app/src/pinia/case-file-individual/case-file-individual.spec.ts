@@ -6,6 +6,7 @@ import { ICaseFileIndividualEntity, mockCaseFileIndividualEntity, IdParams } fro
 import { getExtensionComponents } from '@/pinia/case-file-individual/case-file-individual-extension';
 
 import { Status } from '@libs/shared-lib/types';
+import { ICurrentAddressData } from '@libs/entities-lib/household-create';
 
 const entityService = mockCaseFileIndividualsService();
 const baseComponents = getBaseStoreComponents<ICaseFileIndividualEntity, IdParams>(entityService);
@@ -76,6 +77,20 @@ describe('>>> Case File Individual Store', () => {
 
       expect(entityService.createCaseFileIndividual).toBeCalledWith(payload);
       expect(bComponents.addNewlyCreatedId).toBeCalledWith(res);
+      expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
+
+  describe('editTemporaryAddress', () => {
+    it('should call editTemporaryAddress service with proper params', async () => {
+      const bComponents = { ...baseComponents, set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const payload = {} as ICurrentAddressData;
+      const res = {} as ICaseFileIndividualEntity;
+      entityService.editTemporaryAddress = jest.fn(() => res);
+      await store.editTemporaryAddress('cfid', 'addressid', payload);
+
+      expect(entityService.editTemporaryAddress).toBeCalledWith('cfid', 'addressid', payload);
       expect(bComponents.set).toBeCalledWith(res);
     });
   });

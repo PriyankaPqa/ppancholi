@@ -117,6 +117,18 @@ describe('Team Store', () => {
       });
     });
 
+    describe('getTeamsByEvent', () => {
+      it('should call getTeamsByEvent service with proper params and commit results', async () => {
+        const bComponents = { ...baseComponents, setAll: jest.fn() };
+        const store = createTestStore(bComponents);
+        entityService.getTeamsByEvent = jest.fn(() => []);
+        await store.getTeamsByEvent({ eventId: 'some-event', teamIds: [], isLodging: true });
+
+        expect(entityService.getTeamsByEvent).toBeCalledWith({ eventId: 'some-event', teamIds: [], isLodging: true });
+        expect(bComponents.setAll).toBeCalledWith([]);
+      });
+    });
+
     describe('emptyTeam', () => {
       it('should call editTeam service with proper params and commit results', async () => {
         const bComponents = { ...baseComponents, set: jest.fn() };

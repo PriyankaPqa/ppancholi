@@ -2,7 +2,7 @@ import { ActionTaken, IdParams, ITaskEntity, ITaskEntityData, IUpdateTaskRequest
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface ITaskService extends IDomainBaseService<ITaskEntity, IdParams> {
-  createTask(task: ITaskEntity): Promise<ITaskEntity>;
+  createTask(task: ITaskEntity, sendNotification?: boolean): Promise<ITaskEntity>;
   editTask(taskId: uuid, task: IUpdateTaskRequest): Promise<ITaskEntity>;
   setWorkingOn(id: uuid, caseFileId: uuid, userId: string): Promise<ITaskEntity>;
   completeTask(id: uuid, caseFileId: uuid, rationale: string): Promise<ITaskEntityData>;

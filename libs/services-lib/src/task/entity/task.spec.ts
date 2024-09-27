@@ -11,13 +11,27 @@ describe('>>> Tasks Service', () => {
     const entity = mockTeamTaskEntity();
     entity.caseFileId = 'mock-case-file-id-1';
     await service.createTask(entity);
-    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', entity, { globalHandler: GlobalHandler.Partial });
+    expect(http.post).toHaveBeenCalledWith(
+      'www.test.com/case-file/case-files/mock-case-file-id-1/tasks',
+      { ...entity, sendNotification: false },
+      { globalHandler: GlobalHandler.Partial },
+    );
+    await service.createTask(entity, true);
+    expect(http.post).toHaveBeenCalledWith(
+      'www.test.com/case-file/case-files/mock-case-file-id-1/tasks',
+      { ...entity, sendNotification: true },
+      { globalHandler: GlobalHandler.Partial },
+    );
   });
 
   test('editTask is linked to the correct URL', async () => {
     const payload = mockUpdateTaskRequest();
     await service.editTask('mock-task-id-123', payload);
-    expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-2/tasks/mock-task-id-123', payload, { globalHandler: GlobalHandler.Partial });
+    expect(http.patch).toHaveBeenCalledWith(
+      'www.test.com/case-file/case-files/mock-case-file-id-2/tasks/mock-task-id-123',
+      { ...payload, sendNotification: false },
+      { globalHandler: GlobalHandler.Partial },
+    );
   });
 
   test('setWorkingOn is linked to the correct URL', async () => {

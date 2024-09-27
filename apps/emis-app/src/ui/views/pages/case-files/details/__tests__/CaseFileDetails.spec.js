@@ -1,8 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
@@ -13,14 +12,14 @@ import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { CaseFileDetailsMock } from './caseFileDetailsMock.mock';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 
-const mockCaseFile = mockCaseFileEntity({ id: '1' });
-const mockEvent = mockEventEntity();
-mockEvent.schedule.status = EEventStatus.Open;
+let detailsMock = new CaseFileDetailsMock();
+let mockCaseFile = detailsMock.mocks.caseFile;
 
 const pinia = getPiniaForUser(UserRoles.level1);
 const { caseFileStore } = useMockCaseFileStore(pinia);
@@ -61,28 +60,21 @@ function createWrapper(role, overrides = {}) {
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
-  const doMount = async (featureList = [], otherComputed = {}) => {
+  const doMount = async (fullMount = true, featureList = [], otherComputed = {}) => {
     const params = {
       localVue,
       pinia,
       featureList,
-      propsData: {
-        id: mockCaseFile.id,
-      },
+      propsData: detailsMock.propsData,
       computed: {
-        caseFile() {
-          return mockCaseFile;
-        },
-        event() {
-          return mockEvent;
-        },
+        ...detailsMock.computed,
         ...otherComputed,
       },
       mocks: {
         $services: services,
       },
     };
-    wrapper = mount(Component, params);
+    wrapper = (fullMount ? mount : shallowMount)(Component, params);
     wrapper.vm.getPrimaryMemberFullName = jest.fn(() => 'mock-full-name');
     wrapper.vm.hasPhoneNumbers = jest.fn(() => true);
     wrapper.vm.getAddressFirstLine = jest.fn(() => '100 Right ave');
@@ -107,6 +99,12 @@ describe('CaseFileDetails.vue', () => {
 
     await flushPromises();
   };
+
+  beforeEach(async () => {
+    detailsMock = new CaseFileDetailsMock();
+    mockCaseFile = detailsMock.mocks.caseFile;
+    jest.clearAllMocks();
+  });
 
   describe('Template', () => {
     beforeEach(async () => {
@@ -144,7 +142,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(mockEvent.name.translation.en);
+        expect(element.text()).toEqual(detailsMock.mocks.event.name.translation.en);
       });
     });
 
@@ -194,17 +192,9 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
+          propsData: detailsMock.propsData,
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -236,17 +226,10 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
+          propsData: detailsMock.propsData,
 
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -275,16 +258,9 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
+          propsData: detailsMock.propsData,
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -313,16 +289,9 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
+          propsData: detailsMock.propsData,
           computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
+            ...detailsMock.computed,
           },
           mocks: {
             $services: services,
@@ -397,12 +366,6 @@ describe('CaseFileDetails.vue', () => {
       wrapper = createWrapper(UserRoles.level1);
     });
 
-    describe('caseFile', () => {
-      it('returns the case file by id from the storage', () => {
-        expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFile));
-      });
-    });
-
     describe('canEdit', () => {
       it('returns true if user has level 1', () => {
         wrapper = createWrapper(UserRoles.level1, {
@@ -443,7 +406,7 @@ describe('CaseFileDetails.vue', () => {
     describe('receivingAssistanceMembersCount', () => {
       it('should return proper data', async () => {
         expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(1);
-        await doMount([wrapper.vm.$featureKeys.CaseFileIndividual]);
+        await doMount(false, [wrapper.vm.$featureKeys.CaseFileIndividual]);
         expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(2);
       });
     });
@@ -498,7 +461,7 @@ describe('CaseFileDetails.vue', () => {
     it('should call fetch', () => {
       expect(caseFileStore.fetch).toHaveBeenCalledWith(wrapper.vm.id);
 
-      expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: '1' });
+      expect(caseFileIndividualStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'cf-id' });
       expect(personStore.fetchByIds).toHaveBeenCalledWith(['pid-1', 'pid-2', 'pid-3'], true);
     });
 
@@ -525,16 +488,9 @@ describe('CaseFileDetails.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        propsData: {
-          id: mockCaseFile.id,
-        },
+        propsData: detailsMock.propsData,
         computed: {
-          caseFile() {
-            return mockCaseFile;
-          },
-          event() {
-            return mockEvent;
-          },
+          ...detailsMock.computed,
         },
         mocks: {
           $services: services,
@@ -548,9 +504,9 @@ describe('CaseFileDetails.vue', () => {
         await wrapper.vm.getHouseholdInfo();
         expect(householdStore.fetch).toBeCalledWith(mockCaseFile.householdId);
         expect(caseFileIndividualStore.fetchAll).toBeCalledWith({ caseFileId: wrapper.vm.caseFileId });
-        expect(personStore.fetchByIds).toBeCalledWith(householdStore.fetch().members, true);
+        expect(personStore.fetchByIds).toBeCalledWith(wrapper.vm.household.members, true);
         expect(personStore.fetchByIds).toBeCalledWith(caseFileIndividualStore.fetchAll().map((x) => x.personId), true);
-        expect(services.potentialDuplicates.getPotentialDuplicatesCount).toBeCalledWith(householdStore.fetch().id);
+        expect(services.potentialDuplicates.getPotentialDuplicatesCount).toBeCalledWith(wrapper.vm.household.id);
       });
     });
 
@@ -571,7 +527,7 @@ describe('CaseFileDetails.vue', () => {
   describe('watcher', () => {
     describe('id', () => {
       it('should call fetchData when changed', async () => {
-        await doMount();
+        await doMount(false);
         wrapper.vm.fetchData = jest.fn();
         expect(wrapper.vm.fetchData).not.toHaveBeenCalled();
         await wrapper.setProps({

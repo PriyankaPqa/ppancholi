@@ -34,9 +34,9 @@ export function getExtensionComponents(
     return getTaskCategory();
   }
 
-  async function createTask(task: ITaskEntityData) {
+  async function createTask(task: ITaskEntityData, sendNotification = false) {
     try {
-      const res = await entityService.createTask(task);
+      const res = await entityService.createTask(task, sendNotification);
       if (res) {
         baseComponents.addNewlyCreatedId(res);
         baseComponents.set(res);

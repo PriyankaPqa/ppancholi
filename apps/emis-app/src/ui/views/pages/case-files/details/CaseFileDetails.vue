@@ -153,7 +153,7 @@ import { RcTooltip } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { INavigationTab, Status } from '@libs/shared-lib/types';
+import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 
 import { UserRoles } from '@libs/entities-lib/user';
@@ -163,7 +163,6 @@ import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserStore } from '@/pinia/user/user';
 import { useHouseholdDetails } from '@/ui/views/pages/household/useHouseholdDetails';
 import { usePersonStore } from '@/pinia/person/person';
-import { MembershipStatus } from '@libs/entities-lib/case-file-individual';
 import { useCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import HouseholdDetailsList from './components/HouseholdDetailsList.vue';
@@ -193,7 +192,7 @@ export default mixins(caseFileDetail).extend({
     hasPhoneNumbers,
     getCountry,
      } = useHouseholdDetails(household, members);
-    return { household, members, getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
+    return { getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
   },
 
   data() {
@@ -354,9 +353,7 @@ export default mixins(caseFileDetail).extend({
 
     receivingAssistanceMembersCount(): number {
         const receivingAssistanceMembers = (this.$hasFeature(this.$featureKeys.CaseFileIndividual)
-          ? this.individuals
-            .filter((i) => i.membershipStatus === MembershipStatus.Active && usePersonStore().getById(i.personId)?.status === Status.Active) : this.caseFile.impactedIndividuals)
-          ?.filter((m) => m.receivingAssistance);
+          ? this.activeIndividuals : this.caseFile.impactedIndividuals)?.filter((m) => m.receivingAssistance);
 
         return receivingAssistanceMembers?.length || 0;
     },

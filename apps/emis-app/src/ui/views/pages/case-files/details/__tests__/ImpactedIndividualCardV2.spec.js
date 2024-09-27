@@ -3,18 +3,21 @@ import { MembershipStatus, mockCaseFileIndividualEntity, mockReceivingAssistance
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import { useMockPersonStore } from '@/pinia/person/person.mock';
+import { useMockCaseFileIndividualStore } from '@/pinia/case-file-individual/case-file-individual.mock';
 import Component from '../case-file-impacted-individualsV2/components/ImpactedIndividualCardV2.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
 const { pinia } = useMockPersonStore();
+const { caseFileIndividualStore } = useMockCaseFileIndividualStore(pinia);
 
 describe('ImpactedIndividualCardV2.vue', () => {
   let wrapper;
-  const doMount = async (otherComputed = {}, otherProps = {}, level = 5) => {
+  const doMount = async (otherComputed = {}, otherProps = {}, level = 5, featureList = []) => {
     const options = {
       localVue,
       pinia,
+      featureList,
       propsData: {
         isPrimaryMember: false,
         individual: mockCaseFileIndividualEntity(),
@@ -40,6 +43,7 @@ describe('ImpactedIndividualCardV2.vue', () => {
     await wrapper.vm.$nextTick();
   };
   beforeEach(async () => {
+    jest.clearAllMocks();
     await doMount();
   });
 
@@ -100,11 +104,11 @@ describe('ImpactedIndividualCardV2.vue', () => {
     });
 
     describe('receiving_assistance_toggle', () => {
-      it('should trigger onToggleChange when changed', async () => {
-        wrapper.vm.onToggleChange = jest.fn();
+      it('should trigger onReceivingAssistanceChange when changed', async () => {
+        wrapper.vm.onReceivingAssistanceChange = jest.fn();
         const toggle = wrapper.findDataTest('receiving_assistance_toggle');
         await toggle.vm.$emit('change');
-        expect(wrapper.vm.onToggleChange).toHaveBeenCalled();
+        expect(wrapper.vm.onReceivingAssistanceChange).toHaveBeenCalled();
       });
 
       it('should be enabled when user has level 1', async () => {
@@ -172,6 +176,49 @@ describe('ImpactedIndividualCardV2.vue', () => {
         expect(wrapper.vm.disableEditing).toEqual(false);
       });
     });
+
+    describe('disableEditingAddress', () => {
+      it('based on disableEditing and pendingbooking request', async () => {
+        await doMount({
+          disableEditing() {
+            return false;
+          },
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(false);
+
+        await wrapper.setProps({
+          pendingBookingRequest: {},
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(true);
+
+        await doMount({
+          disableEditing() {
+            return true;
+          },
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(true);
+        await wrapper.setProps({
+          pendingBookingRequest: {},
+        });
+        expect(wrapper.vm.disableEditingAddress).toEqual(true);
+      });
+
+      it('should be true when member is removed is true', async () => {
+        expect(wrapper.vm.disableEditing).toEqual(false);
+        wrapper.vm.individual.membershipStatus = MembershipStatus.Removed;
+        expect(wrapper.vm.disableEditing).toEqual(true);
+      });
+
+      it('should be true when user doesnt have L1', async () => {
+        await doMount(null, null, 0);
+        expect(wrapper.vm.disableEditing).toEqual(true);
+      });
+
+      it('should return false when user has L6', async () => {
+        await doMount(null, null, 6);
+        expect(wrapper.vm.disableEditing).toEqual(false);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -187,25 +234,59 @@ describe('ImpactedIndividualCardV2.vue', () => {
   });
 
   describe('Method', () => {
-    describe('onToggleChange', () => {
-      it('should set isReceivingAssistance to proper value and showRequireRationaleDialog to true ', () => {
-        wrapper.vm.$services.caseFiles.setPersonReceiveAssistance = jest.fn();
-        wrapper.vm.onToggleChange(true);
-        expect(wrapper.vm.isReceivingAssistance).toEqual(true);
-        expect(wrapper.vm.showRequireRationaleDialog).toEqual(true);
+    describe('openEditAddress', () => {
+      it('should open dialog or emit', async () => {
+        wrapper.vm.$emit = jest.fn();
+        expect(wrapper.vm.showEditMemberDialog).toBeFalsy();
+        wrapper.vm.openEditAddress();
+        expect(wrapper.vm.showEditMemberDialog).toBeTruthy();
+        expect(wrapper.vm.$emit).not.toHaveBeenCalledWith('open-edit-address');
+
+        await doMount(null, null, 5, wrapper.vm.$featureKeys.Lodging);
+        wrapper.vm.$emit = jest.fn();
+        wrapper.vm.openEditAddress();
+        expect(wrapper.vm.showEditMemberDialog).toBeFalsy();
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('open-edit-address');
       });
     });
 
-    describe('onCloseDialog', () => {
-      it('should reset isReceivingAssistance and set showRequireRationaleDialog to false', async () => {
-        await wrapper.setData({
-          backUpIsReceivingAssistance: true,
-          isReceivingAssistance: false,
-          showRequireRationaleDialog: true,
+    describe('onReceivingAssistanceChange', () => {
+      it('should show the dialog and save if answered', async () => {
+        const answer = { answered: true, rationale: 'some rationale' };
+        wrapper.vm.$refs.rationaleDialog.open = jest.fn(() => answer);
+        wrapper.vm.$refs.rationaleDialog.close = jest.fn();
+        await wrapper.setData({ isReceivingAssistance: true });
+        await wrapper.vm.onReceivingAssistanceChange();
+
+        expect(wrapper.vm.$refs.rationaleDialog.open).toHaveBeenCalledWith({
+          title: 'impactedIndividuals.remove_member_from_receiving_assistance.title.receiving_assistance',
+          userBoxText: 'impactedIndividuals.remove_member_from_receiving_assistance.actioned_by',
         });
-        wrapper.vm.onCloseDialog();
+
+        expect(caseFileIndividualStore.addReceiveAssistanceDetails)
+          .toHaveBeenCalledWith(wrapper.vm.caseFileId, wrapper.vm.individual.id, { receivingAssistance: true, rationale: 'some rationale' });
         expect(wrapper.vm.isReceivingAssistance).toEqual(true);
-        expect(wrapper.vm.showRequireRationaleDialog).toEqual(false);
+        expect(wrapper.vm.$refs.rationaleDialog.close).toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        await wrapper.setData({ isReceivingAssistance: false });
+        await wrapper.vm.onReceivingAssistanceChange();
+
+        expect(wrapper.vm.$refs.rationaleDialog.open).toHaveBeenCalledWith({
+          title: 'impactedIndividuals.remove_member_from_receiving_assistance.title.not_receiving_assistance',
+          userBoxText: 'impactedIndividuals.remove_member_from_receiving_assistance.removed_by',
+        });
+      });
+
+      it('should show the dialog and reset isreceivingassistance if not answered', async () => {
+        const answer = { answered: false, rationale: null };
+        wrapper.vm.$refs.rationaleDialog.open = jest.fn(() => answer);
+        wrapper.vm.$refs.rationaleDialog.close = jest.fn();
+        await wrapper.setData({ isReceivingAssistance: true });
+        await wrapper.vm.onReceivingAssistanceChange();
+
+        expect(caseFileIndividualStore.addReceiveAssistanceDetails).not.toHaveBeenCalled();
+        expect(wrapper.vm.isReceivingAssistance).toEqual(false);
       });
     });
   });
