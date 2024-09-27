@@ -61,10 +61,10 @@ describe('ErrorReportToast', () => {
         'X-Correlation-ID': '2bcd78ad-21e4-454f-90cd-4500a6d40ad2',
         'Content-Type': 'application/json',
       },
-      baseURL: 'https://api-lab.crc-tech-lab-test.com/',
+      baseURL: 'https://api-lab.crc-tech.ca/',
       withCredentials: true,
       method: 'patch',
-      url: 'https://api-lab.crc-tech-lab-test.com/case-file/case-files/e6112152-be92-4d45-8b9a-69320dc7a835/labels',
+      url: 'https://api-lab.crc-tech.ca/case-file/case-files/e6112152-be92-4d45-8b9a-69320dc7a835/labels',
       data: '{"labels":[{"name":"<br>","order":1},{"name":"","order":2},{"name":"","order":3},{"name":"","order":4}]}',
     },
     code: 'ERR_NETWORK',
@@ -105,7 +105,7 @@ describe('ErrorReportToast', () => {
       it('returns the right value', async () => {
         expect(wrapper.vm.api).toEqual('mock-url');
         await wrapper.setProps({ error: errorWAFFormat });
-        expect(wrapper.vm.api).toEqual('https://api-lab.crc-tech-lab-test.com/case-file/case-files/e6112152-be92-4d45-8b9a-69320dc7a835/labels');
+        expect(wrapper.vm.api).toEqual('https://api-lab.crc-tech.ca/case-file/case-files/e6112152-be92-4d45-8b9a-69320dc7a835/labels');
       });
     });
 

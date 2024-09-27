@@ -26,6 +26,7 @@ import { IPotentialDuplicatesService, IPotentialDuplicatesServiceMock } from '@l
 import { INotificationsService, INotificationsServiceMock } from '@libs/services-lib/notifications/entity';
 import { IQueriesService, IQueriesServiceMock } from '@libs/services-lib/queries/entity';
 import { IPersonsService, IPersonsServiceMock } from '@libs/services-lib/persons/entity';
+import { IAppointmentProgramsService, IAppointmentProgramsServiceMock } from '@libs/services-lib/appointment-programs';
 import { IAppointmentStaffMembersService, IAppointmentStaffMembersServiceMock } from '@libs/services-lib/appointment-staff-members';
 
 export interface IProvider {
@@ -54,6 +55,7 @@ export interface IProvider {
   potentialDuplicates: IPotentialDuplicatesService;
   notifications: INotificationsService;
   queries: IQueriesService,
+  appointmentPrograms: IAppointmentProgramsService;
   appointmentStaffMembers: IAppointmentStaffMembersService,
 }
 
@@ -83,5 +85,6 @@ export interface IProviderMock {
   potentialDuplicates: IPotentialDuplicatesServiceMock;
   notifications: INotificationsServiceMock;
   queries: IQueriesServiceMock;
+  appointmentPrograms: IAppointmentProgramsServiceMock;
   appointmentStaffMembers: IAppointmentStaffMembersServiceMock;
 }

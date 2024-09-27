@@ -1,5 +1,5 @@
 import { IAppointmentProgram, AppointmentProgram, IdParams, IServiceOption } from '@libs/entities-lib/src/appointment';
-import { Status } from '@libs/shared-lib/src/types';
+import { IMultilingual, Status } from '@libs/shared-lib/src/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../base';
 
 export interface IAppointmentProgramsService extends IDomainBaseService<IAppointmentProgram, IdParams> {
@@ -10,6 +10,7 @@ export interface IAppointmentProgramsService extends IDomainBaseService<IAppoint
   updateServiceOption(appointmentProgramId:string, item: IServiceOption): Promise<IAppointmentProgram>;
   deleteServiceOption(appointmentProgramId:string, itemId: string): Promise<IAppointmentProgram>;
   setAppointmentProgramStatus(id: uuid, appointmentProgramStatus: Status, rationale: string): Promise<IAppointmentProgram>;
+  getEmailTemplate(eventId: uuid): Promise<IMultilingual>
 }
 
 export interface IAppointmentProgramsServiceMock extends IDomainBaseServiceMock<IAppointmentProgram> {
@@ -20,4 +21,5 @@ export interface IAppointmentProgramsServiceMock extends IDomainBaseServiceMock<
   updateServiceOption: jest.Mock<IAppointmentProgram>;
   deleteServiceOption: jest.Mock<IAppointmentProgram>;
   setAppointmentProgramStatus: jest.Mock<IAppointmentProgram>;
+  getEmailTemplate: jest.Mock<IMultilingual>;
 }

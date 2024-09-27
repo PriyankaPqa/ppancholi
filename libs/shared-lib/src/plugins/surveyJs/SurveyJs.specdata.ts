@@ -36,8 +36,8 @@ export class surveyData {
 
   static panelDynamicTranslatedFrenchEnglishDefault = JSON.stringify({
     logo: {
-     default: 'https://api-dev.crc-tech-lab-test.com//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-     fr: 'https://api-dev.crc-tech-lab-test.com//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+     default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+     fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -90,8 +90,8 @@ export class surveyData {
 
   static questionsTranslatedFrenchEglishDefault = JSON.stringify({
     logo: {
-     default: 'https://api-dev.crc-tech-lab-test.com//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-     fr: 'https://api-dev.crc-tech-lab-test.com//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+     default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+     fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -543,8 +543,8 @@ export class surveyData {
 
   static matrixDropdownQuestion = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -674,8 +674,8 @@ export class surveyData {
 
   static ratingQuestion = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -695,8 +695,8 @@ export class surveyData {
 
   static ratingQuestionWithStep = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -723,8 +723,8 @@ export class surveyData {
 
   static ratingQuestionWithChoices = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -768,8 +768,8 @@ export class surveyData {
 
   static panelQuestion = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -1010,8 +1010,8 @@ export class surveyData {
 
   static dynamicPanelQuestion = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -1105,8 +1105,8 @@ export class surveyData {
 
   static matrixdynamicQuestion = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -1196,8 +1196,8 @@ export class surveyData {
 
   static complexWithLogic = JSON.stringify({
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [
@@ -1330,8 +1330,8 @@ export class surveyData {
       fr: 'Desc FR',
     },
     logo: {
-      default: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-      fr: 'https://api-lab.crc-tech-lab-test.com/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+      default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+      fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
     },
     logoPosition: 'right',
     pages: [

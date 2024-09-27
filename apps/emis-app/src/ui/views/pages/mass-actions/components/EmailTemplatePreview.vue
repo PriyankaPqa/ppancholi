@@ -1,56 +1,55 @@
 <template>
-  <div>
-    <rc-dialog
-      :title="title"
-      :cancel-action-label="$t('common.buttons.close.preview')"
-      data-test="email-template-preview-dialog"
-      :show.sync="show"
-      content-padding="16"
-      content-only-scrolling
-      :persistent="true"
-      :tooltip-label="$t('common.tooltip_label')"
-      :show-submit="false"
-      cancel-button-class="preview-cancel-button"
-      fullscreen
-      content-style="background-color:#F5F5F5"
-      @cancel="close"
-      @close="close">
-      <div class="content">
-        <rc-page-loading v-if="loading" />
-        <v-row v-else>
-          <v-col cols="12" class="px-6 py-0 my-4">
-            <div class="rc-body16 fw-bold mb-6 subject">
-              {{ $t('common.subject') }}: {{ subject }}
-            </div>
-            <div v-if="files.length > 0" class="rc-body16 mb-6 attachments" data-test="email_template_attachments">
-              <strong>{{ $t('common.attached_documents') }}:</strong>
-              <span v-for="file in files" :key="file.name">
-                {{ file.name }} ({{ helpers.formatBytes(file.size) }})
-              </span>
-            </div>
-            <!-- eslint is disabled because we purposefully decided to inject html in this -->
-            <!-- eslint-disable -->
+  <rc-dialog
+    :title="title"
+    :cancel-action-label="$t('common.buttons.close.preview')"
+    data-test="email-template-preview-dialog"
+    :show.sync="show"
+    content-padding="16"
+    content-only-scrolling
+    :persistent="true"
+    :tooltip-label="$t('common.tooltip_label')"
+    :show-submit="false"
+    fullscreen
+    content-style="background-color:var(--v-grey-lighten4)"
+    @cancel="close"
+    @close="close">
+    <rc-page-loading v-if="loading" />
+    <template v-else>
+      <v-row justify="center">
+        <v-col cols="12" lg="8" class="my-0 px-4 subject">
+          <span class="fw-bold"> {{ $t('common.subject') }}: </span> {{ subject }}
+        </v-col>
+      </v-row>
+
+      <v-row justify="center">
+        <v-col cols="12" lg="8" class="px-4 py-8 my-1 content">
+          <div v-if="files.length > 0" class="rc-body16 mb-6 " data-test="email_template_attachments">
+            <strong>{{ $t('common.attached_documents') }}:</strong>
+            <span v-for="file in files" :key="file.name">
+              {{ file.name }} ({{ helpers.formatBytes(file.size) }})
+            </span>
+          </div>
+          <!-- eslint is disabled because we purposefully decided to inject html in this -->
+          <!-- eslint-disable -->
             <div v-on:click="getTarget" v-html="messageBody" />
             <!-- eslint-enable -->
-          </v-col>
-        </v-row>
-      </div>
-    </rc-dialog>
+        </v-col>
+      </v-row>
+    </template>
     <assessment-template-preview
       v-if="showAssessmentPreview"
       :show.sync="showAssessmentPreview"
       :title="$t('massAction.assessment.template.preview.title')"
-      :event="event"
+      :event-id="eventId"
       :assessment="assessment"
       :language-mode="languageMode" />
-  </div>
+  </rc-dialog>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { IEventEntity } from '@libs/entities-lib/event';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
 import AssessmentTemplatePreview from './AssessmentTemplatePreview.vue';
@@ -81,9 +80,9 @@ export default Vue.extend({
       type: String,
       default: '',
     },
-    event: {
-      type: Object as () => IEventEntity,
-      default: null as IEventEntity,
+    eventId: {
+      type: String,
+      default: '',
     },
     assessment: {
       type: Object as () => IAssessmentFormEntity,
@@ -120,7 +119,7 @@ export default Vue.extend({
     messageBody(): any {
       switch (this.emailTemplateKey) {
         case 'MassCommunication':
-          return this.emailTemplate.translation[this.languageMode]
+          return this.emailTemplate?.translation[this.languageMode]
           .replaceAll('href', 'name')
           .replace('-firstname-', this.$t('massAction.common.name') as string)
           .replace('[message]', this.message)
@@ -129,11 +128,14 @@ export default Vue.extend({
           .replaceAll('x-size-14', 'en')
           .replaceAll('x-size-12', 'en');
         case 'AssessmentAssigned':
-          return this.emailTemplate.translation[this.languageMode]
+          return this.emailTemplate?.translation[this.languageMode]
           .replaceAll('href', 'name')
           .replace('[firstname]', this.$t('massAction.common.name') as string)
           .replace('[topCustom]', this.message)
           .replace('[custom]', this.secondMessage);
+        case 'AppointmentProgramEmail':
+          return this.emailTemplate?.translation[this.languageMode]
+          .replace('[message]', this.message);
         default:
           return '';
       }
@@ -141,7 +143,7 @@ export default Vue.extend({
   },
 
   watch: {
-    event: {
+    eventId: {
       async handler(newEvent) {
         if (newEvent) {
           this.setEmailTemplate();
@@ -162,7 +164,7 @@ export default Vue.extend({
     getTarget(e: any) {
       switch (e.target.getAttribute('name')) {
         case '[assessmentlink]':
-          if (this.event && this.assessment) {
+          if (this.eventId && this.assessment) {
             this.showAssessmentPreview = true;
           } else {
             this.$toasted.global.info(this.$t('massAction.assessment.template.info.needAssessment'));
@@ -175,7 +177,16 @@ export default Vue.extend({
     async setEmailTemplate() {
       try {
       this.loading = true;
-      this.emailTemplate = await this.$services.massActions.getEmailTemplate(this.emailTemplateKey, this.event?.id);
+      switch (this.emailTemplateKey) {
+        case 'MassCommunication':
+        case 'AssessmentAssigned':
+          this.emailTemplate = await this.$services.massActions.getEmailTemplate(this.emailTemplateKey, this.eventId);
+          break;
+        case 'AppointmentProgramEmail':
+          this.emailTemplate = await this.$services.appointmentPrograms.getEmailTemplate(this.eventId);
+          break;
+        default:
+      }
       } finally {
         this.loading = false;
       }
@@ -187,16 +198,9 @@ export default Vue.extend({
 <style lang="scss" scoped>
   .content {
     background-color: white;
-    padding: 20px 0;
-    margin: 0px 15%;
   }
   .subject{
-    padding: 0 0 15px 0;
-    text-align: center;
+    background-color: var(--v-grey-lighten5);
   }
-  .attachments{
-    max-width: 600px;
-    min-width: 320px;
-    margin: 0 auto;
-  }
+
 </style>

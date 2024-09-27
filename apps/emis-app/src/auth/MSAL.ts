@@ -207,7 +207,7 @@ export class MSAL {
       // scopes for IDS
       this.loginRedirectRequest.scopes = [this.Constants.OPENID_SCOPE, this.Constants.PROFILE_SCOPE, this.Constants.EMAIL_SCOPE, this.Constants.EMIS_ID_SCOPE, this.originalOptions.ids_apiPermissions]
     }
-    
+
     // bad state if:
     // - interation status item is set but not for the expected client
     // - access token exists but not for the expected client
@@ -316,8 +316,8 @@ export class MSAL {
       // Used by BE for convenience
       localStorage.setItem(localStorageKeys.accessToken.name, this.accessToken);
       // FeatureKeys.UseIdentityServer
-      const clientId = this.identityServerEnabled 
-        ? this.originalOptions.ids_clientId 
+      const clientId = this.identityServerEnabled
+        ? this.originalOptions.ids_clientId
         : this.originalOptions.auth.clientId;
       localStorage.setItem(localStorageKeys.accessTokenClientId.name, clientId);
       this.showConsole && console.debug("acquireToken - success", response.accessToken);
@@ -400,7 +400,7 @@ export class MSAL {
     };
 
     // FeatureKeys.UseIdentityServer
-    // The parameter forceLogin is set to true here as one scenario is that the user has 
+    // The parameter forceLogin is set to true here as one scenario is that the user has
     // an active authentication session on IdentityServer for a different tenant. This
     // will override that and force re-authentication against the current tenant.
     this.updateLoginRequestForIdentityServer(request, true);
@@ -430,7 +430,7 @@ export class MSAL {
       logOutRequest.idTokenHint = this.identityToken;
       logOutRequest.postLogoutRedirectUri = window.location.origin;
     }
-    
+
     this.msalLibrary.logoutRedirect(logOutRequest);
   }
 
@@ -487,11 +487,11 @@ export class MSAL {
     return {
       account: this.account,
       scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions, this.Constants.EMIS_ID_SCOPE ] : this.tokenRequest.scopes,
-      authority: this.identityServerEnabled 
+      authority: this.identityServerEnabled
         ? this.originalOptions.ids_authority
         : `https://login.microsoftonline.com/${this.account?.tenantId ?? (this.currentDomainTenant ? this.currentDomainTenant : this.Constants.DEFAULT_COMMON_TENANT)}`,
       forceRefresh: force,
-      
+
       redirectUri: `${window.location.origin}/auth.html` // When doing acquireTokenSilent, redirect to blank page to prevent issues
     }
   }
@@ -510,7 +510,7 @@ export class MSAL {
       if (i18n.locale != DEFAULT_LANGUAGE) {
         request.extraQueryParameters = { ui_locales: i18n.locale };
       }
-      request.extraQueryParameters = { 
+      request.extraQueryParameters = {
         ...request.extraQueryParameters,
         acr_values: `tenant:${!!this.currentDomainTenant ? this.currentDomainTenant : this.defaultTenant}`
       }
@@ -575,7 +575,7 @@ export class MSAL {
    */
   private getAccountForCurrentTenant() : AccountInfo | null {
     const domain_name = process.env.VITE_DOMAIN;
-    
+
     if (this.account && (this.account.tenantId === this.currentDomainTenant || this.account.idTokenClaims?.tid === this.currentDomainTenant)) {
       this.showConsole && console.debug("The current account matches tenant id, so we return it");
       return this.account;

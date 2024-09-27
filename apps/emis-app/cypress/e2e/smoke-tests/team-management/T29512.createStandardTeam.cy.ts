@@ -57,9 +57,9 @@ describe('[T29512] Create Standard Team', { tags: ['@case-file', '@teams'] }, ()
         it('should successfully create standard team', function () {
           const createNewTeamPage = new CreateNewTeamPage();
 
+          createNewTeamPage.fillEventName(this.eventCreated.name.translation.en);
           createNewTeamPage.fillTeamName(`${generateRandomTeamName()} - retries${this.test.retries.length}`);
           createNewTeamPage.fillPrimaryContactName(getUserName(`${roleName}`));
-          createNewTeamPage.fillEventName(this.eventCreated.name.translation.en);
           createNewTeamPage.createTeam();
           cy.contains('The standard team has been successfully created.').should('be.visible');
           createNewTeamPage.getMemberName().should('eq', getUserName(`${roleName}`));

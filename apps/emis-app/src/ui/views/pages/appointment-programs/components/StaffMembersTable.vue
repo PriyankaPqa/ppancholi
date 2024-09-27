@@ -2,7 +2,7 @@
   <div :class="{ disabled }">
     <div class="table_top_header border-radius-top no-bottom-border">
       <v-btn
-        color="primary"
+        small
         data-test="add-staff-member-btn"
         :disabled="!serviceOptions.length"
         @click="showManageStaffDialog = true">
@@ -215,7 +215,8 @@ export default Vue.extend({
 
 .table_top_header {
   border: solid 1px var(--v-grey-lighten2);
-  padding: 10px 15px;
+  padding: 8px 16px;
+  background: var(--v-grey-lighten4);
 }
 
 .table {
