@@ -27,7 +27,7 @@ export class Appointment extends BaseEntity {
 
   attendeeEmail: string;
 
-  staffMemberId: uuid;
+  userAccountId: uuid;
 
   appointmentStatus: AppointmentStatus;
 
@@ -56,7 +56,7 @@ constructor(data?: IAppointment) {
     this.seriesMasterId = data?.seriesMasterId;
     this.attendeeId = data?.attendeeId;
     this.attendeeEmail = data?.attendeeEmail;
-    this.staffMemberId = data?.staffMemberId;
+    this.userAccountId = data?.userAccountId;
     this.appointmentStatus = data?.appointmentStatus;
     this.notes = data?.notes;
     this.masterAccountEmail = data?.masterAccountEmail;
@@ -76,7 +76,7 @@ constructor(data?: IAppointment) {
     this.seriesMasterId = null;
     this.attendeeId = null;
     this.attendeeEmail = null;
-    this.staffMemberId = null;
+    this.userAccountId = null;
     this.appointmentStatus = null;
     this.notes = null;
     this.masterAccountEmail = null;

@@ -9,6 +9,9 @@
         <appointment-form
           :appointment.sync="appointment"
           :is-edit-mode="isEditMode"
+          :event-id="caseFile.eventId"
+          :primary-member-id="primaryMember ? primaryMember.id : ''"
+          :primary-member-email="primaryMember ? primaryMember.contactInformation.email : ''"
           :attendees="members" />
 
         <template slot="actions">
@@ -30,10 +33,9 @@ import mixins from 'vue-typed-mixins';
 import {
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import { Appointment, IAppointment, IAppointmentProgram } from '@libs/entities-lib/appointment';
+import { Appointment, IAppointment } from '@libs/entities-lib/appointment';
 import routes from '@/constants/routes';
 import { useAppointmentStore } from '@/pinia/appointment/appointment';
-import { EFilterKeyType } from '@libs/component-lib/types';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { APPOINTMENTS } from '@/ui/views/pages/appointments/home/mocks';
 import caseFileDetail from '../../caseFileDetail';
@@ -48,10 +50,6 @@ export default mixins(caseFileDetail).extend({
   },
 
   props: {
-    id: {
-      type: String,
-      required: true,
-    },
     appointmentId: {
       type: String,
       default: '',
@@ -62,7 +60,6 @@ export default mixins(caseFileDetail).extend({
     return {
       appointment: null as IAppointment,
       loading: false,
-      appointmentPrograms: [] as IAppointmentProgram[],
     };
   },
 
@@ -74,13 +71,18 @@ export default mixins(caseFileDetail).extend({
 
   async created() {
     this.appointment = new Appointment(this.appointment || APPOINTMENTS[0]);
-    // await useUserAccountMetadataStore().fetchByIds(this.staffMemberIds, true);
+    this.loading = true;
+    await Promise.all([
+      useAppointmentProgramStore().fetchByEventId(this.caseFile.eventId),
+      useAppointmentProgramStore().fetchAppointmentModalities(),
+      useAppointmentProgramStore().fetchServiceOptionTypes(),
+    ]);
 
     if (this.isEditMode) {
       const res = await useAppointmentStore().fetch(this.appointmentId);
       this.appointment = new Appointment(res);
     }
-    // this.getStaffMemberAvailability();
+    this.loading = false;
   },
 
   methods: {
@@ -92,18 +94,6 @@ export default mixins(caseFileDetail).extend({
 
     submit() {
       return null;
-    },
-
-    async fetchAppointmentPrograms() {
-      this.loading = true;
-      const res = await useAppointmentProgramStore().search({ params: {
-        filter: { 'Entity/EventId': { value: this.caseFile.eventId, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
-        skip: 0,
-      } });
-      if (res) {
-        this.appointmentPrograms = res.values;
-      }
-      this.loading = false;
     },
   },
 });

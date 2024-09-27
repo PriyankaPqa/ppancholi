@@ -1,7 +1,7 @@
 import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
-import { IdParams } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
-import { IAppointmentStaffMember } from '@libs/entities-lib/src/appointment';
+import { IDateRange, IdParams } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
+import { IAppointmentStaffMember, IStaffMemberAvailabilityRequest } from '@libs/entities-lib/src/appointment';
 import { IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentStaffMembersService } from './appointment-staff-members.types';
@@ -18,6 +18,12 @@ export class AppointmentStaffMembersService extends DomainBaseService<IAppointme
   async assignStaffMembers(appointmentProgramId: string, staffMembers: Partial<IAppointmentStaffMember>[]): Promise<IAppointmentStaffMember[]> {
     const payload = this.parsePayload(appointmentProgramId, staffMembers);
     return this.http.patch<IAppointmentStaffMember[]>(`${this.baseUrl}/assign-staff-members`, payload);
+  }
+
+  async fetchAvailabilites(payload: IStaffMemberAvailabilityRequest): Promise<IDateRange[]> {
+    return this.http.get<IDateRange[]>(`${this.baseUrl}/staff-member-availabilities`, {
+      params: payload,
+    });
   }
 
   async search(params: ISearchParams):

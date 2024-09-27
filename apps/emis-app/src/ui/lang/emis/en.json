@@ -3902,6 +3902,9 @@
     "caseFile.appointments.email": "Attendee email address",
     "caseFile.appointments.noDate": "No date selected",
     "caseFile.appointments.email.label": "Do you want to send a confirmation email to the attendee?",
+    "caseFile.appointments.attendee.primary": "Primary",
     "caseFile.appointments.email.label.second": "Emails are mandatory for online appointments",
-    "caseFile.appointments.date": "Date"
+    "caseFile.appointments.date": "Date",
+    "caseFile.appointments.myself": "Myself",
+    "caseFile.appointments.nextAvailable": "Next available case manager"
 }

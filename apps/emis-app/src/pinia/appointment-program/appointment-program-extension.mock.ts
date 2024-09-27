@@ -13,6 +13,7 @@ export function getMockExtensionComponents() {
     fetchServiceOptionTypes: jest.fn(() => mockOptionItemData()),
     fetchAppointmentModalities: jest.fn(() => mockOptionItemData()),
     createAppointmentProgram: jest.fn(() => appointment),
+    fetchByEventId: jest.fn(() => appointment),
     updateAppointmentProgram: jest.fn(() => appointment),
     deleteAppointmentProgram: jest.fn(() => appointment),
     createServiceOption: jest.fn(() => appointment),

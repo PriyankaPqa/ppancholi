@@ -1,13 +1,14 @@
-import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
+import { BaseEntityStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
 import { ref, Ref } from 'vue';
 import { IAppointmentProgram, IDateRange, IDaySchedule, IdParams, AppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { AppointmentProgramsService, IAppointmentProgramsServiceMock } from '@libs/services-lib/appointment-programs';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/shared-lib/types';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 export function getExtensionComponents(
-  baseComponents: BaseStoreComponents<IAppointmentProgram, IdParams>,
+  baseComponents: BaseEntityStoreComponents<IAppointmentProgram, IdParams>,
   service: AppointmentProgramsService | IAppointmentProgramsServiceMock,
   optionService: OptionItemsService | IOptionItemsServiceMock,
 ) {
@@ -25,6 +26,10 @@ export function getExtensionComponents(
 
   function getAppointmentModalities(actualValue?: string[] | string, filterOutInactive = true) {
     return filterAndSortActiveItems(appointmentModalities.value, filterOutInactive, actualValue);
+  }
+
+  function getAppointmentProgramsByEventId(eventId: string) {
+    return baseComponents.items.value.filter((i) => i.eventId === eventId);
   }
 
   async function fetchServiceOptionTypes() {
@@ -47,8 +52,17 @@ export function getExtensionComponents(
         appointmentModalitiesFetched.value = true;
       }
     }
+  }
 
-    return getServiceOptionTypes();
+  async function fetchByEventId(eventId: string) : Promise<IAppointmentProgram[]> {
+    const result = await baseComponents.search({ params: {
+      filter: { 'Entity/EventId': { value: eventId, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
+      skip: 0,
+    } });
+    if (result?.values) {
+      baseComponents.setAll(result.values);
+    }
+    return result?.values;
   }
 
   async function createAppointmentProgram(appointment: AppointmentProgram) : Promise<IAppointmentProgram> {
@@ -116,8 +130,10 @@ export function getExtensionComponents(
     appointmentModalitiesFetched,
     getServiceOptionTypes,
     getAppointmentModalities,
+    getAppointmentProgramsByEventId,
     fetchServiceOptionTypes,
     fetchAppointmentModalities,
+    fetchByEventId,
     createAppointmentProgram,
     updateAppointmentProgram,
     deleteAppointmentProgram,

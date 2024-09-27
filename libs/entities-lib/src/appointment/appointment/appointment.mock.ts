@@ -23,7 +23,7 @@ export const mockAppointment = (force? : Partial<IAppointment>): IAppointment =>
   appointmentModalityId: 'mock-appointmentModalityId',
   iCalUID: 'mock-iCalUID',
   seriesMasterId: null,
-  staffMemberId: 'mock-staffMemberId',
+  userAccountId: 'mock-userAccountId',
   appointmentStatus: AppointmentStatus.Scheduled,
   notes: 'mock-notes',
   masterAccountEmail: 'mock-masterAccountEmail',

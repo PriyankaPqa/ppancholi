@@ -89,9 +89,7 @@ export default Vue.extend({
     return {
       TeamType,
       selectedEvent: null as IEventEntity,
-      appointmentPrograms: [] as IAppointmentProgram[],
       selectedAppointmentProgramId: '',
-      appointmentProgramIds: [] as string[],
       loadingPrograms: false,
       loadingStaff: false,
     };
@@ -115,6 +113,10 @@ export default Vue.extend({
       }
       return [];
     },
+
+    appointmentPrograms(): IAppointmentProgram[] {
+        return useAppointmentProgramStore().getAppointmentProgramsByEventId(this.selectedEvent?.id);
+    },
   },
 
   watch: {
@@ -125,7 +127,7 @@ export default Vue.extend({
     },
 
     async selectedEvent(newValue) {
-      if (newValue) {
+      if (newValue?.id) {
         this.selectedAppointmentProgramId = '';
         await this.fetchAppointmentPrograms();
       }
@@ -146,18 +148,8 @@ export default Vue.extend({
 
   methods: {
     async fetchAppointmentPrograms() {
-      if (!this.selectedEvent?.id) {
-        return;
-      }
-
       this.loadingPrograms = true;
-      const res = await useAppointmentProgramStore().search({ params: {
-        filter: { 'Entity/EventId': { value: this.selectedEvent.id, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
-        skip: 0,
-      } });
-      if (res) {
-        this.appointmentPrograms = res.values;
-      }
+      await useAppointmentProgramStore().fetchByEventId(this.selectedEvent.id);
       this.loadingPrograms = false;
     },
 

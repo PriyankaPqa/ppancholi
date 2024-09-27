@@ -14,28 +14,28 @@
 
         <v-row class="mt-4">
           <v-col cols="12" md="6" class="pb-0">
-            <v-select-a11y
+            <v-select-with-validation
               v-model="selectedAppointmentProgram"
               outlined
               data-test="select-appointment-program"
               attach
-              :return-object="false"
+              return-object
+
               :label="`${$t('caseFile.appointments.appointmentProgram')} *`"
               :items="appointmentPrograms"
-              :item-value="(item) => item.id"
               :item-text="(item) => $m(item.name)" />
           </v-col>
           <v-col cols="12" md="6" class="pb-0">
-            <v-select-a11y
+            <v-select-with-validation
               v-model="selectedServiceOption"
               outlined
               data-test="select-service-option"
               attach
-              :return-object="false"
+              return-object
               :label="`${$t('caseFile.appointments.serviceOption')} *`"
+              :item-data-test="item=> item.id"
               :items="serviceOptions"
-              :item-value="(item) => item.id"
-              :item-text="(item) => $m(item.name)" />
+              :item-text="(item) => getServiceOptionTypeName(item)" />
           </v-col>
         </v-row>
 
@@ -44,21 +44,26 @@
             <v-select-with-validation
               v-model="selectedStaffMember"
               data-test="select-staff-member"
+              :loading="loadingStaff"
               attach
               :label="`${$t('caseFile.appointments.setMeetingFor')} *`"
+              :item-data-test="item=> item.id"
               :item-value="(item) => item.id"
               :item-text="(item) => getStaffMemberName(item)"
-              :items="staffMembers"
+              :items="displayedStaffMembers"
               :rules="rules.staff" />
           </v-col>
           <v-col cols="12" md="6" class="pb-0">
             <v-select-with-validation
               v-model="selectedModality"
-              data-test="select-appointment-duration"
+              data-test="select-appointment-modality"
               attach
+              return-object
+              :item-data-test="item=> item.optionItemId"
               :label="`${$t('caseFile.appointments.modality')} *`"
               :items="modalities"
-              :rules="rules.duration" />
+              :item-text="(item) => getModalityName(item)"
+              :rules="rules.modality" />
           </v-col>
         </v-row>
 
@@ -69,9 +74,10 @@
               data-test="select-attendee"
               attach
               :label="`${$t('caseFile.appointments.attendee')} *`"
-              :item-value="(item) => item.id"
-              :item-text="(item) => item"
+              :item-text="(item) => getAttendeeName(item)"
+              :item-data-test="item=> item.id"
               :items="attendees"
+              return-object
               :rules="rules.attendee" />
           </v-col>
           <v-col cols="12" md="6" class="pb-0">
@@ -100,10 +106,13 @@
                 :min="today" />
 
               <appointment-time-picker
-                v-if="selectedDate && selectedDuration"
+                v-if="selectedDate"
                 :date="selectedDate"
                 :duration="selectedDuration"
                 :availabilities="availabilities" />
+              <div v-else class="no-date-section rc-body14">
+                {{ $t('caseFile.appointments.noDate') }}
+              </div>
             </div>
           </v-col>
         </v-row>
@@ -138,7 +147,7 @@
               </p>
 
               <validation-provider v-slot="{ errors }" :rules="rules.sendEmail">
-                <v-radio-group v-model="appointment.sendConfirmationEmail" :disabled="isOnline" :error-messages="errors" row class="mt-0 pb-2">
+                <v-radio-group v-model="appointment.sendConfirmationEmail" :error-messages="errors" row class="mt-0 pb-4">
                   <v-radio
                     data-test="send-confirmation-email-yes"
                     :label="$t('common.buttons.yes')"
@@ -146,6 +155,7 @@
                   <v-radio
                     data-test="send-confirmation-email-no"
                     :label="$t('common.buttons.no')"
+                    :disabled="isOnline"
                     :value="false" />
                 </v-radio-group>
               </validation-provider>
@@ -153,6 +163,8 @@
               <v-text-field-with-validation
                 v-if="appointment.sendConfirmationEmail"
                 v-model="appointment.attendeeEmail"
+                background-color="white"
+                :disabled="!$hasLevel(UserRoles.level1)"
                 class="pb-0"
                 data-test="appointment-attendee-email"
                 :label="`${$t('caseFile.appointments.email')}*`"
@@ -167,20 +179,21 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {
-  VSelectWithValidation,
-} from '@libs/component-lib/components';
+import _orderBy from 'lodash/orderBy';
+import { VSelectWithValidation } from '@libs/component-lib/components';
 import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IDateRange } from '@libs/entities-lib/appointment';
-import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
-import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useUserStore } from '@/pinia/user/user';
-import { BaseEntity } from '@libs/entities-lib/base';
 import helpers from '@/ui/helpers/helpers';
-import { IDaySchedule } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
-import { IMemberEntity } from '@libs/entities-lib/household-create';
+import { IMember, IMemberEntity } from '@libs/entities-lib/household-create';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { IServiceOption } from '@libs/entities-lib/src/appointment';
-import { STAFF_MEMBER_IDS, STAFF_MEMBER_AVAILABILITIES, APPOINTMENTS } from '../../../../appointments/home/mocks';
+import { IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/src/appointment';
+import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
+import { IListOption } from '@libs/shared-lib/types';
+import { UserRoles } from '@libs/entities-lib/user';
+import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
+import { TranslateResult } from 'vue-i18n';
+import { APPOINTMENTS } from '../../../../appointments/home/mocks';
 import AppointmentTimePicker from './AppointmentTimePicker.vue';
 
 export default Vue.extend({
@@ -192,7 +205,6 @@ export default Vue.extend({
   },
 
   props: {
-
     appointment: {
       type: Object as () => IAppointment,
       required: true,
@@ -201,29 +213,46 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+    eventId: {
+      type: String,
+      required: true,
+    },
+    primaryMemberId: {
+      type: String,
+      required: true,
+    },
+    primaryMemberEmail: {
+      type: String,
+      required: true,
+    },
+    attendees: {
+      type: Array as ()=> IMember[],
+      required: true,
+    },
 
   },
 
   data() {
     return {
+      UserRoles,
+      nextAvailableMemberId: 'next-available-member',
       localAppointment: null as IAppointment,
       loading: false,
+      loadingStaff: false,
       getLocalStringDate: helpers.getLocalStringDate,
-      availabilities: [] as IDateRange[],
-      staffMemberSchedule: null as IDaySchedule,
 
-      appointmentPrograms: [] as IAppointmentProgram[],
       selectedAppointmentProgram: null as IAppointmentProgram,
-      serviceOptions: [] as IServiceOption[],
       selectedServiceOption: null as IServiceOption,
+      selectedModality: null as IListOption,
       appointmentDurations: ['15', '20', '30', '60'],
-      selectedDuration: '30',
-      selectedStaffMember: null as IUserAccountMetadata,
-      modalities: [] as IOptionItem[],
-      selectedModality: null as IOptionItem,
-      attendees: [] as IMemberEntity[],
+      selectedDuration: '',
+      selectedStaffMember: null as IAppointmentStaffMember,
       selectedAttendee: null as IMemberEntity,
       selectedDate: '',
+      availabilities: [] as IDateRange[],
+
+      // The selection the user made for SendConfirmation before it was forced set to true because modality is online
+      initialSelectedSendConfirmation: null as boolean,
     };
   },
 
@@ -245,26 +274,131 @@ export default Vue.extend({
       };
     },
 
-    staffMemberIds(): string[] {
-      return STAFF_MEMBER_IDS;
+    // staffMemberIds(): string[] {
+    //   return STAFF_MEMBER_IDS;
+    // },
+
+    appointmentPrograms(): IAppointmentProgram[] {
+      return useAppointmentProgramStore().getAppointmentProgramsByEventId(this.eventId);
     },
 
-    staffMembers(): IUserAccountMetadata[] {
-      const nextAvailableMember = new BaseEntity();
-      nextAvailableMember.id = 'next-available-member';
-      return useUserAccountMetadataStore().getByIds(this.staffMemberIds, true).concat([nextAvailableMember]);
+    serviceOptionTypes(): IOptionItem[] {
+      return useAppointmentProgramStore().getServiceOptionTypes(this.appointment?.serviceOptionId);
+    },
+
+    // Only display service options that are currently active
+    serviceOptions(): IServiceOption[] {
+      return this.selectedAppointmentProgram?.serviceOptions.filter((so) => this.serviceOptionTypes.map((t) => t.id).includes(so.serviceOptionType.optionItemId))
+      || [];
+    },
+
+    allModalities(): IOptionItem[] {
+      return useAppointmentProgramStore().getAppointmentModalities(this.appointment?.appointmentModalityId);
+    },
+
+    // Only display service options that are currently active
+    modalities(): IListOption[] {
+      return this.selectedServiceOption?.appointmentModalities.filter((m) => this.allModalities.map((mod) => mod.id).includes(m.optionItemId))
+      || [];
     },
 
     isOnline(): boolean {
-      return false;
+      if (!this.selectedModality) {
+        return false;
+      }
+      return this.allModalities.find((m) => m.id === this.selectedModality.optionItemId)?.isOnline;
     },
+
+    serviceOptionStaffMembers(): IAppointmentStaffMember[] {
+      if (!this.selectedServiceOption) {
+        return [];
+      }
+      const allStaffMembers = useAppointmentStaffMemberStore().getByAppointmentProgramId(this.selectedAppointmentProgram?.id);
+      return allStaffMembers.filter((m) => m.serviceOptionIds.includes(this.selectedServiceOption.id));
+    },
+
+    displayedStaffMembers(): Partial<IAppointmentStaffMember>[] {
+      if (!this.selectedServiceOption) {
+        return [];
+      }
+
+      let members: Partial<IAppointmentStaffMember>[] = [];
+      const currentUserId = useUserStore().getUserId();
+
+      if (this.$hasLevel(UserRoles.level1)) {
+        members = [this.serviceOptionStaffMembers.find((m) => m.userAccountId === currentUserId)].filter((x) => x);
+      }
+
+      if (this.$hasLevel(UserRoles.level3) || this.$hasLevel(UserRoles.level0, true)) {
+        members.push({ id: this.nextAvailableMemberId });
+      }
+
+      if (this.$hasLevel(UserRoles.level3)) {
+        const membersExceptCurrentUser = this.serviceOptionStaffMembers.filter((m) => m.userAccountId !== currentUserId);
+        const orderedMembers = _orderBy(membersExceptCurrentUser, (member) => useUserAccountMetadataStore().getById(member.userAccountId).givenName);
+        members.push(...orderedMembers);
+      }
+
+       return members;
+    },
+
   },
 
   watch: {
-    selectedDate(newValue) {
-      if (newValue && !this.selectedStaffMember) {
-        this.getStaffMemberAvailability();
+
+    async selectedAppointmentProgram(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.selectedServiceOption = null;
+        if (newValue) {
+          await this.fetchStaffMembers();
+        }
       }
+    },
+
+    selectedServiceOption(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.selectedModality = null;
+        this.selectedStaffMember = null;
+      }
+    },
+
+    async displayedStaffMembers(newValue: IAppointmentStaffMember[]) {
+      if (newValue?.length) {
+        const ids = newValue.map((i) => i.userAccountId).filter((i) => i);
+        await useUserAccountMetadataStore().fetchByIds(ids, true);
+      }
+    },
+
+    async selectedDate(newValue) {
+      if (newValue && this.selectedStaffMember) {
+        await this.fetchStaffMemberAvailability();
+      }
+    },
+
+    async selectedStaffMember(newValue) {
+      if (newValue && this.selectedDate) {
+        await this.fetchStaffMemberAvailability();
+      }
+    },
+
+    // If the user picks a value for sendConfirmationEmail, then picks a modality that forces this value to be true (because is online),
+    // and then changes to a different modality, the user comes back to their initial selection
+    isOnline(newValue) {
+      if (newValue) {
+        this.initialSelectedSendConfirmation = this.localAppointment.sendConfirmationEmail;
+        this.localAppointment.sendConfirmationEmail = true;
+      } else {
+        this.localAppointment.sendConfirmationEmail = this.initialSelectedSendConfirmation;
+        this.initialSelectedSendConfirmation = null;
+      }
+    },
+
+    'localAppointment.sendConfirmationEmail': {
+      handler(newValue) {
+          if (!newValue) {
+            this.localAppointment.attendeeEmail = this.primaryMemberEmail;
+          }
+      },
     },
 
     localAppointment: {
@@ -277,28 +411,68 @@ export default Vue.extend({
 
   async created() {
     this.localAppointment = new Appointment(this.appointment || APPOINTMENTS[0]);
+    this.localAppointment.attendeeEmail = this.primaryMemberEmail;
   },
 
   methods: {
-    getStaffMemberAvailability() {
-      // TODO: Call BE for availability, pass this.selectedStaffMember.id. if id === 'next-available-member', send all ids
-      this.availabilities = STAFF_MEMBER_AVAILABILITIES;
+    getServiceOptionTypeName(serviceOption: IServiceOption): string {
+      return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOption.serviceOptionType.optionItemId)?.name);
     },
 
-    getStaffMemberName(item: IUserAccountMetadata): string {
+    getModalityName(modality: IListOption): string {
+      return this.$m(this.allModalities.find((m) => m.id === modality.optionItemId)?.name);
+    },
+
+    getAttendeeName(attendee: IMember) {
+      let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
+      if (attendee.id === this.primaryMemberId) {
+        name += ` (${this.$t('caseFile.appointments.attendee.primary')})`;
+      }
+      return name;
+    },
+
+  async  fetchStaffMemberAvailability() {
+      const payload = {
+        appointmentProgramId: this.selectedAppointmentProgram.id,
+        staffMemberIds: [this.selectedStaffMember.userAccountId],
+        dateTime: new Date(this.selectedDate),
+        localDayOfWeek: 1,
+      };
+      this.availabilities = await this.$services.appointmentStaffMembers.fetchAvailabilites(payload);
+
+        // TODO: Call BE for availability, pass this.selectedStaffMember.id. if id === 'next-available-member', send all ids
+    },
+
+    getStaffMemberName(item: IAppointmentStaffMember): TranslateResult | string {
       if (item.id === 'next-available-member') {
-        return 'Next available member TBT';
+        return this.$t('caseFile.appointments.nextAvailable');
       }
       const currentUserId = useUserStore().getUserId();
-      if (item.id === currentUserId) {
-        return 'MYSELF TBT';
+      if (item.userAccountId === currentUserId) {
+        return this.$t('caseFile.appointments.myself');
       }
-      if (item) {
-        return item.displayName;
+      const user = useUserAccountMetadataStore().getById(item.userAccountId);
+
+      if (user) {
+        return `${user.displayName} (${this.$m(user.roleName)})`;
       }
       return '';
     },
 
+  async fetchStaffMembers() {
+    this.loadingStaff = false;
+      await useAppointmentStaffMemberStore().fetchByAppointmentProgramId(this.selectedAppointmentProgram.id);
+      this.loadingStaff = false;
+    },
   },
 });
 </script>
+
+<style scoped lang="scss">
+  .no-date-section {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

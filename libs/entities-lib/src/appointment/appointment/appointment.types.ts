@@ -38,7 +38,7 @@ export interface IAppointment extends IEntity {
   seriesMasterId: string;
   attendeeId: uuid;
   attendeeEmail: string;
-  staffMemberId: uuid;
+  userAccountId: uuid;
   appointmentStatus: AppointmentStatus;
   notes: string;
   // Account used to create emails in MSGraph
