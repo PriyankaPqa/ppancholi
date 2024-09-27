@@ -77,7 +77,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IAppointmentProgram, IServiceOption } from '@libs/entities-lib/appointment';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { canDeleteServiceOption } from '@/ui/views/pages/appointment-programs/appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 
 export default Vue.extend({
   name: 'ServiceOptionDetails',
@@ -147,24 +147,9 @@ export default Vue.extend({
     },
 
    async deleteServiceOption() {
-      if (!canDeleteServiceOption(this.appointmentProgram)) {
-          this.$message({ title: this.$t('common.error'), message: this.$t('appointmentProgram.serviceOption.deleteUniqueServiceOption.error') });
-          return;
-      }
-
-      const userChoice = await this.$confirm({
-        title: this.$t('appointmentProgram.serviceOption.confirm.delete.title'),
-        messages: this.$t('appointmentProgram.serviceOption.confirm.delete.message'),
-      });
-
-      if (userChoice) {
-        const res = await useAppointmentProgramStore().deleteServiceOption(this.appointmentProgramId, this.serviceOption.id);
-        if (res) {
-          this.$toasted.global.success(this.$t('appointmentProgram.serviceOption.delete.success'));
-          this.$router.back();
-        } else {
-          this.$toasted.global.error(this.$t('appointmentProgram.serviceOption.delete.error'));
-        }
+      const res = await helpers.deleteServiceOption(this.serviceOption.id, this.appointmentProgram, this);
+      if (res) {
+        this.$router.back();
       }
     },
   },

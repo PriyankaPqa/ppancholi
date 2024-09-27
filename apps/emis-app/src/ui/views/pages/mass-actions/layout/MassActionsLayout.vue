@@ -134,6 +134,14 @@ export default mixins(massActions).extend({
               exact: false,
               level: UserRoles.level6,
             },
+            {
+              text: this.$t('massAction.addRemoveTeamMembersTable.title'),
+              test: 'mass_action.card.add_remove_team_members',
+              to: routes.massActions.addRemoveTeamMembers.home.name,
+              exact: false,
+              level: UserRoles.level5,
+              feature: this.$featureKeys.AddRemoveTeamMembers,
+            },
           ],
         },
         {

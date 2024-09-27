@@ -105,7 +105,7 @@
         :show.sync="showPreview"
         :title="$t('massAction.communication.email.preview.title')"
         :language-mode="languageMode"
-        :event="formCopy.event"
+        :event-id="formCopy.event ? formCopy.event.id : ''"
         :subject="formCopy.messageSubject.translation[languageMode]"
         :message="formCopy.emailMessage.translation[languageMode]"
         :files="files" />

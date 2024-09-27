@@ -6,10 +6,10 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member.mock';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import helpers from '../appointmentProgramsHelpers';
 
 import Component from './ManageStaffMembers.vue';
 
-jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
@@ -217,15 +217,14 @@ describe('ManageStaffMembers.vue', () => {
         expect(appointmentStaffMemberStore.assignStaffMembers).not.toHaveBeenCalled();
       });
 
-      it('calls store method', async () => {
+      it('calls helper method', async () => {
         await mountWrapper();
         wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
         const staffMembers = [mockAppointmentStaffMember({ userAccountId: 'u-1', serviceOptionIds: ['so-1'] })];
         wrapper.setData({ staffMembers });
+        helpers.updateStaffMembers = jest.fn();
         await wrapper.vm.onSubmit();
-        expect(appointmentStaffMemberStore.assignStaffMembers).toHaveBeenCalledWith('appt-program-id', staffMembers);
-
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.success');
+        expect(helpers.updateStaffMembers).toHaveBeenCalledWith('appt-program-id', staffMembers, wrapper.vm);
       });
 
       it('adds removed staff members to the payload', async () => {
@@ -234,20 +233,12 @@ describe('ManageStaffMembers.vue', () => {
           mockAppointmentStaffMember({ userAccountId: 'u-id-2', serviceOptionIds: 'so-2' })];
         await wrapper.setProps({ initialStaffMembers: [mockAppointmentStaffMember({ userAccountId: 'u-removed-id', serviceOptionIds: ['so-1'] })] });
         await wrapper.setData({ staffMembers: newMembers });
-
+        helpers.updateStaffMembers = jest.fn();
         await wrapper.vm.onSubmit();
 
-        expect(appointmentStaffMemberStore.assignStaffMembers).toHaveBeenCalledWith('appt-program-id', [
+        expect(helpers.updateStaffMembers).toHaveBeenCalledWith('appt-program-id', [
           ...newMembers, { userAccountId: 'u-removed-id', serviceOptionIds: [] },
-        ]);
-      });
-
-      it('shows error message if store call fails', async () => {
-        await mountWrapper();
-        wrapper.vm.allMembersAreAssigned = jest.fn(() => true);
-        appointmentStaffMemberStore.assignStaffMembers = jest.fn();
-        await wrapper.vm.onSubmit();
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.staffMember.updated.failed');
+        ], wrapper.vm);
       });
     });
   });

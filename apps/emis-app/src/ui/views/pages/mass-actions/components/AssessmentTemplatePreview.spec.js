@@ -107,7 +107,7 @@ describe('AssessmentTemplatePreview', () => {
     describe('loadDetails', () => {
       it('fetches from correct store', async () => {
         doMount();
-        await wrapper.setProps({ event: mockEventEntity({ id: '044fcd68-3d70-4a3a-b5c8-22da9e01730f' }) });
+        await wrapper.setProps({ eventId: '044fcd68-3d70-4a3a-b5c8-22da9e01730f' });
         await wrapper.vm.loadDetails();
         expect(assessmentFormStore.fetch).toHaveBeenCalledWith({ id: wrapper.vm.assessment.id });
         expect(wrapper.vm.assessmentTemplate).toEqual(new AssessmentFormEntity(assessmentFormStore.fetch()));

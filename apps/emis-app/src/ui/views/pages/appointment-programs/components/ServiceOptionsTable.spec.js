@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { mockServiceOption } from '@libs/entities-lib/appointment';
 import { VDataTableA11y } from '@libs/component-lib/components';
-import { canDeleteServiceOption } from '../appointmentProgramsHelper';
+import helpers from '../appointmentProgramsHelpers';
 import Component from './ServiceOptionsTable.vue';
 
 jest.mock('../appointmentProgramsHelper');
@@ -151,37 +151,15 @@ describe('ServiceOptionsTable.vue', () => {
 
     describe('deleteServiceOption', () => {
       describe('in edit mode', () => {
-        it(' shows an error when deleting the last service option', () => {
-          canDeleteServiceOption.mockImplementation(() => false);
-          mountWrapper(true, true);
-          wrapper.vm.deleteServiceOption(mockServiceOption());
-          expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'appointmentProgram.serviceOption.deleteUniqueServiceOption.error' });
-        });
-
-        it('calls confirm and calls store delete and a success message is displayed', async () => {
-          canDeleteServiceOption.mockImplementation(() => true);
-          mountWrapper(true, true);
+        it('calls helper method', async () => {
+          helpers.canDeleteServiceOption = jest.fn(() => true);
+          helpers.deleteServiceOption = jest.fn();
+          await mountWrapper(true, true);
           const so1 = mockServiceOption({ id: '1' });
           const so2 = mockServiceOption({ id: '2' });
           await wrapper.setProps({ serviceOptions: [so1, so2] });
-          wrapper.vm.$confirm = jest.fn(() => true);
           await wrapper.vm.deleteServiceOption(so2);
-          expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: 'appointmentProgram.serviceOption.confirm.delete.title',
-            messages: 'appointmentProgram.serviceOption.confirm.delete.message' });
-          expect(appointmentProgramStore.deleteServiceOption).toHaveBeenCalledWith(wrapper.vm.appointmentProgramId, so2.id);
-          expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('appointmentProgram.serviceOption.delete.success');
-        });
-
-        it('displays an error message on store call error', async () => {
-          canDeleteServiceOption.mockImplementation(() => true);
-          mountWrapper(true, true);
-          const so1 = mockServiceOption({ id: '1' });
-          const so2 = mockServiceOption({ id: '2' });
-          await wrapper.setProps({ serviceOptions: [so1, so2] });
-          wrapper.vm.$confirm = jest.fn(() => true);
-          appointmentProgramStore.deleteServiceOption = jest.fn();
-          await wrapper.vm.deleteServiceOption(so2);
-          expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('appointmentProgram.serviceOption.delete.error');
+          expect(helpers.deleteServiceOption).toHaveBeenCalledWith(so2.id, wrapper.vm.appointmentProgram, wrapper.vm);
         });
       });
 

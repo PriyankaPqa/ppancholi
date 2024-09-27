@@ -146,7 +146,7 @@ const getAllErrors = () => new Promise((resolve, reject) => {
   let errors = {};
 
   const options = {
-    hostname: 'api-dev.crc-tech-lab-test.com',
+    hostname: 'api-dev.crc-tech.ca',
     port: 443,
     path: '/common/api-error-templates',
     method: 'GET',

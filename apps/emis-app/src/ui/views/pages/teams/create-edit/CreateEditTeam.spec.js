@@ -1,14 +1,11 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import {
-  EEventStatus, mockEventEntities,
-} from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntities } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import {
   TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc,
 } from '@libs/entities-lib/team';
-
 import { mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/shared-lib/types';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
@@ -17,6 +14,8 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
 import { mockProvider } from '@/services/provider';
+import { RcTabs } from '@libs/component-lib/components';
+import { SelectedTab } from '../details/TeamDetails.vue';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
@@ -274,6 +273,26 @@ describe('CreateEditTeam.vue', () => {
           jest.spyOn(wrapper.vm, 'handleRemoveEventConfirmation').mockImplementation(() => {});
           element.vm.$emit('close');
           expect(wrapper.vm.handleRemoveEventConfirmation).toHaveBeenCalledWith(false);
+        });
+      });
+
+      describe('tabs and assign service options', () => {
+        it('renders tabs if feature flag is on and team is usable for appointments', async () => {
+          await mountWrapper(true, 5, {
+            featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+          });
+          await wrapper.setData({ team: mockTeamEntity({ useForAppointments: false }) });
+          const tabs = wrapper.findComponent(RcTabs);
+          expect(tabs.exists()).toBeFalsy();
+          await wrapper.setData({ team: mockTeamEntity({ useForAppointments: true }), original: { useForAppointments: true } });
+          const tabs2 = wrapper.findComponent(RcTabs);
+          expect(tabs2.exists()).toBeTruthy();
+          await wrapper.setData({ selectedTab: SelectedTab.AssignServiceOptions });
+          const table = wrapper.findDataTest('assign-service-options-table');
+          expect(table.exists()).toBeTruthy();
+          await wrapper.setData({ selectedTab: SelectedTab.TeamMembers });
+          const table2 = wrapper.findDataTest('assign-service-options-table');
+          expect(table2.exists()).toBeFalsy();
         });
       });
     });

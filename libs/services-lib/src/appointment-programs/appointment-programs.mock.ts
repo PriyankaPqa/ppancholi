@@ -12,4 +12,5 @@ export const mockAppointmentProgramsService = (): IAppointmentProgramsServiceMoc
   updateServiceOption: jest.fn(() => mockAppointmentProgram()),
   deleteServiceOption: jest.fn(() => mockAppointmentProgram()),
   setAppointmentProgramStatus: jest.fn(() => mockAppointmentProgram()),
+  getEmailTemplate: jest.fn(() => ({ translation: { en: 'email-template-en', fr: 'email-template-fr' } })),
 });

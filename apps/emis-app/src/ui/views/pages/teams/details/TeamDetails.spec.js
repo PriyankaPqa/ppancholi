@@ -3,14 +3,12 @@ import routes from '@/constants/routes';
 import {
   mockTeamEntity, mockTeamsDataAddHoc, mockTeamsDataStandard,
 } from '@libs/entities-lib/team';
-import { RcPageContent } from '@libs/component-lib/components';
+import { RcPageContent, RcTabs } from '@libs/component-lib/components';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
-
 import { useMockEventStore } from '@/pinia/event/event.mock';
-
-import Component from './TeamDetails.vue';
+import Component, { SelectedTab } from './TeamDetails.vue';
 
 const localVue = createLocalVue();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
@@ -31,6 +29,7 @@ describe('TeamDetails.vue', () => {
         $hasLevel: (lvl) => lvl <= `level${level}`,
 
       },
+      stubs: ['v-select-a11y'],
       ...additionalOverwrites,
     });
     await wrapper.vm.$nextTick();
@@ -218,6 +217,32 @@ describe('TeamDetails.vue', () => {
         expect(element.text()).toContain('Lodging, Escalation');
       });
     });
+
+    describe('tabs and assign service options', () => {
+      it('renders tabs if feature flag is on and team is usable for appointments', async () => {
+        teamStore.getById = jest.fn(() => mockTeamEntity({ useForAppointments: true }));
+        await mountWrapper(true, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+        });
+        const tabs2 = wrapper.findComponent(RcTabs);
+        expect(tabs2.exists()).toBeTruthy();
+        await wrapper.setData({ selectedTab: SelectedTab.AssignServiceOptions });
+        const table = wrapper.findDataTest('assign-service-options-table');
+        expect(table.exists()).toBeTruthy();
+        await wrapper.setData({ selectedTab: SelectedTab.TeamMembers });
+        const table2 = wrapper.findDataTest('assign-service-options-table');
+        expect(table2.exists()).toBeFalsy();
+      });
+
+      it('does not render tabs if team is not  usable for appointments', async () => {
+        teamStore.getById = jest.fn(() => mockTeamEntity({ useForAppointments: false }));
+        await mountWrapper(true, 5, {
+          featureList: [wrapper.vm.$featureKeys.AppointmentBooking],
+        });
+        const tabs2 = wrapper.findComponent(RcTabs);
+        expect(tabs2.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -263,7 +288,6 @@ describe('TeamDetails.vue', () => {
     describe('getEventNames', () => {
       it('should call the store and return the names', () => {
         const res = wrapper.vm.getEventNames({ eventIds: ['abc'] });
-        expect(eventStore.getByIds).toHaveBeenCalledWith(['abc'], false);
         expect(res).toBe('Gatineau Floods 2021, Vegas Earthquake 2021');
       });
     });

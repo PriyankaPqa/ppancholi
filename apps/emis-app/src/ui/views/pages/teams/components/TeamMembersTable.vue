@@ -194,6 +194,11 @@ export default Vue.extend({
       type: Object as ()=> IUserAccountCombined,
       default: null,
     },
+
+    teamMembersData: {
+      type: Array as ()=> ITeamMemberAsUser[],
+      default: () => [] as ITeamMemberAsUser[],
+    },
   },
 
   data() {
@@ -217,7 +222,7 @@ export default Vue.extend({
       showMemberCaseFilesDialog: false,
       clickedMember: null as ITeamMemberAsUser,
       removeLoading: false,
-      loading: true,
+      loading: false,
       teamMembers: [] as ITeamMemberAsUser[],
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
@@ -344,16 +349,25 @@ export default Vue.extend({
         this.loadTeamMembers();
       }
     },
+
+    teamMembers(newValue) {
+      if (this.$hasFeature(this.$featureKeys.AppointmentBooking)) {
+        this.$emit('update:teamMembersData', newValue);
+      }
+    },
   },
 
   async created() {
-    if (!_isEmpty(this.team)) {
+    if (this.$hasFeature(this.$featureKeys.AppointmentBooking) && this.teamMembersData.length) {
+      this.teamMembers = this.teamMembersData;
+    } else if (!_isEmpty(this.team)) {
       await this.loadTeamMembers();
     }
   },
 
   methods: {
     async loadTeamMembers() {
+      this.loading = true;
       const teamMemberIds = this.team.teamMembers?.map((m) => m.id) || [];
 
       const fetchedAssignedUserAccountData = await sharedHelpers.callSearchInInBatches({

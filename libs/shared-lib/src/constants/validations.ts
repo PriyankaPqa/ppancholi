@@ -6,5 +6,6 @@ export const MAX_LENGTH_SM = 50;
 export const MAX_LENGTH_MD = 250;
 export const MAX_LENGTH_LG = 500;
 export const MAX_LENGTH_XL = 2000;
+export const MAX_LENGTH_XXL = 3000;
 export const MIN_AGE_REGISTRATION = 16;
 export const MAX_LENGTH_SMS = 320;

@@ -31,25 +31,25 @@ describe('helpers', () => {
           hostname: 'localhost',
         },
       });
-      expect(helpers.getCurrentDomain({})).toBe('beneficiary-dev.crc-tech-lab-test.com');
+      expect(helpers.getCurrentDomain({})).toBe('beneficiary-dev.crc-tech.ca');
     });
 
     it('should dev tenant if beneficiary feature branch', () => {
       global.window = Object.create(window);
       Object.defineProperty(window, 'location', {
         value: {
-          href: 'http://beneficiary-1234.crc-tech-lab-test.com/en/registration/bc-fire-event/',
-          hostname: 'beneficiary-1234.crc-tech-lab-test.com',
+          href: 'http://beneficiary-1234.crc-tech.ca/en/registration/bc-fire-event/',
+          hostname: 'beneficiary-1234.crc-tech.ca',
         },
       });
-      expect(helpers.getCurrentDomain({})).toBe('beneficiary-dev.crc-tech-lab-test.com');
+      expect(helpers.getCurrentDomain({})).toBe('beneficiary-dev.crc-tech.ca');
     });
 
     it('should return the tenant if specified in a query params', () => {
       global.window = Object.create(window);
       Object.defineProperty(window, 'location', {
         value: {
-          href: 'http://beneficiary-1234.crc-tech-lab-test.com/en/registration/bc-fire-event/?force-tenant=forceTenant',
+          href: 'http://beneficiary-1234.crc-tech.ca/en/registration/bc-fire-event/?force-tenant=forceTenant',
           hostname: 'beneficiary-1234',
         },
       });

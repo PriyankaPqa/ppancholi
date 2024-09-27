@@ -169,5 +169,24 @@ describe('AppointmentProgramDetails.vue', () => {
         expect(rationale.exists()).toBeFalsy();
       });
     });
+
+    describe('appointment-program-email-subject', () => {
+      it('remders', async () => {
+        await mountWrapper(false);
+        await wrapper.setData({ appointmentProgram: mockAppointmentProgram() });
+        const element = wrapper.findDataTest('appointment-program-email-subject');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toContain(mockAppointmentProgram().emailConfirmationSubject.translation.en);
+      });
+    });
+    describe('appointment-program-email-message', () => {
+      it('remders', async () => {
+        await mountWrapper(false);
+        await wrapper.setData({ appointmentProgram: mockAppointmentProgram() });
+        const element = wrapper.findDataTest('appointment-program-email-message');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toContain(mockAppointmentProgram().emailConfirmationMessage.translation.en);
+      });
+    });
   });
 });

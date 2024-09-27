@@ -5,19 +5,24 @@ export default {
   /**
    * Validate if a multilingual field contains at least one valid value
    * @param field
+   * @param allFields If true, all fields must have a value. If false, at least one field must have a value
    */
-  validateMultilingualFieldRequired(field: IMultilingual) {
+  validateMultilingualFieldRequired(field: IMultilingual, allFields = true) {
     let isValid = true;
 
     if (!field || !field.translation || !Object.keys(field.translation).length) {
       return false;
     }
 
-    Object.keys(field.translation).forEach((key) => {
-      if (!field.translation[key]) {
-        isValid = false;
-      }
-    });
+    if (allFields) {
+      Object.keys(field.translation).forEach((key) => {
+        if (!field.translation[key]) {
+          isValid = false;
+        }
+      });
+    } else if (Object.keys(field.translation).every((key) => !field.translation[key])) {
+      isValid = false;
+    }
 
     return isValid;
   },

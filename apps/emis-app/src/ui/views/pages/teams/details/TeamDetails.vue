@@ -118,23 +118,49 @@
               <v-row no-gutters class="mt-6 flex">
                 <v-col class="team_data">
                   <div class="rc-body14 fw-bold">
-                    {{ $tc('teams.related_events', eventAmount) }}
+                    {{ $tc('teams.related_events', eventCount) }}
                   </div>
                   <div class="rc-body14" data-test="team_events">
-                    {{ getEventNames(team) }}
+                    {{ getEventNames() }}
                   </div>
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
-          <v-row class="mt-12">
-            <v-col class="pa-0">
+          <v-row class="mt-8">
+            <v-col v-if="!$hasFeature($featureKeys.AppointmentBooking) || !team.useForAppointments" class="pa-0 mt-6">
               <team-members-table
                 data-test="team-members-table"
                 :team-id="teamId"
                 disabled-delete-member
                 :show-add-member="false"
+                :team-members-data.sync="teamMembers"
                 :is-edit-mode="false" />
+            </v-col>
+            <v-col v-else class="pt-0">
+              <rc-tabs class="mb-2">
+                <rc-tab
+                  v-for="tab in tabs"
+                  :key="tab"
+                  :label="$t(`team.tab.title--${SelectedTab[tab]}`)"
+                  :data-test="`team.tab.title--${SelectedTab[tab]}`"
+                  :active="selectedTab === tab"
+                  @click="selectedTab = tab" />
+              </rc-tabs>
+              <team-members-table
+                v-if="selectedTab === SelectedTab.TeamMembers"
+                data-test="team-members-table"
+                :team-id="teamId"
+                disabled-delete-member
+                :show-add-member="false"
+                :team-members-data.sync="teamMembers"
+                :is-edit-mode="false" />
+              <team-assign-service-options
+                v-if="selectedTab === SelectedTab.AssignServiceOptions"
+                data-test="assign-service-options-table"
+                :team-id="team.id"
+                :events="events"
+                :team-members="teamMembers" />
             </v-col>
           </v-row>
         </v-col>
@@ -145,19 +171,23 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent } from '@libs/component-lib/components';
-import {
-  TeamType, ITeamEntity,
-} from '@libs/entities-lib/team';
+import { RcPageContent, RcTab, RcTabs } from '@libs/component-lib/components';
+import { TeamType, ITeamEntity, ITeamMemberAsUser } from '@libs/entities-lib/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
-
 import { useEventStore } from '@/pinia/event/event';
 import { GlobalHandler } from '@libs/services-lib/http-client';
+import { IEventEntity } from '@libs/entities-lib/event';
+import TeamAssignServiceOptions from '../components/TeamAssignServiceOptions.vue';
+
+export enum SelectedTab {
+  TeamMembers = 1,
+  AssignServiceOptions = 2,
+}
 
 export default Vue.extend({
   name: 'TeamDetails',
@@ -165,6 +195,9 @@ export default Vue.extend({
     StatusChip,
     RcPageContent,
     TeamMembersTable,
+    RcTab,
+    RcTabs,
+    TeamAssignServiceOptions,
   },
 
   props: {
@@ -179,6 +212,10 @@ export default Vue.extend({
       UserRoles,
       TeamType,
       isEscalation: true,
+      tabs: [SelectedTab.TeamMembers, SelectedTab.AssignServiceOptions],
+      SelectedTab,
+      selectedTab: SelectedTab.TeamMembers,
+      teamMembers: [] as ITeamMemberAsUser[],
     };
   },
 
@@ -195,7 +232,7 @@ export default Vue.extend({
       return useUserAccountMetadataStore().getById(this.primaryContactId)?.displayName || null;
     },
 
-    eventAmount(): number {
+    eventCount(): number {
       return this.team?.eventIds?.length;
     },
 
@@ -226,6 +263,10 @@ export default Vue.extend({
 
       return [lodgingLabel, escalationLabel, appointmentsLabel].filter((x) => x).join(', ');
     },
+
+    events() :IEventEntity[] {
+      return useEventStore().getByIds(this.team.eventIds, false);
+    },
   },
 
   async created() {
@@ -233,9 +274,8 @@ export default Vue.extend({
   },
 
   methods: {
-    getEventNames(team: ITeamEntity) {
-      return useEventStore().getByIds(team.eventIds, false).map((e) => this.$m(e.name)).sort((a, b) => a?.toLowerCase()?.localeCompare(b?.toLowerCase()))
-        .join(', ');
+    getEventNames() {
+      return this.events.map((e) => this.$m(e.name)).sort((a, b) => a?.toLowerCase()?.localeCompare(b?.toLowerCase())).join(', ');
     },
 
     async loadTeam() {

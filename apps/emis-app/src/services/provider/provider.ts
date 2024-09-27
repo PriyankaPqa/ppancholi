@@ -26,6 +26,7 @@ import { QueriesService } from '@libs/services-lib/queries/entity';
 import { PersonsService } from '@libs/services-lib/persons/entity';
 import { CaseFileIndividualsService } from '@libs/services-lib/case-file-individuals';
 import { BookingRequestsService } from '@libs/services-lib/booking-requests';
+import { AppointmentProgramsService } from '@libs/services-lib/appointment-programs';
 import { AppointmentStaffMembersService } from '@libs/services-lib/appointment-staff-members';
 import { IProvider } from './provider.types';
 
@@ -57,5 +58,6 @@ export const provider = (httpClient = client): IProvider => ({
   potentialDuplicates: new PotentialDuplicatesService(httpClient),
   notifications: new NotificationsService(httpClient),
   queries: new QueriesService(httpClient),
+  appointmentPrograms: new AppointmentProgramsService(httpClient),
   appointmentStaffMembers: new AppointmentStaffMembersService(httpClient),
 });

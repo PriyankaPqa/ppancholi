@@ -21,7 +21,7 @@
             <th v-if="isEditMode" />
           </tr>
         </thead>
-        <tbody v-for="day in Object.keys(scheduleCopy)" :key="day" class="border">
+        <tbody v-for="day, i in Object.keys(scheduleCopy)" :key="day" :class="{ border: i < Object.keys(scheduleCopy).length - 1 }">
           <template v-if="scheduleCopy[+day].timeSlots.length">
             <tr v-for="(timeSlot, timeSlotIndex) in scheduleCopy[+day].timeSlots" :key="`${day}_${timeSlotIndex}`">
               <td>

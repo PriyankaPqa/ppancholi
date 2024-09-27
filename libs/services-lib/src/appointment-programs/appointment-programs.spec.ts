@@ -93,4 +93,15 @@ describe('>>> Appointment Programs Service', () => {
 );
     });
   });
+
+  test('getEmailTemplate is linked to the correct URL', async () => {
+    const eventId = '1';
+
+    await service.getEmailTemplate(eventId);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/email-template`, {
+      params: {
+        eventId,
+      },
+    });
+  });
 });

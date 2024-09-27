@@ -34,7 +34,6 @@ import 'survey-core/defaultV2.min.css';
 
 import Vue from 'vue';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
-import { IEventEntity } from '@libs/entities-lib/event';
 import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import {
   AssessmentBaseEntity, AssessmentFormEntity, IAssessmentFormEntity,
@@ -65,9 +64,9 @@ export default Vue.extend({
       type: String,
       default: '',
     },
-    event: {
-      type: Object as () => IEventEntity,
-      default: null as IEventEntity,
+    eventId: {
+      type: String,
+      default: '',
     },
     assessment: {
       type: Object as () => IAssessmentFormEntity,
@@ -134,7 +133,7 @@ export default Vue.extend({
       // eslint-disable-next-line max-len,vue/max-len
       const res = this.assessment?.id ? await useAssessmentFormStore().fetch({ id: this.assessment?.id }) : null;
       const form = new AssessmentFormEntity(res);
-      form.eventId = this.event?.id;
+      form.eventId = this.eventId;
       this.assessmentTemplate = form;
       if (form.programId) {
         this.program = await useProgramStore().fetch({ id: form.programId, eventId: form.eventId });
