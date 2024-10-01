@@ -267,6 +267,10 @@ export class TasksHomePage {
     return cy.selectListElementByValue(DataTest.dialogTeamToAssign, teamName);
   }
 
+  public getTeamFromSelectTeamToAssignDropdown(teamName: string) {
+    return cy.getByDataTest({ selector: `${DataTest.dialogTeamToAssign}__item--${teamName.replace(/\s/g, '')}`, type: 'div' });
+  }
+
   public cancelTask() {
     return cy.getByDataTest(this.dialogRadioCancel).check({ force: true });
   }
