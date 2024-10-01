@@ -2,10 +2,10 @@ import { IEntity } from '../../base';
 import { DayOfWeek, IDateRange, IDaySchedule } from '../appointment-program/appointment-program.types';
 
 export interface IStaffMemberAvailabilityRequest {
-  dateTime: Date,
+  dateTime: string,
   appointmentProgramId: string,
   localDayOfWeek: DayOfWeek,
-  staffMemberIds: string[],
+  userAccountIds: string[],
 }
 export interface IAppointmentStaffMember extends IEntity {
   userAccountId: uuid;

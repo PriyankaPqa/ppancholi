@@ -21,9 +21,7 @@ export class AppointmentStaffMembersService extends DomainBaseService<IAppointme
   }
 
   async fetchAvailabilites(payload: IStaffMemberAvailabilityRequest): Promise<IDateRange[]> {
-    return this.http.get<IDateRange[]>(`${this.baseUrl}/staff-member-availabilities`, {
-      params: payload,
-    });
+    return this.http.post<IDateRange[]>(`${this.baseUrl}/staff-member-availabilities`, payload);
   }
 
   async search(params: ISearchParams):

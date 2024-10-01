@@ -3906,5 +3906,9 @@
     "caseFile.appointments.email.label.second": "Emails are mandatory for online appointments",
     "caseFile.appointments.date": "Date",
     "caseFile.appointments.myself": "Myself",
+    "caseFile.appointments.staffMember": "Staff member",
+    "caseFile.appointments.timePicker.error": "To display availabilites, please select the following:",
+    "caseFile.appointments.timePicker.selected": "Selected",
+    "caseFile.appointments.timePicker.available": "Available",
     "caseFile.appointments.nextAvailable": "Next available case manager"
 }

@@ -1,6 +1,6 @@
 <template>
   <v-sheet rounded class="mb-3 pa-4" :style="styles">
-    <div class="d-flex  pl-1" style="text-align: justify;font-weight: bold;">
+    <div class="d-flex align-start pl-1" style="text-align: justify;font-weight: bold;">
       <v-icon
         class="pr-3"
         :small="smallIcon"
@@ -8,6 +8,7 @@
         {{ icon }}
       </v-icon>
       {{ message }}
+      <slot name="default" />
     </div>
   </v-sheet>
 </template>
@@ -26,7 +27,7 @@ export default Vue.extend({
 
     message: {
       type: String,
-      required: true,
+      default: '',
     },
 
     styles: {

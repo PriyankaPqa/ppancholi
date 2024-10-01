@@ -46,6 +46,7 @@
               data-test="select-staff-member"
               :loading="loadingStaff"
               attach
+              return-object
               :label="`${$t('caseFile.appointments.setMeetingFor')} *`"
               :item-data-test="item=> item.id"
               :item-value="(item) => item.id"
@@ -105,10 +106,40 @@
                 :label="`${$t('caseFile.appointments.date')} *`"
                 :min="today" />
 
+              <p class="rc-body16 fw-bold mb-2">
+                {{ $t('appointment.availabilitesFor', { date: getLocalStringDate(selectedDate, 'local', 'PP') }) }} :
+              </p>
+              <message-box
+                v-if="selectedDate && (!selectedDuration || !selectedStaffMember)"
+                icon="mdi-alert"
+                class="failed  rc-body14 "
+                data-test="appointment-time-picker-error">
+                <div d-flex flex-column>
+                  <p class="mb-0">
+                    {{ $t('caseFile.appointments.timePicker.error') }}
+                  </p>
+                  <ul class="fw-normal">
+                    <li v-if="!selectedAppointmentProgram">
+                      {{ $t('caseFile.appointments.appointmentProgram') }}
+                    </li>
+                    <li v-if="!selectedServiceOption">
+                      {{ $t('caseFile.appointments.serviceOption') }}
+                    </li>
+                    <li v-if="!selectedStaffMember">
+                      {{ $t('caseFile.appointments.staffMember') }}
+                    </li>
+                    <li v-if="!selectedDuration">
+                      {{ $t('caseFile.appointments.duration') }}
+                    </li>
+                  </ul>
+                </div>
+              </message-box>
+
               <appointment-time-picker
                 v-if="selectedDate"
                 :date="selectedDate"
                 :duration="selectedDuration"
+                :booked-time.sync="selectedTime"
                 :availabilities="availabilities" />
               <div v-else class="no-date-section rc-body14">
                 {{ $t('caseFile.appointments.noDate') }}
@@ -181,7 +212,7 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { VSelectWithValidation } from '@libs/component-lib/components';
-import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IDateRange } from '@libs/entities-lib/appointment';
+import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IDateRange, IStaffMemberAvailabilityRequest } from '@libs/entities-lib/appointment';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
 import { IMember, IMemberEntity } from '@libs/entities-lib/household-create';
@@ -240,7 +271,6 @@ export default Vue.extend({
       loading: false,
       loadingStaff: false,
       getLocalStringDate: helpers.getLocalStringDate,
-
       selectedAppointmentProgram: null as IAppointmentProgram,
       selectedServiceOption: null as IServiceOption,
       selectedModality: null as IListOption,
@@ -250,7 +280,6 @@ export default Vue.extend({
       selectedAttendee: null as IMemberEntity,
       selectedDate: '',
       availabilities: [] as IDateRange[],
-
       // The selection the user made for SendConfirmation before it was forced set to true because modality is online
       initialSelectedSendConfirmation: null as boolean,
     };
@@ -273,10 +302,6 @@ export default Vue.extend({
         },
       };
     },
-
-    // staffMemberIds(): string[] {
-    //   return STAFF_MEMBER_IDS;
-    // },
 
     appointmentPrograms(): IAppointmentProgram[] {
       return useAppointmentProgramStore().getAppointmentProgramsByEventId(this.eventId);
@@ -342,10 +367,18 @@ export default Vue.extend({
        return members;
     },
 
+    selectedTime: {
+      get() {
+        return { startDateTime: this.localAppointment.startDate, endDateTime: this.localAppointment.endDate };
+      },
+      set(value: IDateRange) {
+        this.localAppointment.startDate = value?.startDateTime;
+        this.localAppointment.endDate = value?.endDateTime;
+      },
+    },
   },
 
   watch: {
-
     async selectedAppointmentProgram(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.selectedServiceOption = null;
@@ -432,15 +465,17 @@ export default Vue.extend({
     },
 
   async  fetchStaffMemberAvailability() {
-      const payload = {
-        appointmentProgramId: this.selectedAppointmentProgram.id,
-        staffMemberIds: [this.selectedStaffMember.userAccountId],
-        dateTime: new Date(this.selectedDate),
-        localDayOfWeek: 1,
-      };
-      this.availabilities = await this.$services.appointmentStaffMembers.fetchAvailabilites(payload);
+      const userAccountIds = this.selectedStaffMember.id === this.nextAvailableMemberId
+        ? this.displayedStaffMembers.map((m) => m.userAccountId).filter((x) => x)
+        : [this.selectedStaffMember.userAccountId];
 
-        // TODO: Call BE for availability, pass this.selectedStaffMember.id. if id === 'next-available-member', send all ids
+      const payload: IStaffMemberAvailabilityRequest = {
+        appointmentProgramId: this.selectedAppointmentProgram.id,
+        userAccountIds,
+        dateTime: new Date(`${this.selectedDate} 0:00`).toISOString(),
+        localDayOfWeek: new Date(this.selectedDate).getDay(),
+      };
+      this.availabilities = await this.$services.appointmentStaffMembers.fetchAvailabilites(payload); //  STAFF_MEMBER_AVAILABILITIES; //
     },
 
     getStaffMemberName(item: IAppointmentStaffMember): TranslateResult | string {

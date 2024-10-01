@@ -1,41 +1,36 @@
 <template>
-  <div>
-    <p class="rc-body16 fw-bold mb-2">
-      {{ $t('appointment.availabilitesFor', { date: getLocalStringDate(date, 'local', 'PP') }) }} :
-    </p>
-    <v-radio-group v-model="bookedTime" class="my-0">
-      <v-sheet rounded outlined>
-        <v-calendar
-          ref="calendar"
-          v-model="date"
-          hide-header
-          short-intervals
-          type="day"
-          :events="availableSlots"
-          :event-color="item => item.color"
-          :event-text-color="item => item.textColor"
-          :interval-minutes="+duration"
-          :interval-height="35"
-          :first-time="firstTime"
-          :interval-count="9 * (60 / +duration)"
-          @change="getWeekStartDate">
-          <template #event="data">
-            <div class="availability-slot d-flex">
-              <v-radio
-                data-test="appointment_slot_selected"
-                class="select-time-radio-btn"
-                active-class="active"
-                color="white"
-                :label="getTimeSlotLabel(data.event)"
-                :ripple=" false"
-                off-icon="mdi-circle"
-                :value="data.event" />
-            </div>
-          </template>
-        </v-calendar>
-      </v-sheet>
-    </v-radio-group>
-  </div>
+  <v-radio-group v-model="bookedCalendarTime" class="my-0">
+    <v-sheet rounded outlined>
+      <v-calendar
+        ref="calendar"
+        v-model="date"
+        hide-header
+        short-intervals
+        type="day"
+        :events="availableSlots"
+        :event-color="item => item.color"
+        :event-text-color="item => item.textColor"
+        :interval-minutes="+duration || 30"
+        :interval-height="35"
+        :first-time="firstTime"
+        :interval-count="9 * (60 / (+duration || 30))"
+        @change="getWeekStartDate">
+        <template #event="data">
+          <div class="availability-slot d-flex">
+            <v-radio
+              data-test="appointment_slot_selected"
+              class="select-time-radio-btn"
+              active-class="active"
+              color="white"
+              :label="getTimeSlotLabel(data.event)"
+              :ripple=" false"
+              off-icon="mdi-circle"
+              :value="data.event" />
+          </div>
+        </template>
+      </v-calendar>
+    </v-sheet>
+  </v-radio-group>
 </template>
 
 <script lang="ts">
@@ -44,7 +39,6 @@ import { addMinutes, format, addDays } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { IDateRange, ITimeSlot } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
-import { APPOINTMENT_PROGRAM_TIMEZONE } from '../../../../appointments/home/mocks';
 
 export interface ICalendarEvent {
   name: string,
@@ -63,7 +57,7 @@ export default Vue.extend({
   props: {
     duration: {
       type: String,
-      required: true,
+      default: '',
     },
 
     date: {
@@ -73,7 +67,12 @@ export default Vue.extend({
 
     availabilities: {
       type: Array as ()=> IDateRange[],
-      required: true,
+      default: () => [] as IDateRange[],
+    },
+
+    bookedTime: {
+      type: Object as ()=> IDateRange,
+      default: () => null as IDateRange,
     },
   },
 
@@ -81,18 +80,20 @@ export default Vue.extend({
     return {
       availableSlots: [] as ITimeSlot[],
       getLocalStringDate: helpers.getLocalStringDate,
-      bookedTime: null as ICalendarEvent,
-      timeZone: APPOINTMENT_PROGRAM_TIMEZONE,
+      bookedCalendarTime: null as ICalendarEvent,
       weekStartDate: '',
       currentWeekDay: 0,
-      firstTime: '09:00',
     };
   },
 
   computed: {
-    // firstTime(): string {
-    //   return this.availableSlots[0]?.start ? format(addMinutes(this.availableSlots[0].start as Date, -(+this.duration)), 'HH:mm') : '09:00';
-    // },
+    firstTime(): string {
+       if (this.availableSlots?.length && this.duration) {
+        const minStart = Math.min(...this.availableSlots.map((s) => new Date(s.start).getTime()));
+        return format(addMinutes(new Date(minStart), -(+this.duration)), 'HH:mm');
+       }
+      return this.availableSlots.length ? format(addMinutes(this.availableSlots[0].start as Date, -(+this.duration)), 'HH:mm') : '09:00';
+    },
   },
 
   watch: {
@@ -109,14 +110,27 @@ export default Vue.extend({
       }
     },
 
+    bookedCalendarTime(newValue) {
+      if (newValue) {
+        this.$emit('update:bookedTime', { startDateTime: (newValue.start).toISOString(), endDateTime: (newValue.end).toISOString() });
+      }
+    },
+
  },
 
   created() {
+    if (this.bookedTime?.startDateTime) {
+      this.bookedCalendarTime = this.parseEventFromTimeSlot(new Date(this.bookedTime.startDateTime), new Date(this.bookedTime.endDateTime));
+    }
     this.calculateAvailableSlots();
   },
 
   methods: {
     calculateAvailableSlots() {
+      if (!this.duration) {
+        return;
+      }
+
       const slots = [] as ITimeSlot[];
       this.availabilities.forEach((a) => {
         let s = new Date(a.startDateTime);
@@ -131,6 +145,9 @@ export default Vue.extend({
         }
       });
 
+      if (this.bookedTime?.startDateTime) {
+        slots.push(this.bookedCalendarTime);
+      }
       this.availableSlots = slots;
     },
 
@@ -145,8 +162,9 @@ export default Vue.extend({
     },
 
     getTimeSlotLabel(event: ICalendarEvent) {
-      const first = event.start === this.bookedTime?.start ? 'Selected  TBT' : 'Available TBT';
-      return `${first} ${format(event.start, 'hh:mm')}-${format(event.end, 'hh:mm')}`;
+      return event.start === this.bookedCalendarTime?.start
+      ? this.$t('caseFile.appointments.timePicker.selected')
+      : this.$t('caseFile.appointments.timePicker.available');
     },
 
     getWeekStartDate(updateData: { start: { date: Date, weekday: number } }) {
