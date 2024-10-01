@@ -7,6 +7,8 @@
         :disable-edit-btn="isEditingBranding"
         :is-editing-colours.sync="isEditingColours" />
 
+      <design v-if="showDesign" />
+
       <logo ref="logo" class="px-12" :disable-edit-btn="isEditingBranding" />
 
       <tenant-details
@@ -59,6 +61,7 @@ export default Vue.extend({
     return {
       isEditingColours: false,
       isEditingTenantDetails: false,
+      showDesign: false,
     };
   },
 

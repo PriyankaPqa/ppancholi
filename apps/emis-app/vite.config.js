@@ -65,9 +65,21 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `
-          @import "@libs/shared-lib/assets/styles/rctech_variables.scss";
-        `,
+          // This block is used by Vite to load our variables in every scss file (and SFC files)
+          additionalData: [
+            '@import "vuetify/src/styles/settings/_variables.scss";',
+            '@import "@libs/shared-lib/assets/styles/rctech_variables.scss";',
+            '',
+          ].join('\n'),
+        },
+        sass: {
+          // This block is used by Vuetify ONLY, to load the overrides into its components (VBtn and so on)
+          additionalData: [
+            // vuetify variable overrides
+            '@import "vuetify/src/styles/settings/_variables.scss"',
+            '@import "@libs/shared-lib/assets/styles/rctech_variables.scss"',
+            '',
+          ].join('\n'),
         },
       },
     },
