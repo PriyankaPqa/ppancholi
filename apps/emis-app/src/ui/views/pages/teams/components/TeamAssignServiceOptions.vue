@@ -166,7 +166,8 @@ export default Vue.extend({
       await useAppointmentStaffMemberStore().search({ params: {
         filter: { 'Entity/AppointmentProgramId': { value: this.selectedAppointmentProgramId, type: EFilterKeyType.Guid } },
         skip: 0,
-      } });
+      },
+includeInactiveItems: true });
       this.loadingStaff = false;
     },
 
