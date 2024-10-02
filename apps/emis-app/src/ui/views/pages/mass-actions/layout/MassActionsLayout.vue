@@ -70,6 +70,14 @@ export default mixins(massActions).extend({
               level: UserRoles.level6,
             },
             {
+              text: this.$t('mass_action.card.authentication_retry'),
+              test: 'mass_action.card.authentication_retry',
+              to: null, //2do add routes.massActions.authenticationRetry.home.name,
+              exact: false,
+              level: UserRoles.level6,
+              feature: this.$featureKeys.AuthenticationRetry,
+            },
+            {
               text: this.$t('mass_action.card.caseFileStatus'),
               test: 'mass_action.card.case_file_status',
               to: routes.massActions.caseFileStatus.home.name,

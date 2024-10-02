@@ -5,7 +5,7 @@ import {
 import routes from '@/constants/routes';
 import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
 import { UserRoles } from '@libs/entities-lib/user';
-
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -52,6 +52,20 @@ describe('MassActionsHome.vue', () => {
             level: UserRoles.level6,
             roles: null,
             group: MassActionGroup.Group1,
+          },
+          {
+            title: 'mass_action.card.authentication_retry',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 1 }),
+            button: 'mass_action.card.action.view',
+            secondaryButton: 'mass_action.card.action.download_template',
+            showSecondaryButton: true,
+            route: null,
+            dataTest: 'massAction_authentication_retry',
+            level: UserRoles.level6,
+            roles: null,
+            group: MassActionGroup.Group1,
+            onSecondaryClick: 'downloadAuthenticationRetryTemplate',
+            feature: FeatureKeys.AuthenticationRetry,
           },
           {
             title: 'mass_action.card.caseFileStatus',

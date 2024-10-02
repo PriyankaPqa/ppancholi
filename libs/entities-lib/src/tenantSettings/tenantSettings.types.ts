@@ -9,13 +9,13 @@ export enum FeatureKeys {
   UseIdentityServer = 'UseIdentityServer',
   TaskManagement = 'TaskManagement',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
-  DataCorrectionPhaseII = 'DataCorrectionPhaseII',
   FeatureDashboard = 'FeatureDashboard',
   AppointmentBooking = 'AppointmentBooking',
   Lodging = 'Lodging',
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
   CaseFileIndividual = 'CaseFileIndividual',
   AddRemoveTeamMembers = 'AddRemoveTeamMembers',
+  AuthenticationRetry = 'AuthenticationRetry',
 }
 
 export enum FeatureType {

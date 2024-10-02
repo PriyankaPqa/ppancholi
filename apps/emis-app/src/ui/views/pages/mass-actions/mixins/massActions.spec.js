@@ -69,6 +69,12 @@ describe('massActions', () => {
         wrapper.vm.onClick('downloadFACustomTemplate');
         expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(15);
       });
+
+      it('should trigger proper method downloadAuthenticationRetryTemplate', () => {
+        wrapper.vm.downloadApiTemplate = jest.fn();
+        wrapper.vm.onClick('downloadAuthenticationRetryTemplate');
+        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionType.AuthenticationRetry);
+      });
     });
 
     describe('onClickMenu', () => {

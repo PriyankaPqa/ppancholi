@@ -75,6 +75,9 @@ export default Vue.extend({
         case 'downloadFACustomTemplate':
           this.downloadApiTemplate(MassActionType.FinancialAssistanceCustomOptions);
           break;
+        case 'downloadAuthenticationRetryTemplate':
+            this.downloadApiTemplate(MassActionType.AuthenticationRetry);
+            break;
         default:
       }
     },

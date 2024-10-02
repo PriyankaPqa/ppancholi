@@ -25,6 +25,7 @@ export enum MassActionType {
   CaseFileStatus = 16,
   Communication = 18,
   AddRemoveTeamMembers = 21,
+  AuthenticationRetry = 22,
 }
 
 // this is actually also part of MassActionType!!
