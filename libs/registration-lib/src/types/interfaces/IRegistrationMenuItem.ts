@@ -1,5 +1,5 @@
 export interface IRegistrationMenuItem {
-  id: string;
+  id: TabId;
   labelKey: string;
   titleKey: string;
   icon: string;

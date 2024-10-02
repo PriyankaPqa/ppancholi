@@ -76,8 +76,10 @@ describe('LandingPage.vue', () => {
   describe('Methods', () => {
     describe('redirect', () => {
       it('should redirect to home page of registration', () => {
+        registrationStore.setTimeOnStep = jest.fn();
         wrapper.vm.redirect();
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.individual.name });
+        expect(registrationStore.setTimeOnStep).toHaveBeenCalledWith('LandingPage');
       });
     });
     describe('reset', () => {

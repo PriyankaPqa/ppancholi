@@ -178,7 +178,8 @@ describe('TeamAssignServiceOptions.vue', () => {
         expect(appointmentStaffMemberStore.search).toHaveBeenCalledWith({ params: {
           filter: { 'Entity/AppointmentProgramId': { value: 'p-id', type: EFilterKeyType.Guid } },
           skip: 0,
-        } });
+        },
+        includeInactiveItems: true });
       });
     });
   });

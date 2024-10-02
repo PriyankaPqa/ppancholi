@@ -3,7 +3,7 @@ import {
   CurrentAddress,
   ECurrentAddressTypes,
   EIndigenousTypes, HouseholdCreate, IAddressData, ICheckForPossibleDuplicateResponse, IHouseholdCreateData,
-  IIdentitySet, IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
+  IIdentitySet, IIndigenousCommunityData, IMember, IMemberEntity, ISelfRegistrationLog, ISplitHousehold, Member,
 } from '@libs/entities-lib/household-create';
 import { IInformationFromBeneficiarySearch } from '@libs/registration-lib/src/types';
 import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
@@ -14,6 +14,8 @@ import {
  Status } from '@libs/shared-lib/types';
 import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 import _sortBy from 'lodash/sortBy';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { UAParser } from 'ua-parser-js';
 import _cloneDeep from 'lodash/cloneDeep';
 import deepmerge from 'deepmerge';
 import { IPublicService, IPublicServiceMock } from '@libs/services-lib/public';
@@ -88,6 +90,8 @@ export function storeFactory({
       Ref<{ mustDoTier2: boolean, completed: boolean, basicDocumentsOnly?: boolean, status: IdentityAuthenticationStatus, hasErrors: boolean }>;
     const basicInformationWhenTier2FromEmail = ref(null) as Ref<ITier2Details>;
     const storeShelterLocations = ref([]);
+    const selfRegistrationLog = ref({ }) as Ref<ISelfRegistrationLog>;
+    const currentStepTimer = ref(new Date());
 
     function isDuplicateError(): boolean {
       if (duplicateResult.value?.duplicateFound && (duplicateResult.value.registeredToEvent || (!duplicateResult.value.maskedAlternatePhoneNumber
@@ -100,6 +104,7 @@ export function storeFactory({
       }
       return false;
     }
+
     function containsErrorCode(): boolean {
       const errors = registrationErrors.value?.response?.data?.errors;
       if (errors && Array.isArray(errors)) {
@@ -286,12 +291,15 @@ export function storeFactory({
     function isCRCRegistration() {
       return mode === ERegistrationMode.CRC;
     }
+
     function getEvent() {
       return new RegistrationEvent(event.value);
     }
+
     function getCurrentTab() {
       return tabs.value[currentTabIndex.value];
     }
+
     function getPreviousTabName() {
       if (currentTabIndex.value === 0 && getCurrentTab().id !== TabId.Confirmation) {
         return 'registration.privacy_statement.start_registration';
@@ -300,12 +308,14 @@ export function storeFactory({
       const nonDisabledTabs = tabs.value.filter((t, index) => index < currentTabIndex.value && !t.disabled);
       return nonDisabledTabs.length ? nonDisabledTabs[nonDisabledTabs.length - 1].titleKey : null;
     }
+
     function getNextTabName() {
       if (currentTabIndex.value >= tabs.value.length - 2) {
         return '';
       }
       return tabs.value[currentTabIndex.value + 1].titleKey;
     }
+
     function getGenders(includeInactive = false) {
       let returnGenders = genders.value;
       if (!includeInactive) {
@@ -313,9 +323,11 @@ export function storeFactory({
       }
       return _sortBy(returnGenders, 'orderRank');
     }
+
     function getPreferredLanguages() {
       return _sortBy(preferredLanguages.value, 'orderRank');
     }
+
     function getPrimarySpokenLanguages(includeInactive = false) {
       let res = primarySpokenLanguages.value;
       if (!includeInactive) {
@@ -323,6 +335,7 @@ export function storeFactory({
       }
       return _sortBy(res, 'orderRank');
     }
+
     function getIndigenousTypesItems(): Record<string, TranslateResult>[] {
       const communities = indigenousCommunities.value;
       if (communities) {
@@ -338,6 +351,7 @@ export function storeFactory({
       }
       return [];
     }
+
     function getIndigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[] {
       const commmunities = indigenousCommunities.value;
       if (commmunities) {
@@ -361,6 +375,7 @@ export function storeFactory({
       }
       return [];
     }
+
     function getHouseholdCreate() {
       return _cloneDeep(householdCreate.value);
     }
@@ -416,39 +431,96 @@ export function storeFactory({
       }
       return currentIndex;
     }
+
     function mutateCurrentTab(callback: (targetTab: IRegistrationMenuItem) => void) {
       const targetTab = getCurrentTab();
       callback(targetTab);
     }
+
     function mutateTabAtIndex(targetIndex: number, callback: (targetTab: IRegistrationMenuItem) => void) {
       const targetTab = tabs.value[targetIndex];
       callback(targetTab);
     }
+
+    function setTimeOnStep(tabName: TabId | 'LandingPage') {
+      const timeSpent = Math.round(((new Date()).getTime() - currentStepTimer.value.getTime()) / 1000);
+
+      switch (tabName) {
+        case 'LandingPage':
+          selfRegistrationLog.value.timeOnLandingPage += timeSpent;
+          break;
+        case TabId.AdditionalMembers:
+          selfRegistrationLog.value.timeOnAdditionalMembers += timeSpent;
+          break;
+        case TabId.Addresses:
+          selfRegistrationLog.value.timeOnAddresses += timeSpent;
+          break;
+        case TabId.PersonalInfo:
+          selfRegistrationLog.value.timeOnPersonalInfo += timeSpent;
+          break;
+        case TabId.Privacy:
+          selfRegistrationLog.value.timeOnPrivacy += timeSpent;
+          break;
+        case TabId.Review:
+          selfRegistrationLog.value.timeOnReview += timeSpent;
+          break;
+        default:
+          break;
+      }
+      currentStepTimer.value = new Date();
+    }
+
     function jump(toIndex: number): void {
       const currentIndex = currentTabIndex.value;
       if (toIndex === currentIndex || toIndex < 0 || toIndex >= tabs.value.length) {
         return;
       }
 
+      setTimeOnStep(tabs.value[currentIndex].id);
+
       Vue.set(tabs.value[currentIndex], 'isTouched', true);
 
       currentTabIndex.value = toIndex;
     }
+
     function increaseInlineEditCounter() {
       inlineEditCounter.value += 1;
     }
+
     function decreaseInlineEditCounter() {
       if (inlineEditCounter.value >= 1) {
         inlineEditCounter.value -= 1;
       }
     }
+
     function setHouseholdCreate(payload: IHouseholdCreateData) {
       householdCreate.value = new HouseholdCreate(payload);
     }
+
+    function setupSelfRegistrationLog(overwriteExisting: boolean) {
+      if (overwriteExisting || !selfRegistrationLog.value?.deviceInformationRawData) {
+        selfRegistrationLog.value = {
+          timeOnAdditionalMembers: 0,
+          timeOnAddresses: 0,
+          timeOnCaptcha: 0,
+          timeOnLandingPage: 0,
+          timeOnPersonalInfo: 0,
+          timeOnPrivacy: 0,
+          timeOnReview: 0,
+          mouseDistance: 0,
+          mouseTime: 0,
+          deviceInformationRawData: JSON.stringify(UAParser()),
+        };
+        currentStepTimer.value = new Date();
+      }
+    }
+
     function resetHouseholdCreate() {
       householdCreate.value = new HouseholdCreate();
+      setupSelfRegistrationLog(true);
       registrationErrors.value = null;
     }
+
     function resetTabs() {
       for (let index = 0; index < tabs.value.length; index += 1) {
         const originalTab = allTabs.value.find((t) => t.id === tabs.value[index].id);
@@ -459,9 +531,11 @@ export function storeFactory({
         });
       }
     }
+
     function setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: { originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
       splitHouseholdState.value = { originHouseholdId, splitMembers: { primaryMember, additionalMembers } };
     }
+
     function resetSplitHousehold() {
       splitHouseholdState.value = null;
       event.value = null;
@@ -584,6 +658,12 @@ export function storeFactory({
       };
     }
 
+    function finalizeSelfRegistrationLog() {
+      setTimeOnStep(TabId.Review);
+      // so as to send a smaller number and not bust int just for stats...
+      selfRegistrationLog.value.mouseDistance = Math.round(selfRegistrationLog.value.mouseDistance / 1000);
+    }
+
     async function submitRegistration(): Promise<IDetailedRegistrationResponse> {
       let result: IDetailedRegistrationResponse;
       submitLoading.value = true;
@@ -597,16 +677,20 @@ export function storeFactory({
                 receivingAssistanceDetails: [{ receivingAssistance: true }],
               })) as ICaseFileIndividualCreateRequest[];
 
+            finalizeSelfRegistrationLog();
+
             result = await caseFileApi.createCaseFile({
               householdId: householdCreate.value.id,
               eventId: event.value.id,
               consentInformation: householdCreate.value.consentInformation,
               individuals,
+              selfRegistrationLog: selfRegistrationLog.value,
             }, true);
           } else {
             result = await householdApi.submitRegistration({
               household: householdCreate.value,
               eventId: event.value.id,
+              selfRegistrationLog: selfRegistrationLog.value,
             });
           }
         } else {
@@ -899,6 +983,7 @@ export function storeFactory({
       increaseInlineEditCounter,
       decreaseInlineEditCounter,
       setHouseholdCreate,
+      setupSelfRegistrationLog,
       resetHouseholdCreate,
       resetTabs,
       setSplitHousehold,
@@ -926,6 +1011,9 @@ export function storeFactory({
       buildHouseholdCreateData,
       internalMethods: testMode ? internalMethods : null,
       storeShelterLocations,
+      selfRegistrationLog,
+      setTimeOnStep,
+      currentStepTimer,
     };
   })();
 }

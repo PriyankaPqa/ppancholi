@@ -59,6 +59,7 @@ export default Vue.extend({
       this.$services.publicApi.resetPublicToken();
     },
     redirect() {
+      useRegistrationStore().setTimeOnStep('LandingPage');
       this.$router.replace({ name: routes.individual.name });
     },
   },

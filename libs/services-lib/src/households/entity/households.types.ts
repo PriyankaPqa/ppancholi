@@ -14,6 +14,7 @@ import {
   ISendOneTimeCodeRegistrationPublicPayload,
   IVerifyOneTimeCodeRegistrationPublicPayload,
   ICreateHouseholdRequest,
+  ISelfRegistrationLog,
 } from '@libs/entities-lib/household-create';
 import { HouseholdStatus, IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
@@ -26,7 +27,8 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   getIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
   getPerson(id: uuid): Promise<IMemberEntity>;
-  submitRegistration({ household, eventId }: { household: IHouseholdCreate; eventId: string; }): Promise<IDetailedRegistrationResponse>;
+  submitRegistration({ household, eventId }: { household: IHouseholdCreate; eventId: string; selfRegistrationLog: ISelfRegistrationLog }):
+      Promise<IDetailedRegistrationResponse>;
   postPublicRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse>
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse>;
   postCrcRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse>

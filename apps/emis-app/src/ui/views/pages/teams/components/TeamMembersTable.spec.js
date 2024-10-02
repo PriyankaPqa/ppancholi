@@ -11,6 +11,7 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 
 import { mockProvider } from '@/services/provider';
+import routes from '@/constants/routes';
 import Component from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
@@ -196,6 +197,38 @@ describe('TeamMembersTable.vue', () => {
         const component = wrapper.findComponent(TeamMemberCaseFiles);
         await component.vm.$emit('dialogClose');
         expect(wrapper.vm.onCloseCaseFileDialog).toHaveBeenCalled();
+      });
+    });
+
+    describe('bulk-add-members-button, bulk-remove-members-button', () => {
+      it('should be rendered when FF AddRemoveTeamMembers is on and user has L5', async () => {
+        await mountWrapper(true, 5, {
+          featureList: [wrapper.vm.$featureKeys.AddRemoveTeamMembers],
+        });
+        const addButton = wrapper.findDataTest('bulk-add-members-button');
+        const removeButton = wrapper.findDataTest('bulk-remove-members-button');
+        expect(addButton.exists()).toBeTruthy();
+        expect(removeButton.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered when FF AddRemoveTeamMembers is on but user has no L5', async () => {
+        await mountWrapper(true, 4, {
+          featureList: [wrapper.vm.$featureKeys.AddRemoveTeamMembers],
+        });
+        const addButton = wrapper.findDataTest('bulk-add-members-button');
+        const removeButton = wrapper.findDataTest('bulk-remove-members-button');
+        expect(addButton.exists()).toBeFalsy();
+        expect(removeButton.exists()).toBeFalsy();
+      });
+
+      it('should not be rendered when FF AddRemoveTeamMembers is off but user has L5', async () => {
+        await mountWrapper(true, 5, {
+          featureList: [],
+        });
+        const addButton = wrapper.findDataTest('bulk-add-members-button');
+        const removeButton = wrapper.findDataTest('bulk-remove-members-button');
+        expect(addButton.exists()).toBeFalsy();
+        expect(removeButton.exists()).toBeFalsy();
       });
     });
   });
@@ -495,6 +528,17 @@ describe('TeamMembersTable.vue', () => {
         await wrapper.vm.onCloseCaseFileDialog();
         expect(wrapper.vm.loadTeamMembers).toHaveBeenCalled();
         expect(wrapper.vm.showMemberCaseFilesDialog).toEqual(false);
+      });
+    });
+
+    describe('goToMassAddRemoveTeamMembers', () => {
+      it('should redirect route with proper params', async () => {
+        wrapper.vm.$router.push = jest.fn();
+        await wrapper.setProps({
+          teamId: 'team-id-1',
+        });
+        await wrapper.vm.goToMassAddRemoveTeamMembers('add');
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.massActions.addRemoveTeamMembers.create.name, query: { action: 'add', teamId: 'team-id-1' } });
       });
     });
   });

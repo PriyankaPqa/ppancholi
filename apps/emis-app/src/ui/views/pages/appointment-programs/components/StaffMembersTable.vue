@@ -187,7 +187,8 @@ export default Vue.extend({
       await useAppointmentStaffMemberStore().search({ params: {
         filter: { 'Entity/AppointmentProgramId': { value: this.appointmentProgramId, type: EFilterKeyType.Guid } },
         skip: 0,
-      } });
+      },
+includeInactiveItems: true });
     },
 
     async removeStaffMember(userId: string) {

@@ -2,11 +2,6 @@
 import Vue from 'vue';
 import VueMeta from 'vue-meta';
 
-// asset imports
-import '@libs/shared-lib/assets/styles/main.scss';
-import 'devextreme/dist/css/dx.common.css';
-import 'devextreme/dist/css/dx.light.css';
-
 // Import i18n related files
 
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
@@ -33,6 +28,11 @@ import resetStore from '@libs/stores-lib/store-reset';
 import registrationStore from '@/ui/plugins/registrationStore';
 import router from './ui/router';
 import App from './ui/App.vue';
+
+// asset imports
+import '@libs/shared-lib/assets/styles/main.scss';
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
 
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();

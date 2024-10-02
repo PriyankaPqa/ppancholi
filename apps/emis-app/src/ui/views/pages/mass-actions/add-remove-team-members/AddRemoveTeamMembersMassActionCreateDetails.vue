@@ -84,7 +84,7 @@ export default Vue.extend({
 
   async created() {
     this.formCopy = cloneDeep(this.form);
-    await this.fetchTeams();
+    await this.fetchTeams('', this.form.teamId);
   },
 
   methods: {
@@ -95,19 +95,19 @@ export default Vue.extend({
       return '';
     },
 
-    async fetchTeams(querySearch?: '') {
+    async fetchTeams(querySearch = '', searchTeamId = '') {
       this.loading = true;
-      const searchParam = helpers.toQuickSearchSql(querySearch);
+      const teamFilter = searchTeamId ? { Entity: { Id: { value: searchTeamId, type: 'guid' } } } : helpers.toQuickSearchSql(querySearch);
 
       const params = {
           orderBy: 'Entity/Name asc',
           filter: {
-        ...searchParam,
-        },
+            ...teamFilter,
+          },
         top: 5,
       };
 
-      const res = await useTeamStore().search({ params });
+      const res = await useTeamStore().search({ params, includeInactiveItems: true });
 
       this.teams = res?.values;
       this.loading = false;

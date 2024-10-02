@@ -48,6 +48,14 @@ describe('MassActionsLayout.vue', () => {
                 level: UserRoles.level6,
               },
               {
+                text: wrapper.vm.$t('mass_action.card.authentication_retry'),
+                test: 'mass_action.card.authentication_retry',
+                to: null,
+                exact: false,
+                level: UserRoles.level6,
+                feature: FeatureKeys.AuthenticationRetry,
+              },
+              {
                 text: wrapper.vm.$t('mass_action.card.caseFileStatus'),
                 test: 'mass_action.card.case_file_status',
                 to: routes.massActions.caseFileStatus.home.name,

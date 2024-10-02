@@ -1,3 +1,21 @@
 // Import files containing scss variables here. It will be available in each component. See vue.config.
 @import 'breakpoints';
 $font-family: 'Roboto';
+
+// Uncomment when doing https://rctech.atlassian.net/browse/EMISV2-10182
+// $btn-letter-spacing: 0.4px;
+// $btn-border-radius: 6px;
+// $btn-text-transform: 'none';
+// $btn-active-opacity: 0.18;
+
+// $btn-sizes: (
+//   'small': 24,
+//   'default': 32,
+//   'large': 40,
+// );
+
+// $btn-font-sizes: (
+//   'small': 14px,
+//   'default': 14px,
+//   'large': 16px,
+// );

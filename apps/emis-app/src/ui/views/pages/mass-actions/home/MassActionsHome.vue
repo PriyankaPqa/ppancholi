@@ -45,6 +45,7 @@ export default mixins(massActions).extend({
       return routes;
     },
 
+    // eslint-disable-next-line max-lines-per-function
     cards(): Array<IMassActionCards> {
       return [
         {
@@ -76,6 +77,20 @@ export default mixins(massActions).extend({
           level: UserRoles.level6,
           roles: null,
           group: MassActionGroup.Group1,
+        },
+        {
+          title: 'mass_action.card.authentication_retry',
+          description: this.$t('mass_action.card.group', { x: 1 }),
+          button: 'mass_action.card.action.view',
+          secondaryButton: 'mass_action.card.action.download_template',
+          showSecondaryButton: true,
+          route: null, // 2do add routes.massActions.authenticationRetry.home.name,
+          dataTest: 'massAction_authentication_retry',
+          level: UserRoles.level6,
+          roles: null,
+          group: MassActionGroup.Group1,
+          onSecondaryClick: 'downloadAuthenticationRetryTemplate',
+          feature: this.$featureKeys.AuthenticationRetry,
         },
         {
           title: 'mass_action.card.caseFileStatus',

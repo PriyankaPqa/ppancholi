@@ -121,6 +121,36 @@ describe('MainLayout.vue', () => {
 
           expect(wrapper.vm.$appInsights.trackException).toHaveBeenCalledWith(testError, {}, 'MainLayout', 'fetchData');
         });
+
+        describe('mouseMoved', () => {
+          it('initialized movement when not initialized', async () => {
+            wrapper.vm.mouseMoved({ clientX: 123, clientY: 456 });
+            expect(registrationStore.selfRegistrationLog.mouseDistance).toEqual(0);
+            expect(registrationStore.selfRegistrationLog.mouseTime).toEqual(0);
+            expect(wrapper.vm.previousMouseCoordinates).toEqual({ x: 123, y: 456 });
+          });
+          it('records movement when initialized and throttles time', async () => {
+            wrapper.vm.mouseMoved({ clientX: 123, clientY: 456 });
+
+            wrapper.vm.mouseMoved({ clientX: 125, clientY: 450 });
+            expect(registrationStore.selfRegistrationLog.mouseDistance).toEqual(8);
+            expect(registrationStore.selfRegistrationLog.mouseTime).toEqual(1);
+            wrapper.vm.mouseMoved({ clientX: 125, clientY: 451 });
+            expect(registrationStore.selfRegistrationLog.mouseDistance).toEqual(9);
+            expect(registrationStore.selfRegistrationLog.mouseTime).toEqual(1);
+            // eslint-disable-next-line no-promise-executor-return
+            await new Promise((resolve) => setTimeout(resolve, 1100));
+            expect(registrationStore.selfRegistrationLog.mouseDistance).toEqual(9);
+            expect(registrationStore.selfRegistrationLog.mouseTime).toEqual(1);
+            wrapper.vm.mouseMoved({ clientX: 120, clientY: 451 });
+            expect(registrationStore.selfRegistrationLog.mouseDistance).toEqual(14);
+            expect(registrationStore.selfRegistrationLog.mouseTime).toEqual(2);
+            // eslint-disable-next-line no-promise-executor-return
+            await new Promise((resolve) => setTimeout(resolve, 1100));
+            expect(registrationStore.selfRegistrationLog.mouseDistance).toEqual(14);
+            expect(registrationStore.selfRegistrationLog.mouseTime).toEqual(2);
+          });
+        });
       });
     });
   });

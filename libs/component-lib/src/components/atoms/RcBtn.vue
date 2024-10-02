@@ -1,12 +1,20 @@
 <template>
   <v-btn
-    :id="idName"
     class="base-btn"
-    :class="type + '-btn'"
+    :class="`${type}-btn`"
     :depressed="isDepressed"
-    v-bind="$attrs"
+    v-bind="attrs"
+    :ripple="false"
     @click="$emit('click')">
-    <slot name="default" />
+    <template v-if="type === 'back' || type === 'back-light'">
+      <v-icon left>
+        mdi-arrow-left
+      </v-icon>
+      {{ $t('common.button.back') }}
+    </template>
+    <template v-else>
+      <slot name="default" />
+    </template>
   </v-btn>
 </template>
 
@@ -16,35 +24,36 @@ import Vue, { PropType } from 'vue';
 export default Vue.extend({
   name: 'RcBtn',
   props: {
-    type: {
-      type: String as PropType<
-        'primary' | 'secondary' | 'transparent' | 'back' | 'back-dark' | 'cancel' | 'inline-icon' | 'inline-icon-dark' | 'fab-primary' | 'fab-secondary'
-        >,
-      default: 'primary',
+  type: {
+    type: String as PropType<
+      'primary' | 'secondary' | 'transparent' | 'back' | 'back-light' | 'cancel' | 'icon' | 'icon-light' | 'fab' | 'fab-light'
+    >,
+    default: 'primary',
+    validator(value: string) {
+      return ['primary', 'secondary', 'transparent', 'back', 'back-light', 'cancel', 'icon', 'icon-light', 'fab', 'fab-light'].includes(value);
     },
   },
+},
   computed: {
-    idName() :string {
-      // this id is used to override the disabled style
-      type buttonIdObjectType = {
-        [key: string]: string;
-      };
-      const buttonIdObj: buttonIdObjectType = {
-        primary: 'custom-primary-btn-disabled',
-        secondary: 'custom-secondary-btn-disabled',
-        transparent: 'custom-transparent-btn-disabled',
-        back: 'custom-back-btn-disabled',
-        'back-dark': 'custom-back-btn-dark-disabled',
-        cancel: 'custom-cancel-btn-disabled',
-        'fab-primary': 'custom-fab-primary-btn-disabled',
-        'fab-secondary': 'custom-fab-secondary-btn-disabled',
-      };
-        return buttonIdObj[this.type];
+    attrs(): Record<string, string> {
+      if (this.type.includes('fab')) {
+        return {
+          ...this.$attrs,
+          fab: '',
+        };
+      }
+      if (this.type.includes('icon')) {
+        return {
+          ...this.$attrs,
+          icon: '',
+        };
+      }
+      return this.$attrs;
     },
 
     isDepressed() : boolean {
       const depressedBtnType = [
-        'primary', 'secondary', 'transparent', 'back', 'back-dark', 'cancel', 'inline-icon',
+        'primary', 'secondary', 'transparent', 'back', 'back-light', 'cancel', 'icon',
       ];
       return depressedBtnType.indexOf(this.type) > -1;
     },
@@ -53,11 +62,52 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-// base button style
-.base-btn {
-  .v-size--default{
-    height: 40px !important;
+// Common styles for disabled buttons
+@mixin disabled-btn-styles($color, $bg-color) {
+  opacity: .5;
+  color: $color !important;
+  background-color: $bg-color !important;
+
+  ::v-deep .v-icon {
+    color: $color !important;
   }
+}
+
+@mixin fab-shadow {
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2),
+              0 6px 10px 0 rgba(0, 0, 0, .14),
+              0 1px 18px 0 rgba(0, 0, 0, .12) !important;
+}
+
+// Common button size styles
+@mixin button-sizes($large, $default, $small) {
+  &.v-size--large {
+    height: $large;
+
+    & .v-btn__content .v-icon {
+      margin-right: 6px;
+    }
+  }
+
+  &.v-size--default {
+    height: $default;
+
+    & .v-btn__content .v-icon {
+      margin-right: 4px;
+    }
+  }
+
+  &.v-size--small {
+    height: $small;
+
+    & .v-btn__content .v-icon {
+      margin-right: 2px;
+    }
+  }
+}
+
+// Base button styles
+.base-btn {
   &:focus {
     outline: 0 !important;
   }
@@ -66,33 +116,172 @@ export default Vue.extend({
     gap: 6px;
     outline: 3px solid #35B2E8 !important;
   }
+
+  &:hover::before {
+    opacity: 0 !important;
+  }
 }
 
-// override vuetify button size
-.v-btn:not(.v-btn--round).v-size--default{
-  height: 40px;
-  font-size: 16px;
-}
-
-.v-btn:not(.v-btn--round).v-size--small{
-  height: 32px;
-  font-size: 14px;
-}
-
-.v-btn:not(.v-btn--round).v-size--x-small{
-  height: 24px;
-  border-radius: 4px !important;
-  font-size: 14px;
-}
-
-// primary button
-.primary-btn {
+// Primary, Secondary, Transparent, and Cancel button styles
+@mixin btn-styles($color, $bg, $hover-bg, $active-bg) {
   text-transform: none !important;
+  color: $color !important;
+  background-color: $bg !important;
+
+  &:hover {
+    background-color: $hover-bg !important;
+  }
+
+  &:active {
+    background-color: $active-bg !important;
+  }
+}
+
+.primary-btn {
+  @include btn-styles(white, var(--v-primary-base), var(--v-primary-darken1), var(--v-primary-darken2));
+}
+
+.secondary-btn {
+  @include btn-styles(var(--v-primary-base), var(--v-primary-lighten2), #CEE9F5, var(--v-primary-lighten1));
+  border: 1px solid var(--v-primary-base);
+}
+
+.transparent-btn {
+  @include btn-styles(var(--v-primary-darken1), transparent, var(--v-primary-lighten2), var(--v-primary-lighten2));
+  text-decoration: underline;
+}
+
+.cancel-btn {
+  @include btn-styles(var(--v-grey-darken4), var(--v-grey-lighten5), var(--v-grey-lighten3), var(--v-grey-lighten2));
+  border: 1px solid var(--v-grey-darken2);
+}
+
+// Back button shared styles
+@mixin back-btn-styles($color) {
+  text-transform: none !important;
+  color: $color !important;
+  background-color: transparent !important;
+  padding: 0px 4px !important;
+}
+
+.back-btn {
+  @include back-btn-styles(var(--v-primary-darken1));
+  @include button-sizes(24px, 20px, 16px);
+
+  &:hover {
+    background-color: #CEE9F5 !important;
+  }
+
+  &:active {
+    background-color: var(--v-primary-lighten1) !important;
+  }
+}
+
+.back-light-btn {
+  @include back-btn-styles(var(--v-primary-lighten1));
+  @include button-sizes(24px, 20px, 16px);
+
+  &:hover,
+  &:active {
+    color: var(--v-primary-lighten2) !important;
+    background-color: var(--v-primary-base) !important;
+  }
+}
+
+// Icon button styles
+@mixin icon-btn-sizes($icon-large, $icon-default, $icon-small) {
+  &.v-size--large {
+    height: 36px;
+    width: 36px;
+
+    & ::v-deep .v-btn__content .v-icon {
+      height: $icon-large;
+      font-size: $icon-large;
+      width: $icon-large;
+    }
+  }
+
+  &.v-size--default {
+    height: 30px;
+    width: 30px;
+
+    & ::v-deep .v-btn__content .v-icon {
+      height: $icon-default;
+      font-size: $icon-default;
+      width: $icon-default;
+    }
+  }
+
+  &.v-size--small {
+    height: 24px;
+    width: 24px;
+
+    & ::v-deep .v-btn__content .v-icon {
+      height: $icon-small;
+      font-size: $icon-small;
+      width: $icon-small;
+    }
+  }
+}
+
+.icon-btn {
+  text-transform: none !important;
+  color: var(--v-grey-darken3) !important;
+  background-color: transparent !important;
+
+  @include icon-btn-sizes(24px, 20px, 16px);
+
+  &:hover {
+    background-color: var(--v-grey-lighten3) !important;
+  }
+
+  &:active {
+    background-color: var(--v-grey-lighten2) !important;
+  }
+}
+
+.icon-light-btn {
+  @include icon-btn-sizes(24px, 20px, 16px);
+
+  &:hover, &:active {
+    color: var(--v-primary-lighten2) !important;
+    background-color: var(--v-primary-base) !important;
+  }
+}
+
+// Fab button styles (reuse from previous code)
+@mixin fab-sizes($icon-size, $btn-size) {
+  height: $btn-size;
+  width: $btn-size;
+
+  & ::v-deep .v-btn__content .v-icon {
+    height: $icon-size;
+    font-size: $icon-size;
+    width: $icon-size;
+  }
+}
+
+.fab-btn, .fab-light-btn {
+  &.v-size--large {
+    @include fab-sizes(24px, 56px);
+  }
+
+  &.v-size--default {
+    @include fab-sizes(24px, 40px);
+  }
+
+  &.v-size--small {
+    @include fab-sizes(16px, 32px);
+  }
+
+  @include fab-shadow;
+}
+
+.fab-btn {
   background-color: var(--v-primary-base) !important;
   color: white !important;
-  border-radius: 6px !important;
 
-  &:hover{
+  &:hover {
     background-color: var(--v-primary-darken1) !important;
   }
 
@@ -101,209 +290,52 @@ export default Vue.extend({
   }
 }
 
-#custom-primary-btn-disabled.v-btn--disabled{
-  opacity: .5;
-  background-color: var(--v-primary-base) !important;
-  color: white !important;
-  ::v-deep .v-icon{
-    color: white !important;
-  }
-}
-
-// secondary button
-.secondary-btn {
-  text-transform: none !important;
-  color: var(--v-primary-base) !important;
-  background-color: var(--v-primary-lighten2) !important;
-  border-radius: 6px !important;
-  border: 1px solid var(--v-primary-base);
-
-  &:hover {
-    background-color: #CEE9F5 !important;
-  }
-
-  &:active {
-    background-color: var(--v-primary-lighten1) !important;
-  }
-}
-
-#custom-secondary-btn-disabled.v-btn--disabled{
-  opacity: .5;
-  color: var(--v-primary-base) !important;
-  background-color: var(--v-primary-lighten2) !important;
-  ::v-deep .v-icon{
-    color: var(--v-primary-base) !important;
-  }
-}
-
-// transparent button
-.transparent-btn {
-  text-transform: none !important;
-  color: var(--v-primary-darken1) !important;
-  background-color: rgba(0,0,0,0) !important;
-  border-radius: 6px !important;
-
-  &:hover {
-    color: var(--v-primary-darken2) !important;
-  }
-
-  &:active {
-    color: var(--v-primary-darken2) !important;
-  }
-}
-
-#custom-transparent-btn-disabled.v-btn--disabled{
-  opacity: .5;
-  background-color: rgba(0,0,0,0) !important;
-  color: var(--v-primary-base) !important;
-  ::v-deep .v-icon{
-    color: var(--v-primary-base) !important;
-    text-decoration: none !important;
-  }
-}
-
-// back button light
-.back-btn {
-  text-transform: none !important;
-  color: var(--v-primary-darken1) !important;
-  background-color: rgba(0,0,0,0) !important;
-  border-radius: 6px !important;
-
-  &:hover {
-    color: var(--v-primary-darken1) !important;
-    background-color: #CEE9F5 !important;
-  }
-
-  &:active {
-    background-color: var(--v-primary-lighten1) !important;
-  }
-}
-
-#custom-back-btn-disabled.v-btn--disabled{
-  opacity: .5;
-  color: var(--v-primary-darken1) !important;
-  background-color: rgba(0,0,0,0) !important;
-  border-radius: 6px !important;
-  ::v-deep .v-icon{
-    color: var(--v-primary-darken1) !important;
-  }
-}
-
-// back button dark
-.back-dark-btn {
-  text-transform: none !important;
-  color: var(--v-primary-lighten1) !important;
-  background-color: rgba(0,0,0,0) !important;
-  border-radius: 6px !important;
-
-  &:hover {
-    color: var(--v-primary-lighten2) !important;
-  }
-
-  &:active {
-    color: var(--v-primary-lighten2) !important;
-    background-color: #007093 !important;
-  }
-}
-
-#custom-back-btn-dark-disabled.v-btn--disabled{
-  opacity: 0.5;
-  color: var(--v-primary-lighten1) !important;
-  background-color: rgba(0,0,0,0) !important;
-  border-radius: 6px !important;
-  ::v-deep .v-icon{
-    color: var(--v-primary-lighten1) !important;
-  }
-}
-
-// cancel button
-.cancel-btn {
-  text-transform: none !important;
-  color: var(--v-grey-darken4) !important;
-  background-color: var(--v-grey-lighten5) !important;
-  border: 1px solid var(--v-grey-darken2) !important;
-  border-radius: 6px !important;
-
-  &:hover {
-    background-color: var(--v-grey-lighten3) !important;
-  }
-
-  &:active {
-    background-color: var(--v-grey-lighten2) !important;
-  }
-}
-
-#custom-cancel-btn-disabled.v-btn--disabled{
-  opacity: .5;
-  color: var(--v-grey-darken4) !important;
-  background-color: var(--v-grey-lighten5) !important;
-  border: 1px solid var(--v-grey-darken2) !important;
-  border-radius: 6px !important;
-  ::v-deep .v-icon{
-    color: var(--v-grey-darken4) !important;
-  }
-}
-
-// inline icon button
-.inline-icon-btn {
-  text-transform: none !important;
-  color: var(--v-grey-darken3) !important;
-  background-color: rgba(0,0,0,0) !important;
-
-  &:hover {
-    background-color: var(--v-grey-lighten3) !important;
-  }
-
-  &:active {
-    background-color: var(--v-grey-lighten2) !important;
-  }
-}
-
-// inline icon dark button
-.inline-icon-dark-btn {
-  text-transform: none !important;
-  color: var(--v-primary-ligthen1) !important;
-  background-color: rgba(0,0,0,0) !important;
-  &:hover {
-    color: var(--v-primary-ligthen2) !important;
-  }
-
-  &:active {
-    color: var(--v-primary-lighten2) !important;
-    background-color: #007093 !important;  }
-}
-
-// fab primary button
-.fab-primary-btn {
-  @extend .primary-btn;
-  border-radius: 50% !important;
-  box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12) !important;
-}
-
-#custom-fab-primary-btn-disabled.v-btn--disabled{
-  opacity: .5;
-  background-color: var(--v-primary-base) !important;
-  color: white !important;
-  ::v-deep .v-icon{
-    color: white !important;
-  }
-}
-
-// fab secondary button
-.fab-secondary-btn {
-  @extend .secondary-btn;
-  border-radius: 50% !important;
+.fab-light-btn {
   background-color: white !important;
-  box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12) !important;
-}
+  color: var(--v-primary-darken1) !important;
+  border-color: var(--v-primary-base)!important;
+  border: 1px solid;
 
-#custom-fab-secondary-btn-disabled.v-btn--disabled{
-  opacity: .5;
-  color: var(--v-primary-base) !important;
-  background-color: var(--v-primary-lighten2) !important;
-  ::v-deep .v-icon{
-    color: var(--v-primary-base) !important;
+  &:hover {
+    background: #CEE9F5 !important;
+    border-color: var(--v-primary-darken1)!important;
+  }
+
+  &:active {
+    background-color: var(--v-primary-lighten1) !important;
   }
 }
 
+// Disabled button styles
+.primary-btn.v-btn--disabled.v-btn--has-bg {
+  @include disabled-btn-styles(white, var(--v-primary-base));
+}
+
+.secondary-btn.v-btn--disabled.v-btn--has-bg  {
+  @include disabled-btn-styles(var(--v-primary-base), var(--v-primary-lighten2));
+}
+
+.transparent-btn.v-btn--disabled.v-btn--has-bg  {
+  @include disabled-btn-styles(var(--v-primary-base), transparent);
+}
+
+.back-btn.v-btn--disabled.v-btn--has-bg  {
+  @include disabled-btn-styles(var(--v-primary-darken1), transparent);
+}
+
+.back-light-btn.v-btn--disabled.v-btn--has-bg  {
+  @include disabled-btn-styles(var(--v-primary-lighten1), transparent);
+}
+
+.cancel-btn.v-btn--disabled.v-btn--has-bg  {
+  @include disabled-btn-styles(var(--v-grey-darken4), var(--v-grey-lighten5));
+}
+
+.fab-btn.v-btn--disabled.v-btn--has-bg  {
+  @include disabled-btn-styles(white, var(--v-primary-base));
+}
+
+.fab-light-btn.v-btn--disabled.v-btn--has-bg  {
+  @include disabled-btn-styles(var(--v-primary-base), white);
+}
 </style>

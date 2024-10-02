@@ -1,5 +1,5 @@
 <template>
-  <div class="selfReg__wrapper">
+  <div class="selfReg__wrapper" @mousemove="mouseMoved">
     <rc-page-loading v-if="fetchingData" />
     <template v-else>
       <app-header data-test="app-header" />
@@ -14,6 +14,7 @@
 import Vue from 'vue';
 import { RcPageLoading, RcRouterViewTransition } from '@libs/component-lib/components';
 import _isEmpty from 'lodash/isEmpty';
+import _throttle from 'lodash/throttle';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
@@ -33,6 +34,7 @@ export default Vue.extend({
   data() {
     return {
       fetchingData: false,
+      previousMouseCoordinates: null as { x: number, y: number },
     };
   },
 
@@ -93,6 +95,21 @@ export default Vue.extend({
         this.$appInsights.trackException(error, {}, 'MainLayout', 'fetchData');
       });
     },
+    mouseMoved(event: MouseEvent) {
+      if (!this.previousMouseCoordinates) {
+        useRegistrationStore().selfRegistrationLog.mouseDistance = 0;
+        useRegistrationStore().selfRegistrationLog.mouseTime = 0;
+      } else {
+        useRegistrationStore().selfRegistrationLog.mouseDistance
+              += Math.abs(this.previousMouseCoordinates.x - event.clientX) + Math.abs(this.previousMouseCoordinates.y - event.clientY);
+        this.throttleMouseMove();
+      }
+      this.previousMouseCoordinates = { x: event.clientX, y: event.clientY };
+    },
+
+    throttleMouseMove: _throttle(() => {
+      useRegistrationStore().selfRegistrationLog.mouseTime += 1;
+    }, 1000, { leading: true, trailing: false }),
   },
 });
 </script>
