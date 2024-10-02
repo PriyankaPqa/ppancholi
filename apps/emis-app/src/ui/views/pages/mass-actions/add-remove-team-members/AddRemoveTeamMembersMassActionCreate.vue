@@ -61,6 +61,12 @@ export default Vue.extend({
     },
   },
 
+  created() {
+    if (this.$route.query.teamId) {
+      this.form.teamId = this.$route.query.teamId as string;
+    }
+  },
+
   methods: {
     back() {
       this.$router.replace({ name: routes.massActions.addRemoveTeamMembers.home.name });

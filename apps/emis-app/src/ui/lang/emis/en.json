@@ -3793,6 +3793,8 @@
     "teams.types.create_adhoc": "Create ad hoc team",
     "teams.types.create_standard": "Create standard team",
     "teams.types.standard": "Standard team",
+    "teams.edit.bulk_add_members": "Bulk add members",
+    "teams.edit.bulk_remove_members": "Bulk remove members",
     "test": "test",
     "user.accountSettings.contact_info": "Contact info",
     "user.accountSettings.email_username": "Email (username)",

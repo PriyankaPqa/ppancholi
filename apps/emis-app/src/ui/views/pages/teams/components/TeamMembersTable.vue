@@ -3,9 +3,29 @@
     <div
       :class="['table_top_header', showMembers ? 'border-radius-top no-bottom-border' : 'border-radius-all']">
       <div class="team_member_toolbar">
-        <v-btn v-if="showAddMember" color="primary" data-test="add-new-member" :disabled="disableAddMembers" @click="showAddTeamMemberDialog = true">
-          {{ $t('teams.add_new_members') }}
-        </v-btn>
+        <div v-if="showAddMember">
+          <v-btn color="primary" data-test="add-new-member" :disabled="disableAddMembers" @click="showAddTeamMemberDialog = true">
+            {{ $t('teams.add_new_members') }}
+          </v-btn>
+          <template v-if="$hasFeature($featureKeys.AddRemoveTeamMembers) && $hasLevel(UserRoles.level5)">
+            <v-btn
+              class="ml-4"
+              color="grey lighten-5"
+              data-test="bulk-add-members-button"
+              :disabled="disableAddMembers"
+              @click="goToMassAddRemoveTeamMembers('add')">
+              {{ $t('teams.edit.bulk_add_members') }}
+            </v-btn>
+            <v-btn
+              class="ml-4"
+              color="grey lighten-5"
+              data-test="bulk-remove-members-button"
+              :disabled="disableAddMembers"
+              @click="goToMassAddRemoveTeamMembers('remove')">
+              {{ $t('teams.edit.bulk_remove_members') }}
+            </v-btn>
+          </template>
+        </div>
         <div v-else />
         <div>
           <v-text-field
@@ -143,6 +163,7 @@ import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-a
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
 import { ICombinedIndex, ITableSearchResults } from '@libs/shared-lib/types';
+import routes from '@/constants/routes';
 
 export interface Result extends IUserAccountCombined {
   isPrimaryContact: boolean;
@@ -225,6 +246,7 @@ export default Vue.extend({
       loading: false,
       teamMembers: [] as ITeamMemberAsUser[],
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
+      UserRoles,
     };
   },
 
@@ -487,6 +509,10 @@ export default Vue.extend({
     async onCloseCaseFileDialog() {
       await this.loadTeamMembers();
       this.showMemberCaseFilesDialog = false;
+    },
+
+    goToMassAddRemoveTeamMembers(action: string) {
+      return this.$router.push({ name: routes.massActions.addRemoveTeamMembers.create.name, query: { action, teamId: this.teamId } });
     },
   },
 });

@@ -136,4 +136,25 @@ describe('AddRemoveTeamMembersMassActionCreate.vue', () => {
       });
     });
   });
+
+  describe('lifecycle', () => {
+    describe('created', () => {
+      it('should set teamId when there is one from router query', () => {
+        doMount({
+          mocks: {
+            $services: services,
+            $route: {
+              query: {
+                action: 'remove',
+                teamId: 'team-id-123',
+              },
+            },
+          },
+        });
+        const hook = wrapper.vm.$options.created[0];
+        hook.call(wrapper.vm);
+        expect(wrapper.vm.form.teamId).toEqual('team-id-123');
+      });
+    });
+  });
 });

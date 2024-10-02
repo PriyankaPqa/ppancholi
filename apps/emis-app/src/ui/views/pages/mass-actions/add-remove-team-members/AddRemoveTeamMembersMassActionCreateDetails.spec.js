@@ -40,15 +40,27 @@ describe('AddRemoveTeamMembersMassActionCreateDetails.vue', () => {
     await wrapper.vm.$nextTick();
   };
 
+  beforeEach(async () => {
+    await doMount();
+  });
+
   describe('Methods', () => {
     describe('fetchTeams', () => {
-      it('should call teams search with proper params', async () => {
-        await doMount();
+      it('should call teams search with proper params when it is called with searchQuery', async () => {
         helpers.toQuickSearchSql = jest.fn(() => ({ somefilter: 'team-name' }));
         teamStore.search = jest.fn(() => ({ values: [mockTeamEntity({ id: 'id-1' })] }));
         await wrapper.vm.fetchTeams('team-name');
-        expect(teamStore.search).toHaveBeenCalledWith({ params: { filter: { somefilter: 'team-name' }, orderBy: 'Entity/Name asc', top: 5 } });
+        expect(teamStore.search).toHaveBeenCalledWith({ params: { filter: { somefilter: 'team-name' }, orderBy: 'Entity/Name asc', top: 5 }, includeInactiveItems: true });
         expect(wrapper.vm.teams).toEqual([mockTeamEntity({ id: 'id-1' })]);
+      });
+
+      it('should call teams search with proper params when it is called with searchTeamId', async () => {
+        teamStore.search = jest.fn(() => ({ values: [mockTeamEntity({ id: 'team-id-123' })] }));
+        await wrapper.vm.fetchTeams('', 'team-id-123');
+        expect(teamStore.search).toHaveBeenCalledWith(
+          { params: { filter: { Entity: { Id: { value: 'team-id-123', type: 'guid' } } }, orderBy: 'Entity/Name asc', top: 5 }, includeInactiveItems: true },
+        );
+        expect(wrapper.vm.teams).toEqual([mockTeamEntity({ id: 'team-id-123' })]);
       });
     });
   });
@@ -80,7 +92,7 @@ describe('AddRemoveTeamMembersMassActionCreateDetails.vue', () => {
         const hook = wrapper.vm.$options.created[0];
         hook.call(wrapper.vm);
         expect(wrapper.vm.formCopy).toEqual({ teamId: 'original-team-id' });
-        expect(wrapper.vm.fetchTeams).toHaveBeenCalled();
+        expect(wrapper.vm.fetchTeams).toHaveBeenCalledWith('', 'original-team-id');
       });
     });
   });

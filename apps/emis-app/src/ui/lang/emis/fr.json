@@ -3793,6 +3793,8 @@
     "teams.types.create_adhoc": "Créer une équipe spéciale",
     "teams.types.create_standard": "Créer une équipe régulière",
     "teams.types.standard": "Équipe régulière",
+    "teams.edit.bulk_add_members": "Ajouter des membres en masse",
+    "teams.edit.bulk_remove_members": "Supprimer des membres en masse",
     "test": "test",
     "user.accountSettings.contact_info": "Coordonnées",
     "user.accountSettings.email_username": "Courriel\/Nom d’utilisateur",
