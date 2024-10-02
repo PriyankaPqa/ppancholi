@@ -45,24 +45,24 @@ export class Appointment extends BaseEntity {
 constructor(data?: IAppointment) {
   if (data) {
     super(data);
-    this.caseFileId = data?.caseFileId;
-    this.appointmentProgramId = data?.appointmentProgramId;
-    this.serviceOptionId = data?.serviceOptionId;
-    this.appointmentModalityId = data?.appointmentModalityId;
-    this.onlineMeetingUrl = data?.onlineMeetingUrl;
-    this.startDate = data?.startDate;
-    this.endDate = data?.endDate;
-    this.iCalUID = data?.iCalUID;
-    this.seriesMasterId = data?.seriesMasterId;
-    this.attendeeId = data?.attendeeId;
-    this.attendeeEmail = data?.attendeeEmail;
-    this.userAccountId = data?.userAccountId;
-    this.appointmentStatus = data?.appointmentStatus;
-    this.notes = data?.notes;
-    this.masterAccountEmail = data?.masterAccountEmail;
-    this.sendConfirmationEmail = data?.sendConfirmationEmail;
-    this.rescheduled = data?.rescheduled;
-    this.appointmentHistory = data?.appointmentHistory ? _cloneDeep(data.appointmentHistory) : null;
+    this.caseFileId = data.caseFileId;
+    this.appointmentProgramId = data.appointmentProgramId;
+    this.serviceOptionId = data.serviceOptionId;
+    this.appointmentModalityId = data.appointmentModalityId;
+    this.onlineMeetingUrl = data.onlineMeetingUrl;
+    this.startDate = data.startDate;
+    this.endDate = data.endDate;
+    this.iCalUID = data.iCalUID;
+    this.seriesMasterId = data.seriesMasterId;
+    this.attendeeId = data.attendeeId;
+    this.attendeeEmail = data.attendeeEmail;
+    this.userAccountId = data.userAccountId;
+    this.appointmentStatus = data.appointmentStatus;
+    this.notes = data.notes;
+    this.masterAccountEmail = data.masterAccountEmail;
+    this.sendConfirmationEmail = data.sendConfirmationEmail;
+    this.rescheduled = data.rescheduled;
+    this.appointmentHistory = data.appointmentHistory ? _cloneDeep(data.appointmentHistory) : null;
   } else {
     super();
     this.caseFileId = null;
@@ -77,7 +77,7 @@ constructor(data?: IAppointment) {
     this.attendeeId = null;
     this.attendeeEmail = null;
     this.userAccountId = null;
-    this.appointmentStatus = null;
+    this.appointmentStatus = AppointmentStatus.Scheduled;
     this.notes = null;
     this.masterAccountEmail = null;
     this.sendConfirmationEmail = null;

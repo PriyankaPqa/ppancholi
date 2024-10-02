@@ -100,7 +100,6 @@ export default Vue.extend({
     duration(newValue) {
       if (newValue) {
         this.calculateAvailableSlots();
-        // this.calculateFirstTimeInterval();
       }
     },
 
@@ -170,24 +169,6 @@ export default Vue.extend({
     getWeekStartDate(updateData: { start: { date: Date, weekday: number } }) {
         this.currentWeekDay = updateData.start.weekday;
         this.weekStartDate = format(addDays(utcToZonedTime(new Date(updateData.start.date), 'UTC'), -this.currentWeekDay), 'yyyy-MM-dd');
-        this.calculateFirstTimeInterval();
-      },
-
-      calculateFirstTimeInterval() {
-      // if (this.selectedStaffMember) {
-      //   // TODO: call the BE with the selected staff member id
-      //   const staffAvailability = mockAppointmentStaffMember({ userAccountId: this.selectedStaffMember.id });
-      //   const staffSchedule = appointmentHelpers.calculateSchedule(
-      //     staffAvailability.defaultbusinessHours,
-      //     staffAvailability.customDateRanges as ITimeSlot[],
-      //     this.timeZone,
-      //     this.weekStartDate,
-      //   ).mergedSchedule;
-
-      //   const daySchedule = staffSchedule[this.currentWeekDay];
-      //   const scheduleStart = daySchedule.timeSlots?.[0]?.startDateTime;
-      //   this.firstTime = scheduleStart ? format(addMinutes(parseISO(scheduleStart as string), -(+this.duration)), 'HH:mm') : '09:00';
-      // }
     },
   },
 });

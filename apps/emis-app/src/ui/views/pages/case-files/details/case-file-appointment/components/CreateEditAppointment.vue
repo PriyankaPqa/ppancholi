@@ -1,9 +1,7 @@
 <template>
-  <div class="full-height">
-    <rc-page-loading v-if="loading" />
-    <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
+    <page-template :loading="loading" :show-left-menu="false">
       <rc-page-content
-        v-if="!loading"
         outer-scroll
         :title="isEditMode ? $t('caseFile.appointments.edit.title') : $t('caseFile.appointments.add.title')">
         <appointment-form
@@ -12,20 +10,26 @@
           :event-id="caseFile.eventId"
           :primary-member-id="primaryMember ? primaryMember.id : ''"
           :primary-member-email="primaryMember ? primaryMember.contactInformation.email : ''"
-          :attendees="members" />
+          :attendees="members"
+          :show-time-slot-error.sync="showTimeSlotError" />
 
         <template slot="actions">
           <v-btn data-test="cancel" @click.stop="back()">
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || loading || (isEditMode && !dirty) " @click.stop="submit">
+          <v-btn
+            color="primary"
+            data-test="save"
+            :loading="loading"
+            :disabled="failed || loading || (isEditMode && !dirty) "
+            @click.stop="submit">
             {{ isEditMode ? $t('common.save') : $t('common.buttons.add') }}
           </v-btn>
         </template>
       </rc-page-content>
-    </validation-observer>
-  </div>
+    </page-template>
+  </validation-observer>
 </template>
 
 <script lang="ts">
@@ -37,7 +41,8 @@ import { Appointment, IAppointment } from '@libs/entities-lib/appointment';
 import routes from '@/constants/routes';
 import { useAppointmentStore } from '@/pinia/appointment/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { APPOINTMENTS } from '@/ui/views/pages/appointments/home/mocks';
+import { VForm } from '@libs/shared-lib/types';
+import helpers from '@/ui/helpers/helpers';
 import caseFileDetail from '../../caseFileDetail';
 import AppointmentForm from './AppointmentForm.vue';
 
@@ -60,6 +65,7 @@ export default mixins(caseFileDetail).extend({
     return {
       appointment: null as IAppointment,
       loading: false,
+      showTimeSlotError: false,
     };
   },
 
@@ -69,8 +75,18 @@ export default mixins(caseFileDetail).extend({
     },
   },
 
+  watch: {
+    'appointment.startDate': {
+      async handler(newValue) {
+        if (newValue) {
+         this.showTimeSlotError = false;
+        }
+      },
+    },
+  },
+
   async created() {
-    this.appointment = new Appointment(this.appointment || APPOINTMENTS[0]);
+    this.appointment = new Appointment();
     this.loading = true;
     await Promise.all([
       useAppointmentProgramStore().fetchByEventId(this.caseFile.eventId),
@@ -81,6 +97,8 @@ export default mixins(caseFileDetail).extend({
     if (this.isEditMode) {
       const res = await useAppointmentStore().fetch(this.appointmentId);
       this.appointment = new Appointment(res);
+    } else {
+      this.appointment.caseFileId = this.id;
     }
     this.loading = false;
   },
@@ -92,8 +110,16 @@ export default mixins(caseFileDetail).extend({
       });
     },
 
-    submit() {
-      return null;
+   async submit() {
+     this.showTimeSlotError = !this.appointment.startDate;
+    const isValid = await (this.$refs.form as VForm).validate();
+
+    if (!isValid || this.showTimeSlotError) {
+      await this.$nextTick();
+      helpers.scrollToFirstError('app');
+    }
+
+      // call endpoint to submit
     },
   },
 });

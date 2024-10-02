@@ -3908,6 +3908,7 @@
     "caseFile.appointments.myself": "Myself",
     "caseFile.appointments.staffMember": "Staff member",
     "caseFile.appointments.timePicker.error": "To display availabilites, please select the following:",
+    "caseFile.appointments.timePicker.noTimeSlot": "You need to select a time slot for the appointment",
     "caseFile.appointments.timePicker.selected": "Selected",
     "caseFile.appointments.timePicker.available": "Available",
     "caseFile.appointments.nextAvailable": "Next available case manager"
