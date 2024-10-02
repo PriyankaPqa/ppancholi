@@ -163,4 +163,8 @@ export class CaseFileDetailsBase {
   public getStatusText() {
     return cy.getByDataTest(this.statusSelect).getAndTrimText();
   }
+
+  public goToImpactedIndividualsHomePage() {
+    return cy.getByDataTest(this.impactedIndividualsSubTag).click();
+  }
 }

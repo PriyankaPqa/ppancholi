@@ -76,7 +76,9 @@ describe('[T28833] Process an Authentication data correction file', { tags: ['@c
           }
         });
         it('should successfully process an Authentication data correction file', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'case file records', massActionName: this.massActionName, massActionType: 'Authentication', roleName },
+          );
         });
       });
     }

@@ -84,7 +84,9 @@ describe('[T28869] Process a Label data correction file', { tags: ['@case-file',
         });
 
         it('should successfully process a Label data correction file', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'case file records', massActionName: this.massActionName, massActionType: 'Labels', roleName },
+          );
         });
       });
     }

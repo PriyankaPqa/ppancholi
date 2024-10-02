@@ -69,6 +69,8 @@ export interface IIdentitySetData {
 
   indigenousIdentity?: IIndigenousIdentityOption;
 
+  fullName: string;
+
 }
 
 export interface IIdentitySet extends IIdentitySetData {
