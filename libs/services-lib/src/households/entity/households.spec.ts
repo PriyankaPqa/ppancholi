@@ -1,5 +1,5 @@
 import { ECanadaProvinces, ERegistrationMethod, ERegistrationMode } from '@libs/shared-lib/types';
-import { IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
+import { IMoveHouseholdRequest, ISelfRegistrationLog } from '@libs/entities-lib/household-create/householdCreate.types';
 import {
   CurrentAddress,
   ECurrentAddressTypes,
@@ -75,8 +75,10 @@ describe('>>> Household Service', () => {
     await service.submitRegistration({
       household: mockHouseholdCreate(),
       eventId: 'event id',
+      selfRegistrationLog: { mouseDistance: 123 } as ISelfRegistrationLog,
     });
 
+    expect(service.parseHouseholdPayload).toHaveBeenCalledWith(mockHouseholdCreate(), 'event id', { mouseDistance: 123 });
     expect(http.post).toHaveBeenCalledWith(
       `${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
       { ...createBeneficiaryRequest },

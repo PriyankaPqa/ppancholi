@@ -37,12 +37,16 @@ jest.mock('./registrationUtils', () => ({
   ...jest.requireActual('./registrationUtils'),
 }));
 
+jest.mock('ua-parser-js', () => ({ UAParser: jest.fn(() => 'device information') }));
+
 let useRegistrationStore = null as ReturnType<typeof storeFactory>;
 
 const member = mockMember();
 const publicApi = mockPublicService();
 const householdApi = mockHouseholdsService();
 const caseFileApi = mockCaseFilesService();
+
+const mockDate = new Date('2024-08-22T17:18:06Z');
 
 const initStore = (mode = ERegistrationMode.CRC, mockedInternalMethods?: any) => storeFactory({
   pTabs: mockTabs(),
@@ -61,6 +65,8 @@ const initStore = (mode = ERegistrationMode.CRC, mockedInternalMethods?: any) =>
 // eslint-disable-next-line max-statements
 describe('>>> Registration Store', () => {
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(mockDate);
     setActivePinia(createTestingPinia({ stubActions: false }));
   });
   afterEach(() => {
@@ -509,12 +515,77 @@ describe('>>> Registration Store', () => {
     });
   });
 
+  describe('setupSelfRegistrationLog', () => {
+    it('should reset the state to default depending on whether we want a hard reset', () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setupSelfRegistrationLog(true);
+      expect(useRegistrationStore.householdCreate).toEqual(new HouseholdCreate());
+      expect(useRegistrationStore.selfRegistrationLog).toEqual({
+        deviceInformationRawData: '"device information"',
+        mouseDistance: 0,
+        mouseTime: 0,
+        timeOnAdditionalMembers: 0,
+        timeOnAddresses: 0,
+        timeOnCaptcha: 0,
+        timeOnLandingPage: 0,
+        timeOnPersonalInfo: 0,
+        timeOnPrivacy: 0,
+        timeOnReview: 0,
+      });
+      useRegistrationStore.selfRegistrationLog.mouseTime = 123;
+
+      useRegistrationStore.setupSelfRegistrationLog(true);
+
+      expect(useRegistrationStore.selfRegistrationLog).toEqual({
+        deviceInformationRawData: '"device information"',
+        mouseDistance: 0,
+        mouseTime: 0,
+        timeOnAdditionalMembers: 0,
+        timeOnAddresses: 0,
+        timeOnCaptcha: 0,
+        timeOnLandingPage: 0,
+        timeOnPersonalInfo: 0,
+        timeOnPrivacy: 0,
+        timeOnReview: 0,
+      });
+
+      useRegistrationStore.selfRegistrationLog.mouseTime = 123;
+
+      useRegistrationStore.setupSelfRegistrationLog(false);
+
+      expect(useRegistrationStore.selfRegistrationLog).toEqual({
+        deviceInformationRawData: '"device information"',
+        mouseDistance: 0,
+        mouseTime: 123,
+        timeOnAdditionalMembers: 0,
+        timeOnAddresses: 0,
+        timeOnCaptcha: 0,
+        timeOnLandingPage: 0,
+        timeOnPersonalInfo: 0,
+        timeOnPrivacy: 0,
+        timeOnReview: 0,
+      });
+    });
+  });
+
   describe('resetHouseholdCreate', () => {
     it('should reset the state to default', () => {
       useRegistrationStore = initStore();
       useRegistrationStore.householdCreate.setPrimaryBeneficiary(mockMember());
       useRegistrationStore.resetHouseholdCreate();
       expect(useRegistrationStore.householdCreate).toEqual(new HouseholdCreate());
+      expect(useRegistrationStore.selfRegistrationLog).toEqual({
+        deviceInformationRawData: '"device information"',
+        mouseDistance: 0,
+        mouseTime: 0,
+        timeOnAdditionalMembers: 0,
+        timeOnAddresses: 0,
+        timeOnCaptcha: 0,
+        timeOnLandingPage: 0,
+        timeOnPersonalInfo: 0,
+        timeOnPrivacy: 0,
+        timeOnReview: 0,
+      });
     });
   });
 
@@ -739,6 +810,25 @@ describe('>>> Registration Store', () => {
     });
   });
 
+  describe('setTimeOnStep', () => {
+    it('sets time in metadata object', async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.resetHouseholdCreate();
+      useRegistrationStore.currentStepTimer = new Date(mockDate.setMinutes(1));
+      useRegistrationStore.setTimeOnStep('LandingPage');
+      expect(useRegistrationStore.selfRegistrationLog.timeOnLandingPage).toBe(1020);
+      expect(useRegistrationStore.selfRegistrationLog.timeOnAddresses).toBe(0);
+      useRegistrationStore.currentStepTimer = new Date(mockDate.setMinutes(5));
+      useRegistrationStore.setTimeOnStep(TabId.Addresses);
+      expect(useRegistrationStore.selfRegistrationLog.timeOnLandingPage).toBe(1020);
+      expect(useRegistrationStore.selfRegistrationLog.timeOnAddresses).toBe(780);
+      useRegistrationStore.currentStepTimer = new Date(mockDate.setMinutes(5));
+      useRegistrationStore.setTimeOnStep(TabId.Addresses);
+      expect(useRegistrationStore.selfRegistrationLog.timeOnLandingPage).toBe(1020);
+      expect(useRegistrationStore.selfRegistrationLog.timeOnAddresses).toBe(780 * 2);
+    });
+  });
+
   describe('submitRegistration', () => {
     it('should call proper service for CRC Registration', async () => {
       useRegistrationStore = initStore();
@@ -753,6 +843,7 @@ describe('>>> Registration Store', () => {
     it('should call proper service for Self Registration', async () => {
       useRegistrationStore = initStore(ERegistrationMode.Self);
       useRegistrationStore.event = mockEventSummary();
+      useRegistrationStore.selfRegistrationLog.mouseDistance = 123;
       await useRegistrationStore.submitRegistration();
       expect(householdApi.submitRegistration).toHaveBeenCalledTimes(1);
       expect(householdApi.submitCRCRegistration).toHaveBeenCalledTimes(0);
@@ -760,6 +851,7 @@ describe('>>> Registration Store', () => {
       expect(householdApi.submitRegistration).toHaveBeenCalledWith({
         household: useRegistrationStore.householdCreate,
         eventId: mockEventSummary().id,
+        selfRegistrationLog: useRegistrationStore.selfRegistrationLog,
       });
     });
 

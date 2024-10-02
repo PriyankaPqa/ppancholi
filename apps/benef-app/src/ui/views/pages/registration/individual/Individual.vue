@@ -155,6 +155,7 @@ export default mixins(individual).extend({
     showDuplicateDialog: false,
     functionAfterToken: null as () => void,
     tokenFetchedLast: null as Date,
+    recaptchaStart: null as Date,
     tier2ProcessStarted: false,
     TabId,
   }),
@@ -172,6 +173,8 @@ export default mixins(individual).extend({
   },
 
   created() {
+    // in case someone hit refresh and isnt starting on landing page...
+    useRegistrationStore().setupSelfRegistrationLog(false);
     // fetch public token will try to do a recaptcha if needed and return a valid beneficiary token
     // if the token was last fetched less then 30 minutes ago we dont do anything as it is valid for an hour
     EventHub.$on('fetchPublicToken', this.fetchPublicToken);
@@ -201,6 +204,7 @@ export default mixins(individual).extend({
     },
 
     executeRecaptcha() {
+      this.recaptchaStart = new Date();
       (this.$refs.recaptchaSubmit as any).execute();
     },
 
@@ -214,7 +218,6 @@ export default mixins(individual).extend({
       // then we will be able to get the token on the recaptcha callback
       if (this.$hasFeature(this.$featureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
         this.functionAfterToken = continueFnct;
-        // eslint-disable-next-line
         this.executeRecaptcha();
       } else {
         // no need for recaptcha the BE will not require one
@@ -336,6 +339,9 @@ export default mixins(individual).extend({
 
     async recaptchaCallBack(token: string) {
       if (token) { // you're not a robot
+        if (this.recaptchaStart) {
+          useRegistrationStore().selfRegistrationLog.timeOnCaptcha += Math.round(((new Date()).getTime() - this.recaptchaStart.getTime()) / 1000);
+        }
         // we send the recaptcha to the BE to get the public token
         await this.$services.households.getPublicToken(token);
         this.tokenFetchedLast = new Date();

@@ -9,6 +9,7 @@ import {
 } from '@libs/entities-lib/case-file';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { ICaseFileIndividualCreateRequest } from '@libs/entities-lib/src/case-file-individual';
+import { ISelfRegistrationLog } from '@libs/entities-lib/src/household-create';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface ICreateCaseFileRequest {
@@ -20,7 +21,8 @@ export interface ICreateCaseFileRequest {
     crcUserName: string,
     privacyDateTimeConsent: string;
   },
-  individuals: ICaseFileIndividualCreateRequest[]
+  individuals: ICaseFileIndividualCreateRequest[],
+  selfRegistrationLog?: ISelfRegistrationLog,
 }
 
 export interface ICaseFileCountByExceptionalAuthentication {

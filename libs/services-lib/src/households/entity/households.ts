@@ -1,5 +1,5 @@
 import { utcToZonedTime, format } from 'date-fns-tz';
-import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
+import { IConsentInformation, IMoveHouseholdRequest, ISelfRegistrationLog } from '@libs/entities-lib/household-create/householdCreate.types';
 import { HouseholdStatus, IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 import {
   IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
@@ -46,9 +46,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 
-  async submitRegistration({ household, eventId }: { household: IHouseholdCreate; eventId: string; }):
+  async submitRegistration({ household, eventId, selfRegistrationLog }:
+        { household: IHouseholdCreate; eventId: string; selfRegistrationLog: ISelfRegistrationLog }):
   Promise<IDetailedRegistrationResponse> {
-    const payload = this.parseHouseholdPayload(household, eventId);
+    const payload = this.parseHouseholdPayload(household, eventId, selfRegistrationLog);
     return this.postPublicRegistration(payload);
   }
 
@@ -278,7 +279,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     };
   }
 
-  parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {
+  parseHouseholdPayload(household: IHouseholdCreate, eventId: string, selfRegistrationLog?: ISelfRegistrationLog): ICreateHouseholdRequest {
     return {
       noFixedHome: household.noFixedHome,
       primaryBeneficiary: this.parseMember(household.primaryBeneficiary),
@@ -288,6 +289,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       consentInformation: household.consentInformation,
       // name is honey pot - it should always be null...
       name: (household.primaryBeneficiary.identitySet as IHoneyPotIdentitySet).name,
+      selfRegistrationLog,
     };
   }
 

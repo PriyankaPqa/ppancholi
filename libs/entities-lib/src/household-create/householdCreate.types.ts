@@ -24,6 +24,20 @@ export interface IConsentInformation {
   privacyDateTimeConsent: string;
 }
 
+export interface ISelfRegistrationLog {
+  caseFileId?: string;
+  deviceInformationRawData: string;
+  timeOnLandingPage: number;
+  timeOnPrivacy: number;
+  timeOnPersonalInfo: number;
+  timeOnAddresses: number;
+  timeOnAdditionalMembers: number;
+  timeOnReview: number;
+  mouseTime: number;
+  mouseDistance: number;
+  timeOnCaptcha: number;
+}
+
 export interface IHouseholdCreateData {
   primaryBeneficiary: IMemberEntity;
   noFixedHome: boolean;
@@ -75,6 +89,7 @@ export interface ICreateHouseholdRequest {
   consentInformation: IConsentInformation;
   // name is honey pot - it should always be null...
   name?: string;
+  selfRegistrationLog?: ISelfRegistrationLog;
 }
 
 export interface ISplitHouseholdRequest {

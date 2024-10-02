@@ -58,10 +58,12 @@ describe('Individual.vue', () => {
       it('connects and disconnects to event hub on created/destroyed', async () => {
         EventHub.$on = jest.fn();
         EventHub.$off = jest.fn();
+        wrapper.vm.$registrationStore.setupSelfRegistrationLog = jest.fn();
         jest.clearAllMocks();
         wrapper.vm.$options.created[0].call(wrapper.vm);
         expect(EventHub.$on).toHaveBeenCalledWith('fetchPublicToken', wrapper.vm.fetchPublicToken);
         expect(EventHub.$on).toHaveBeenCalledWith('next', wrapper.vm.goNext);
+        expect(wrapper.vm.$registrationStore.setupSelfRegistrationLog).toHaveBeenCalledWith(false);
 
         jest.clearAllMocks();
         wrapper.vm.$options.destroyed[1].call(wrapper.vm);
@@ -308,9 +310,11 @@ describe('Individual.vue', () => {
       it('should call execute method from recaptcha', () => {
         wrapper.vm.$refs.recaptchaSubmit = {};
         wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+        expect(wrapper.vm.recaptchaStart).toBeFalsy();
 
         wrapper.vm.executeRecaptcha();
         expect(wrapper.vm.$refs.recaptchaSubmit.execute).toBeCalled();
+        expect(wrapper.vm.recaptchaStart).not.toBeFalsy();
       });
     });
 
@@ -369,11 +373,16 @@ describe('Individual.vue', () => {
     describe('recaptchaCallBack', () => {
       it('should set the last date the token was fetched and call validateAndNext', async () => {
         const nextFunc = jest.fn();
-        await wrapper.setData({ functionAfterToken: nextFunc });
+        await wrapper.setData({ functionAfterToken: nextFunc, recaptchaStart: new Date() });
+        wrapper.vm.$registrationStore.selfRegistrationLog.timeOnCaptcha = 0;
+
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 1100));
         await wrapper.vm.recaptchaCallBack('token');
         expect(wrapper.vm.$services.households.getPublicToken).toHaveBeenCalledWith('token');
         expect(wrapper.vm.tokenFetchedLast).toBeTruthy();
         expect(nextFunc).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.selfRegistrationLog.timeOnCaptcha).toBe(1);
       });
     });
 
