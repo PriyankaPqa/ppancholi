@@ -242,7 +242,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
 }
 
 export function getEntityStoreComponents<T extends IEntity, IdParams>(
-  service: DomainBaseService<T, IdParams>,
+  service: DomainBaseService<T, IdParams> | IDomainBaseServiceMock<T>,
 ) {
   const readOnlyComponents = getBaseStoreComponents(service);
   const searchLoading = ref(false);

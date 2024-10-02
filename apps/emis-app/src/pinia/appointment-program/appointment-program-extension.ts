@@ -28,10 +28,6 @@ export function getExtensionComponents(
     return filterAndSortActiveItems(appointmentModalities.value, filterOutInactive, actualValue);
   }
 
-  function getAppointmentProgramsByEventId(eventId: string) {
-    return baseComponents.items.value.filter((i) => i.eventId === eventId);
-  }
-
   async function fetchServiceOptionTypes() {
     if (!serviceOptionTypesFetched.value) {
       const data = await optionService.getOptionList(EOptionLists.ServiceOptionTypes);
@@ -130,7 +126,6 @@ export function getExtensionComponents(
     appointmentModalitiesFetched,
     getServiceOptionTypes,
     getAppointmentModalities,
-    getAppointmentProgramsByEventId,
     fetchServiceOptionTypes,
     fetchAppointmentModalities,
     fetchByEventId,

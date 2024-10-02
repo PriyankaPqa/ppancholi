@@ -316,7 +316,7 @@ export default Vue.extend({
     },
 
     appointmentPrograms(): IAppointmentProgram[] {
-      return useAppointmentProgramStore().getAppointmentProgramsByEventId(this.eventId);
+      return useAppointmentProgramStore().getByCriteria(this.eventId, true, ['eventId']);
     },
 
     selectedAppointmentProgram(): IAppointmentProgram {
@@ -352,7 +352,7 @@ export default Vue.extend({
       if (!this.selectedServiceOption) {
         return [];
       }
-      const allStaffMembers = useAppointmentStaffMemberStore().getByAppointmentProgramId(this.selectedAppointmentProgram?.id);
+      const allStaffMembers = useAppointmentStaffMemberStore().getByCriteria(this.selectedAppointmentProgram?.id, true, ['appointmentProgramId']);
       return allStaffMembers.filter((m) => m.serviceOptionIds.includes(this.selectedServiceOption.id));
     },
 

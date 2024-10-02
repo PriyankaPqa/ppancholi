@@ -115,7 +115,7 @@ export default Vue.extend({
     },
 
     appointmentPrograms(): IAppointmentProgram[] {
-        return useAppointmentProgramStore().getAppointmentProgramsByEventId(this.selectedEvent?.id);
+      return useAppointmentProgramStore().getByCriteria(this.selectedEvent?.id, true, ['eventId']);
     },
   },
 

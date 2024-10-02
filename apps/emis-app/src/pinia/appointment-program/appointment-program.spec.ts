@@ -1,5 +1,5 @@
 import { mockAppointmentProgramsService } from '@libs/services-lib/appointment-programs';
-import { getBaseStoreComponents } from '@libs/stores-lib/base';
+import { getEntityStoreComponents } from '@libs/stores-lib/base';
 import { getExtensionComponents } from '@/pinia/appointment-program/appointment-program-extension';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore } from 'pinia';
@@ -8,10 +8,11 @@ import { AppointmentProgram, IAppointmentProgram, IdParams, mockAppointmentProgr
 import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { EOptionLists, mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/shared-lib/types';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 const entityService = mockAppointmentProgramsService();
 const optionsService = mockOptionItemsService();
-const baseComponents = getBaseStoreComponents<IAppointmentProgram, IdParams>(entityService);
+const baseComponents = getEntityStoreComponents<IAppointmentProgram, IdParams>(entityService);
 
 const createTestStore = (opts = {}) => {
   const pinia = createTestingPinia({
@@ -108,6 +109,20 @@ describe('Appointment program store', () => {
     });
   });
 
+  describe('fetchByEventId', () => {
+    it('should call search with the good params and save the result', async () => {
+      const mockProgram = new AppointmentProgram(mockAppointmentProgram({ id: '42' }));
+      const bComponents = { ...baseComponents, setAll: jest.fn(), search: jest.fn(() => ({ values: [mockProgram] })) };
+      const store = createTestStore(bComponents);
+      await store.fetchByEventId('ev-1');
+      expect(bComponents.search).toHaveBeenCalledWith({ params: {
+        filter: { 'Entity/EventId': { value: 'ev-1', type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
+        skip: 0,
+      } });
+      expect(bComponents.setAll).toBeCalledWith([mockProgram]);
+    });
+  });
+
   describe('create appointment program', () => {
     it('should call service create and commit the result', async () => {
       const store = createTestStore();
@@ -118,7 +133,7 @@ describe('Appointment program store', () => {
       expect(entityService.create).toBeCalledWith(mockProgram);
       expect(store.items).toContainEqual(mockProgram);
     });
-    });
+  });
 
   describe('updateAppointmentProgram', () => {
     it('should call service update and commit the result', async () => {

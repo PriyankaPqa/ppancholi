@@ -1,12 +1,13 @@
 import { mockAppointmentStaffMembersService } from '@libs/services-lib/appointment-staff-members';
-import { getBaseStoreComponents } from '@libs/stores-lib/base';
+import { getEntityStoreComponents } from '@libs/stores-lib/base';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore } from 'pinia';
 import { IAppointmentStaffMember, IdParams, mockAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import { getExtensionComponents } from '@/pinia/appointment-staff-member/appointment-staff-member-extension';
+import { EFilterKeyType } from '@libs/component-lib/types';
 
 const entityService = mockAppointmentStaffMembersService();
-const baseComponents = getBaseStoreComponents<IAppointmentStaffMember, IdParams>(entityService);
+const baseComponents = getEntityStoreComponents<IAppointmentStaffMember, IdParams>(entityService);
 
 const createTestStore = (opts = {}) => {
   const pinia = createTestingPinia({
@@ -46,6 +47,20 @@ describe('Appointment StaffMember store', () => {
       const m3 = mockAppointmentStaffMember({ appointmentProgramId: 'ap-id', serviceOptionIds: ['so-1'] });
       store.items = [m1, m2, m3];
       expect(store.getByAppointmentProgramId('ap-id')).toEqual([m3]);
+    });
+  });
+
+  describe('fetchByAppointmentProgramId', () => {
+    it('should call search with the good params and save the result', async () => {
+      const mockStaffMember = mockAppointmentStaffMember();
+      const bComponents = { ...baseComponents, setAll: jest.fn(), search: jest.fn(() => ({ values: [mockStaffMember] })) };
+      const store = createTestStore(bComponents);
+      await store.fetchByAppointmentProgramId('ap-1');
+      expect(bComponents.search).toHaveBeenCalledWith({ params: {
+        filter: { 'Entity/AppointmentProgramId': { value: 'ap-1', type: EFilterKeyType.Guid } },
+        skip: 0,
+      } });
+      expect(bComponents.setAll).toBeCalledWith([mockStaffMember]);
     });
   });
 
