@@ -45,9 +45,9 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
 
   editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity>;
 
-  searchMyEvents(params: ISearchParams, includeEventsWithoutAccess?: boolean): Promise<ISearchResult<IEventSummary>>;
+  searchEventSummaries(params: ISearchParams, includeEventsWithoutAccess?: boolean): Promise<ISearchResult<IEventSummary>>;
 
-  searchMyEventsById(ids: string[]): Promise<ISearchResult<IEventSummary>>;
+  searchEventSummariesById(ids: string[]): Promise<ISearchResult<IEventSummary>>;
 
   addRegistrationAssessment(eventId: uuid, payload: IRegistrationAssessment): Promise<IEventEntity>;
 
@@ -84,8 +84,8 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   removeRegistrationAssessment: jest.Mock<IEventEntity>;
   addShelterLocation: jest.Mock<IEventEntity>;
   editShelterLocation: jest.Mock<IEventEntity>;
-  searchMyEvents: jest.Mock<ISearchResult<IEventSummary>>;
-  searchMyEventsById: jest.Mock<ISearchResult<IEventSummary>>;
+  searchEventSummaries: jest.Mock<ISearchResult<IEventSummary>>;
+  searchEventSummariesById: jest.Mock<ISearchResult<IEventSummary>>;
   toggleAssessmentsForL0Users: jest.Mock<IEventEntity>;
   toggleRegistrationForL0Users: jest.Mock<IEventEntity>;
   toggleAppointmentBookingForL0Users: jest.Mock<IEventEntity>;

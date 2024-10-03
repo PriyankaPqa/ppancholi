@@ -97,7 +97,7 @@ describe('EventsSelector.vue', () => {
       it('should fetch all events corresponding to the query', async () => {
         doMount(true, true);
         await wrapper.vm.fetchEvents('test', 10);
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenLastCalledWith({
+        expect(wrapper.vm.$services.events.searchEventSummaries).toHaveBeenLastCalledWith({
           filter: { and: [{ 'Name/Translation/en': { contains: 'test' } }] },
           orderBy: 'Schedule/OpenDate desc',
           top: 10,
@@ -106,7 +106,7 @@ describe('EventsSelector.vue', () => {
 
       it('should fetch active events corresponding to the query', async () => {
         await wrapper.vm.fetchEvents('test', 10);
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
+        expect(wrapper.vm.$services.events.searchEventSummaries).toHaveBeenCalledWith({
           orderBy: 'Schedule/OpenDate desc',
           filter: { Schedule: { Status: 'Open' }, and: [{ 'Name/Translation/en': { contains: 'test' } }] },
           top: 10,
@@ -122,7 +122,7 @@ describe('EventsSelector.vue', () => {
         await wrapper.setProps({
           excludedEvent: '1',
         });
-        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: [mockEventSummary({ id: '1' }), mockEventSummary({ id: '2' })] }));
+        wrapper.vm.$services.events.searchEventSummaries = jest.fn(() => ({ value: [mockEventSummary({ id: '1' }), mockEventSummary({ id: '2' })] }));
         await wrapper.vm.fetchEvents();
         expect(wrapper.vm.events).toEqual([new RegistrationEvent(mockEventSummary({ id: '2' }))]);
       });
@@ -132,44 +132,44 @@ describe('EventsSelector.vue', () => {
       it('should do nothing if the param is an empty array', async () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds([]);
-        expect(wrapper.vm.$services.events.searchMyEvents).not.toHaveBeenCalled();
+        expect(wrapper.vm.$services.events.searchEventSummaries).not.toHaveBeenCalled();
       });
 
       it('should do nothing if the param is an empty value', async () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds('');
-        expect(wrapper.vm.$services.events.searchMyEvents).not.toHaveBeenCalled();
+        expect(wrapper.vm.$services.events.searchEventSummaries).not.toHaveBeenCalled();
 
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds(null);
-        expect(wrapper.vm.$services.events.searchMyEvents).not.toHaveBeenCalled();
+        expect(wrapper.vm.$services.events.searchEventSummaries).not.toHaveBeenCalled();
       });
 
-      it('should call searchMyEvents with proper params if param is an array', async () => {
+      it('should call searchEventSummaries with proper params if param is an array', async () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds(['1', '2']);
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
+        expect(wrapper.vm.$services.events.searchEventSummaries).toHaveBeenCalledWith({
           filter: 'Id in(1,2)',
           top: 999,
-        });
+        }, true);
       });
 
-      it('should call searchMyEvents with proper params if param is a value non empty', async () => {
+      it('should call searchEventSummaries with proper params if param is a value non empty', async () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds('1');
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
+        expect(wrapper.vm.$services.events.searchEventSummaries).toHaveBeenCalledWith({
           filter: 'Id in(1)',
           top: 999,
-        });
+        }, true);
       });
 
-      it('should call searchMyEvents with proper params if param is an object with a key id', async () => {
+      it('should call searchEventSummaries with proper params if param is an object with a key id', async () => {
         jest.clearAllMocks();
         await wrapper.vm.fetchEventsByIds({ id: '1' });
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
+        expect(wrapper.vm.$services.events.searchEventSummaries).toHaveBeenCalledWith({
           filter: 'Id in(1)',
           top: 999,
-        });
+        }, true);
       });
     });
   });

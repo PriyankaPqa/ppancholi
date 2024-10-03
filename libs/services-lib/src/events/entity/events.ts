@@ -149,17 +149,17 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     return this.http.get(`${this.apiUrlSuffix}/search/eventsV2`, { params, isOData: true });
   }
 
-  // events that a user has access to
-  async searchMyEvents(params: ISearchParams): Promise<ISearchResult<IEventSummary>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/event-summaries`, { params: this.filterForMyEvents(params), isOData: true });
+  // events that a user has access to, unless includeEventsWithoutAccess is used
+  async searchEventSummaries(params: ISearchParams, includeEventsWithoutAccess = false): Promise<ISearchResult<IEventSummary>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/event-summaries`, { params: includeEventsWithoutAccess ? params : this.filterForMyEvents(params), isOData: true });
   }
 
-  async searchMyEventsById(ids: string[]): Promise<ISearchResult<IEventSummary>> {
+  async searchEventSummariesById(ids: string[]): Promise<ISearchResult<IEventSummary>> {
     return helpers.callSearchInInBatches({
       searchInFilter: 'Id in({ids})',
       service: this,
       ids,
-      api: 'searchMyEvents',
+      api: 'searchEventSummaries',
       otherApiParameters: [null, false, true],
     }) as Promise<ISearchResult<IEventSummary>>;
   }

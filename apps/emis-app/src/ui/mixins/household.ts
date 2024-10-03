@@ -73,7 +73,7 @@ export default Vue.extend({
       const cf = caseFiles || this.caseFiles;
       if (cf?.length) {
         const eventIds = cf.map((f) => f.eventId);
-        const results = await this.$services.events.searchMyEventsById(eventIds);
+        const results = await this.$services.events.searchEventSummariesById(eventIds);
         if (!caseFiles) {
           this.myEvents = results?.value;
         }
