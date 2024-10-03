@@ -1,4 +1,4 @@
-import { IUserInformation } from '@libs/shared-lib/types';
+import { IListOption, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 
 /**
@@ -41,8 +41,7 @@ export interface IAppointment extends IEntity {
   userAccountId: uuid;
   appointmentStatus: AppointmentStatus;
   notes: string;
-  // Account used to create emails in MSGraph
-  masterAccountEmail: string;
+  preferredLanguage: IListOption;
   sendConfirmationEmail: boolean;
   rescheduled: boolean;
   appointmentHistory: IAppointmentStatusHistory[];

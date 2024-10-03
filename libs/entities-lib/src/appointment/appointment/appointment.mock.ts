@@ -26,7 +26,7 @@ export const mockAppointment = (force? : Partial<IAppointment>): IAppointment =>
   userAccountId: 'mock-userAccountId',
   appointmentStatus: AppointmentStatus.Scheduled,
   notes: 'mock-notes',
-  masterAccountEmail: 'mock-masterAccountEmail',
+  preferredLanguage: { optionItemId: 'id-EN', specifiedOther: null },
   sendConfirmationEmail: null,
   rescheduled: false,
   appointmentHistory: [mockAppointmentStatusHistory()],

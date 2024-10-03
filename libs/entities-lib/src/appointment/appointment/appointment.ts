@@ -1,4 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import { IListOption } from '@libs/shared-lib/src/types';
 import { BaseEntity } from '../../base';
 import { AppointmentStatus, IAppointment, IAppointmentStatusHistory } from './appointment.types';
 
@@ -33,8 +34,7 @@ export class Appointment extends BaseEntity {
 
   notes: string;
 
-  // Account used to create emails in MSGraph
-  masterAccountEmail: string;
+  preferredLanguage: IListOption;
 
   sendConfirmationEmail: boolean;
 
@@ -59,7 +59,7 @@ constructor(data?: IAppointment) {
     this.userAccountId = data.userAccountId;
     this.appointmentStatus = data.appointmentStatus;
     this.notes = data.notes;
-    this.masterAccountEmail = data.masterAccountEmail;
+    this.preferredLanguage = data.preferredLanguage;
     this.sendConfirmationEmail = data.sendConfirmationEmail;
     this.rescheduled = data.rescheduled;
     this.appointmentHistory = data.appointmentHistory ? _cloneDeep(data.appointmentHistory) : null;
@@ -79,7 +79,7 @@ constructor(data?: IAppointment) {
     this.userAccountId = null;
     this.appointmentStatus = AppointmentStatus.Scheduled;
     this.notes = null;
-    this.masterAccountEmail = null;
+    this.preferredLanguage = null;
     this.sendConfirmationEmail = null;
     this.rescheduled = false;
     this.appointmentHistory = [];
