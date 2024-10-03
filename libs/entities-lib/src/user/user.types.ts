@@ -1,5 +1,8 @@
 export enum UserRoles {
   'noAccess' = 'noAccess',
+  'partner1' = 'partner1',
+  'partner2' = 'partner2',
+  'partner3' = 'partner3',
   'level0' = 'level0',
   'level1' = 'level1',
   'level2' = 'level2',
@@ -16,6 +19,9 @@ export enum UserRoles {
 
 export enum UserRolesNames {
   'noAccess' = 'No Access',
+  'partner1' = 'Partner 1',
+  'partner2' = 'Partner 2',
+  'partner3' = 'Partner 3',
   'level0' = 'Level 0',
   'level1' = 'Level 1',
   'level2' = 'Level 2',

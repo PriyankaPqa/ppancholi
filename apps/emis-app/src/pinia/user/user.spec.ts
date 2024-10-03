@@ -118,6 +118,15 @@ describe('>>> User Store', () => {
       const store = createUserTestStore('noRole');
       expect(store.getLandingPage()).toEqual('HomeNoRole');
     });
+
+    it('returns proper landing page user partner', () => {
+      let store = createUserTestStore(UserRoles.partner1);
+      expect(store.getLandingPage()).toEqual('HomePartners');
+      store = createUserTestStore(UserRoles.partner2);
+      expect(store.getLandingPage()).toEqual('HomePartners');
+      store = createUserTestStore(UserRoles.partner3);
+      expect(store.getLandingPage()).toEqual('HomePartners');
+    });
   });
 
   describe('setUser', () => {

@@ -38,26 +38,28 @@ export const useUserStore = defineStore('user', () => {
     return oid.value;
   }
 
-  function getLandingPage() {
+  function getLandingPage(): string {
     const user = getUser();
     const role = user.currentRole();
-    if (role === UserRoles.level0 || role === UserRoles.level1 || role === UserRoles.level2
-      || role === UserRoles.contributorFinance || role === UserRoles.contributor3 || role === UserRoles.readonly) {
-      return 'DashboardCaseFile';
-    }
-    if (role === UserRoles.contributorIM) {
-      return 'HomeContributorIM';
-    }
-    if (role === UserRoles.level3) {
-      return 'HomeLevel3';
-    } if (role === UserRoles.level4) {
-      return 'HomeLevel4';
-    } if (role === UserRoles.level5) {
-      return 'HomeLevel5';
-    } if (role === UserRoles.level6) {
-      return 'HomeLevel6';
-    }
-    return 'HomeNoRole';
+
+    const roleLandingMap: Record<string, string> = {
+      [UserRoles.partner1]: 'HomePartners',
+      [UserRoles.partner2]: 'HomePartners',
+      [UserRoles.partner3]: 'HomePartners',
+      [UserRoles.level0]: 'DashboardCaseFile',
+      [UserRoles.level1]: 'DashboardCaseFile',
+      [UserRoles.level2]: 'DashboardCaseFile',
+      [UserRoles.contributorFinance]: 'DashboardCaseFile',
+      [UserRoles.contributor3]: 'DashboardCaseFile',
+      [UserRoles.readonly]: 'DashboardCaseFile',
+      [UserRoles.contributorIM]: 'HomeContributorIM',
+      [UserRoles.level3]: 'HomeLevel3',
+      [UserRoles.level4]: 'HomeLevel4',
+      [UserRoles.level5]: 'HomeLevel5',
+      [UserRoles.level6]: 'HomeLevel6',
+    };
+
+    return roleLandingMap[role] || 'HomeNoRole';
   }
 
   function setUser(payload: IMSALUserData) {
