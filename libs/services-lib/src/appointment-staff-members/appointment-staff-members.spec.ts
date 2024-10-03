@@ -20,6 +20,14 @@ describe('>>> AppointmentStaffMembers Service', () => {
     });
   });
 
+  describe('fetchAvailabilites', () => {
+    it('should call the proper endpoint', async () => {
+      const payload = { userAccountIds: ['a'], selectedDate: '', selectedDateStartInUtc: '', appointmentProgramId: 'id' };
+      await service.fetchAvailabilites(payload);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/appointment/appointment-staff-members/staff-member-availabilities', payload);
+    });
+  });
+
   describe('assignStaffMembers', () => {
     it('should call the proper endpoint with the right payload', async () => {
       const staffMembers = [{ userAccountId: mockAppointmentStaffMember().userAccountId,

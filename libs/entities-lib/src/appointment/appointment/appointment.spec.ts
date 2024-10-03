@@ -1,5 +1,6 @@
 import { Appointment } from './appointment';
 import { mockAppointment } from './appointment.mock';
+import { AppointmentStatus } from './appointment.types';
 
 const mockData = mockAppointment();
 
@@ -42,7 +43,7 @@ const mockData = mockAppointment();
           expect(item.attendeeId).toEqual(null);
           expect(item.attendeeEmail).toEqual(null);
           expect(item.userAccountId).toEqual(null);
-          expect(item.appointmentStatus).toEqual(null);
+          expect(item.appointmentStatus).toEqual(AppointmentStatus.Scheduled);
           expect(item.notes).toEqual(null);
           expect(item.masterAccountEmail).toEqual(null);
           expect(item.sendConfirmationEmail).toEqual(null);

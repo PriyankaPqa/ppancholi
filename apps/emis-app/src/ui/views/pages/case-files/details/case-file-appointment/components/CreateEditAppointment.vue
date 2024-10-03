@@ -23,7 +23,7 @@
             data-test="save"
             :loading="loading"
             :disabled="failed || loading || (isEditMode && !dirty) "
-            @click.stop="submit">
+            @click="submit()">
             {{ isEditMode ? $t('common.save') : $t('common.buttons.add') }}
           </v-btn>
         </template>
@@ -35,6 +35,7 @@
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import {
+  RcPageContent,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
 import { Appointment, IAppointment } from '@libs/entities-lib/appointment';
@@ -43,6 +44,7 @@ import { useAppointmentStore } from '@/pinia/appointment/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
+import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import caseFileDetail from '../../caseFileDetail';
 import AppointmentForm from './AppointmentForm.vue';
 
@@ -52,9 +54,15 @@ export default mixins(caseFileDetail).extend({
   components: {
     VSelectWithValidation,
     AppointmentForm,
+    PageTemplate,
+    RcPageContent,
   },
 
   props: {
+    id: {
+      type: String,
+      default: '',
+    },
     appointmentId: {
       type: String,
       default: '',
@@ -86,7 +94,6 @@ export default mixins(caseFileDetail).extend({
   },
 
   async created() {
-    this.appointment = new Appointment();
     this.loading = true;
     await Promise.all([
       useAppointmentProgramStore().fetchByEventId(this.caseFile.eventId),
@@ -98,6 +105,7 @@ export default mixins(caseFileDetail).extend({
       const res = await useAppointmentStore().fetch(this.appointmentId);
       this.appointment = new Appointment(res);
     } else {
+      this.appointment = new Appointment();
       this.appointment.caseFileId = this.id;
     }
     this.loading = false;
