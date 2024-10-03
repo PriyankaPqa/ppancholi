@@ -13,8 +13,7 @@
         :interval-minutes="+duration || 30"
         :interval-height="35"
         :first-time="firstTime"
-        :interval-count="9 * (60 / (+duration || 30))"
-        @change="getWeekStartDate">
+        :interval-count="9 * (60 / (+duration || 30))">
         <template #event="data">
           <div class="availability-slot d-flex">
             <v-radio
@@ -35,10 +34,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { addMinutes, format, addDays } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
-import { IDateRange, ITimeSlot } from '@libs/entities-lib/appointment';
-import helpers from '@/ui/helpers/helpers';
+import { addMinutes, format } from 'date-fns';
+import { IDateRange } from '@libs/entities-lib/appointment';
 
 export interface ICalendarEvent {
   name: string,
@@ -50,9 +47,6 @@ export interface ICalendarEvent {
 
 export default Vue.extend({
   name: 'AppointmentTimePicker',
-
-  components: {
-  },
 
   props: {
     duration: {
@@ -78,11 +72,7 @@ export default Vue.extend({
 
   data() {
     return {
-      availableSlots: [] as ITimeSlot[],
-      getLocalStringDate: helpers.getLocalStringDate,
       bookedCalendarTime: null as ICalendarEvent,
-      weekStartDate: '',
-      currentWeekDay: 0,
     };
   },
 
@@ -90,47 +80,19 @@ export default Vue.extend({
     firstTime(): string {
        if (this.availableSlots?.length && this.duration) {
         const minStart = Math.min(...this.availableSlots.map((s) => new Date(s.start).getTime()));
+        // Substract the duration from the start time of the earliest slot, so that the calendar displays the hour of this slot
+        // otherwise it gets hidden
         return format(addMinutes(new Date(minStart), -(+this.duration)), 'HH:mm');
        }
-      return this.availableSlots.length ? format(addMinutes(this.availableSlots[0].start as Date, -(+this.duration)), 'HH:mm') : '09:00';
-    },
-  },
-
-  watch: {
-    duration(newValue) {
-      if (newValue) {
-        this.calculateAvailableSlots();
-      }
+      return '09:00';
     },
 
-    date(newValue) {
-      if (newValue) {
-        this.calculateAvailableSlots();
-      }
-    },
-
-    bookedCalendarTime(newValue) {
-      if (newValue) {
-        this.$emit('update:bookedTime', { startDateTime: (newValue.start).toISOString(), endDateTime: (newValue.end).toISOString() });
-      }
-    },
-
- },
-
-  created() {
-    if (this.bookedTime?.startDateTime) {
-      this.bookedCalendarTime = this.parseEventFromTimeSlot(new Date(this.bookedTime.startDateTime), new Date(this.bookedTime.endDateTime));
-    }
-    this.calculateAvailableSlots();
-  },
-
-  methods: {
-    calculateAvailableSlots() {
-      if (!this.duration) {
-        return;
+    availableSlots(): ICalendarEvent[] {
+      if (!this.duration || !this.date || !this.availabilities?.length) {
+        return [];
       }
 
-      const slots = [] as ITimeSlot[];
+      const slots = [] as ICalendarEvent[];
       this.availabilities.forEach((a) => {
         let s = new Date(a.startDateTime);
         const end = new Date(a.endDateTime);
@@ -147,9 +109,25 @@ export default Vue.extend({
       if (this.bookedTime?.startDateTime) {
         slots.push(this.bookedCalendarTime);
       }
-      this.availableSlots = slots;
+      return slots;
     },
+  },
 
+  watch: {
+    bookedCalendarTime(newValue) {
+      if (newValue) {
+        this.$emit('update:bookedTime', { startDateTime: (newValue.start).toISOString(), endDateTime: (newValue.end).toISOString() });
+      }
+    },
+ },
+
+  created() {
+    if (this.bookedTime?.startDateTime) {
+      this.bookedCalendarTime = this.parseEventFromTimeSlot(new Date(this.bookedTime.startDateTime), new Date(this.bookedTime.endDateTime));
+    }
+  },
+
+  methods: {
     parseEventFromTimeSlot(start: Date, end:Date): ICalendarEvent {
       return {
         name: 'Available',
@@ -161,14 +139,9 @@ export default Vue.extend({
     },
 
     getTimeSlotLabel(event: ICalendarEvent) {
-      return event.start === this.bookedCalendarTime?.start
+      return event.start.getTime() === this.bookedCalendarTime?.start.getTime()
       ? this.$t('caseFile.appointments.timePicker.selected')
       : this.$t('caseFile.appointments.timePicker.available');
-    },
-
-    getWeekStartDate(updateData: { start: { date: Date, weekday: number } }) {
-        this.currentWeekDay = updateData.start.weekday;
-        this.weekStartDate = format(addDays(utcToZonedTime(new Date(updateData.start.date), 'UTC'), -this.currentWeekDay), 'yyyy-MM-dd');
     },
   },
 });

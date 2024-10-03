@@ -33,7 +33,6 @@ describe('CreateEditAppointment', () => {
             id: 'CASEFILE_ID',
           },
         },
-
       },
     });
   };
