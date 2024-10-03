@@ -218,7 +218,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { VSelectWithValidation } from '@libs/component-lib/components';
+import { VDateFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IDateRange, IStaffMemberAvailabilityRequest } from '@libs/entities-lib/appointment';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
@@ -232,6 +232,7 @@ import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { TranslateResult } from 'vue-i18n';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import AppointmentTimePicker from './AppointmentTimePicker.vue';
 
 export default Vue.extend({
@@ -240,6 +241,9 @@ export default Vue.extend({
   components: {
     VSelectWithValidation,
     AppointmentTimePicker,
+    VTextAreaWithValidation,
+    StatusSelect,
+    VDateFieldWithValidation,
   },
 
   props: {
