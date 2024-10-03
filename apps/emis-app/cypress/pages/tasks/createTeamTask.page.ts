@@ -5,6 +5,7 @@ export enum DataTest {
   isUrgent = 'is-urgent-check-box',
   taskAssignedTo = 'task-assigned-to',
   taskCategory = 'task-category-team-task',
+  faPayment = 'create-edit-task-FA-select',
   taskDescription = 'task-description_input',
   cancelButton = 'cancel-button',
   createButton = 'save-button',
@@ -21,6 +22,8 @@ export class CreateTeamTaskPage {
   private taskCategory = { selector: DataTest.taskCategory };
 
   private taskSubCategory = { selector: DataTest.taskSubCategory };
+
+  private faPayment = { selector: DataTest.faPayment };
 
   private taskDescription = { selector: DataTest.taskDescription, type: 'textarea' };
 
@@ -44,12 +47,25 @@ export class CreateTeamTaskPage {
     return cy.getByDataTest(this.taskSubCategory);
   }
 
+  public getFaPaymentDropdown() {
+    return cy.getByDataTest(this.faPayment);
+  }
+
   public selectTaskCategory(category: string) {
     return cy.selectListElementByValue(DataTest.taskCategory, category);
   }
 
   public selectTaskSubCategory(subCategory: string) {
     return cy.selectListElementByValue(DataTest.taskSubCategory, subCategory);
+  }
+
+  public selectFaPayment(faPayment: string) {
+    return cy.selectListElementByValue(DataTest.faPayment, faPayment);
+  }
+
+  public getFaPaymentDropdownElement(faPayment: string) {
+    cy.getByDataTest(this.faPayment).click();
+    return cy.getByDataTest({ selector: `${DataTest.faPayment}__item--${faPayment.replace(/\s/g, '')}`, type: 'div' });
   }
 
   public getEscalationTeamAssigned() {
