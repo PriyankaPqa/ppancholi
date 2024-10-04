@@ -64,11 +64,11 @@
                 v-model="localAppointment.appointmentModalityId"
                 data-test="select-appointment-modality"
                 attach
-                :item-data-test="item=> item.optionItemId"
+                :item-data-test="item=> item.id"
                 :label="`${$t('caseFile.appointments.modality')} *`"
                 :items="modalities"
-                :item-value="item=> item.optionItemId"
-                :item-text="(item) => getModalityName(item)"
+                :item-value="item=> item.id"
+                :item-text="(item) => $m(item.name)"
                 :rules="rules.modality" />
             </v-col>
           </v-row>
@@ -218,7 +218,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { VDateFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
+import { MessageBox, VDateFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IDateRange, IStaffMemberAvailabilityRequest } from '@libs/entities-lib/appointment';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
@@ -226,7 +226,6 @@ import { IMember } from '@libs/entities-lib/household-create';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IAppointmentStaffMember, IServiceOption } from '@libs/entities-lib/src/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { IListOption } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
@@ -244,6 +243,7 @@ export default Vue.extend({
     VTextAreaWithValidation,
     StatusSelect,
     VDateFieldWithValidation,
+    MessageBox,
   },
 
   props: {
@@ -332,9 +332,10 @@ export default Vue.extend({
     },
 
     // In the dropdown, only display service options of the selected appointment program that are currently active and have active types
+    // or - in edit mode - that has been previously selected
     serviceOptions(): IServiceOption[] {
-      return this.selectedAppointmentProgram?.serviceOptions.filter((so) => this.serviceOptionTypes.map((t) => t.id).includes(so.serviceOptionType.optionItemId))
-      || [];
+      return this.selectedAppointmentProgram?.serviceOptions.filter((so) => this.serviceOptionTypes.map((t) => t.id).includes(so.serviceOptionType.optionItemId)
+    || so.id === this.appointment.serviceOptionId) || [];
     },
 
     selectedServiceOption(): IServiceOption {
@@ -345,10 +346,12 @@ export default Vue.extend({
       return useAppointmentProgramStore().getAppointmentModalities(this.appointment?.appointmentModalityId);
     },
 
-    // In the dropdown, only display the modalities of the selected service option that are currently active
-    modalities(): IListOption[] {
-      return this.selectedServiceOption?.appointmentModalities.filter((m) => this.allModalities.map((mod) => mod.id).includes(m.optionItemId))
-      || [];
+    // In the dropdown, only display the modalities of the selected service option
+    modalities(): IOptionItem[] {
+      if (!this.selectedServiceOption) {
+        return [];
+      }
+      return this.allModalities.filter((m) => this.selectedServiceOption.appointmentModalities.map((mod) => mod.optionItemId).includes(m.id));
     },
 
     // The appointment program staff members that are assigned to the selected service option
@@ -374,7 +377,9 @@ export default Vue.extend({
       }
 
       if (this.$hasLevel(UserRoles.level3) || this.$hasLevel(UserRoles.level0, true)) {
-        memberIds.push(this.nextAvailableMemberId);
+        if (this.serviceOptionStaffMembers.length) {
+          memberIds.push(this.nextAvailableMemberId);
+        }
       }
 
       if (this.$hasLevel(UserRoles.level3)) {
@@ -388,7 +393,7 @@ export default Vue.extend({
     },
 
     isOnline(): boolean {
-      if (!this.localAppointment.appointmentModalityId) {
+      if (!this.localAppointment?.appointmentModalityId) {
         return false;
       }
       return this.allModalities.find((m) => m.id === this.localAppointment.appointmentModalityId)?.isOnline;
@@ -396,7 +401,7 @@ export default Vue.extend({
 
     // the selected time slot, as passed to or received from to the component AppointmentTimePicker
     selectedTime: {
-      get() {
+      get(): IDateRange {
         return { startDateTime: this.localAppointment.startDate, endDateTime: this.localAppointment.endDate };
       },
       set(value: IDateRange) {
@@ -439,7 +444,7 @@ export default Vue.extend({
 
     async selectedDate(newValue, oldValue) {
       this.$emit('update:showTimeSlotError', false);
-      if (newValue && this.localAppointment.userAccountId) {
+      if (newValue && this.localAppointment?.userAccountId) {
         await this.fetchStaffMemberAvailability();
       }
       if (!!oldValue && oldValue !== newValue) {
@@ -486,6 +491,7 @@ export default Vue.extend({
     },
   },
 
+  // TODO develop when coding the edit part
   async created() {
     this.localAppointment = new Appointment(this.appointment);
     if (this.isEditMode) {
@@ -502,10 +508,6 @@ export default Vue.extend({
       return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOption.serviceOptionType.optionItemId)?.name);
     },
 
-    getModalityName(modality: IListOption): string {
-      return this.$m(this.allModalities.find((m) => m.id === modality.optionItemId)?.name);
-    },
-
     getAttendeeName(attendee: IMember) {
       let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
       if (attendee.id === this.primaryMemberId) {
@@ -515,7 +517,7 @@ export default Vue.extend({
     },
 
     getStaffMemberName(id: string): TranslateResult | string {
-      if (id === 'next-available-member') {
+      if (id === this.nextAvailableMemberId) {
         return this.$t('caseFile.appointments.nextAvailable');
       }
       const currentUserId = useUserStore().getUserId();
@@ -530,12 +532,18 @@ export default Vue.extend({
     },
 
     async fetchStaffMembers() {
+      if (!this.selectedAppointmentProgram?.id) {
+        return;
+      }
       this.loadingStaff = true;
       await useAppointmentStaffMemberStore().fetchByAppointmentProgramId(this.selectedAppointmentProgram.id);
       this.loadingStaff = false;
     },
 
     async fetchStaffMemberAvailability() {
+      if (!this.selectedAppointmentProgram?.id) {
+        return;
+      }
       const userAccountIds = this.localAppointment.userAccountId === this.nextAvailableMemberId
       // The next available case file manager was selected, so we fetch the availability of all the staff members
         ? this.displayedStaffMemberIds.filter((id) => id !== this.nextAvailableMemberId)
