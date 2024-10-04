@@ -81,7 +81,9 @@ describe('[T28845] Process a Contact Information data correction file', { tags: 
           }
         });
         it('should successfully process a Contact Information data correction file', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'household records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'household records', massActionName: this.massActionName, massActionType: 'Contact Information', roleName },
+          );
         });
       });
     }

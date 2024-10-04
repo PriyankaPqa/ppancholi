@@ -82,7 +82,9 @@ describe('[T28885] Process DC triage.', { tags: ['@case-file', '@mass-actions'] 
         });
 
         it('should be able to process a DC triage', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'case files', this.massActionName, 'case files');
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'case files', massActionName: this.massActionName, massActionType: 'Triage', roleName, processedItemsLabelTwo: 'case files' },
+          );
           const baseDetailsMassActionPage = new BaseDetailsMassAction();
           baseDetailsMassActionPage.getBackToMassActionListButton().should('be.enabled');
           baseDetailsMassActionPage.getMassActionType().should('eq', 'Triage');

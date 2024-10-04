@@ -30,6 +30,15 @@ export interface PreProcessDataCorrectionFileCanStepsParams {
   eventName?: string,
 }
 
+export interface ProcessDataCorrectionFileCanStepsParams {
+  householdQuantity: number,
+  processedItems: string,
+  massActionName: string,
+  massActionType: string,
+  roleName: string,
+  processedItemsLabelTwo: string,
+}
+
 // eslint-disable-next-line
 export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTypeDataTest, dataCorrectionTypeDropDown, filePath, preprocessedItems, householdQuantity, roleName, eventName}: Partial<PreProcessDataCorrectionFileCanStepsParams>) => {
   const baseMassActionData = fixtureBaseMassAction(retries);
@@ -69,7 +78,9 @@ export const preprocessDataCorrectionFileCanSteps = ({retries, dataCorrectionTyp
   baseDetailsMassActionPage.getBackToMassActionListButton().should('be.visible');
 };
 
-export const processDataCorrectionFileSteps = (householdQuantity: number, processedItems: string, massActionName: string, processedItemsLabelTwo = 'records') => {
+export const processDataCorrectionFileSteps = (
+  { householdQuantity, processedItems, massActionName, massActionType, roleName, processedItemsLabelTwo = 'records' }: Partial<ProcessDataCorrectionFileCanStepsParams>,
+) => {
   const baseDetailsMassActionPage = new BaseDetailsMassAction();
   cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed, false);
   baseDetailsMassActionPage.getMassActionProcessButton().should('be.visible');
@@ -102,5 +113,9 @@ export const processDataCorrectionFileSteps = (householdQuantity: number, proces
     } else {
       baseDetailsMassActionPage.getInvalidCasefilesDownloadButton().should('be.enabled');
     }
+    baseDetailsMassActionPage.getMassActionType().should('eq', massActionType);
+    baseDetailsMassActionPage.getMassActionDateCreated().should('eq', getToday());
+    baseDetailsMassActionPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+    baseDetailsMassActionPage.getBackToMassActionListButton().should('be.visible');
   });
 };
