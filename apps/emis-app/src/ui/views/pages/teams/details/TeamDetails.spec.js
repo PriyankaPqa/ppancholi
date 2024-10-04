@@ -7,13 +7,16 @@ import { RcPageContent, RcTabs } from '@libs/component-lib/components';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
-import { useMockEventStore } from '@/pinia/event/event.mock';
+import { mockProvider } from '@/services/provider';
+import { mockEventEntityData } from '@libs/entities-lib/event';
 import Component, { SelectedTab } from './TeamDetails.vue';
 
 const localVue = createLocalVue();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
-const eventStore = useMockEventStore(pinia).eventStore;
+const services = mockProvider();
+
+services.publicApi.searchEventsById = jest.fn(() => ({ value: mockEventEntityData() }));
 
 describe('TeamDetails.vue', () => {
   let wrapper;
@@ -27,7 +30,7 @@ describe('TeamDetails.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-
+        $services: services,
       },
       stubs: ['v-select-a11y'],
       ...additionalOverwrites,
@@ -258,7 +261,7 @@ describe('TeamDetails.vue', () => {
       it('should calls getTeam actions and the events', async () => {
         await wrapper.vm.loadTeam();
         expect(teamStore.fetch).toHaveBeenLastCalledWith('id');
-        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['id-1'], true);
+        expect(services.publicApi.searchEventsById).toHaveBeenCalledWith(['id-1']);
       });
 
       it('should fetch userAccount metadata with correct Id', async () => {

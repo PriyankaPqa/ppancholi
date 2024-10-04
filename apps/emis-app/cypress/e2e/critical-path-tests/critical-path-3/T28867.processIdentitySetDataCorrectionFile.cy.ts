@@ -80,7 +80,9 @@ describe('[T28867] Process an Identity Set data correction file', { tags: ['@hou
           }
         });
         it('should successfully process a Identity Set data correction file', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'household records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'household records', massActionName: this.massActionName, massActionType: 'Identity Set', roleName },
+          );
         });
       });
     }

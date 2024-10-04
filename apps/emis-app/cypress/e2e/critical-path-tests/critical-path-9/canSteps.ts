@@ -1,5 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { CaseFileDetailsPage } from 'cypress/pages/casefiles/caseFileDetails.page';
 import { formatDateToMmmDdYyyy } from '@libs/cypress-lib/helpers';
 import { format } from 'date-fns';
 import { TasksHistoryPage } from '../../../pages/tasks/taskHistory.page';
@@ -20,4 +21,13 @@ export const assertTaskHistorySteps = ({ roleName, actionTaken, rationale = '-',
   tasksHistoryPage.getHistoryTableRationaleByIndex(index).should('eq', rationale);
   tasksHistoryPage.getHistoryTableDateOfChangeByIndex(index).should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
   tasksHistoryPage.getCloseButton().should('be.visible');
+};
+
+export const caseFileDetailsSteps = (taskCategory: string, roleName:UserRoles, taskStatus: string) => {
+  const caseFileDetailsPage = new CaseFileDetailsPage();
+  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`${taskCategory} has been ${taskStatus}`);
+  caseFileDetailsPage.getUserName().should('string', getUserName(roleName));
+  caseFileDetailsPage.getRoleName().should('string', getUserRoleDescription(roleName));
+  caseFileDetailsPage.getCaseFileActivityTitle().should('string', `Task ${taskStatus}`);
+  caseFileDetailsPage.getCaseFileActivityBody().should('string', `${taskCategory} has been ${taskStatus}`);
 };

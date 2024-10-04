@@ -21,7 +21,7 @@ import {
   IEventExceptionalAuthenticationType,
 } from './event.types';
 
-export class EventEntity extends BaseEntity {
+export class EventEntity extends BaseEntity implements IEventEntity {
   name: IMultilingual;
 
   description: IMultilingual;
@@ -60,11 +60,11 @@ export class EventEntity extends BaseEntity {
 
   appointmentBookingForL0usersEnabled: boolean;
 
-  consentStatementId?: uuid;
+  consentStatementId: uuid;
 
-  authenticationTier1disabled?: boolean;
+  authenticationTier1disabled: boolean;
 
-  authenticationTier2disabled?: boolean;
+  authenticationTier2disabled: boolean;
 
   exceptionalAuthenticationTypes: Array<IEventExceptionalAuthenticationType>;
 

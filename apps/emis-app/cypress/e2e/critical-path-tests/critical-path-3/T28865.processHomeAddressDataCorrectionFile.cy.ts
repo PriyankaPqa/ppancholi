@@ -79,7 +79,9 @@ describe('[T28865] Process a Home Address data correction file', { tags: ['@hous
           }
         });
         it('should successfully process a Home Address data correction file', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'household records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'household records', massActionName: this.massActionName, massActionType: 'Home Address', roleName },
+          );
         });
       });
     }

@@ -15,6 +15,7 @@ export enum DataTest {
   previousTemporaryAddressRow = 'previous-address-row',
   currentAddressTemplate = 'current_address_template',
   currentAddressType = 'currentAddress__type',
+  currentAddressTypeUnknown = 'currentAddress__unknown',
   currentAddressStreet = 'currentAddress__street',
   currentAddressLine = 'currentAddress__line',
   currentAddressCountry = 'currentAddress__country',
@@ -57,6 +58,8 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
   private currentAddressTemplate = { selector: DataTest.currentAddressTemplate };
 
   private currentAddressType = { selector: DataTest.currentAddressType };
+
+  private currentAddressTypeUnknown = { selector: DataTest.currentAddressTypeUnknown };
 
   private currentAddressStreet = { selector: DataTest.currentAddressStreet };
 
@@ -141,6 +144,10 @@ export class CaseFileImpactedIndividualsHomePage extends CaseFileDetailsBase {
 
   public getCurrentAddressType() {
     return cy.getByDataTest(this.currentAddressType).getAndTrimText();
+  }
+
+  public getCurrentAddressTypeUnknown() {
+    return cy.getByDataTest(this.currentAddressTypeUnknown).getAndTrimText();
   }
 
   public getCurrentAddressStreet() {

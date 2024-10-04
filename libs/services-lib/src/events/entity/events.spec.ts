@@ -70,6 +70,7 @@ describe('>>> Events Service', () => {
       scheduledCloseDate: '2021-05-15T15:00:00.000Z',
       scheduledOpenDate: '2021-03-01T00:00:00.000Z',
       status: EEventStatus.OnHold,
+      consentStatementId: null,
       authenticationTier1disabled: false,
       authenticationTier2disabled: true,
     }, { globalHandler: GlobalHandler.Partial });
@@ -131,6 +132,7 @@ describe('>>> Events Service', () => {
       assessmentsForL0usersEnabled: false,
       registrationsForL0usersEnabled: false,
       appointmentBookingForL0usersEnabled: false,
+      consentStatementId: null,
       authenticationTier1disabled: false,
       authenticationTier2disabled: true,
     }, { globalHandler: GlobalHandler.Partial });
@@ -141,20 +143,20 @@ describe('>>> Events Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/self-registration-enabled`, { selfRegistrationEnabled: false });
   });
 
-  test('searchMyEvents is linked to the correct URL and params', async () => {
+  test('searchEventSummaries is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
-    await service.searchMyEvents(params);
+    await service.searchEventSummaries(params);
     expect(http.get).toHaveBeenCalledWith('event/search/event-summaries', { params: { filter: 'foo and HasAccess eq true' }, isOData: true });
   });
 
-  test('searchMyEventsById calls the helper callSearchInInBatches with the right params and return the right object', async () => {
+  test('searchEventSummariesById calls the helper callSearchInInBatches with the right params and return the right object', async () => {
     const ids = ['id-1', 'id-2'];
-    helpers.callSearchInInBatches = jest.fn(); await service.searchMyEventsById(ids);
+    helpers.callSearchInInBatches = jest.fn(); await service.searchEventSummariesById(ids);
     expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
       searchInFilter: 'Id in({ids})',
       service,
       ids,
-      api: 'searchMyEvents',
+      api: 'searchEventSummaries',
       otherApiParameters: [null, false, true],
     });
   });

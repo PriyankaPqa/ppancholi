@@ -124,6 +124,9 @@ export const mockEventEntityData = (): IEventEntity[] => [
     assessmentsForL0usersEnabled: false,
     registrationsForL0usersEnabled: false,
     appointmentBookingForL0usersEnabled: false,
+    authenticationTier1disabled: false,
+    authenticationTier2disabled: false,
+    consentStatementId: null,
     registrationLink: {
       translation: {
         en: 'https://www.redcross.ca/gatineau-floods-2021',
@@ -350,7 +353,10 @@ export const mockEventEntityData = (): IEventEntity[] => [
     id: '1dea3c36-d6a5-4e6c-ac36-078677b7d222',
     validate: null,
     fillEmptyMultilingualAttributes: null,
-
+    authenticationTier1disabled: false,
+    authenticationTier2disabled: false,
+    consentStatementId: null,
+    registrationAssessments: [],
     number: 2,
     name: {
       translation: {
@@ -599,6 +605,8 @@ const getEventEntity = (index = 0) : IEventEntity => ({
   relatedEventIds: [mockBaseData().id + (index + 1)],
   agreements: mockEventEntityData()[index].agreements,
   exceptionalAuthenticationTypes: mockEventEntityData()[index].exceptionalAuthenticationTypes,
+  authenticationTier1disabled: mockEventEntityData()[index].authenticationTier1disabled,
+  authenticationTier2disabled: mockEventEntityData()[index].authenticationTier2disabled,
 
   validate: jest.fn(),
   fillEmptyMultilingualAttributes: jest.fn(),
@@ -672,6 +680,11 @@ export const mockEmptyEntity = (force?: Partial<IEventEntity>) : IEventEntity =>
     registrationLocations: [],
     selfRegistrationEnabled: false,
     assessmentsForL0usersEnabled: false,
+    authenticationTier1disabled: false,
+    authenticationTier2disabled: false,
+    consentStatementId: null,
+    exceptionalAuthenticationTypes: [],
+    registrationAssessments: [],
     registrationsForL0usersEnabled: false,
     appointmentBookingForL0usersEnabled: false,
     shelterLocations: [],

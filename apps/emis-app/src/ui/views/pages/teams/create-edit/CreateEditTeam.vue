@@ -247,7 +247,7 @@ import {
   TeamType, TeamEntity, ITeamEntity,
   ITeamMemberAsUser,
 } from '@libs/entities-lib/team';
-import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
+import { EEventStatus, IEventEntity, IEventSummary } from '@libs/entities-lib/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
@@ -324,7 +324,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       eventsAfterRemoval: null as string[],
       team: null as ITeamEntity,
       isLoading: true,
-      availableEvents: [] as IEventEntity[],
+      availableEvents: [] as IEventSummary[],
       original: {
         name: null as string,
         status: null as Status,
@@ -423,7 +423,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       || this.$hasFeature(this.$featureKeys.AppointmentBooking);
     },
 
-    eventsForServiceOptionAssignment(): IEventEntity[] {
+    eventsForServiceOptionAssignment(): IEventSummary[] {
       return this.availableEvents.filter((e) => this.original.events.includes(e.id));
     },
   },
@@ -468,7 +468,15 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       await useEventStore().fetchByIds(this.team?.eventIds, true);
       const allEvents = useEventStore().getAll();
       const activeEvents = useEventStore().getEventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
-      const availableEvents = allEvents.filter((e) => this.team.eventIds.indexOf(e.id) > -1);
+      const availableEvents = allEvents.filter((e) => this.team.eventIds.indexOf(e.id) > -1) as IEventSummary[];
+
+      // missing events the person might not normally have access to - we'll add them
+      const missingIds = (this.team?.eventIds || []).filter((e) => !availableEvents.map((e2) => e2.id).includes(e));
+      if (missingIds.length) {
+        const summaries = (await this.$services.publicApi.searchEventsById(missingIds)).value;
+        this.availableEvents = availableEvents.concat(summaries);
+      }
+
       this.availableEvents = availableEvents.concat(activeEvents);
     },
 

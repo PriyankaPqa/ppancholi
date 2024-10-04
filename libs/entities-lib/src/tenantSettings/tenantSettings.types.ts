@@ -15,6 +15,7 @@ export enum FeatureKeys {
   NoReloadOnNewVersion = 'NoReloadOnNewVersion',
   CaseFileIndividual = 'CaseFileIndividual',
   AddRemoveTeamMembers = 'AddRemoveTeamMembers',
+  Partnerships = 'Partnerships',
   AuthenticationRetry = 'AuthenticationRetry',
 }
 

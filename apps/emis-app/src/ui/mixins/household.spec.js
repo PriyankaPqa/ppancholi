@@ -100,7 +100,7 @@ describe('household', () => {
     });
 
     describe('fetchMyEvents', () => {
-      it('calls searchMyEventsById with the expected parameters if no argument is passed', async () => {
+      it('calls searchEventSummariesById with the expected parameters if no argument is passed', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -115,16 +115,16 @@ describe('household', () => {
         await wrapper.setData({
           caseFiles: [{ eventId: 'id-1' }, { eventId: 'id-2' }],
         });
-        wrapper.vm.$services.events.searchMyEventsById = jest.fn();
+        wrapper.vm.$services.events.searchEventSummariesById = jest.fn();
         await wrapper.vm.fetchMyEvents();
-        expect(wrapper.vm.$services.events.searchMyEventsById).toHaveBeenCalledWith(['id-1', 'id-2']);
+        expect(wrapper.vm.$services.events.searchEventSummariesById).toHaveBeenCalledWith(['id-1', 'id-2']);
       });
 
-      it('calls searchMyEventsById with the expected parameters from the argument', async () => {
+      it('calls searchEventSummariesById with the expected parameters from the argument', async () => {
         const caseFiles = [{ eventId: 'id-1' }, { eventId: 'id-2' }];
-        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm.$services.events, 'searchEventSummariesById').mockImplementation(() => {});
         await wrapper.vm.fetchMyEvents(caseFiles);
-        expect(wrapper.vm.$services.events.searchMyEventsById).toHaveBeenCalledWith(['id-1', 'id-2']);
+        expect(wrapper.vm.$services.events.searchEventSummariesById).toHaveBeenCalledWith(['id-1', 'id-2']);
       });
 
       it('stores the result in myEvents if there is no argument and returns the result', async () => {
@@ -143,7 +143,7 @@ describe('household', () => {
           caseFiles: [{ eventId: 'eventId' }],
         });
 
-        wrapper.vm.$services.events.searchMyEventsById = jest.fn(() => ({ value: [{ id: 'eventId' }] }));
+        wrapper.vm.$services.events.searchEventSummariesById = jest.fn(() => ({ value: [{ id: 'eventId' }] }));
         const result = await wrapper.vm.fetchMyEvents();
         expect(wrapper.vm.myEvents).toEqual([{ id: 'eventId' }]);
         expect(result).toEqual([{ id: 'eventId' }]);

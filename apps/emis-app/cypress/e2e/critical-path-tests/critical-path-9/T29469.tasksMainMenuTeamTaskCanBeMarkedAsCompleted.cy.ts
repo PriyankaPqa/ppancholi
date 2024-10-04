@@ -9,9 +9,8 @@ import { IProvider } from '@/services/provider';
 import { useProvider } from '../../../provider/provider';
 import { assignTeamTask, createEventWithAssignableTeam, createHousehold, createTeamTask } from '../../helpers/prepareState';
 import { linkEventToTeamForManyRoles, LinkEventToTeamParams, removeTeamMembersFromTeam } from '../../helpers/teams';
-import { assertTaskHistorySteps } from './canSteps';
+import { assertTaskHistorySteps, caseFileDetailsSteps } from './canSteps';
 import { TasksHomePage } from '../../../pages/tasks/tasksHome.page';
-import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 
 const escalationRole = [
   UserRoles.level6,
@@ -173,13 +172,7 @@ describe(
           }
           tasksHistoryPage.getCloseButton().click();
           cy.goTo(`casefile/${this.caseFileId}`);
-          const caseFileDetailsPage = new CaseFileDetailsPage();
-          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('EMIS has been completed');
-          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-          caseFileDetailsPage.getRoleName().should('string', `${getUserRoleDescription(roleName)}`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('string', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
-          caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Task completed');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', 'EMIS has been completed');
+          caseFileDetailsSteps('EMIS', roleName, 'completed');
         });
       });
     }

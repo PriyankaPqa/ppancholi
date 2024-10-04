@@ -1158,14 +1158,33 @@ export const assignTeamTask = async (provider: IProvider, taskId: string, caseFi
   await provider.task.setTaskActionTaken(taskId, caseFileId, params);
 };
 
-  /**
-   * Set a team task action
-   * @param provider
-   * @param caseFileId
-   * @param assignedTeamId
-   */
-  export const setTeamTaskAction = async (params: SetTeamTaskActionParams) => {
-    const mockSetTaskActionTaken = mockSetTaskActionTakenRequest(params.actionTaken, params.teamId);
-    const setTaskActionTakenResult = await params.provider.task.setTaskActionTaken(params.taskId, params.caseFileId, mockSetTaskActionTaken);
-    return setTaskActionTakenResult;
+/**
+ * Set a team task action
+ * @param provider
+ * @param caseFileId
+ * @param assignedTeamId
+ */
+export const setTeamTaskAction = async (params: SetTeamTaskActionParams) => {
+  const mockSetTaskActionTaken = mockSetTaskActionTakenRequest(params.actionTaken, params.teamId);
+  const setTaskActionTakenResult = await params.provider.task.setTaskActionTaken(params.taskId, params.caseFileId, mockSetTaskActionTaken);
+  return setTaskActionTakenResult;
+};
+
+/**
+ * Add and Submit Fa payment
+ * @param provider
+ * @param caseFileId
+ * @param financialAssistanceTableId
+ * @param modality
+ */
+export const addAndSubmitFaPayment = async (provider: IProvider, caseFileId: string, financialAssistanceTableId: string, modality: EPaymentModalities) => {
+  const addFinancialAssistancePayment1ParamData: AddFinancialAssistancePaymentParams = {
+    provider,
+    modality,
+    caseFileId,
+    financialAssistanceTableId,
   };
+  const financialAssistancePayment = await addFinancialAssistancePayment(addFinancialAssistancePayment1ParamData);
+  await submitFinancialAssistancePayment(provider, financialAssistancePayment.id);
+  return financialAssistancePayment;
+};

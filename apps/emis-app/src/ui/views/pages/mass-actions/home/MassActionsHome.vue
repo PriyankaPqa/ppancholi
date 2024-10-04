@@ -45,6 +45,7 @@ export default mixins(massActions).extend({
       return routes;
     },
 
+    // eslint-disable-next-line max-lines-per-function
     cards(): Array<IMassActionCards> {
       return [
         {

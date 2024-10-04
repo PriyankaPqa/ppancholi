@@ -178,6 +178,7 @@ import entityUtils from '@libs/entities-lib/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
   IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,
+  EOptionLists,
 } from '@libs/entities-lib/optionItem';
 import { useOptionListStore } from '@/pinia/option-list/optionList';
 import OptionListItem from './OptionListItem.vue';
@@ -323,6 +324,10 @@ export default Vue.extend({
 
     items: {
       get(): OptionItem[] {
+        if (useOptionListStore().list === EOptionLists.Roles && !this.$hasFeature(this.$featureKeys.Partnerships)) {
+          // cant show the partner roles yet...  this is very temporary code
+          return useOptionListStore().getItems().filter((i) => !i.isHidden && i.orderRank < 13);
+        }
         return useOptionListStore().getItems().filter((i) => !i.isHidden);
       },
 

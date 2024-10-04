@@ -177,30 +177,30 @@ export interface IEventExceptionalAuthenticationType { exceptionalAuthentication
 /**
  * Interface used for the Event entity class
  */
-export interface IEventEntity extends IEntity {
-   name?: IMultilingual;
-   description?: IMultilingual;
-   number?: number;
-   selfRegistrationEnabled?: boolean;
-   registrationLink?: IMultilingual;
-   location?: IEventLocation;
-   schedule?: IEventSchedule;
-   responseDetails?: IEventResponseDetails;
-   registrationAssessments?: Array<IRegistrationAssessment>;
-   registrationLocations?: Array<IEventGenericLocation>;
-   callCentres?: Array<IEventCallCentre>;
-   scheduleHistory?: IEventSchedule[];
-   shelterLocations?: Array<IEventGenericLocation>;
-   eventStatus?: number;
-   relatedEventIds?: Array<string>;
-   agreements?: Array<IEventAgreement>;
+export interface IEventEntity extends IEntity, IEventSummary {
+   name: IMultilingual;
+   description: IMultilingual;
+   number: number;
+   selfRegistrationEnabled: boolean;
+   registrationLink: IMultilingual;
+   location: IEventLocation;
+   schedule: IEventSchedule;
+   responseDetails: IEventResponseDetails;
+   registrationAssessments: Array<IRegistrationAssessment>;
+   registrationLocations: Array<IEventGenericLocation>;
+   callCentres: Array<IEventCallCentre>;
+   scheduleHistory: IEventSchedule[];
+   shelterLocations: Array<IEventGenericLocation>;
+   eventStatus: number;
+   relatedEventIds: Array<string>;
+   agreements: Array<IEventAgreement>;
    assessmentsForL0usersEnabled: boolean;
    registrationsForL0usersEnabled: boolean;
    appointmentBookingForL0usersEnabled: boolean;
-   consentStatementId?: uuid;
-   authenticationTier1disabled?: boolean;
-   authenticationTier2disabled?: boolean;
-   exceptionalAuthenticationTypes?: Array<IEventExceptionalAuthenticationType>;
+   consentStatementId: uuid;
+   authenticationTier1disabled: boolean;
+   authenticationTier2disabled: boolean;
+   exceptionalAuthenticationTypes: Array<IEventExceptionalAuthenticationType>;
 
    validate(): Array<string> | boolean;
    fillEmptyMultilingualAttributes(): void;

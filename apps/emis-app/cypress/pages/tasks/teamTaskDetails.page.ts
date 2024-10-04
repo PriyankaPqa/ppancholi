@@ -121,6 +121,10 @@ export class TeamTaskDetailsPage {
     return cy.getByDataTest(this.backToTaskButton);
   }
 
+  public goToTasksHomePage() {
+    cy.getByDataTest(this.backToTaskButton).click();
+  }
+
   public goToCaseFileDetailsPage() {
     cy.getByDataTest(this.caseFileActivityTab).click();
     return new CaseFileDetailsPage();

@@ -1,21 +1,28 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
-import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { formatDateToMmmDdYyyy } from '@libs/cypress-lib/helpers';
 import { TeamType } from '@libs/entities-lib/team';
-import { format } from 'date-fns';
+import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { EPaymentModalities } from '@libs/entities-lib/program';
+import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { IProvider } from '@/services/provider';
-import { createEventWithAssignableTeam, createHousehold } from '../../helpers/prepareState';
-import { TasksHomePage } from '../../../pages/tasks/tasksHome.page';
+import { TasksHomePage } from 'cypress/pages/tasks/tasksHome.page';
+import {
+  addAndSubmitFaPayment,
+  createEventWithAssignableTeam,
+  createHousehold,
+  createProgramWithTableWithItemAndSubItem,
+} from '../../helpers/prepareState';
 import { linkEventToTeamForManyRoles, LinkEventToTeamParams, removeTeamMembersFromTeam } from '../../helpers/teams';
-import { assertTaskHistorySteps, caseFileDetailsSteps } from './canSteps';
 import { useProvider } from '../../../provider/provider';
+import { CreateTeamTaskPage } from '../../../pages/tasks/createTeamTask.page';
+import { assertTaskHistorySteps, caseFileDetailsSteps } from './canSteps';
 
 const escalationRole = [
   UserRoles.level6,
 ];
 
 const assignableRoles = [
+  UserRoles.level6,
   UserRoles.level5,
   UserRoles.level4,
   UserRoles.level3,
@@ -46,7 +53,7 @@ const { filteredCanRoles } = getRoles(canRoles, []);
 
 let accessTokenL6 = '';
 
-describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
+describe('[T29663] When Payment Issue Team Task created, user can select a specific Payment', { tags: ['@team-task', '@tasks'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -62,42 +69,42 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
               isAssignable: true,
               isEscalation: true,
             };
-            const escalationTeam = await linkEventToTeamForManyRoles(escalationTeamParamData); // creates escalation team
+            const escalationTeam = await linkEventToTeamForManyRoles(escalationTeamParamData);
+            cy.callSearchUntilMeetCondition({
+              provider: useProvider(accessTokenL6),
+              searchCallBack: (provider: IProvider) => (provider.teams.search({
+                filter: { Entity: { Events: { any: { Id: { value: event.id, type: 'guid' } } }, isEscalation: true } },
+              })),
+              conditionCallBack: (value: []) => value.length > 0,
+            });
+            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
             const resultCreateHousehold = await createHousehold(provider, event);
+            const caseFileId = resultCreateHousehold.registrationResponse.caseFile.id;
+
+            const faPaymentCreated1 = await addAndSubmitFaPayment(provider, caseFileId, resultCreateProgram.table.id, EPaymentModalities.Cheque);
+            const faPaymentCreated2 = await addAndSubmitFaPayment(provider, caseFileId, resultCreateProgram.table.id, EPaymentModalities.Voucher);
+
             cy.login(roleName);
-            cy.goTo(`casefile/${resultCreateHousehold.registrationResponse.caseFile.id}/task`);
+            cy.goTo(`casefile/${caseFileId}/task/create/team`);
             cy.wrap(provider).as('provider');
-            cy.wrap(event).as('event');
             cy.wrap(team).as('assignableTeamCreated');
-            cy.wrap(team.name).as('assignableTeamName');
+            cy.wrap(escalationTeam).as('escalationTeamCreated');
             cy.wrap(escalationTeam.name).as('escalationTeamName');
+            cy.wrap(faPaymentCreated1.name).as('faPayment1Name');
+            cy.wrap(faPaymentCreated2.name).as('faPayment2Name');
           });
         });
 
         after(function () {
-          if (this.provider && this.assignableTeamCreated?.id) {
+          if (this.provider && this.assignableTeamCreated?.id && this.escalationTeamCreated?.id) {
             removeTeamMembersFromTeam(this.assignableTeamCreated.id, this.provider);
+            removeTeamMembersFromTeam(this.escalationTeamCreated.id, this.provider);
           }
         });
+
         // eslint-disable-next-line
-        it('should create a team task successfully.', function () {
-          const tasksHomePage = new TasksHomePage();
-          tasksHomePage.getTableTitleElement().contains('Tasks').should('be.visible');
-          tasksHomePage.getCreateTaskButton().should('be.visible');
-          // searches for escalation team before creating a team task
-          cy.callSearchUntilMeetCondition({
-            provider: useProvider(this.accessTokenL6),
-            searchCallBack: (provider: IProvider) => (provider.teams.search({
-              filter: { Entity: { Events: { any: { Id: { value: this.event.id, type: 'guid' } } }, isEscalation: true } },
-            })),
-            conditionCallBack: (value: []) => value.length > 0,
-          });
-
-          tasksHomePage.getCreateTaskButton().click();
-          tasksHomePage.getCreateNewTeamTaskOption().should('be.visible');
-          tasksHomePage.getCreateNewPersonalTaskOption().should('be.visible');
-
-          const createTeamTaskPage = tasksHomePage.addNewTeamTask();
+        it('should be able to select a specific Payment when payment issue team task created', function () {
+          const createTeamTaskPage = new CreateTeamTaskPage();
           createTeamTaskPage.getPageTitleElement().contains('Create team task').should('be.visible');
           createTeamTaskPage.getIsUrgentCheckbox().should('not.be.checked');
           createTeamTaskPage.getEscalationTeamAssigned().contains(this.escalationTeamName).should('be.visible');
@@ -106,10 +113,14 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
           createTeamTaskPage.getCreateButton().should('be.enabled');
           createTeamTaskPage.getCancelButton().should('be.enabled');
           createTeamTaskPage.getIsUrgentCheckbox().check({ force: true });
-          createTeamTaskPage.selectTaskCategory('EMIS');
+          createTeamTaskPage.selectTaskCategory('Payment Issue');
+          createTeamTaskPage.getFaPaymentDropdown().should('be.visible');
+          createTeamTaskPage.getFaPaymentDropdownElement(this.faPayment1Name).should('be.visible');
+          createTeamTaskPage.getFaPaymentDropdownElement(this.faPayment2Name).should('be.visible');
+          createTeamTaskPage.selectFaPayment(this.faPayment1Name);
+          createTeamTaskPage.selectTaskSubCategory('Did not receive funds');
           createTeamTaskPage.getTaskSubCategoryDropdown().should('be.visible');
-          createTeamTaskPage.selectTaskSubCategory('File correction');
-          createTeamTaskPage.enterTaskDescription('team task test description');
+          createTeamTaskPage.enterTaskDescription('team task description payment issue');
 
           const teamTaskDetailsPage = createTeamTaskPage.createTeamTask();
           cy.contains('The team task has been successfully created.').should('be.visible');
@@ -122,36 +133,28 @@ describe('[T28444] Create a Team Task', { tags: ['@teams', '@tasks'] }, () => {
           teamTaskDetailsPage.getEditButton().should('be.visible');
           teamTaskDetailsPage.getTeamTaskTeamAssignedTo().should('eq', this.escalationTeamName);
           teamTaskDetailsPage.getTeamTaskActionButton().should('not.be.disabled');
-          if (roleName === UserRoles.level6) {
-            teamTaskDetailsPage.getTeamTaskActionWorkingOnItToggle().should('not.be.disabled');
-          } else {
-            teamTaskDetailsPage.getTeamTaskActionWorkingOnItToggle().should('be.disabled');
-          }
-          teamTaskDetailsPage.getTeamTaskActionWorkingOnItElement().contains('N/A').should('be.visible');
-          teamTaskDetailsPage.getTeamTaskActionWorkingOnItToggle().should('have.attr', 'aria-checked').and('contains', 'false');
-          teamTaskDetailsPage.getTeamTaskDateAdded().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
-          teamTaskDetailsPage.getBackToTasksButton().should('be.visible');
 
           const tasksHistoryPage = teamTaskDetailsPage.goToTaskHistory();
           assertTaskHistorySteps({
             roleName,
             actionTaken: 'Task created',
           });
-          tasksHistoryPage.getCloseButton().click();
+          tasksHistoryPage.goToTaskDetailsPage();
 
-          teamTaskDetailsPage.getBackToTasksButton().should('be.visible');
-          teamTaskDetailsPage.getBackToTasksButton().click();
+          teamTaskDetailsPage.goToTasksHomePage();
 
+          const tasksHomePage = new TasksHomePage();
           tasksHomePage.getTableTitleElement().contains('Tasks').should('be.visible');
           cy.contains('Refresh').should('be.visible');
-          tasksHomePage.getCreatedTaskCategory().should('eq', 'EMIS');
+          tasksHomePage.getCreatedTaskCategory().should('eq', 'Payment Issue');
           tasksHomePage.getCreatedTaskAssignedTo().should('eq', this.escalationTeamName);
           tasksHomePage.getCreatedTaskStatusElement().contains('New').should('be.visible');
           tasksHomePage.getCreatedTaskActionButton().should('be.visible');
           tasksHomePage.getCreatedTaskEditButton().should('be.visible');
 
           tasksHomePage.goToCaseFileDetailsPage();
-          caseFileDetailsSteps('EMIS', roleName, 'created');
+
+          caseFileDetailsSteps('Payment Issue', roleName, 'created');
         });
       });
     }
