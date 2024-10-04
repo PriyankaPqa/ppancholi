@@ -50,7 +50,7 @@ describe('MassActionsLayout.vue', () => {
               {
                 text: wrapper.vm.$t('mass_action.card.authentication_retry'),
                 test: 'mass_action.card.authentication_retry',
-                to: null,
+                to: routes.massActions.authenticationRetry.home.name,
                 exact: false,
                 level: UserRoles.level6,
                 feature: FeatureKeys.AuthenticationRetry,

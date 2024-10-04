@@ -192,5 +192,33 @@ describe('>>> Mass Action Store', () => {
         expect(bComponents.set).toBeCalledWith(massAction);
       });
     });
+
+    describe('Authentication retry', () => {
+      it('should call the create service with proper parameters and commit the res', async () => {
+        const store = createTestStore();
+        const urlSuffix = 'authentication-retry-from-listfilter';
+        const massActionType = MassActionType.AuthenticationRetry;
+        const payload = mockMassActionCreatePayload();
+
+        await store.create(massActionType, payload);
+
+        expect(entityService.create).toHaveBeenCalledWith(urlSuffix, payload);
+      });
+
+      it('should set the res', async () => {
+        const massAction = mockMassActionEntity();
+        const bComponents = { ...baseComponents, set: jest.fn(), addNewlyCreatedId: jest.fn() };
+        const store = createTestStore(bComponents);
+        const massActionType = MassActionType.AuthenticationRetry;
+        const payload = mockMassActionCreatePayload();
+
+        entityService.create = jest.fn(() => massAction);
+        await store.create(massActionType, payload);
+
+        expect(bComponents.set).toBeCalledWith(massAction);
+        expect(bComponents.addNewlyCreatedId).toBeCalledWith(massAction);
+      });
+    });
+
   });
 });

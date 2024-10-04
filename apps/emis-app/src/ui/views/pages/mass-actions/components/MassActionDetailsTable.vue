@@ -70,6 +70,7 @@ export default Vue.extend({
         [MassActionType.FinancialAssistanceCustomOptions]: 'massAction.financialAssistanceCustomTable.title',
         [MassActionType.CaseFileStatus]: 'massActions.type.caseFileStatus',
         [MassActionType.Communication]: 'massActions.type.communication',
+        [MassActionType.AuthenticationRetry]: 'massActions.type.authenticationRetry',
         // eslint-disable-next-line vue/max-len
         [MassActionType.AddRemoveTeamMembers]: (this.massAction.details as IMassActionAddRemoveTeamMembersDetails)?.teamMembersMassActionType === TeamMembersMassActionType.AddTeamMember
           ? 'massActions.type.addTeamMembers'

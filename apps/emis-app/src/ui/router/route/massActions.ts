@@ -21,6 +21,10 @@ const MassActionsCommunicationHome = () => import('@/ui/views/pages/mass-actions
 const MassActionsCommunicationCreate = () => import('@/ui/views/pages/mass-actions/communications/CommunicationCreate.vue');
 const MassActionsCommunicationDetails = () => import('@/ui/views/pages/mass-actions/communications/CommunicationDetailsMassAction.vue');
 
+const MassActionsAuthenticationRetryHome = () => import('@/ui/views/pages/mass-actions/authentication-retry/AuthenticationRetryHomeMassAction.vue');
+const MassActionsAuthenticationRetryCreate = () => import('@/ui/views/pages/mass-actions/authentication-retry/AuthenticationRetryCreate.vue');
+const MassActionsAuthenticationRetryDetails = () => import('@/ui/views/pages/mass-actions/authentication-retry/AuthenticationRetryDetailsMassAction.vue');
+
 const MassActionsImportValidationStatusHome = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
 const MassActionsImportValidationStatusCreate = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
 const MassActionsImportValidationStatusDetails = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
@@ -138,6 +142,26 @@ export const massActions: RouteConfig = {
       path: Routes.massActions.communications.details.path,
       name: Routes.massActions.communications.details.name,
       component: MassActionsCommunicationDetails,
+      meta: { level: UserRoles.level6 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.authenticationRetry.home.path,
+      name: Routes.massActions.authenticationRetry.home.name,
+      component: MassActionsAuthenticationRetryHome,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.massActions.authenticationRetry.create.path,
+      name: Routes.massActions.authenticationRetry.create.name,
+      component: MassActionsAuthenticationRetryCreate,
+      meta: { level: UserRoles.level6 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.authenticationRetry.details.path,
+      name: Routes.massActions.authenticationRetry.details.name,
+      component: MassActionsAuthenticationRetryDetails,
       meta: { level: UserRoles.level6 },
       props: true,
     },

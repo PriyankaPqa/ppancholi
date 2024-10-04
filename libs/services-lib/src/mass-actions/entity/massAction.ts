@@ -66,6 +66,9 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     if (massActionType === MassActionType.Communication) {
       urlSuffix = 'export-communication-records';
     }
+    if (massActionType === MassActionType.AuthenticationRetry) {
+      urlSuffix = 'export-authentication-retry-records';
+    }
     // Remove when EMISV2-3799 is done - Temporary timeout to 10 minutes
     return this.http.postFullResponse(`${this.baseUrl}/${urlSuffix}V2${payload.filter}`, payload, { timeout: 600000 });
   }

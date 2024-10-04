@@ -72,7 +72,7 @@ export default mixins(massActions).extend({
             {
               text: this.$t('mass_action.card.authentication_retry'),
               test: 'mass_action.card.authentication_retry',
-              to: null, // 2do add routes.massActions.authenticationRetry.home.name,
+              to: routes.massActions.authenticationRetry.home.name,
               exact: false,
               level: UserRoles.level6,
               feature: this.$featureKeys.AuthenticationRetry,

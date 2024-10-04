@@ -7,6 +7,7 @@ import {
   IMassActionCaseFileStatusCreatePayload,
   IMassActionFinancialAssistanceCreatePayload,
   IMassActionFundingRequestCreatePayload,
+  IMassActionAuthenticationRetryCreatePayload,
   IMassActionServiceMock,
   MassActionService,
 } from '@libs/services-lib/mass-actions/entity';
@@ -67,6 +68,10 @@ export function getExtensionComponents(
       data = await entityService.create(urlSuffix, payload as IMassActionCaseFileStatusCreatePayload);
     }
 
+    if (massActionType === MassActionType.AuthenticationRetry) {
+      const urlSuffix = `authentication-retry-from-list${payload.filter}`;
+      data = await entityService.create(urlSuffix, payload as IMassActionAuthenticationRetryCreatePayload);
+    }
     /* Add future mass action call here */
 
     if (data) {

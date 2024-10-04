@@ -73,6 +73,11 @@ export enum TeamMembersMassActionType {
   RemoveTeamMember = 2,
 }
 
+export enum AuthenticationTier {
+  Tier1 = 1,
+  Tier2 = 2,
+}
+
 export interface IMassActionDetails {
   paymentModality?: EPaymentModalities;
   amount?: number;
@@ -107,6 +112,11 @@ export interface IMassActionCommunicationDetails {
   method: MassActionCommunicationMethod;
   messageSubject: IMultilingual;
   message: IMultilingual;
+}
+
+export interface IMassActionAuthenticationRetryDetails {
+  eventId: uuid;
+  tier: AuthenticationTier;
 }
 
 export interface IMassActionRun extends IEntity {
