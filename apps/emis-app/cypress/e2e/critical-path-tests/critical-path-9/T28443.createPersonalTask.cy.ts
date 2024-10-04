@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { createEventAndTeam, createHousehold } from '../../helpers/prepareState';
 import { TasksHomePage } from '../../../pages/tasks/tasksHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { assertTaskHistorySteps } from './canSteps';
+import { assertTaskHistorySteps, personalTaskDetailsSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -71,16 +71,7 @@ describe('[T28443] Create a Personal Task', { tags: ['@teams', '@tasks'] }, () =
           const personalTaskDetailsPage = createPersonalTaskPage.createPersonalTask();
           cy.contains('The personal task has been successfully created.').should('be.visible');
 
-          personalTaskDetailsPage.getPageTitleElement().contains('Personal task details').should('be.visible');
-          cy.contains('Personal Task 1').should('be.visible');
-          personalTaskDetailsPage.getTeamTaskTeamAssignedTo().should('eq', 'Me');
-          personalTaskDetailsPage.getTaskDetailsDueDate().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
-          personalTaskDetailsPage.getTaskDetailsDateAdded().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
-          personalTaskDetailsPage.getTeamDetailsDescription().should('eq', 'Test Description 1');
-          personalTaskDetailsPage.getHistoryButton().should('be.visible');
-          personalTaskDetailsPage.getEditButton().should('be.visible');
-          personalTaskDetailsPage.getTeamTaskActionButton().should('be.visible');
-          personalTaskDetailsPage.getBackToTasksButton().should('be.visible');
+          personalTaskDetailsSteps('Personal Task 1', 'Test Description 1');
 
           const tasksHistoryPage = personalTaskDetailsPage.goToTaskHistory();
 
