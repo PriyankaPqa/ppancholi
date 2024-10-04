@@ -446,6 +446,20 @@ const routes = {
         name: 'massActions.communications.details',
       },
     },
+    authenticationRetry: {
+      home: {
+        path: 'authentication-retry',
+        name: 'massActions.authenticationRetry.home',
+      },
+      create: {
+        path: 'authentication-retry/create',
+        name: 'massActions.authenticationRetry.create',
+      },
+      details: {
+        path: 'authentication-retry/details/:id',
+        name: 'massActions.authenticationRetry.details',
+      },
+    },
     importValidationStatus: {
       home: {
         path: 'import-validation-status',

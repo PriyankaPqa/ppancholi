@@ -76,6 +76,11 @@ describe('MassActionDetailsTable.vue', () => {
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.fundingRequest');
     });
 
+    it('should return proper text for AuthenticationRetry', () => {
+      doMount(MassActionType.AuthenticationRetry);
+      expect(wrapper.vm.massActionTypeText).toBe('massActions.type.authenticationRetry');
+    });
+
     it('should return proper text for data correction mass action', () => {
       doMount(MassActionDataCorrectionType.DataCorrectionLabels);
       expect(wrapper.vm.massActionTypeText).toBe(`enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[MassActionDataCorrectionType.DataCorrectionLabels]}`);

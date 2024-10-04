@@ -59,7 +59,7 @@ describe('MassActionsHome.vue', () => {
             button: 'mass_action.card.action.view',
             secondaryButton: 'mass_action.card.action.download_template',
             showSecondaryButton: true,
-            route: null,
+            route: routes.massActions.authenticationRetry.home.name,
             dataTest: 'massAction_authentication_retry',
             level: UserRoles.level6,
             roles: null,

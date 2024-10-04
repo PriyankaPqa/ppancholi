@@ -1,5 +1,5 @@
 import {
-  IMassActionEntity, MassActionRunType, MassActionType, MassActionDataCorrectionType, MassActionCommunicationMethod,
+  IMassActionEntity, MassActionRunType, MassActionType, MassActionDataCorrectionType, MassActionCommunicationMethod, AuthenticationTier
 } from '@libs/entities-lib/mass-action/massActions.types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { IListOption, IMultilingual } from '@libs/shared-lib/src/types';
@@ -40,6 +40,15 @@ export interface IMassActionCommunicationCreatePayload {
   method: MassActionCommunicationMethod;
   messageSubject: IMultilingual;
   message: IMultilingual;
+  search: string;
+  filter: string;
+}
+
+export interface IMassActionAuthenticationRetryCreatePayload {
+  name: string;
+  description: string;
+  eventId: uuid;
+  tier: AuthenticationTier;
   search: string;
   filter: string;
 }

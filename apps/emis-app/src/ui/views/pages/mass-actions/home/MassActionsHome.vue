@@ -83,7 +83,7 @@ export default mixins(massActions).extend({
           button: 'mass_action.card.action.view',
           secondaryButton: 'mass_action.card.action.download_template',
           showSecondaryButton: true,
-          route: null, //2do add routes.massActions.authenticationRetry.home.name,
+          route: routes.massActions.authenticationRetry.home.name,
           dataTest: 'massAction_authentication_retry',
           level: UserRoles.level6,
           roles: null,

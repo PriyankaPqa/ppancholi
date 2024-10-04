@@ -110,6 +110,15 @@ describe('>>> Mass Action Service', () => {
 
       expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}V2${payload.filter}`, payload, { timeout: 600000 });
     });
+
+    it('should be linked to correct URL for authentication retry mass action', async () => {
+      const urlSuffix = 'export-authentication-retry-records';
+      const payload = { filter: 'filter', search: 'search', language: 'en' };
+
+      await service.exportList(MassActionType.AuthenticationRetry, payload);
+
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}V2${payload.filter}`, payload, { timeout: 600000 });
+    });
   });
 
   test('getValidFile is linked to the correct URL', async () => {
