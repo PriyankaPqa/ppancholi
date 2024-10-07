@@ -94,8 +94,8 @@ export default Vue.extend({
 
       const slots = [] as ICalendarEvent[];
       this.availabilities.forEach((a) => {
-        let s = new Date(a.startDateTime);
-        const end = new Date(a.endDateTime);
+        let s = new Date(a.startDate);
+        const end = new Date(a.endDate);
         while (s < end) {
           const e = addMinutes(s, this.duration);
 
@@ -106,7 +106,7 @@ export default Vue.extend({
         }
       });
 
-      if (this.bookedTime?.startDateTime) {
+      if (this.bookedTime?.startDate) {
         slots.push(this.bookedCalendarTime);
       }
       return slots;
@@ -116,14 +116,14 @@ export default Vue.extend({
   watch: {
     bookedCalendarTime(newValue) {
       if (newValue) {
-        this.$emit('update:bookedTime', { startDateTime: (newValue.start).toISOString(), endDateTime: (newValue.end).toISOString() });
+        this.$emit('update:bookedTime', { startDate: (newValue.start).toISOString(), endDate: (newValue.end).toISOString() });
       }
     },
  },
 
   created() {
-    if (this.bookedTime?.startDateTime) {
-      this.bookedCalendarTime = this.parseEventFromTimeSlot(new Date(this.bookedTime.startDateTime), new Date(this.bookedTime.endDateTime));
+    if (this.bookedTime?.startDate) {
+      this.bookedCalendarTime = this.parseEventFromTimeSlot(new Date(this.bookedTime.startDate), new Date(this.bookedTime.endDate));
     }
   },
 

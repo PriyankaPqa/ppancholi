@@ -81,9 +81,9 @@ describe('helpers', () => {
 
   describe('recalculateDifferentDaySlot', () => {
     it('moves the slot from day 0 to day 1 if it overflows entirely - start is next day, end is next day', () => {
-      const slot = { startDateTime: new Date(2024, 4, 2, 1, 0).toISOString(),
+      const slot = { startDate: new Date(2024, 4, 2, 1, 0).toISOString(),
         start: '01:00',
-        endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+        endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
         end: '02:00' };
 
       const defaultSchedule = {
@@ -109,9 +109,9 @@ describe('helpers', () => {
     });
 
     it('moves part of the slot from day 0 to day 1 if it overflows partly - start is day 0, end is in day 1', () => {
-      const slot = { startDateTime: new Date(2024, 4, 1, 23, 0).toISOString(),
+      const slot = { startDate: new Date(2024, 4, 1, 23, 0).toISOString(),
         start: '23:00',
-        endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+        endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
         end: '02:00' };
 
       const defaultSchedule = {
@@ -134,26 +134,26 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-01',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 1, 23, 0).toISOString(),
+            { startDate: new Date(2024, 4, 1, 23, 0).toISOString(),
               start: '23:00',
-              endDateTime: new Date(2024, 4, 2, 0, 0).toISOString(),
+              endDate: new Date(2024, 4, 2, 0, 0).toISOString(),
               end: '00:00' },
           ] },
         1: { day: 1,
           date: '2024-05-02',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 2, 0, 0).toISOString(),
+            { startDate: new Date(2024, 4, 2, 0, 0).toISOString(),
               start: '00:00',
-              endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+              endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
               end: '02:00' },
           ] },
       });
     });
 
     it('moves part of the slot from day 1 to day 0 if it overflows partly - start is day 0, end is in day 1, and slot is initially in day 1', () => {
-      const slot = { startDateTime: new Date(2024, 4, 1, 23, 0).toISOString(),
+      const slot = { startDate: new Date(2024, 4, 1, 23, 0).toISOString(),
         start: '23:00',
-        endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+        endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
         end: '02:00' };
 
       const defaultSchedule = {
@@ -176,26 +176,26 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-01',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 1, 23, 0).toISOString(),
+            { startDate: new Date(2024, 4, 1, 23, 0).toISOString(),
               start: '23:00',
-              endDateTime: new Date(2024, 4, 2, 0, 0).toISOString(),
+              endDate: new Date(2024, 4, 2, 0, 0).toISOString(),
               end: '00:00' },
           ] },
         1: { day: 1,
           date: '2024-05-02',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 2, 0, 0).toISOString(),
+            { startDate: new Date(2024, 4, 2, 0, 0).toISOString(),
               start: '00:00',
-              endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+              endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
               end: '02:00' },
           ] },
       });
     });
 
     it('moves part of the slot from day 0 to day 6 if it overflows partly - start is day 0, end is in previous day, needs to be moved to day 6', () => {
-      const slot = { startDateTime: new Date(2024, 4, 1, 23, 0).toISOString(),
+      const slot = { startDate: new Date(2024, 4, 1, 23, 0).toISOString(),
         start: '23:00',
-        endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+        endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
         end: '02:00' };
 
       const defaultSchedule = {
@@ -218,26 +218,26 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-02',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 2, 0, 0).toISOString(),
+            { startDate: new Date(2024, 4, 2, 0, 0).toISOString(),
               start: '00:00',
-              endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+              endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
               end: '02:00' },
           ] },
         6: { day: 6,
           date: '2024-05-08',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 8, 23, 0).toISOString(),
+            { startDate: new Date(2024, 4, 8, 23, 0).toISOString(),
               start: '23:00',
-              endDateTime: new Date(2024, 4, 9, 0, 0).toISOString(),
+              endDate: new Date(2024, 4, 9, 0, 0).toISOString(),
               end: '00:00' },
           ] },
       });
     });
 
     it('moves part of the slot from day 6 to day 0 if it overflows partly - start is day 6, end is in next day, needs to be moved to day 0', () => {
-      const slot = { startDateTime: new Date(2024, 4, 8, 23, 0).toISOString(),
+      const slot = { startDate: new Date(2024, 4, 8, 23, 0).toISOString(),
         start: '23:00',
-        endDateTime: new Date(2024, 4, 9, 2, 0).toISOString(),
+        endDate: new Date(2024, 4, 9, 2, 0).toISOString(),
         end: '02:00' };
 
       const defaultSchedule = {
@@ -260,17 +260,17 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-02',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 2, 0, 0).toISOString(),
+            { startDate: new Date(2024, 4, 2, 0, 0).toISOString(),
               start: '00:00',
-              endDateTime: new Date(2024, 4, 2, 2, 0).toISOString(),
+              endDate: new Date(2024, 4, 2, 2, 0).toISOString(),
               end: '02:00' },
           ] },
         6: { day: 6,
           date: '2024-05-08',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 8, 23, 0).toISOString(),
+            { startDate: new Date(2024, 4, 8, 23, 0).toISOString(),
               start: '23:00',
-              endDateTime: new Date(2024, 4, 9, 0, 0).toISOString(),
+              endDate: new Date(2024, 4, 9, 0, 0).toISOString(),
               end: '00:00' },
           ] },
       });
@@ -282,7 +282,7 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-01',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 1, 3, 0), endDateTime: new Date(2024, 4, 1, 5, 0) },
+            { startDate: new Date(2024, 4, 1, 3, 0), endDate: new Date(2024, 4, 1, 5, 0) },
           ] },
       };
 
@@ -290,8 +290,8 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-01',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 1, 3, 0),
-              endDateTime: new Date(2024, 4, 1, 5, 0),
+            { startDate: new Date(2024, 4, 1, 3, 0),
+              endDate: new Date(2024, 4, 1, 5, 0),
               start: '03:00',
               end: '05:00',
             },
@@ -306,7 +306,7 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-01',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 1, 3, 0), endDateTime: new Date(2024, 4, 1, 5, 0) },
+            { startDate: new Date(2024, 4, 1, 3, 0), endDate: new Date(2024, 4, 1, 5, 0) },
           ] },
       };
 
@@ -316,8 +316,8 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-01',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 1, 3, 0),
-              endDateTime: new Date(2024, 4, 1, 5, 0),
+            { startDate: new Date(2024, 4, 1, 3, 0),
+              endDate: new Date(2024, 4, 1, 5, 0),
               start: `0${3 + timeOffset / 60}:00`,
               end: `0${5 + timeOffset / 60}:00`,
             },
@@ -334,7 +334,7 @@ describe('helpers', () => {
         0: { day: 0,
           date: '2024-05-01',
           timeSlots: [
-            { startDateTime: new Date(2024, 4, 1, 11, 0), endDateTime: new Date(2024, 4, 2, 1, 0) },
+            { startDate: new Date(2024, 4, 1, 11, 0), endDate: new Date(2024, 4, 2, 1, 0) },
           ] },
       };
 
@@ -368,15 +368,15 @@ describe('helpers', () => {
           day: 0,
           date: '2024-05-05',
           timeSlots: [{
-            startDateTime: zonedTimeToUtc('2024-05-05 09:00', programTimeZone).toISOString(),
+            startDate: zonedTimeToUtc('2024-05-05 09:00', programTimeZone).toISOString(),
             start: '09:00',
-            endDateTime: zonedTimeToUtc('2024-05-05 12:00', programTimeZone).toISOString(),
+            endDate: zonedTimeToUtc('2024-05-05 12:00', programTimeZone).toISOString(),
             end: '12:00',
           },
           {
-            startDateTime: zonedTimeToUtc('2024-05-05 13:00', programTimeZone).toISOString(),
+            startDate: zonedTimeToUtc('2024-05-05 13:00', programTimeZone).toISOString(),
             start: '13:00',
-            endDateTime: zonedTimeToUtc('2024-05-05 17:00', programTimeZone).toISOString(),
+            endDate: zonedTimeToUtc('2024-05-05 17:00', programTimeZone).toISOString(),
             end: '17:00',
           },
           ],
@@ -411,9 +411,9 @@ describe('helpers', () => {
           date: '2024-05-05',
           timeSlots: [
             {
-              startDateTime: zonedTimeToUtc('2024-05-05 13:00', programTimeZone).toISOString(),
+              startDate: zonedTimeToUtc('2024-05-05 13:00', programTimeZone).toISOString(),
               start: '13:00',
-              endDateTime: zonedTimeToUtc('2024-05-06 00:00', programTimeZone).toISOString(),
+              endDate: zonedTimeToUtc('2024-05-06 00:00', programTimeZone).toISOString(),
               end: '00:00',
             },
           ],
@@ -463,9 +463,9 @@ describe('helpers', () => {
           date: '2024-05-05',
           timeSlots: [
             {
-              startDateTime: zonedTimeToUtc('2024-05-05 09:00', programTimeZone).toISOString(),
+              startDate: zonedTimeToUtc('2024-05-05 09:00', programTimeZone).toISOString(),
               start: `0${9 - timeOffset / 60}:00`,
-              endDateTime: zonedTimeToUtc('2024-05-05 10:00', programTimeZone).toISOString(),
+              endDate: zonedTimeToUtc('2024-05-05 10:00', programTimeZone).toISOString(),
               end: `${timeOffset ? 0 : ''}${10 - timeOffset / 60}:00`,
             },
           ],
@@ -474,9 +474,9 @@ describe('helpers', () => {
           date: '2024-05-06',
           custom: true,
           timeSlots: [{
-            startDateTime: new Date('2024-05-06 09:00').toISOString(),
+            startDate: new Date('2024-05-06 09:00').toISOString(),
             start: '09:00',
-            endDateTime: new Date('2024-05-06 12:00').toISOString(),
+            endDate: new Date('2024-05-06 12:00').toISOString(),
             end: '12:00',
 
           }] },

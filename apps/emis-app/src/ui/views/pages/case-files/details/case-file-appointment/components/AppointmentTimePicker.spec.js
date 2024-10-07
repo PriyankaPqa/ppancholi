@@ -9,7 +9,7 @@ describe('AppointmentTimePicker', () => {
   const props = {
     date: '2024-10-01',
     duration: 30,
-    availabilities: [{ startDateTime: '2024-10-01T14:00:00.000Z', endDateTime: '2024-10-01T16:00:00.000Z' }],
+    availabilities: [{ startDate: '2024-10-01T14:00:00.000Z', endDate: '2024-10-01T16:00:00.000Z' }],
   };
 
   const doMount = (otherOptions = {}) => {
@@ -114,7 +114,7 @@ describe('AppointmentTimePicker', () => {
 
   describe('lifecycle', () => {
     it('on create, calculates the bookedCalendarTime from the prop bookedTime', () => {
-      doMount({ propsData: { ...props, bookedTime: { startDateTime: '2024-10-01 09:00', endDateTime: '2024-10-01 10:00' } } });
+      doMount({ propsData: { ...props, bookedTime: { startDate: '2024-10-01 09:00', endDate: '2024-10-01 10:00' } } });
       expect(wrapper.vm.bookedCalendarTime).toEqual({
         name: 'Available',
         start: new Date('2024-10-01 09:00'),

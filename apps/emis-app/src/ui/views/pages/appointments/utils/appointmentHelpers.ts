@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { DayOfWeek, IDaySchedule, ITimeSlot } from '@libs/entities-lib/appointment';
+import { DayOfWeek, IDateRange, IDaySchedule, ITimeSlot } from '@libs/entities-lib/appointment';
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { addDays, format } from 'date-fns';
 import helpers from '@/ui/helpers/helpers';
@@ -24,10 +24,10 @@ export default {
       if (!slot || !weekStartDate || currentDay == null || !midnight || !nextMidnight) {
         return;
       }
-      const isStartInPreviousDay = new Date(slot.startDateTime) < midnight;
-      const isEndInPreviousDay = new Date(slot.endDateTime) < midnight;
-      const isStartInNextDay = new Date(slot.startDateTime) > nextMidnight;
-      const isEndInNextDay = new Date(slot.endDateTime) > nextMidnight;
+      const isStartInPreviousDay = new Date(slot.startDate) < midnight;
+      const isEndInPreviousDay = new Date(slot.endDate) < midnight;
+      const isStartInNextDay = new Date(slot.startDate) > nextMidnight;
+      const isEndInNextDay = new Date(slot.endDate) > nextMidnight;
       const currentDaySchedule = fullSchedule[currentDay];
       const { start: rangeStart, end: rangeEnd } = this.weekRange(weekStartDate);
 
@@ -55,8 +55,8 @@ export default {
       if ((isStartInPreviousDay && isEndInPreviousDay) || (isStartInNextDay && isEndInNextDay)) {
         otherDaySlot = {
           ...slot,
-          startDateTime: new Date(`${otherDayString} ${slot.start}`).toISOString(),
-          endDateTime: new Date(`${otherDayString} ${slot.end}`).toISOString(),
+          startDate: new Date(`${otherDayString} ${slot.start}`).toISOString(),
+          endDate: new Date(`${otherDayString} ${slot.end}`).toISOString(),
         };
 
         // the slot starts in previous day and ends in current day (local day localMidnight to localMidnight)
@@ -64,24 +64,24 @@ export default {
         // we create a new slot that ends at midnight of previous day and push it to the list of timeslots of that day
         otherDaySlot = {
           ...slot,
-          startDateTime: new Date(`${otherDayString} ${slot.start}`).toISOString(),
-          endDateTime: addDays(otherDay, 1).toISOString(), // next midnight of otherDay
+          startDate: new Date(`${otherDayString} ${slot.start}`).toISOString(),
+          endDate: addDays(otherDay, 1).toISOString(), // next midnight of otherDay
           end: '00:00',
         };
 
           // we cut the current slot to start only from midnight
-        currentDaySlot = { ...slot, startDateTime: midnight.toISOString(), start: '00:00' };
+        currentDaySlot = { ...slot, startDate: midnight.toISOString(), start: '00:00' };
 
         // the slot starts in current day and ends in next day (local day localMidnight to localMidnight)
       } else {
         otherDaySlot = {
           ...slot,
-          startDateTime: otherDay.toISOString(),
+          startDate: otherDay.toISOString(),
           start: '00:00',
-          endDateTime: new Date(`${otherDayString} ${slot.end}`).toISOString(),
+          endDate: new Date(`${otherDayString} ${slot.end}`).toISOString(),
         };
 
-        currentDaySlot = { ...slot, endDateTime: nextMidnight.toISOString(), end: '00:00' };
+        currentDaySlot = { ...slot, endDate: nextMidnight.toISOString(), end: '00:00' };
       }
 
       // Adding the newly calculated slots to their respective schedules timeslots lists
@@ -105,11 +105,11 @@ export default {
       schedule.day = schedule.day || weekDay;
 
       schedule.timeSlots = schedule.timeSlots ? schedule.timeSlots.map((slot) => {
-        slot.startDateTime = zonedTimeToUtc(`${date} ${slot.start}`, programTimeZone).toISOString();
-        slot.endDateTime = zonedTimeToUtc(`${date} ${slot.end}`, programTimeZone).toISOString();
+        slot.startDate = zonedTimeToUtc(`${date} ${slot.start}`, programTimeZone).toISOString();
+        slot.endDate = zonedTimeToUtc(`${date} ${slot.end}`, programTimeZone).toISOString();
         // if the time slot ends at 0:00, it means the end date time is the next day
         if (slot.end === '00:00') {
-          slot.endDateTime = addDays(new Date(slot.endDateTime), 1).toISOString();
+          slot.endDate = addDays(new Date(slot.endDate), 1).toISOString();
         }
 
         return slot;
@@ -138,13 +138,13 @@ export default {
         localNextMidnight.setDate(localNextMidnight.getDate() + 1);
 
         daySchedule.timeSlots = daySchedule.timeSlots.map((slot) => {
-          slot.start = timeZone === 'local' ? format(new Date(slot.startDateTime), 'HH:mm') : format(utcToZonedTime(slot.startDateTime, timeZone), 'HH:mm');
-          slot.end = timeZone === 'local' ? format(new Date(slot.endDateTime), 'HH:mm') : format(utcToZonedTime(slot.endDateTime, timeZone), 'HH:mm');
+          slot.start = timeZone === 'local' ? format(new Date(slot.startDate), 'HH:mm') : format(utcToZonedTime(slot.startDate, timeZone), 'HH:mm');
+          slot.end = timeZone === 'local' ? format(new Date(slot.endDate), 'HH:mm') : format(utcToZonedTime(slot.endDate, timeZone), 'HH:mm');
 
           // The timeslot might overflow to the next or previous day because it was set to local time from appointment program timezone,
           // so we need to recalculate it and move it to the right week day in the local time zone, potentially also split it if only
           // part of it overflows
-          const isTimeSlotSameDay = new Date(slot.startDateTime) >= localMidnight && new Date(slot.endDateTime) <= localNextMidnight;
+          const isTimeSlotSameDay = new Date(slot.startDate) >= localMidnight && new Date(slot.endDate) <= localNextMidnight;
 
           if (!isTimeSlotSameDay) {
             slotsToRecalculate.push({ slot, midnight: localMidnight, nextMidnight: localNextMidnight, currentDay: daySchedule.day });
@@ -160,7 +160,7 @@ export default {
       return schedule;
   },
 
-  calculateMergedSchedule(localDefaultSchedule: Record<number, IDaySchedule>, customSchedule: ITimeSlot[]): Record<number, IDaySchedule> {
+  calculateMergedSchedule(localDefaultSchedule: Record<number, IDaySchedule>, customSchedule: IDateRange[]): Record<number, IDaySchedule> {
     const mergedSchedule = {} as Record<number, IDaySchedule>;
     Object.keys(localDefaultSchedule).forEach((scheduleKey) => {
       const localSchedule = _cloneDeep(localDefaultSchedule[+scheduleKey]);
@@ -171,19 +171,19 @@ export default {
 
       // extract the custom schedule dates that correspond to a day of a week (from the local localMidnight to the next local localMidnight)
       // A custom schedule will override the default schedule (time slots) for the whole respective day (localMidnight to localMidnight)
-      const customDateRanges = customSchedule.filter((slot) => new Date(slot.start) >= localMidnight && new Date(slot.start) < localNextMidnight);
+      const customDateRanges = customSchedule.filter((slot) => new Date(slot.startDate) >= localMidnight && new Date(slot.startDate) < localNextMidnight);
 
       if (customDateRanges?.length) {
         localSchedule.timeSlots = [];
         customDateRanges.forEach((slot) => {
           // If slot start and end are the same time, it means that the custom schedule is represented by no time slots for that day
-          if (slot.start !== slot.end) {
+          if (slot.startDate !== slot.endDate) {
             localSchedule.timeSlots.push({
               ...slot,
-              startDateTime: slot.start,
-              endDateTime: slot.end,
-              start: format(new Date(slot.start), 'HH:mm'),
-              end: format(new Date(slot.end), 'HH:mm'),
+              startDate: slot.startDate,
+              endDate: slot.endDate,
+              start: format(new Date(slot.startDate), 'HH:mm'),
+              end: format(new Date(slot.endDate), 'HH:mm'),
             });
           }
         });
@@ -198,7 +198,7 @@ export default {
 
     // call methods that create a clone of the default schedule,as an object with the keys the week days ({0: schedule for Sunday, 1: schedule for Monday etc})
   // calculates the datetime for each slot to the time of the week, and sets the hours from the program timezone to the user's local timezone
-  calculateSchedule(defaultSchedule: IDaySchedule[], customSchedule: ITimeSlot[], programTimeZone: string, weekStartDate: string):
+  calculateSchedule(defaultSchedule: IDaySchedule[], customSchedule: IDateRange[], programTimeZone: string, weekStartDate: string):
     { scheduleWithLocalHours: Record<number, IDaySchedule>, mergedSchedule: Record<number, IDaySchedule> } {
     // sets the start and end of the default schedule for each day to UTC time, with the dates of the current week
     const scheduleWithUTCDateTime = this.addUTCTimeToDefaultSchedule(defaultSchedule, programTimeZone, weekStartDate);
@@ -220,10 +220,10 @@ export default {
       timeSlots.splice(tangentSlotIndex, 1);
       if (slot.start === tangentSlot.end) {
         newSlot.start = tangentSlot.start;
-        newSlot.startDateTime = tangentSlot.startDateTime;
+        newSlot.startDate = tangentSlot.startDate;
       } else if (slot.end === tangentSlot.start) {
         newSlot.end = tangentSlot.end;
-        newSlot.endDateTime = tangentSlot.endDateTime;
+        newSlot.endDate = tangentSlot.endDate;
       }
     }
 

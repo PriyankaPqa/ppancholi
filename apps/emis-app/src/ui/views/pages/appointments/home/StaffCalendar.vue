@@ -103,7 +103,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { parseISO, format, addDays } from 'date-fns';
-import { IAppointment, IDaySchedule, IStaffMemberAvailability } from '@libs/entities-lib/appointment';
+import { IAppointment, IDaySchedule, IAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import helpers from '@/ui/helpers/helpers';
 import { utcToZonedTime } from 'date-fns-tz';
 import { RcDialog } from '@libs/component-lib/components';
@@ -177,7 +177,7 @@ export default Vue.extend({
       return useUserAccountMetadataStore().getByIds(this.staffMemberIds, true);
     },
 
-    staffAvailabilities(): IStaffMemberAvailability[] {
+    staffAvailabilities(): IAppointmentStaffMember[] {
       return STAFF_AVAILABILITIES;
     },
 
@@ -247,10 +247,10 @@ export default Vue.extend({
         name: attendeeIdentity ? `${attendeeIdentity.firstName} ${attendeeIdentity.lastName}` : '',
         start: parseISO(a.startDate as string),
         end: parseISO(a.endDate as string),
-        color: this.userId === a.staffMemberId ? 'primary lighten-1' : 'white',
+        color: this.userId === a.userAccountId ? 'primary lighten-1' : 'white',
         textColor: 'primary darken-2',
         timed: true,
-        category: this.staffMembers.find((m) => m.id === a.staffMemberId)?.displayName,
+        category: this.staffMembers.find((m) => m.id === a.userAccountId)?.displayName,
       };
 });
     },
@@ -268,10 +268,10 @@ export default Vue.extend({
      // Code to display the interval background color depending on start and end dateTime of the timeslot
       if (day?.timeSlots?.length) {
         day.timeSlots.forEach((slot) => {
-          const startHour = utcToZonedTime(slot.startDateTime, this.localTimeZone).getHours();
-          const startMinute = utcToZonedTime(slot.startDateTime, this.localTimeZone).getMinutes();
-          let endHour = utcToZonedTime(slot.endDateTime, this.localTimeZone).getHours();
-          const endMinute = utcToZonedTime(slot.endDateTime, this.localTimeZone).getMinutes();
+          const startHour = utcToZonedTime(slot.startDate, this.localTimeZone).getHours();
+          const startMinute = utcToZonedTime(slot.startDate, this.localTimeZone).getMinutes();
+          let endHour = utcToZonedTime(slot.endDate, this.localTimeZone).getHours();
+          const endMinute = utcToZonedTime(slot.endDate, this.localTimeZone).getMinutes();
 
           if (endHour < startHour) {
             endHour += 24;
@@ -307,7 +307,7 @@ export default Vue.extend({
       // TODO - check if the member uses program schedule( useBusinessHours: false ?)
 
       this.staffSchedule = this.staffAvailabilities.map((av) => ({
-        id: av.staffMemberId,
+        id: av.userAccountId,
         schedule: appointmentHelpers.calculateSchedule(av.defaultbusinessHours, av.customDateRanges, this.timeZone, this.weekStartDate).mergedSchedule,
       }));
 

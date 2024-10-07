@@ -403,11 +403,11 @@ export default Vue.extend({
     // the selected time slot, as passed to or received from to the component AppointmentTimePicker
     selectedTime: {
       get(): IDateRange {
-        return { startDateTime: this.localAppointment.startDate, endDateTime: this.localAppointment.endDate };
+        return { startDate: this.localAppointment.startDate, endDate: this.localAppointment.endDate };
       },
       set(value: IDateRange) {
-        this.localAppointment.startDate = value?.startDateTime;
-        this.localAppointment.endDate = value?.endDateTime;
+        this.localAppointment.startDate = value?.startDate;
+        this.localAppointment.endDate = value?.endDate;
       },
     },
   },
@@ -497,8 +497,7 @@ export default Vue.extend({
     this.localAppointment = new Appointment(this.appointment);
     if (this.isEditMode) {
       // TODO - move this to a computed var
-      this.selectedDuration = ((new Date(this.appointment.endDate).getTime() - new Date(this.appointment.startDate).getTime()) / (1000 * 60))
-      .toString();
+      this.selectedDuration = ((new Date(this.appointment.endDate).getTime() - new Date(this.appointment.startDate).getTime()) / (1000 * 60));
     } else {
       this.localAppointment.attendeeEmail = this.primaryMemberEmail;
     }

@@ -284,12 +284,12 @@ describe('AppointmentForm', () => {
         await doMount();
         await wrapper.setData({ selectedDate: '2024-10-01',
           localAppointment: mockAppointment({ startDate: '2024-10-01 09:00', endDate: '2024-10-01 10:00' }) });
-        expect(wrapper.vm.selectedTime).toEqual({ startDateTime: '2024-10-01 09:00', endDateTime: '2024-10-01 10:00' });
+        expect(wrapper.vm.selectedTime).toEqual({ startDate: '2024-10-01 09:00', endDate: '2024-10-01 10:00' });
       });
       test('setter - it sets the local appointment start and end time', async () => {
         await doMount(false);
         wrapper.vm.fetchStaffMemberAvailability = jest.fn();
-        wrapper.vm.selectedTime = { startDateTime: '2024-10-01T13:00:00.000Z', endDateTime: '2024-10-01T14:00:00.000Z' };
+        wrapper.vm.selectedTime = { startDate: '2024-10-01T13:00:00.000Z', endDate: '2024-10-01T14:00:00.000Z' };
         await wrapper.setData({ selectedDate: '2024-10-01' });
         expect(wrapper.vm.localAppointment.startDate).toEqual('2024-10-01T13:00:00.000Z');
       });
