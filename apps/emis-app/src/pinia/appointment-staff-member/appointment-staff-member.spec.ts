@@ -53,14 +53,14 @@ describe('Appointment StaffMember store', () => {
   describe('fetchByAppointmentProgramId', () => {
     it('should call search with the good params and save the result', async () => {
       const mockStaffMember = mockAppointmentStaffMember();
-      const bComponents = { ...baseComponents, setAll: jest.fn(), search: jest.fn(() => ({ values: [mockStaffMember] })) };
+      const bComponents = { ...baseComponents, search: jest.fn(() => ({ values: [mockStaffMember] })) };
       const store = createTestStore(bComponents);
-      await store.fetchByAppointmentProgramId('ap-1');
+      const res = await store.fetchByAppointmentProgramId('ap-1');
       expect(bComponents.search).toHaveBeenCalledWith({ params: {
         filter: { 'Entity/AppointmentProgramId': { value: 'ap-1', type: EFilterKeyType.Guid } },
         skip: 0,
       } });
-      expect(bComponents.setAll).toBeCalledWith([mockStaffMember]);
+      expect(res).toEqual([mockStaffMember]);
     });
   });
 

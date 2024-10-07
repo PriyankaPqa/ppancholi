@@ -89,6 +89,7 @@
             <v-col cols="12" md="6" class="pb-0">
               <v-select-with-validation
                 v-model="selectedDuration"
+                :item-text="item => item.toString()"
                 data-test="appointment-duration"
                 attach
                 :label="`${$t('caseFile.appointments.duration')} *`"
@@ -285,8 +286,8 @@ export default Vue.extend({
       loadingStaff: false,
       getLocalStringDate: helpers.getLocalStringDate,
       localAppointment: new Appointment(),
-      appointmentDurations: ['15', '20', '30', '60'],
-      selectedDuration: '',
+      appointmentDurations: [15, 20, 30, 60],
+      selectedDuration: null as Number,
       selectedDate: '',
       availabilities: [] as IDateRange[],
       // The selection the user made for SendConfirmation before it was forced set to true by an online modality

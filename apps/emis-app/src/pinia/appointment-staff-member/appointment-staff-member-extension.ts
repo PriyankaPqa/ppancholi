@@ -19,9 +19,6 @@ export function getExtensionComponents(
       filter: { 'Entity/AppointmentProgramId': { value: appointmentprogramId, type: EFilterKeyType.Guid } },
       skip: 0,
     } });
-    if (result?.values) {
-      baseComponents.setAll(result.values);
-    }
     return result?.values;
   }
 

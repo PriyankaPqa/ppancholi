@@ -10,10 +10,10 @@
         :events="availableSlots"
         :event-color="item => item.color"
         :event-text-color="item => item.textColor"
-        :interval-minutes="+duration || 30"
+        :interval-minutes="duration || 30"
         :interval-height="35"
         :first-time="firstTime"
-        :interval-count="9 * (60 / (+duration || 30))">
+        :interval-count="9 * (60 / (duration || 30))">
         <template #event="data">
           <div class="availability-slot d-flex">
             <v-radio
@@ -50,8 +50,8 @@ export default Vue.extend({
 
   props: {
     duration: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
 
     date: {
@@ -82,7 +82,7 @@ export default Vue.extend({
         const minStart = Math.min(...this.availableSlots.map((s) => new Date(s.start).getTime()));
         // Substract the duration from the start time of the earliest slot, so that the calendar displays the hour of this slot
         // otherwise it gets hidden
-        return format(addMinutes(new Date(minStart), -(+this.duration)), 'HH:mm');
+        return format(addMinutes(new Date(minStart), -this.duration), 'HH:mm');
        }
       return '09:00';
     },
@@ -97,7 +97,7 @@ export default Vue.extend({
         let s = new Date(a.startDateTime);
         const end = new Date(a.endDateTime);
         while (s < end) {
-          const e = addMinutes(s, +this.duration);
+          const e = addMinutes(s, this.duration);
 
           if (e <= end) {
             slots.push(this.parseEventFromTimeSlot(s, e));

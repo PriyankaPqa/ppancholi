@@ -114,12 +114,12 @@ describe('Appointment program store', () => {
       const mockProgram = new AppointmentProgram(mockAppointmentProgram({ id: '42' }));
       const bComponents = { ...baseComponents, setAll: jest.fn(), search: jest.fn(() => ({ values: [mockProgram] })) };
       const store = createTestStore(bComponents);
-      await store.fetchByEventId('ev-1');
+      const res = await store.fetchByEventId('ev-1');
       expect(bComponents.search).toHaveBeenCalledWith({ params: {
         filter: { 'Entity/EventId': { value: 'ev-1', type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
         skip: 0,
       } });
-      expect(bComponents.setAll).toBeCalledWith([mockProgram]);
+      expect(res).toEqual([mockProgram]);
     });
   });
 

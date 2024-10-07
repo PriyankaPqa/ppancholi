@@ -55,9 +55,6 @@ export function getExtensionComponents(
       filter: { 'Entity/EventId': { value: eventId, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
       skip: 0,
     } });
-    if (result?.values) {
-      baseComponents.setAll(result.values);
-    }
     return result?.values;
   }
 
