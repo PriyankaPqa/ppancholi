@@ -4,8 +4,9 @@ import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { getToday } from '@libs/cypress-lib/helpers';
+import { formatDateToMmmDdYyyy, getToday } from '@libs/cypress-lib/helpers';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { format } from 'date-fns';
 import { fixtureGenerateTemporaryAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
   createEventAndTeam,
@@ -103,10 +104,12 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
           const caseFilesHomePage = new CaseFilesHomePage();
           const caseFileDetailsPage = caseFilesHomePage.goToCaseFileDetail(this.caseFileNumber);
           caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`${this.fullName} - Temporary address updated`);
-          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityTitle(0).should('eq', 'Impacted individuals edited');
-          caseFileDetailsPage.getCaseFileActivityBody(0).should('eq', `${this.fullName} - Temporary address updated`);
+          caseFileDetailsPage.getCaseFileActivityCard().within(() => {
+            caseFileDetailsPage.getRoleNameSystemAdmin().should('eq', 'System Admin');
+            caseFileDetailsPage.getCaseFileActivityLogDate().should('string', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+            caseFileDetailsPage.getCaseFileActivityTitle().should('eq', 'Impacted individuals edited');
+            caseFileDetailsPage.getCaseFileActivityBody().should('eq', `${this.fullName} - Temporary address updated`);
+          });
           caseFileDetailsPage.goToImpactedIndividualsHomePage();
           const caseFileImpactedIndividualsHomePage = new CaseFileImpactedIndividualsHomePage();
           caseFileImpactedIndividualsHomePage.getPrimaryMemberCard().within(() => {
