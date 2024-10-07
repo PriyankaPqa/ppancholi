@@ -4,6 +4,7 @@ import { CaseFileDetailsPage } from 'cypress/pages/casefiles/caseFileDetails.pag
 import { formatDateToMmmDdYyyy } from '@libs/cypress-lib/helpers';
 import { format } from 'date-fns';
 import { TasksHistoryPage } from '../../../pages/tasks/taskHistory.page';
+import { PersonalTaskDetailsPage } from '../../../pages/tasks/personalTaskDetails.page';
 
 export interface AssertTaskHistoryStepsParams {
   roleName: UserRoles,
@@ -30,4 +31,18 @@ export const caseFileDetailsSteps = (taskCategory: string, roleName:UserRoles, t
   caseFileDetailsPage.getRoleName().should('string', getUserRoleDescription(roleName));
   caseFileDetailsPage.getCaseFileActivityTitle().should('string', `Task ${taskStatus}`);
   caseFileDetailsPage.getCaseFileActivityBody().should('string', `${taskCategory} has been ${taskStatus}`);
+};
+
+export const personalTaskDetailsSteps = (taskCategory: string, taskDescription: string) => {
+  const personalTaskDetailsPage = new PersonalTaskDetailsPage();
+  personalTaskDetailsPage.getPageTitleElement().contains('Personal task details').should('be.visible');
+  cy.contains(taskCategory).should('be.visible');
+  personalTaskDetailsPage.getPersonalTaskTeamAssignedTo().should('eq', 'Me');
+  personalTaskDetailsPage.getPersonalTaskDueDate().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+  personalTaskDetailsPage.getPersonalTaskDateAdded().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+  personalTaskDetailsPage.getPersonalTaskDescription().should('eq', taskDescription);
+  personalTaskDetailsPage.getHistoryButton().should('be.visible');
+  personalTaskDetailsPage.getEditButton().should('be.visible');
+  personalTaskDetailsPage.getPersonalTaskActionButton().should('be.visible');
+  personalTaskDetailsPage.getBackToTasksButton().should('be.visible');
 };
