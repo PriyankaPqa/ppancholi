@@ -32,7 +32,7 @@ export const getHttpClient = (
 export const httpClient = getHttpClient({
   authentication: false,
   accessToken: null,
-  baseUrl: `${process.env.VITE_API_BASE_URL}/`,
+  baseUrl: `${process.env.VITE_API_BASE_URL}`,
   useErrorReport: false,
   localBaseUrl: process.env.VITE_API_LOCAL_BASE_URL,
   localApiPortMap: process.env.VITE_API_PORTS,

@@ -613,17 +613,17 @@ describe('httpClient', () => {
 
       it('should do nothing for unmapped domains', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev2.crc-tech.ca',
           url: '/team/search/teams',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);
-        expect(request.baseURL).toBe('https://api-dev.crc-tech.ca');
+        expect(request.baseURL).toBe('https://api-dev2.crc-tech.ca');
         expect(request.url).toBe('/team/search/teams');
       });
 
       it('should handle absolute urls', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev2.crc-tech.ca',
           url: 'http://localhost/case-file/search/case-files',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);
@@ -633,7 +633,7 @@ describe('httpClient', () => {
 
       it('should handle absolute paths', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev2.crc-tech.ca',
           url: '/case-file/search/case-files',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);
@@ -643,7 +643,7 @@ describe('httpClient', () => {
 
       it('should handle relative paths', () => {
         const request = {
-          baseURL: 'https://api-dev.crc-tech.ca',
+          baseURL: 'https://api-dev2.crc-tech.ca',
           url: 'case-file/search/case-files',
         };
         mockHttpClient.mapRequestForLocalhost(request, apiPorts);

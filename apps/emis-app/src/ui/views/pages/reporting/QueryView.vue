@@ -384,7 +384,7 @@ export default Vue.extend({
         store: new ODataStore({
           deserializeDates: false,
           url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`,
-          // url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`.replace('api-dev.crc-tech.ca/common', 'localhost:44352'),
+          // url: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/${ds.url}`.replace('api-dev2.crc-tech.ca/common', 'localhost:44352'),
           key: Object.keys(ds.key),
           keyType: ds.key,
           version: 4,
