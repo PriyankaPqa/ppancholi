@@ -6,14 +6,16 @@ const localVue = createLocalVue();
 describe('AppointmentTimePicker', () => {
   let wrapper;
 
+  const props = {
+    date: '2024-10-01',
+    duration: 30,
+    availabilities: [{ startDateTime: '2024-10-01T14:00:00.000Z', endDateTime: '2024-10-01T16:00:00.000Z' }],
+  };
+
   const doMount = (otherOptions = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
-      propsData: {
-        date: '2024-10-01',
-        duration: '30',
-        availabilities: [{ startDateTime: '2024-10-01T14:00:00.000Z', endDateTime: '2024-10-01T16:00:00.000Z' }],
-      },
+      propsData: props,
       ...otherOptions,
     });
   };
@@ -27,12 +29,12 @@ describe('AppointmentTimePicker', () => {
         } } });
         expect(wrapper.vm.firstTime).toEqual('10:00');
 
-        await wrapper.setProps({ duration: '60' });
+        await wrapper.setProps({ duration: 60 });
         expect(wrapper.vm.firstTime).toEqual('09:30');
       });
       it('returns 09:00 if there is no duration or no availabilities', async () => {
         doMount();
-        await wrapper.setProps({ duration: '' });
+        await wrapper.setProps({ duration: null });
         expect(wrapper.vm.firstTime).toEqual('09:00');
         await wrapper.setProps({ avalabilites: [] });
         expect(wrapper.vm.firstTime).toEqual('09:00');
@@ -67,7 +69,7 @@ describe('AppointmentTimePicker', () => {
       });
       it('cuts the availabilites in calendar slots of the set duration - 60 min', async () => {
         doMount();
-        await wrapper.setProps({ duration: '60' });
+        await wrapper.setProps({ duration: 60 });
         expect(wrapper.vm.availableSlots).toEqual([
           { name: 'Available',
             start: new Date('2024-10-01T14:00:00.000Z'),
@@ -112,7 +114,7 @@ describe('AppointmentTimePicker', () => {
 
   describe('lifecycle', () => {
     it('on create, calculates the bookedCalendarTime from the prop bookedTime', () => {
-      doMount({ propsData: { bookedTime: { startDateTime: '2024-10-01 09:00', endDateTime: '2024-10-01 10:00' } } });
+      doMount({ propsData: { ...props, bookedTime: { startDateTime: '2024-10-01 09:00', endDateTime: '2024-10-01 10:00' } } });
       expect(wrapper.vm.bookedCalendarTime).toEqual({
         name: 'Available',
         start: new Date('2024-10-01 09:00'),
