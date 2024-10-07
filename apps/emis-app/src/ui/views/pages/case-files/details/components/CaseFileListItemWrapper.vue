@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-4">
+  <div class="mt-4" data-test="caseFileItem__card">
     <div :class="{ item__header: true, 'item__header--pinned': item.pinned }" data-test="caseFileItem__header">
       <div>
         <template v-if="displaySystemAdminOnly">
