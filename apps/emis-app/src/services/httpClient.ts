@@ -21,7 +21,7 @@ export const getHttpClient = ({ accessToken, baseUrl, useErrorReport, localBaseU
   });
 
 export const httpClient = getHttpClient({
-  baseUrl: `${process.env.VITE_API_BASE_URL}/`,
+  baseUrl: `${process.env.VITE_API_BASE_URL}`,
   useErrorReport: true,
   localBaseUrl: process.env.VITE_API_LOCAL_BASE_URL,
   localApiPortMap: process.env.VITE_API_PORTS,

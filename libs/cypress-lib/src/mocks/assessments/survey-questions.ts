@@ -3,8 +3,8 @@ import { IAnsweredQuestion, IAssessmentQuestion } from '@libs/entities-lib/asses
 
 export const propertyStateMockAllComponentsData = {
   logo: {
-    default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/en',
-    fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/fr',
+    default: 'https://api-dev2.crc-tech.ca/system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/en',
+    fr: 'https://api-dev2.crc-tech.ca/system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/fr',
   },
   logoPosition: 'right',
   pages: [
@@ -1285,8 +1285,8 @@ export const propertyQuestionsMockAllComponentsData: IAssessmentQuestion[] = [
 
 export const propertyStateMockUpdateAssessmentData = {
   logo: {
-    default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/en',
-    fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/fr',
+    default: 'https://api-dev2.crc-tech.ca/system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/en',
+    fr: 'https://api-dev2.crc-tech.ca/system-management/tenant-settings/56f61c9c-0a6f-4be2-954d-941c9f02cb4c/logo/fr',
   },
   logoPosition: 'right',
   pages: [
