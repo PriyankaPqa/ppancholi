@@ -106,9 +106,9 @@ export default Vue.extend({
         }
       });
 
-      if (this.bookedTime?.startDate) {
-        slots.push(this.bookedCalendarTime);
-      }
+      // if (this.bookedTime?.startDate ) {
+      //   slots.push(this.bookedCalendarTime);
+      // }
       return slots;
     },
   },

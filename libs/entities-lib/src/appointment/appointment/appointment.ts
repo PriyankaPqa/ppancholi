@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IListOption } from '@libs/shared-lib/src/types';
+// import { IListOption } from '@libs/shared-lib/src/types';
 import { BaseEntity } from '../../base';
 import { AppointmentStatus, IAppointment, IAppointmentStatusHistory } from './appointment.types';
 
@@ -34,7 +34,7 @@ export class Appointment extends BaseEntity {
 
   notes: string;
 
-  preferredLanguage: IListOption;
+  preferredLanguage: string;// IListOption;
 
   sendConfirmationEmail: boolean;
 

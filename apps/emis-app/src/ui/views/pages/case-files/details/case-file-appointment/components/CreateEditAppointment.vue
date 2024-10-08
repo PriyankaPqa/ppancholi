@@ -5,7 +5,8 @@
         outer-scroll
         :title="isEditMode ? $t('caseFile.appointments.edit.title') : $t('caseFile.appointments.add.title')">
         <appointment-form
-          :appointment.sync="appointment"
+          :appointment="appointment"
+          :submit-request-data.sync="submitRequestData"
           :is-edit-mode="isEditMode"
           :event-id="caseFile.eventId"
           :primary-member-id="primaryMember ? primaryMember.id : ''"
@@ -38,7 +39,7 @@ import {
   RcPageContent,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import { Appointment, IAppointment } from '@libs/entities-lib/appointment';
+import { Appointment, IAppointment, IAppointmentRequest } from '@libs/entities-lib/appointment';
 import routes from '@/constants/routes';
 import { useAppointmentStore } from '@/pinia/appointment/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
@@ -74,6 +75,7 @@ export default mixins(caseFileDetail).extend({
       appointment: null as IAppointment,
       loading: false,
       showTimeSlotError: false,
+      submitRequestData: null as IAppointmentRequest,
     };
   },
 
@@ -96,9 +98,9 @@ export default mixins(caseFileDetail).extend({
   async created() {
     this.loading = true;
     await Promise.all([
-      useAppointmentProgramStore().fetchByEventId(this.caseFile.eventId),
       useAppointmentProgramStore().fetchAppointmentModalities(),
       useAppointmentProgramStore().fetchServiceOptionTypes(),
+      this.fetchAppointmentPrograms(),
     ]);
 
     if (this.isEditMode) {
@@ -118,16 +120,28 @@ export default mixins(caseFileDetail).extend({
       });
     },
 
-   async submit() {
-     this.showTimeSlotError = !this.appointment.startDate;
-    const isValid = await (this.$refs.form as VForm).validate();
+    async fetchAppointmentPrograms() {
+      const programs = await useAppointmentProgramStore().fetchByEventId(this.caseFile.eventId);
+      if (!programs?.length) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.noAppointmentPrograms') });
+      }
+    },
 
-    if (!isValid || this.showTimeSlotError) {
-      await this.$nextTick();
-      helpers.scrollToFirstError('app');
-    }
+    async submit() {
+      this.showTimeSlotError = !this.submitRequestData.startDate;
+      const isValid = await (this.$refs.form as VForm).validate();
 
-      // call endpoint to submit
+      if (!isValid || this.showTimeSlotError) {
+        await this.$nextTick();
+        helpers.scrollToFirstError('app');
+      }
+
+      useAppointmentStore().createAppointment(
+        {
+          ...this.submitRequestData,
+          preferredLanguage: 'en', // { optionItemId: this.primaryMember.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
+        },
+      );
     },
   },
 });

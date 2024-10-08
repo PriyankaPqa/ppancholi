@@ -1,12 +1,12 @@
 import { ISearchParams, ICombinedSearchResult } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/src/base';
-import { IAppointment } from '@libs/entities-lib/src/appointment/appointment/appointment.types';
+import { IAppointment, IAppointmentRequest } from '@libs/entities-lib/src/appointment/appointment/appointment.types';
 import { IdParams } from '@libs/entities-lib/src/appointment/appointment-program/appointment-program.types';
 import { GlobalHandler, IHttpClient } from '../http-client';
 import { DomainBaseService } from '../base';
 import { IAppointmentsService } from './appointments.types';
 
-const API_URL_SUFFIX = 'appointments';
+const API_URL_SUFFIX = 'appointment';
 const ENTITY = 'appointments';
 
 export class AppointmentsService extends DomainBaseService<IAppointment, IdParams>
@@ -15,8 +15,8 @@ export class AppointmentsService extends DomainBaseService<IAppointment, IdParam
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
-  async create(item: IAppointment): Promise<IAppointment> {
-    return this.http.post<IAppointment>(`${this.baseUrl}/${item.id}`, item);
+  async create(payload: IAppointmentRequest): Promise<IAppointment> {
+    return this.http.post<IAppointment>(this.baseUrl, payload);
   }
 
   async update(item: IAppointment): Promise<IAppointment> {

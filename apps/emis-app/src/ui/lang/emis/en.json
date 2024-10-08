@@ -3934,5 +3934,10 @@
     "zendesk.question.create_case_note": "How to create a case note?",
     "zendesk.question.forgot_password": "Forgot password?",
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
-    "zendesk.question.select_language_preferences": "How do I select my language preferences?"
+    "zendesk.question.select_language_preferences": "How do I select my language preferences?",
+    "caseFile.appointments.error.noServiceOptions": "This appointment program has no active service options",
+    "caseFile.appointments.error.noStaffMembersInServiceOption": "This service option has no assigned staff members",
+    "caseFile.appointments.error.notAssignedToServiceOption": "You are not assigned to this service option",
+    "caseFile.appointments.error.noStaffMembersInAppointmentProgram": "This appointment program has no staff members",
+    "caseFile.appointments.error.noAppointmentPrograms": "This event has no appointment programs"
 }

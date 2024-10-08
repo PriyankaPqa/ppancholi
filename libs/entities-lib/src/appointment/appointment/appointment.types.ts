@@ -1,5 +1,6 @@
-import { IListOption, IUserInformation } from '@libs/shared-lib/types';
+import { IUserInformation } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
+import { IStaffMemberAvailabilityRequest } from '../appointment-staff-member/appointment-staff-member.types';
 
 /**
  * Enums
@@ -21,6 +22,9 @@ export interface IAppointmentStatusHistory {
   rationale: string,
 }
 
+export interface IAppointmentRequest extends IAppointment, IStaffMemberAvailabilityRequest {
+}
+
 /**
  * Interface used for the Appointment entity class
  */
@@ -29,20 +33,19 @@ export interface IAppointment extends IEntity {
   appointmentProgramId: uuid;
   serviceOptionId: uuid;
   appointmentModalityId: uuid;
-  onlineMeetingUrl: string;
   startDate: Date | string;
   endDate: Date | string;
-  // The id specific for a single event (I called like this in MS booking)
-  iCalUID: string
-  // The id for a group of recurring appointments
-  seriesMasterId: string;
   attendeeId: uuid;
   attendeeEmail: string;
   userAccountId: uuid;
   appointmentStatus: AppointmentStatus;
   notes: string;
-  preferredLanguage: IListOption;
+  preferredLanguage: string, // IListOption;
+  // The id for a group of recurring appointments
+  seriesMasterId?: string;
   sendConfirmationEmail: boolean;
-  rescheduled: boolean;
-  appointmentHistory: IAppointmentStatusHistory[];
+  // The id specific for a single event (I called like this in MS booking)
+  iCalUID?: string
+  onlineMeetingUrl?: string;
+  appointmentHistory?: IAppointmentStatusHistory[];
 }

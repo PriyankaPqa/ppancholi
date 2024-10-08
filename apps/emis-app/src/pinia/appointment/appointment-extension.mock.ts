@@ -4,7 +4,7 @@ export function getMockAppointmentExtensionComponents() {
   const appointment = mockAppointment();
 
   return {
-    addAppointment: jest.fn(() => appointment),
+    createAppointment: jest.fn(() => appointment),
     editAppointment: jest.fn(() => appointment),
   };
 }
