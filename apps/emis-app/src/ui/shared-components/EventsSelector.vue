@@ -12,7 +12,7 @@
     :placeholder="$t(placeholder)"
     :loading="loading"
     async-mode
-    :attach="true"
+    :attach="attach"
     :label="label"
     :data-test="dataTest"
     :disable-chip-delete="disableEventDelete"
@@ -79,6 +79,10 @@ export default Vue.extend({
     disableEventDelete: {
       type: Boolean,
       default: false,
+    },
+    attach: {
+      type: Boolean,
+      default: true,
     },
     excludedEvent: {
       type: String,

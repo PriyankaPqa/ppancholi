@@ -68,6 +68,16 @@ export const AssessmentPbiL5Fr = {
   queryType: QueryType.StandardL5fr,
 } as IQuery;
 
+export const AssessmentPbiL4En = {
+  ...AssessmentPbiL6En,
+  queryType: QueryType.StandardL4en,
+} as IQuery;
+
+export const AssessmentPbiL4Fr = {
+  ...AssessmentPbiL6Fr,
+  queryType: QueryType.StandardL4fr,
+} as IQuery;
+
 export const AssessmentPbiIMEn = {
   ...AssessmentPbiL6En,
   queryType: QueryType.StandardIMen,
@@ -210,6 +220,7 @@ export const FinancialStatisticsIMFr = {
 export const AllPbiReports : IQuery[] = [
   AssessmentPbiL6En, AssessmentPbiL6Fr,
   AssessmentPbiL5En, AssessmentPbiL5Fr,
+  AssessmentPbiL4En, AssessmentPbiL4Fr,
   AssessmentPbiIMEn, AssessmentPbiIMFr,
   QuarterlyReportHHIDPbiL6En, QuarterlyReportHHIDPbiL6Fr,
   QuarterlyReportHHIDPbiIMEn, QuarterlyReportHHIDPbiIMFr,
