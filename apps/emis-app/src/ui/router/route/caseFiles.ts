@@ -36,6 +36,9 @@ const TaskDetails = () => import('@/ui/views/pages/case-files/details/case-file-
 const CreateEditRecoveryPlan = () => import('@/ui/views/pages/case-files/details/case-file-recovery-plan/create-edit/CreateEditRecoveryPlan.vue');
 const RecoveryPlanDetails = () => import('@/ui/views/pages/case-files/details/case-file-recovery-plan/details/RecoveryPlanDetails.vue');
 
+const CaseFileAppointments = () => import('@/ui/views/pages/case-files/details/case-file-appointment/CaseFileAppointments.vue');
+const CreateEditAppointment = () => import('@/ui/views/pages/case-files/details/case-file-appointment/components/CreateEditAppointment.vue');
+
 export const caseFiles: RouteConfig = {
   path: Routes.caseFile.layout.path,
   component: CaseFileLayout,
@@ -235,6 +238,20 @@ export const caseFiles: RouteConfig = {
           name: Routes.caseFile.recoveryPlan.details.name,
           component: RecoveryPlanDetails,
           meta: { level: UserRoles.level1, roles: [UserRoles.contributor3] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.appointments.home.path,
+          name: Routes.caseFile.appointments.home.name,
+          component: CaseFileAppointments,
+          meta: { level: UserRoles.level0 },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.appointments.add.path,
+          name: Routes.caseFile.appointments.add.name,
+          component: CreateEditAppointment,
+          meta: { level: UserRoles.level0 },
           props: true,
         },
       ],

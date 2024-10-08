@@ -1,12 +1,13 @@
-import { IUserInformation } from '@libs/shared-lib/types';
+import { IListOption, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 
 /**
  * Enums
  */
 export enum AppointmentStatus {
-  Active = 1,
+  Scheduled = 1,
   Cancelled = 2,
+  Rescheduled = 3,
 }
 
 /**
@@ -37,11 +38,10 @@ export interface IAppointment extends IEntity {
   seriesMasterId: string;
   attendeeId: uuid;
   attendeeEmail: string;
-  staffMemberId: uuid;
+  userAccountId: uuid;
   appointmentStatus: AppointmentStatus;
   notes: string;
-  // Account used to create emails in MSGraph
-  masterAccountEmail: string;
+  preferredLanguage: IListOption;
   sendConfirmationEmail: boolean;
   rescheduled: boolean;
   appointmentHistory: IAppointmentStatusHistory[];

@@ -1,4 +1,4 @@
-import { mockAppointmentStaffMember } from '@libs/entities-lib/appointment';
+import { mockAppointmentStaffMember, mockDateRange } from '@libs/entities-lib/appointment';
 
 import { mockDomainBaseService } from '../base';
 import { IAppointmentStaffMembersServiceMock } from './appointment-staff-members.types';
@@ -6,4 +6,5 @@ import { IAppointmentStaffMembersServiceMock } from './appointment-staff-members
 export const mockAppointmentStaffMembersService = (): IAppointmentStaffMembersServiceMock => ({
   ...mockDomainBaseService(mockAppointmentStaffMember()),
   assignStaffMembers: jest.fn(() => [mockAppointmentStaffMember()]),
+  fetchAvailabilites: jest.fn(() => [mockDateRange()]),
 });

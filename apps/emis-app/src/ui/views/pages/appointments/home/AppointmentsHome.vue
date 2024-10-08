@@ -23,7 +23,7 @@ import { mockAppointment } from '@libs/entities-lib/appointment';
 
 import StaffAvailability from './StaffAvailability.vue';
 import StaffCalendar from './StaffCalendar.vue';
-import AppointmentForm from './AppointmentForm.vue';
+import AppointmentForm from './AppointmentFormPOC.vue';
 
 export default Vue.extend({
   name: 'AppointmentsHome',

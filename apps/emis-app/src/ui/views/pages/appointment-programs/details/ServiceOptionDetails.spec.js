@@ -7,7 +7,6 @@ import helpers from '../appointmentProgramsHelpers';
 
 import Component from './ServiceOptionDetails.vue';
 
-jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 

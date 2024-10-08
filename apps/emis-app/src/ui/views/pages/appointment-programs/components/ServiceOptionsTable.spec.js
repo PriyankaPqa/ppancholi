@@ -5,7 +5,6 @@ import { VDataTableA11y } from '@libs/component-lib/components';
 import helpers from '../appointmentProgramsHelpers';
 import Component from './ServiceOptionsTable.vue';
 
-jest.mock('../appointmentProgramsHelper');
 const localVue = createLocalVue();
 const { pinia, appointmentProgramStore } = useMockAppointmentProgramStore();
 

@@ -8,10 +8,13 @@ export const STAFF_MEMBER_IDS = ['8db578a2-6627-4597-9ae5-94a20c85c506',
 
 export const APPOINTMENTS = [
   mockAppointment({
-    startDate: `${today}T14:00:00.000Z`,
-    endDate: `${today}T15:00:00.000Z`,
-    attendeeId: '0952b52b-8b9a-48ce-b18e-b471c91faa35',
-    staffMemberId: STAFF_MEMBER_IDS[0],
+    startDate: `${today}T12:00:00.000Z`,
+    endDate: `${today}T13:00:00.000Z`,
+    attendeeId: '677db23e-ac1d-43ab-aa1d-2fd98b3f725d',
+    userAccountId: '87eefd29-b558-4bd4-b706-b209e97d564b',
+    appointmentModalityId: 'a32d863a-067e-44c6-9b29-e87c36bf994a',
+    appointmentProgramId: 'fc4ee464-936b-4b98-b6ce-bea21113d0fe',
+    serviceOptionId: 'e0f770bd-7269-4630-9618-30f6400edb0a',
   }),
   mockAppointment({
     startDate: `${today}T17:00:00.000Z`,

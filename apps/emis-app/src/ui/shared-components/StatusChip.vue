@@ -26,6 +26,7 @@ import { Status } from '@libs/shared-lib/types';
 import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { TaskStatus } from '@libs/entities-lib/task';
+import { AppointmentStatus } from '@libs/entities-lib/appointment';
 
 export default Vue.extend({
   name: 'StatusChip',
@@ -56,6 +57,7 @@ export default Vue.extend({
           'HouseholdStatus',
           'TaskStatus',
           'AppointmentProgramStatus',
+          'AppointmentStatus',
         ].indexOf(value) > -1
       ),
     },
@@ -110,6 +112,8 @@ export default Vue.extend({
           return this.getHouseholdStatusColor();
         case 'TaskStatus':
           return this.getTaskStatusColor();
+        case 'AppointmentStatus':
+          return this.getAppointmentStatusColor();
         default:
           return colors.chips.green;
       }
@@ -148,6 +152,8 @@ export default Vue.extend({
         case 'Status':
         case 'AppointmentProgramStatus':
           return `enums.Status.${Status[this.status]}`;
+        case 'AppointmentStatus':
+          return `enums.AppointmentStatus.${AppointmentStatus[this.status]}`;
         case 'MassActionRunStatus':
           return `enums.MassActionRunStatus.${MassActionRunStatus[this.status]}`;
         case 'AssessmentResponseCompletionStatus':
@@ -359,6 +365,22 @@ export default Vue.extend({
 
         default:
           return colors.chips.orange;
+      }
+    },
+
+    getAppointmentStatusColor(): string {
+      switch (this.status) {
+        case AppointmentStatus.Scheduled:
+          return colors.chips.green;
+
+        case AppointmentStatus.Rescheduled:
+          return colors.chips.green_pale;
+
+        case AppointmentStatus.Cancelled:
+          return colors.chips.red;
+
+        default:
+          return colors.chips.grey;
       }
     },
   },

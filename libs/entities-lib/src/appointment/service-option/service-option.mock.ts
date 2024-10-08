@@ -8,6 +8,5 @@ export const mockServiceOption = (force? : Partial<IServiceOption>): IServiceOpt
   serviceOptionType: { optionItemId: 'id', specifiedOther: '' },
   appointmentModalities: [mockListOption()],
   serviceOptionStatus: Status.Active,
-  staffMembers: ['staff-member-id-1'],
   ...force,
 });

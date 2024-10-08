@@ -1,5 +1,6 @@
 import { Appointment } from './appointment';
 import { mockAppointment } from './appointment.mock';
+import { AppointmentStatus } from './appointment.types';
 
 const mockData = mockAppointment();
 
@@ -20,10 +21,10 @@ const mockData = mockAppointment();
           expect(item.seriesMasterId).toEqual(mockData.seriesMasterId);
           expect(item.attendeeId).toEqual(mockData.attendeeId);
           expect(item.attendeeEmail).toEqual(mockData.attendeeEmail);
-          expect(item.staffMemberId).toEqual(mockData.staffMemberId);
+          expect(item.userAccountId).toEqual(mockData.userAccountId);
           expect(item.appointmentStatus).toEqual(mockData.appointmentStatus);
           expect(item.notes).toEqual(mockData.notes);
-          expect(item.masterAccountEmail).toEqual(mockData.masterAccountEmail);
+          expect(item.preferredLanguage).toEqual(mockData.preferredLanguage);
           expect(item.sendConfirmationEmail).toEqual(mockData.sendConfirmationEmail);
           expect(item.rescheduled).toEqual(mockData.rescheduled);
           expect(item.appointmentHistory).toEqual(mockData.appointmentHistory);
@@ -41,10 +42,10 @@ const mockData = mockAppointment();
           expect(item.seriesMasterId).toEqual(null);
           expect(item.attendeeId).toEqual(null);
           expect(item.attendeeEmail).toEqual(null);
-          expect(item.staffMemberId).toEqual(null);
-          expect(item.appointmentStatus).toEqual(null);
+          expect(item.userAccountId).toEqual(null);
+          expect(item.appointmentStatus).toEqual(AppointmentStatus.Scheduled);
           expect(item.notes).toEqual(null);
-          expect(item.masterAccountEmail).toEqual(null);
+          expect(item.preferredLanguage).toEqual(null);
           expect(item.sendConfirmationEmail).toEqual(null);
           expect(item.rescheduled).toEqual(false);
           expect(item.appointmentHistory).toEqual([]);

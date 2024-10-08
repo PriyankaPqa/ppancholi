@@ -340,6 +340,14 @@ export default mixins(caseFileDetail).extend({
             exact: false,
           },
           this.$hasFeature(this.$featureKeys.TaskManagement) && taskTab,
+          {
+            text: this.$t('caseFileDetail.menu_appointments') as string,
+            test: 'appointments',
+            to: routes.caseFile.appointments.home.name,
+            exact: false,
+            feature: this.$featureKeys.AppointmentBooking,
+            level: UserRoles.level0,
+          },
         ];
 
         return tabs.filter((t) => t);

@@ -156,17 +156,13 @@ describe('TeamAssignServiceOptions.vue', () => {
 
   describe('Methods', () => {
     describe('fetchAppointmentPrograms', () => {
-      it('calls useAppointmentProgramStore and sets the appointmentPrograms', async () => {
+      it('calls useAppointmentProgramStore', async () => {
         const program = mockAppointmentProgram();
-        appointmentProgramStore.search = jest.fn(() => ({ values: [program] }));
+        appointmentProgramStore.fetchByEventId = jest.fn(() => ({ values: [program] }));
         await mountWrapper();
         await wrapper.setData({ selectedEvent: mockEventEntity() });
         await wrapper.vm.fetchAppointmentPrograms();
-        expect(appointmentProgramStore.search).toHaveBeenCalledWith({ params: {
-          filter: { 'Entity/EventId': { value: mockEventEntity().id, type: EFilterKeyType.Guid }, 'Entity/AppointmentProgramStatus': 'Active' },
-          skip: 0,
-        } });
-        expect(wrapper.vm.appointmentPrograms).toEqual([program]);
+        expect(appointmentProgramStore.fetchByEventId).toHaveBeenCalledWith(mockEventEntity().id);
       });
     });
 

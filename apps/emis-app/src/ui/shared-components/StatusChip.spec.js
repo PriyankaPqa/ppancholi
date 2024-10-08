@@ -11,6 +11,7 @@ import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 import { TaskStatus } from '@libs/entities-lib/task';
+import { AppointmentStatus } from '@libs/entities-lib/appointment';
 
 const localVue = createLocalVue();
 
@@ -276,6 +277,22 @@ describe('StatusChip.vue', () => {
         mountWithStatus('TaskStatus', TaskStatus.Completed);
         expect(wrapper.vm.color).toEqual(colors.chips.green);
         expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('task.task_status.Completed'));
+      });
+    });
+
+    describe('AppointmentStatus', () => {
+      it('should render proper color and text', () => {
+        mountWithStatus('AppointmentStatus', AppointmentStatus.Scheduled);
+        expect(wrapper.vm.color).toEqual(colors.chips.green);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.AppointmentStatus.Scheduled'));
+
+        mountWithStatus('AppointmentStatus', AppointmentStatus.Rescheduled);
+        expect(wrapper.vm.color).toEqual(colors.chips.green_pale);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.AppointmentStatus.Rescheduled'));
+
+        mountWithStatus('AppointmentStatus', AppointmentStatus.Cancelled);
+        expect(wrapper.vm.color).toEqual(colors.chips.red);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('enums.AppointmentStatus.Cancelled'));
       });
     });
   });
