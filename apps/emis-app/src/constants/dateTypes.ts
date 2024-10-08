@@ -13,6 +13,12 @@ export const dateTypes = {
     'IFinancialAssistancePaymentGroup.cancellationDate',
     'local',
     'EventSchedule.scheduledOpenDate',
+    'TaskHistory.dateOfChange',
+    'Task.dateAdded',
+    'Notification.created',
+    'Approval.submissionStartedDate',
+    'ApprovalHistory.dateOfApprovalAction',
+    'Event.statusChangeDate',
   ] as string[],
 
   convertToUtc: [
@@ -34,6 +40,7 @@ export const dateTypes = {
     'CaseFileIndividual.checkIn',
     'CaseFileIndividual.checkOut',
     'Task.dueDate',
+    'RecoveryPlan.startDate',
   ] as string[],
 
   getType(dateField: string) : DateTypes {
@@ -46,6 +53,7 @@ export const dateTypes = {
     if (this.static.indexOf(dateField) > -1) {
       return DateTypes.Static;
     }
-    return DateTypes.Unknown;
+    throw new Error('Please enter a proper date field name');
+    // return DateTypes.Unknown;
   },
 };

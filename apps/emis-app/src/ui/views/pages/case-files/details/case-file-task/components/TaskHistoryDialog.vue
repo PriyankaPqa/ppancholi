@@ -42,7 +42,7 @@
       </template>
       <template #[`item.${customColumns.dateOfChange}`]="{ item }">
         <div data-test="history_table_change_date">
-          {{ helpers.getLocalStringDate(item.timestamp, '', 'PP') }}
+          {{ helpers.getLocalStringDate(item.timestamp, 'TaskHistory.dateOfChange', 'PP') }}
         </div>
       </template>
     </v-data-table-a11y>

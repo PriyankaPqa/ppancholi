@@ -19,7 +19,7 @@
         {{ $m(notification.subject) }}
       </div>
       <div data-test="notification-created-date">
-        {{ $t('eventDetail.created') }} {{ helpers.getLocalStringDate((notification.created), 'local', 'PP') }}
+        {{ $t('eventDetail.created') }} {{ helpers.getLocalStringDate((notification.created), 'Notification.created', 'PP') }}
         <span v-if="helperView && helperView.isUrgent" data-test="notification-urgent" class="red--text">
           {{ $t('task.create_edit.urgent') }}
         </span>
