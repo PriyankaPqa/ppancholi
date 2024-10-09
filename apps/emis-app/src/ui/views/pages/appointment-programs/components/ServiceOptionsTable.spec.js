@@ -117,16 +117,6 @@ describe('ServiceOptionsTable.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('getTypeName', () => {
-      it('returns the type name from the service option types', async () => {
-        appointmentProgramStore.getServiceOptionTypes = jest.fn(() => [{ id: '1', name: { translation: { en: 'name-1' } } }, { id: '2', name: { translation: { en: 'name-2' } } }]);
-        await mountWrapper();
-
-        const res = await wrapper.vm.getTypeName({ optionItemId: '2' });
-        expect(res).toEqual('name-2');
-      });
-    });
-
     describe('getModalitiesNames', () => {
       it('returns the modalities names from the option item list', async () => {
         appointmentProgramStore.getAppointmentModalities = jest.fn(() => [

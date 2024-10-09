@@ -227,7 +227,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { MessageBox, VDateFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
+import { MessageBox, VDateFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IAppointmentRequest,
   IDateRange, IStaffMemberAvailabilityRequest } from '@libs/entities-lib/appointment';
 import { useUserStore } from '@/pinia/user/user';
@@ -258,6 +258,7 @@ export default Vue.extend({
     StatusSelect,
     VDateFieldWithValidation,
     MessageBox,
+    VTextFieldWithValidation,
   },
 
   props: {
@@ -352,12 +353,9 @@ export default Vue.extend({
       return useAppointmentProgramStore().getServiceOptionTypes();
     },
 
-    // In the dropdown, only display service options of the selected appointment program that are currently active and have active types
-    // or - in edit mode - that has been previously selected
+    // In the dropdown, only display service options of the selected appointment program that are currently active
     serviceOptions(): IServiceOption[] {
-      return this.selectedAppointmentProgram?.serviceOptions.filter((so) => so.serviceOptionStatus === Status.Active
-      && this.serviceOptionTypes.map((t) => t.id).includes(so.serviceOptionType.optionItemId))
-      || [];
+      return this.selectedAppointmentProgram?.serviceOptions.filter((so) => so.serviceOptionStatus === Status.Active) || [];
     },
 
     selectedServiceOption(): IServiceOption {
@@ -440,12 +438,9 @@ export default Vue.extend({
       }
       if (newValue) {
         await this.fetchStaffMembers();
-      }
-    },
-
-    serviceOptions(newValue) {
-      if (this.selectedAppointmentProgram && !newValue.length) {
-        this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.noServiceOptions') });
+        if (!newValue.serviceOptions.length || !newValue.serviceOptions.some((so) => so.serviceOptionStatus === Status.Active)) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.noServiceOptions') });
+        }
       }
     },
 

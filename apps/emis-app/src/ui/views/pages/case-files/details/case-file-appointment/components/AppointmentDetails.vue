@@ -1,3 +1,5 @@
+<!-- INCOMPLETE COMPONENT -->
+
 <template>
   <rc-page-content :title="$t('caseFile.appointments.details.title')">
     <rc-page-loading v-if="loading" />

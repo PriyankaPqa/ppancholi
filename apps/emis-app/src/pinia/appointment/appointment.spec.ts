@@ -1,7 +1,7 @@
 import { mockAppointmentsService } from '@libs/services-lib/appointments';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
-import { IAppointment, mockAppointment, IdParams } from '@libs/entities-lib/appointment';
+import { IAppointment, mockAppointment, IdParams, mockAppointmentRequest } from '@libs/entities-lib/appointment';
 import { getExtensionComponents } from '@/pinia/appointment/appointment-extension';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 
@@ -49,10 +49,10 @@ describe('>>> Appointment Store', () => {
     it('should call addAppointment service with proper params', async () => {
       const bComponents = { ...baseComponents, addNewlyCreatedId: jest.fn(), set: jest.fn() };
       const store = createTestStore(bComponents);
-      const appointment = mockAppointment();
+      const appointment = mockAppointmentRequest();
       const res = {} as IAppointment;
       entityService.create = jest.fn(() => res);
-      await store.addAppointment(appointment);
+      await store.createAppointment(appointment);
 
       expect(entityService.create).toBeCalledWith(appointment);
       expect(bComponents.addNewlyCreatedId).toBeCalledWith(res);

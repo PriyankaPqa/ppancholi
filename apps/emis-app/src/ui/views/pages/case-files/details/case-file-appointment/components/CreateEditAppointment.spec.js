@@ -1,20 +1,24 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockPersonStore } from '@/pinia/person/person.mock';
 import { useMockAppointmentStore } from '@/pinia/appointment/appointment.mock';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
+import { mockMember } from '@libs/entities-lib/household-create';
+import { mockAppointmentRequest } from '@libs/entities-lib/appointment';
 import Component from './CreateEditAppointment.vue';
 
 const localVue = createLocalVue();
 
 const { pinia } = useMockCaseFileStore();
 const { appointmentProgramStore } = useMockAppointmentProgramStore(pinia);
-useMockAppointmentStore(pinia);
+const { appointmentStore } = useMockAppointmentStore(pinia);
+useMockPersonStore(pinia);
 
 describe('CreateEditAppointment', () => {
   let wrapper;
 
-  const doMount = (isEditMode) => {
+  const doMount = (isEditMode, otherOptions = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -34,6 +38,7 @@ describe('CreateEditAppointment', () => {
           },
         },
       },
+      ...otherOptions,
     });
   };
 
@@ -52,45 +57,89 @@ describe('CreateEditAppointment', () => {
       });
     });
 
-    describe('submit', () => {
-      it('does not call createAppointment unless form validation succeeds', async () => {
+    describe('fetchAppointmentPrograms', () => {
+      it('calls appointmentProgramStore fetchByEventId', async () => {
+        await wrapper.vm.fetchAppointmentPrograms();
+        expect(appointmentProgramStore.fetchByEventId).toHaveBeenCalledWith(wrapper.vm.caseFile.eventId);
+      });
+    });
+
+    describe('showConfirmation', () => {
+      it('calls confirmation and submit if answer is positive', async () => {
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.submit = jest.fn();
+        await wrapper.vm.showConfirmation();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: ('caseFile.appointments.confirmCreate.title'),
+          messages: ('caseFile.appointments.confirmCreate.content'),
+        });
+        expect(wrapper.vm.submit).toHaveBeenCalled();
+      });
+    });
+
+    describe('initSubmit', () => {
+      it('does nothing if validation of form fails', async () => {
+        wrapper.vm.submit = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        await wrapper.vm.initSubmit();
+        expect(wrapper.vm.submit).not.toHaveBeenCalled();
+      });
+      it('does nothing if there is no start date set in the request data', async () => {
+        wrapper.vm.submit = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.setData({ submitRequestData: { startDate: null } });
+        await wrapper.vm.initSubmit();
+        expect(wrapper.vm.submit).not.toHaveBeenCalled();
+        expect(wrapper.vm.showTimeSlotError).toBeTruthy();
+      });
+      it('calls submit if validation passes when in edit mode ', async () => {
+        doMount(true);
+        wrapper.vm.submit = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.setData({ submitRequestData: { startDate: '2024-10-10' } });
+        await wrapper.vm.initSubmit();
+        expect(wrapper.vm.submit).toHaveBeenCalled();
+      });
+      it('set showReview true if validation passes when in create mode ', async () => {
+        wrapper.vm.submit = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.setData({ submitRequestData: { startDate: '2024-10-10' } });
+        await wrapper.vm.initSubmit();
+        expect(wrapper.vm.submit).not.toHaveBeenCalled();
+        expect(wrapper.vm.showReview).toBeTruthy();
+      });
+    });
+
+    describe('submit', () => {
+      it('calls createAppointment if isEditMode is false', async () => {
+        doMount(false, { computed: { primaryMember() {
+          return mockMember({ contactInformation: { preferredLanguage: { optionItemId: 'oi-id', specifiedOther: null } } });
+        } } });
+        await wrapper.setData({ submitRequestData: mockAppointmentRequest() });
         await wrapper.vm.submit();
-        // expect(caseFileReferralStore.createReferral).toHaveBeenCalledTimes(0);
+        expect(appointmentStore.createAppointment).toHaveBeenCalledWith({ ...mockAppointmentRequest(), preferredLanguage: { optionItemId: 'oi-id', specifiedOther: null } });
       });
 
-      // it('calls updateReferral if isEditMode is true', async () => {
-      //   doMount(true);
+      test('after submitting, the user is redirected to the referral detail page', async () => {
+        appointmentStore.createAppointment = jest.fn(() => ({ id: 'abc' }));
+        await wrapper.vm.submit();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.appointments.details.name,
+          params: { appointmentId: 'abc', id: '' },
+        });
+      });
 
-      //   wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      //   await wrapper.vm.submit();
-      //   expect(caseFileReferralStore.updateReferral).toHaveBeenCalledTimes(1);
-      // });
+      test('after creating an event a toast notification is shown', async () => {
+        appointmentStore.createAppointment = jest.fn(() => ({ id: 'abc' }));
+        await wrapper.vm.submit();
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('caseFile.appointments.success.create');
+      });
 
-      // test('after submitting, the user is redirected to the referral detail page', async () => {
-      //   wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      //   caseFileReferralStore.createReferral = jest.fn(() => ({ id: 'abc' }));
-      //   await wrapper.vm.submit();
-
-      //   expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-      //     name: routes.caseFile.referrals.details.name,
-      //     params: { referralId: 'abc' },
-      //   });
-      // });
-
-      // test('after creating an event a toast notification is shown', async () => {
-      //   wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      //   await wrapper.vm.submit();
-      //   expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('referral.create.success');
-      // });
-
-      // test('after updating an event a toast notification is shown', async () => {
-      //   doMount(true);
-
-      //   wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      //   await wrapper.vm.submit();
-      //   expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('referral.edit.success');
-      // });
+      test('if creating failed a toast notification is shown', async () => {
+        appointmentStore.createAppointment = jest.fn();
+        await wrapper.vm.submit();
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('caseFile.appointments.failed.create');
+      });
     });
   });
 
@@ -112,7 +161,6 @@ describe('CreateEditAppointment', () => {
                 appointmentId: 'APPT_ID',
               },
             },
-
           },
         });
 
@@ -140,6 +188,17 @@ describe('CreateEditAppointment', () => {
         });
 
         expect(wrapper.vm.isEditMode).toBe(false);
+      });
+    });
+
+    describe('attendee', () => {
+      it('returns the selected attendee of the submit request', async () => {
+        const member = mockMember({ id: 'a-id' });
+        doMount(false, { computed: { members() {
+          return [member];
+        } } });
+        await wrapper.setData({ submitRequestData: { attendeeId: 'a-id' } });
+        expect(wrapper.vm.attendee).toEqual(member);
       });
     });
   });
@@ -179,14 +238,10 @@ describe('CreateEditAppointment', () => {
       });
 
       test('the save button calls the submit method', async () => {
-        // // eslint-disable-next-line no-underscore-dangle
-        // wrapper.vm.$refs.form._data.flags.dirty = true;
-        // await wrapper.vm.$nextTick();
-
-        const spy = jest.spyOn(wrapper.vm, 'submit').mockImplementation(() => { });
+        const spy = jest.spyOn(wrapper.vm, 'initSubmit').mockImplementation(() => { });
         const button = wrapper.findDataTest('save');
         await button.trigger('click');
-        expect(wrapper.vm.submit).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.initSubmit).toHaveBeenCalledTimes(1);
         spy.mockRestore();
       });
 

@@ -55,6 +55,7 @@
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import {
+  RcDialog,
   RcPageContent,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
@@ -68,6 +69,7 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { IMemberEntity } from '@libs/entities-lib/household-create';
 import caseFileDetail from '../../caseFileDetail';
 import AppointmentForm from './AppointmentForm.vue';
+import AppointmentDetailsContent from './AppointmentDetailsContent.vue';
 
 export default mixins(caseFileDetail).extend({
   name: 'CreateEditAppointment',
@@ -77,6 +79,8 @@ export default mixins(caseFileDetail).extend({
     AppointmentForm,
     PageTemplate,
     RcPageContent,
+    AppointmentDetailsContent,
+    RcDialog,
   },
 
   props: {
@@ -106,10 +110,10 @@ export default mixins(caseFileDetail).extend({
       return this.$route.name === routes.caseFile.appointments.edit.name;
     },
     attendee(): IMemberEntity {
-      if (!this.submitRequestData?.attendeeEmail) {
+      if (!this.submitRequestData?.attendeeId) {
         return null;
       }
-      return this.members.find((m) => this.submitRequestData.attendeeId === m.id);
+      return this.members?.find((m) => this.submitRequestData.attendeeId === m.id);
     },
   },
 
@@ -192,7 +196,7 @@ export default mixins(caseFileDetail).extend({
      const appointment = !this.isEditMode ? await useAppointmentStore().createAppointment(
         {
           ...this.submitRequestData,
-          preferredLanguage: { optionItemId: this.primaryMember.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
+          preferredLanguage: { optionItemId: this.primaryMember?.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
         },
       ) : null;
       if (appointment) {
