@@ -1,10 +1,11 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
+import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { useProvider } from '../../../provider/provider';
 import { createEventAndTeam, createHousehold, createPersonalTask } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { assertTaskHistorySteps, assertTaskHomeAndGoToEditTaskSteps, editPersonalTaskSteps, personalTaskDetailsSteps } from './canSteps';
 import { PersonalTaskDetailsPage } from '../../../pages/tasks/personalTaskDetails.page';
-import { assertTaskHistorySteps, personalTaskDetailsSteps } from './canSteps';
 
 const canRoles = [
   UserRoles.level6,
@@ -24,7 +25,7 @@ const { filteredCanRoles, allRoles } = getRoles(canRoles, []);
 
 let accessTokenL6 = '';
 
-describe('[T29717] Action Complete a Personal Task', { tags: ['@teams', '@tasks'] }, () => {
+describe('[T29792] Completed Personal task can be edited by the person who created it', { tags: ['@teams', '@tasks'] }, () => {
   describe('Can Roles', () => {
     for (const roleName of filteredCanRoles) {
       describe(`${roleName}`, () => {
@@ -37,11 +38,12 @@ describe('[T29717] Action Complete a Personal Task', { tags: ['@teams', '@tasks'
             cy.getToken(roleName).then(async (tokenResponse) => {
               const provider = useProvider(tokenResponse.access_token);
               const resultPersonalTaskCreated = await createPersonalTask(provider, caseFileId);
+              provider.task.completeTask(resultPersonalTaskCreated.id, caseFileId, 'complete personal task using endpoint');
               cy.wrap(provider).as('provider');
               cy.wrap(team).as('teamCreated');
               cy.wrap(resultPersonalTaskCreated).as('personalTask');
               cy.login(roleName);
-              cy.goTo(`casefile/${resultCreateHousehold.registrationResponse.caseFile.id}/task/${resultPersonalTaskCreated.id}`);
+              cy.goTo(`casefile/${resultCreateHousehold.registrationResponse.caseFile.id}/task`);
             });
           });
         });
@@ -52,36 +54,40 @@ describe('[T29717] Action Complete a Personal Task', { tags: ['@teams', '@tasks'
           }
         });
         // eslint-disable-next-line
-        it('should be able to complete a personal task', function () {
-          personalTaskDetailsSteps(this.personalTask.category.specifiedOther, this.personalTask.description, false);
+        it('should be able to edit a completed a personal task by the person who created it', function () {
+          assertTaskHomeAndGoToEditTaskSteps(this.personalTask.id);
+
+          editPersonalTaskSteps('Updated Task Category attempt1', 'Updated task description attempt1');
+
+          personalTaskDetailsSteps('Updated Task Category attempt1', 'Updated task description attempt1', true);
 
           const personalTaskDetailsPage = new PersonalTaskDetailsPage();
-          personalTaskDetailsPage.getPersonalTaskActionButton().click();
-          personalTaskDetailsPage.getDialogTitleElement().contains('Task action').should('be.visible');
-          personalTaskDetailsPage.getCompletedButton().should('not.be.checked');
-          personalTaskDetailsPage.getCancelButton().should('not.be.checked');
-          personalTaskDetailsPage.getRationaleDescription().should('be.visible');
-          personalTaskDetailsPage.getCompletedButton().check({ force: true });
-          personalTaskDetailsPage.getRationaleDescription().type('Test Rationale');
-          personalTaskDetailsPage.getDialogApplyButton().click();
-
-          personalTaskDetailsPage.getPersonalTaskStatus().contains('Completed').should('be.visible');
-          personalTaskDetailsPage.getPersonalTaskDueDate().should('eq', '-');
-          personalTaskDetailsPage.getEditButton().should('be.visible');
-          personalTaskDetailsPage.getPersonalTaskActionButton().should('not.exist');
-          personalTaskDetailsPage.getHistoryButton().should('be.visible');
-
           const tasksHistoryPage = personalTaskDetailsPage.goToTaskHistory();
+
           assertTaskHistorySteps({
             roleName,
-            rationale: 'Test Rationale',
-            actionTaken: 'Task completed',
-            index: 1,
+            actionTaken: `${getUserName(roleName)} updated task details`,
+            index: 2,
+          });
+
+          tasksHistoryPage.getCloseButton().click();
+
+          personalTaskDetailsPage.getBackToTasksButton().should('be.visible');
+          personalTaskDetailsPage.getBackToTasksButton().click();
+
+          assertTaskHomeAndGoToEditTaskSteps(this.personalTask.id);
+
+          editPersonalTaskSteps('Updated Task Category attempt2', 'Updated task description attempt2');
+
+          personalTaskDetailsSteps('Updated Task Category attempt2', 'Updated task description attempt2', true);
+
+          personalTaskDetailsPage.goToTaskHistory();
+          assertTaskHistorySteps({
+            roleName,
+            actionTaken: `${getUserName(roleName)} updated task details`,
+            index: 3,
           });
           tasksHistoryPage.getCloseButton().click();
-          tasksHistoryPage.getCloseButton().should('not.exist');
-
-          personalTaskDetailsPage.getPageTitleElement().contains('Personal task details').should('be.visible');
         });
       });
     }

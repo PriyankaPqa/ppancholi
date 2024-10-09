@@ -71,7 +71,7 @@ describe('[T28443] Create a Personal Task', { tags: ['@teams', '@tasks'] }, () =
           const personalTaskDetailsPage = createPersonalTaskPage.createPersonalTask();
           cy.contains('The personal task has been successfully created.').should('be.visible');
 
-          personalTaskDetailsSteps('Personal Task 1', 'Test Description 1');
+          personalTaskDetailsSteps('Personal Task 1', 'Test Description 1', false);
 
           const tasksHistoryPage = personalTaskDetailsPage.goToTaskHistory();
 
