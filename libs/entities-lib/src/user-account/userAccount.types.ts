@@ -40,6 +40,7 @@ export enum AccountStatus {
   None = 0,
   Active = 1,
   Inactive = 2,
+  Pending = 3,
 }
 
 export interface IUserAccountTeamEvent {

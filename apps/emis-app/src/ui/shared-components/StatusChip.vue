@@ -258,6 +258,9 @@ export default Vue.extend({
         case AccountStatus.Inactive:
           return colors.chips.light_grey;
 
+        case AccountStatus.Pending:
+          return colors.chips.green_pale;
+
         default:
           return colors.chips.green;
       }

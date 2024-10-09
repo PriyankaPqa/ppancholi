@@ -66,6 +66,10 @@ export class MSAL {
   // FeatureKeys.UseIdentityServer
   private defaultTenant: string;
 
+  private invitationCode: string;
+
+  private invitationEmail: string;
+
   private readonly showConsole: boolean;
 
   private readonly enableAppInsights: boolean;
@@ -258,6 +262,17 @@ export class MSAL {
   public setCurrentTenantDomain(tenant: string | null): void {
       this.showConsole && console.debug('setCurrentTenantDomain', tenant)
       this.currentDomainTenant = tenant
+  }
+
+  /**
+   * Set parameters provided through an email invitation to a user, which are to
+   * be passed to IdentityServer for processing within an authentication request.
+   * @param invitationCode 
+   * @param invitationEmail 
+   */
+  public setUserInvitationParameters(invitationCode: string, invitationEmail: string) {
+    this.invitationCode = invitationCode;
+    this.invitationEmail = invitationEmail;
   }
 
   /**
@@ -513,6 +528,10 @@ export class MSAL {
       request.extraQueryParameters = {
         ...request.extraQueryParameters,
         acr_values: `tenant:${!!this.currentDomainTenant ? this.currentDomainTenant : this.defaultTenant}`
+      }
+      if (this.invitationCode) {
+        request.loginHint = this.invitationEmail;
+        request.extraQueryParameters.acr_values += ` invite_code:${this.invitationCode}`;
       }
     }
   }

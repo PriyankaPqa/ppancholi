@@ -140,7 +140,8 @@ const authorizationGuard = async (to: Route) => {
 const initializeMSAL = async () => {
   const publicService = new PublicService(httpClient);
   let currentTenant = null;
-  const forceTenant = new URLSearchParams(window.location.search).get('force-tenant') || sessionStorage.getItem('force-tenant');
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const forceTenant = urlSearchParams.get('force-tenant') || sessionStorage.getItem('force-tenant');
 
   if ((window.location.host.startsWith('localhost') || window.location.host.startsWith('emis-'))
       && forceTenant && forceTenant !== 'null') {
@@ -165,6 +166,14 @@ const initializeMSAL = async () => {
   // Feature branch case for IdentityServer
   if (useIdentityServer && !window.location.host.startsWith('localhost') && !currentTenant) {
     AuthenticationProvider.setCurrentTenantDomain(tenant);
+  }
+
+  if (useIdentityServer) {
+    const invitationCode = urlSearchParams.get('invite-code');
+    const invitationEmail = urlSearchParams.get('invite-email');
+    if (invitationCode) {
+      AuthenticationProvider.setUserInvitationParameters(invitationCode, invitationEmail);
+    }
   }
 
   AuthenticationProvider.init(useIdentityServer, tenant);

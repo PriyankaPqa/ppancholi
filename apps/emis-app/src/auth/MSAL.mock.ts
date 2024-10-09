@@ -6,6 +6,10 @@ export default class MSALMock {
 
   private currentDomainTenant: string;
 
+  private invitationCode: string;
+
+  private invitationEmail: string;
+
   public account: AccountInfo;
 
   public msalLibrary = {
@@ -25,6 +29,11 @@ export default class MSALMock {
 
   public setCurrentTenantDomain(tenant: string | null): void {
     this.currentDomainTenant = tenant;
+  }
+
+  public setUserInvitationParameters(invitationCode: string, invitationEmail: string) {
+    this.invitationCode = invitationCode;
+    this.invitationEmail = invitationEmail;
   }
 
   public startAccessTokenAutoRenewal() {

@@ -553,6 +553,7 @@ export const userAccountViewDS : IDatasourceBase = {
     { dataField: 'accessLevelNameEn', dataType: 'string', visible: false, lookupType: LookupType.enumEn, lookupKey: 'AccessLevels' },
     { dataField: 'accessLevelNameFr', dataType: 'string', visible: false, lookupType: LookupType.enumFr, lookupKey: 'AccessLevels' },
     { dataField: 'isInactive', dataType: 'boolean', visible: false },
+    { dataField: 'isPending', dataType: 'boolean', visible: false },
     { dataField: 'displayName', dataType: 'string' },
     { dataField: 'emailAddress', dataType: 'string', visible: false },
     { dataField: 'phoneNumber', dataType: 'string', visible: false },

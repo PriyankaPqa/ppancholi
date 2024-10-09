@@ -162,6 +162,10 @@ describe('StatusChip.vue', () => {
         expect(wrapper.vm.color).toEqual(colors.chips.green);
         expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('common.account_status.Active'));
 
+        mountWithStatus('AccountStatus', AccountStatus.Pending);
+        expect(wrapper.vm.color).toEqual(colors.chips.green_pale);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('common.account_status.Pending'));
+
         mountWithStatus('AccountStatus', AccountStatus.Inactive);
         expect(wrapper.vm.color).toEqual(colors.chips.light_grey);
         expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('common.account_status.Inactive'));
