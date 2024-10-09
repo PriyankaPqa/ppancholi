@@ -3,6 +3,10 @@ import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { ECurrentAddressTypes } from '@libs/entities-lib/household-create';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { formatDateToMmmDdYyyy, getToday } from '@libs/cypress-lib/helpers';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { format } from 'date-fns';
 import { fixtureGenerateTemporaryAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
   createEventAndTeam,
@@ -13,6 +17,9 @@ import {
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+import { CaseFileImpactedIndividualsHomePage } from '../../../pages/casefiles/case-file-impacted-individuals/caseFileImpactedIndividualsHome.page';
+import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -52,8 +59,9 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
               resultCreatedMultipleHousehold.householdsCreated[1].registrationResponse.household.members[0],
               resultCreatedMultipleHousehold.householdsCreated[2].registrationResponse.household.members[0],
             ];
-            await updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
+            const previousAddress = await updatePersonsCurrentAddress(resultCreatedMultipleHousehold.provider, personIds, ECurrentAddressTypes.FriendsFamily);
             const resultPersonsInfo = await getPersonsInfo(resultCreatedMultipleHousehold.provider, personIds);
+
             const memberHouseholds: Record<string, string> = {
               [resultPersonsInfo[0].id]: resultPersonsInfo[0].etag.replace(/"/g, ''),
               [resultPersonsInfo[1].id]: resultPersonsInfo[1].etag.replace(/"/g, ''),
@@ -69,6 +77,10 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
               eventId: null,
             };
             const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultCreatedMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
+            cy.wrap(resultCreatedMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
+            cy.wrap(resultCreatedMultipleHousehold.householdsCreated[0].registrationResponse.household.id).as('householdId');
+            cy.wrap(resultPersonsInfo[0].identitySet.fullName).as('fullName');
+            cy.wrap(previousAddress).as('previousAddress');
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -85,7 +97,47 @@ describe('[T28884] Process a Temporary Address data correction file', { tags: ['
         });
 
         it('should successfully process a Temporary Address data correction file', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'household records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'household records', massActionName: this.massActionName, massActionType: 'Temporary Address', roleName },
+          );
+          cy.goTo('casefile');
+          const caseFilesHomePage = new CaseFilesHomePage();
+          const caseFileDetailsPage = caseFilesHomePage.goToCaseFileDetail(this.caseFileNumber);
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`${this.fullName} - Temporary address updated`);
+          caseFileDetailsPage.getCaseFileActivityCard().within(() => {
+            caseFileDetailsPage.getRoleNameSystemAdmin().should('eq', 'System Admin');
+            caseFileDetailsPage.getCaseFileActivityLogDate().should('string', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+            caseFileDetailsPage.getCaseFileActivityTitle().should('eq', 'Impacted individuals edited');
+            caseFileDetailsPage.getCaseFileActivityBody().should('eq', `${this.fullName} - Temporary address updated`);
+          });
+          caseFileDetailsPage.goToImpactedIndividualsHomePage();
+          const caseFileImpactedIndividualsHomePage = new CaseFileImpactedIndividualsHomePage();
+          caseFileImpactedIndividualsHomePage.getPrimaryMemberCard().within(() => {
+            caseFileImpactedIndividualsHomePage.getCurrentAddressTypeUnknown().should('eq', 'Unknown');
+            caseFileImpactedIndividualsHomePage.getPreviousTemporaryAddressExpandButton().click();
+            caseFileImpactedIndividualsHomePage.getCurrentAddressType().should('eq', 'Friends / Family');
+            caseFileImpactedIndividualsHomePage.getCurrentAddressStreet().should(
+              'eq',
+              `${this.previousAddress.address.streetAddress}  #${this.previousAddress.address.unitSuite}`.trim(),
+            );
+            caseFileImpactedIndividualsHomePage.getCurrentAddressLine().should(
+              'eq',
+              `${this.previousAddress.address.city}, ${ECanadaProvinces[this.previousAddress.address.province]}, ${this.previousAddress.address.postalCode}`,
+            );
+          });
+          caseFileDetailsPage.goToHouseholdProfilePage();
+          const householdProfilePage = new HouseholdProfilePage();
+          const profileHistoryPage = householdProfilePage.goToProfileHistoryPage();
+          profileHistoryPage.refreshUntilHouseholdProfileReady(this.householdId.toString());
+          profileHistoryPage.getHouseholdHistoryEditedBy().should('eq', `${getUserName(roleName)}${getUserRoleDescription(roleName)}`);
+          profileHistoryPage.getHouseholdHistoryChangeDate().should('eq', getToday());
+          profileHistoryPage.getHouseholdHistoryLastAction().should('eq', 'Temporary address changed');
+
+          profileHistoryPage.getHouseholdHistoryPreviousValue()
+            .should('string', `${this.previousAddress.address.unitSuite}-${this.previousAddress.address.streetAddress}`)
+            .should('string', `${this.previousAddress.address.city}, ${ECanadaProvinces[Number(this.previousAddress.address.province.toString())]}, `
+              + `${this.previousAddress.address.postalCode}`);
+          profileHistoryPage.getHouseholdHistoryNewValue().should('string', 'Unknown');
         });
       });
     }

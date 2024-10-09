@@ -3,7 +3,8 @@ import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
 import { IUserData, mockUsersData, UserRoles } from '@libs/entities-lib/user';
 
-export type Role = UserRoles.level0 | UserRoles.level1 |
+export type Role = UserRoles.partner1 | UserRoles.partner2 | UserRoles.partner3 |
+UserRoles.level0 | UserRoles.level1 |
 UserRoles.level2 | UserRoles.level3 | UserRoles.level4 | UserRoles.level5 |
 UserRoles.level6 | UserRoles.contributorIM | UserRoles.contributorFinance | UserRoles.contributor3 | 'readOnly' | 'noRole';
 
@@ -23,6 +24,9 @@ export const useMockUserStore = (pinia?: TestingPinia) => {
 
 export const getPiniaForUser = (level: Role, stubActions = false) => {
   const mockData = {
+    partner1: mockUsersData()[12],
+    partner2: mockUsersData()[13],
+    partner3: mockUsersData()[14],
     level0: mockUsersData()[11],
     level1: mockUsersData()[0],
     level2: mockUsersData()[1],

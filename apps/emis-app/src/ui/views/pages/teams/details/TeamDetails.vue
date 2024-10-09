@@ -179,9 +179,8 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useEventStore } from '@/pinia/event/event';
 import { GlobalHandler } from '@libs/services-lib/http-client';
-import { IEventEntity } from '@libs/entities-lib/event';
+import { IEventSummary } from '@libs/entities-lib/event';
 import TeamAssignServiceOptions from '../components/TeamAssignServiceOptions.vue';
 
 export enum SelectedTab {
@@ -216,6 +215,7 @@ export default Vue.extend({
       SelectedTab,
       selectedTab: SelectedTab.TeamMembers,
       teamMembers: [] as ITeamMemberAsUser[],
+      events: [] as IEventSummary[],
     };
   },
 
@@ -263,10 +263,6 @@ export default Vue.extend({
 
       return [lodgingLabel, escalationLabel, appointmentsLabel].filter((x) => x).join(', ');
     },
-
-    events() :IEventEntity[] {
-      return useEventStore().getByIds(this.team.eventIds, false);
-    },
   },
 
   async created() {
@@ -280,7 +276,7 @@ export default Vue.extend({
 
     async loadTeam() {
       const t = await useTeamStore().fetch(this.id);
-      await useEventStore().fetchByIds(t.eventIds, true);
+      this.events = (await this.$services.publicApi.searchEventsById(t.eventIds)).value;
       if (this.primaryContactId) {
         await useUserAccountMetadataStore().fetch(this.primaryContactId, GlobalHandler.Disabled);
       }

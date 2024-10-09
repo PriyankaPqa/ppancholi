@@ -12,7 +12,7 @@
     :placeholder="$t(placeholder)"
     :loading="loading"
     async-mode
-    :attach="true"
+    :attach="attach"
     :label="label"
     :data-test="dataTest"
     :disable-chip-delete="disableEventDelete"
@@ -79,6 +79,10 @@ export default Vue.extend({
     disableEventDelete: {
       type: Boolean,
       default: false,
+    },
+    attach: {
+      type: Boolean,
+      default: true,
     },
     excludedEvent: {
       type: String,
@@ -166,7 +170,7 @@ export default Vue.extend({
         top,
       };
 
-      const res = await this.$services.events.searchMyEvents(params);
+      const res = await this.$services.events.searchEventSummaries(params);
 
       const resultData = res?.value;
       this.events = resultData;
@@ -198,10 +202,12 @@ export default Vue.extend({
       }
 
       this.loading = true;
-      const res = await this.$services.events.searchMyEvents({
+      // we include events you do not have access to here since this is a search by id and maybe for some reason
+      // we have data that relates to an event without access
+      const res = await this.$services.events.searchEventSummaries({
         filter: `Id in(${(newIds as string[]).join(',')})`,
         top: 999,
-      });
+      }, true);
       if (res?.value) {
         this.events = deepmerge(res?.value, this.events);
       }

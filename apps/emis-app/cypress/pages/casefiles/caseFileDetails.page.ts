@@ -1,6 +1,7 @@
 import { CaseFileDetailsBase } from './caseFileDetailsBase.page';
 
 export enum DataTest {
+  caseFileActivityCard = 'caseFileItem__card',
   caseFileActivityTitle = 'caseFileActivity-listItem-content-title',
   caseFileActivityBody = 'caseFileActivity-listItem-content-body',
   sortBy = 'caseFileActivity-case-file-activity-sort-select',
@@ -125,6 +126,8 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
   private verifyIdentityOptions = { selector: DataTest.verifyIdentityOptions };
 
   private verifyIdentityExceptionalType = { selector: DataTest.verifyIdentityExceptionalType };
+
+  private caseFileActivityCard = { selector: DataTest.caseFileActivityCard };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
@@ -326,5 +329,9 @@ export class CaseFileDetailsPage extends CaseFileDetailsBase {
 
   public selectIdProvided(id: string) {
     return cy.selectListElementByValue(DataTest.verifyIdentityOptions, id);
+  }
+
+  public getCaseFileActivityCard(index = 0) {
+    return cy.getByDataTest(this.caseFileActivityCard).eq(index);
   }
 }

@@ -1,8 +1,10 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { CaseFileDetailsPage } from 'cypress/pages/casefiles/caseFileDetails.page';
 import { formatDateToMmmDdYyyy } from '@libs/cypress-lib/helpers';
 import { format } from 'date-fns';
 import { TasksHistoryPage } from '../../../pages/tasks/taskHistory.page';
+import { PersonalTaskDetailsPage } from '../../../pages/tasks/personalTaskDetails.page';
 
 export interface AssertTaskHistoryStepsParams {
   roleName: UserRoles,
@@ -20,4 +22,27 @@ export const assertTaskHistorySteps = ({ roleName, actionTaken, rationale = '-',
   tasksHistoryPage.getHistoryTableRationaleByIndex(index).should('eq', rationale);
   tasksHistoryPage.getHistoryTableDateOfChangeByIndex(index).should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
   tasksHistoryPage.getCloseButton().should('be.visible');
+};
+
+export const caseFileDetailsSteps = (taskCategory: string, roleName:UserRoles, taskStatus: string) => {
+  const caseFileDetailsPage = new CaseFileDetailsPage();
+  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`${taskCategory} has been ${taskStatus}`);
+  caseFileDetailsPage.getUserName().should('string', getUserName(roleName));
+  caseFileDetailsPage.getRoleName().should('string', getUserRoleDescription(roleName));
+  caseFileDetailsPage.getCaseFileActivityTitle().should('string', `Task ${taskStatus}`);
+  caseFileDetailsPage.getCaseFileActivityBody().should('string', `${taskCategory} has been ${taskStatus}`);
+};
+
+export const personalTaskDetailsSteps = (taskCategory: string, taskDescription: string) => {
+  const personalTaskDetailsPage = new PersonalTaskDetailsPage();
+  personalTaskDetailsPage.getPageTitleElement().contains('Personal task details').should('be.visible');
+  cy.contains(taskCategory).should('be.visible');
+  personalTaskDetailsPage.getPersonalTaskTeamAssignedTo().should('eq', 'Me');
+  personalTaskDetailsPage.getPersonalTaskDueDate().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+  personalTaskDetailsPage.getPersonalTaskDateAdded().should('eq', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+  personalTaskDetailsPage.getPersonalTaskDescription().should('eq', taskDescription);
+  personalTaskDetailsPage.getHistoryButton().should('be.visible');
+  personalTaskDetailsPage.getEditButton().should('be.visible');
+  personalTaskDetailsPage.getPersonalTaskActionButton().should('be.visible');
+  personalTaskDetailsPage.getBackToTasksButton().should('be.visible');
 };

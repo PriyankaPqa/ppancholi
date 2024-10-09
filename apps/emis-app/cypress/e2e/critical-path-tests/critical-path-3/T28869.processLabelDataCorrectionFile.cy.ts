@@ -2,6 +2,8 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { formatDateToMmmDdYyyy } from '@libs/cypress-lib/helpers';
+import { format } from 'date-fns';
 import {
   createEventAndTeam,
   getCaseFiles,
@@ -11,6 +13,7 @@ import {
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
 import { fixtureGenerateLabelDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
+import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -67,6 +70,7 @@ describe('[T28869] Process a Label data correction file', { tags: ['@case-file',
               eventId: null,
             };
             const resultMassFinancialAssistance = await prepareStateMassActionXlsxFile(resultMultipleHousehold.provider, 'data-correction', mockRequestDataParams);
+            cy.wrap(resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.caseFileNumber).as('caseFileNumber');
             cy.wrap(resultPrepareStateEvent.provider).as('provider');
             cy.wrap(resultPrepareStateEvent.event).as('event');
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
@@ -84,7 +88,19 @@ describe('[T28869] Process a Label data correction file', { tags: ['@case-file',
         });
 
         it('should successfully process a Label data correction file', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'case file records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'case file records', massActionName: this.massActionName, massActionType: 'Labels', roleName },
+          );
+          cy.goTo('casefile');
+          const caseFilesHomePage = new CaseFilesHomePage();
+          const caseFileDetailsPage = caseFilesHomePage.goToCaseFileDetail(this.caseFileNumber);
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('New Labels: Test Label 1 | Test Label 2 | Test Label 3 | Test Label 4');
+          caseFileDetailsPage.getCaseFileActivityCard().within(() => {
+            caseFileDetailsPage.getRoleNameSystemAdmin().should('eq', 'System Admin');
+            caseFileDetailsPage.getCaseFileActivityLogDate().should('string', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+            caseFileDetailsPage.getCaseFileActivityTitle().should('eq', 'Case File Labels Updated');
+            caseFileDetailsPage.getCaseFileActivityBody().should('string', 'New Labels: Test Label 1 | Test Label 2 | Test Label 3 | Test Label 4');
+          });
         });
       });
     }

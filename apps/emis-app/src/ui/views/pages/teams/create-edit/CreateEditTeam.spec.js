@@ -959,19 +959,20 @@ describe('CreateEditTeam.vue', () => {
 
     describe('getAvailableEvents', () => {
       it('calls the store to fetch the current team events and those with on hold and active status', async () => {
-        await wrapper.setData({ team: mockTeamsDataAddHoc() });
-        wrapper.vm.getAvailableEvents();
-        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['id-1'], true);
+        await wrapper.setData({ team: mockTeamsDataAddHoc({ eventIds: ['id-1', 'missing-id'] }) });
+        await wrapper.vm.getAvailableEvents();
+        expect(eventStore.fetchByIds).toHaveBeenCalledWith(['id-1', 'missing-id'], true);
         expect(eventStore.getEventsByStatus).toHaveBeenCalledWith([EEventStatus.Open, EEventStatus.OnHold]);
+        expect(services.publicApi.searchEventsById).toHaveBeenCalledWith(['missing-id']);
       });
 
       it('sets into availableEvents the events returned by the storage in the right form', async () => {
-        wrapper.vm.getAvailableEvents();
+        await wrapper.vm.getAvailableEvents();
         // when no id on eventStore.getEventsByStatus
         expect(wrapper.vm.availableEvents).toEqual(eventStore.getEventsByStatus());
         // adds the current event id
         await wrapper.setData({ team: mockTeamsDataAddHoc() });
-        wrapper.vm.getAvailableEvents();
+        await wrapper.vm.getAvailableEvents();
         expect(wrapper.vm.availableEvents).toEqual([allEvents[0], ...eventStore.getEventsByStatus()]);
       });
     });

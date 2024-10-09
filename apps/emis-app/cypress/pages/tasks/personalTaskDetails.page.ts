@@ -10,6 +10,12 @@ export enum DataTest {
   taskDetailsDateAdded = 'task-details-date-added',
   taskDetailsDescription = 'task-details-description',
   backToTaskButton = 'task_details_back_btn',
+  dialogTitle = 'dialog-title',
+  dialogRadioCompleted = 'task-action-dialog-radio-Completed',
+  dialogRadioCancelled = 'task-action-dialog-radio-Cancel',
+  dialogRadioRationale = 'task-action-dialog-rationale_input',
+  applyButton = 'dialog-submit-action',
+  status = 'chip-text',
 }
 
 export class PersonalTaskDetailsPage {
@@ -31,6 +37,18 @@ export class PersonalTaskDetailsPage {
 
   private backToTaskButton = { selector: DataTest.backToTaskButton };
 
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private dialogRadioCompleted = { selector: DataTest.dialogRadioCompleted };
+
+  private dialogRadioCancelled = { selector: DataTest.dialogRadioCancelled };
+
+  private dialogRadioRationale = { selector: DataTest.dialogRadioRationale, type: 'textarea' };
+
+  private applyButton = { selector: DataTest.applyButton };
+
+  private status = { selector: DataTest.status };
+
   public getPageTitleElement() {
     return cy.getByDataTest(this.pageTitle);
   }
@@ -39,7 +57,7 @@ export class PersonalTaskDetailsPage {
     return cy.getByDataTest(this.taskDetailsHistoryButton);
   }
 
-  public getTaskDetailsDueDate() {
+  public getPersonalTaskDueDate() {
     return cy.getByDataTest(this.taskDetailsDueDate).getAndTrimText();
   }
 
@@ -52,27 +70,47 @@ export class PersonalTaskDetailsPage {
     return cy.getByDataTest(this.taskDetailsEditButton);
   }
 
-  public getTaskDetailsDateAdded() {
+  public getPersonalTaskDateAdded() {
     return cy.getByDataTest(this.taskDetailsDateAdded).getAndTrimText();
   }
 
-  public getTeamTaskTeamAssignedTo() {
+  public getPersonalTaskTeamAssignedTo() {
     return cy.getByDataTest(this.taskDetailsTeamAssignedTo).getAndTrimText();
   }
 
-  public getTeamTaskActionButton() {
+  public getPersonalTaskActionButton() {
     return cy.getByDataTest(this.taskDetailsActionButton);
   }
 
-  public getTeamDetailsDescription() {
+  public getPersonalTaskDescription() {
     return cy.getByDataTest(this.taskDetailsDescription).getAndTrimText();
-  }
-
-  public getTeamTaskDateAdded() {
-    return cy.getByDataTest(this.taskDetailsDateAdded).getAndTrimText();
   }
 
   public getBackToTasksButton() {
     return cy.getByDataTest(this.backToTaskButton);
+  }
+
+  public getDialogTitleElement() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public getCompletedButton() {
+    return cy.getByDataTest(this.dialogRadioCompleted);
+  }
+
+  public getCancelButton() {
+    return cy.getByDataTest(this.dialogRadioCancelled);
+  }
+
+  public getRationaleDescription() {
+    return cy.getByDataTest(this.dialogRadioRationale);
+  }
+
+  public getDialogApplyButton() {
+    return cy.getByDataTest(this.applyButton);
+  }
+
+  public getPersonalTaskStatus() {
+    return cy.getByDataTest(this.status);
   }
 }

@@ -1,4 +1,4 @@
-import { ItemFinancialAssistance, SubItemFinancialAssistance } from '@libs/cypress-lib/helpers';
+import { getRandomNumber, ItemFinancialAssistance, SubItemFinancialAssistance } from '@libs/cypress-lib/helpers';
 import {
   ApprovalAction,
   ApprovalStatus,
@@ -51,7 +51,7 @@ export const mockFinancialAssistancePaymentRequest = (modality: EPaymentModaliti
   ...mockBaseData(),
   caseFileId: '6cc65951-480f-4c1b-94b4-921dcb0c3d9c',
   financialAssistanceTableId: 'afaf0c99-e305-4702-9783-0adb0576f57f',
-  name: 'FA Payment',
+  name: `FA Payment ${getRandomNumber()}`,
   description: 'Description',
   approvalStatus: ApprovalStatus.New,
   approvalAction: null,

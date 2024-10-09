@@ -115,7 +115,9 @@ describe('[T28847] Process a Financial Assistance data correction file', { tags:
           }
         });
         it('should successfully process a financial assistance data correction file.', function () {
-          processDataCorrectionFileSteps(householdQuantity, 'financial assistance records', this.massActionName);
+          processDataCorrectionFileSteps(
+            { householdQuantity, processedItems: 'financial assistance records', massActionName: this.massActionName, massActionType: 'Financial Assistance', roleName },
+          );
           const baseDetailsMassActionPage = new BaseDetailsMassAction();
           baseDetailsMassActionPage.getBackToMassActionListButton().should('be.enabled');
           baseDetailsMassActionPage.getMassActionType().should('eq', 'Financial Assistance');
