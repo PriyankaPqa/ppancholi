@@ -530,8 +530,6 @@ export default Vue.extend({
         const payload = {
           ...newValue,
           ...this.getRequestPayload() || {},
-          startDate: new Date('2024-10-10 09:00').toISOString(),
-          endDate: new Date('2024-10-10 09:30').toISOString(),
         };
         this.$emit('update:submitRequestData', payload);
       },
