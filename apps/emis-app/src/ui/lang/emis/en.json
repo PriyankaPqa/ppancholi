@@ -209,6 +209,8 @@
     "assessmentTemplate.copySampleLink": "Copy sample link",
     "assessmentTemplate.create.success": "The assessment has been successfully created.",
     "assessmentTemplate.duplicateSurvey": "Duplicate assessment",
+    "assessmentTemplate.duplicateAnswers.title": "Duplicate answers found",
+    "assessmentTemplate.duplicateAnswers.message": "Duplicate answers are present within some questions.  Here are the identifiers:<br\/><br\/>{duplicates}",
     "assessmentTemplate.edit.success": "The assessment has been successfully edited.",
     "assessmentTemplate.edit.title": "Edit assessment",
     "assessmentTemplate.editAssessment": "Edit assessment",

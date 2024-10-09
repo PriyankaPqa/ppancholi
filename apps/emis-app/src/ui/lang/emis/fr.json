@@ -209,6 +209,8 @@
     "assessmentTemplate.copySampleLink": "Copier l'hyperlien de test",
     "assessmentTemplate.create.success": "L'analyse a été créée.",
     "assessmentTemplate.duplicateSurvey": "Reproduire l'analyse",
+    "assessmentTemplate.duplicateAnswers.title": "Réponses dupliquées trouvées",
+    "assessmentTemplate.duplicateAnswers.message": "Des réponses dupliquées sont présentes dans certaines questions.  Voici leurs identifiants:<br\/><br\/>{duplicates}",
     "assessmentTemplate.edit.success": "L'analyse a été modifiée.",
     "assessmentTemplate.edit.title": "Modifier l'analyse",
     "assessmentTemplate.editAssessment": "Modifier l'analyse",

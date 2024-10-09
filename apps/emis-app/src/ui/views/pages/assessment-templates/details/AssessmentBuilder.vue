@@ -20,6 +20,7 @@ import { SurveyJsTextExtractor, IExtractedSurveyObject } from '@libs/shared-lib/
 import metadata from '@/ui/mixins/metadata';
 import helpers from '@/ui/helpers/helpers';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import { IAssessmentQuestion } from '@libs/entities-lib/assessment-template';
 import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import assessmentDetail from './assessmentDetail';
@@ -108,6 +109,10 @@ export default mixins(assessmentDetail, metadata).extend({
       this.assessmentTemplate.externalToolState.data.rawJson = this.creator.text;
       this.assessmentTemplate.questions = this.surveyJsHelper.getAssessmentQuestions();
 
+      if (!this.questionsAreValid(this.assessmentTemplate.questions)) {
+        return;
+      }
+
       if (this.isFormMode) {
         await useAssessmentFormStore().updateAssessmentStructure(this.assessmentForm);
       } else {
@@ -115,6 +120,31 @@ export default mixins(assessmentDetail, metadata).extend({
       }
       this.lastRawJsonSaved = this.assessmentTemplate.externalToolState?.data?.rawJson;
       callback(saveNo, true);
+    },
+
+    questionsAreValid(questions: IAssessmentQuestion[]): boolean {
+      // normally each asnwer choice is unique - this is validate by surveyjs - but with the "other", "none" options which can be added they can
+      // then have two "none"
+      const duplicates = questions.map((q) => {
+        const duplicateAnswers = q.answerChoices?.length ? q.answerChoices
+            .filter((a) => q.answerChoices.find((a2) => a.identifier.toLowerCase() === a2.identifier.toLowerCase() && a !== a2)) : [];
+        return { question: q, duplicateAnswers };
+      }).filter((q) => q.duplicateAnswers.length);
+
+      if (duplicates.length) {
+        this.$confirm({
+          title: this.$t('assessmentTemplate.duplicateAnswers.title'),
+          htmlContent: this.$t(
+            'assessmentTemplate.duplicateAnswers.message',
+            { duplicates: duplicates.map((d) => `${d.question.identifier} - ${d.duplicateAnswers.map((a) => a.identifier).join(', ')}`).join('<br>') },
+          ) as string,
+          messages: null,
+          showCancelButton: false,
+          submitActionLabel: this.$t('common.cancel'),
+        });
+        return false;
+      }
+      return true;
     },
 
     getDefaultJson(): string {

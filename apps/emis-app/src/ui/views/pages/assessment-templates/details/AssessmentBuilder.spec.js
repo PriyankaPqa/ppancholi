@@ -165,6 +165,139 @@ describe('AssessmentBuilder', () => {
         expect(assessmentTemplateStore.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentTemplate);
         expect(wrapper.vm.lastRawJsonSaved).toEqual(wrapper.vm.creator.text);
       });
+
+      it('doesnt call save method if questions are not valid', async () => {
+        wrapper.vm.questionsAreValid = jest.fn(() => false);
+        wrapper.vm.lastRawJsonSaved = 'nope';
+        await wrapper.vm.saveSurveyJson(null, () => {});
+        expect(assessmentFormStore.updateAssessmentStructure).not.toHaveBeenCalled();
+        expect(wrapper.vm.questionsAreValid).toHaveBeenCalled();
+      });
+    });
+
+    describe('questionsAreValid', () => {
+      it('checks for duplicate answers within a question', () => {
+        wrapper.vm.creator.text = JSON.stringify({
+          logo: {
+            default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+            fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+          },
+          logoPosition: 'right',
+          pages: [
+            {
+              name: 'page1',
+              elements: [
+                {
+                  type: 'radiogroup',
+                  name: 'question1',
+                  choices: [
+                    'noNez',
+                    'item2',
+                    'item3',
+                  ],
+                  showOtherItem: true,
+                  showNoneItem: true,
+                },
+                {
+                  type: 'radiogroup',
+                  name: 'question2',
+                  choices: [
+                    'item3',
+                  ],
+                  showOtherItem: true,
+                  showNoneItem: true,
+                },
+                {
+                  type: 'text',
+                  name: 'question3',
+                },
+                {
+                  type: 'checkbox',
+                  name: 'question4',
+                  choices: [
+                    'item1',
+                    'item2',
+                    'item3',
+                  ],
+                  showOtherItem: true,
+                },
+              ],
+            },
+          ],
+          clearInvisibleValues: 'onHiddenContainer',
+        });
+        expect(wrapper.vm.questionsAreValid(wrapper.vm.surveyJsHelper.getAssessmentQuestions())).toBeTruthy();
+        expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+
+        wrapper.vm.creator.text = JSON.stringify({
+          logo: {
+            default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+            fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+          },
+          logoPosition: 'right',
+          pages: [
+            {
+              name: 'page1',
+              elements: [
+                {
+                  type: 'radiogroup',
+                  name: 'question1',
+                  choices: [
+                    'noNe',
+                    'item2',
+                    'item3',
+                  ],
+                  showOtherItem: true,
+                  showNoneItem: true,
+                },
+                {
+                  type: 'radiogroup',
+                  name: 'question2',
+                  choices: [
+                    'noNe',
+                    'other',
+                    'item3',
+                  ],
+                  showOtherItem: true,
+                  showNoneItem: true,
+                },
+                {
+                  type: 'text',
+                  name: 'question3',
+                },
+                {
+                  type: 'checkbox',
+                  name: 'question4',
+                  choices: [
+                    'item1',
+                    'item2',
+                    'item3',
+                  ],
+                  showOtherItem: true,
+                },
+              ],
+            },
+          ],
+          clearInvisibleValues: 'onHiddenContainer',
+        });
+        expect(wrapper.vm.questionsAreValid(wrapper.vm.surveyJsHelper.getAssessmentQuestions())).toBeFalsy();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
+          {
+            htmlContent: {
+              key: 'assessmentTemplate.duplicateAnswers.message',
+              params: [
+                {
+                  duplicates: 'question1 - noNe, none<br>question2 - noNe, other, other, none',
+                },
+              ],
+            },
+            messages: null,
+            showCancelButton: false,
+            submitActionLabel: 'common.cancel',
+            title: 'assessmentTemplate.duplicateAnswers.title',
+          },
+        );
+      });
     });
 
     describe('getDefaultJson', () => {
