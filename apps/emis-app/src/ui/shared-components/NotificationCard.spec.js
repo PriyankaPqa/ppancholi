@@ -77,7 +77,7 @@ describe('NotificationCard.vue', () => {
       it('should render expected date', () => {
         mountWithNotification(mockNotification);
         const text = wrapper.findDataTest('notification-created-date');
-        const dateText = helpers.getLocalStringDate((mockNotification.created), 'local', 'PP');
+        const dateText = helpers.getLocalStringDate((mockNotification.created), 'Notification.created', 'PP');
         expect(text.text()).toEqual(`eventDetail.created ${dateText}`);
       });
       it('should render Urgent when view marked as urgent', () => {

@@ -94,7 +94,7 @@
 
       <template #[`item.${customColumns.submissionStartedDate}`]="{ item }">
         <div class="text-no-wrap" :data-test="`submission_date_fa_id_${item.entity.id}`">
-          {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate, '', 'PP') : '-' }}
+          {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate, 'Approval.submissionStartedDate', 'PP') : '-' }}
         </div>
       </template>
 

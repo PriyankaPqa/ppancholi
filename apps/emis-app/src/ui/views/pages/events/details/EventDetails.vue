@@ -111,7 +111,7 @@
           </div>
 
           <div class="rc-body14 fw-bold" data-test="status-change-date">
-            {{ getLocalStringDate(statusChange.date, 'Entity.timestamp') }}
+            {{ getLocalStringDate(statusChange.date, 'Event.statusChangeDate') }}
           </div>
 
           <template v-if="statusChange.reason">

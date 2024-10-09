@@ -142,7 +142,7 @@
               </v-col>
               <v-col cols="8">
                 <div data-test="task-details-date-added">
-                  {{ helpers.getLocalStringDate(task.dateAdded, '', 'PP') }}
+                  {{ helpers.getLocalStringDate(task.dateAdded, 'Task.dateAdded', 'PP') }}
                 </div>
               </v-col>
             </v-row>

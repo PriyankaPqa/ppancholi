@@ -221,7 +221,7 @@ export default mixins(caseFileDetail).extend({
       this.recoveryPlanLocal = {
         hasRecoveryPlan: this.recoveryPlan.hasRecoveryPlan,
         crcProvided: this.recoveryPlan.crcProvided,
-        startDate: this.recoveryPlan.startDate ? helpers.getLocalStringDate(this.recoveryPlan.startDate, '') : null,
+        startDate: this.recoveryPlan.startDate ? helpers.getLocalStringDate(this.recoveryPlan.startDate, 'RecoveryPlan.startDate') : null,
       };
       this.setOriginalData(this.recoveryPlan);
     }
@@ -264,7 +264,7 @@ export default mixins(caseFileDetail).extend({
       this.originalData = {
         hasRecoveryPlan: recoveryPlan.hasRecoveryPlan,
         crcProvided: recoveryPlan.crcProvided,
-        startDate: recoveryPlan.startDate ? helpers.getLocalStringDate(recoveryPlan.startDate, '') : null,
+        startDate: recoveryPlan.startDate ? helpers.getLocalStringDate(recoveryPlan.startDate, 'RecoveryPlan.startDate') : null,
       };
     },
 

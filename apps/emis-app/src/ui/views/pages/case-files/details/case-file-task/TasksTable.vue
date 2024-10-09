@@ -105,7 +105,7 @@
         </router-link>
       </template>
       <template #[`item.${customColumns.dateAdded}`]="{ item }">
-        <span data-test="task-table-date-added"> {{ helpers.getLocalStringDate(item.entity.dateAdded, '', 'PP') }}</span>
+        <span data-test="task-table-date-added"> {{ helpers.getLocalStringDate(item.entity.dateAdded, 'Task.dateAdded', 'PP') }}</span>
       </template>
       <template #[`item.${customColumns.taskStatus}`]="{ item }">
         <status-chip

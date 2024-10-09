@@ -718,7 +718,7 @@ export default Vue.extend({
         body += recoveryPlan.crcProvided ? this.$t('common.yes') as string : this.$t('common.no') as string;
         if (recoveryPlan.crcProvided) {
           body += `\n${this.$t('caseFileActivity.activityList.body.startDate')} `;
-          body += helpers.getLocalStringDate(recoveryPlan.startDate as string, '', 'PP');
+          body += helpers.getLocalStringDate(recoveryPlan.startDate as string, 'RecoveryPlan.startDate', 'PP');
         }
       }
 

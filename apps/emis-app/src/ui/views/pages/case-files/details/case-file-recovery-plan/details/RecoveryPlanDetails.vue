@@ -52,7 +52,7 @@
                 </div>
               </div>
               <div>
-                {{ helpers.getLocalStringDate(recoveryPlan.startDate, '', 'PP') }}
+                {{ helpers.getLocalStringDate(recoveryPlan.startDate, 'RecoveryPlan.startDate', 'PP') }}
               </div>
             </v-row>
             <v-row class="justify-space-between flex-nowrap pt-4 pb-4 px-4 ma-0 mt-0">

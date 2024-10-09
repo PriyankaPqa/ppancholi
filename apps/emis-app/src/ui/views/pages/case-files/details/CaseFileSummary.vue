@@ -241,7 +241,7 @@ export default Vue.extend({
         s.closedArchivedActivity = {
           name: this.closeActivity.user.name,
           isClosed: this.closeActivity.activityType === CaseFileActivityType.CaseFileStatusClosed,
-          date: helpers.getLocalStringDate(this.closeActivity.created, 'Entity.created', 'PP'),
+          date: helpers.getLocalStringDate(this.closeActivity.created, 'CaseFileSummary.closeActivityDate', 'PP'),
           reason: this.closeActivity.activityType === CaseFileActivityType.CaseFileStatusClosed
             ? this.$m((this.closeActivity.details.reason as IIdMultilingualName).name) : null,
         };
