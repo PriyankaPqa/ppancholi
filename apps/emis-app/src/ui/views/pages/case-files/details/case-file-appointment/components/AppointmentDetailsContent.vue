@@ -66,11 +66,29 @@
           </tr>
           <tr>
             <th>{{ $t('caseFile.appointments.appointmentProgram') }}</th>
-            <td>{{ appointmentProgramName }}</td>
+            <td>{{ $m(appointmentProgram.name) }}</td>
           </tr>
           <tr>
             <th>{{ $t('caseFile.appointments.serviceOption') }}</th>
-            <td>{{ staffMemberNameRole }}</td>
+            <td>{{ serviceOptionName }}</td>
+          </tr>
+        </tbody>
+      </v-simple-table>
+    </v-sheet>
+    <v-sheet rounded outlined class="mt-4">
+      <v-simple-table>
+        <tbody>
+          <tr>
+            <th>{{ $t('caseFile.appointments.notes') }} </th>
+            <td>{{ appointment.notes || '—' }}</td>
+          </tr>
+          <tr>
+            <th>{{ $t('caseFile.appointments.details.sendEmailToAttendee') }}</th>
+            <td>{{ appointment.sendConfirmationEmail ? $t('common.buttons.yes') : $t('common.buttons.no') }}</td>
+          </tr>
+          <tr v-if="appointment.sendConfirmationEmail">
+            <th>{{ $t('caseFile.appointments.details.sendEmailTo') }}</th>
+            <td>{{ appointment.attendeeEmail }}</td>
           </tr>
         </tbody>
       </v-simple-table>
@@ -82,11 +100,13 @@
 import Vue from 'vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { format } from 'date-fns';
-import { IAppointment } from '@libs/entities-lib/appointment';
+import { IAppointment, IAppointmentProgram } from '@libs/entities-lib/appointment';
 import { IMember } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
+import helpers from '@/ui/helpers/helpers';
 import appointmentHelpers from '../utils/appointmentHelpers';
+import { NEXT_AVAILABLE_MEMBER_ID } from './AppointmentForm.vue';
 
 export default Vue.extend({
   name: 'AppointmentDetailsContent',
@@ -138,7 +158,7 @@ export default Vue.extend({
     },
 
     staffMemberNameRole(): TranslateResult {
-      return appointmentHelpers.getStaffMemberName(this.appointment.userAccountId, '', this);
+      return appointmentHelpers.getStaffMemberName(this.appointment.userAccountId, NEXT_AVAILABLE_MEMBER_ID, this);
     },
 
     modalityName(): string {
@@ -146,8 +166,18 @@ export default Vue.extend({
       return this.$m(modalities.find((m) => m.id === this.appointment?.appointmentModalityId)?.name);
     },
 
-    appointmentProgramName(): string {
-      return this.$m(useAppointmentProgramStore().getById(this.appointment.appointmentProgramId)?.name);
+    appointmentProgram(): IAppointmentProgram {
+     return useAppointmentProgramStore().getById(this.appointment.appointmentProgramId);
+    },
+
+    serviceOptionName(): string {
+     const types = useAppointmentProgramStore().getServiceOptionTypes();
+     const serviceOptionType = this.appointmentProgram.serviceOptions.find((so) => so.id === this.appointment.serviceOptionId)?.serviceOptionType;
+
+     if (serviceOptionType) {
+       return helpers.getOptionItemNameFromListOption(types, serviceOptionType);
+     }
+     return '';
     },
   },
 

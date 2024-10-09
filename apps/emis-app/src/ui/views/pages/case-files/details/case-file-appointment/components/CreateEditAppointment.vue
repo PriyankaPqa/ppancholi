@@ -62,8 +62,8 @@ import { Appointment, IAppointment, IAppointmentRequest } from '@libs/entities-l
 import routes from '@/constants/routes';
 import { useAppointmentStore } from '@/pinia/appointment/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-// import { VForm } from '@libs/shared-lib/types';
-// import helpers from '@/ui/helpers/helpers';
+import { VForm } from '@libs/shared-lib/types';
+import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { IMemberEntity } from '@libs/entities-lib/household-create';
 import caseFileDetail from '../../caseFileDetail';
@@ -137,9 +137,6 @@ export default mixins(caseFileDetail).extend({
     } else {
       this.appointment = new Appointment();
       this.appointment.caseFileId = this.id;
-
-      // TO DO - remove this, only for testing
-      this.submitRequestData = { ...new Appointment(), userAccountIds: [], selectedDateStartInUtc: '' };
     }
     this.loading = false;
   },
@@ -158,8 +155,15 @@ export default mixins(caseFileDetail).extend({
       }
     },
 
-    showConfirmation() {
-
+    async  showConfirmation() {
+      this.showReview = false;
+      const confirmCreate = await this.$confirm({
+        title: this.$t('caseFile.appointments.confirmCreate.title'),
+        messages: this.$t('caseFile.appointments.confirmCreate.content'),
+      });
+      if (confirmCreate) {
+        await this.submit();
+      }
     },
 
     async initSubmit() {
@@ -168,29 +172,36 @@ export default mixins(caseFileDetail).extend({
       }
 
       this.showTimeSlotError = !this.submitRequestData.startDate;
-      // const isValid = await (this.$refs.form as VForm).validate();
+      const isValid = await (this.$refs.form as VForm).validate();
 
-      // if (!isValid || this.showTimeSlotError) {
-      //   await this.$nextTick();
-      //   helpers.scrollToFirstError('app');
-      //   return;
-      // }
+      if (!isValid || this.showTimeSlotError) {
+        await this.$nextTick();
+        helpers.scrollToFirstError('app');
+        return;
+      }
 
-      // if (this.isEditMode) {
+      if (this.isEditMode) {
         await this.submit();
-      // } else {
-      //   this.showReview = true;
-      // }
+      } else {
+        this.showReview = true;
+      }
     },
 
     async submit() {
       this.loadingSubmit = true;
-      await useAppointmentStore().createAppointment(
+     const res = await useAppointmentStore().createAppointment(
         {
           ...this.submitRequestData,
           preferredLanguage: { optionItemId: this.primaryMember.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
         },
       );
+      if (res) {
+        this.$toasted.global.success(this.$t(this.isEditMode ? 'caseFile.appointments.success.edit' : 'caseFile.appointments.success.create'));
+        this.$router.push({ name: routes.caseFile.appointments.home.name, params: { id: this.id } });
+      } else {
+        this.$toasted.global.error(this.$t(this.isEditMode ? 'caseFile.appointments.failed.edit' : 'caseFile.appointments.failed.create'));
+      }
+
       this.loadingSubmit = false;
     },
   },

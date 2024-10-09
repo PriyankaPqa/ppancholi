@@ -37,7 +37,7 @@
                 :item-data-test="item => item.id"
                 :item-value="item => item.id"
                 :items="serviceOptions"
-                :item-text="(item) => getServiceOptionTypeName(item)" />
+                :item-text="(item) => helpers.getOptionItemNameFromListOption(serviceOptionTypes, item.serviceOptionType)" />
             </v-col>
           </v-row>
 
@@ -50,7 +50,7 @@
                 attach
                 :item-value="item => item"
                 :label="`${$t('caseFile.appointments.setMeetingFor')} *`"
-                :item-text="(item) => appointmentHelpers.getStaffMemberName(item, nextAvailableMemberId, this)"
+                :item-text="(item) => appointmentHelpers.getStaffMemberName(item, NEXT_AVAILABLE_MEMBER_ID, this)"
                 :items="displayedStaffMemberIds"
                 :disabled="loadingStaff || $hasLevel(UserRoles.level0) && !$hasLevel(UserRoles.level3)"
                 :rules="rules.staffMember">
@@ -246,6 +246,8 @@ import { Status } from '@libs/shared-lib/types';
 import AppointmentTimePicker from './AppointmentTimePicker.vue';
 import appointmentHelpers from '../utils/appointmentHelpers';
 
+export const NEXT_AVAILABLE_MEMBER_ID = 'next-available-member';
+
 export default Vue.extend({
   name: 'AppointmentForm',
 
@@ -295,9 +297,10 @@ export default Vue.extend({
 
   data() {
     return {
+      NEXT_AVAILABLE_MEMBER_ID,
+      helpers,
       appointmentHelpers,
       UserRoles,
-      nextAvailableMemberId: 'next-available-member',
       loading: false,
       loadingStaff: false,
       loadingAvailabilities: false,
@@ -346,7 +349,7 @@ export default Vue.extend({
     },
 
     serviceOptionTypes(): IOptionItem[] {
-      return useAppointmentProgramStore().getServiceOptionTypes(this.appointment?.serviceOptionId);
+      return useAppointmentProgramStore().getServiceOptionTypes();
     },
 
     // In the dropdown, only display service options of the selected appointment program that are currently active and have active types
@@ -397,7 +400,7 @@ export default Vue.extend({
 
       if (this.$hasLevel(UserRoles.level3) || this.$hasLevel(UserRoles.level0, true)) {
         if (this.serviceOptionStaffMembers.length) {
-          memberIds.push(this.nextAvailableMemberId);
+          memberIds.push(NEXT_AVAILABLE_MEMBER_ID);
         }
       }
 
@@ -463,7 +466,7 @@ export default Vue.extend({
 
     async displayedStaffMemberIds(newValue: string[]) {
       if (this.$hasLevel(UserRoles.level3) && newValue?.length) {
-        const ids = newValue.filter((i) => i !== this.nextAvailableMemberId);
+        const ids = newValue.filter((i) => i !== NEXT_AVAILABLE_MEMBER_ID);
         await useUserAccountMetadataStore().fetchByIds(ids, true);
       }
       // For Level 1 and 2 users, the appointment is assigned to them automatically if they are part if the service option staff
@@ -548,25 +551,13 @@ export default Vue.extend({
     }
 
     if (this.$hasLevel(UserRoles.level0, true)) {
-      this.localAppointment.userAccountId = this.nextAvailableMemberId;
+      this.localAppointment.userAccountId = NEXT_AVAILABLE_MEMBER_ID;
     }
   },
 
   methods: {
-    getServiceOptionTypeName(serviceOption: IServiceOption): string {
-      return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOption.serviceOptionType.optionItemId)?.name);
-    },
-
-    // getAttendeeName(attendee: IMember) {
-    //   let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
-    //   if (attendee.id === this.primaryMemberId) {
-    //     name += ` (${this.$t('caseFile.appointments.attendee.primary')})`;
-    //   }
-    //   return name;
-    // },
-
     getStaffMemberName(id: string): TranslateResult | string {
-      if (id === this.nextAvailableMemberId) {
+      if (id === NEXT_AVAILABLE_MEMBER_ID) {
         return this.$t('caseFile.appointments.nextAvailable');
       }
       const currentUserId = useUserStore().getUserId();
@@ -596,9 +587,9 @@ export default Vue.extend({
       if (!this.selectedAppointmentProgram?.id || !this.selectedServiceOption || !this.localAppointment?.userAccountId || !this.selectedDate) {
         return null;
       }
-      const userAccountIds = this.localAppointment?.userAccountId === this.nextAvailableMemberId
+      const userAccountIds = this.localAppointment?.userAccountId === NEXT_AVAILABLE_MEMBER_ID
       // The next available case file manager was selected, so we fetch the availability of all the staff members
-        ? this.displayedStaffMemberIds.filter((id) => id !== this.nextAvailableMemberId)
+        ? this.displayedStaffMemberIds.filter((id) => id !== NEXT_AVAILABLE_MEMBER_ID)
         : [this.localAppointment.userAccountId];
 
       return {

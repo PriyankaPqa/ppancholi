@@ -3944,5 +3944,13 @@
     "caseFile.appointments.review.backToEdit": "Back to editing",
     "caseFile.appointments.review.title": "Review appointment details",
     "caseFile.appointments.details.teamsLink": "Teams link",
+    "caseFile.appointments.details.sendEmailToAttendee": "Send confirmation email to attendee",
+    "caseFile.appointments.details.sendEmailTo": "Send confirmation email to",
+    "caseFile.appointments.confirmCreate.title": "Confirmation",
+    "caseFile.appointments.confirmCreate.content": "Are you sure you want to create this appointment?",
+    "caseFile.appointments.success.create": "The appointment was created successfully",
+    "caseFile.appointments.success.edit": "The appointment was updated successfully",
+    "caseFile.appointments.failed.edit": "There was an issue updating the appointment",
+    "caseFile.appointments.failed.create": "There was an issue creating the appointment",
     "caseFile.appointments.duration.minutes": "{minutes} minutes"
 }
