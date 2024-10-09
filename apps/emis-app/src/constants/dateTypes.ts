@@ -19,6 +19,7 @@ export const dateTypes = {
     'Approval.submissionStartedDate',
     'ApprovalHistory.dateOfApprovalAction',
     'Event.statusChangeDate',
+    'CaseFileSummary.closeActivityDate',
   ] as string[],
 
   convertToUtc: [
