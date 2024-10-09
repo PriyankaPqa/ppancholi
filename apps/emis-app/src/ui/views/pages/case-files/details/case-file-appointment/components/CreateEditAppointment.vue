@@ -189,15 +189,15 @@ export default mixins(caseFileDetail).extend({
 
     async submit() {
       this.loadingSubmit = true;
-     const res = await useAppointmentStore().createAppointment(
+     const appointment = !this.isEditMode ? await useAppointmentStore().createAppointment(
         {
           ...this.submitRequestData,
           preferredLanguage: { optionItemId: this.primaryMember.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
         },
-      );
-      if (res) {
+      ) : null;
+      if (appointment) {
         this.$toasted.global.success(this.$t(this.isEditMode ? 'caseFile.appointments.success.edit' : 'caseFile.appointments.success.create'));
-        this.$router.push({ name: routes.caseFile.appointments.home.name, params: { id: this.id } });
+        this.$router.push({ name: routes.caseFile.appointments.details.name, params: { id: this.id, appointmentId: appointment.id } });
       } else {
         this.$toasted.global.error(this.$t(this.isEditMode ? 'caseFile.appointments.failed.edit' : 'caseFile.appointments.failed.create'));
       }
