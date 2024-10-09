@@ -2,6 +2,8 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getRoles } from '@libs/cypress-lib/helpers/rolesSelector';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { MockCreateMassActionXlsxFileRequestParams } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { formatDateToMmmDdYyyy } from '@libs/cypress-lib/helpers';
+import { format } from 'date-fns';
 import { fixtureGenerateHomeAddressDataCorrectionXlsxFile } from '../../../fixtures/mass-action-data-correction';
 import {
   createEventAndTeam,
@@ -11,6 +13,7 @@ import {
 } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { processDataCorrectionFileSteps } from './canSteps';
+import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 
 const canRoles = [
   UserRoles.level6,
@@ -69,6 +72,7 @@ describe('[T28865] Process a Home Address data correction file', { tags: ['@hous
             cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
             cy.wrap(resultHouseholdSummary).as('householdsSummary');
             cy.wrap(resultMassFinancialAssistance.name).as('massActionName');
+            cy.wrap(resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile.id).as('caseFileId1');
             cy.login(roleName);
             cy.goTo(`mass-actions/data-correction/details/${resultMassFinancialAssistance.id}`);
           });
@@ -82,6 +86,15 @@ describe('[T28865] Process a Home Address data correction file', { tags: ['@hous
           processDataCorrectionFileSteps(
             { householdQuantity, processedItems: 'household records', massActionName: this.massActionName, massActionType: 'Home Address', roleName },
           );
+          cy.goTo(`casefile/${this.caseFileId1}`);
+          const caseFileDetailsPage = new CaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Address information changed');
+          caseFileDetailsPage.getCaseFileActivityCard().within(() => {
+            caseFileDetailsPage.getRoleNameSystemAdmin().should('eq', 'System Admin');
+            caseFileDetailsPage.getCaseFileActivityLogDate().should('string', formatDateToMmmDdYyyy(format(Date.now(), 'PPp')));
+            caseFileDetailsPage.getCaseFileActivityTitle().should('eq', 'Modified household information');
+            caseFileDetailsPage.getCaseFileActivityBody().should('string', 'Address information changed');
+          });
         });
       });
     }
