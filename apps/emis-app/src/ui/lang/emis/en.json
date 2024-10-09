@@ -294,6 +294,7 @@
     "caseFile.appointments.attendee.primary": "Primary",
     "caseFile.appointments.choseTime": "Chose time",
     "caseFile.appointments.date": "Date",
+    "caseFile.appointments.timeDuration": "Time and duration",
     "caseFile.appointments.duration": "Duration",
     "caseFile.appointments.edit.title": "Edit appointment",
     "caseFile.appointments.email": "Attendee email address",
@@ -3939,5 +3940,9 @@
     "caseFile.appointments.error.noStaffMembersInServiceOption": "This service option has no assigned staff members",
     "caseFile.appointments.error.notAssignedToServiceOption": "You are not assigned to this service option",
     "caseFile.appointments.error.noStaffMembersInAppointmentProgram": "This appointment program has no staff members",
-    "caseFile.appointments.error.noAppointmentPrograms": "This event has no appointment programs"
+    "caseFile.appointments.error.noAppointmentPrograms": "This event has no appointment programs",
+    "caseFile.appointments.review.backToEdit": "Back to editing",
+    "caseFile.appointments.review.title": "Review appointment details",
+    "caseFile.appointments.details.teamsLink": "Teams link",
+    "caseFile.appointments.duration.minutes": "{minutes} minutes"
 }

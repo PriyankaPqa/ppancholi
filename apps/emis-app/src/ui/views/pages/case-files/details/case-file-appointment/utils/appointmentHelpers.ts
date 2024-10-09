@@ -3,6 +3,10 @@ import { DayOfWeek, IDaySchedule, ITimeSlot } from '@libs/entities-lib/appointme
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { addDays, format } from 'date-fns';
 import helpers from '@/ui/helpers/helpers';
+import { IMember } from '@libs/entities-lib/household-create';
+import { TranslateResult } from 'vue-i18n';
+import { useUserStore } from '@/pinia/user/user';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 
 export default {
 
@@ -246,4 +250,30 @@ export default {
 
       return intervals.map((i) => ({ text: format(i, 'hh:mm a'), value: format(i, 'HH:mm:ss') }));
   },
-  };
+
+  getAttendeeName(attendee: IMember, primaryMemberId: string, vue: Vue) {
+    if (!attendee?.identitySet) {
+      return '';
+    }
+    let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
+    if (attendee.id === primaryMemberId) {
+      name += ` (${vue.$t('caseFile.appointments.attendee.primary')})`;
+    }
+    return name;
+  },
+
+  getStaffMemberName(id: string, nextAvailableMemberId = '', vue: Vue): TranslateResult | string {
+    if (id === nextAvailableMemberId) {
+      return vue.$t('caseFile.appointments.nextAvailable');
+    }
+    const currentUserId = useUserStore().getUserId();
+    if (id === currentUserId) {
+      return vue.$t('caseFile.appointments.myself');
+    }
+    const user = useUserAccountMetadataStore().getById(id);
+    if (user?.displayName) {
+      return `${user.displayName} (${vue.$m(user.roleName)})`;
+    }
+    return '';
+  },
+};

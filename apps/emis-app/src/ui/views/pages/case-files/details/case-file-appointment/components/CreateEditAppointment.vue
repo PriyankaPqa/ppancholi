@@ -22,14 +22,33 @@
           <v-btn
             color="primary"
             data-test="save"
-            :loading="loading"
+            :loading="loadingSubmit"
             :disabled="failed || loading || (isEditMode && !dirty) "
-            @click="submit()">
-            {{ isEditMode ? $t('common.save') : $t('common.buttons.add') }}
+            @click="initSubmit()">
+            {{ isEditMode ? $t('common.save') : $t('common.buttons.next') }}
           </v-btn>
         </template>
       </rc-page-content>
     </page-template>
+    <rc-dialog
+      v-if="showReview"
+      :title="$t('caseFile.appointments.review.title')"
+      :show.sync="showReview"
+      :cancel-action-label="$t('caseFile.appointments.review.backToEdit')"
+      :submit-action-label="$t('common.buttons.create')"
+      :max-width="800"
+      :min-height="400"
+      content-padding="8"
+      persistent
+      data-test="appointment-review-dialog"
+      @cancel="showReview = false"
+      @close="showReview = false"
+      @submit="showConfirmation">
+      <appointment-details-content
+        :appointment="submitRequestData"
+        :attendee="attendee"
+        :primary-member-id="primaryMember ? primaryMember.id : ''" />
+    </rc-dialog>
   </validation-observer>
 </template>
 
@@ -43,9 +62,10 @@ import { Appointment, IAppointment, IAppointmentRequest } from '@libs/entities-l
 import routes from '@/constants/routes';
 import { useAppointmentStore } from '@/pinia/appointment/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
-import { VForm } from '@libs/shared-lib/types';
-import helpers from '@/ui/helpers/helpers';
+// import { VForm } from '@libs/shared-lib/types';
+// import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
 import caseFileDetail from '../../caseFileDetail';
 import AppointmentForm from './AppointmentForm.vue';
 
@@ -74,7 +94,9 @@ export default mixins(caseFileDetail).extend({
     return {
       appointment: null as IAppointment,
       loading: false,
+      loadingSubmit: false,
       showTimeSlotError: false,
+      showReview: false,
       submitRequestData: null as IAppointmentRequest,
     };
   },
@@ -82,6 +104,12 @@ export default mixins(caseFileDetail).extend({
   computed: {
     isEditMode(): boolean {
       return this.$route.name === routes.caseFile.appointments.edit.name;
+    },
+    attendee(): IMemberEntity {
+      if (!this.submitRequestData?.attendeeEmail) {
+        return null;
+      }
+      return this.members.find((m) => this.submitRequestData.attendeeId === m.id);
     },
   },
 
@@ -109,6 +137,9 @@ export default mixins(caseFileDetail).extend({
     } else {
       this.appointment = new Appointment();
       this.appointment.caseFileId = this.id;
+
+      // TO DO - remove this, only for testing
+      this.submitRequestData = { ...new Appointment(), userAccountIds: [], selectedDateStartInUtc: '' };
     }
     this.loading = false;
   },
@@ -127,21 +158,40 @@ export default mixins(caseFileDetail).extend({
       }
     },
 
-    async submit() {
-      this.showTimeSlotError = !this.submitRequestData.startDate;
-      const isValid = await (this.$refs.form as VForm).validate();
+    showConfirmation() {
 
-      if (!isValid || this.showTimeSlotError) {
-        await this.$nextTick();
-        helpers.scrollToFirstError('app');
+    },
+
+    async initSubmit() {
+      if (!this.submitRequestData) {
+        return;
       }
 
-      useAppointmentStore().createAppointment(
+      this.showTimeSlotError = !this.submitRequestData.startDate;
+      // const isValid = await (this.$refs.form as VForm).validate();
+
+      // if (!isValid || this.showTimeSlotError) {
+      //   await this.$nextTick();
+      //   helpers.scrollToFirstError('app');
+      //   return;
+      // }
+
+      // if (this.isEditMode) {
+        await this.submit();
+      // } else {
+      //   this.showReview = true;
+      // }
+    },
+
+    async submit() {
+      this.loadingSubmit = true;
+      await useAppointmentStore().createAppointment(
         {
           ...this.submitRequestData,
-          preferredLanguage: 'en', // { optionItemId: this.primaryMember.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
+          preferredLanguage: { optionItemId: this.primaryMember.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
         },
       );
+      this.loadingSubmit = false;
     },
   },
 });

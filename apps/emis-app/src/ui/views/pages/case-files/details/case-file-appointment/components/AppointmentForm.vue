@@ -50,7 +50,7 @@
                 attach
                 :item-value="item => item"
                 :label="`${$t('caseFile.appointments.setMeetingFor')} *`"
-                :item-text="(item) => getStaffMemberName(item)"
+                :item-text="(item) => appointmentHelpers.getStaffMemberName(item, nextAvailableMemberId, this)"
                 :items="displayedStaffMemberIds"
                 :disabled="loadingStaff || $hasLevel(UserRoles.level0) && !$hasLevel(UserRoles.level3)"
                 :rules="rules.staffMember">
@@ -80,7 +80,7 @@
                 data-test="select-attendee"
                 attach
                 :label="`${$t('caseFile.appointments.attendee')} *`"
-                :item-text="(item) => getAttendeeName(item)"
+                :item-text="(item) => appointmentHelpers.getAttendeeName(item, primaryMemberId, this)"
                 :item-value="(item) => item.id"
                 :item-data-test="item=> item.id"
                 :items="attendees"
@@ -89,12 +89,16 @@
             <v-col cols="12" md="6" class="pb-0">
               <v-select-with-validation
                 v-model="selectedDuration"
-                :item-text="item => item.toString()"
+                :item-text="item => $t('caseFile.appointments.duration.minutes', { minutes: item })"
                 data-test="appointment-duration"
                 attach
                 :label="`${$t('caseFile.appointments.duration')} *`"
                 :items="appointmentDurations"
-                :rules="rules.duration" />
+                :rules="rules.duration">
+                <template #selection="{ item }">
+                  {{ $t('caseFile.appointments.duration.minutes', { minutes: item }) }}
+                </template>
+              </v-select-with-validation>
             </v-col>
           </v-row>
 
@@ -240,6 +244,7 @@ import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { Status } from '@libs/shared-lib/types';
 import AppointmentTimePicker from './AppointmentTimePicker.vue';
+import appointmentHelpers from '../utils/appointmentHelpers';
 
 export default Vue.extend({
   name: 'AppointmentForm',
@@ -290,6 +295,7 @@ export default Vue.extend({
 
   data() {
     return {
+      appointmentHelpers,
       UserRoles,
       nextAvailableMemberId: 'next-available-member',
       loading: false,
@@ -460,7 +466,8 @@ export default Vue.extend({
         const ids = newValue.filter((i) => i !== this.nextAvailableMemberId);
         await useUserAccountMetadataStore().fetchByIds(ids, true);
       }
-      if (this.$hasLevel(UserRoles.level1) && this.selectedServiceOption) {
+      // For Level 1 and 2 users, the appointment is assigned to them automatically if they are part if the service option staff
+      if (this.$hasLevel(UserRoles.level1) && !this.$hasLevel(UserRoles.level3) && this.selectedServiceOption) {
         const currentUserId = useUserStore().getUserId();
         if (newValue.includes(currentUserId)) {
           this.localAppointment.userAccountId = currentUserId;
@@ -491,8 +498,8 @@ export default Vue.extend({
     'localAppointment.userAccountId': {
       async handler(newValue) {
         if (newValue && this.selectedDate) {
-        await this.fetchStaffMemberAvailability();
-      }
+          await this.fetchStaffMemberAvailability();
+        }
       },
     },
 
@@ -523,6 +530,8 @@ export default Vue.extend({
         const payload = {
           ...newValue,
           ...this.getRequestPayload() || {},
+          startDate: new Date('2024-10-10 09:00').toISOString(),
+          endDate: new Date('2024-10-10 09:30').toISOString(),
         };
         this.$emit('update:submitRequestData', payload);
       },
@@ -550,13 +559,13 @@ export default Vue.extend({
       return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOption.serviceOptionType.optionItemId)?.name);
     },
 
-    getAttendeeName(attendee: IMember) {
-      let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
-      if (attendee.id === this.primaryMemberId) {
-        name += ` (${this.$t('caseFile.appointments.attendee.primary')})`;
-      }
-      return name;
-    },
+    // getAttendeeName(attendee: IMember) {
+    //   let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
+    //   if (attendee.id === this.primaryMemberId) {
+    //     name += ` (${this.$t('caseFile.appointments.attendee.primary')})`;
+    //   }
+    //   return name;
+    // },
 
     getStaffMemberName(id: string): TranslateResult | string {
       if (id === this.nextAvailableMemberId) {

@@ -1,4 +1,4 @@
-import { IUserInformation } from '@libs/shared-lib/types';
+import { IListOption, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 import { IStaffMemberAvailabilityRequest } from '../appointment-staff-member/appointment-staff-member.types';
 
@@ -40,7 +40,7 @@ export interface IAppointment extends IEntity {
   userAccountId: uuid;
   appointmentStatus: AppointmentStatus;
   notes: string;
-  preferredLanguage: string, // IListOption;
+  preferredLanguage: IListOption;
   // The id for a group of recurring appointments
   seriesMasterId?: string;
   sendConfirmationEmail: boolean;
