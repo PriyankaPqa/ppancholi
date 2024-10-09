@@ -54,6 +54,5 @@ export const dateTypes = {
       return DateTypes.Static;
     }
     throw new Error('Please enter a proper date field name');
-    // return DateTypes.Unknown;
   },
 };
