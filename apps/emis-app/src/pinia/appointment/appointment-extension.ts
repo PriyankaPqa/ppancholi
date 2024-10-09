@@ -1,14 +1,14 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
 // import { ref, Ref } from 'vue';
-import { IAppointment, IdParams } from '@libs/entities-lib/appointment';
+import { IAppointment, IAppointmentRequest, IdParams } from '@libs/entities-lib/appointment';
 import { AppointmentsService, IAppointmentsServiceMock } from '@libs/services-lib/appointments';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<IAppointment, IdParams>,
   service: AppointmentsService | IAppointmentsServiceMock,
 ) {
-  async function addAppointment(appointment: IAppointment) : Promise<IAppointment> {
-    const result = await service.create(appointment);
+  async function createAppointment(payload: IAppointmentRequest) : Promise<IAppointment> {
+    const result = await service.create(payload);
     if (result) {
       baseComponents.addNewlyCreatedId(result);
       baseComponents.set(result);
@@ -25,7 +25,7 @@ export function getExtensionComponents(
   }
 
   return {
-    addAppointment,
+    createAppointment,
     editAppointment,
   };
 }

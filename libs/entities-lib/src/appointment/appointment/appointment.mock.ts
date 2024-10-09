@@ -1,6 +1,6 @@
 import { mockUserInformation } from '../../user-account';
 import { mockBaseData } from '../../base';
-import { AppointmentStatus, IAppointment, IAppointmentStatusHistory } from './appointment.types';
+import { AppointmentStatus, IAppointment, IAppointmentRequest, IAppointmentStatusHistory } from './appointment.types';
 
   export const mockAppointmentStatusHistory = (force?: Partial<IAppointmentStatusHistory>): IAppointmentStatusHistory => ({
     userInformation: mockUserInformation(),
@@ -28,7 +28,13 @@ export const mockAppointment = (force? : Partial<IAppointment>): IAppointment =>
   notes: 'mock-notes',
   preferredLanguage: { optionItemId: 'id-EN', specifiedOther: null },
   sendConfirmationEmail: null,
-  rescheduled: false,
   appointmentHistory: [mockAppointmentStatusHistory()],
+  ...force,
+});
+
+export const mockAppointmentRequest = (force? : Partial<IAppointmentRequest>): IAppointmentRequest => ({
+  ...mockAppointment(force),
+  userAccountIds: ['userAccount-id-1'],
+  selectedDateStartInUtc: '2024-01-24T04:00:00.000Z',
   ...force,
 });

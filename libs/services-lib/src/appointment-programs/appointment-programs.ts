@@ -16,7 +16,7 @@ export class AppointmentProgramsService extends DomainBaseService<IAppointmentPr
 
   async create(item: AppointmentProgram): Promise<IAppointmentProgram> {
     const payload = this.parsePayload(item);
-    return this.http.post<IAppointmentProgram>(`${this.baseUrl}/${item.id}`, payload, { globalHandler: GlobalHandler.Partial });
+    return this.http.post<IAppointmentProgram>(this.baseUrl, payload, { globalHandler: GlobalHandler.Partial });
   }
 
   async update(item: AppointmentProgram): Promise<IAppointmentProgram> {

@@ -37,7 +37,7 @@
                 :item-data-test="item => item.id"
                 :item-value="item => item.id"
                 :items="serviceOptions"
-                :item-text="(item) => getServiceOptionTypeName(item)" />
+                :item-text="(item) => helpers.getOptionItemNameFromListOption(serviceOptionTypes, item.serviceOptionType)" />
             </v-col>
           </v-row>
 
@@ -47,12 +47,12 @@
                 v-model="localAppointment.userAccountId"
                 data-test="select-staff-member"
                 :loading="loadingStaff"
-                :disabled="loadingStaff"
                 attach
                 :item-value="item => item"
                 :label="`${$t('caseFile.appointments.setMeetingFor')} *`"
-                :item-text="(item) => getStaffMemberName(item)"
+                :item-text="(item) => appointmentHelpers.getStaffMemberName(item, NEXT_AVAILABLE_MEMBER_ID, this)"
                 :items="displayedStaffMemberIds"
+                :disabled="loadingStaff || $hasLevel(UserRoles.level0) && !$hasLevel(UserRoles.level3)"
                 :rules="rules.staffMember">
                 <template #selection="{ item }">
                   {{ getStaffMemberName(item) }}
@@ -80,7 +80,7 @@
                 data-test="select-attendee"
                 attach
                 :label="`${$t('caseFile.appointments.attendee')} *`"
-                :item-text="(item) => getAttendeeName(item)"
+                :item-text="(item) => appointmentHelpers.getAttendeeName(item, primaryMemberId, this)"
                 :item-value="(item) => item.id"
                 :item-data-test="item=> item.id"
                 :items="attendees"
@@ -89,12 +89,16 @@
             <v-col cols="12" md="6" class="pb-0">
               <v-select-with-validation
                 v-model="selectedDuration"
-                :item-text="item => item.toString()"
+                :item-text="item => $t('caseFile.appointments.duration.minutes', { minutes: item })"
                 data-test="appointment-duration"
                 attach
                 :label="`${$t('caseFile.appointments.duration')} *`"
                 :items="appointmentDurations"
-                :rules="rules.duration" />
+                :rules="rules.duration">
+                <template #selection="{ item }">
+                  {{ $t('caseFile.appointments.duration.minutes', { minutes: item }) }}
+                </template>
+              </v-select-with-validation>
             </v-col>
           </v-row>
 
@@ -141,8 +145,12 @@
                       </ul>
                     </div>
                   </message-box>
-
+                  <template v-if="loadingAvailabilities">
+                    <v-skeleton-loader class="my-6" type="article" />
+                    <v-skeleton-loader class="my-6" type="article" />
+                  </template>
                   <appointment-time-picker
+                    v-else
                     :date="selectedDate"
                     :duration="selectedDuration"
                     :booked-time.sync="selectedTime"
@@ -158,7 +166,7 @@
           <v-row class="mt-0">
             <v-col cols="12">
               <v-text-area-with-validation
-                v-model="appointment.notes"
+                v-model="localAppointment.notes"
                 data-test="appointment-notes"
                 full-width
                 hide-details
@@ -185,7 +193,7 @@
                 </p>
 
                 <validation-provider v-slot="{ errors }" :rules="rules.sendEmail">
-                  <v-radio-group v-model="appointment.sendConfirmationEmail" :error-messages="errors" row class="mt-0 pb-4">
+                  <v-radio-group v-model="localAppointment.sendConfirmationEmail" :error-messages="errors" row class="mt-0 pb-4">
                     <v-radio
                       data-test="send-confirmation-email-yes"
                       :label="$t('common.buttons.yes')"
@@ -199,8 +207,8 @@
                 </validation-provider>
 
                 <v-text-field-with-validation
-                  v-if="appointment.sendConfirmationEmail"
-                  v-model="appointment.attendeeEmail"
+                  v-if="localAppointment.sendConfirmationEmail"
+                  v-model="localAppointment.attendeeEmail"
                   background-color="white"
                   :disabled="!$hasLevel(UserRoles.level1)"
                   class="pb-0"
@@ -219,8 +227,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { MessageBox, VDateFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
-import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IDateRange, IStaffMemberAvailabilityRequest } from '@libs/entities-lib/appointment';
+import { MessageBox, VDateFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
+import { Appointment, AppointmentStatus, IAppointment, IAppointmentProgram, IAppointmentRequest,
+  IDateRange, IStaffMemberAvailabilityRequest } from '@libs/entities-lib/appointment';
 import { useUserStore } from '@/pinia/user/user';
 import helpers from '@/ui/helpers/helpers';
 import { IMember } from '@libs/entities-lib/household-create';
@@ -233,7 +242,11 @@ import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { TranslateResult } from 'vue-i18n';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
+import { Status } from '@libs/shared-lib/types';
 import AppointmentTimePicker from './AppointmentTimePicker.vue';
+import appointmentHelpers from '../utils/appointmentHelpers';
+
+export const NEXT_AVAILABLE_MEMBER_ID = 'next-available-member';
 
 export default Vue.extend({
   name: 'AppointmentForm',
@@ -245,12 +258,17 @@ export default Vue.extend({
     StatusSelect,
     VDateFieldWithValidation,
     MessageBox,
+    VTextFieldWithValidation,
   },
 
   props: {
     appointment: {
       type: Object as () => IAppointment,
       required: true,
+    },
+    submitRequestData: {
+      type: Object as () => IAppointmentRequest,
+      default: null,
     },
     isEditMode: {
       type: Boolean,
@@ -280,10 +298,13 @@ export default Vue.extend({
 
   data() {
     return {
+      NEXT_AVAILABLE_MEMBER_ID,
+      helpers,
+      appointmentHelpers,
       UserRoles,
-      nextAvailableMemberId: 'next-available-member',
       loading: false,
       loadingStaff: false,
+      loadingAvailabilities: false,
       getLocalStringDate: helpers.getLocalStringDate,
       localAppointment: new Appointment(),
       appointmentDurations: [15, 20, 30, 60],
@@ -329,14 +350,12 @@ export default Vue.extend({
     },
 
     serviceOptionTypes(): IOptionItem[] {
-      return useAppointmentProgramStore().getServiceOptionTypes(this.appointment?.serviceOptionId);
+      return useAppointmentProgramStore().getServiceOptionTypes();
     },
 
-    // In the dropdown, only display service options of the selected appointment program that are currently active and have active types
-    // or - in edit mode - that has been previously selected
+    // In the dropdown, only display service options of the selected appointment program that are currently active
     serviceOptions(): IServiceOption[] {
-      return this.selectedAppointmentProgram?.serviceOptions.filter((so) => this.serviceOptionTypes.map((t) => t.id).includes(so.serviceOptionType.optionItemId)
-    || so.id === this.appointment.serviceOptionId) || [];
+      return this.selectedAppointmentProgram?.serviceOptions.filter((so) => so.serviceOptionStatus === Status.Active) || [];
     },
 
     selectedServiceOption(): IServiceOption {
@@ -366,7 +385,7 @@ export default Vue.extend({
 
     // The user account ids of the staff members displayed in the dropdown 'Set meeting for', ordered in the required order - depending on user level
     displayedStaffMemberIds(): string[] {
-      if (!this.selectedServiceOption) {
+      if (this.$hasLevel(UserRoles.level1) && !this.selectedServiceOption) {
         return [];
       }
 
@@ -379,7 +398,7 @@ export default Vue.extend({
 
       if (this.$hasLevel(UserRoles.level3) || this.$hasLevel(UserRoles.level0, true)) {
         if (this.serviceOptionStaffMembers.length) {
-          memberIds.push(this.nextAvailableMemberId);
+          memberIds.push(NEXT_AVAILABLE_MEMBER_ID);
         }
       }
 
@@ -403,36 +422,56 @@ export default Vue.extend({
     // the selected time slot, as passed to or received from to the component AppointmentTimePicker
     selectedTime: {
       get(): IDateRange {
-        return { startDateTime: this.localAppointment.startDate, endDateTime: this.localAppointment.endDate };
+        return { startDate: this.localAppointment.startDate, endDate: this.localAppointment.endDate };
       },
       set(value: IDateRange) {
-        this.localAppointment.startDate = value?.startDateTime;
-        this.localAppointment.endDate = value?.endDateTime;
+        this.localAppointment.startDate = value?.startDate;
+        this.localAppointment.endDate = value?.endDate;
       },
     },
   },
 
   watch: {
-    async selectedAppointmentProgram(newValue, oldValue) {
+    async selectedAppointmentProgram(newValue:IAppointmentProgram, oldValue: IAppointmentProgram) {
       if (!!oldValue && newValue !== oldValue) {
         this.localAppointment.serviceOptionId = null;
       }
       if (newValue) {
         await this.fetchStaffMembers();
+        if (!newValue.serviceOptions.length || !newValue.serviceOptions.some((so) => so.serviceOptionStatus === Status.Active)) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.noServiceOptions') });
+        }
       }
     },
 
     selectedServiceOption(newValue, oldValue) {
       if (!!oldValue && newValue !== oldValue) {
         this.localAppointment.appointmentModalityId = null;
-        this.localAppointment.userAccountId = null;
+        if (this.$hasLevel(UserRoles.level1)) {
+          this.localAppointment.userAccountId = null;
+        }
+      }
+    },
+
+    serviceOptionStaffMembers(newValue) {
+      if (this.selectedServiceOption && !newValue.length) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.noStaffMembersInServiceOption') });
       }
     },
 
     async displayedStaffMemberIds(newValue: string[]) {
-      if (newValue?.length) {
-        const ids = newValue.filter((i) => i !== this.nextAvailableMemberId);
+      if (this.$hasLevel(UserRoles.level3) && newValue?.length) {
+        const ids = newValue.filter((i) => i !== NEXT_AVAILABLE_MEMBER_ID);
         await useUserAccountMetadataStore().fetchByIds(ids, true);
+      }
+      // For Level 1 and 2 users, the appointment is assigned to them automatically if they are part if the service option staff
+      if (this.$hasLevel(UserRoles.level1) && !this.$hasLevel(UserRoles.level3) && this.selectedServiceOption) {
+        const currentUserId = useUserStore().getUserId();
+        if (newValue.includes(currentUserId)) {
+          this.localAppointment.userAccountId = currentUserId;
+        } else {
+          this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.notAssignedToServiceOption') });
+        }
       }
     },
 
@@ -457,8 +496,8 @@ export default Vue.extend({
     'localAppointment.userAccountId': {
       async handler(newValue) {
         if (newValue && this.selectedDate) {
-        await this.fetchStaffMemberAvailability();
-      }
+          await this.fetchStaffMemberAvailability();
+        }
       },
     },
 
@@ -486,7 +525,11 @@ export default Vue.extend({
 
     localAppointment: {
       handler(newValue) {
-        this.$emit('update:appointment', newValue);
+        const payload = {
+          ...newValue,
+          ...this.getRequestPayload() || {},
+        };
+        this.$emit('update:submitRequestData', payload);
       },
       deep: true,
     },
@@ -497,28 +540,19 @@ export default Vue.extend({
     this.localAppointment = new Appointment(this.appointment);
     if (this.isEditMode) {
       // TODO - move this to a computed var
-      this.selectedDuration = ((new Date(this.appointment.endDate).getTime() - new Date(this.appointment.startDate).getTime()) / (1000 * 60))
-      .toString();
+      this.selectedDuration = ((new Date(this.appointment.endDate).getTime() - new Date(this.appointment.startDate).getTime()) / (1000 * 60));
     } else {
       this.localAppointment.attendeeEmail = this.primaryMemberEmail;
+    }
+
+    if (this.$hasLevel(UserRoles.level0, true)) {
+      this.localAppointment.userAccountId = NEXT_AVAILABLE_MEMBER_ID;
     }
   },
 
   methods: {
-    getServiceOptionTypeName(serviceOption: IServiceOption): string {
-      return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOption.serviceOptionType.optionItemId)?.name);
-    },
-
-    getAttendeeName(attendee: IMember) {
-      let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
-      if (attendee.id === this.primaryMemberId) {
-        name += ` (${this.$t('caseFile.appointments.attendee.primary')})`;
-      }
-      return name;
-    },
-
     getStaffMemberName(id: string): TranslateResult | string {
-      if (id === this.nextAvailableMemberId) {
+      if (id === NEXT_AVAILABLE_MEMBER_ID) {
         return this.$t('caseFile.appointments.nextAvailable');
       }
       const currentUserId = useUserStore().getUserId();
@@ -537,27 +571,36 @@ export default Vue.extend({
         return;
       }
       this.loadingStaff = true;
-      await useAppointmentStaffMemberStore().fetchByAppointmentProgramId(this.selectedAppointmentProgram.id);
+      const staffMembers = await useAppointmentStaffMemberStore().fetchByAppointmentProgramId(this.selectedAppointmentProgram.id);
+      if (!staffMembers?.length) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.noStaffMembersInAppointmentProgram') });
+      }
       this.loadingStaff = false;
     },
 
-    async fetchStaffMemberAvailability() {
-      if (!this.selectedAppointmentProgram?.id) {
-        return;
+    getRequestPayload(): IStaffMemberAvailabilityRequest {
+      if (!this.selectedAppointmentProgram?.id || !this.selectedServiceOption || !this.localAppointment?.userAccountId || !this.selectedDate) {
+        return null;
       }
-      const userAccountIds = this.localAppointment.userAccountId === this.nextAvailableMemberId
+      const userAccountIds = this.localAppointment?.userAccountId === NEXT_AVAILABLE_MEMBER_ID
       // The next available case file manager was selected, so we fetch the availability of all the staff members
-        ? this.displayedStaffMemberIds.filter((id) => id !== this.nextAvailableMemberId)
+        ? this.displayedStaffMemberIds.filter((id) => id !== NEXT_AVAILABLE_MEMBER_ID)
         : [this.localAppointment.userAccountId];
 
-      const payload: IStaffMemberAvailabilityRequest = {
+      return {
         appointmentProgramId: this.selectedAppointmentProgram.id,
         userAccountIds,
-        selectedDate: this.selectedDate, // The date that the user picked in the date picker
         selectedDateStartInUtc: new Date(`${this.selectedDate} 0:00`).toISOString(), // The midnight of the selected date, in UTC
       };
+    },
 
-      this.availabilities = await this.$services.appointmentStaffMembers.fetchAvailabilites(payload);
+    async fetchStaffMemberAvailability() {
+      this.loadingAvailabilities = true;
+      const payload = this.getRequestPayload();
+      if (payload) {
+        this.availabilities = await this.$services.appointmentStaffMembers.fetchAvailabilites(payload);
+      }
+      this.loadingAvailabilities = false;
     },
   },
 });

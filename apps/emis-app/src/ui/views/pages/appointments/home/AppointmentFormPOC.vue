@@ -231,8 +231,8 @@ export default Vue.extend({
     calculateAvailableSlots(availabilities: IDateRange[]): ITimeSlot[] {
       const slots = [] as ITimeSlot[];
       availabilities.forEach((a) => {
-        let s = new Date(a.startDateTime);
-        const end = new Date(a.endDateTime);
+        let s = new Date(a.startDate);
+        const end = new Date(a.endDate);
         while (s < end) {
           const e = addMinutes(s, +this.duration);
 
@@ -279,7 +279,7 @@ export default Vue.extend({
         ).mergedSchedule;
 
         const daySchedule = staffSchedule[this.currentWeekDay];
-        const scheduleStart = daySchedule.timeSlots?.[0]?.startDateTime;
+        const scheduleStart = daySchedule.timeSlots?.[0]?.startDate;
         this.firstTime = scheduleStart ? format(addMinutes(parseISO(scheduleStart as string), -(+this.duration)), 'HH:mm') : '09:00';
 }
     },

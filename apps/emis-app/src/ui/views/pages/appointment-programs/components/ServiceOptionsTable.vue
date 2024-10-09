@@ -20,7 +20,7 @@
           :data-test="`serviceOption__type_${item.id}`"
           class="rc-link14 font-weight-bold"
           :to="getDetailsRoute(item.id)">
-          {{ getTypeName(item.serviceOptionType) }}
+          {{ uiHelpers.getOptionItemNameFromListOption(serviceOptionTypes, item.serviceOptionType) }}
         </router-link>
       </template>
 
@@ -72,6 +72,7 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
+import uiHelpers from '@/ui/helpers/helpers';
 import helpers from '../appointmentProgramsHelpers';
 import CreateEditServiceOption from '../create-edit/CreateEditServiceOption.vue';
 
@@ -110,10 +111,11 @@ export default Vue.extend({
 
   data() {
     return {
+      uiHelpers,
       sortDesc: false,
       sortBy: 'metadata.displayName',
       loading: false,
-      selectedServiceOption: null,
+      selectedServiceOption: null as IServiceOption,
       showServiceOptionDialog: false,
       serviceOptionTempId: '0',
     };
@@ -136,7 +138,8 @@ export default Vue.extend({
           text: this.$t('appointmentProgram.serviceOption.table.type') as string,
           filterable: false,
           value: this.customColumns.serviceOptionType,
-          sort: (a, b) => this.getTypeName(a).localeCompare(this.getTypeName(b)),
+          sort: (a, b) => uiHelpers.getOptionItemNameFromListOption(this.serviceOptionTypes, a)
+          .localeCompare(uiHelpers.getOptionItemNameFromListOption(this.serviceOptionTypes, b)),
         },
         {
           text: this.$t('appointmentProgram.serviceOption.table.modality') as string,
@@ -199,10 +202,6 @@ export default Vue.extend({
            serviceOptionId: id,
         },
       };
-    },
-
-    getTypeName(serviceOptionType: IListOption): string {
-      return this.$m(this.serviceOptionTypes.find((t) => t.id === serviceOptionType?.optionItemId)?.name);
     },
 
     getModalitiesNames(modalities: IListOption[]) {

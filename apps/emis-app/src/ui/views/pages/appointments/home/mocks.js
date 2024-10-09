@@ -71,8 +71,8 @@ export const STAFF_AVAILABILITIES = [
 ];
 
 export const STAFF_MEMBER_AVAILABILITIES = [
-  { startDateTime: `${today}T14:15:00.000Z`, endDateTime: `${today}T16:00:00.000Z` },
-  { startDateTime: `${today}T17:00:00.000Z`, endDateTime: `${today}T20:00:00.000Z` },
+  { startDate: `${today}T14:15:00.000Z`, endDate: `${today}T16:00:00.000Z` },
+  { startDate: `${today}T17:00:00.000Z`, endDate: `${today}T20:00:00.000Z` },
 ];
 
 export const SERVICE_OPTIONS = [

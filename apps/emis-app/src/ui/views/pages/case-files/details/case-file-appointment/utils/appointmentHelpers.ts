@@ -3,6 +3,10 @@ import { DayOfWeek, IDaySchedule, ITimeSlot } from '@libs/entities-lib/appointme
 import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { addDays, format } from 'date-fns';
 import helpers from '@/ui/helpers/helpers';
+import { IMember } from '@libs/entities-lib/household-create';
+import { TranslateResult } from 'vue-i18n';
+import { useUserStore } from '@/pinia/user/user';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 
 export default {
 
@@ -24,10 +28,10 @@ export default {
       if (!slot || !weekStartDate || currentDay == null || !midnight || !nextMidnight) {
         return;
       }
-      const isStartInPreviousDay = new Date(slot.startDateTime) < midnight;
-      const isEndInPreviousDay = new Date(slot.endDateTime) < midnight;
-      const isStartInNextDay = new Date(slot.startDateTime) > nextMidnight;
-      const isEndInNextDay = new Date(slot.endDateTime) > nextMidnight;
+      const isStartInPreviousDay = new Date(slot.startDate) < midnight;
+      const isEndInPreviousDay = new Date(slot.endDate) < midnight;
+      const isStartInNextDay = new Date(slot.startDate) > nextMidnight;
+      const isEndInNextDay = new Date(slot.endDate) > nextMidnight;
       const currentDaySchedule = fullSchedule[currentDay];
       const { start: rangeStart, end: rangeEnd } = this.weekRange(weekStartDate);
 
@@ -55,8 +59,8 @@ export default {
       if ((isStartInPreviousDay && isEndInPreviousDay) || (isStartInNextDay && isEndInNextDay)) {
         otherDaySlot = {
           ...slot,
-          startDateTime: new Date(`${otherDayString} ${slot.start}`).toISOString(),
-          endDateTime: new Date(`${otherDayString} ${slot.end}`).toISOString(),
+          startDate: new Date(`${otherDayString} ${slot.start}`).toISOString(),
+          endDate: new Date(`${otherDayString} ${slot.end}`).toISOString(),
         };
 
         // the slot starts in previous day and ends in current day (local day localMidnight to localMidnight)
@@ -64,24 +68,24 @@ export default {
         // we create a new slot that ends at midnight of previous day and push it to the list of timeslots of that day
         otherDaySlot = {
           ...slot,
-          startDateTime: new Date(`${otherDayString} ${slot.start}`).toISOString(),
-          endDateTime: addDays(otherDay, 1).toISOString(), // next midnight of otherDay
+          startDate: new Date(`${otherDayString} ${slot.start}`).toISOString(),
+          endDate: addDays(otherDay, 1).toISOString(), // next midnight of otherDay
           end: '00:00',
         };
 
           // we cut the current slot to start only from midnight
-        currentDaySlot = { ...slot, startDateTime: midnight.toISOString(), start: '00:00' };
+        currentDaySlot = { ...slot, startDate: midnight.toISOString(), start: '00:00' };
 
         // the slot starts in current day and ends in next day (local day localMidnight to localMidnight)
       } else {
         otherDaySlot = {
           ...slot,
-          startDateTime: otherDay.toISOString(),
+          startDate: otherDay.toISOString(),
           start: '00:00',
-          endDateTime: new Date(`${otherDayString} ${slot.end}`).toISOString(),
+          endDate: new Date(`${otherDayString} ${slot.end}`).toISOString(),
         };
 
-        currentDaySlot = { ...slot, endDateTime: nextMidnight.toISOString(), end: '00:00' };
+        currentDaySlot = { ...slot, endDate: nextMidnight.toISOString(), end: '00:00' };
       }
 
       // Adding the newly calculated slots to their respective schedules timeslots lists
@@ -105,11 +109,11 @@ export default {
       schedule.day = schedule.day || weekDay;
 
       schedule.timeSlots = schedule.timeSlots ? schedule.timeSlots.map((slot) => {
-        slot.startDateTime = zonedTimeToUtc(`${date} ${slot.start}`, programTimeZone).toISOString();
-        slot.endDateTime = zonedTimeToUtc(`${date} ${slot.end}`, programTimeZone).toISOString();
+        slot.startDate = zonedTimeToUtc(`${date} ${slot.start}`, programTimeZone).toISOString();
+        slot.endDate = zonedTimeToUtc(`${date} ${slot.end}`, programTimeZone).toISOString();
         // if the time slot ends at 0:00, it means the end date time is the next day
         if (slot.end === '00:00') {
-          slot.endDateTime = addDays(new Date(slot.endDateTime), 1).toISOString();
+          slot.endDate = addDays(new Date(slot.endDate), 1).toISOString();
         }
 
         return slot;
@@ -138,13 +142,13 @@ export default {
         localNextMidnight.setDate(localNextMidnight.getDate() + 1);
 
         daySchedule.timeSlots = daySchedule.timeSlots.map((slot) => {
-          slot.start = timeZone === 'local' ? format(new Date(slot.startDateTime), 'HH:mm') : format(utcToZonedTime(slot.startDateTime, timeZone), 'HH:mm');
-          slot.end = timeZone === 'local' ? format(new Date(slot.endDateTime), 'HH:mm') : format(utcToZonedTime(slot.endDateTime, timeZone), 'HH:mm');
+          slot.start = timeZone === 'local' ? format(new Date(slot.startDate), 'HH:mm') : format(utcToZonedTime(slot.startDate, timeZone), 'HH:mm');
+          slot.end = timeZone === 'local' ? format(new Date(slot.endDate), 'HH:mm') : format(utcToZonedTime(slot.endDate, timeZone), 'HH:mm');
 
           // The timeslot might overflow to the next or previous day because it was set to local time from appointment program timezone,
           // so we need to recalculate it and move it to the right week day in the local time zone, potentially also split it if only
           // part of it overflows
-          const isTimeSlotSameDay = new Date(slot.startDateTime) >= localMidnight && new Date(slot.endDateTime) <= localNextMidnight;
+          const isTimeSlotSameDay = new Date(slot.startDate) >= localMidnight && new Date(slot.endDate) <= localNextMidnight;
 
           if (!isTimeSlotSameDay) {
             slotsToRecalculate.push({ slot, midnight: localMidnight, nextMidnight: localNextMidnight, currentDay: daySchedule.day });
@@ -180,8 +184,8 @@ export default {
           if (slot.start !== slot.end) {
             localSchedule.timeSlots.push({
               ...slot,
-              startDateTime: slot.start,
-              endDateTime: slot.end,
+              startDate: slot.start,
+              endDate: slot.end,
               start: format(new Date(slot.start), 'HH:mm'),
               end: format(new Date(slot.end), 'HH:mm'),
             });
@@ -220,10 +224,10 @@ export default {
       timeSlots.splice(tangentSlotIndex, 1);
       if (slot.start === tangentSlot.end) {
         newSlot.start = tangentSlot.start;
-        newSlot.startDateTime = tangentSlot.startDateTime;
+        newSlot.startDate = tangentSlot.startDate;
       } else if (slot.end === tangentSlot.start) {
         newSlot.end = tangentSlot.end;
-        newSlot.endDateTime = tangentSlot.endDateTime;
+        newSlot.endDate = tangentSlot.endDate;
       }
     }
 
@@ -246,4 +250,30 @@ export default {
 
       return intervals.map((i) => ({ text: format(i, 'hh:mm a'), value: format(i, 'HH:mm:ss') }));
   },
-  };
+
+  getAttendeeName(attendee: IMember, primaryMemberId: string, vue: Vue) {
+    if (!attendee?.identitySet) {
+      return '';
+    }
+    let name = `${attendee.identitySet.firstName} ${attendee.identitySet.lastName}`;
+    if (attendee.id === primaryMemberId) {
+      name += ` (${vue.$t('caseFile.appointments.attendee.primary')})`;
+    }
+    return name;
+  },
+
+  getStaffMemberName(id: string, nextAvailableMemberId = '', vue: Vue): TranslateResult | string {
+    if (id === nextAvailableMemberId) {
+      return vue.$t('caseFile.appointments.nextAvailable');
+    }
+    const currentUserId = useUserStore().getUserId();
+    if (id === currentUserId) {
+      return vue.$t('caseFile.appointments.myself');
+    }
+    const user = useUserAccountMetadataStore().getById(id);
+    if (user?.displayName) {
+      return `${user.displayName} (${vue.$m(user.roleName)})`;
+    }
+    return '';
+  },
+};

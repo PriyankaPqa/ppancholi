@@ -186,7 +186,7 @@ export default Vue.extend({
         const date = this.scheduleCopy[dayOfWeek]?.date;
         if (date) {
           const newTime = new Date(`${date} ${value}`).toISOString();
-          updatedSlot[`${position}DateTime` as 'startDateTime' | 'endDateTime'] = newTime;
+          updatedSlot[`${position}DateTime` as 'startDate' | 'endDate'] = newTime;
         }
       }
       this.scheduleCopy[dayOfWeek].timeSlots.splice(timeSlotIndex, 1, updatedSlot);
@@ -204,8 +204,8 @@ export default Vue.extend({
       };
 
       if (slotDate) {
-        newSlot.startDateTime = new Date(`${slotDate} ${startTime}`).toISOString();
-        newSlot.endDateTime = new Date(`${slotDate} 17:00`).toISOString();
+        newSlot.startDate = new Date(`${slotDate} ${startTime}`).toISOString();
+        newSlot.endDate = new Date(`${slotDate} 17:00`).toISOString();
       }
 
       this.scheduleCopy[day].timeSlots.push(newSlot);

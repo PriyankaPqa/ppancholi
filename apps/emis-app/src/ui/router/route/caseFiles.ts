@@ -38,6 +38,7 @@ const RecoveryPlanDetails = () => import('@/ui/views/pages/case-files/details/ca
 
 const CaseFileAppointments = () => import('@/ui/views/pages/case-files/details/case-file-appointment/CaseFileAppointments.vue');
 const CreateEditAppointment = () => import('@/ui/views/pages/case-files/details/case-file-appointment/components/CreateEditAppointment.vue');
+const AppointmentDetails = () => import('@/ui/views/pages/case-files/details/case-file-appointment/components/AppointmentDetails.vue');
 
 export const caseFiles: RouteConfig = {
   path: Routes.caseFile.layout.path,
@@ -251,6 +252,13 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.appointments.add.path,
           name: Routes.caseFile.appointments.add.name,
           component: CreateEditAppointment,
+          meta: { level: UserRoles.level0 },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.appointments.details.path,
+          name: Routes.caseFile.appointments.details.name,
+          component: AppointmentDetails,
           meta: { level: UserRoles.level0 },
           props: true,
         },

@@ -189,10 +189,10 @@ export default Vue.extend({
         // Code to display the interval background color depending on start and end dateTime of the timeslot
         if (day?.timeSlots?.length) {
           day.timeSlots.forEach((slot) => {
-            const startHour = utcToZonedTime(slot.startDateTime, this.localTimeZone).getHours();
-            const startMinute = utcToZonedTime(slot.startDateTime, this.localTimeZone).getMinutes();
-            let endHour = utcToZonedTime(slot.endDateTime, this.localTimeZone).getHours();
-            const endMinute = utcToZonedTime(slot.endDateTime, this.localTimeZone).getMinutes();
+            const startHour = utcToZonedTime(slot.startDate, this.localTimeZone).getHours();
+            const startMinute = utcToZonedTime(slot.startDate, this.localTimeZone).getMinutes();
+            let endHour = utcToZonedTime(slot.endDate, this.localTimeZone).getHours();
+            const endMinute = utcToZonedTime(slot.endDate, this.localTimeZone).getMinutes();
 
             if (endHour < startHour) {
               endHour += 24;

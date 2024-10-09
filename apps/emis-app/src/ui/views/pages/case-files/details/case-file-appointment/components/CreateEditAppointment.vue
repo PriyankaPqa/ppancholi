@@ -5,7 +5,8 @@
         outer-scroll
         :title="isEditMode ? $t('caseFile.appointments.edit.title') : $t('caseFile.appointments.add.title')">
         <appointment-form
-          :appointment.sync="appointment"
+          :appointment="appointment"
+          :submit-request-data.sync="submitRequestData"
           :is-edit-mode="isEditMode"
           :event-id="caseFile.eventId"
           :primary-member-id="primaryMember ? primaryMember.id : ''"
@@ -21,32 +22,54 @@
           <v-btn
             color="primary"
             data-test="save"
-            :loading="loading"
+            :loading="loadingSubmit"
             :disabled="failed || loading || (isEditMode && !dirty) "
-            @click="submit()">
-            {{ isEditMode ? $t('common.save') : $t('common.buttons.add') }}
+            @click="initSubmit()">
+            {{ isEditMode ? $t('common.save') : $t('common.buttons.next') }}
           </v-btn>
         </template>
       </rc-page-content>
     </page-template>
+    <rc-dialog
+      v-if="showReview"
+      :title="$t('caseFile.appointments.review.title')"
+      :show.sync="showReview"
+      :cancel-action-label="$t('caseFile.appointments.review.backToEdit')"
+      :submit-action-label="$t('common.buttons.create')"
+      :max-width="800"
+      :min-height="400"
+      content-padding="8"
+      persistent
+      data-test="appointment-review-dialog"
+      @cancel="showReview = false"
+      @close="showReview = false"
+      @submit="showConfirmation">
+      <appointment-details-content
+        :appointment="submitRequestData"
+        :attendee="attendee"
+        :primary-member-id="primaryMember ? primaryMember.id : ''" />
+    </rc-dialog>
   </validation-observer>
 </template>
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import {
+  RcDialog,
   RcPageContent,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import { Appointment, IAppointment } from '@libs/entities-lib/appointment';
+import { Appointment, IAppointment, IAppointmentRequest } from '@libs/entities-lib/appointment';
 import routes from '@/constants/routes';
 import { useAppointmentStore } from '@/pinia/appointment/appointment';
 import { useAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
+import { IMemberEntity } from '@libs/entities-lib/household-create';
 import caseFileDetail from '../../caseFileDetail';
 import AppointmentForm from './AppointmentForm.vue';
+import AppointmentDetailsContent from './AppointmentDetailsContent.vue';
 
 export default mixins(caseFileDetail).extend({
   name: 'CreateEditAppointment',
@@ -56,6 +79,8 @@ export default mixins(caseFileDetail).extend({
     AppointmentForm,
     PageTemplate,
     RcPageContent,
+    AppointmentDetailsContent,
+    RcDialog,
   },
 
   props: {
@@ -73,13 +98,22 @@ export default mixins(caseFileDetail).extend({
     return {
       appointment: null as IAppointment,
       loading: false,
+      loadingSubmit: false,
       showTimeSlotError: false,
+      showReview: false,
+      submitRequestData: null as IAppointmentRequest,
     };
   },
 
   computed: {
     isEditMode(): boolean {
       return this.$route.name === routes.caseFile.appointments.edit.name;
+    },
+    attendee(): IMemberEntity {
+      if (!this.submitRequestData?.attendeeId) {
+        return null;
+      }
+      return this.members?.find((m) => this.submitRequestData.attendeeId === m.id);
     },
   },
 
@@ -96,9 +130,9 @@ export default mixins(caseFileDetail).extend({
   async created() {
     this.loading = true;
     await Promise.all([
-      useAppointmentProgramStore().fetchByEventId(this.caseFile.eventId),
       useAppointmentProgramStore().fetchAppointmentModalities(),
       useAppointmentProgramStore().fetchServiceOptionTypes(),
+      this.fetchAppointmentPrograms(),
     ]);
 
     if (this.isEditMode) {
@@ -118,16 +152,61 @@ export default mixins(caseFileDetail).extend({
       });
     },
 
-   async submit() {
-     this.showTimeSlotError = !this.appointment.startDate;
-    const isValid = await (this.$refs.form as VForm).validate();
+    async fetchAppointmentPrograms() {
+      const programs = await useAppointmentProgramStore().fetchByEventId(this.caseFile.eventId);
+      if (!programs?.length) {
+        this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.appointments.error.noAppointmentPrograms') });
+      }
+    },
 
-    if (!isValid || this.showTimeSlotError) {
-      await this.$nextTick();
-      helpers.scrollToFirstError('app');
-    }
+    async  showConfirmation() {
+      this.showReview = false;
+      const confirmCreate = await this.$confirm({
+        title: this.$t('caseFile.appointments.confirmCreate.title'),
+        messages: this.$t('caseFile.appointments.confirmCreate.content'),
+      });
+      if (confirmCreate) {
+        await this.submit();
+      }
+    },
 
-      // call endpoint to submit
+    async initSubmit() {
+      if (!this.submitRequestData) {
+        return;
+      }
+
+      this.showTimeSlotError = !this.submitRequestData.startDate;
+      const isValid = await (this.$refs.form as VForm).validate();
+
+      if (!isValid || this.showTimeSlotError) {
+        await this.$nextTick();
+        helpers.scrollToFirstError('app');
+        return;
+      }
+
+      if (this.isEditMode) {
+        await this.submit();
+      } else {
+        this.showReview = true;
+      }
+    },
+
+    async submit() {
+      this.loadingSubmit = true;
+     const appointment = !this.isEditMode ? await useAppointmentStore().createAppointment(
+        {
+          ...this.submitRequestData,
+          preferredLanguage: { optionItemId: this.primaryMember?.contactInformation.preferredLanguage.optionItemId, specifiedOther: null },
+        },
+      ) : null;
+      if (appointment) {
+        this.$toasted.global.success(this.$t(this.isEditMode ? 'caseFile.appointments.success.edit' : 'caseFile.appointments.success.create'));
+        this.$router.push({ name: routes.caseFile.appointments.details.name, params: { id: this.id, appointmentId: appointment.id } });
+      } else {
+        this.$toasted.global.error(this.$t(this.isEditMode ? 'caseFile.appointments.failed.edit' : 'caseFile.appointments.failed.create'));
+      }
+
+      this.loadingSubmit = false;
     },
   },
 });

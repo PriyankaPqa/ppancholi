@@ -4,7 +4,6 @@ import { IDateRange, IDaySchedule } from '../appointment-program/appointment-pro
 export interface IStaffMemberAvailabilityRequest {
   appointmentProgramId: string,
   userAccountIds: string[],
-  selectedDate: string,
   selectedDateStartInUtc: string,
 }
 export interface IAppointmentStaffMember extends IEntity {

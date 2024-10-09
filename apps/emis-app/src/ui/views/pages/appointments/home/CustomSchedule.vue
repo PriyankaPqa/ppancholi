@@ -74,7 +74,7 @@ export default Vue.extend({
     submit() {
       const currentCustomSchedule = this.calculateNewCustomSchedule();
       const weekRange = appointmentHelpers.weekRange(this.rangeStartDate);
-      const otherCustomSchedule = this.customSchedule.filter((sch) => new Date(sch.endDateTime) < weekRange.start || new Date(sch.startDateTime) > weekRange.end);
+      const otherCustomSchedule = this.customSchedule.filter((sch) => new Date(sch.endDate) < weekRange.start || new Date(sch.startDate) > weekRange.end);
       // merges the new custom schedule with all the rest of the custom schedule data that is outside the current week
       const customScheduleToSubmit = [...currentCustomSchedule, ...otherCustomSchedule];
 
@@ -98,20 +98,20 @@ export default Vue.extend({
         // with the start and end date the same (midnight) - to signal that the custom schedule for that day is no schedule at all
         if (!currentDaySchedule.timeSlots.length && !!correspondingDefaultDay.timeSlots.length) {
           const midnight = new Date(`${correspondingDefaultDay.date} 0:00`).toISOString();
-          customSchedules.push({ startDateTime: midnight, endDateTime: midnight });
+          customSchedules.push({ startDate: midnight, endDate: midnight });
         }
 
         // if there are a different number of time slots for default and current schedule, we know it's a custom day schedule directly, no need to compare times
         if (correspondingDefaultDay.timeSlots.length !== currentDaySchedule.timeSlots.length) {
-          customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ startDateTime: s.startDateTime, endDateTime: s.endDateTime })));
+          customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ startDate: s.startDate, endDate: s.endDate })));
           return;
         }
 
         // compare utc start and end time for each default and current slot and only add the custom schedule of the whole day if they differ
         for (let i = 0; i < currentDaySchedule.timeSlots.length; i += 1) {
-          if (currentDaySchedule.timeSlots[i].startDateTime !== correspondingDefaultDay.timeSlots[i].startDateTime
-          || currentDaySchedule.timeSlots[i].endDateTime !== correspondingDefaultDay.timeSlots[i].endDateTime) {
-            customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ startDateTime: s.startDateTime, endDateTime: s.endDateTime })));
+          if (currentDaySchedule.timeSlots[i].startDate !== correspondingDefaultDay.timeSlots[i].startDate
+          || currentDaySchedule.timeSlots[i].endDate !== correspondingDefaultDay.timeSlots[i].endDate) {
+            customSchedules.push(...currentDaySchedule.timeSlots.map((s:ITimeSlot) => ({ startDate: s.startDate, endDate: s.endDate })));
             break;
           }
         }

@@ -4,14 +4,14 @@ import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { useMockAppointmentStaffMemberStore } from '@/pinia/appointment-staff-member/appointment-staff-member.mock';
 import { useMockAppointmentProgramStore } from '@/pinia/appointment-program/appointment-program.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
-import { mockAppointment, AppointmentStatus, mockAppointmentProgram, mockServiceOption, Appointment, mockAppointmentStaffMember } from '@libs/entities-lib/appointment';
+import { mockAppointment, AppointmentStatus, mockAppointmentProgram, mockServiceOption, mockAppointmentStaffMember } from '@libs/entities-lib/appointment';
 import { mockMember } from '@libs/entities-lib/household-create';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 import { mockOptionItem } from '@libs/entities-lib/optionItem';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { mockProvider } from '@/services/provider';
-import Component from './AppointmentForm.vue';
+import Component, { NEXT_AVAILABLE_MEMBER_ID } from './AppointmentForm.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
@@ -95,43 +95,23 @@ describe('AppointmentForm', () => {
           return mockAppointmentProgram({ id: '2' });
         } } });
         await wrapper.setData({ localAppointment: mockAppointment({ appointmentProgramId: '2' }) });
-        expect(appointmentProgramStore.getServiceOptionTypes).toHaveBeenCalledWith(wrapper.vm.appointment.serviceOptionId);
+        expect(appointmentProgramStore.getServiceOptionTypes).toHaveBeenCalled();
       });
     });
 
     describe('serviceOptions', () => {
-      it('returns service options of the selected appointment program, that have active types', async () => {
+      it('returns service options of the selected appointment program, that have active types and are active', async () => {
         appointmentProgramStore.getServiceOptionTypes = jest.fn(() => [mockOptionItem({ id: 'active-id' })]);
         const appointmentProgram = mockAppointmentProgram({ serviceOptions:
-          [mockServiceOption({ serviceOptionType: { optionItemId: 'not-active-id' } }),
-            mockServiceOption({ serviceOptionType: { optionItemId: 'active-id' } }),
+          [mockServiceOption({ serviceOptionStatus: 1 }),
+            mockServiceOption({ serviceOptionStatus: 2 }),
           ] });
 
         await doMount(false, { computed: { selectedAppointmentProgram() {
           return appointmentProgram;
         } } });
 
-        expect(wrapper.vm.serviceOptions).toEqual([mockServiceOption({ serviceOptionType: { optionItemId: 'active-id' } })]);
-      });
-      it('contains the service option of the initial appointment ', async () => {
-        appointmentProgramStore.getServiceOptionTypes = jest.fn(() => [mockOptionItem({ id: 'active-id' })]);
-        const appointmentProgram = mockAppointmentProgram({ serviceOptions:
-          [mockServiceOption({ serviceOptionType: { optionItemId: 'not-active-id' } }),
-            mockServiceOption({ serviceOptionType: { optionItemId: 'active-id' } }),
-          ] });
-
-        await doMount(false, { computed: { selectedAppointmentProgram() {
-          return appointmentProgram;
-        } } });
-
-        await wrapper.setProps({ appointment: new Appointment({ serviceOptionId: 'not-active-id' }) });
-
-        expect(wrapper.vm.serviceOptions).toEqual(
-          [mockServiceOption(
-            { serviceOptionType: { optionItemId: 'active-id' } },
-            mockServiceOption({ serviceOptionType: { optionItemId: 'not-active-id' } }),
-          )],
-        );
+        expect(wrapper.vm.serviceOptions).toEqual([mockServiceOption({ serviceOptionStatus: 1 })]);
       });
     });
 
@@ -207,7 +187,7 @@ describe('AppointmentForm', () => {
             },
           } });
 
-          expect(wrapper.vm.displayedStaffMemberIds).toEqual(['my-id', wrapper.vm.nextAvailableMemberId, 'm-aaa', 'm-bbb']);
+          expect(wrapper.vm.displayedStaffMemberIds).toEqual(['my-id', NEXT_AVAILABLE_MEMBER_ID, 'm-aaa', 'm-bbb']);
         },
       );
 
@@ -260,7 +240,7 @@ describe('AppointmentForm', () => {
           },
         } }, pinia);
 
-        expect(wrapper.vm.displayedStaffMemberIds).toEqual([wrapper.vm.nextAvailableMemberId]);
+        expect(wrapper.vm.displayedStaffMemberIds).toEqual([NEXT_AVAILABLE_MEMBER_ID]);
       });
     });
 
@@ -284,12 +264,12 @@ describe('AppointmentForm', () => {
         await doMount();
         await wrapper.setData({ selectedDate: '2024-10-01',
           localAppointment: mockAppointment({ startDate: '2024-10-01 09:00', endDate: '2024-10-01 10:00' }) });
-        expect(wrapper.vm.selectedTime).toEqual({ startDateTime: '2024-10-01 09:00', endDateTime: '2024-10-01 10:00' });
+        expect(wrapper.vm.selectedTime).toEqual({ startDate: '2024-10-01 09:00', endDate: '2024-10-01 10:00' });
       });
       test('setter - it sets the local appointment start and end time', async () => {
         await doMount(false);
         wrapper.vm.fetchStaffMemberAvailability = jest.fn();
-        wrapper.vm.selectedTime = { startDateTime: '2024-10-01T13:00:00.000Z', endDateTime: '2024-10-01T14:00:00.000Z' };
+        wrapper.vm.selectedTime = { startDate: '2024-10-01T13:00:00.000Z', endDate: '2024-10-01T14:00:00.000Z' };
         await wrapper.setData({ selectedDate: '2024-10-01' });
         expect(wrapper.vm.localAppointment.startDate).toEqual('2024-10-01T13:00:00.000Z');
       });
@@ -297,31 +277,10 @@ describe('AppointmentForm', () => {
   });
 
   describe('Methods', () => {
-    describe('getServiceOptionTypeName', () => {
-      it('returns the type name from the service option types', async () => {
-        appointmentProgramStore.getServiceOptionTypes = jest.fn(() => [{ id: '1', name: { translation: { en: 'name-1' } } }, { id: '2', name: { translation: { en: 'name-2' } } }]);
-        await doMount();
-        const res = await wrapper.vm.getServiceOptionTypeName(mockServiceOption({ serviceOptionType: { optionItemId: '2' } }));
-        expect(res).toEqual('name-2');
-      });
-    });
-
-    describe('getAttendeeName', () => {
-      it('returns the full name of the member', async () => {
-        const member = mockMember({ identitySet: { firstName: 'John', lastName: 'Doe' }, id: 'm-id-1' });
-        await doMount();
-        const res = wrapper.vm.getAttendeeName(member);
-        expect(res).toEqual('John Doe');
-        await wrapper.setProps({ primaryMemberId: 'm-id-1' });
-        const res2 = wrapper.vm.getAttendeeName(member);
-        expect(res2).toEqual('John Doe (caseFile.appointments.attendee.primary)');
-      });
-    });
-
     describe('getStaffMemberName', () => {
       it('returns the right name if the id is nextAvailableMemberId', async () => {
         await doMount();
-        expect(wrapper.vm.getStaffMemberName(wrapper.vm.nextAvailableMemberId)).toEqual('caseFile.appointments.nextAvailable');
+        expect(wrapper.vm.getStaffMemberName(NEXT_AVAILABLE_MEMBER_ID)).toEqual('caseFile.appointments.nextAvailable');
       });
 
       it('returns "myself" if the id is that of the current user', async () => {
@@ -347,19 +306,31 @@ describe('AppointmentForm', () => {
         await wrapper.vm.fetchStaffMembers();
         expect(appointmentStaffMemberStore.fetchByAppointmentProgramId).toHaveBeenCalledWith('ap-1');
       });
+      it('shows an error if  staff members is empty', async () => {
+        appointmentStaffMemberStore.fetchByAppointmentProgramId = jest.fn(() => []);
+        await doMount(false, { computed: {
+          selectedAppointmentProgram() {
+            return mockAppointmentProgram({ id: 'ap-1' });
+          },
+        } });
+        await wrapper.vm.fetchStaffMembers();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'caseFile.appointments.error.noStaffMembersInAppointmentProgram' });
+      });
     });
 
     describe('fetchStaffMemberAvailability', () => {
       it('calls service fetchAvailabilites with the right payload - one staff member', async () => {
         await doMount(true, { computed: { selectedAppointmentProgram() {
           return mockAppointmentProgram({ id: 'a-1' });
+        },
+        selectedServiceOption() {
+          return mockServiceOption();
         } } });
         await wrapper.setData({ localAppointment: mockAppointment({ userAccountId: 'ua-1' }), selectedDate: '2024-10-01' });
         await wrapper.vm.fetchStaffMemberAvailability;
         expect(wrapper.vm.$services.appointmentStaffMembers.fetchAvailabilites).toHaveBeenCalledWith({
           appointmentProgramId: 'a-1',
           userAccountIds: ['ua-1'],
-          selectedDate: '2024-10-01',
           selectedDateStartInUtc: new Date('2024-10-01 0:00').toISOString(),
         });
       });
@@ -368,16 +339,18 @@ describe('AppointmentForm', () => {
           selectedAppointmentProgram() {
             return mockAppointmentProgram({ id: 'a-1' });
           },
+          selectedServiceOption() {
+            return mockServiceOption();
+          },
           displayedStaffMemberIds() {
-            return ['next-available-member', 'u-1', 'u-2'];
+            return [NEXT_AVAILABLE_MEMBER_ID, 'u-1', 'u-2'];
           },
         } });
-        await wrapper.setData({ localAppointment: mockAppointment({ userAccountId: wrapper.vm.nextAvailableMemberId }), selectedDate: '2024-10-01' });
+        await wrapper.setData({ localAppointment: mockAppointment({ userAccountId: NEXT_AVAILABLE_MEMBER_ID }), selectedDate: '2024-10-01' });
         await wrapper.vm.fetchStaffMemberAvailability;
         expect(wrapper.vm.$services.appointmentStaffMembers.fetchAvailabilites).toHaveBeenCalledWith({
           appointmentProgramId: 'a-1',
           userAccountIds: ['u-1', 'u-2'],
-          selectedDate: '2024-10-01',
           selectedDateStartInUtc: new Date('2024-10-01 0:00').toISOString(),
         });
       });
@@ -404,6 +377,25 @@ describe('AppointmentForm', () => {
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.fetchStaffMembers).toHaveBeenCalled();
       });
+
+      it('shows an error message if there are no  service options in the selected program', async () => {
+        appointmentProgramStore.getByCriteria = jest.fn(() => [mockAppointmentProgram({ id: '1' }), mockAppointmentProgram({ id: '2', serviceOptions: [] })]);
+        await doMount(true);
+        wrapper.vm.fetchStaffMembers = jest.fn();
+        wrapper.vm.localAppointment.appointmentProgramId = '2';
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$message).toBeCalledWith({ title: 'common.error', message: 'caseFile.appointments.error.noServiceOptions' });
+      });
+
+      it('shows an error message if there are no active service options in the selected program', async () => {
+        appointmentProgramStore.getByCriteria = jest.fn(() => [mockAppointmentProgram({ id: '1' }),
+          mockAppointmentProgram({ id: '2', serviceOptions: [mockServiceOption({ serviceOptionStatus: 2 })] })]);
+        await doMount(true);
+        wrapper.vm.fetchStaffMembers = jest.fn();
+        wrapper.vm.localAppointment.appointmentProgramId = '2';
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'caseFile.appointments.error.noServiceOptions' });
+      });
     });
 
     describe('selectedServiceOption', () => {
@@ -419,6 +411,19 @@ describe('AppointmentForm', () => {
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.localAppointment.appointmentModalityId).toEqual(null);
         expect(wrapper.vm.localAppointment.userAccountId).toEqual(null);
+      });
+    });
+
+    describe('serviceOptionStaffMembers', () => {
+      it('displays an error message when there are no members in the selected service option', async () => {
+        appointmentStaffMemberStore.getByCriteria = jest.fn(() => []);
+        await doMount(true, { computed: { serviceOptions() {
+          return [mockServiceOption({ id: '1' }), mockServiceOption({ id: '2' })];
+        },
+        } });
+        wrapper.vm.localAppointment.serviceOptionId = '1';
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'caseFile.appointments.error.noStaffMembersInServiceOption' });
       });
     });
 
@@ -492,9 +497,13 @@ describe('AppointmentForm', () => {
     describe('localAppointment', () => {
       it('emits when is changed', async () => {
         await doMount();
+        wrapper.vm.$emit = jest.fn();
+        const request = { userAccountIds: ['id'] };
+        wrapper.vm.getRequestPayload = jest.fn(() => (request));
         const appt = mockAppointment({ id: '2' });
         await wrapper.setData({ localAppointment: appt });
-        expect(wrapper.emitted('update:appointment')[0][0]).toEqual(appt);
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$emit).toBeCalledWith('update:submitRequestData', { ...appt, ...request });
       });
     });
   });

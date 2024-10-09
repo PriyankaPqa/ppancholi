@@ -22,15 +22,15 @@ export enum DayOfWeek {
 export interface ITimeSlot {
   start: string | Date; // TimeOnly
   end: string | Date; // TimeOnly
-  startDateTime?: Date | string;
-  endDateTime?: Date | string;
+  startDate?: Date | string;
+  endDate?: Date | string;
   startLocalTime?: string;
   endLocalTime?: string;
 }
 
 export interface IDateRange {
-  startDateTime: Date | string;
-  endDateTime: Date | string;
+  startDate: Date | string;
+  endDate: Date | string;
 }
 
 export interface IDaySchedule {
