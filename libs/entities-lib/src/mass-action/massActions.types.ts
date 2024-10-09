@@ -24,7 +24,7 @@ export enum MassActionType {
   FinancialAssistanceCustomOptions = 15,
   CaseFileStatus = 16,
   Communication = 18,
-  AddRemoveTeamMembers = 21,
+  UpdateTeamMembers = 21,
   AuthenticationRetry = 22,
 }
 

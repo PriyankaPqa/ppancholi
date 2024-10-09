@@ -14,7 +14,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.AddTeamMember,
               },
@@ -27,7 +27,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.RemoveTeamMember,
               },
@@ -44,7 +44,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.AddTeamMember,
               },
@@ -57,7 +57,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.RemoveTeamMember,
               },
@@ -74,7 +74,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.AddTeamMember,
               },
@@ -87,7 +87,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.RemoveTeamMember,
               },
@@ -104,7 +104,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.AddTeamMember,
               },
@@ -117,7 +117,7 @@ describe('AddRemoveTeamMembersMassActionDetails', () => {
           localVue,
           computed: {
             massAction: () => mockMassActionEntity({
-              type: MassActionType.AddRemoveTeamMembers,
+              type: MassActionType.UpdateTeamMembers,
               details: {
                 teamMembersMassActionType: TeamMembersMassActionType.RemoveTeamMember,
               },

@@ -77,7 +77,7 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   data() {
     return {
       // To be defined to filter on type for the search api (see mixin massActionsTable)
-      massActionTypeData: MassActionType.AddRemoveTeamMembers,
+      massActionTypeData: MassActionType.UpdateTeamMembers,
       detailsRouteNameData: routes.massActions.addRemoveTeamMembers.details.name,
       tableTitleData: 'massAction.addRemoveTeamMembersTable.title',
       UserRoles,

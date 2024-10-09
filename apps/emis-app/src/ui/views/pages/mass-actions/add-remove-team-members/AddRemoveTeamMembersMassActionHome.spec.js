@@ -19,7 +19,7 @@ describe('AddRemoveTeamMembersMassActionHome.vue', () => {
   });
   describe('Data', () => {
     it('should have proper mass action type', () => {
-      expect(wrapper.vm.massActionTypeData).toEqual(MassActionType.AddRemoveTeamMembers);
+      expect(wrapper.vm.massActionTypeData).toEqual(MassActionType.UpdateTeamMembers);
     });
 
     it('should have proper detailsRouteName', () => {

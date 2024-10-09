@@ -12,7 +12,7 @@ describe('AddRemoveTeamMembersMassActionDetailsTable', () => {
     localVue,
     pinia,
     propsData: {
-      massAction: mockMassActionEntity({ type: MassActionType.AddRemoveTeamMembers, details: { teamId: 'team-id-1' } }),
+      massAction: mockMassActionEntity({ type: MassActionType.UpdateTeamMembers, details: { teamId: 'team-id-1' } }),
     },
   });
 
